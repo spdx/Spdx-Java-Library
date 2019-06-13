@@ -66,7 +66,7 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo {
 	 */
 	@Override
 	public List<String> verify() {
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	@Override

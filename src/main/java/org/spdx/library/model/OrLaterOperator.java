@@ -77,7 +77,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 */
 	@Override
 	public List<String> verify() {
-		List<String> retval = new ArrayList<String>();
+		List<String> retval = new ArrayList<>();
 		SimpleLicensingInfo license;
 		try {
 			license = getLicense();

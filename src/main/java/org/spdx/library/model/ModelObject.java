@@ -45,7 +45,7 @@ public abstract class ModelObject implements SpdxConstants {
 	/**
 	 * Map of ID's copied from other model stores for efficiency
 	 */
-	private Map<IModelStore, Map<String, String>> idMap = new HashMap<IModelStore, Map<String, String>>();
+	private Map<IModelStore, Map<String, String>> idMap = new HashMap<>();
 
 	/**
 	 * @param modelStore Storage for the model objects
@@ -350,7 +350,7 @@ public abstract class ModelObject implements SpdxConstants {
 			// We keep track of any ID's we created in the idMap
 			Map<String, String> mapForModelStore = this.idMap.get(modelObject.getModelStore());
 			if (mapForModelStore == null) {
-				mapForModelStore = new HashMap<String, String>();
+				mapForModelStore = new HashMap<>();
 			}
 			String retval = mapForModelStore.get(modelObject.getId());
 			if (retval != null) {

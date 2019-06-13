@@ -120,7 +120,7 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	protected List<AnyLicenseInfo> getFlattenedMembers() throws SpdxInvalidTypeException {
-		HashSet<AnyLicenseInfo> retval = new HashSet<AnyLicenseInfo>();	// Use a set since any duplicated elements would be still considered equal
+		HashSet<AnyLicenseInfo> retval = new HashSet<>();	// Use a set since any duplicated elements would be still considered equal
 		Iterator<AnyLicenseInfo> iter = this.getMembers().iterator();
 		while (iter.hasNext()) {
 			AnyLicenseInfo li = iter.next();
@@ -131,7 +131,7 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 				retval.add(li);
 			}
 		}
-		ArrayList<AnyLicenseInfo> retvallist = new ArrayList<AnyLicenseInfo>();
+		ArrayList<AnyLicenseInfo> retvallist = new ArrayList<>();
 		retvallist.addAll(retval);
 		return retvallist;
 	}

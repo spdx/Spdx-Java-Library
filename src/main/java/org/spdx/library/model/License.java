@@ -150,7 +150,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 */
 	@Override
 	public List<String> verify() {
-		List<String> retval = new ArrayList<String>();
+		List<String> retval = new ArrayList<>();
 		String id = this.getLicenseId();
 		if (id == null || id.isEmpty()) {
 			retval.add("Missing required license ID");

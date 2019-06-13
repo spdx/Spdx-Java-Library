@@ -69,7 +69,7 @@ public class ConjunctiveLicenseSet extends LicenseSet {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public List<AnyLicenseInfo> getFlattenedMembers() throws SpdxInvalidTypeException {
-		HashSet<AnyLicenseInfo> retval = new HashSet<AnyLicenseInfo>();	// Use a set since any duplicated elements would be still considered equal
+		HashSet<AnyLicenseInfo> retval = new HashSet<>();	// Use a set since any duplicated elements would be still considered equal
 		Iterator<AnyLicenseInfo> iter = this.getMembers().iterator();
 		while (iter.hasNext()) {
 			AnyLicenseInfo li = iter.next();
@@ -83,7 +83,7 @@ public class ConjunctiveLicenseSet extends LicenseSet {
 				retval.add(li);
 			}
 		}
-		List<AnyLicenseInfo> retvallist = new ArrayList<AnyLicenseInfo>();
+		List<AnyLicenseInfo> retvallist = new ArrayList<>();
 		retvallist.addAll(retval);
 		return retvallist;
 	}
