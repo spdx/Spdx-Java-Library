@@ -32,7 +32,7 @@ public class InvalidLicenseTemplateException extends Exception {
 	 * 
 	 */
 	public InvalidLicenseTemplateException() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
@@ -40,7 +40,6 @@ public class InvalidLicenseTemplateException extends Exception {
 	 */
 	public InvalidLicenseTemplateException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -48,7 +47,6 @@ public class InvalidLicenseTemplateException extends Exception {
 	 */
 	public InvalidLicenseTemplateException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -57,7 +55,6 @@ public class InvalidLicenseTemplateException extends Exception {
 	 */
 	public InvalidLicenseTemplateException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

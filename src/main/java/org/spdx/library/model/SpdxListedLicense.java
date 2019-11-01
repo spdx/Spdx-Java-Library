@@ -85,8 +85,9 @@ public class SpdxListedLicense extends License {
 	/**
 	 * Set the licenseTextHtml
 	 * @param licenseTextHtml HTML fragment representing the license text
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setLicenseTextHtml(String licenseTextHtml) {
+	public void setLicenseTextHtml(String licenseTextHtml) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LICENSE_TEXT_HTML, licenseTextHtml);
 	}
 	
@@ -118,8 +119,9 @@ public class SpdxListedLicense extends License {
 	/**
 	 * Set the licenseHeaderTemplateHtml
 	 * @param licenseHeaderHtml HTML fragment representing the license standard header text
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setLicenseHeaderHtml(String licenseHeaderHtml) {
+	public void setLicenseHeaderHtml(String licenseHeaderHtml) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LICENSE_HEADER_HTML, licenseHeaderHtml);
 	}
 	
@@ -133,8 +135,9 @@ public class SpdxListedLicense extends License {
 
 	/**
 	 * @param deprecatedVersion the deprecatedVersion to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setDeprecatedVersion(String deprecatedVersion) {
+	public void setDeprecatedVersion(String deprecatedVersion) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
 	}
 

@@ -128,8 +128,9 @@ public abstract class ModelObject implements SpdxConstants {
 	/**
 	 * @param propertyName Name of the proprety associated with this object
 	 * @param value Value to associate with the property
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setPropertyValue(String propertyName, Object value) {
+	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		//TODO: Add nullable annotation, make sure the storage class handles null values
 		if (value instanceof ModelObject) {
 			modelStore.setTypedValue(documentUri, id, propertyName, 
@@ -163,7 +164,7 @@ public abstract class ModelObject implements SpdxConstants {
 	public Boolean getBooleanPropertyValue(String propertyName) throws SpdxInvalidTypeException {
 		Object ovalue = getObjectPropertyValue(propertyName);
 		if (ovalue == null) {
-			return null;
+			return null;	// Note that some of the properties such as FsfLibre explicitly look for null values
 		}
 		if (!(ovalue instanceof Boolean)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
@@ -185,8 +186,9 @@ public abstract class ModelObject implements SpdxConstants {
 	 * belong to the document, it will be copied into the object store
 	 * @param propertyName  Name of the property
 	 * @param value to add
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void addPropertyValueToList(String propertyName, Object value) {
+	public void addPropertyValueToList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
 			modelStore.addTypedValueToList(documentUri, id, propertyName, 
 					modelObjectToId((ModelObject)value), ((ModelObject)value).getType());
@@ -200,8 +202,9 @@ public abstract class ModelObject implements SpdxConstants {
 	 * belong to the document, it will be copied into the object store
 	 * @param propertyName name of the property
 	 * @param values list of new properties
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void replacePropertyValueList(String propertyName, List<?> values) {
+	public void replacePropertyValueList(String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
 		clearPropertyValueList(propertyName);
 		for (Object value:values) {
 			addPropertyValueToList(propertyName, value);
@@ -322,8 +325,9 @@ public abstract class ModelObject implements SpdxConstants {
 	/**
 	 * Copy all the properties from the source object
 	 * @param source
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void copyFrom(ModelObject source) {
+	public void copyFrom(ModelObject source) throws InvalidSPDXAnalysisException {
 		List<String> propertyValueNames = source.getPropertyValueNames();
 		for (String propertyName:propertyValueNames) {
 			setPropertyValue(propertyName, source.getObjectPropertyValue(propertyName));
@@ -340,8 +344,9 @@ public abstract class ModelObject implements SpdxConstants {
 	 * associated with this model object
 	 * @param modelObject
 	 * @return
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private String modelObjectToId(ModelObject modelObject) {
+	private String modelObjectToId(ModelObject modelObject) throws InvalidSPDXAnalysisException {
 		//TODO: Make threadsafe
 		if (this.getModelStore().equals(modelObject.getModelStore()) && this.getDocumentUri().equals(modelObject.getDocumentUri())) {
 			return modelObject.getId();

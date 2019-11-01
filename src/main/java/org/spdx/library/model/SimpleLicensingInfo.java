@@ -62,8 +62,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	
 	/**
 	 * @param name the name to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setName(String name) {
+	public void setName(String name) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_NAME, name);
 	}
 	/**
@@ -76,8 +77,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	
 	/**
 	 * @param comment the comment to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setComment(String comment) {
+	public void setComment(String comment) throws InvalidSPDXAnalysisException {
 		setPropertyValue(RDFS_PROP_COMMENT, comment);
 	}
 	
@@ -90,8 +92,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	}
 	/**
 	 * @param seeAlsoUrl the urls which are references to the same license to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setSeeAlso(List<String> seeAlsoUrl) {
+	public void setSeeAlso(List<String> seeAlsoUrl) throws InvalidSPDXAnalysisException {
 		if (seeAlsoUrl == null) {
 			clearPropertyValueList(RDFS_PROP_SEE_ALSO);
 		} else {

@@ -75,8 +75,9 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 
 	/**
 	 * @param text the text to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setExtractedText(String text) {
+	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_EXTRACTED_TEXT, text);
 	}
 

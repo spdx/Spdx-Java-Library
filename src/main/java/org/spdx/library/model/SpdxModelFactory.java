@@ -18,6 +18,8 @@
 package org.spdx.library.model;
 
 import org.spdx.storage.IModelStore;
+import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 
 /**
  * @author gary
@@ -25,12 +27,34 @@ import org.spdx.storage.IModelStore;
  */
 public class SpdxModelFactory {
 
-	public static ModelObject createModelObject(IModelStore modelStore, String documentUri, String retval,
-			String type) {
-		// I think this is going to be one massive switch statement based on the CLASS names
-		throw new RuntimeException("Not implemented");
+	public static ModelObject createModelObject(IModelStore modelStore, String documentUri, String id,
+			String type) throws InvalidSPDXAnalysisException {
+		switch (type) {
+		case SpdxConstants.CLASS_SPDX_DOCUMENT: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_PACKAGE: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_CREATION_INFO: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_CHECKSUM: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO: throw new InvalidSPDXAnalysisException("Can not create abstract AnyLicensing Info.  Must specify one of the concrete classes");
+		case SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO:  throw new InvalidSPDXAnalysisException("Can not create abstract SimpleLicensingInfo.  Must specify one of the concrete classes");
+		case SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return new ConjunctiveLicenseSet(modelStore, documentUri, id, true);
+		case SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return new DisjunctiveLicenseSet(modelStore, documentUri, id, true);
+		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return new ExtractedLicenseInfo(modelStore, documentUri, id, true);
+		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
+		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, true);
+		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_FILE: throw new RuntimeException("Not implemented");  //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_ANNOTATION: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_RELATIONSHIP: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_SNIPPET: throw new RuntimeException("Not implemented"); //TODO: Implement
+		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
+		}
 	}
-	
-	//TODO Implement
-
 }

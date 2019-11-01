@@ -70,8 +70,9 @@ public abstract class License extends SimpleLicensingInfo {
 
 	/**
 	 * @param text the license text to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setLicenseText(String text) {
+	public void setLicenseText(String text) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(PROP_LICENSE_TEXT, text);
 		this.textInHtml = false;	// stored in the clear
 	}
@@ -102,15 +103,17 @@ public abstract class License extends SimpleLicensingInfo {
 	
 	/**
 	 * @param standardLicenseHeaderTemplate
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setStandardLicenseHeaderTemplate(String standardLicenseHeaderTemplate) {
+	public void setStandardLicenseHeaderTemplate(String standardLicenseHeaderTemplate) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE, standardLicenseHeaderTemplate);
 	}
 	
 	/**
 	 * @param standardLicenseHeader the standardLicenseHeader to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setStandardLicenseHeader(String standardLicenseHeader) {
+	public void setStandardLicenseHeader(String standardLicenseHeader) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_NOTICE, standardLicenseHeader);
 	}
 	/**
@@ -129,8 +132,9 @@ public abstract class License extends SimpleLicensingInfo {
 	}
 	/**
 	 * @param template the template to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setStandardLicenseTemplate(String template) {
+	public void setStandardLicenseTemplate(String template) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_TEMPLATE, template);
 	}
 	
@@ -252,21 +256,23 @@ public abstract class License extends SimpleLicensingInfo {
 		return deprecated != null && deprecated;
 	}
 	
-	public void setOsiApproved(Boolean osiApproved) {
+	public void setOsiApproved(Boolean osiApproved) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_OSI_APPROVED, osiApproved);
 	}
 	
 	/**
 	 * @param fsfLibre true if FSF describes the license as free / libre, false if FSF describes the license as not free / libre, null if FSF does not reference the license
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setFsfLibre(Boolean fsfLibre) {
+	public void setFsfLibre(Boolean fsfLibre) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_FSF_LIBRE, fsfLibre);
 	}
 	
 	/**
 	 * @param deprecated true if this license is deprecated
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setDeprecated(Boolean deprecated) {
+	public void setDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 }
