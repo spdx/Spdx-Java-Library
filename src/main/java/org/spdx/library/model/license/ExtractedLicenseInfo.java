@@ -16,13 +16,14 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -42,7 +43,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @param create if true, create the license if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	ExtractedLicenseInfo(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
+	public ExtractedLicenseInfo(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
 	}
 	
@@ -69,7 +70,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @return the text
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getExtractedText() throws SpdxInvalidTypeException {
+	public String getExtractedText() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValue(PROP_EXTRACTED_TEXT);
 	}
 

@@ -14,7 +14,7 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;

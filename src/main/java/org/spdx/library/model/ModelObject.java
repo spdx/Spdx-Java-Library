@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -105,15 +106,17 @@ public abstract class ModelObject implements SpdxConstants {
 	//The following methods are to manage the properties associated with the model object
 	/**
 	 * @return all names of property values currently associated with this object
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public List<String> getPropertyValueNames() {
+	public List<String> getPropertyValueNames() throws InvalidSPDXAnalysisException {
 		return modelStore.getPropertyValueNames(documentUri, id);
 	}
 	
 	/**
 	 * @return all names of property lists currently associated with this object
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public List<String> getPropertyValueListNames() {
+	public List<String> getPropertyValueListNames() throws InvalidSPDXAnalysisException {
 		return modelStore.getPropertyValueListNames(documentUri, id);
 	}
 	
@@ -121,7 +124,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param propertyName Name of the property
 	 * @return value associated with a property
 	 */
-	public Object getObjectPropertyValue(String propertyName) {
+	public Object getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		return modelStore.getValue(documentUri, id, propertyName);
 	}
 
@@ -145,7 +148,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @return the String value associated with a property
 	 * @throws SpdxInvalidTypeException
 	 */
-	public String getStringPropertyValue(String propertyName) throws SpdxInvalidTypeException {
+	public String getStringPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Object ovalue = getObjectPropertyValue(propertyName);
 		if (ovalue == null) {
 			return null;
@@ -161,7 +164,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @return the Boolean value for a property
 	 * @throws SpdxInvalidTypeException
 	 */
-	public Boolean getBooleanPropertyValue(String propertyName) throws SpdxInvalidTypeException {
+	public Boolean getBooleanPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Object ovalue = getObjectPropertyValue(propertyName);
 		if (ovalue == null) {
 			return null;	// Note that some of the properties such as FsfLibre explicitly look for null values
@@ -177,7 +180,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * Clears a list of values associated with a property
 	 * @param propertyName Name of the property
 	 */
-	public void clearPropertyValueList(String propertyName) {
+	public void clearPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
 		modelStore.clearPropertyValueList(documentUri, id, propertyName);
 	}
 	
@@ -215,7 +218,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param propertyName Name of the property
 	 * @return List of values associated with a property
 	 */
-	public List<?> getObjectPropertyValueList(String propertyName) {
+	public List<?> getObjectPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
 		return modelStore.getValueList(documentUri, id, propertyName);
 	}
 	
@@ -225,7 +228,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getStringPropertyValueList(String propertyName) throws SpdxInvalidTypeException {
+	public List<String> getStringPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
 		List<?> oList = getObjectPropertyValueList(propertyName);
 		if (oList == null) {
 			return null;
@@ -240,7 +243,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param compare
 	 * @return true if all the properties have the same or equivalent values
 	 */
-	public boolean equivalent(ModelObject compare) {
+	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
 		if (!this.getClass().equals(compare.getClass())) {
 			return false;
 		}
@@ -380,7 +383,7 @@ public abstract class ModelObject implements SpdxConstants {
 			return IdType.SpdxId;
 		} else if (id.startsWith(EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
-		} else if (ListedLicenses.isSpdxListedLicenseID(id)) {
+		} else if (ListedLicenses.getListedLicenses().isSpdxListedLicenseID(id)) {
 			return IdType.ListedLicense;
 		} else if ("none".equals(id) || "noassertion".equals(id)) {
 			return IdType.Literal;

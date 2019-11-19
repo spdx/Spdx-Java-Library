@@ -16,11 +16,12 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 
@@ -56,7 +57,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @return the name
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getName() throws SpdxInvalidTypeException {
+	public String getName() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValue(PROP_STD_LICENSE_NAME);
 	}
 	
@@ -71,7 +72,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @return the comments
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getComment() throws SpdxInvalidTypeException {
+	public String getComment() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValue(RDFS_PROP_COMMENT);
 	}
 	
@@ -87,7 +88,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @return the urls which reference the same license information
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public List<String> getSeeAlso() throws SpdxInvalidTypeException {
+	public List<String> getSeeAlso() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValueList(RDFS_PROP_SEE_ALSO);
 	}
 	/**

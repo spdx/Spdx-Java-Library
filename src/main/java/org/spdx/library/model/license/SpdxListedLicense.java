@@ -14,12 +14,13 @@
  *   limitations under the License.
  *
  */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
@@ -47,15 +48,13 @@ public class SpdxListedLicense extends License {
 	@Override 
 	public List<String> verify() {
 		List<String> retval = super.verify();
-		//TODO: Implement additional fields
-		/*
-		if (!LicenseInfoFactory.isSpdxListedLicenseID(this.getLicenseId())) {
-			retval.add("License "+this.getLicenseId()+" is not a listed license at spdx.org/licenses");
+		try {
+			if (this.isDeprecated()) {
+				retval.add(this.getLicenseId() + " is deprecated.");
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Invalid type for SPDX license isDeprecated");
 		}
-		if (this.isDeprecated()) {
-			retval.add(this.licenseId + " is deprecated.");
-		}
-		*/
 		return retval;
 	}
 	
@@ -64,7 +63,7 @@ public class SpdxListedLicense extends License {
 	 * @throws InvalidLicenseTemplateException 
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getLicenseTextHtml() throws InvalidLicenseTemplateException, SpdxInvalidTypeException {
+	public String getLicenseTextHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
 		String licenseTextHtml = getStringPropertyValue(PROP_LICENSE_TEXT_HTML);
 		if (licenseTextHtml == null) {
 			// Format the HTML using the text and template
@@ -96,7 +95,7 @@ public class SpdxListedLicense extends License {
 	 * @throws InvalidLicenseTemplateException 
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getLicenseHeaderHtml() throws InvalidLicenseTemplateException, SpdxInvalidTypeException {
+	public String getLicenseHeaderHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
 		String licenseHeaderHtml = getStringPropertyValue(PROP_LICENSE_HEADER_HTML);
 		if (licenseHeaderHtml == null) {
 			// Format the HTML using the text and template
@@ -129,7 +128,7 @@ public class SpdxListedLicense extends License {
 	 * @return the deprecatedVersion
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getDeprecatedVersion() throws SpdxInvalidTypeException {
+	public String getDeprecatedVersion() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
 	}
 

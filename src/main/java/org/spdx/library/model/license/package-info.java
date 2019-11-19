@@ -15,19 +15,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
-
 /**
  * @author Gary O'Neall
+ * 
+ * Model for the SPDX license related objects
  *
  */
-public class ListedLicenses {
-
-	public static boolean isSpdxListedLicenseID(String id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	//TODO: Implement
-
-}
+package org.spdx.library.model.license;

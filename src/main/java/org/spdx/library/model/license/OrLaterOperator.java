@@ -14,12 +14,13 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 
@@ -30,7 +31,7 @@ import org.spdx.storage.IModelStore;
  */
 public class OrLaterOperator extends AnyLicenseInfo {
 	
-	OrLaterOperator(IModelStore modelStore, String documentUri, String id, boolean create)
+	public OrLaterOperator(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
 	}
@@ -39,7 +40,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 * @return the license
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public SimpleLicensingInfo getLicense() throws SpdxInvalidTypeException {
+	public SimpleLicensingInfo getLicense() throws InvalidSPDXAnalysisException {
 		Object retval = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
 		if (!(retval instanceof SimpleLicensingInfo)) {
 			throw new SpdxInvalidTypeException("Expecting SimpleLicensingInfo for or operator license type.  Found "+retval.getClass().toString());
@@ -63,7 +64,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 		SimpleLicensingInfo license;
 		try {
 			license = getLicense();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			return "ERROR GETTING ORLATER LICENSE";
 		}
 		if (license == null) {
@@ -86,7 +87,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 			} else {
 				retval.addAll(license.verify());
 			}
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Exception getting license for OrLater: "+e.getMessage());
 		}
 		return retval;

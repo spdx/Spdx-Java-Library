@@ -14,13 +14,14 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.storage.IModelStore;
 
@@ -64,7 +65,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return the text of the license
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getLicenseText() throws SpdxInvalidTypeException {
+	public String getLicenseText() throws InvalidSPDXAnalysisException {
 		return getStringPropertyValue(PROP_LICENSE_TEXT);
 	}
 
@@ -81,7 +82,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return the standardLicenseHeader
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getStandardLicenseHeader() throws SpdxInvalidTypeException {
+	public String getStandardLicenseHeader() throws InvalidSPDXAnalysisException {
 		String standardLicenseHeader =  getStringPropertyValue(PROP_STD_LICENSE_NOTICE);
 		if (standardLicenseHeader != null) {
 			standardLicenseHeader = StringEscapeUtils.unescapeHtml4(standardLicenseHeader);
@@ -93,7 +94,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return standard license header template
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getStandardLicenseHeaderTemplate() throws SpdxInvalidTypeException {
+	public String getStandardLicenseHeaderTemplate() throws InvalidSPDXAnalysisException {
 		String standardLicenseHeaderTemplate = getStringPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE);
 		if (standardLicenseHeaderTemplate != null) {
 			standardLicenseHeaderTemplate = StringEscapeUtils.unescapeHtml4(standardLicenseHeaderTemplate);
@@ -120,7 +121,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return the template
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public String getStandardLicenseTemplate() throws SpdxInvalidTypeException {
+	public String getStandardLicenseTemplate() throws InvalidSPDXAnalysisException {
 		String standardLicenseTemplate = getStringPropertyValue(PROP_STD_LICENSE_TEMPLATE);		
 		if (standardLicenseTemplate != null && standardLicenseTemplate.endsWith(XML_LITERAL)) {
 			standardLicenseTemplate = standardLicenseTemplate.substring(0, standardLicenseTemplate.length()-XML_LITERAL.length());
@@ -165,33 +166,33 @@ public abstract class License extends SimpleLicensingInfo {
 			if (name == null || name.isEmpty()) {
 				retval.add("Missing required license name");
 			}
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for name");
 		}
 		try {
 			this.getComment();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for comment");
 		}
 		try {
 			this.getSeeAlso();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for seeAlso");
 		}
 		try {
 			this.getStandardLicenseHeader();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for standard license header");
 		}
 		try {
 			this.getStandardLicenseTemplate();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for standard license template");
 		}
 		//TODO Add test for template
 		try {
 			this.getStandardLicenseHeaderTemplate();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for standard license header template");
 		}
 		//TODO add test for license header template
@@ -201,7 +202,7 @@ public abstract class License extends SimpleLicensingInfo {
 			if (licenseText == null || licenseText.isEmpty()) {
 				retval.add("Missing required license text for " + id);
 			}
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid type for license text");
 		}
 		return retval;
@@ -212,7 +213,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public boolean isFsfLibre() throws SpdxInvalidTypeException {
+	public boolean isFsfLibre() throws InvalidSPDXAnalysisException {
 		Boolean libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
 		if (libre == null) {
 			return false;
@@ -224,7 +225,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return true if FSF specified this license as not free/libre, false if it has been specified by the FSF as free / libre or if it has not been specified
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public boolean isNotFsfLibre() throws SpdxInvalidTypeException {
+	public boolean isNotFsfLibre() throws InvalidSPDXAnalysisException {
 		Boolean fsfLibre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
 		return fsfLibre != null && !fsfLibre;
 	}
@@ -233,7 +234,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return true if FSF describes the license as free / libre, false if FSF describes the license as not free / libre, null if FSF does not reference the license
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public Boolean getFsfLibre() throws SpdxInvalidTypeException {
+	public Boolean getFsfLibre() throws InvalidSPDXAnalysisException {
 		return getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
 	}
 	
@@ -242,7 +243,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return true if the license is listed as an approved license on the OSI website
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public boolean isOsiApproved() throws SpdxInvalidTypeException {
+	public boolean isOsiApproved() throws InvalidSPDXAnalysisException {
 		Boolean osiApproved = getBooleanPropertyValue(PROP_STD_LICENSE_OSI_APPROVED);
 		return osiApproved != null && osiApproved;
 	}
@@ -251,7 +252,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @return true if this license is marked as being deprecated
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public boolean isDeprecated() throws SpdxInvalidTypeException {
+	public boolean isDeprecated() throws InvalidSPDXAnalysisException {
 		Boolean deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
 		return deprecated != null && deprecated;
 	}

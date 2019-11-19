@@ -14,11 +14,12 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 
 /**

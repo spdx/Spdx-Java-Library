@@ -77,6 +77,7 @@ public interface SpdxConstants {
 	public static final String CLASS_SPDX_DISJUNCTIVE_LICENSE_SET = "DisjunctiveLicenseSet";
 	public static final String CLASS_SPDX_EXTRACTED_LICENSING_INFO = "ExtractedLicensingInfo";
 	public static final String CLASS_SPDX_LICENSE = "License";
+	public static final String CLASS_SPDX_LISTED_LICENSE = "SpdxListedLicense";
 	public static final String CLASS_SPDX_LICENSE_EXCEPTION = "LicenseException";
 	public static final String CLASS_OR_LATER_OPERATOR = "OrLaterOperator";
 	public static final String CLASS_WITH_EXCEPTION_OPERATOR = "WithExceptionOperator";
@@ -192,6 +193,9 @@ public interface SpdxConstants {
 	public static final String PROP_LICENSE_EXCEPTION = "licenseException";
 	public static final String PROP_LIC_ID_DEPRECATED = "isDeprecatedLicenseId";
 	public static final String PROP_LIC_DEPRECATED_VERSION = "deprecatedVersion";
+	
+	// SPDX Listed License constants
+	public static final String LISTED_LICENSE_DOCUMENT_URI = "https://spdx.org/licenses/";
 	
 	// SpdxElement Properties
 	public static final String PROP_NAME = "name";

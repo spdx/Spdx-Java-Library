@@ -19,6 +19,8 @@ package org.spdx.storage;
 
 import java.util.List;
 
+import org.spdx.library.InvalidSPDXAnalysisException;
+
 /**
  * Interface for storing and retrieving SPDX properties for SPDX documents.
  * 
@@ -59,22 +61,25 @@ public interface IModelStore {
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param type SPDX model type as defined in the CLASS constants in SpdxConstants
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void create(String documentUri, String id, String type);
+	void create(String documentUri, String id, String type) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @return Property names for all properties having a value for a given id within a document
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	List<String> getPropertyValueNames(String documentUri, String id);
+	List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @return Property names for all properties have a value list for a given id within a document
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	List<String> getPropertyValueListNames(String documentUri, String id);
+	List<String> getPropertyValueListNames(String documentUri, String id) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Sets the value for a property to a Model Object with a valueId and type
@@ -83,8 +88,9 @@ public interface IModelStore {
 	 * @param propertyName Name of the property
 	 * @param valueId The ID for the value
 	 * @param type the SPDX class name for the type
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void setTypedValue(String documentUri, String id, String propertyName, String valueId, String type);
+	void setTypedValue(String documentUri, String id, String propertyName, String valueId, String type) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Sets a property value for a String or Boolean type of value
@@ -92,16 +98,18 @@ public interface IModelStore {
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
 	 * @param value value to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void setPrimitiveValue(String documentUri, String id, String propertyName, Object value);
+	void setPrimitiveValue(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Sets the value list for the property to an empty list
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void clearPropertyValueList(String documentUri, String id, String propertyName);
+	void clearPropertyValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Adds a value to a value list for a property to a Model Object with a valueId and type
@@ -110,8 +118,9 @@ public interface IModelStore {
 	 * @param propertyName Name of the property
 	 * @param valueId The ID for the value
 	 * @param type the SPDX class name for the type
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void addTypedValueToList(String documentUri, String id, String propertyName, String valueId, String type);
+	void addTypedValueToList(String documentUri, String id, String propertyName, String valueId, String type) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Adds a value to a property list for a String or Boolean type of value
@@ -119,30 +128,34 @@ public interface IModelStore {
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
 	 * @param value value to set
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void addPrimitiveValueToList(String documentUri, String id, String propertyName, Object value);
+	void addPrimitiveValueToList(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
 	 * @return List of values associated with the id, propertyName and document
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	List<?> getValueList(String documentUri, String id, String propertyName);
+	List<?> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
 	 * @return the single value associated with the id, propertyName and document
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	Object getValue(String documentUri, String id, String propertyName);
+	Object getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Generate a unique ID for use within the document
 	 * @param idType Type of ID
 	 * @param documentUri the SPDX Document URI
 	 * @return
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	String getNextId(IdType idType, String documentUri);
+	String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException;
 }

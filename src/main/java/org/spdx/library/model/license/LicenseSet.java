@@ -14,9 +14,10 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	@SuppressWarnings("unchecked")
-	public List<AnyLicenseInfo> getMembers() throws SpdxInvalidTypeException {
+	public List<AnyLicenseInfo> getMembers() throws InvalidSPDXAnalysisException {
 		List<?> retval = getObjectPropertyValueList(PROP_LICENSE_SET_MEMEBER);
 		if (!retval.isEmpty() && !(retval.get(0) instanceof AnyLicenseInfo)) {
 			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type.  Found "+retval.get(0).getClass().toString());
@@ -70,7 +71,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 			while (iter.hasNext()) {
 				retval.addAll(iter.next().verify());
 			}
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Exception getting license set members: "+e.getMessage());
 		}
 		return retval;

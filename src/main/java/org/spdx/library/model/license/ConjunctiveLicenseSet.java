@@ -14,7 +14,7 @@
  *   limitations under the License.
  *
 */
-package org.spdx.library.model;
+package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,16 +22,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**
- * A set of licenses where there is a choice of one of the licenses in the set
+ * A set of licenses where all of the licenses apply
  * @author Gary O'Neall
  *
  */
-public class DisjunctiveLicenseSet extends LicenseSet {
+public class ConjunctiveLicenseSet extends LicenseSet {
 	
-	DisjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
+	public ConjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
 	}
@@ -48,58 +50,88 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 			iter = this.getMembers().iterator();
 			while (iter.hasNext()) {
 				if (moreThanOne) {
-					sb.append(" OR ");
+					sb.append(" AND ");
 				}
 				moreThanOne = true;
 				sb.append(iter.next().toString());
 			}
 			sb.append(')');
 			return sb.toString();
-		} catch (SpdxInvalidTypeException e) {
+		} catch (InvalidSPDXAnalysisException e) {
 			return "ERROR RETRIEVING LICENSE SET MEMBERS";
 		}
-
 	}
 	
+
+	/**
+	 * Conjunctive license sets can contain other conjunctive license sets as members.  Logically,
+	 * the members of these "sub-conjunctive license sets" could be direct members and have the same
+	 * meaning.
+	 * @return all members "flattening out" conjunctive license sets which are members of this set
+	 * @throws SpdxInvalidTypeException 
+	 */
+	public List<AnyLicenseInfo> getFlattenedMembers() throws InvalidSPDXAnalysisException {
+		HashSet<AnyLicenseInfo> retval = new HashSet<>();	// Use a set since any duplicated elements would be still considered equal
+		Iterator<AnyLicenseInfo> iter = this.getMembers().iterator();
+		while (iter.hasNext()) {
+			AnyLicenseInfo li = iter.next();
+			if (li instanceof ConjunctiveLicenseSet) {
+				// we need to flatten this out
+				List<AnyLicenseInfo> members = ((ConjunctiveLicenseSet)li).getFlattenedMembers();
+				for (int i = 0; i < members.size(); i++) {
+					retval.add(members.get(i));
+				}
+			} else {
+				retval.add(li);
+			}
+		}
+		List<AnyLicenseInfo> retvallist = new ArrayList<>();
+		retvallist.addAll(retval);
+		return retvallist;
+	}
+
 	@Override
 	public int hashCode() {
+		// We override equals and hashcode to take into account flattening of the license set
+		// Calculate a hashcode by XOR'ing all of the hashcodes of the license set
 		int retval = 41;	// Prime number
 		List<AnyLicenseInfo> allMembers;
 		try {
 			allMembers = this.getFlattenedMembers();
-		} catch (SpdxInvalidTypeException e) {
-			throw new RuntimeException(e);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException("Error getting license set members",e);
 		}
-		for (AnyLicenseInfo member:allMembers) {
-			retval = retval ^ member.hashCode();
+		for (AnyLicenseInfo licenseInfo:allMembers) {
+			retval = retval ^ licenseInfo.hashCode();
 		}
 		return retval;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object o) {
+		// We override equals and hashcode to take into account flattening of the license set
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof DisjunctiveLicenseSet)) {
+		if (!(o instanceof ConjunctiveLicenseSet)) {
 			// covers o == null, as null is not an instance of anything
 			return false;
 		}
-		DisjunctiveLicenseSet comp = (DisjunctiveLicenseSet)o;
+		ConjunctiveLicenseSet comp = (ConjunctiveLicenseSet)o;
 		List<AnyLicenseInfo> compInfos;
 		try {
 			compInfos = comp.getFlattenedMembers();
-		} catch (SpdxInvalidTypeException e) {
-			throw new RuntimeException(e);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException("Error getting compare license set members",e);
 		}
 		List<AnyLicenseInfo> myInfos;
 		try {
 			myInfos = this.getFlattenedMembers();
-		} catch (SpdxInvalidTypeException e) {
-			throw new RuntimeException(e);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException("Error getting license set members",e);
 		}
 		if (compInfos.size() != myInfos.size()) {
 			return false;
@@ -112,30 +144,6 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 		return true;
 	}
 	
-	/**
-	 * Disjunctive license sets can contain other conjunctive license sets as members.  Logically,
-	 * the members of these "sub-disjunctive license sets" could be direct members and have the same
-	 * meaning.
-	 * @return all members "flattening out" disjunctive license sets which are members of this set
-	 * @throws SpdxInvalidTypeException 
-	 */
-	protected List<AnyLicenseInfo> getFlattenedMembers() throws SpdxInvalidTypeException {
-		HashSet<AnyLicenseInfo> retval = new HashSet<>();	// Use a set since any duplicated elements would be still considered equal
-		Iterator<AnyLicenseInfo> iter = this.getMembers().iterator();
-		while (iter.hasNext()) {
-			AnyLicenseInfo li = iter.next();
-			if (li instanceof DisjunctiveLicenseSet) {
-				// we need to flatten this out
-				retval.addAll(((DisjunctiveLicenseSet)li).getFlattenedMembers());
-			} else {
-				retval.add(li);
-			}
-		}
-		ArrayList<AnyLicenseInfo> retvallist = new ArrayList<>();
-		retvallist.addAll(retval);
-		return retvallist;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.spdx.rdfparser.model.IRdfModel#equivalent(org.spdx.rdfparser.model.IRdfModel)
 	 */
@@ -146,6 +154,6 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 
 	@Override
 	public String getType() {
-		return CLASS_SPDX_DISJUNCTIVE_LICENSE_SET;
+		return CLASS_SPDX_CONJUNCTIVE_LICENSE_SET;
 	}
 }
