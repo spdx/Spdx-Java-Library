@@ -196,11 +196,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				throw new SpdxIdNotFoundException("ID "+id+" not found.");
 			}
 			if (!this.listedLicenseCache.containsKey(id)) {
-	            InputStream tocStream = null;
+	            InputStream jsonStream = null;
 	            BufferedReader reader = null;
 	            try {
-	            	tocStream = getLicenseInputStream(id);
-	                reader = new BufferedReader(new InputStreamReader(tocStream));
+	            	jsonStream = getLicenseInputStream(id);
+	                reader = new BufferedReader(new InputStreamReader(jsonStream, "UTF-8"));
 	                StringBuilder tocJsonStr = new StringBuilder();
 	                String line;
 	                while((line = reader.readLine()) != null) {
@@ -221,9 +221,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 						} catch (IOException e) {
 							logger.warn("Unable to close JSON TOC reader");
 						}
-	            	} else if (tocStream != null) {
+	            	} else if (jsonStream != null) {
 	            		try {
-							tocStream.close();
+							jsonStream.close();
 						} catch (IOException e) {
 							logger.warn("Unable to close JSON TOC input stream");
 						}

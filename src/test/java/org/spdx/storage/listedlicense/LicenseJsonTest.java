@@ -215,5 +215,56 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 			}
 		}
 	}
+	
+	public void testLegacyJson() throws Exception {
+		//TODO: In SPDX 3.0 this test should be removed once Spec issue #158 is resolved (https://github.com/spdx/spdx-spec/issues/158)
+		StringBuilder json = new StringBuilder("{\n");
+		Map<String, String> stringValues = new HashMap<>();
+		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+			stringValues.put(valueName, "ValueFor"+valueName);
+			json.append("\t\"");
+			if (RDFS_PROP_COMMENT.equals(valueName)) {
+				json.append("licenseComments");	// Legacy value
+			} else {
+				json.append(valueName);
+			}
+			json.append("\":\"");
+			json.append(stringValues.get(valueName));
+			json.append("\",\n");
+		}
+		Map<String, Boolean> booleanValues = new HashMap<>();
+		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+			booleanValues.put(valueName, false);
+			json.append("\t\"");
+			json.append(valueName);
+			json.append("\":\"");
+			json.append(booleanValues.get(valueName));
+			json.append("\",\n");
+		}
+		List<String> seeAlsoValues = Arrays.asList("seeAlso1", "seeAlso2");
+		json.append("\t\"seeAlso\": [\n\t\t\"");
+		json.append(seeAlsoValues.get(0));
+		for (int i = 1; i < seeAlsoValues.size(); i++) {
+			json.append("\",\n\t\t\"");
+			json.append(seeAlsoValues.get(i));
+		}
+		json.append("\"\n\t]\n}");
+		Gson gson = new Gson();
+		LicenseJson lj = gson.fromJson(json.toString(), LicenseJson.class);
+		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+			assertEquals(stringValues.get(valueName), lj.getValue(valueName));
+		}
+		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
+		}
+		@SuppressWarnings("unchecked")
+		List<String> seeAlsoResult = (List<String>)lj.getValueList("seeAlso");
+		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
+		for (String seeAlsoValue:seeAlsoValues) {
+			if (!seeAlsoResult.contains(seeAlsoValue)) {
+				fail("Missing "+seeAlsoValue);
+			}
+		}
+	}
 
 }

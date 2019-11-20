@@ -17,116 +17,42 @@
  */
 package org.spdx.storage.listedlicense;
 
-import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.storage.IModelStore;
-import org.spdx.storage.IModelStore.IdType;
 
 /**
  * @author gary
  *
  */
-public class SpdxListedLicenseLocalModelStore implements IListedLicenseStore {
+public class SpdxListedLicenseLocalModelStore extends SpdxListedLicenseModelStore {
 	
-	static final String DEFAULT_LICENSE_LIST_VERSION = "3.7";
-	
-	String licenseListVersion = DEFAULT_LICENSE_LIST_VERSION;
-	private static final ReadWriteLock listedLicenseModificationLock = new ReentrantReadWriteLock();
+	static final String LISTED_LICENSE_JSON_LOCAL_DIR = "resources" + "/" + "stdlicenses";
 	
 	public SpdxListedLicenseLocalModelStore() throws InvalidSPDXAnalysisException {
-		loadLicenseIds();
+		super();
 	}
 
-	private void loadLicenseIds() {
-		// TODO Auto-generated method stub
+	@Override
+	InputStream getTocInputStream() throws IOException {
+		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + LICENSE_TOC_FILENAME;
+    	InputStream retval = SpdxListedLicenseLocalModelStore.class.getResourceAsStream("/" + fileName);
+    	if (retval == null) {
+    		throw new IOException("Unable to open local local license table of contents file");
+    	}
+    	return retval;
+	}
+
+	@Override
+	InputStream getLicenseInputStream(String licenseId) throws IOException {
 		
-	}
-
-	@Override
-	public boolean exists(String documentUri, String id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void create(String documentUri, String id, String type) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<String> getPropertyValueNames(String documentUri, String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getPropertyValueListNames(String documentUri, String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setTypedValue(String documentUri, String id, String propertyName, String valueId, String type) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setPrimitiveValue(String documentUri, String id, String propertyName, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clearPropertyValueList(String documentUri, String id, String propertyName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addTypedValueToList(String documentUri, String id, String propertyName, String valueId, String type) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addPrimitiveValueToList(String documentUri, String id, String propertyName, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<?> getValueList(String documentUri, String id, String propertyName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getValue(String documentUri, String id, String propertyName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getNextId(IdType idType, String documentUri) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getSpdxListedLicenseIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getLicenseListVersion() {
-		// TODO Auto-generated method stub
-		return null;
+		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + licenseId + JSON_SUFFIX;
+    	InputStream retval = SpdxListedLicenseLocalModelStore.class.getResourceAsStream("/" + fileName);
+    	if (retval == null) {
+    		throw new IOException("Unable to open local local license JSON file for license ID "+licenseId);
+    	}
+    	return retval;
 	}
 
 }
