@@ -31,7 +31,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseLocalModelStore;
-import org.spdx.storage.listedlicense.SpdxListedLicenseModelStore;
+import org.spdx.storage.listedlicense.SpdxListedLicenseWebStore;
 
 /**
  * Singleton class which holds the listed licenses
@@ -103,7 +103,7 @@ public class ListedLicenses {
         try {
         	if (!this.onlyUseLocalLicenses) {
         		try {
-        			licenseModelStore = new SpdxListedLicenseModelStore();
+        			licenseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
         			logger.warn("Unable to open SPDX listed license model store - using locally cached licenses",ex);
         			licenseModelStore = null;

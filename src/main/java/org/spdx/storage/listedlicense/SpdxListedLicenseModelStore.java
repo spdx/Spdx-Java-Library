@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,9 +37,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
 import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.SpdxListedLicenseException;
-import org.spdx.storage.IModelStore;
-import org.spdx.storage.IModelStore.IdType;
+import org.spdx.library.model.license.SpdxListedLicenseException;
 
 import com.google.gson.Gson;
 
@@ -50,12 +47,12 @@ import com.google.gson.Gson;
  * @author Gary O'Neall
  *
  */
-public class SpdxListedLicenseModelStore implements IListedLicenseStore {
+public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore {
 	
 	static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class.getName());
 	static final String DEFAULT_LICENSE_LIST_VERSION = "3.7";
-	private static final String LICENSE_TOC_FILENAME = "licenses.json";
-	private static final String JSON_SUFFIX = ".json";
+	static final String LICENSE_TOC_FILENAME = "licenses.json";
+	static final String JSON_SUFFIX = ".json";
 	
 	Set<String> licenseIds = new HashSet<>();
 	Map<String, LicenseJson> listedLicenseCache = null;
@@ -69,6 +66,18 @@ public class SpdxListedLicenseModelStore implements IListedLicenseStore {
 	public SpdxListedLicenseModelStore() throws InvalidSPDXAnalysisException {
 		loadLicenseIds();
 	}
+	
+	/**
+	 * @return InputStream for the Table of Contents of the licenses formated in JSON SPDX
+	 * @throws IOException
+	 */
+	abstract InputStream getTocInputStream() throws IOException;
+	
+	/**
+	 * @return InputStream for a license formated in SPDX JSON
+	 * @throws IOException
+	 */
+	abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
 
 	private void loadLicenseIds() throws InvalidSPDXAnalysisException {
         listedLicenseModificationLock.writeLock().lock();
@@ -79,8 +88,7 @@ public class SpdxListedLicenseModelStore implements IListedLicenseStore {
             InputStream tocStream = null;
             BufferedReader reader = null;
             try {
-				URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + LICENSE_TOC_FILENAME);
-				tocStream = tocUrl.openStream();
+            	tocStream = getTocInputStream();
                 reader = new BufferedReader(new InputStreamReader(tocStream));
                 StringBuilder tocJsonStr = new StringBuilder();
                 String line;
@@ -121,6 +129,9 @@ public class SpdxListedLicenseModelStore implements IListedLicenseStore {
 	 */
 	@Override
 	public boolean exists(String documentUri, String id) {
+		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
+			return false;
+		}
 		return this.licenseIds.contains(id);
 	}
 
@@ -188,8 +199,7 @@ public class SpdxListedLicenseModelStore implements IListedLicenseStore {
 	            InputStream tocStream = null;
 	            BufferedReader reader = null;
 	            try {
-					URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + id + JSON_SUFFIX);
-					tocStream = tocUrl.openStream();
+	            	tocStream = getLicenseInputStream(id);
 	                reader = new BufferedReader(new InputStreamReader(tocStream));
 	                StringBuilder tocJsonStr = new StringBuilder();
 	                String line;

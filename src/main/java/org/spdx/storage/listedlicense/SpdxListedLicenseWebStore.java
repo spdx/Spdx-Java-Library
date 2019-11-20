@@ -15,57 +15,38 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
+package org.spdx.storage.listedlicense;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 
 /**
  * @author gary
  *
  */
-public class SpdxListedLicenseException extends InvalidSPDXAnalysisException {
+public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	/**
-	 * 
+	 * @throws InvalidSPDXAnalysisException
 	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 */
-	public SpdxListedLicenseException() {
+	public SpdxListedLicenseWebStore() throws InvalidSPDXAnalysisException {
+		super();
 	}
 
-	/**
-	 * @param arg0
-	 */
-	public SpdxListedLicenseException(String arg0) {
-		super(arg0);
+	@Override
+	InputStream getTocInputStream() throws IOException {
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + LICENSE_TOC_FILENAME);
+		return tocUrl.openStream();
 	}
 
-	/**
-	 * @param arg0
-	 */
-	public SpdxListedLicenseException(Throwable arg0) {
-		super(arg0);
-	}
-
-	/**
-	 * @param arg0
-	 * @param arg1
-	 */
-	public SpdxListedLicenseException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @param arg3
-	 */
-	public SpdxListedLicenseException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(arg0, arg1, arg2, arg3);
+	@Override
+	InputStream getLicenseInputStream(String licenseId) throws IOException {
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + licenseId + JSON_SUFFIX);
+		return tocUrl.openStream();
 	}
 
 }
