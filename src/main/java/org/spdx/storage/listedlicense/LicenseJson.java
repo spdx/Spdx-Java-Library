@@ -38,7 +38,7 @@ public class LicenseJson {
 			"licenseText", "licenseTextHtml", "name", "standardLicenseHeader",
 			"standardLicenseHeaderTemplate", "standardLicenseHeaderHtml", "standardLicenseTemplate",
 			"isOsiApproved", "isFsfLibre", "example", "isDeprecatedLicenseId", "deprecatedVersion", 
-			"comment", "licenseId"));	//NOTE: This list must be updated if any new properties are added
+			"licenseComment", "licenseId"));	//NOTE: This list must be updated if any new properties are added
 	
 	static final List<String> PROPERTY_VALUE_LIST_NAMES = Collections.unmodifiableList(Arrays.asList(
 			"seeAlso"
@@ -57,7 +57,7 @@ public class LicenseJson {
 	String example;
 	Boolean isDeprecatedLicenseId;
 	String deprecatedVersion;
-	String comment;
+	String licenseComments;
 	String licenseId;
 	
 	public LicenseJson(String id) {
@@ -156,10 +156,11 @@ public class LicenseJson {
 				deprecatedVersion = (String)value;
 				break;
 			case "comment":
+			case "licenseComments":
 				if (!(value instanceof String)) {
 					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 				}
-				comment = (String)value;
+				licenseComments = (String)value;
 				break;
 			case "licenseId":
 				if (!(value instanceof String)) {
@@ -214,7 +215,8 @@ public class LicenseJson {
 			case "example": return example;
 			case "isDeprecatedLicenseId": return isDeprecatedLicenseId;
 			case "deprecatedVersion": return deprecatedVersion;
-			case "comment": return comment;
+			case "comment":
+			case "licenseComments": return licenseComments;
 			case "licenseId": return licenseId;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}

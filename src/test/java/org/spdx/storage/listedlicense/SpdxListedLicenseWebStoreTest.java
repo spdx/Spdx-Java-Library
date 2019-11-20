@@ -23,6 +23,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;
@@ -117,14 +118,28 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		assertEquals(newName, result);
 	}
 
-	public void testCreateLicense() throws InvalidSPDXAnalysisException {
+	public void testCreateLicense() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxListedLicense result = (SpdxListedLicense)SpdxModelFactory.createModelObject(sllw, LICENSE_LIST_URI, APACHE_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
 		assertEquals(APACHE_ID, result.getLicenseId());
 		assertEquals(APACHE_LICENSE_NAME, result.getName());
 		String licenseText = result.getLicenseText();
 		assertTrue(licenseText.length() > 100);
-		// TODO: Test other fields
-		
+		assertTrue(result.getComment().length() > 5);
+		String sResult = result.getDeprecatedVersion();
+		assertEquals(LICENSE_LIST_URI, result.getDocumentUri());
+		assertTrue(result.getFsfLibre());
+		assertFalse(result.isDeprecated());
+		assertTrue(result.isFsfLibre());
+		assertFalse(result.isNotFsfLibre());
+		assertTrue(result.isOsiApproved());
+		assertEquals(APACHE_ID, result.getId());
+		assertTrue(result.getLicenseHeaderHtml().length() > 100);
+		assertTrue(result.getLicenseTextHtml().length() > 100);
+		List<String> lResult = result.getSeeAlso();
+		assertTrue(lResult.size() > 0);
+		assertTrue(lResult.get(0).length() > 10);
+		assertTrue(result.getStandardLicenseHeader().length() > 100);
+		assertEquals(SpdxConstants.CLASS_SPDX_LISTED_LICENSE, (result.getType()));
 	}
 }

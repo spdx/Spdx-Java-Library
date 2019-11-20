@@ -142,7 +142,7 @@ public class SpdxListedLicense extends License {
 
 	@Override
 	public String getType() {
-		return SpdxConstants.CLASS_SPDX_LICENSE;
+		return SpdxConstants.CLASS_SPDX_LISTED_LICENSE;
 	}
 
 }
