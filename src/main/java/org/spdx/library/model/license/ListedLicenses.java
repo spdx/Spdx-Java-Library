@@ -156,21 +156,33 @@ public class ListedLicenses {
 	
 
 	/**
-	 * @param licenseID
-	 * @return true if the licenseID belongs to an SPDX listed license
+	 * @param licenseId
+	 * @return true if the licenseId belongs to an SPDX listed license
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-    public boolean isSpdxListedLicenseID(String licenseID) {
-		return this.licenseModelStore.exists(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseID);
+    public boolean isSpdxListedLicenseId(String licenseId) {
+		return this.licenseModelStore.isSpdxListedLicenseId(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId);
 	}
+    
+    /**
+     * @param exceptionId
+     * @return true if the exceptionId belongs to an SPDX listed exception
+     */
+    public boolean isSpdxListedExceptionId(String exceptionId) {
+    	return this.licenseModelStore.isSpdxListedExceptionId(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId);
+    }
 	
 	/**
 	 * @param licenseId SPDX Listed License ID
 	 * @return SPDX listed license or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxListedLicense getListedLicenseById(String licenseId)throws InvalidSPDXAnalysisException {
+	public SpdxListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
 		return (SpdxListedLicense)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+	}
+	
+	public LicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
+		return (LicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
 	}
 	
 	/**
@@ -191,6 +203,13 @@ public class ListedLicenses {
 	 */
 	public String getLicenseListVersion() {
 		return this.licenseModelStore.getLicenseListVersion();
+	}
+
+	/**
+	 * @return list of SPDX exception IDs
+	 */
+	public List<String> getSpdxListedExceptionIds() {
+		return this.licenseModelStore.getSpdxListedExceptionIds();
 	}  
 
 }

@@ -383,7 +383,7 @@ public abstract class ModelObject implements SpdxConstants {
 			return IdType.SpdxId;
 		} else if (id.startsWith(EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
-		} else if (ListedLicenses.getListedLicenses().isSpdxListedLicenseID(id)) {
+		} else if (ListedLicenses.getListedLicenses().isSpdxListedLicenseId(id)) {
 			return IdType.ListedLicense;
 		} else if ("none".equals(id) || "noassertion".equals(id)) {
 			return IdType.Literal;

@@ -695,5 +695,33 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			this.listedLicenseModificationLock.readLock().unlock();
 		}
 	}
+	
+	/**
+	 * @param listedLicenseDocumentUri
+	 * @param licenseId
+	 * @return true if the licenseId belongs to an SPDX listed license
+	 */
+	public boolean isSpdxListedLicenseId(String listedLicenseDocumentUri, String licenseId) {
+		this.listedLicenseModificationLock.readLock().lock();
+		try {
+			return this.licenseIds.contains(licenseId);
+		} finally {
+			this.listedLicenseModificationLock.readLock().unlock();
+		}
+	}
+	
+	/**
+	 * @param listedLicenseDocumentUri
+	 * @param exceptionId
+	 * @return true if the exceptionId belongs to an SPDX listed exception
+	 */
+	public boolean isSpdxListedExceptionId(String listedLicenseDocumentUri, String exceptionId) {
+		this.listedLicenseModificationLock.readLock().lock();
+		try {
+			return this.exceptionIds.contains(exceptionId);
+		} finally {
+			this.listedLicenseModificationLock.readLock().unlock();
+		}
+	}
 
 }
