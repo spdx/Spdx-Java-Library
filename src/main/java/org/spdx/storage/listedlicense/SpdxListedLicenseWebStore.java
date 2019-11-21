@@ -20,6 +20,7 @@ package org.spdx.storage.listedlicense;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -49,4 +50,14 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		return tocUrl.openStream();
 	}
 
+	@Override
+	InputStream getExceptionTocInputStream() throws IOException {
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + EXCEPTION_TOC_FILENAME);
+		return tocUrl.openStream();
+	}
+
+	@Override
+	InputStream getExceptionInputStream(String exceptionId) throws IOException {
+		return getLicenseInputStream(exceptionId);	// Same URL using exception ID rather than license ID
+	}
 }

@@ -52,10 +52,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class.getName());
 	static final String DEFAULT_LICENSE_LIST_VERSION = "3.7";
 	static final String LICENSE_TOC_FILENAME = "licenses.json";
+	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
 	
 	Set<String> licenseIds = new HashSet<>();
+	Set<String> exceptionIds = new HashSet<>();
 	Map<String, LicenseJson> listedLicenseCache = null;
+	Map<String, ExceptionJson> listedExceptionCache = null;
 	String licenseListVersion = DEFAULT_LICENSE_LIST_VERSION;
 	private int nextId=0;
 	private final ReadWriteLock listedLicenseModificationLock = new ReentrantReadWriteLock();
@@ -64,7 +67,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 
 	
 	public SpdxListedLicenseModelStore() throws InvalidSPDXAnalysisException {
-		loadLicenseIds();
+		loadIds();
 	}
 	
 	/**
@@ -74,20 +77,38 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	abstract InputStream getTocInputStream() throws IOException;
 	
 	/**
+	 * @return InputStream for the Table of Contents of the exceptions formated in JSON SPDX
+	 * @throws IOException
+	 */
+	abstract InputStream getExceptionTocInputStream() throws IOException;
+	
+	/**
 	 * @return InputStream for a license formated in SPDX JSON
 	 * @throws IOException
 	 */
 	abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
+	
+	/**
+	 * @return InputStream for an exception formated in SPDX JSON
+	 * @throws IOException
+	 */
+	abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
 
-	private void loadLicenseIds() throws InvalidSPDXAnalysisException {
+	/**
+	 * Loads all license and exception ID's from the appropriate JSON files
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	private void loadIds() throws InvalidSPDXAnalysisException {
         listedLicenseModificationLock.writeLock().lock();
         try {
             listedLicenseCache = new HashMap<>(); // clear the cache
+            listedExceptionCache = new HashMap<>();
             licenseIds = new HashSet<>(); //Clear the listed license IDs to avoid stale licenses.
              //NOTE: This includes deprecated licenses - should this be changed to only return non-deprecated licenses?
             InputStream tocStream = null;
             BufferedReader reader = null;
             try {
+            	// read the license IDs
             	tocStream = getTocInputStream();
                 reader = new BufferedReader(new InputStreamReader(tocStream));
                 StringBuilder tocJsonStr = new StringBuilder();
@@ -98,6 +119,16 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
                 LicenseJsonTOC jsonToc = gson.fromJson(tocJsonStr.toString(), LicenseJsonTOC.class);
                 licenseIds = jsonToc.getLicenseIds();
                 this.licenseListVersion = jsonToc.getLicenseListVersion();
+                
+                // read the exception ID's
+                tocStream = getExceptionTocInputStream();
+                reader = new BufferedReader(new InputStreamReader(tocStream));
+                tocJsonStr  = new StringBuilder();
+                while((line = reader.readLine()) != null) {
+                	tocJsonStr.append(line);
+                }
+                ExceptionJsonTOC exceptionToc = gson.fromJson(tocJsonStr.toString(), ExceptionJsonTOC.class);
+                exceptionIds = exceptionToc.getExceptionIds();
             } catch (MalformedURLException e) {
 				logger.error("Json TOC URL invalid, using local TOC file");
 				throw(new SpdxListedLicenseException("License TOC URL invalid"));
@@ -132,7 +163,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			return false;
 		}
-		return this.licenseIds.contains(id);
+		return (this.licenseIds.contains(id) || this.exceptionIds.contains(id));
 	}
 
 	/* (non-Javadoc)
@@ -148,12 +179,17 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {
-			if (this.licenseIds.contains(id)) {
+			if (this.licenseIds.contains(id) || this.exceptionIds.contains(id)) {
 				logger.error("Duplicate SPDX ID on create: "+id);;
 				throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 			}
-			this.licenseIds.add(id);
-			this.listedLicenseCache.put(id, new LicenseJson(id));
+			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
+				this.licenseIds.add(id);
+				this.listedLicenseCache.put(id, new LicenseJson(id));
+			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
+				this.exceptionIds.add(id);
+				this.listedExceptionCache.put(id,  new ExceptionJson(id));
+			}
 		} finally {
 			listedLicenseModificationLock.writeLock().unlock();
 		}
@@ -170,10 +206,35 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		return license.getPropertyValueNames();
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			return license.getPropertyValueNames();
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return exc.getPropertyValueListNames();
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
+	/**
+	 * @param id License ID
+	 * @return License JSON for the ID - reading from the input stream if needed
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	private LicenseJson fetchLicenseJson(String id) throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
 		try {
@@ -201,12 +262,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	            try {
 	            	jsonStream = getLicenseInputStream(id);
 	                reader = new BufferedReader(new InputStreamReader(jsonStream, "UTF-8"));
-	                StringBuilder tocJsonStr = new StringBuilder();
+	                StringBuilder licenseJsonStr = new StringBuilder();
 	                String line;
 	                while((line = reader.readLine()) != null) {
-	                	tocJsonStr.append(line);
+	                	licenseJsonStr.append(line);
 	                }
-	                LicenseJson license = gson.fromJson(tocJsonStr.toString(), LicenseJson.class);
+	                LicenseJson license = gson.fromJson(licenseJsonStr.toString(), LicenseJson.class);
 	                this.listedLicenseCache.put(id, license);
 	            } catch (MalformedURLException e) {
 					logger.error("Json license invalid for ID "+id);
@@ -235,6 +296,73 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			listedLicenseModificationLock.writeLock().unlock();
 		}
 	}
+	
+	/**
+	 * @param id License ID
+	 * @return Exception JSON for the ID - reading from the input stream if needed
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	private ExceptionJson fetchExceptionJson(String id) throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (!this.exceptionIds.contains(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+id);
+				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			}
+			if (this.listedExceptionCache.containsKey(id)) {
+				return this.listedExceptionCache.get(id);
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		// If we got here, it wasn't in the cache
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			// have to retest since we were unlocked
+			if (!this.exceptionIds.contains(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+id);
+				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			}
+			if (!this.listedExceptionCache.containsKey(id)) {
+	            InputStream jsonStream = null;
+	            BufferedReader reader = null;
+	            try {
+	            	jsonStream = getExceptionInputStream(id);
+	                reader = new BufferedReader(new InputStreamReader(jsonStream, "UTF-8"));
+	                StringBuilder exceptionJsonStr = new StringBuilder();
+	                String line;
+	                while((line = reader.readLine()) != null) {
+	                	exceptionJsonStr.append(line);
+	                }
+	                ExceptionJson exc = gson.fromJson(exceptionJsonStr.toString(), ExceptionJson.class);
+	                this.listedExceptionCache.put(id, exc);
+	            } catch (MalformedURLException e) {
+					logger.error("Json license invalid for ID "+id);
+					throw(new SpdxListedLicenseException("JSON license URL invalid for ID "+id));
+				} catch (IOException e) {
+					logger.error("I/O error opening Json license URL");
+					throw(new SpdxListedLicenseException("I/O Error reading license data for ID "+id));
+				} finally {
+	            	if (reader != null) {
+	            		try {
+							reader.close();
+						} catch (IOException e) {
+							logger.warn("Unable to close JSON TOC reader");
+						}
+	            	} else if (jsonStream != null) {
+	            		try {
+							jsonStream.close();
+						} catch (IOException e) {
+							logger.warn("Unable to close JSON TOC input stream");
+						}
+	            	}
+				}
+			}
+			return this.listedExceptionCache.get(id);
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#getPropertyValueListNames(java.lang.String, java.lang.String)
@@ -247,8 +375,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		return license.getPropertyValueListNames();
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			return license.getPropertyValueListNames();
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return exc.getPropertyValueListNames();
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -262,8 +410,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		license.setTypedProperty(propertyName, valueId, type);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.setTypedProperty(propertyName, valueId, type);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.setTypedProperty(propertyName, valueId, type);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -277,8 +445,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		license.setPrimativeValue(propertyName, value);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.setPrimativeValue(propertyName, value);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.setPrimativeValue(propertyName, value);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -292,8 +480,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		license.clearPropertyValueList(propertyName);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.clearPropertyValueList(propertyName);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.clearPropertyValueList(propertyName);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -307,8 +515,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		license.addValueToList(propertyName, valueId, type);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.addValueToList(propertyName, valueId, type);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.addValueToList(propertyName, valueId, type);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -322,8 +550,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		license.addPrimitiveValueToList(propertyName, value);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.addPrimitiveValueToList(propertyName, value);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.addPrimitiveValueToList(propertyName, value);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -337,8 +585,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		return license.getValueList(propertyName);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			return license.getValueList(propertyName);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return exc.getValueList(propertyName);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -352,8 +620,28 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
 		}
-		LicenseJson license = fetchLicenseJson(id);
-		return license.getValue(propertyName);
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			return license.getValue(propertyName);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return exc.getValue(propertyName);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -392,6 +680,17 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		this.listedLicenseModificationLock.readLock().lock();
 		try {
 			return this.licenseListVersion;
+		} finally {
+			this.listedLicenseModificationLock.readLock().unlock();
+		}
+	}
+	
+	public List<String> getSpdxListedExceptionIds() {
+		this.listedLicenseModificationLock.readLock().lock();
+		try {
+			List<String> retval = new ArrayList<>();
+			retval.addAll(this.exceptionIds);
+			return retval;
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
 		}

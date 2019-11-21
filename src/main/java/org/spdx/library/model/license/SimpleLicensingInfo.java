@@ -68,6 +68,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	public void setName(String name) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_STD_LICENSE_NAME, name);
 	}
+	
 	/**
 	 * @return the comments
 	 * @throws SpdxInvalidTypeException 

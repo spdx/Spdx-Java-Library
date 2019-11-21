@@ -23,21 +23,24 @@ import java.io.InputStream;
 import org.spdx.library.InvalidSPDXAnalysisException;
 
 /**
- * @author gary
+ * @author Gary O'Neall
+ * 
+ * Model store for listed licenses using the JSON files in the resources/stdlicenses directory.
+ * Note the resources/stdlicenses must be on the build path.
  *
  */
-public class SpdxListedLicenseLocalModelStore extends SpdxListedLicenseModelStore {
+public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	
 	static final String LISTED_LICENSE_JSON_LOCAL_DIR = "resources" + "/" + "stdlicenses";
 	
-	public SpdxListedLicenseLocalModelStore() throws InvalidSPDXAnalysisException {
+	public SpdxListedLicenseLocalStore() throws InvalidSPDXAnalysisException {
 		super();
 	}
 
 	@Override
 	InputStream getTocInputStream() throws IOException {
 		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + LICENSE_TOC_FILENAME;
-    	InputStream retval = SpdxListedLicenseLocalModelStore.class.getResourceAsStream("/" + fileName);
+    	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
     	if (retval == null) {
     		throw new IOException("Unable to open local local license table of contents file");
     	}
@@ -48,11 +51,26 @@ public class SpdxListedLicenseLocalModelStore extends SpdxListedLicenseModelStor
 	InputStream getLicenseInputStream(String licenseId) throws IOException {
 		
 		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + licenseId + JSON_SUFFIX;
-    	InputStream retval = SpdxListedLicenseLocalModelStore.class.getResourceAsStream("/" + fileName);
+    	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
     	if (retval == null) {
     		throw new IOException("Unable to open local local license JSON file for license ID "+licenseId);
     	}
     	return retval;
+	}
+
+	@Override
+	InputStream getExceptionTocInputStream() throws IOException {
+		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + EXCEPTION_TOC_FILENAME;
+    	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
+    	if (retval == null) {
+    		throw new IOException("Unable to open local local license table of contents file");
+    	}
+    	return retval;
+	}
+
+	@Override
+	InputStream getExceptionInputStream(String exceptionId) throws IOException {
+		return getLicenseInputStream(exceptionId);
 	}
 
 }

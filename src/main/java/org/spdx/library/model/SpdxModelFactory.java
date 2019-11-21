@@ -23,6 +23,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SpdxListedLicense;
 
@@ -46,7 +47,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return new ExtractedLicenseInfo(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
 		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, true);
-		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_FILE: throw new RuntimeException("Not implemented");  //TODO: Implement

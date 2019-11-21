@@ -30,7 +30,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
-import org.spdx.storage.listedlicense.SpdxListedLicenseLocalModelStore;
+import org.spdx.storage.listedlicense.SpdxListedLicenseLocalStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseWebStore;
 
 /**
@@ -111,7 +111,7 @@ public class ListedLicenses {
         	}
         	if (licenseModelStore == null) {
         		try {
-        			licenseModelStore = new SpdxListedLicenseLocalModelStore();
+        			licenseModelStore = new SpdxListedLicenseLocalStore();
         		} catch(InvalidSPDXAnalysisException ex) {
         			logger.error("Error loading cached SPDX licenses");
         			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses");
