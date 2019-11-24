@@ -37,7 +37,13 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
 import org.spdx.library.model.SpdxIdNotFoundException;
+import org.spdx.library.model.SpdxInvalidTypeException;
+import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.license.LicenseException;
+import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxListedLicenseException;
+import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
+import org.spdx.storage.IModelStore;
 
 import com.google.gson.Gson;
 
@@ -399,46 +405,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#setTypedValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void setTypedValue(String documentUri, String id, String propertyName, String valueId, String type)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
-			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-		}
-		boolean isLicenseId = false;
-		boolean isExceptionId = false;
-		listedLicenseModificationLock.readLock().lock();
-		try {
-			if (licenseIds.contains(id)) {
-				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
-				isExceptionId = true;
-			}
-		} finally {
-			listedLicenseModificationLock.readLock().unlock();
-		}
-		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(id);
-			license.setTypedProperty(propertyName, valueId, type);
-		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(id);
-			exc.setTypedProperty(propertyName, valueId, type);
-		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#setPrimitiveValue(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setPrimitiveValue(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
+	public void setValue(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
@@ -505,45 +477,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#addTypedValueToList(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addTypedValueToList(String documentUri, String id, String propertyName, String valueId, String type)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
-			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-		}
-		boolean isLicenseId = false;
-		boolean isExceptionId = false;
-		listedLicenseModificationLock.readLock().lock();
-		try {
-			if (licenseIds.contains(id)) {
-				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
-				isExceptionId = true;
-			}
-		} finally {
-			listedLicenseModificationLock.readLock().unlock();
-		}
-		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(id);
-			license.addValueToList(propertyName, valueId, type);
-		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(id);
-			exc.addValueToList(propertyName, valueId, type);
-		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#addPrimitiveValueToList(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void addPrimitiveValueToList(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
+	public void addValueToList(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
@@ -722,6 +659,65 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
 		}
+	}
+	
+	@Override
+	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
+			logger.error("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
+			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
+		}
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.contains(id)) {
+				isLicenseId = true;
+			} else if (exceptionIds.contains(id)) {
+				isExceptionId = true;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			license.removeProperty(propertyName);
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			exc.removeProperty(propertyName);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
+	}
+	
+	@Override
+	public void copyFrom(String documentUri, String id, String type, IModelStore store) throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
+				create(documentUri, id, type);
+				LicenseJson toLicense = this.listedLicenseCache.get(id);
+				SpdxListedLicense fromLicense = (SpdxListedLicense)SpdxModelFactory.createModelObject(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+				try {
+					toLicense.copyFrom(fromLicense);
+				} catch (InvalidLicenseTemplateException e) {
+					throw new InvalidSPDXAnalysisException("Invalid license template found in "+id,e);
+				}
+			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
+				create(documentUri, id, type);
+				ExceptionJson toException = this.listedExceptionCache.get(id);
+				LicenseException fromException = (LicenseException)SpdxModelFactory.createModelObject(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+				toException.copyFrom(fromException);
+			} else {
+				throw new SpdxInvalidTypeException("Can not copy "+type+" to a listed license store.");
+			}
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+
 	}
 
 }

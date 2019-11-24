@@ -266,5 +266,15 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 			}
 		}
 	}
+	
+	public void testRemoveProperty() throws InvalidSpdxPropertyException {
+		String licenseId = "SpdxLicenseId1";
+		LicenseJson lj = new LicenseJson(licenseId);
+		String value = "value";
+		lj.setPrimativeValue(STRING_PROPERTY_VALUE_NAMES.get(0), value);
+		assertEquals("value", lj.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)));
+		lj.removeProperty(STRING_PROPERTY_VALUE_NAMES.get(0));
+		assertTrue(lj.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)) == null);
+	}
 
 }

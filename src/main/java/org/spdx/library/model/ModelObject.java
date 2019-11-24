@@ -18,9 +18,7 @@
 package org.spdx.library.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -43,10 +41,6 @@ public abstract class ModelObject implements SpdxConstants {
 	private IModelStore modelStore;
 	private String documentUri;
 	private String id;
-	/**
-	 * Map of ID's copied from other model stores for efficiency
-	 */
-	private Map<IModelStore, Map<String, String>> idMap = new HashMap<>();
 
 	/**
 	 * @param modelStore Storage for the model objects
@@ -124,22 +118,46 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param propertyName Name of the property
 	 * @return value associated with a property
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		return modelStore.getValue(documentUri, id, propertyName);
+		Object result =  modelStore.getValue(documentUri, id, propertyName);
+		if (result instanceof TypedValue) {
+			TypedValue tv = (TypedValue)result;
+			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, tv.getId(), tv.getType());
+		} else if (result instanceof List) {
+			List retval = new ArrayList();
+			List lResult = (List)result;
+			for (Object element:lResult) {
+				if (element instanceof TypedValue) {
+					TypedValue tv = (TypedValue)element;
+					retval.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
+				} else {
+					retval.add(element);
+				}
+			}
+			return lResult;
+		} else {
+			return result;
+		}
 	}
 
 	/**
-	 * @param propertyName Name of the proprety associated with this object
+	 * @param propertyName Name of the property associated with this object
 	 * @param value Value to associate with the property
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		//TODO: Add nullable annotation, make sure the storage class handles null values
 		if (value instanceof ModelObject) {
-			modelStore.setTypedValue(documentUri, id, propertyName, 
-					modelObjectToId((ModelObject)value), ((ModelObject)value).getType());
+			ModelObject mValue = (ModelObject)value;
+			if (!mValue.getModelStore().equals(this.modelStore)) {
+				if (!this.modelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+					this.modelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+				}
+			}
+			modelStore.setValue(documentUri, id, propertyName, mValue.toTypeValue());
 		} else {
-			modelStore.setPrimitiveValue(documentUri, id, propertyName, value);
+			modelStore.setValue(documentUri, id, propertyName, value);
 		}	
 	}
 	
@@ -193,10 +211,15 @@ public abstract class ModelObject implements SpdxConstants {
 	 */
 	public void addPropertyValueToList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
-			modelStore.addTypedValueToList(documentUri, id, propertyName, 
-					modelObjectToId((ModelObject)value), ((ModelObject)value).getType());
+			ModelObject mValue = (ModelObject)value;
+			if (!mValue.getModelStore().equals(this.modelStore)) {
+				if (!this.modelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+					this.modelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+				}
+			}
+			modelStore.addValueToList(documentUri, id, propertyName, mValue.toTypeValue());
 		} else {
-			modelStore.addPrimitiveValueToList(documentUri, id, propertyName, value);
+			modelStore.addValueToList(documentUri, id, propertyName, value);
 		}
 	}
 	
@@ -342,37 +365,6 @@ public abstract class ModelObject implements SpdxConstants {
 	}
 	
 	/**
-	 * Translates a model object into an ID taking into account the modelObject may be from
-	 * a different model store and needs to be made referenceable within the model store
-	 * associated with this model object
-	 * @param modelObject
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	private String modelObjectToId(ModelObject modelObject) throws InvalidSPDXAnalysisException {
-		//TODO: Make threadsafe
-		if (this.getModelStore().equals(modelObject.getModelStore()) && this.getDocumentUri().equals(modelObject.getDocumentUri())) {
-			return modelObject.getId();
-		} else {
-			// Need to find or create a duplicate stored in this model store
-			// We keep track of any ID's we created in the idMap
-			Map<String, String> mapForModelStore = this.idMap.get(modelObject.getModelStore());
-			if (mapForModelStore == null) {
-				mapForModelStore = new HashMap<>();
-			}
-			String retval = mapForModelStore.get(modelObject.getId());
-			if (retval != null) {
-				return retval;
-			} else {
-				retval = modelStore.getNextId(idToIdType(modelObject.getId()), documentUri);
-				SpdxModelFactory.createModelObject(modelStore, documentUri, retval, modelObject.getType()).copyFrom(modelObject);
-			}
-			mapForModelStore.put(modelObject.getId(), retval);
-			return retval;
-		}
-	}
-	
-	/**
 	 * @param id String for the object
 	 * @return type of the ID
 	 */
@@ -390,5 +382,9 @@ public abstract class ModelObject implements SpdxConstants {
 		} else {
 			return IdType.Anonomous;
 		}
+	}
+	
+	TypedValue toTypeValue() throws InvalidSPDXAnalysisException {
+		return new TypedValue(this.documentUri, this.id, this.getType());
 	}
 }

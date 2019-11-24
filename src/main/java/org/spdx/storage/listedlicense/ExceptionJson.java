@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.InvalidSpdxPropertyException;
+import org.spdx.library.model.license.LicenseException;
 
 /**
  * Simple POJO to hold the license exception data loaded from a JSON file
@@ -173,6 +175,37 @@ public class ExceptionJson {
 			case "licenseExceptionId": return licenseExceptionId;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}
+	}
+
+	public void removeProperty(String propertyName) throws InvalidSpdxPropertyException  {
+		switch (propertyName) {
+		case "licenseExceptionText": licenseExceptionText = null; break;
+		case "name": name = null; break;
+		case "seeAlso":seeAlso.clear(); break;
+		case "licenseExceptionTemplate": licenseExceptionTemplate = null; break;
+		case "example": example = null; break;
+		case "isDeprecatedLicenseId": isDeprecatedLicenseId = null; break;
+		case "deprecatedVersion": deprecatedVersion = null; break;
+		case "comment": 
+			comment = null;
+			licenseComments = null; break;
+		case "licenseExceptionId": licenseExceptionId = null; break;
+		default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
+	}
+
+	}
+
+	public void copyFrom(LicenseException fromException) throws InvalidSPDXAnalysisException {
+		this.comment = fromException.getComment();
+		this.deprecatedVersion = fromException.getDeprecatedVersion();
+		this.example = fromException.getExample();
+		this.isDeprecatedLicenseId = fromException.isDeprecated();
+		this.licenseComments = null;
+		this.licenseExceptionId = fromException.getId();
+		this.licenseExceptionTemplate = fromException.getLicenseExceptionTemplate();
+		this.licenseExceptionText = fromException.getLicenseExceptionText();
+		this.name = fromException.getName();
+		this.seeAlso = fromException.getSeeAlso();
 	}
 
 }

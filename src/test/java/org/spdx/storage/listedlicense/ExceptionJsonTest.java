@@ -131,6 +131,16 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 			assertEquals(booleanValues.get(valueName), ej.getValue(valueName));
 		}
 	}
+	
+	public void testRemove() throws InvalidSpdxPropertyException {
+		String exceptionId = "SpdxexceptionId1";
+		ExceptionJson ej = new ExceptionJson(exceptionId);
+		String value = "value";
+		ej.setPrimativeValue(STRING_PROPERTY_VALUE_NAMES.get(0), value);
+		assertEquals("value", ej.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)));
+		ej.removeProperty(STRING_PROPERTY_VALUE_NAMES.get(0));
+		assertTrue(ej.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)) == null);
+	}
 
 	@SuppressWarnings("unchecked")
 	public void testAddClearGetPropertyValueList() throws InvalidSpdxPropertyException {

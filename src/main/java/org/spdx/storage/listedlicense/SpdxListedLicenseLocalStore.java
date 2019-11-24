@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.storage.IModelStore;
 
 /**
  * @author Gary O'Neall

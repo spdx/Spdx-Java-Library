@@ -22,7 +22,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.InvalidSpdxPropertyException;
+import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 
 /**
  * Simple POJO to hold the license data loaded from a JSON file
@@ -222,5 +225,46 @@ public class LicenseJson {
 			case "licenseId": return licenseId;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}
+	}
+
+	public void removeProperty(String propertyName) throws InvalidSpdxPropertyException {
+		switch (propertyName) {
+		case "licenseText": licenseText = null; break;
+		case "licenseTextHtml": licenseTextHtml = null; break;
+		case "name": name = null; break;
+		case "seeAlso":seeAlso.clear(); break;
+		case "standardLicenseHeader": standardLicenseHeader = null; break;
+		case "standardLicenseHeaderTemplate": standardLicenseHeaderTemplate = null; break;
+		case "standardLicenseHeaderHtml": standardLicenseHeaderHtml = null; break;
+		case "standardLicenseTemplate": standardLicenseTemplate = null; break;
+		case "isOsiApproved": isOsiApproved = null; break;
+		case "isFsfLibre": isFsfLibre = null; break;
+		case "example": example = null; break;
+		case "isDeprecatedLicenseId": isDeprecatedLicenseId = null; break;
+		case "deprecatedVersion": deprecatedVersion = null; break;
+		case "comment": 
+			comment = null;
+			licenseComments = null; break;
+		case "licenseId": licenseId = null; break;
+		default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
+	}
+	}
+
+	public void copyFrom(SpdxListedLicense fromLicense) throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
+		this.comment = fromLicense.getComment();
+		this.deprecatedVersion = fromLicense.getDeprecatedVersion();
+		this.example = null;
+		this.isDeprecatedLicenseId = fromLicense.isDeprecated();
+		this.isFsfLibre = fromLicense.getFsfLibre();
+		this.licenseComments = null;
+		this.licenseId = fromLicense.getId();
+		this.licenseText = fromLicense.getLicenseText();
+		this.licenseTextHtml = fromLicense.getLicenseTextHtml();
+		this.name = fromLicense.getName();
+		this.seeAlso = fromLicense.getSeeAlso();
+		this.standardLicenseHeader = fromLicense.getStandardLicenseHeader();
+		this.standardLicenseHeaderHtml = fromLicense.getLicenseHeaderHtml();
+		this.standardLicenseHeaderTemplate = fromLicense.getStandardLicenseHeaderTemplate();
+		this.standardLicenseTemplate = fromLicense.getStandardLicenseTemplate();
 	}
 }

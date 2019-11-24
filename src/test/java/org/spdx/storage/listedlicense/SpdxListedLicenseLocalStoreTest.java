@@ -134,13 +134,13 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		String result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME);
 		assertEquals(APACHE_LICENSE_NAME, result);
 		String newName = "new name";
-		slll.setPrimitiveValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME, newName);
+		slll.setValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME, newName);
 		result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME);
 		assertEquals(newName, result);
 		
 		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME);
 		assertEquals(ECOS_LICENSE_NAME, result);
-		slll.setPrimitiveValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME, newName);
+		slll.setValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME, newName);
 		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME);
 		assertEquals(newName, result);
 	}

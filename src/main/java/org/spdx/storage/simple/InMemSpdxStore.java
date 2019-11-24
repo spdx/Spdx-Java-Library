@@ -1,0 +1,229 @@
+/**
+ * Copyright (c) 2019 Source Auditor Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+package org.spdx.storage.simple;
+
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.DuplicateSpdxIdException;
+import org.spdx.library.model.SpdxIdNotFoundException;
+import org.spdx.storage.IModelStore;
+
+/**
+ * @author Gary O'Neall
+ * 
+ * In memory implementation of an SPDX store.
+ * 
+ * This implementation primarily uses <code>ConcurrentHashMaps</code>.
+ * 
+ * It is designed to be thread-safe and low CPU utilization.  It may use significant amounts of memory
+ * for larger SPDX documents.
+ *
+ */
+public class InMemSpdxStore implements IModelStore {
+	
+	static Pattern DOCUMENT_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"(\\d+)$");
+	static Pattern SPDX_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"(\\d+)$");
+	static final String ANON_PREFIX = "__anon__";
+	static Pattern ANON_ID_PATTERN_NUMERIC = Pattern.compile(ANON_PREFIX+"(\\d+)$");
+	
+	/**
+	 * Map of Document URI to items stored in the document
+	 */
+	ConcurrentHashMap<String, ConcurrentHashMap<String, StoredTypedItem>> documentValues = new ConcurrentHashMap<>();
+	private int nextNextLicenseId = 0;
+	private int nextNextDocumentId = 0;
+	private int nextNextSpdxId = 0;
+	private int nextAnonId = 0;
+
+	@Override
+	public boolean exists(String documentUri, String id) {
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		if (idMap == null) {
+			return false;
+		}
+		return idMap.containsKey(id);
+	}
+
+	@Override
+	public void create(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
+		StoredTypedItem value = new StoredTypedItem(documentUri, id, type);
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		while (idMap == null) {
+			documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
+			idMap = documentValues.get(documentUri);
+		}
+		updateNextIds(id);
+		idMap.putIfAbsent(id, value);
+		Object checkWhatWasPut = idMap.get(id);	// Check in case a separate thread inserted a different value
+		if (!value.equals(checkWhatWasPut)) {
+			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
+		}
+	}
+	
+	/**
+	 * Check to see if the next ID indexes need to be updated based on the name provided
+	 * @param id
+	 */
+	void updateNextIds(String id) {
+		if (id == null) {
+			return;
+		}
+		Matcher licenseRefMatcher = SpdxConstants.LICENSE_ID_PATTERN_NUMERIC.matcher(id);
+		if (licenseRefMatcher.matches()) {
+			checkUpdateNextLicenseId(licenseRefMatcher);
+			return;
+		}
+		Matcher documentRefMatcher = DOCUMENT_ID_PATTERN_NUMERIC.matcher(id);
+		if (documentRefMatcher.matches()) {
+			checkUpdateNextDocumentId(documentRefMatcher);
+			return;
+		}
+		Matcher spdxRefMatcher = SPDX_ID_PATTERN_NUMERIC.matcher(id);
+		if (spdxRefMatcher.matches()) {
+			checkUpdateNextSpdxId(spdxRefMatcher);
+			return;
+		}
+		Matcher anonRefMatcher = ANON_ID_PATTERN_NUMERIC.matcher(id);
+		if (anonRefMatcher.matches()) {
+			checkUpdateNextAnonId(anonRefMatcher);
+			return;
+		}
+	}
+
+	private synchronized void checkUpdateNextAnonId(Matcher anonRefMatcher) {
+		String strNum = anonRefMatcher.group(1);
+		int num = Integer.parseInt(strNum);
+		if (num >= this.nextAnonId ) {
+			this.nextAnonId = num + 1;
+		}
+	}
+
+	private synchronized void checkUpdateNextSpdxId(Matcher spdxRefMatcher) {
+		String strNum = spdxRefMatcher.group(1);
+		int num = Integer.parseInt(strNum);
+		if (num >= this.nextNextSpdxId) {
+			this.nextNextSpdxId = num + 1;
+		}
+	}
+
+	private synchronized void checkUpdateNextDocumentId(Matcher documentRefMatcher) {
+		String strNum = documentRefMatcher.group(1);
+		int num = Integer.parseInt(strNum);
+		if (num >= this.nextNextDocumentId) {
+			this.nextNextDocumentId = num + 1;
+		}
+	}
+
+	private synchronized void checkUpdateNextLicenseId(Matcher licenseRefMatcher) {
+		String strNum = licenseRefMatcher.group(1);
+		int num = Integer.parseInt(strNum);
+		if (num >= this.nextNextLicenseId) {
+			this.nextNextLicenseId = num + 1;
+		}
+	}
+
+	private StoredTypedItem getItem(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		if (idMap == null) {
+			throw new SpdxIdNotFoundException("Document URI "+documentUri+" was not found in the memory store.  The ID must first be created before getting property values.");
+		}
+		StoredTypedItem item = idMap.get(id);
+		if (item == null) {
+			throw new SpdxIdNotFoundException("ID "+id+" was not found in the memory store.  The ID must first be created before getting property values.");
+		}
+		return item;
+	}
+
+	@Override
+	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).getPropertyValueNames();
+	}
+
+	@Override
+	public List<String> getPropertyValueListNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).getPropertyValueListNames();
+	}
+
+	@Override
+	public void setValue(String documentUri, String id, String propertyName, Object value)
+			throws InvalidSPDXAnalysisException {
+		getItem(documentUri, id).setValue(propertyName, value);
+	}
+
+	@Override
+	public void clearPropertyValueList(String documentUri, String id, String propertyName)
+			throws InvalidSPDXAnalysisException {
+		getItem(documentUri, id).clearPropertyValueList(propertyName);
+	}
+
+	@Override
+	public void addValueToList(String documentUri, String id, String propertyName, Object value)
+			throws InvalidSPDXAnalysisException {
+		getItem(documentUri, id).addValueToList(propertyName, value);
+	}
+
+	@Override
+	public List<?> getValueList(String documentUri, String id, String propertyName)
+			throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).getValueList(propertyName);
+	}
+
+	@Override
+	public Object getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).getValue(propertyName);
+	}
+
+	@Override
+	public synchronized String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
+		switch (idType) {
+		case Anonomous: return ANON_PREFIX+String.valueOf(nextAnonId++);
+		case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+String.valueOf(nextNextLicenseId++);
+		case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+String.valueOf(nextNextDocumentId++);
+		case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+String.valueOf(nextNextSpdxId++);
+		case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
+		case Literal: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Literal");
+		default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
+		}
+	}
+
+	@Override
+	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		getItem(documentUri, id).removeProperty(propertyName);
+	}
+
+	@Override
+	public void copyFrom(String documentUri, String id, String type, IModelStore store)
+			throws InvalidSPDXAnalysisException {
+		if (store == this) {
+			return;	// check to make sure were not copying to ourself
+		}
+		create(documentUri, id, type);
+		StoredTypedItem copyTo = getItem(documentUri, id);
+		if (copyTo == null) {
+			// must have been deleted send it was created
+			return;
+		}
+		copyTo.copyValuesFrom(store);
+	}
+
+}
