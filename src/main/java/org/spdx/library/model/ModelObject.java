@@ -242,7 +242,19 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @return List of values associated with a property
 	 */
 	public List<?> getObjectPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		return modelStore.getValueList(documentUri, id, propertyName);
+		List<?> modelStoreVal = modelStore.getValueList(documentUri, id, propertyName);
+		if (modelStoreVal == null || modelStoreVal.size() == 0 || !(modelStoreVal.get(0) instanceof TypedValue)) {
+			return modelStoreVal;
+		}
+		List<ModelObject> retval = new ArrayList<>();	// Need to convert to the actual objects
+		for (Object modelVal:modelStoreVal) {
+			if (!(modelVal instanceof TypedValue)) {
+				throw new SpdxInvalidTypeException("Expected a typed value type in list for "+propertyName);
+			}
+			TypedValue tv = (TypedValue)modelVal;
+			retval.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
+		}
+		return retval;
 	}
 	
 	/**

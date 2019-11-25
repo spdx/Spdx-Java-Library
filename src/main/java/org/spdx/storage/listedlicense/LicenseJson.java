@@ -197,7 +197,7 @@ public class LicenseJson {
 		seeAlso.add((String)value);
 	}
 
-	public List<?> getValueList(String propertyName) throws InvalidSpdxPropertyException {
+	public List<String> getValueList(String propertyName) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
