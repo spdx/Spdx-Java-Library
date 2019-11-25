@@ -33,6 +33,14 @@ import org.spdx.storage.IModelStore;
  */
 public class DisjunctiveLicenseSet extends LicenseSet {
 	
+	public DisjunctiveLicenseSet() throws InvalidSPDXAnalysisException {
+		super();
+	}
+
+	public DisjunctiveLicenseSet(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
 	public DisjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);

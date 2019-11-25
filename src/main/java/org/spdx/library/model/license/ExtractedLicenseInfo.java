@@ -21,8 +21,10 @@ package org.spdx.library.model.license;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
@@ -35,6 +37,10 @@ import org.spdx.storage.IModelStore;
  */
 public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Comparable<ExtractedLicenseInfo> {
 	
+	public ExtractedLicenseInfo(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
 	/**
 	 * Create a new SimpleLicensingInfo object
 	 * @param modelStore container which includes the license
@@ -47,6 +53,17 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 		super(modelStore, documentUri, id, create);
 	}
 	
+	/**
+	 * Create a new ExtractedLicenseInfo using the ID and text
+	 * @param id
+	 * @param text
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ExtractedLicenseInfo(String id, String text) throws InvalidSPDXAnalysisException {
+		super(id);
+		this.setExtractedText(text);;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.ModelObject#getType()
 	 */
@@ -141,5 +158,14 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 		} catch (InvalidSPDXAnalysisException ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+	
+	@Override
+	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+		if (!(compare instanceof ExtractedLicenseInfo)) {
+			return false;
+		}
+		// Only test for the text - other fields do not need to equal to be considered equivalent
+		return LicenseCompareHelper.isLicenseTextEquivalent(this.getExtractedText(), ((ExtractedLicenseInfo)compare).getExtractedText());
 	}
 }

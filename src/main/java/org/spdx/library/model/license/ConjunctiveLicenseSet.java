@@ -33,6 +33,16 @@ import org.spdx.storage.IModelStore;
  */
 public class ConjunctiveLicenseSet extends LicenseSet {
 	
+	public ConjunctiveLicenseSet() throws InvalidSPDXAnalysisException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public ConjunctiveLicenseSet(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+		// TODO Auto-generated constructor stub
+	}
+
 	public ConjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);

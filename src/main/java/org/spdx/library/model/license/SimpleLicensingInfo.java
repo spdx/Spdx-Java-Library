@@ -33,6 +33,15 @@ import org.spdx.storage.IModelStore;
  *
  */
 public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
+	
+	/**
+	 * Open or create a model object with the default store and default document URI
+	 * @param id ID for this object - must be unique within the SPDX document
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	SimpleLicensingInfo(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
 
 	/**
 	 * Create a new SimpleLicensingInfo object

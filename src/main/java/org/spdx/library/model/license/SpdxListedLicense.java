@@ -34,6 +34,15 @@ import org.spdx.storage.IModelStore;
 public class SpdxListedLicense extends License {
 	
 	/**
+	 * Open or create a model object with the default store and default document URI
+	 * @param id ID for this object - must be unique within the SPDX document
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public SpdxListedLicense(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
+	/**
 	 * Create a new SPDX Listed License object
 	 * @param modelStore container which includes the license
 	 * @param documentUri URI for the SPDX document containing the license

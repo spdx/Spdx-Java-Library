@@ -34,6 +34,23 @@ import org.spdx.storage.IModelStore;
 public abstract class AnyLicenseInfo extends ModelObject {
 	
 	static final Logger logger = LoggerFactory.getLogger(AnyLicenseInfo.class.getName());
+	
+	/**
+	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public AnyLicenseInfo() throws InvalidSPDXAnalysisException {
+		super();
+	}
+
+	/**
+	 * Open or create a model object with the default store and default document URI
+	 * @param id ID for this object - must be unique within the SPDX document
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public AnyLicenseInfo(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
 
 	/**
 	 * Create a new LicenseInfo object

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.ListedLicenses;
@@ -42,6 +43,23 @@ public abstract class ModelObject implements SpdxConstants {
 	private String documentUri;
 	private String id;
 
+	/**
+	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ModelObject() throws InvalidSPDXAnalysisException {
+		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonomous, DefaultModelStore.getDefaultDocumentUri()));
+	}
+	
+	/**
+	 * Open or create a model object with the default store and default document URI
+	 * @param id ID for this object - must be unique within the SPDX document
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ModelObject(String id) throws InvalidSPDXAnalysisException {
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, true);
+	}
+	
 	/**
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for the document associated with this model
@@ -308,12 +326,18 @@ public abstract class ModelObject implements SpdxConstants {
 			if (comparePropertyValueListNames.contains(propertyName)) {
 				List<?> myList = getObjectPropertyValueList(propertyName);
 				List<?> compList = compare.getObjectPropertyValueList(propertyName);
+				int numRemainingComp = compList.size();
 				for (Object item:myList) {
-					if (!compList.contains(item)) {
+					if (compList.contains(item)) {
+						numRemainingComp--;
+					} else {
 						return false;
 					}
 				}
-				comparePropertyValueNames.remove(propertyName);
+				if (numRemainingComp > 0) {
+					return false;
+				}
+				comparePropertyValueListNames.remove(propertyName);
 			} else {
 				// No property value
 				if (!this.getObjectPropertyValueList(propertyName).isEmpty()) {
@@ -321,10 +345,8 @@ public abstract class ModelObject implements SpdxConstants {
 				}
 			}
 		}
-		for (String propertyName:comparePropertyValueListNames) {
-			if (!compare.getObjectPropertyValueList(propertyName).isEmpty()) {
-				return false;
-			}
+		if (!comparePropertyValueListNames.isEmpty()) {
+			return false;
 		}
 		return true;
 	}

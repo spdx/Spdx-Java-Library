@@ -32,6 +32,15 @@ import java.util.List;
  */
 public abstract class LicenseSet extends AnyLicenseInfo {
 	
+	
+	public LicenseSet() throws InvalidSPDXAnalysisException {
+		super();
+	}
+
+	public LicenseSet(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
 	LicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);

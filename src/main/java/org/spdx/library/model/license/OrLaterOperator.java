@@ -31,6 +31,14 @@ import org.spdx.storage.IModelStore;
  */
 public class OrLaterOperator extends AnyLicenseInfo {
 	
+	public OrLaterOperator() throws InvalidSPDXAnalysisException {
+		super();
+	}
+
+	public OrLaterOperator(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
 	public OrLaterOperator(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);

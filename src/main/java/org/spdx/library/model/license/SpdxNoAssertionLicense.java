@@ -30,9 +30,19 @@ import org.spdx.storage.IModelStore;
  */
 public class SpdxNoAssertionLicense extends AnyLicenseInfo {
 	
-	SpdxNoAssertionLicense(IModelStore modelStore, String documentUri, String id, boolean create)
+	static final String NOASSERTION_LICENSE_ID = "NOASSERTION_LICENSE_ID";
+	
+	/**
+	 * Create a new No Assertion license with the default store and default document URI
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public SpdxNoAssertionLicense() throws InvalidSPDXAnalysisException {
+		super(NOASSERTION_LICENSE_ID);
+	}
+
+	SpdxNoAssertionLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, NOASSERTION_LICENSE_ID, true);
 	}
 	
 	static final int NO_ASSERTION_HASHCODE = 89;	// prime number - all NoAssertion licenses should have the same hashcode

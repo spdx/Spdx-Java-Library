@@ -30,10 +30,19 @@ import org.spdx.storage.IModelStore;
 public class SpdxNoneLicense extends AnyLicenseInfo {
 	
 	static final int NONE_LICENSE_HASHCODE = 147; // prime number - all none licenses should have the same hashcde
+	static final String NONE_LICENSE_ID = "SPDX_NONE_LICENSE";
+	
+	/**
+	 * Create a new NoneLicense with the default store and default document URI
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public SpdxNoneLicense() throws InvalidSPDXAnalysisException {
+		super(NONE_LICENSE_ID);
+	}
 
-	SpdxNoneLicense(IModelStore modelStore, String documentUri, String id, boolean create)
+	SpdxNoneLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, NONE_LICENSE_ID, true);
 	}
 
 	/* (non-Javadoc)
