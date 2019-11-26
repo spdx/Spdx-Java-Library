@@ -23,19 +23,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.library.model.SpdxModelFactory;
@@ -60,6 +67,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final String LICENSE_TOC_FILENAME = "licenses.json";
 	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
+	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstants.LISTED_LICENSE_DOCUMENT_URI}));
 	
 	Set<String> licenseIds = new HashSet<>();
 	Set<String> exceptionIds = new HashSet<>();
@@ -71,6 +79,36 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 
 	Gson gson = new Gson();	// we should be able to reuse since all access is within write locks
 
+	public class ListedLicenseStoreTransaction implements ModelTransaction {
+
+		Lock lock;
+		@Override
+		public void begin(ReadWrite readWrite) throws IOException {
+			Objects.requireNonNull(readWrite);
+			if (ReadWrite.READ == readWrite) {
+				lock = listedLicenseModificationLock.readLock();
+			} else {
+				lock = listedLicenseModificationLock.writeLock();
+			}
+			lock.lock();
+		}
+
+		@Override
+		public void commit() throws IOException {
+			if (lock != null) {
+				lock.unlock();
+				lock = null;
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (lock != null) {
+				logger.warn("Uncommitted transaction");
+				lock.unlock();
+			}
+		}
+	}
 	
 	public SpdxListedLicenseModelStore() throws InvalidSPDXAnalysisException {
 		loadIds();
@@ -717,7 +755,36 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} finally {
 			listedLicenseModificationLock.writeLock().unlock();
 		}
+	}
+	
+	@Override
+	public List<String> getDocumentUris() {
+		return DOCUMENT_URIS;
+	}
 
+	@Override
+	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter)
+			throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			List<ModelObject> allItems = new ArrayList<ModelObject>();
+			for (String licenseId:this.licenseIds) {
+				allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+			}
+			for (String exceptionId:this.exceptionIds) {
+				allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+			}
+			return Collections.unmodifiableList(allItems).stream();
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+	}
+
+	@Override
+	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException {
+		ListedLicenseStoreTransaction transaction = new ListedLicenseStoreTransaction();
+		transaction.begin(readWrite);
+		return transaction;
 	}
 
 }

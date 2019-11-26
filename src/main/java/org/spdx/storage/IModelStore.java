@@ -17,9 +17,13 @@
  */
 package org.spdx.storage;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.ModelObject;
 
 /**
  * Interface for storing and retrieving SPDX properties for SPDX documents.
@@ -37,6 +41,31 @@ import org.spdx.library.InvalidSPDXAnalysisException;
  *
  */
 public interface IModelStore {
+	
+	@FunctionalInterface
+	public static interface ModelUpdate {
+		void apply() throws InvalidSPDXAnalysisException;
+	}
+	
+	public enum ReadWrite {
+		READ,
+		WRITE,
+		READ_WRITE
+	}
+	
+	/**
+	 * Transaction to provide ACID properties around modifications made between begin and commit
+	 *
+	 */
+	public interface ModelTransaction extends AutoCloseable {
+		/**
+		 * @param readWrite
+		 * @throws IOException
+		 */
+		void begin(ReadWrite readWrite) throws IOException;
+		void commit() throws IOException;
+		void close() throws IOException;
+	}
 	
 	/**
 	 * Different types of ID's
@@ -154,4 +183,26 @@ public interface IModelStore {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void copyFrom(String documentUri, String id, String type, IModelStore store) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @return a list of all Document URI's stored in the model store
+	 */
+	public List<String> getDocumentUris();
+
+	/**
+	 * @param modelStore Storage for the model objects
+	 * @param documentUri SPDX Document URI for a document associated with this model
+	 * @param typeFilter Optional parameter to specify the type of objects to be retrieved
+	 * @return Stream of all items store within the document
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * Initiates a transaction
+	 * @param readWrite signal if any writes or updates is expected
+	 * @return transaction object to call commit and close when the transaction is complete
+	 * @throws IOException 
+	 */
+	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException;
 }

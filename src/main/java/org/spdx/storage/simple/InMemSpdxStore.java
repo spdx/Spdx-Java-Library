@@ -17,15 +17,29 @@
  */
 package org.spdx.storage.simple;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
+import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -41,6 +55,8 @@ import org.spdx.storage.IModelStore;
  */
 public class InMemSpdxStore implements IModelStore {
 	
+	static final Logger logger = LoggerFactory.getLogger(InMemSpdxStore.class.getName());
+	
 	static Pattern DOCUMENT_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"(\\d+)$");
 	static Pattern SPDX_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"(\\d+)$");
 	static final String ANON_PREFIX = "__anon__";
@@ -54,6 +70,39 @@ public class InMemSpdxStore implements IModelStore {
 	private int nextNextDocumentId = 0;
 	private int nextNextSpdxId = 0;
 	private int nextAnonId = 0;
+	
+	private final ReadWriteLock transactionLock = new ReentrantReadWriteLock();
+	
+	public class InMemStoreTransaction implements ModelTransaction {
+
+		Lock lock;
+		@Override
+		public void begin(ReadWrite readWrite) throws IOException {
+			Objects.requireNonNull(readWrite);
+			if (ReadWrite.READ == readWrite) {
+				lock = transactionLock.readLock();
+			} else {
+				lock = transactionLock.writeLock();
+			}
+			lock.lock();
+		}
+
+		@Override
+		public void commit() throws IOException {
+			if (lock != null) {
+				lock.unlock();
+				lock = null;
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (lock != null) {
+				logger.warn("Uncommitted transaction");
+				lock.unlock();
+			}
+		}
+	}
 
 	@Override
 	public boolean exists(String documentUri, String id) {
@@ -224,6 +273,34 @@ public class InMemSpdxStore implements IModelStore {
 			return;
 		}
 		copyTo.copyValuesFrom(store);
+	}
+
+	@Override
+	public List<String> getDocumentUris() {
+		return Collections.unmodifiableList(new ArrayList<String>(this.documentValues.keySet()));
+	}
+
+	@Override
+	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter)
+			throws InvalidSPDXAnalysisException {
+		List<ModelObject> allItems = new ArrayList<>();
+		Iterator<ConcurrentHashMap<String, StoredTypedItem>> docIter = this.documentValues.values().iterator();
+		while (docIter.hasNext()) {
+			ConcurrentHashMap<String, StoredTypedItem> itemMap = docIter.next();
+			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
+			while (valueIter.hasNext()) {
+				StoredTypedItem item = valueIter.next();
+				allItems.add(SpdxModelFactory.createModelObject(this, item.getDocumentUri(), item.getId(), item.getType()));
+			}
+		}
+		return Collections.unmodifiableList(allItems).stream();
+	}
+
+	@Override
+	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException {
+		InMemStoreTransaction transaction = new InMemStoreTransaction();
+		transaction.begin(readWrite);
+		return transaction;
 	}
 
 }

@@ -27,6 +27,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.IModelStore.ModelUpdate;
 
 /**
  * @author Gary O'Neall
@@ -62,7 +63,7 @@ public abstract class ModelObject implements SpdxConstants {
 	
 	/**
 	 * @param modelStore Storage for the model objects
-	 * @param documentUri SPDX Document URI for the document associated with this model
+	 * @param documentUri SPDX Document URI for a document associated with this model
 	 * @param id ID for this object - must be unique within the SPDX document
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
@@ -164,19 +165,29 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param value Value to associate with the property
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+	public static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		//TODO: Add nullable annotation, make sure the storage class handles null values
 		if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(this.modelStore)) {
-				if (!this.modelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
-					this.modelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+			if (!mValue.getModelStore().equals(stModelStore)) {
+				if (stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 				}
 			}
-			modelStore.setValue(documentUri, id, propertyName, mValue.toTypeValue());
+			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypeValue());
 		} else {
-			modelStore.setValue(documentUri, id, propertyName, value);
+			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		}	
+	}
+	
+	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
+	}
+	
+	public ModelUpdate updatePropertyValue(String propertyName, Object value) {
+		return () ->{
+			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
+		};
 	}
 	
 	/**

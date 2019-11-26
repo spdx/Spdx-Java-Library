@@ -24,6 +24,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.ModelUpdate;
 
 /**
  * Describes a license
@@ -38,11 +39,6 @@ public abstract class License extends SimpleLicensingInfo {
 
 	static final String XML_LITERAL = "^^http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
 
-	/**
-	 * True if the text in the  model uses HTML tags.  If this flag is true, the text will
-	 * be converted on import from the model.
-	 */
-	private boolean textInHtml = true;
 	/**
 	 * True if the template in the model uses HTML tags.  If this flag is true, the text will
 	 * be converted on import from the model.
@@ -85,7 +81,6 @@ public abstract class License extends SimpleLicensingInfo {
 	 */
 	public void setLicenseText(String text) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(PROP_LICENSE_TEXT, text);
-		this.textInHtml = false;	// stored in the clear
 	}
 	
 	/**
@@ -285,5 +280,9 @@ public abstract class License extends SimpleLicensingInfo {
 	 */
 	public void setDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
+	}
+	
+	public ModelUpdate updateSetDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
+		return updatePropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 }
