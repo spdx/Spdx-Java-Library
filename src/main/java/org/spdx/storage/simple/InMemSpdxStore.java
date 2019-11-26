@@ -118,12 +118,10 @@ public class InMemSpdxStore implements IModelStore {
 		StoredTypedItem value = new StoredTypedItem(documentUri, id, type);
 		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
 		while (idMap == null) {
-			documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
-			idMap = documentValues.get(documentUri);
+			idMap = documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
 		}
 		updateNextIds(id);
-		idMap.putIfAbsent(id, value);
-		Object checkWhatWasPut = idMap.get(id);	// Check in case a separate thread inserted a different value
+		Object checkWhatWasPut = idMap.putIfAbsent(id, value);
 		if (!value.equals(checkWhatWasPut)) {
 			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 		}
