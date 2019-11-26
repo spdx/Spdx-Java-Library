@@ -30,7 +30,7 @@ import org.spdx.storage.simple.InMemSpdxStore;
  */
 public class DefaultModelStore {
 	
-	static final IModelStore defaultModelStore = new InMemSpdxStore();
+	static IModelStore defaultModelStore = new InMemSpdxStore();
 	static final String defaultDocumentUri = "http://www.spdx.org/documents/default_doc_uri_for_SPDX_tools";
 	
 	private DefaultModelStore() {
@@ -43,6 +43,13 @@ public class DefaultModelStore {
 	
 	public static String getDefaultDocumentUri() {
 		return defaultDocumentUri;
+	}
+	
+	/**
+	 * Clears the default model store by replacing the default model store with a new one
+	 */
+	public static final void reset() {
+		defaultModelStore = new InMemSpdxStore();
 	}
 
 }

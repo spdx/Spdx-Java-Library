@@ -18,6 +18,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -72,7 +73,12 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseText() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_LICENSE_TEXT);
+		Optional<String> o = getStringPropertyValue(PROP_LICENSE_TEXT);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 
 	/**
@@ -88,11 +94,12 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseHeader() throws InvalidSPDXAnalysisException {
-		String standardLicenseHeader =  getStringPropertyValue(PROP_STD_LICENSE_NOTICE);
-		if (standardLicenseHeader != null) {
-			standardLicenseHeader = StringEscapeUtils.unescapeHtml4(standardLicenseHeader);
+		Optional<String> standardLicenseHeader =  getStringPropertyValue(PROP_STD_LICENSE_NOTICE);
+		if (standardLicenseHeader.isPresent()) {
+			return StringEscapeUtils.unescapeHtml4(standardLicenseHeader.get());
+		} else {
+			return "";
 		}
-		return standardLicenseHeader;
 	}
 	
 	/**
@@ -100,11 +107,12 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseHeaderTemplate() throws InvalidSPDXAnalysisException {
-		String standardLicenseHeaderTemplate = getStringPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE);
-		if (standardLicenseHeaderTemplate != null) {
-			standardLicenseHeaderTemplate = StringEscapeUtils.unescapeHtml4(standardLicenseHeaderTemplate);
+		Optional<String> standardLicenseHeaderTemplate = getStringPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE);
+		if (standardLicenseHeaderTemplate.isPresent()) {
+			return StringEscapeUtils.unescapeHtml4(standardLicenseHeaderTemplate.get());
+		} else {
+			return "";
 		}
-		return standardLicenseHeaderTemplate;
 	}
 	
 	/**
@@ -127,7 +135,11 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseTemplate() throws InvalidSPDXAnalysisException {
-		String standardLicenseTemplate = getStringPropertyValue(PROP_STD_LICENSE_TEMPLATE);		
+		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_TEMPLATE);	
+		String standardLicenseTemplate = o.get();
+		if (!o.isPresent()) {
+			return "";
+		}
 		if (standardLicenseTemplate != null && standardLicenseTemplate.endsWith(XML_LITERAL)) {
 			standardLicenseTemplate = standardLicenseTemplate.substring(0, standardLicenseTemplate.length()-XML_LITERAL.length());
 		}
@@ -219,11 +231,11 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean isFsfLibre() throws InvalidSPDXAnalysisException {
-		Boolean libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
-		if (libre == null) {
+		Optional<Boolean> libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		if (!libre.isPresent()) {
 			return false;
 		}
-		return libre;
+		return libre.get();
 	}
 	
 	/**
@@ -231,8 +243,8 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isNotFsfLibre() throws InvalidSPDXAnalysisException {
-		Boolean fsfLibre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
-		return fsfLibre != null && !fsfLibre;
+		Optional<Boolean> fsfLibre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		return fsfLibre.isPresent() && !fsfLibre.get();
 	}
 	
 	/**
@@ -240,7 +252,12 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public Boolean getFsfLibre() throws InvalidSPDXAnalysisException {
-		return getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		Optional<Boolean> libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		if (libre.isPresent()) {
+			return libre.get();
+		} else {
+			return null;
+		}
 	}
 	
 	
@@ -249,8 +266,8 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isOsiApproved() throws InvalidSPDXAnalysisException {
-		Boolean osiApproved = getBooleanPropertyValue(PROP_STD_LICENSE_OSI_APPROVED);
-		return osiApproved != null && osiApproved;
+		Optional<Boolean> osiApproved = getBooleanPropertyValue(PROP_STD_LICENSE_OSI_APPROVED);
+		return osiApproved.isPresent() && osiApproved.get();
 	}
 	
 	/**
@@ -258,8 +275,8 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isDeprecated() throws InvalidSPDXAnalysisException {
-		Boolean deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
-		return deprecated != null && deprecated;
+		Optional<Boolean> deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
+		return deprecated.isPresent() && deprecated.get();
 	}
 	
 	public void setOsiApproved(Boolean osiApproved) throws InvalidSPDXAnalysisException {

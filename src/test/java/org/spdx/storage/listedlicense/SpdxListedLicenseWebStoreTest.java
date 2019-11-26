@@ -77,12 +77,12 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		String nextId = sllw.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
 		sllw.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
-		String result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID);
+		String result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID).get();
 		assertEquals(nextId, result);
 
 		nextId = sllw.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
 		sllw.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
-		result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
 		assertEquals(nextId, result);
 	}
 
@@ -123,26 +123,26 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	
 	public void testGetValue() throws InvalidSPDXAnalysisException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
-		String result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME);
+		String result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(APACHE_LICENSE_NAME, result);
 		
-		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(ECOS_LICENSE_NAME, result);
 	}
 	
 	public void testSetValue() throws InvalidSPDXAnalysisException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
-		String result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME);
+		String result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(APACHE_LICENSE_NAME, result);
 		String newName = "new name";
 		sllw.setValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME, newName);
-		result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(newName, result);
 		
-		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(ECOS_LICENSE_NAME, result);
 		sllw.setValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME, newName);
-		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
 		assertEquals(newName, result);
 	}
 

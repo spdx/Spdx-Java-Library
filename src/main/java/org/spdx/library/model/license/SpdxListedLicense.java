@@ -17,6 +17,7 @@
 package org.spdx.library.model.license;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -73,21 +74,22 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseTextHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
-		String licenseTextHtml = getStringPropertyValue(PROP_LICENSE_TEXT_HTML);
-		if (licenseTextHtml == null) {
+		Optional<String> licenseTextHtml = getStringPropertyValue(PROP_LICENSE_TEXT_HTML);
+		if (licenseTextHtml.isPresent()) {
+			return licenseTextHtml.get();
+		} else {
 			// Format the HTML using the text and template
 			String templateText = this.getStandardLicenseTemplate();
 			if (templateText != null && !templateText.trim().isEmpty()) {
 				try {
-					licenseTextHtml = SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
+					return SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
 				} catch(LicenseTemplateRuleException ex) {
 					throw new InvalidLicenseTemplateException("Invalid license expression found in license text for license "+getName()+":"+ex.getMessage());
 				}
 			} else {
-				licenseTextHtml = SpdxLicenseTemplateHelper.formatEscapeHTML(this.getLicenseText());
+				return SpdxLicenseTemplateHelper.formatEscapeHTML(this.getLicenseText());
 			}
 		}
-		return licenseTextHtml;
 	}
 	
 	/**
@@ -105,23 +107,22 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseHeaderHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
-		String licenseHeaderHtml = getStringPropertyValue(PROP_LICENSE_HEADER_HTML);
-		if (licenseHeaderHtml == null) {
+		Optional<String> licenseHeaderHtml = getStringPropertyValue(PROP_LICENSE_HEADER_HTML);
+		if (licenseHeaderHtml.isPresent()) {
+			return licenseHeaderHtml.get();
+		} else {
 			// Format the HTML using the text and template
 			String templateText = this.getStandardLicenseHeaderTemplate();
 			if (templateText != null && !templateText.trim().isEmpty()) {
 				try {
-					licenseHeaderHtml = SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
+					return SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
 				} catch(LicenseTemplateRuleException ex) {
 					throw new InvalidLicenseTemplateException("Invalid license expression found in standard license header for license "+getName()+":"+ex.getMessage());
 				}
-			} else if (this.getStandardLicenseHeader() == null) {
-				licenseHeaderHtml = "";
 			} else {
-				licenseHeaderHtml = SpdxLicenseTemplateHelper.formatEscapeHTML(this.getStandardLicenseHeader());
+				return SpdxLicenseTemplateHelper.formatEscapeHTML(this.getStandardLicenseHeader());
 			}
 		}
-		return licenseHeaderHtml;
 	}
 	
 	/**
@@ -138,7 +139,12 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getDeprecatedVersion() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		Optional<String> depVersion = getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		if (depVersion.isPresent()) {
+			return depVersion.get();
+		} else {
+			return "";
+		}
 	}
 
 	/**

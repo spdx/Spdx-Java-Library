@@ -183,10 +183,6 @@ public class LicenseJson {
 		seeAlso.clear();
 	}
 
-	public void addValueToList(String propertyName, String valueId, String type) throws InvalidSpdxPropertyException {
-		throw new InvalidSpdxPropertyException("Invalid type for Listed License SPDX Property: "+type);
-	}
-
 	public void addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
@@ -195,6 +191,13 @@ public class LicenseJson {
 			throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 		}
 		seeAlso.add((String)value);
+	}
+	
+	public void removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+		if (!"seeAlso".equals(propertyName)) {
+			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
+		}
+		seeAlso.remove(value);
 	}
 
 	public List<String> getValueList(String propertyName) throws InvalidSpdxPropertyException {
@@ -209,7 +212,7 @@ public class LicenseJson {
 			case "licenseText": return licenseText;
 			case "licenseTextHtml": return licenseTextHtml;
 			case "name": return name;
-			case "seeAlso":throw new InvalidSpdxPropertyException("Expected list type for "+propertyName);
+			case "seeAlso": return seeAlso;
 			case "standardLicenseHeader": return standardLicenseHeader;
 			case "standardLicenseHeaderTemplate": return standardLicenseHeaderTemplate;
 			case "standardLicenseHeaderHtml": return standardLicenseHeaderHtml;

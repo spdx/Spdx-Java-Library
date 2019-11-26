@@ -18,8 +18,10 @@
 package org.spdx.library.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -36,6 +38,24 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  * 
  * Provides the primary interface to the storage class that access and stores the data for 
  * the model objects.
+ * 
+ * Each model object is in itself stateless.  All state is maintained in the Model Store.  
+ * The Document URI uniquely identifies the document containing the model object.
+ * 
+ * The concrete classes are expected to implements getters for the model class properties which translate
+ * into calls to the getTYPEPropertyValue where TYPE is the type of value to be returned and the property name
+ * is passed as a parameter.
+ * 
+ * There are 2 methods of setting values:
+ *   - call the setPropertyValue, clearValueList or addPropertyValueToList methods - this will call the modelStore and store the
+ *     value immediately
+ *   - Gather a list of updates by calling the updatePropertyValue, updateClearValueList, or updateAddPropertyValue
+ *     methods.  These methods return a ModelUpdate which can be applied later by calling the <code>apply()</code> method.
+ *     A convenience method <code>Write.applyUpdatesInOneTransaction</code> will perform all updates within
+ *     a single transaction. This method may result in higher performance updates for some Model Store implementations.
+ *     Note that none of the updates will be applied until the storage manager update method is invoked.
+ *     
+ * This class also handles the conversion of a ModelObject to and from a TypeValue for storage in the ModelStore.
  *
  */
 public abstract class ModelObject implements SpdxConstants {
@@ -134,40 +154,50 @@ public abstract class ModelObject implements SpdxConstants {
 	}
 	
 	/**
+	 * Get an object value for a property
 	 * @param propertyName Name of the property
 	 * @return value associated with a property
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Object result =  modelStore.getValue(documentUri, id, propertyName);
-		if (result instanceof TypedValue) {
-			TypedValue tv = (TypedValue)result;
-			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, tv.getId(), tv.getType());
-		} else if (result instanceof List) {
-			List retval = new ArrayList();
-			List lResult = (List)result;
+	public Optional<Object> getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result =  modelStore.getValue(documentUri, id, propertyName);
+		if (result.isPresent() && result.get() instanceof TypedValue) {
+			TypedValue tv = (TypedValue)result.get();
+			result = Optional.of(SpdxModelFactory.createModelObject(modelStore, this.documentUri, tv.getId(), tv.getType()));
+		} else if (result.isPresent() && result.get() instanceof List) {
+			List converted = new ArrayList();
+			List lResult = (List)result.get();
 			for (Object element:lResult) {
 				if (element instanceof TypedValue) {
 					TypedValue tv = (TypedValue)element;
-					retval.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
+					converted.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
 				} else {
-					retval.add(element);
+					converted.add(element);
 				}
 			}
-			return lResult;
-		} else {
-			return result;
-		}
+			result = Optional.of(Collections.unmodifiableList(converted));
+		} 
+		return result;
 	}
 
 	/**
+	 * Set a property value for a property name, creating the property if necessary
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
 	 * @param propertyName Name of the property associated with this object
 	 * @param value Value to associate with the property
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		//TODO: Add nullable annotation, make sure the storage class handles null values
-		if (value instanceof ModelObject) {
+		Objects.requireNonNull(stModelStore);
+		Objects.requireNonNull(stDocumentUri);
+		Objects.requireNonNull(stId);
+		Objects.requireNonNull(propertyName);
+		if (value == null) {
+			// we just remove the value
+			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
+		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
 				if (stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
@@ -180,10 +210,22 @@ public abstract class ModelObject implements SpdxConstants {
 		}	
 	}
 	
+	/**
+	 * Set a property value for a property name, creating the property if necessary
+	 * @param propertyName Name of the property associated with this object
+	 * @param value Value to associate with the property
+	 * @throws InvalidSPDXAnalysisException 
+	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
 	}
 	
+	/**
+	 * Create an update when, when applied by the ModelStore, sets a property value for a property name, creating the property if necessary
+	 * @param propertyName Name of the property associated with this object
+	 * @param value Value to associate with the property
+	 * @return an update which can be applied by invoking the apply method
+	 */
 	public ModelUpdate updatePropertyValue(String propertyName, Object value) {
 		return () ->{
 			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
@@ -192,43 +234,129 @@ public abstract class ModelObject implements SpdxConstants {
 	
 	/**
 	 * @param propertyName Name of a property
-	 * @return the String value associated with a property
+	 * @return the Optional String value associated with a property, null if no value is present
 	 * @throws SpdxInvalidTypeException
 	 */
-	public String getStringPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Object ovalue = getObjectPropertyValue(propertyName);
-		if (ovalue == null) {
-			return null;
+	public Optional<String> getStringPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		Optional<String> retval;
+		if (result.isPresent()) {
+			if (!(result.get() instanceof String)) {
+				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type String");
+			}
+			retval = Optional.of((String)result.get());
+		} else {
+			retval = Optional.empty();
 		}
-		if (!(ovalue instanceof String)) {
-			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type String");
-		}
-		return (String)ovalue;
+		return retval;
 	}
 	
 	/**
 	 * @param propertyName Name of the property
-	 * @return the Boolean value for a property
+	 * @return the Optional Boolean value for a property
 	 * @throws SpdxInvalidTypeException
 	 */
-	public Boolean getBooleanPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Object ovalue = getObjectPropertyValue(propertyName);
-		if (ovalue == null) {
-			return null;	// Note that some of the properties such as FsfLibre explicitly look for null values
+	public Optional<Boolean> getBooleanPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		Optional<Boolean> retval;
+		if (result.isPresent()) {
+			if (!(result.get() instanceof Boolean)) {
+				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
+			}
+			retval = Optional.of((Boolean)result.get());
+		} else {
+			retval = Optional.empty();
 		}
-		if (!(ovalue instanceof Boolean)) {
-			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
-		}
-		return (Boolean)ovalue;
+		return retval;
+	}
+	
+	/**
+	 * Removes a property and its value from the model store if it exists
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
+	 * @param propertyName Name of the property associated with this object to be removed
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static void removeProperty(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
+		stModelStore.removeProperty(stDocumentUri, stId, propertyName);
+	}
+	
+	/**
+	 * Removes a property and its value from the model store if it exists
+	 * @param propertyName Name of the property associated with this object to be removed
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void removeProperty(String propertyName) throws InvalidSPDXAnalysisException {
+		removeProperty(modelStore, documentUri, id, propertyName);
+	}
+	
+	/**
+	 * Create an update when, when applied by the ModelStore, removes a property and its value from the model store if it exists
+	 * @param propertyName Name of the property associated with this object to be removed
+	 * @return  an update which can be applied by invoking the apply method
+	 */
+	public ModelUpdate updateRemoveProperty(String propertyName) {
+		return () -> {
+			removeProperty(modelStore, documentUri, id, propertyName);
+		};
 	}
 	
 	// The following methods manage lists of values associated with a property
 	/**
 	 * Clears a list of values associated with a property
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
+	 * @param propertyName Name of the property
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static void clearPropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
+		stModelStore.clearPropertyValueList(stDocumentUri, stId, propertyName);
+	}
+	
+	/**
+	 * Clears a list of values associated with a property
 	 * @param propertyName Name of the property
 	 */
 	public void clearPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		modelStore.clearPropertyValueList(documentUri, id, propertyName);
+		clearPropertyValueList(modelStore, documentUri, id, propertyName);
+	}
+	
+	/**
+	 * Create an update when, when applied by the ModelStore, clears a list of values associated with a property
+	 * @param propertyName Name of the property
+	 * @return an update which can be applied by invoking the apply method
+	 */
+	public ModelUpdate updateClearPropertyValueList(String propertyName) {
+		return () ->{
+			clearPropertyValueList(modelStore, documentUri, id, propertyName);
+		};
+	}
+	
+	/**
+	 * Add a value to a list of values associated with a property.  If a value is a ModelObject and does not
+	 * belong to the document, it will be copied into the object store
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
+	 * @param propertyName  Name of the property
+	 * @param value to add
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static void addPropertyValueToList(IModelStore stModelStore, String stDocumentUri, String stId, 
+			String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		if (value instanceof ModelObject) {
+			ModelObject mValue = (ModelObject)value;
+			if (!mValue.getModelStore().equals(stModelStore)) {
+				if (!stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+				}
+			}
+			stModelStore.addValueToList(stDocumentUri, stId, propertyName, mValue.toTypeValue());
+		} else {
+			stModelStore.addValueToList(stDocumentUri, stId, propertyName, value);
+		}
 	}
 	
 	/**
@@ -239,16 +367,37 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void addPropertyValueToList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (value instanceof ModelObject) {
-			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(this.modelStore)) {
-				if (!this.modelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
-					this.modelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
-				}
-			}
-			modelStore.addValueToList(documentUri, id, propertyName, mValue.toTypeValue());
-		} else {
-			modelStore.addValueToList(documentUri, id, propertyName, value);
+		addPropertyValueToList(modelStore, documentUri, id, propertyName, value);
+	}
+	
+	/**
+	 * Create an update when, when applied, adds a value to a list of values associated with a property.  If a value is a ModelObject and does not
+	 * belong to the document, it will be copied into the object store
+	 * @param propertyName  Name of the property
+	 * @param value to add
+	 * @return an update which can be applied by invoking the apply method
+	 */
+	public ModelUpdate updateAddPropertyValueToList(String propertyName, Object value) {
+		return () ->{
+			addPropertyValueToList(modelStore, documentUri, id, propertyName, value);
+		};
+	}
+	
+	/**
+	 * Replace the entire value list for a property.  If a value is a ModelObject and does not
+	 * belong to the document, it will be copied into the object store
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
+	 * @param propertyName name of the property
+	 * @param values list of new properties
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static void replacePropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, 
+			String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
+		clearPropertyValueList(stModelStore, stDocumentUri, stId, propertyName);
+		for (Object value:values) {
+			addPropertyValueToList(stModelStore, stDocumentUri, stId, propertyName, value);
 		}
 	}
 	
@@ -260,10 +409,61 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void replacePropertyValueList(String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
-		clearPropertyValueList(propertyName);
-		for (Object value:values) {
-			addPropertyValueToList(propertyName, value);
+		replacePropertyValueList(modelStore, documentUri, id, propertyName, values);
+	}
+	
+	/**
+	 * When applied, replace the entire value list for a property.  If a value is a ModelObject and does not
+	 * belong to the document, it will be copied into the object store
+	 * @param propertyName name of the property
+	 * @param values list of new properties
+	 * @return an update which can be applied by invoking the apply method
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ModelUpdate updateReplacePropertyValueList(String propertyName, List<?> values) {
+		return () ->{
+			replacePropertyValueList(modelStore, documentUri, id, propertyName, values);
+		};
+	}
+	
+	/**
+	 * Remove a property value from a list
+	 * @param stModelStore Model store for the properties
+	 * @param stDocumentUri Unique document URI
+	 * @param stId ID of the item to associate the property with
+	 * @param propertyName name of the property
+	 * @param value Value to be removed
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static void removePropertyValueFromList(IModelStore stModelStore, String stDocumentUri, String stId, 
+			String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		if (value instanceof ModelObject) {
+			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypeValue());
+		} else {
+			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, value);
 		}
+	}
+	
+	/**
+	 * Remove a property value from a list
+	 * @param propertyName name of the property
+	 * @param value Value to be removed
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void removePropertyValueFromList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		removePropertyValueFromList(modelStore, documentUri, id, propertyName, value);
+	}
+	
+	/**
+	 * Create an update when, when applied, removes a property value from a list
+	 * @param propertyName name of the property
+	 * @param value Value to be removed
+	 * @return an update which can be applied by invoking the apply method
+	 */
+	public ModelUpdate updateRemovePropertyValueFromList(String propertyName, Object value) {
+		return () -> {
+			removePropertyValueFromList(modelStore, documentUri, id, propertyName, value);
+		};
 	}
 	
 	/**
@@ -271,19 +471,14 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @return List of values associated with a property
 	 */
 	public List<?> getObjectPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		List<?> modelStoreVal = modelStore.getValueList(documentUri, id, propertyName);
-		if (modelStoreVal == null || modelStoreVal.size() == 0 || !(modelStoreVal.get(0) instanceof TypedValue)) {
-			return modelStoreVal;
+		Optional<Object> retval = getObjectPropertyValue(propertyName);
+		if (!retval.isPresent()) {
+			return new ArrayList<>();	// return an empty list
 		}
-		List<ModelObject> retval = new ArrayList<>();	// Need to convert to the actual objects
-		for (Object modelVal:modelStoreVal) {
-			if (!(modelVal instanceof TypedValue)) {
-				throw new SpdxInvalidTypeException("Expected a typed value type in list for "+propertyName);
-			}
-			TypedValue tv = (TypedValue)modelVal;
-			retval.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
+		if (!(retval.get() instanceof List<?>)) {
+			throw new SpdxInvalidTypeException("Expected a list for the value of property "+propertyName);
 		}
-		return retval;
+		return (List<?>)retval.get();
 	}
 	
 	/**
@@ -389,8 +584,11 @@ public abstract class ModelObject implements SpdxConstants {
 
 	
 	public Object clone() {
-		//TODO Implement - I'm not sure this is even needed in the new design since the objects are stateless
-		throw new RuntimeException("Unimplemented funtion");
+		try {
+			return SpdxModelFactory.createModelObject(modelStore, documentUri, id, getType());
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**

@@ -19,6 +19,7 @@
 package org.spdx.library.model.license;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.SpdxInvalidTypeException;
@@ -67,7 +68,12 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getName() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -83,7 +89,12 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getComment() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(RDFS_PROP_COMMENT);
+		Optional<String> o = getStringPropertyValue(RDFS_PROP_COMMENT);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**

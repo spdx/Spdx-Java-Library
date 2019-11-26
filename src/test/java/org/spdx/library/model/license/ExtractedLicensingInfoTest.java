@@ -19,7 +19,6 @@ package org.spdx.library.model.license;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -41,6 +40,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		DefaultModelStore.reset();
 	}
 
 	/* (non-Javadoc)

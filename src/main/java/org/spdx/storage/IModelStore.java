@@ -155,7 +155,7 @@ public interface IModelStore {
 	 * @return the single value associated with the id, propertyName and document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Object getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Generate a unique ID for use within the document
@@ -205,4 +205,12 @@ public interface IModelStore {
 	 * @throws IOException 
 	 */
 	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException;
+
+	/**
+	 * @param documentUri Unique document UR
+	 * @param id ID of the item to associate the property with
+	 * @param propertyName name of the property
+	 * @param value Value to be removed
+	 */
+	public void removePropertyValueFromList(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
 }

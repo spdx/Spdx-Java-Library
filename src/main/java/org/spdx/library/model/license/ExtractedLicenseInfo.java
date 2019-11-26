@@ -20,6 +20,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -61,7 +62,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 */
 	public ExtractedLicenseInfo(String id, String text) throws InvalidSPDXAnalysisException {
 		super(id);
-		this.setExtractedText(text);;
+		this.setExtractedText(text);
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +89,12 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getExtractedText() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_EXTRACTED_TEXT);
+		Optional<String> o = getStringPropertyValue(PROP_EXTRACTED_TEXT);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 
 	/**

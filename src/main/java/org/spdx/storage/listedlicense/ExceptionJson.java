@@ -164,7 +164,7 @@ public class ExceptionJson {
 		switch (propertyName) {
 			case "licenseExceptionText": return licenseExceptionText;
 			case "name": return name;
-			case "seeAlso":throw new InvalidSpdxPropertyException("Expected list type for "+propertyName);
+			case "seeAlso":return seeAlso;
 			case "licenseExceptionTemplate": return licenseExceptionTemplate;
 			case "example": return example;
 			case "isDeprecatedLicenseId": return isDeprecatedLicenseId;
@@ -206,6 +206,13 @@ public class ExceptionJson {
 		this.licenseExceptionText = fromException.getLicenseExceptionText();
 		this.name = fromException.getName();
 		this.seeAlso = fromException.getSeeAlso();
+	}
+
+	public void removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+		if (!"seeAlso".equals(propertyName)) {
+			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
+		}
+		seeAlso.remove(value);
 	}
 
 }

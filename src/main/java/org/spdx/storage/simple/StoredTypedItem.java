@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -116,6 +117,28 @@ class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
+	 * Removes a property from a list if it exists
+	 * @param propertyName
+	 * @param value
+	 * @throws SpdxInvalidTypeException 
+	 */
+	@SuppressWarnings("rawtypes")
+	public void removeValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Object list = properties.get(propertyName);
+		if (list == null) {
+			return;
+		}
+		if (!(list instanceof List)) {
+			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
+		}
+		try {
+			((List)list).remove(value);
+		} catch (Exception ex) {
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+		}
+	}
+	
+	/**
 	 * @param propertyName Name of the property
 	 * @return List of values associated with the id, propertyName and document
 	 * @throws SpdxInvalidTypeException
@@ -158,7 +181,10 @@ class StoredTypedItem extends TypedValue {
 	public void copyValuesFrom(IModelStore store) throws InvalidSPDXAnalysisException {
 		List<String> propertyNames = store.getPropertyValueNames(this.getDocumentUri(), this.getId());
 		for (String propertyName:propertyNames) {
-			this.setValue(propertyName, store.getValue(getDocumentUri(), getId(), propertyName));
+			Optional<Object> value = store.getValue(getDocumentUri(), getId(), propertyName);
+			if (value.isPresent()) {
+				this.setValue(propertyName, value.get());
+			}
 		}
 		List<String> propertyListNames = store.getPropertyValueListNames(getDocumentUri(), getId());
 		for (String propertyListName:propertyListNames) {

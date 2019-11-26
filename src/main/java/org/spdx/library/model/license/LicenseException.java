@@ -19,6 +19,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -53,7 +54,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getComment() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(RDFS_PROP_COMMENT);
+		Optional<String> o = getStringPropertyValue(RDFS_PROP_COMMENT);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -71,7 +77,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 */
 	@Deprecated
 	public String getExample() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_EXAMPLE);
+		Optional<String> o = getStringPropertyValue(PROP_EXAMPLE);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -96,7 +107,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getLicenseExceptionTemplate() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_EXCEPTION_TEMPLATE);
+		Optional<String> o = getStringPropertyValue(PROP_EXCEPTION_TEMPLATE);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -113,7 +129,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getLicenseExceptionText() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_EXCEPTION_TEXT);
+		Optional<String> o = getStringPropertyValue(PROP_EXCEPTION_TEXT);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -131,7 +152,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getName() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -166,8 +192,8 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isDeprecated() throws InvalidSPDXAnalysisException {
-		Boolean deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
-		return deprecated != null && deprecated;
+		Optional<Boolean> deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
+		return deprecated.isPresent() && deprecated.get();
 	}
 	
 	/**
@@ -183,7 +209,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getDeprecatedVersion() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		Optional<String> o = getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		if (o.isPresent()) {
+			return o.get();
+		} else {
+			return "";
+		}
 	}
 
 	/**

@@ -121,7 +121,8 @@ public class InMemSpdxStore implements IModelStore {
 			idMap = documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
 		}
 		updateNextIds(id);
-		Object checkWhatWasPut = idMap.putIfAbsent(id, value);
+		idMap.putIfAbsent(id, value);
+		Object checkWhatWasPut = idMap.get(id);
 		if (!value.equals(checkWhatWasPut)) {
 			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 		}
@@ -228,6 +229,13 @@ public class InMemSpdxStore implements IModelStore {
 			throws InvalidSPDXAnalysisException {
 		getItem(documentUri, id).addValueToList(propertyName, value);
 	}
+	
+
+	@Override
+	public void removePropertyValueFromList(String documentUri, String id, String propertyName, Object value)
+			throws InvalidSPDXAnalysisException {
+		getItem(documentUri, id).removeValueToList(propertyName, value);
+	}
 
 	@Override
 	public List<?> getValueList(String documentUri, String id, String propertyName)
@@ -236,8 +244,8 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Object getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getValue(propertyName);
+	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		return Optional.ofNullable(getItem(documentUri, id).getValue(propertyName));
 	}
 
 	@Override
@@ -300,5 +308,4 @@ public class InMemSpdxStore implements IModelStore {
 		transaction.begin(readWrite);
 		return transaction;
 	}
-
 }
