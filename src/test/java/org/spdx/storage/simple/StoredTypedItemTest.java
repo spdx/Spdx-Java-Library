@@ -92,28 +92,10 @@ public class StoredTypedItemTest extends TestCase {
 			}
 		}
 		List<String> result = sti.getPropertyValueNames();
-		assertEquals(TEST_VALUE_PROPERTIES.length, result.size());
+		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, result.size());
 		for (String prop:TEST_VALUE_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
-	}
-
-	/**
-	 * Test method for {@link org.spdx.storage.simple.StoredTypedItem#getPropertyValueListNames(java.lang.String, java.lang.String)}.
-	 */
-	public void testGetPropertyValueListNames() throws InvalidSPDXAnalysisException {
-		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
-		assertEquals(0, sti.getPropertyValueListNames().size());
-		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
-			sti.setValue(TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
-		}
-		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
-			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
-				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
-			}
-		}
-		List<String> result = sti.getPropertyValueListNames();
-		assertEquals(TEST_LIST_PROPERTIES.length, result.size());
 		for (String prop:TEST_LIST_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
@@ -184,7 +166,6 @@ public class StoredTypedItemTest extends TestCase {
 	public void testRemove() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
 		assertEquals(0, sti.getPropertyValueNames().size());
-		assertEquals(0, sti.getPropertyValueListNames().size());
 		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
 			sti.setValue(TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
 		}
@@ -193,12 +174,10 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		assertEquals(TEST_VALUE_PROPERTIES.length, sti.getPropertyValueNames().size());
-		assertEquals(TEST_LIST_PROPERTIES.length, sti.getPropertyValueListNames().size());
+		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, sti.getPropertyValueNames().size());
 		sti.removeProperty(TEST_VALUE_PROPERTIES[0]);
 		sti.removeProperty(TEST_LIST_PROPERTIES[0]);
-		assertEquals(TEST_VALUE_PROPERTIES.length-1, sti.getPropertyValueNames().size());
-		assertEquals(TEST_LIST_PROPERTIES.length-1, sti.getPropertyValueListNames().size());
+		assertEquals(TEST_VALUE_PROPERTIES.length-1+TEST_LIST_PROPERTIES.length-1, sti.getPropertyValueNames().size());
 		assertTrue(sti.getValue(TEST_VALUE_PROPERTIES[0]) == null);
 		assertTrue(sti.getValue(TEST_LIST_PROPERTIES[0]) == null);
 	}

@@ -61,6 +61,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_SNIPPET: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, true);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}

@@ -50,13 +50,14 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
 			PROP_LIC_ID_DEPRECATED
 			);
-	
+
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
+		PROPERTY_VALUE_NAMES.addAll(PROPERTY_VALUE_LIST_NAMES);
 	}
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -87,16 +88,6 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 			if (!result.contains(valueName)) {
 				fail("Missing "+valueName);
 			}
-		}
-	}
-
-	public void testGetPropertyValueListNames() {
-		String exceptionId = "SpdxexceptionId1";
-		ExceptionJson ej = new ExceptionJson(exceptionId);
-		List<String> result = ej.getPropertyValueListNames();
-		assertEquals(PROPERTY_VALUE_LIST_NAMES.size(), result.size());
-		for (String valueName:PROPERTY_VALUE_LIST_NAMES) {
-			assertTrue(result.contains(valueName));
 		}
 	}
 

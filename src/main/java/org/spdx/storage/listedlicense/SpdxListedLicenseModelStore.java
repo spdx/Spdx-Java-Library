@@ -267,7 +267,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return license.getPropertyValueNames();
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.getPropertyValueListNames();
+			return exc.getPropertyValueNames();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
@@ -405,41 +405,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return this.listedExceptionCache.get(id);
 		} finally {
 			listedLicenseModificationLock.writeLock().unlock();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getPropertyValueListNames(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public List<String> getPropertyValueListNames(String documentUri, String id) throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
-			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
-		}
-		boolean isLicenseId = false;
-		boolean isExceptionId = false;
-		listedLicenseModificationLock.readLock().lock();
-		try {
-			if (licenseIds.contains(id)) {
-				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
-				isExceptionId = true;
-			}
-		} finally {
-			listedLicenseModificationLock.readLock().unlock();
-		}
-		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(id);
-			return license.getPropertyValueListNames();
-		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.getPropertyValueListNames();
-		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
 		}
 	}
 

@@ -120,7 +120,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 		if (seeAlsoUrl == null) {
 			clearPropertyValueList(RDFS_PROP_SEE_ALSO);
 		} else {
-			replacePropertyValueList(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
+			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
 		}
 	}
 }

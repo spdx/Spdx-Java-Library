@@ -39,11 +39,7 @@ public class ExceptionJson {
 	static final List<String> PROPERTY_VALUE_NAMES = Collections.unmodifiableList(Arrays.asList(
 			"licenseExceptionText", "name",  "licenseExceptionTemplate",
 			"example", "isDeprecatedLicenseId", "deprecatedVersion", 
-			"comment", "licenseExceptionId"));	//NOTE: This list must be updated if any new properties are added
-	
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Collections.unmodifiableList(Arrays.asList(
-			"seeAlso"
-			));	//NOTE: This list must be updated if any new properties are added
+			"comment", "licenseExceptionId", "seeAlso"));	//NOTE: This list must be updated if any new properties are added
 
 	String licenseExceptionText;
 	String name;
@@ -66,10 +62,6 @@ public class ExceptionJson {
 
 	public List<String> getPropertyValueNames() {
 		return PROPERTY_VALUE_NAMES;
-	}
-
-	public List<String> getPropertyValueListNames() {
-		return PROPERTY_VALUE_LIST_NAMES;
 	}
 
 	public void setTypedProperty(String propertyName, String valueId, String type) throws InvalidSpdxPropertyException {

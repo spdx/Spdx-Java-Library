@@ -103,14 +103,6 @@ public interface IModelStore {
 	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * @param documentUri the SPDX Document URI
-	 * @param id unique ID within the SPDX document
-	 * @return Property names for all properties have a value list for a given id within a document
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public List<String> getPropertyValueListNames(String documentUri, String id) throws InvalidSPDXAnalysisException;
-
-	/**
 	 * Sets a property value for a String or Boolean type of value creating the propertyName if it does not exist
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document

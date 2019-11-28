@@ -208,11 +208,6 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public List<String> getPropertyValueListNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getPropertyValueListNames();
-	}
-
-	@Override
 	public void setValue(String documentUri, String id, String propertyName, Object value)
 			throws InvalidSPDXAnalysisException {
 		getItem(documentUri, id).setValue(propertyName, value);

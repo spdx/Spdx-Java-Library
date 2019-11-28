@@ -183,7 +183,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 		if (seeAlsoUrl == null) {
 			clearPropertyValueList(RDFS_PROP_SEE_ALSO);
 		} else {
-			replacePropertyValueList(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
+			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
 		}
 	}
 	

@@ -2,6 +2,7 @@ package org.spdx.storage.simple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -42,28 +43,10 @@ class StoredTypedItem extends TypedValue {
 		List<String> retval = new ArrayList<>();
 		while (iter.hasNext()) {
 			Entry<String, Object> entry = iter.next();
-			if (!(entry.getValue() instanceof List)) {
-				retval.add(entry.getKey());
-			}
+			retval.add(entry.getKey());
 		}
-		return retval;
+		return Collections.unmodifiableList(retval);
 	}
-	
-	/**
-	 * @return Property names for all properties have a value list
-	 */
-	public List<String> getPropertyValueListNames() {
-		Iterator<Entry<String, Object>> iter = this.properties.entrySet().iterator();
-		List<String> retval = new ArrayList<>();
-		while (iter.hasNext()) {
-			Entry<String, Object> entry = iter.next();
-			if (entry.getValue() instanceof List) {
-				retval.add(entry.getKey());
-			}
-		}
-		return retval;
-	}
-
 	
 	/**
 	 * @param propertyName Name of the property
@@ -184,13 +167,6 @@ class StoredTypedItem extends TypedValue {
 			Optional<Object> value = store.getValue(getDocumentUri(), getId(), propertyName);
 			if (value.isPresent()) {
 				this.setValue(propertyName, value.get());
-			}
-		}
-		List<String> propertyListNames = store.getPropertyValueListNames(getDocumentUri(), getId());
-		for (String propertyListName:propertyListNames) {
-			List<?> list = store.getValueList(getDocumentUri(), getId(), propertyListName);
-			for (Object listItem:list) {
-				addValueToList(propertyListName, listItem);
 			}
 		}
 	}

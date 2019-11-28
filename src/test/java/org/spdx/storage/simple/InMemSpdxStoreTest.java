@@ -156,38 +156,17 @@ public class InMemSpdxStoreTest extends TestCase {
 			}
 		}
 		List<String> result = store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID1);
-		assertEquals(TEST_VALUE_PROPERTIES.length, result.size());
+		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, result.size());
 		for (String prop:TEST_VALUE_PROPERTIES) {
+			assertTrue(result.contains(prop));
+		}
+		for (String prop:TEST_LIST_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
 		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
 		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID2).size());		
 	}
 	
-	public void testGetPropertyValueListNames() throws InvalidSPDXAnalysisException {
-		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
-		assertEquals(0, store.getPropertyValueListNames(TEST_DOCUMENT_URI1, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueListNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueListNames(TEST_DOCUMENT_URI1, TEST_ID2).size());
-		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
-			store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
-		}
-		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
-			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
-				store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[i], value);
-			}
-		}
-		List<String> result = store.getPropertyValueListNames(TEST_DOCUMENT_URI1, TEST_ID1);
-		assertEquals(TEST_LIST_PROPERTIES.length, result.size());
-		for (String prop:TEST_LIST_PROPERTIES) {
-			assertTrue(result.contains(prop));
-		}
-		assertEquals(0, store.getPropertyValueListNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueListNames(TEST_DOCUMENT_URI1, TEST_ID2).size());
-	}
 	
 	public void testGetSetValue() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();

@@ -146,14 +146,6 @@ public abstract class ModelObject implements SpdxConstants {
 	}
 	
 	/**
-	 * @return all names of property lists currently associated with this object
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public List<String> getPropertyValueListNames() throws InvalidSPDXAnalysisException {
-		return modelStore.getPropertyValueListNames(documentUri, id);
-	}
-	
-	/**
 	 * Get an object value for a property
 	 * @param propertyName Name of the property
 	 * @return value associated with a property
@@ -205,9 +197,11 @@ public abstract class ModelObject implements SpdxConstants {
 				}
 			}
 			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypeValue());
+		} else if (value instanceof List) {
+			replacePropertyValueList(stModelStore, stDocumentUri, stId, propertyName, (List<?>)value);
 		} else {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
-		}	
+		}
 	}
 	
 	/**
@@ -304,7 +298,7 @@ public abstract class ModelObject implements SpdxConstants {
 	
 	// The following methods manage lists of values associated with a property
 	/**
-	 * Clears a list of values associated with a property
+	 * Clears a list of values associated with a property creating the property if it does not exist
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
@@ -393,7 +387,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param values list of new properties
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static void replacePropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, 
+	private static void replacePropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
 		clearPropertyValueList(stModelStore, stDocumentUri, stId, propertyName);
 		for (Object value:values) {
@@ -401,31 +395,7 @@ public abstract class ModelObject implements SpdxConstants {
 		}
 	}
 	
-	/**
-	 * Replace the entire value list for a property.  If a value is a ModelObject and does not
-	 * belong to the document, it will be copied into the object store
-	 * @param propertyName name of the property
-	 * @param values list of new properties
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public void replacePropertyValueList(String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
-		replacePropertyValueList(modelStore, documentUri, id, propertyName, values);
-	}
-	
-	/**
-	 * When applied, replace the entire value list for a property.  If a value is a ModelObject and does not
-	 * belong to the document, it will be copied into the object store
-	 * @param propertyName name of the property
-	 * @param values list of new properties
-	 * @return an update which can be applied by invoking the apply method
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public ModelUpdate updateReplacePropertyValueList(String propertyName, List<?> values) {
-		return () ->{
-			replacePropertyValueList(modelStore, documentUri, id, propertyName, values);
-		};
-	}
-	
+
 	/**
 	 * Remove a property value from a list
 	 * @param stModelStore Model store for the properties
@@ -510,49 +480,42 @@ public abstract class ModelObject implements SpdxConstants {
 		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
 		for (String propertyName:propertyValueNames) {
 			if (comparePropertyValueNames.contains(propertyName)) {
-				if (!Objects.equals(this.getObjectPropertyValue(propertyName), compare.getObjectPropertyValue(propertyName))) {
-					return false;
+				Optional<Object> myValue = this.getObjectPropertyValue(propertyName);
+				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
+				if (!myValue.isPresent() || !(myValue.get() instanceof List)) {
+					if (!Objects.equals(this.getObjectPropertyValue(propertyName), compare.getObjectPropertyValue(propertyName))) {
+						return false;
+					}
+				} else { // list type			
+					if (!compareValue.isPresent() || !(compareValue.get() instanceof List<?>)) {
+						return false;
+					}
+					List<?> myList = (List<?>)myValue.get();
+					List<?> compareList = (List<?>)compareValue.get();
+					int numRemainingComp = compareList.size();
+					for (Object item:myList) {
+						if (compareList.contains(item)) {
+							numRemainingComp--;
+						} else {
+							return false;
+						}
+					}
+					if (numRemainingComp > 0) {
+						return false;
+					}
 				}
 				comparePropertyValueNames.remove(propertyName);
 			} else {
 				// No property value
-				if (this.getObjectPropertyValue(propertyName) != null) {
+				if (!this.getObjectPropertyValue(propertyName).isPresent()) {
 					return false;
 				}
 			}
 		}
-		for (String propertyName:comparePropertyValueNames) {
-			if (compare.getObjectPropertyValue(propertyName) != null) {
+		for (String propertyName:comparePropertyValueNames) {	// check any remaining property values
+			if (!compare.getObjectPropertyValue(propertyName).isPresent()) {
 				return false;
 			}
-		}
-		List<String> propertyValueListNames = getPropertyValueListNames();
-		List<String> comparePropertyValueListNames = new ArrayList<String>(compare.getPropertyValueListNames());	// create a copy since we're going to modify it
-		for (String propertyName:propertyValueListNames) {
-			if (comparePropertyValueListNames.contains(propertyName)) {
-				List<?> myList = getObjectPropertyValueList(propertyName);
-				List<?> compList = compare.getObjectPropertyValueList(propertyName);
-				int numRemainingComp = compList.size();
-				for (Object item:myList) {
-					if (compList.contains(item)) {
-						numRemainingComp--;
-					} else {
-						return false;
-					}
-				}
-				if (numRemainingComp > 0) {
-					return false;
-				}
-				comparePropertyValueListNames.remove(propertyName);
-			} else {
-				// No property value
-				if (!this.getObjectPropertyValueList(propertyName).isEmpty()) {
-					return false;
-				}
-			}
-		}
-		if (!comparePropertyValueListNames.isEmpty()) {
-			return false;
 		}
 		return true;
 	}
@@ -600,10 +563,6 @@ public abstract class ModelObject implements SpdxConstants {
 		List<String> propertyValueNames = source.getPropertyValueNames();
 		for (String propertyName:propertyValueNames) {
 			setPropertyValue(propertyName, source.getObjectPropertyValue(propertyName));
-		}
-		List<String> propertyValueListNames = source.getPropertyValueListNames();
-		for (String propertyName:propertyValueListNames) {
-			replacePropertyValueList(propertyName, source.getObjectPropertyValueList(propertyName));
 		}
 	}
 	

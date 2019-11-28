@@ -48,11 +48,13 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 			);
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
+		PROPERTY_VALUE_NAMES.addAll(PROPERTY_VALUE_LIST_NAMES);
 	}
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
+	
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -89,19 +91,6 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 			if (!result.contains(valueName)) {
 				fail("Missing "+valueName);
 			}
-		}
-	}
-
-	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJson#getPropertyValueListNames()}.
-	 */
-	public void testGetPropertyValueListNames() {
-		String licenseId = "SpdxLicenseId1";
-		LicenseJson lj = new LicenseJson(licenseId);
-		List<String> result = lj.getPropertyValueListNames();
-		assertEquals(PROPERTY_VALUE_LIST_NAMES.size(), result.size());
-		for (String valueName:PROPERTY_VALUE_LIST_NAMES) {
-			assertTrue(result.contains(valueName));
 		}
 	}
 
