@@ -196,7 +196,7 @@ public abstract class ModelObject implements SpdxConstants {
 					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 				}
 			}
-			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypeValue());
+			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else if (value instanceof List) {
 			replacePropertyValueList(stModelStore, stDocumentUri, stId, propertyName, (List<?>)value);
 		} else {
@@ -347,7 +347,7 @@ public abstract class ModelObject implements SpdxConstants {
 					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 				}
 			}
-			stModelStore.addValueToList(stDocumentUri, stId, propertyName, mValue.toTypeValue());
+			stModelStore.addValueToList(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else {
 			stModelStore.addValueToList(stDocumentUri, stId, propertyName, value);
 		}
@@ -408,7 +408,7 @@ public abstract class ModelObject implements SpdxConstants {
 	public static void removePropertyValueFromList(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
-			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypeValue());
+			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
 		} else {
 			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, value);
 		}
@@ -483,7 +483,7 @@ public abstract class ModelObject implements SpdxConstants {
 				Optional<Object> myValue = this.getObjectPropertyValue(propertyName);
 				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
 				if (!myValue.isPresent() || !(myValue.get() instanceof List)) {
-					if (!Objects.equals(this.getObjectPropertyValue(propertyName), compare.getObjectPropertyValue(propertyName))) {
+					if (!Objects.equals(myValue, compareValue)) {
 						return false;
 					}
 				} else { // list type			
@@ -546,9 +546,14 @@ public abstract class ModelObject implements SpdxConstants {
 	
 
 	
-	public Object clone() {
+	/**
+	 * Clone a new object using a different model store
+	 * @param modelStore
+	 * @return
+	 */
+	public ModelObject clone(IModelStore modelStore) {
 		try {
-			return SpdxModelFactory.createModelObject(modelStore, documentUri, id, getType());
+			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType());
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -562,7 +567,10 @@ public abstract class ModelObject implements SpdxConstants {
 	public void copyFrom(ModelObject source) throws InvalidSPDXAnalysisException {
 		List<String> propertyValueNames = source.getPropertyValueNames();
 		for (String propertyName:propertyValueNames) {
-			setPropertyValue(propertyName, source.getObjectPropertyValue(propertyName));
+			Optional<Object> value = source.getObjectPropertyValue(propertyName);
+			if (value.isPresent()) {
+				setPropertyValue(propertyName, source.getObjectPropertyValue(propertyName).get());
+			}
 		}
 	}
 	
@@ -579,14 +587,14 @@ public abstract class ModelObject implements SpdxConstants {
 			return IdType.DocumentRef;
 		} else if (ListedLicenses.getListedLicenses().isSpdxListedLicenseId(id)) {
 			return IdType.ListedLicense;
-		} else if ("none".equals(id) || "noassertion".equals(id)) {
+		} else if ("none".equalsIgnoreCase(id) || "noassertion".equalsIgnoreCase(id)) {
 			return IdType.Literal;
 		} else {
 			return IdType.Anonomous;
 		}
 	}
 	
-	TypedValue toTypeValue() throws InvalidSPDXAnalysisException {
+	TypedValue toTypedValue() throws InvalidSPDXAnalysisException {
 		return new TypedValue(this.documentUri, this.id, this.getType());
 	}
 }
