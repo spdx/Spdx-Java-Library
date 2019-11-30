@@ -135,14 +135,14 @@ public class ExceptionJson {
 		throw new InvalidSpdxPropertyException("Invalid type for Listed License SPDX Property: "+type);
 	}
 
-	public void addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+	public boolean addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
 		if (!(value instanceof String)) {
 			throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 		}
-		seeAlso.add((String)value);
+		return seeAlso.add((String)value);
 	}
 
 	public List<?> getValueList(String propertyName) throws InvalidSpdxPropertyException {
@@ -200,11 +200,11 @@ public class ExceptionJson {
 		this.seeAlso = fromException.getSeeAlso();
 	}
 
-	public void removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		seeAlso.remove(value);
+		return seeAlso.remove(value);
 	}
 
 }

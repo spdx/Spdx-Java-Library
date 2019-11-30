@@ -152,7 +152,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		}
 		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
 			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
-				store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[i], value);
+				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[i], value);
 			}
 		}
 		List<String> result = store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID1);
@@ -194,8 +194,8 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
 		String value1 = "value1";
 		String value2 = "value2";
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		assertTrue(store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
+		assertTrue(store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2));
 		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
@@ -254,14 +254,14 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
 		String value1 = "value1";
 		String value2 = "value2";
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
 		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
-		store.clearPropertyValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]);
+		store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]);
 		assertEquals(0, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
 	}
 	
@@ -270,8 +270,8 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		store2.copyFrom(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION, store);
@@ -286,15 +286,16 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
-		store.addValueToList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
 		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
-		store.removePropertyValueFromList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		assertTrue(store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
 		assertEquals(1, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
 		assertFalse(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
 		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertFalse("Already removed - should return false",store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
 	}
 	
 	public void testTransaction() throws InvalidSPDXAnalysisException, IOException, InterruptedException, TimeoutException {
@@ -417,5 +418,39 @@ public class InMemSpdxStoreTest extends TestCase {
 		logger.info("Joining thread2");
 		thread2.join();
 		assertEquals("step4", getTestState());
+	}
+	
+	public void testCollectionSize() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
+		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
+		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
+		String value1 = "value1";
+		String value2 = "value2";
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		assertEquals(2, store.collectionSize(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]));
+		assertEquals(0, store.collectionSize(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[1]));
+	}
+	
+	public void testCollectionContains() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
+		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
+		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
+		String value1 = "value1";
+		String value2 = "value2";
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
+		assertTrue(store.collectionContains(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0],value1));
+		assertTrue(store.collectionContains(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0],value2));
+		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
+		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
 	}
 }

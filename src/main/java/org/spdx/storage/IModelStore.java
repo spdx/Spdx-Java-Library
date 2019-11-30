@@ -113,34 +113,6 @@ public interface IModelStore {
 	public void setValue(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * Sets the value list for the property to an empty list creating the propertyName if it does not exist
-	 * @param documentUri the SPDX Document URI
-	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	void clearPropertyValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
-
-	/**
-	 * Adds a value to a property list for a String, Boolean or TypedValue type of value creating the propertyName if it does not exist
-	 * @param documentUri the SPDX Document URI
-	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @param value value to set
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public void addValueToList(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
-
-	/**
-	 * @param documentUri the SPDX Document URI
-	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @return List of values associated with the id, propertyName and document
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public List<?> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
-
-	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
@@ -199,10 +171,58 @@ public interface IModelStore {
 	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException;
 
 	/**
-	 * @param documentUri Unique document UR
+	 * Removes a value from a collection of values associated with a property
+	 * @param documentUri Unique document URI
 	 * @param id ID of the item to associate the property with
 	 * @param propertyName name of the property
 	 * @param value Value to be removed
+	 * @return 
 	 */
-	public void removePropertyValueFromList(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param documentUri Unique document URI
+	 * @param id ID of the item to associate the property with
+	 * @param propertyName name of the property
+	 * @return size of a collection associated with a property.  0 if the property does not exist.
+	 */
+	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param documentUri Unique document URI
+	 * @param id ID of the item to associate the property with
+	 * @param propertyName name of the property
+	 * @param value
+	 * @return true if the collection associated with a property contains the value
+	 */
+	public boolean collectionContains(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	
+	/**
+	 * Sets the value collection for the property to an empty collection creating the propertyName if it does not exist
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	void clearValueCollection(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * Adds a value to a property collection creating the propertyName if it does not exist
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @param value value to add
+	 * @return true if the collection was modified
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @return List of values associated with the id, propertyName and document
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public List<Object> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 }

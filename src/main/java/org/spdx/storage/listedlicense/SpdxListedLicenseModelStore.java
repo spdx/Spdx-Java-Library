@@ -448,7 +448,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#clearPropertyValueList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void clearPropertyValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	public void clearValueCollection(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
@@ -483,7 +483,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#addPrimitiveValueToList(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void addValueToList(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
+	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
@@ -504,10 +504,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.addPrimitiveValueToList(propertyName, value);
+			return license.addPrimitiveValueToList(propertyName, value);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.addPrimitiveValueToList(propertyName, value);
+			return exc.addPrimitiveValueToList(propertyName, value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
@@ -515,7 +515,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public void removePropertyValueFromList(String documentUri, String id, String propertyName, Object value)
+	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -537,10 +537,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.removePrimitiveValueToList(propertyName, value);
+			return license.removePrimitiveValueToList(propertyName, value);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.removePrimitiveValueToList(propertyName, value);
+			return exc.removePrimitiveValueToList(propertyName, value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
@@ -550,8 +550,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#getValueList(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<?> getValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	public List<Object> getValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + ".  Supplied document URI was "+documentUri);
@@ -572,10 +573,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.getValueList(propertyName);
+			return (List<Object>)(List<?>)license.getValueList(propertyName);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.getValueList(propertyName);
+			return (List<Object>)(List<?>)exc.getValueList(propertyName);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
@@ -783,6 +784,17 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		ListedLicenseStoreTransaction transaction = new ListedLicenseStoreTransaction();
 		transaction.begin(readWrite);
 		return transaction;
+	}
+	
+	@Override
+	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		return getValueList(documentUri, id, propertyName).size();
+	}
+
+	@Override
+	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+			throws InvalidSPDXAnalysisException {
+		return getValueList(documentUri, id, propertyName).contains(value);
 	}
 
 }

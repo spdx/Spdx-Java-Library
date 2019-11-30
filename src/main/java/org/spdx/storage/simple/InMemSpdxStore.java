@@ -214,26 +214,26 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public void clearPropertyValueList(String documentUri, String id, String propertyName)
+	public void clearValueCollection(String documentUri, String id, String propertyName)
 			throws InvalidSPDXAnalysisException {
 		getItem(documentUri, id).clearPropertyValueList(propertyName);
 	}
 
 	@Override
-	public void addValueToList(String documentUri, String id, String propertyName, Object value)
+	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)
 			throws InvalidSPDXAnalysisException {
-		getItem(documentUri, id).addValueToList(propertyName, value);
+		return getItem(documentUri, id).addValueToList(propertyName, value);
 	}
 	
 
 	@Override
-	public void removePropertyValueFromList(String documentUri, String id, String propertyName, Object value)
+	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
 			throws InvalidSPDXAnalysisException {
-		getItem(documentUri, id).removeValueToList(propertyName, value);
+		return getItem(documentUri, id).removeValueFromList(propertyName, value);
 	}
 
 	@Override
-	public List<?> getValueList(String documentUri, String id, String propertyName)
+	public List<Object> getValueList(String documentUri, String id, String propertyName)
 			throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).getValueList(propertyName);
 	}
@@ -302,5 +302,16 @@ public class InMemSpdxStore implements IModelStore {
 		InMemStoreTransaction transaction = new InMemStoreTransaction();
 		transaction.begin(readWrite);
 		return transaction;
+	}
+
+	@Override
+	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).collectionSize(propertyName);
+	}
+
+	@Override
+	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+			throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).collectionContains(propertyName, value);
 	}
 }

@@ -18,6 +18,7 @@
 package org.spdx.library.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -156,7 +157,7 @@ public abstract class ModelObject implements SpdxConstants {
 		if (result.isPresent() && result.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)result.get();
 			result = Optional.of(SpdxModelFactory.createModelObject(modelStore, this.documentUri, tv.getId(), tv.getType()));
-		} else if (result.isPresent() && result.get() instanceof List) {
+		} else if (result.isPresent() && result.get() instanceof Collection) {
 			List converted = new ArrayList();
 			List lResult = (List)result.get();
 			for (Object element:lResult) {
@@ -306,7 +307,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static void clearPropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
-		stModelStore.clearPropertyValueList(stDocumentUri, stId, propertyName);
+		stModelStore.clearValueCollection(stDocumentUri, stId, propertyName);
 	}
 	
 	/**
@@ -347,9 +348,9 @@ public abstract class ModelObject implements SpdxConstants {
 					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 				}
 			}
-			stModelStore.addValueToList(stDocumentUri, stId, propertyName, mValue.toTypedValue());
+			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else {
-			stModelStore.addValueToList(stDocumentUri, stId, propertyName, value);
+			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
 		}
 	}
 	
@@ -408,9 +409,9 @@ public abstract class ModelObject implements SpdxConstants {
 	public static void removePropertyValueFromList(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
-			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
+			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
 		} else {
-			stModelStore.removePropertyValueFromList(stDocumentUri, stId, propertyName, value);
+			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, value);
 		}
 	}
 	

@@ -79,21 +79,21 @@ class StoredTypedItem extends TypedValue {
 	 * @throws SpdxInvalidTypeException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
+	public boolean addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
 			list = properties.get(propertyName);	
 			//Note: there is a small timing window where the property could be removed
 			if (list == null) {
-				return;
+				return true;
 			}
 		}
 		if (!(list instanceof List)) {
 			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
 		}
 		try {
-			((List)list).add(value);
+			return ((List)list).add(value);
 		} catch (Exception ex) {
 			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
 		}
@@ -106,16 +106,16 @@ class StoredTypedItem extends TypedValue {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public void removeValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
+	public boolean removeValueFromList(String propertyName, Object value) throws SpdxInvalidTypeException {
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			return;
+			return true;
 		}
 		if (!(list instanceof List)) {
 			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
 		}
 		try {
-			((List)list).remove(value);
+			return ((List)list).remove(value);
 		} catch (Exception ex) {
 			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
 		}
@@ -126,7 +126,8 @@ class StoredTypedItem extends TypedValue {
 	 * @return List of values associated with the id, propertyName and document
 	 * @throws SpdxInvalidTypeException
 	 */
-	public List<?> getValueList(String propertyName) throws SpdxInvalidTypeException {
+	@SuppressWarnings("unchecked")
+	public List<Object> getValueList(String propertyName) throws SpdxInvalidTypeException {
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			return null;
@@ -134,10 +135,7 @@ class StoredTypedItem extends TypedValue {
 		if (!(list instanceof List)) {
 			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyName);
 		}
-		if (!(list instanceof List<?>)) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
-		}
-		return (List<?>)list;
+		return (List<Object>)list;
 	}
 	
 	/**
@@ -168,6 +166,53 @@ class StoredTypedItem extends TypedValue {
 			if (value.isPresent()) {
 				this.setValue(propertyName, value.get());
 			}
+		}
+	}
+
+	/**
+	 * @param propertyName
+	 * @return Size of the collection
+	 * @throws SpdxInvalidTypeException 
+	 */
+	@SuppressWarnings("rawtypes")
+	public int collectionSize(String propertyName) throws SpdxInvalidTypeException {
+		Object list = properties.get(propertyName);
+		if (list == null) {
+			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
+			list = properties.get(propertyName);	
+			//Note: there is a small timing window where the property could be removed
+			if (list == null) {
+				return 0;
+			}
+		}
+		if (!(list instanceof List)) {
+			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
+		}
+		try {
+			return ((List)list).size();
+		} catch (Exception ex) {
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public boolean collectionContains(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Object list = properties.get(propertyName);
+		if (list == null) {
+			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
+			list = properties.get(propertyName);	
+			//Note: there is a small timing window where the property could be removed
+			if (list == null) {
+				return false;
+			}
+		}
+		if (!(list instanceof List)) {
+			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
+		}
+		try {
+			return ((List)list).contains(value);
+		} catch (Exception ex) {
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
 		}
 	}
 }

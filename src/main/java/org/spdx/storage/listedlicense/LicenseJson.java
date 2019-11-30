@@ -175,21 +175,21 @@ public class LicenseJson {
 		seeAlso.clear();
 	}
 
-	public void addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+	public boolean addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
 		if (!(value instanceof String)) {
 			throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 		}
-		seeAlso.add((String)value);
+		return seeAlso.add((String)value);
 	}
 	
-	public void removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
+	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(propertyName)) {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		seeAlso.remove(value);
+		return seeAlso.remove(value);
 	}
 
 	public List<String> getValueList(String propertyName) throws InvalidSpdxPropertyException {

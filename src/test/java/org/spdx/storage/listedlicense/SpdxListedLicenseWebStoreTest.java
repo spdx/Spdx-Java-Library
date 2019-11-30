@@ -17,6 +17,7 @@
  */
 package org.spdx.storage.listedlicense;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -188,5 +189,60 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		assertTrue(lResult.get(0).length() > 10);
 		assertEquals(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, (result.getType()));
 		assertFalse(result.isDeprecated());
+	}
+	
+	public void testList() throws InvalidSPDXAnalysisException {
+		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
+		// Exception
+		LicenseException exception = (LicenseException)SpdxModelFactory.createModelObject(sllw, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+		String seeAlso1 = "seeAlso1";
+		String seeAlso2 = "seeAlso2";
+		List<String> seeAlsos = Arrays.asList(new String[]{seeAlso1, seeAlso2});
+		exception.setSeeAlso(seeAlsos);
+		// getValueList
+		List<Object> result = sllw.getValueList(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO);
+		assertEquals(seeAlsos.size(), result.size());
+		for (String seeAlso:seeAlsos) {
+			assertTrue(result.contains(seeAlso));
+			// collectionContains
+			assertTrue(sllw.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso));
+		}
+		// collectionSize
+		assertEquals(seeAlsos.size(), sllw.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		// addValueToCollection
+		String seeAlso3 = "seeAlso3";
+		assertFalse(sllw.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(sllw.addValueToCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(sllw.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size()+1, sllw.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		// remove value
+		assertTrue(sllw.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertFalse(sllw.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size(), sllw.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertFalse(sllw.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		
+		// License
+		SpdxListedLicense license = (SpdxListedLicense)SpdxModelFactory.createModelObject(sllw, LICENSE_LIST_URI, APACHE_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+		license.setSeeAlso(seeAlsos);
+		// getValueList
+		result = sllw.getValueList(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO);
+		assertEquals(seeAlsos.size(), result.size());
+		for (String seeAlso:seeAlsos) {
+			assertTrue(result.contains(seeAlso));
+			// collectionContains
+			assertTrue(sllw.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso));
+		}
+		// collectionSize
+		assertEquals(seeAlsos.size(), sllw.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		// addValueToCollection
+		assertFalse(sllw.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(sllw.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(sllw.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size()+1, sllw.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		// remove value
+		assertTrue(sllw.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertFalse(sllw.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size(), sllw.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertFalse(sllw.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
 	}
 }

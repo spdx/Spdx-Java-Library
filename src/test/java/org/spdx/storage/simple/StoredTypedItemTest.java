@@ -181,5 +181,32 @@ public class StoredTypedItemTest extends TestCase {
 		assertTrue(sti.getValue(TEST_VALUE_PROPERTIES[0]) == null);
 		assertTrue(sti.getValue(TEST_LIST_PROPERTIES[0]) == null);
 	}
+	
+	public void testCollectionSize() throws InvalidSPDXAnalysisException {
+		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
+		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
+			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
+				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
+			}
+		}
+		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
+			assertEquals(TEST_LIST_PROPERTY_VALUES[i].size(), sti.collectionSize(TEST_LIST_PROPERTIES[i]));
+		}
+	}
+	
+	public void testCollectionContains() throws InvalidSPDXAnalysisException {
+		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
+		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
+			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
+				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
+			}
+		}
+		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
+			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
+				assertTrue(sti.collectionContains(TEST_LIST_PROPERTIES[i], value));
+			}
+		}
+		assertFalse(sti.collectionContains(TEST_LIST_PROPERTIES[0], "notthere"));
+	}
 
 }
