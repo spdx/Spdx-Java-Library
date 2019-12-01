@@ -21,6 +21,7 @@ import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,12 +61,11 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	@SuppressWarnings("unchecked")
-	public List<AnyLicenseInfo> getMembers() throws InvalidSPDXAnalysisException {
-		List<?> retval = getObjectPropertyValueList(PROP_LICENSE_SET_MEMEBER);
-		if (!retval.isEmpty() && !(retval.get(0) instanceof AnyLicenseInfo)) {
-			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type.  Found "+retval.get(0).getClass().toString());
+	public Collection<AnyLicenseInfo> getMembers() throws InvalidSPDXAnalysisException {
+		if (!isCollectionMembersAssignableTo(PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
+			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
 		}
-		return (List<AnyLicenseInfo>)retval;
+		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(PROP_LICENSE_SET_MEMEBER));
 	}
 	
 	/* (non-Javadoc)

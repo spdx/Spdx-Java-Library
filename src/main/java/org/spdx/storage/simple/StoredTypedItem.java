@@ -215,4 +215,30 @@ class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
 		}
 	}
+
+	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
+		Object value = properties.get(propertyName);
+		if (value == null) {
+			return false;
+		}
+		if (!(value instanceof List)) {
+			return false;
+		}
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		List<Object> list = (List)value;
+		for (Object o:list) {
+			if (!o.getClass().isAssignableFrom(clazz)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) {
+		Object value = properties.get(propertyName);
+		if (value == null) {
+			return false;
+		}
+		return value.getClass().isAssignableFrom(clazz);
+	}
 }

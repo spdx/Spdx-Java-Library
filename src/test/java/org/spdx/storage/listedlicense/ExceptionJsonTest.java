@@ -251,4 +251,24 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 			}
 		}
 	}
+	
+	public void testIsCollectionMembersAssignableTo() throws Exception {
+		String exceptionId = "excId";
+		ExceptionJson ej = new ExceptionJson(exceptionId);
+		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
+		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT, String.class));
+	}
+	
+	public void testIsPropertyValueAssignableTo() throws Exception {
+		String exceptionId = "excId";
+		ExceptionJson ej = new ExceptionJson(exceptionId);
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT, String.class));
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT, Boolean.class));
+
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
+		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+	}
+
 }

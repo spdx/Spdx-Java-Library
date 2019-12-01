@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
@@ -256,10 +257,39 @@ public class LicenseJson {
 		this.licenseText = fromLicense.getLicenseText();
 		this.licenseTextHtml = fromLicense.getLicenseTextHtml();
 		this.name = fromLicense.getName();
-		this.seeAlso = fromLicense.getSeeAlso();
+		this.seeAlso = new ArrayList<String>(fromLicense.getSeeAlso());
 		this.standardLicenseHeader = fromLicense.getStandardLicenseHeader();
 		this.standardLicenseHeaderHtml = fromLicense.getLicenseHeaderHtml();
 		this.standardLicenseHeaderTemplate = fromLicense.getStandardLicenseHeaderTemplate();
 		this.standardLicenseTemplate = fromLicense.getStandardLicenseTemplate();
+	}
+
+	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) throws InvalidSpdxPropertyException {
+		switch (propertyName) {
+		case "licenseText":
+		case "licenseTextHtml":
+		case "name":
+		case "standardLicenseHeader":
+		case "standardLicenseHeaderTemplate":
+		case "standardLicenseHeaderHtml":
+		case "standardLicenseTemplate":
+		case "example":
+		case "deprecatedVersion":
+		case "comment":
+		case "licenseId": return String.class.isAssignableFrom(clazz);
+		case "seeAlso": return false;
+		case "isOsiApproved":
+		case "isFsfLibre":
+		case "isDeprecatedLicenseId": return Boolean.class.isAssignableFrom(clazz);
+		default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
+	}
+
+	}
+
+	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
+		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
+			return false;
+		}
+		return String.class.isAssignableFrom(clazz);
 	}
 }

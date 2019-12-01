@@ -41,7 +41,6 @@ public class StoredTypedItemTest extends TestCase {
 	static final String[] TEST_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3", "valueProp4"};
 	static final Object[] TEST_VALUE_PROPERTY_VALUES = new Object[] {"value1", true, "value2", null};
 	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3"};
-	TypedValue[] TEST_TYPED_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	
 	/* (non-Javadoc)
@@ -207,6 +206,68 @@ public class StoredTypedItemTest extends TestCase {
 			}
 		}
 		assertFalse(sti.collectionContains(TEST_LIST_PROPERTIES[0], "notthere"));
+	}
+	
+	public void testIsPropertyValueAssignableTo() throws InvalidSPDXAnalysisException {
+		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
+		// String
+		String sProperty = "stringprop";
+		sti.addValueToList(sProperty, "String 1");
+		sti.addValueToList(sProperty, "String 2");
+		assertTrue(sti.isCollectionMembersAssignableTo(sProperty, String.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(sProperty, Boolean.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(sProperty, TypedValue.class));
+		// Boolean
+		String bProperty = "boolprop";
+		sti.addValueToList(bProperty, new Boolean(true));
+		sti.addValueToList(bProperty, new Boolean(false));
+		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, String.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(bProperty, Boolean.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, TypedValue.class));
+		// TypedValue
+		String tvProperty = "tvprop";
+		sti.addValueToList(tvProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, String.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, Boolean.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(tvProperty, TypedValue.class));
+		// Mixed
+		String mixedProperty = "mixedprop";
+		sti.addValueToList(mixedProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		sti.addValueToList(mixedProperty, new Boolean(true));
+		sti.addValueToList(mixedProperty, "mixed value");
+		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, String.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, Boolean.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, TypedValue.class));
+		// Empty
+		String emptyProperty = "emptyprop";
+		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, String.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, Boolean.class));
+		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, TypedValue.class));
+	}
+	
+	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
+		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
+		// String
+		String sProperty = "stringprop";
+		sti.setValue(sProperty, "String 1");
+		assertTrue(sti.isPropertyValueAssignableTo(sProperty, String.class));
+		assertFalse(sti.isPropertyValueAssignableTo(sProperty, Boolean.class));
+		assertFalse(sti.isPropertyValueAssignableTo(sProperty, TypedValue.class));
+		// Boolean
+		String bProperty = "boolprop";
+		sti.setValue(bProperty, new Boolean(true));
+		assertFalse(sti.isPropertyValueAssignableTo(bProperty, String.class));
+		assertTrue(sti.isPropertyValueAssignableTo(bProperty, Boolean.class));
+		assertFalse(sti.isPropertyValueAssignableTo(bProperty, TypedValue.class));
+		// TypedValue
+		String tvProperty = "tvprop";
+		sti.setValue(tvProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, String.class));
+		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, Boolean.class));
+		assertTrue(sti.isPropertyValueAssignableTo(tvProperty, TypedValue.class));
+		// Empty
+		String emptyProperty = "emptyprop";
+		assertFalse(sti.isPropertyValueAssignableTo(emptyProperty, String.class));
 	}
 
 }

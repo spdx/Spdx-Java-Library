@@ -314,4 +314,17 @@ public class InMemSpdxStore implements IModelStore {
 			throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).collectionContains(propertyName, value);
 	}
+
+	@Override
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName,
+			Class<?> clazz) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).isCollectionMembersAssignableTo(propertyName, clazz);
+	}
+
+	@Override
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+			throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).isPropertyValueAssignableTo(propertyName, clazz);
+	}
+
 }

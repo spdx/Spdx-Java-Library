@@ -225,4 +225,24 @@ public interface IModelStore {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public List<Object> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @param clazz Class to test compatibility with
+	 * @return true if all members of a collection associated with the id and propertyName can be assigned to the clazz
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException;
+	
+	/**
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @param clazz Class to test compatibility with
+	 * @return true if the value associated with the id and propertyName can be assigned to the clazz
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException;
 }

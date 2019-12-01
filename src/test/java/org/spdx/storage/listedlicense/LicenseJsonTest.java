@@ -265,5 +265,24 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 		lj.removeProperty(STRING_PROPERTY_VALUE_NAMES.get(0));
 		assertTrue(lj.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)) == null);
 	}
+	
+	public void testIsCollectionMembersAssignableTo() throws Exception {
+		String licenseId = "SpdxLicenseId1";
+		LicenseJson lj = new LicenseJson(licenseId);
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
+	}
+	
+	public void testIsPropertyValueAssignableTo() throws Exception {
+		String licenseId = "SpdxLicenseId1";
+		LicenseJson lj = new LicenseJson(licenseId);
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, Boolean.class));
+
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+	}
 
 }

@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.spdx.compare.CompareTemplateOutputHandler.DifferenceDescription;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -545,8 +546,8 @@ public class LicenseCompareHelper {
 	 */
 	private static boolean isLicenseSetsEqual(LicenseSet license1, LicenseSet license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		// note - order does not matter
-		List<AnyLicenseInfo> licenseInfos1 = license1.getMembers();
-		List<AnyLicenseInfo> licenseInfos2 = license2.getMembers();
+		Collection<AnyLicenseInfo> licenseInfos1 = license1.getMembers();
+		Collection<AnyLicenseInfo> licenseInfos2 = license2.getMembers();
 		if (licenseInfos1 == null) {
 			return licenseInfos2 == null;
 		}

@@ -17,6 +17,7 @@
  */
 package org.spdx.storage.listedlicense;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertEquals(APACHE_ID, result.getId());
 		assertTrue(result.getLicenseHeaderHtml().length() > 100);
 		assertTrue(result.getLicenseTextHtml().length() > 100);
-		List<String> lResult = result.getSeeAlso();
+		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
 		assertTrue(result.getStandardLicenseHeader().length() > 100);
@@ -183,7 +184,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		sResult = result.getLicenseExceptionTemplate();
 		assertTrue(result.getLicenseExceptionText().length() > 100);
 		assertEquals(ECOS_LICENSE_NAME, result.getName());
-		List<String> lResult = result.getSeeAlso();
+		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
 		assertEquals(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, (result.getType()));
@@ -243,6 +244,23 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
 		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
 		assertFalse(slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+	}
+	
+	public void testIsCollectionMembersAssignableTo() throws Exception {
+		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
+		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, String.class));
+	}
+	
+	public void testIsPropertyValueAssignableTo() throws Exception {
+		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, String.class));
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, Boolean.class));
+
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
+		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
 	}
 
 }

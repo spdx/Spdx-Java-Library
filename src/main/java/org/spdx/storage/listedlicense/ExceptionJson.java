@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
 import org.spdx.library.model.license.LicenseException;
 
@@ -187,6 +188,7 @@ public class ExceptionJson {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public void copyFrom(LicenseException fromException) throws InvalidSPDXAnalysisException {
 		this.comment = fromException.getComment();
 		this.deprecatedVersion = fromException.getDeprecatedVersion();
@@ -197,7 +199,7 @@ public class ExceptionJson {
 		this.licenseExceptionTemplate = fromException.getLicenseExceptionTemplate();
 		this.licenseExceptionText = fromException.getLicenseExceptionText();
 		this.name = fromException.getName();
-		this.seeAlso = fromException.getSeeAlso();
+		this.seeAlso = new ArrayList<String>(fromException.getSeeAlso());
 	}
 
 	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
@@ -205,6 +207,28 @@ public class ExceptionJson {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
 		return seeAlso.remove(value);
+	}
+
+	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) throws InvalidSpdxPropertyException {
+		switch (propertyName) {
+		case "licenseExceptionText":
+		case "name":
+		case "licenseExceptionTemplate": 
+		case "example": 
+		case "comment": 
+		case "deprecatedVersion":
+		case "licenseExceptionId": return String.class.isAssignableFrom(clazz);
+		case "seeAlso": return false;
+		case "isDeprecatedLicenseId": return Boolean.class.isAssignableFrom(clazz);
+		default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
+		}
+	}
+
+	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
+		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
+			return false;
+		}
+		return String.class.isAssignableFrom(clazz);
 	}
 
 }

@@ -17,6 +17,7 @@
  */
 package org.spdx.storage.listedlicense;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -165,7 +166,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		assertEquals(APACHE_ID, result.getId());
 		assertTrue(result.getLicenseHeaderHtml().length() > 100);
 		assertTrue(result.getLicenseTextHtml().length() > 100);
-		List<String> lResult = result.getSeeAlso();
+		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
 		assertTrue(result.getStandardLicenseHeader().length() > 100);
@@ -184,7 +185,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		sResult = result.getLicenseExceptionTemplate();
 		assertTrue(result.getLicenseExceptionText().length() > 100);
 		assertEquals(ECOS_LICENSE_NAME, result.getName());
-		List<String> lResult = result.getSeeAlso();
+		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
 		assertEquals(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, (result.getType()));

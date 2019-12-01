@@ -33,7 +33,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-class ModelCollection implements Collection<Object> {
+class ModelCollection<T extends Object> implements Collection<Object> {
 
 	private IModelStore modelStore;
 	private String documentUri;
@@ -48,7 +48,7 @@ class ModelCollection implements Collection<Object> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(this.modelStore);
+		Objects.requireNonNull(modelStore);
 		this.modelStore = modelStore;
 		Objects.requireNonNull(documentUri);
 		this.documentUri = documentUri;
@@ -122,7 +122,7 @@ class ModelCollection implements Collection<Object> {
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <AT> AT[] toArray(AT[] a) {
 		return toImmutableList().toArray(a);
 	}
 

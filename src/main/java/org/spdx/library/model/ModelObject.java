@@ -19,7 +19,6 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,7 +47,7 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  * is passed as a parameter.
  * 
  * There are 2 methods of setting values:
- *   - call the setPropertyValue, clearValueList or addPropertyValueToList methods - this will call the modelStore and store the
+ *   - call the setPropertyValue, clearValueCollection or addValueToCollection methods - this will call the modelStore and store the
  *     value immediately
  *   - Gather a list of updates by calling the updatePropertyValue, updateClearValueList, or updateAddPropertyValue
  *     methods.  These methods return a ModelUpdate which can be applied later by calling the <code>apply()</code> method.
@@ -151,24 +150,11 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param propertyName Name of the property
 	 * @return value associated with a property
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Optional<Object> getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result =  modelStore.getValue(documentUri, id, propertyName);
 		if (result.isPresent() && result.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)result.get();
 			result = Optional.of(SpdxModelFactory.createModelObject(modelStore, this.documentUri, tv.getId(), tv.getType()));
-		} else if (result.isPresent() && result.get() instanceof Collection) {
-			List converted = new ArrayList();
-			List lResult = (List)result.get();
-			for (Object element:lResult) {
-				if (element instanceof TypedValue) {
-					TypedValue tv = (TypedValue)element;
-					converted.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
-				} else {
-					converted.add(element);
-				}
-			}
-			result = Optional.of(Collections.unmodifiableList(converted));
 		} 
 		return result;
 	}
@@ -198,8 +184,8 @@ public abstract class ModelObject implements SpdxConstants {
 				}
 			}
 			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else if (value instanceof List) {
-			replacePropertyValueList(stModelStore, stDocumentUri, stId, propertyName, (List<?>)value);
+		} else if (value instanceof Collection) {
+			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value);
 		} else {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		}
@@ -297,40 +283,40 @@ public abstract class ModelObject implements SpdxConstants {
 		};
 	}
 	
-	// The following methods manage lists of values associated with a property
+	// The following methods manage collections of values associated with a property
 	/**
-	 * Clears a list of values associated with a property creating the property if it does not exist
+	 * Clears a collection of values associated with a property creating the property if it does not exist
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName Name of the property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static void clearPropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
+	public static void clearValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
 		stModelStore.clearValueCollection(stDocumentUri, stId, propertyName);
 	}
 	
 	/**
-	 * Clears a list of values associated with a property
+	 * Clears a collection of values associated with a property
 	 * @param propertyName Name of the property
 	 */
-	public void clearPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		clearPropertyValueList(modelStore, documentUri, id, propertyName);
+	public void clearValueCollection(String propertyName) throws InvalidSPDXAnalysisException {
+		clearValueCollection(modelStore, documentUri, id, propertyName);
 	}
 	
 	/**
-	 * Create an update when, when applied by the ModelStore, clears a list of values associated with a property
+	 * Create an update when, when applied by the ModelStore, clears a collection of values associated with a property
 	 * @param propertyName Name of the property
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	public ModelUpdate updateClearPropertyValueList(String propertyName) {
+	public ModelUpdate updateClearValueCollection(String propertyName) {
 		return () ->{
-			clearPropertyValueList(modelStore, documentUri, id, propertyName);
+			clearValueCollection(modelStore, documentUri, id, propertyName);
 		};
 	}
 	
 	/**
-	 * Add a value to a list of values associated with a property.  If a value is a ModelObject and does not
+	 * Add a value to a collection of values associated with a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
@@ -339,7 +325,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param value to add
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static void addPropertyValueToList(IModelStore stModelStore, String stDocumentUri, String stId, 
+	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
@@ -355,50 +341,50 @@ public abstract class ModelObject implements SpdxConstants {
 	}
 	
 	/**
-	 * Add a value to a list of values associated with a property.  If a value is a ModelObject and does not
+	 * Add a value to a collection of values associated with a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
 	 * @param propertyName  Name of the property
 	 * @param value to add
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void addPropertyValueToList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		addPropertyValueToList(modelStore, documentUri, id, propertyName, value);
+	public void addPropertyValueToCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		addValueToCollection(modelStore, documentUri, id, propertyName, value);
 	}
 	
 	/**
-	 * Create an update when, when applied, adds a value to a list of values associated with a property.  If a value is a ModelObject and does not
+	 * Create an update when, when applied, adds a value to a collection of values associated with a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
 	 * @param propertyName  Name of the property
 	 * @param value to add
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	public ModelUpdate updateAddPropertyValueToList(String propertyName, Object value) {
+	public ModelUpdate updateAddPropertyValueToCollection(String propertyName, Object value) {
 		return () ->{
-			addPropertyValueToList(modelStore, documentUri, id, propertyName, value);
+			addValueToCollection(modelStore, documentUri, id, propertyName, value);
 		};
 	}
 	
 	/**
-	 * Replace the entire value list for a property.  If a value is a ModelObject and does not
+	 * Replace the entire value collection for a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName name of the property
-	 * @param values list of new properties
+	 * @param values collection of new properties
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static void replacePropertyValueList(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, List<?> values) throws InvalidSPDXAnalysisException {
-		clearPropertyValueList(stModelStore, stDocumentUri, stId, propertyName);
+	private static void replacePropertyValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
+			String propertyName, Collection<?> values) throws InvalidSPDXAnalysisException {
+		clearValueCollection(stModelStore, stDocumentUri, stId, propertyName);
 		for (Object value:values) {
-			addPropertyValueToList(stModelStore, stDocumentUri, stId, propertyName, value);
+			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value);
 		}
 	}
 	
 
 	/**
-	 * Remove a property value from a list
+	 * Remove a property value from a collection
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
@@ -406,7 +392,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param value Value to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static void removePropertyValueFromList(IModelStore stModelStore, String stDocumentUri, String stId, 
+	public static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		if (value instanceof ModelObject) {
 			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
@@ -416,57 +402,55 @@ public abstract class ModelObject implements SpdxConstants {
 	}
 	
 	/**
-	 * Remove a property value from a list
+	 * Remove a property value from a collection
 	 * @param propertyName name of the property
 	 * @param value Value to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void removePropertyValueFromList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		removePropertyValueFromList(modelStore, documentUri, id, propertyName, value);
+	public void removePropertyValueFromCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		removePropertyValueFromCollection(modelStore, documentUri, id, propertyName, value);
 	}
 	
 	/**
-	 * Create an update when, when applied, removes a property value from a list
+	 * Create an update when, when applied, removes a property value from a collection
 	 * @param propertyName name of the property
 	 * @param value Value to be removed
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	public ModelUpdate updateRemovePropertyValueFromList(String propertyName, Object value) {
+	public ModelUpdate updateRemovePropertyValueFromCollection(String propertyName, Object value) {
 		return () -> {
-			removePropertyValueFromList(modelStore, documentUri, id, propertyName, value);
+			removePropertyValueFromCollection(modelStore, documentUri, id, propertyName, value);
 		};
 	}
 	
 	/**
 	 * @param propertyName Name of the property
-	 * @return List of values associated with a property
+	 * @return collection of values associated with a property
 	 */
-	public List<?> getObjectPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(propertyName);
-		if (!retval.isPresent()) {
-			return new ArrayList<>();	// return an empty list
-		}
-		if (!(retval.get() instanceof List<?>)) {
-			throw new SpdxInvalidTypeException("Expected a list for the value of property "+propertyName);
-		}
-		return (List<?>)retval.get();
+	public ModelCollection<Object> getObjectPropertyValueCollection(String propertyName) throws InvalidSPDXAnalysisException {
+		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName);
 	}
 	
 	/**
 	 * @param propertyName Name of property
-	 * @return List of Strings associated with the property
+	 * @return Collection of Strings associated with the property
 	 * @throws SpdxInvalidTypeException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getStringPropertyValueList(String propertyName) throws InvalidSPDXAnalysisException {
-		List<?> oList = getObjectPropertyValueList(propertyName);
-		if (oList == null) {
-			return null;
+	public Collection<String> getStringCollection(String propertyName) throws InvalidSPDXAnalysisException {
+		if (!isCollectionMembersAssignableTo(propertyName, String.class)) {
+			throw new SpdxInvalidTypeException("Property "+propertyName+" does not contain a collection of Strings");
 		}
-		if (oList.size() > 0 && (!(oList.get(0) instanceof String))) {
-			throw new SpdxInvalidTypeException("Property "+propertyName+" does not contain a list of Strings");
+		return (Collection<String>)(Collection<?>)getObjectPropertyValueCollection(propertyName);
+	}
+	
+	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException {
+		if (ModelObject.class.isAssignableFrom(clazz)) {
+			return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, TypedValue.class);
+			//TODO: We should also check the specific types in the typed values for a match
+		} else {
+			return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, clazz);
 		}
-		return (List<String>)oList;
 	}
 	
 	/**
@@ -483,16 +467,14 @@ public abstract class ModelObject implements SpdxConstants {
 			if (comparePropertyValueNames.contains(propertyName)) {
 				Optional<Object> myValue = this.getObjectPropertyValue(propertyName);
 				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
-				if (!myValue.isPresent() || !(myValue.get() instanceof List)) {
+				if (!myValue.isPresent() || !(myValue.get() instanceof ModelCollection)) {
 					if (!Objects.equals(myValue, compareValue)) {
 						return false;
 					}
-				} else { // list type			
-					if (!compareValue.isPresent() || !(compareValue.get() instanceof List<?>)) {
-						return false;
-					}
-					List<?> myList = (List<?>)myValue.get();
-					List<?> compareList = (List<?>)compareValue.get();
+				} else { // collection type			
+					
+					List<?> myList = ((ModelCollection<?>)myValue.get()).toImmutableList();
+					List<?> compareList = ((ModelCollection<?>)compareValue.get()).toImmutableList();
 					int numRemainingComp = compareList.size();
 					for (Object item:myList) {
 						if (compareList.contains(item)) {
