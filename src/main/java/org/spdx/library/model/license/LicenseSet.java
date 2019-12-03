@@ -52,7 +52,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @param licenseInfos New members for the set
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setMembers(List<AnyLicenseInfo> licenseInfos) throws InvalidSPDXAnalysisException {
+	public void setMembers(Collection<AnyLicenseInfo> licenseInfos) throws InvalidSPDXAnalysisException {
 		setPropertyValue(PROP_LICENSE_SET_MEMEBER, licenseInfos);
 	}
 	

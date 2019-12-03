@@ -19,7 +19,6 @@
 package org.spdx.library.model.license;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -117,7 +116,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @param seeAlsoUrl the urls which are references to the same license to set
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setSeeAlso(List<String> seeAlsoUrl) throws InvalidSPDXAnalysisException {
+	public void setSeeAlso(Collection<String> seeAlsoUrl) throws InvalidSPDXAnalysisException {
 		if (seeAlsoUrl == null) {
 			clearValueCollection(RDFS_PROP_SEE_ALSO);
 		} else {

@@ -49,7 +49,22 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	public LicenseException(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
 	}
-	
+
+	public LicenseException(String id, String name, String text,
+			Collection<String> seeAlso, String comment) throws InvalidSPDXAnalysisException {
+		super(id);
+		setName(name);
+		setLicenseExceptionText(text);
+		setSeeAlso(seeAlso);
+		setComment(comment);
+	}
+
+	public LicenseException(String id, String name, String text,
+			String template, Collection<String> seeAlso, String comment) throws InvalidSPDXAnalysisException {
+		this(id, name, text, seeAlso, comment);
+		setLicenseExceptionTemplate(template);
+	}
+
 	/**
 	 * @return Comment associated with the License Exception
 	 * @throws InvalidSPDXAnalysisException 
@@ -177,14 +192,14 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 		return getStringCollection(RDFS_PROP_SEE_ALSO);
 	}
 	/**
-	 * @param seeAlsoUrl the urls which are references to the same license to set
+	 * @param seeAlso the urls which are references to the same license to set
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setSeeAlso(List<String> seeAlsoUrl) throws InvalidSPDXAnalysisException {
-		if (seeAlsoUrl == null) {
+	public void setSeeAlso(Collection<String> seeAlso) throws InvalidSPDXAnalysisException {
+		if (seeAlso == null) {
 			clearValueCollection(RDFS_PROP_SEE_ALSO);
 		} else {
-			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
+			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlso);
 		}
 	}
 	
@@ -271,7 +286,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 		String exceptionText;
 		try {
 			exceptionText = this.getLicenseExceptionText();
-			if (exceptionText == null || exceptionText.isEmpty()) {
+			if (exceptionText == null || exceptionText.trim().isEmpty()) {
 				retval.add("Missing required exception text for " + id);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
