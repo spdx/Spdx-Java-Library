@@ -40,7 +40,7 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo {
 		super(NOASSERTION_LICENSE_ID);
 	}
 
-	SpdxNoAssertionLicense(IModelStore modelStore, String documentUri)
+	public SpdxNoAssertionLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, NOASSERTION_LICENSE_ID, true);
 	}
@@ -81,6 +81,6 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo {
 
 	@Override
 	public String getType() {
-		return SpdxConstants.NOASSERTION_VALUE;
+		return CLASS_NOASSERTION_LICENSE;
 	}
 }

@@ -26,6 +26,8 @@ import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 
 /**
  * @author gary
@@ -61,6 +63,8 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_SNIPPET: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return new SpdxNoAssertionLicense(modelStore, documentUri);
+		case SpdxConstants.CLASS_NONE_LICENSE: return new SpdxNoneLicense(modelStore, documentUri);
 		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, true);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}

@@ -40,7 +40,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo {
 		super(NONE_LICENSE_ID);
 	}
 
-	SpdxNoneLicense(IModelStore modelStore, String documentUri)
+	public SpdxNoneLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, NONE_LICENSE_ID, true);
 	}
@@ -79,7 +79,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo {
 
 	@Override
 	public String getType() {
-		return NONE_VALUE;
+		return CLASS_NONE_LICENSE;
 	}
 	
 	
