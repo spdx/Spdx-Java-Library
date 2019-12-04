@@ -87,7 +87,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		lic.setComment(COMMENT1);
 		IModelStore modelStore = new InMemSpdxStore();
 
-		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
+		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertEquals(ID1, lic2.getLicenseId());
 		assertEquals(TEXT1, lic2.getExtractedText());
@@ -114,7 +114,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		ExtractedLicenseInfo lic = new ExtractedLicenseInfo(ID1, TEXT1);
 		lic.setComment(COMMENT1);
 		IModelStore modelStore = new InMemSpdxStore();
-		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
+		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		lic2.setExtractedText(TEXT2);
 		assertEquals(ID1, lic2.getLicenseId());
@@ -134,7 +134,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		lic.setComment(COMMENT1);
 		IModelStore modelStore = new InMemSpdxStore();
 
-		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
+		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		lic2.setComment(COMMENT2);
 		assertEquals(ID1, lic2.getLicenseId());
@@ -149,7 +149,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		lic.setName(LICENSENAME1);
 		IModelStore modelStore = new InMemSpdxStore();
 
-		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
+		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		lic2.setName(LICENSENAME2);
 		assertEquals(LICENSENAME2, lic2.getName());
@@ -163,7 +163,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		lic.setSeeAlso(Arrays.asList(SOURCEURLS1));
 		IModelStore modelStore = new InMemSpdxStore();
 
-		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
+		modelStore.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultModelStore());
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		lic2.setSeeAlso(Arrays.asList(SOURCEURLS2));
 		if (!compareArrayContent(SOURCEURLS2, (String[])lic2.getSeeAlso().toArray(new String[lic2.getSeeAlso().size()]))) {

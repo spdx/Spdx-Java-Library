@@ -18,10 +18,13 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 
 
 /**
@@ -45,15 +48,29 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	}
 	
 	/**
+	 * Create a new OrLaterOperator applied to license using the same ModelStore and DocumentURI as the license
+	 * @param license License the OrLater applies to
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public OrLaterOperator(SimpleLicensingInfo license) throws InvalidSPDXAnalysisException {
+		super(license.getModelStore(), license.getDocumentUri(), 
+				license.getModelStore().getNextId(IdType.Anonomous, license.getDocumentUri()), true);
+		setLicense(license);
+	}
+
+	/**
 	 * @return the license
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public SimpleLicensingInfo getLicense() throws InvalidSPDXAnalysisException {
-		Object retval = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
-		if (!(retval instanceof SimpleLicensingInfo)) {
+		Optional<Object> retval = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
+		if (!retval.isPresent()) {
+			throw new SpdxInvalidTypeException("Missing required license for OrLater operator");
+		}
+		if (!(retval.get() instanceof SimpleLicensingInfo)) {
 			throw new SpdxInvalidTypeException("Expecting SimpleLicensingInfo for or operator license type.  Found "+retval.getClass().toString());
 		}
-		return (SimpleLicensingInfo)retval;
+		return (SimpleLicensingInfo)retval.get();
 	}
 
 	/**
@@ -104,5 +121,32 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	@Override
 	public String getType() {
 		return CLASS_OR_LATER_OPERATOR;
+	}
+	
+	@Override
+	public boolean equals(Object compare) {
+		if (!(compare instanceof OrLaterOperator)) {
+			return false;
+		}
+		SimpleLicensingInfo cLic;
+		try {
+			cLic = ((OrLaterOperator)compare).getLicense();
+			return Objects.equals(this.getLicense(), cLic);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override 
+	public int hashCode() {
+		int licHashCode = 101;
+		try {
+			if (this.getLicense() != null) {
+				licHashCode = this.getLicense().hashCode() ^ 101;
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			// Ignore - use the null value
+		}
+		return licHashCode;
 	}
 }

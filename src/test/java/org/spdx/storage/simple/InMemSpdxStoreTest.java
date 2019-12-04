@@ -274,11 +274,11 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		store2.copyFrom(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION, store);
-		assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]));
-		assertEquals(2, store2.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(store2.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store2.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		store2.copyFrom(TEST_DOCUMENT_URI2, TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION, store);
+		assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_VALUE_PROPERTIES[0]));
+		assertEquals(2, store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
+		assertTrue(store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
+		assertTrue(store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
 	}
 	
 	public void testRemoveListItem() throws InvalidSPDXAnalysisException {

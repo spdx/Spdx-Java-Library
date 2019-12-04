@@ -33,8 +33,8 @@ import junit.framework.TestCase;
  * @author gary
  *
  */
-public class ConjunctiveLicenseSetTest extends TestCase {
-	
+public class DisjunctiveLiceseSetTest extends TestCase {
+
 	static final String DOCUMENT_URI = "https://test.document.uri";
 	String[] IDS = new String[] {"LicenseRef-id1", "LicenseRef-id2", "LicenseRef-id3", "LicenseRef-id4"};
 	String[] TEXTS = new String[] {"text1", "text2", "text3", "text4"};
@@ -62,15 +62,16 @@ public class ConjunctiveLicenseSetTest extends TestCase {
 		super.tearDown();
 	}
 
-	public void testCreateConjunctive() throws InvalidSPDXAnalysisException {
+	public void testCreateDisjunctive() throws InvalidSPDXAnalysisException {
 		String id = modelStore.getNextId(IdType.Anonomous, DOCUMENT_URI);
-		ConjunctiveLicenseSet cls = new ConjunctiveLicenseSet(modelStore, DOCUMENT_URI, id, true);
+		DisjunctiveLicenseSet cls = new DisjunctiveLicenseSet(modelStore, DOCUMENT_URI, id, true);
 		cls.setMembers(Arrays.asList(NON_STD_LICENSES));
-		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET);
+		DisjunctiveLicenseSet cls2 = (DisjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET);
 		assertTrue(cls.equals(cls2));
 		List<String> verify = cls2.verify();
 		assertEquals(0, verify.size());
 		verify = cls.verify();
 		assertEquals(0, verify.size());
 	}
+
 }

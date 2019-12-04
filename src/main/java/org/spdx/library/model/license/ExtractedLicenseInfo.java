@@ -168,10 +168,12 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	
 	@Override
 	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
-		if (!(compare instanceof ExtractedLicenseInfo)) {
-			return false;
+		if (compare instanceof ExtractedLicenseInfo) {
+			// Only test for the text - other fields do not need to equal to be considered equivalent
+			return LicenseCompareHelper.isLicenseTextEquivalent(this.getExtractedText(), ((ExtractedLicenseInfo)compare).getExtractedText());
+		} else {
+			return super.equivalent(compare);
 		}
-		// Only test for the text - other fields do not need to equal to be considered equivalent
-		return LicenseCompareHelper.isLicenseTextEquivalent(this.getExtractedText(), ((ExtractedLicenseInfo)compare).getExtractedText());
+		
 	}
 }

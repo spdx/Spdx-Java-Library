@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.storage.IModelStore;
@@ -301,5 +303,14 @@ public abstract class License extends SimpleLicensingInfo {
 	
 	public ModelUpdate updateSetDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
 		return updatePropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
+	}
+	
+	@Override
+	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+		if (compare instanceof License) {
+			return LicenseCompareHelper.isLicenseTextEquivalent(this.getLicenseText(), ((License)compare).getLicenseText());
+		} else {
+			return super.equivalent(compare);
+		}
 	}
 }

@@ -262,18 +262,18 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public void copyFrom(String documentUri, String id, String type, IModelStore store)
+	public void copyFrom(String toDocumentUri, String fromDocumentUri, String id, String type, IModelStore store)
 			throws InvalidSPDXAnalysisException {
 		if (store == this) {
 			return;	// check to make sure were not copying to ourself
 		}
-		create(documentUri, id, type);
-		StoredTypedItem copyTo = getItem(documentUri, id);
+		create(toDocumentUri, id, type);
+		StoredTypedItem copyTo = getItem(toDocumentUri, id);
 		if (copyTo == null) {
 			// must have been deleted send it was created
 			return;
 		}
-		copyTo.copyValuesFrom(store);
+		copyTo.copyValuesFrom(fromDocumentUri, store);
 	}
 
 	@Override

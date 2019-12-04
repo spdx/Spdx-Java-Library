@@ -141,12 +141,14 @@ public interface IModelStore {
 
 	/**
 	 * Copy an object from a different Object store creating if it doesn't exist and copying all parameters
-	 * @param documentUri document URI
+	 * @param toDocumentUri document URI to be copied to
+	 * @param fromDocumentUri document URI to be copied from
 	 * @param id unique ID within the SPDX document
 	 * @param type The class name for this object.  Class names are defined in the constants file
+	 * @param fromstore the model store to be containing the object to be copied from
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void copyFrom(String documentUri, String id, String type, IModelStore store) throws InvalidSPDXAnalysisException;
+	public void copyFrom(String toDocumentUri, String fromDocumentUri, String id, String type, IModelStore fromStore) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @return a list of all Document URI's stored in the model store

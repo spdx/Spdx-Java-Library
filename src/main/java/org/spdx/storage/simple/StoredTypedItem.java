@@ -156,13 +156,14 @@ class StoredTypedItem extends TypedValue {
 
 	/**
 	 * Copy all values for this item from another store
+	 * @param fromDocumentUri 
 	 * @param store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void copyValuesFrom(IModelStore store) throws InvalidSPDXAnalysisException {
-		List<String> propertyNames = store.getPropertyValueNames(this.getDocumentUri(), this.getId());
+	public void copyValuesFrom(String fromDocumentUri, IModelStore store) throws InvalidSPDXAnalysisException {
+		List<String> propertyNames = store.getPropertyValueNames(fromDocumentUri, this.getId());
 		for (String propertyName:propertyNames) {
-			Optional<Object> value = store.getValue(getDocumentUri(), getId(), propertyName);
+			Optional<Object> value = store.getValue(fromDocumentUri, getId(), propertyName);
 			if (value.isPresent()) {
 				this.setValue(propertyName, value.get());
 			}

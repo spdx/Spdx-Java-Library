@@ -1,4 +1,4 @@
-package org.spdx.storage.listedlicense;
+package org.spdx.library.model.license;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;

@@ -731,11 +731,17 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public void copyFrom(String documentUri, String id, String type, IModelStore store) throws InvalidSPDXAnalysisException {
+	public void copyFrom(String toDocumentUri, String fromDocumentUri, String id, String type, IModelStore store) throws InvalidSPDXAnalysisException {
+		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(toDocumentUri)) {
+			throw new InvalidSPDXAnalysisException("Expected listed license document URI for copyFrom toDocumentUri.  Found "+toDocumentUri);
+		}
+		if (!SpdxConstants.LISTED_LICENSE_DOCUMENT_URI.equals(fromDocumentUri)) {
+			throw new InvalidSPDXAnalysisException("Expected listed license document URI for copyFrom fromDocumentUri.  Found "+fromDocumentUri);
+		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
-				create(documentUri, id, type);
+				create(toDocumentUri, id, type);
 				LicenseJson toLicense = this.listedLicenseCache.get(id);
 				SpdxListedLicense fromLicense = (SpdxListedLicense)SpdxModelFactory.createModelObject(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
 				try {
@@ -744,7 +750,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					throw new InvalidSPDXAnalysisException("Invalid license template found in "+id,e);
 				}
 			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
-				create(documentUri, id, type);
+				create(toDocumentUri, id, type);
 				ExceptionJson toException = this.listedExceptionCache.get(id);
 				LicenseException fromException = (LicenseException)SpdxModelFactory.createModelObject(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
 				toException.copyFrom(fromException);

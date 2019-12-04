@@ -16,11 +16,13 @@
  */
 package org.spdx.library.model.license;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
@@ -53,6 +55,38 @@ public class SpdxListedLicense extends License {
 	 */
 	public SpdxListedLicense(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
+	}
+	
+	/**
+	 * @param name License name
+	 * @param id License ID
+	 * @param text License text
+	 * @param sourceUrl Optional URLs that reference this license
+	 * @param comments Optional comments
+	 * @param standardLicenseHeader Optional license header
+	 * @param template Optional template
+	 * @param osiApproved True if this is an OSI Approved license
+	 * @param fsfLibre true if FSF describes the license as free / libre, false if FSF describes the license as not free / libre, null if FSF does not reference the license
+	 * @param licenseTextHtml HTML version for the license text
+	 * @param isDeprecated True if this license has been designated as deprecated by the SPDX legal team
+	 * @param deprecatedVersion License list version when this license was first deprecated (null if not deprecated)
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxListedLicense(String name, String id, String text, Collection<String> sourceUrl, String comments,
+			String standardLicenseHeader, String template, boolean osiApproved, Boolean fsfLibre, 
+			String licenseTextHtml, boolean isDeprecated, String deprecatedVersion) throws InvalidSPDXAnalysisException {
+		this(id);
+		setName(name);
+		setLicenseText(text);
+		setSeeAlso(sourceUrl);
+		setComment(comments);
+		setStandardLicenseHeader(standardLicenseHeader);
+		setStandardLicenseTemplate(template);
+		setOsiApproved(osiApproved);
+		setFsfLibre(fsfLibre);
+		setLicenseTextHtml(licenseTextHtml);
+		setDeprecated(isDeprecated);
+		setDeprecatedVersion(deprecatedVersion);
 	}
 
 	@Override 
@@ -158,6 +192,15 @@ public class SpdxListedLicense extends License {
 	@Override
 	public String getType() {
 		return SpdxConstants.CLASS_SPDX_LISTED_LICENSE;
+	}
+	
+	@Override
+	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+		if (compare instanceof SpdxListedLicense) {
+			return this.getLicenseId().equals(((SpdxListedLicense)compare).getLicenseId());	// for listed license, the license ID is the only thing that matters
+		} else {
+			return super.equivalent(compare);
+		}
 	}
 
 }

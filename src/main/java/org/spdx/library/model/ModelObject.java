@@ -179,9 +179,10 @@ public abstract class ModelObject implements SpdxConstants {
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
-				if (stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
-					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+				if (!stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+					stModelStore.create(mValue.getDocumentUri(), mValue.getId(), mValue.getType());
 				}
+				stModelStore.copyFrom(stDocumentUri, mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 			}
 			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else if (value instanceof Collection) {
@@ -331,7 +332,7 @@ public abstract class ModelObject implements SpdxConstants {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
 				if (!stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
-					stModelStore.copyFrom(mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
+					stModelStore.copyFrom(stDocumentUri, mValue.getDocumentUri(), mValue.getId(), mValue.getType(), mValue.getModelStore());
 				}
 			}
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
@@ -552,7 +553,7 @@ public abstract class ModelObject implements SpdxConstants {
 		for (String propertyName:propertyValueNames) {
 			Optional<Object> value = source.getObjectPropertyValue(propertyName);
 			if (value.isPresent()) {
-				setPropertyValue(propertyName, source.getObjectPropertyValue(propertyName).get());
+				setPropertyValue(propertyName, value.get());
 			}
 		}
 	}
