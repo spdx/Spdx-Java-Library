@@ -140,17 +140,6 @@ public interface IModelStore {
 	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * Copy an object from a different Object store creating if it doesn't exist and copying all parameters
-	 * @param toDocumentUri document URI to be copied to
-	 * @param fromDocumentUri document URI to be copied from
-	 * @param id unique ID within the SPDX document
-	 * @param type The class name for this object.  Class names are defined in the constants file
-	 * @param fromstore the model store to be containing the object to be copied from
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public void copyFrom(String toDocumentUri, String fromDocumentUri, String id, String type, IModelStore fromStore) throws InvalidSPDXAnalysisException;
-
-	/**
 	 * @return a list of all Document URI's stored in the model store
 	 */
 	public List<String> getDocumentUris();
@@ -247,4 +236,12 @@ public interface IModelStore {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @param propertyName Name of the property
+	 * @return true if the propertyName represents multiple values
+	 */
+	public boolean isCollectionProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 }

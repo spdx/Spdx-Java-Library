@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
+import org.spdx.library.model.ModelCollection;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.SpdxModelFactory;
@@ -240,7 +241,12 @@ public class InMemSpdxStore implements IModelStore {
 
 	@Override
 	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return Optional.ofNullable(getItem(documentUri, id).getValue(propertyName));
+		StoredTypedItem item = getItem(documentUri, id);
+		if (item.isCollectionProperty(propertyName)) {
+			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyName));
+		} else {
+			return Optional.ofNullable(item.getValue(propertyName));
+		}
 	}
 
 	@Override
@@ -259,21 +265,6 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
 		getItem(documentUri, id).removeProperty(propertyName);
-	}
-
-	@Override
-	public void copyFrom(String toDocumentUri, String fromDocumentUri, String id, String type, IModelStore store)
-			throws InvalidSPDXAnalysisException {
-		if (store == this) {
-			return;	// check to make sure were not copying to ourself
-		}
-		create(toDocumentUri, id, type);
-		StoredTypedItem copyTo = getItem(toDocumentUri, id);
-		if (copyTo == null) {
-			// must have been deleted send it was created
-			return;
-		}
-		copyTo.copyValuesFrom(fromDocumentUri, store);
 	}
 
 	@Override
@@ -325,6 +316,12 @@ public class InMemSpdxStore implements IModelStore {
 	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).isPropertyValueAssignableTo(propertyName, clazz);
+	}
+
+	@Override
+	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
+			throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).isCollectionProperty(propertyName);
 	}
 
 }

@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelUpdate;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -227,11 +228,14 @@ public class ModelObjectTest extends TestCase {
 				assertTrue(compareLists(entry.getValue(), result.get()));
 			} else if (result.get() instanceof ModelObject) {
 				assertEquals(entry.getValue(), ((ModelObject)(result.get())).toTypedValue());
+			} else if (result.get() instanceof ModelCollection) {
+				assertTrue(compareLists(entry.getValue(), ((ModelCollection<?>)result.get()).toImmutableList()));
 			} else {
 				assertEquals(entry.getValue(), result.get());
 			}
 		}
 	}
+
 
 	/**
 	 * Test method for {@link org.spdx.library.model.ModelObject#setPropertyValue(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
@@ -516,6 +520,62 @@ public class ModelObjectTest extends TestCase {
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		GenericModelObject gmo3 = new GenericModelObject(store2, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo3);
+		assertTrue(gmo.equivalent(gmo3));
+		assertTrue(gmo3.equivalent(gmo2));
+	}
+	
+	public void testEquivalentModelObjectProp() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
+		String id1 = "id1";
+		String id2 = "id2";
+		String text = "licenseText";
+		String prop = "prop";
+		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(id1, text);
+		ExtractedLicenseInfo eli2 = new ExtractedLicenseInfo(id2, text);
+		assertTrue(eli.equivalent(eli2));
+		assertFalse(eli.equals(eli2));
+		gmo.setPropertyValue(prop, eli);
+		assertTrue(gmo.equivalent(gmo));
+		// different store
+		InMemSpdxStore store2 = new InMemSpdxStore();
+		GenericModelObject gmo3 = new GenericModelObject(store2, TEST_DOCUMENT_URI, TEST_ID, true);
+		gmo3.setPropertyValue(prop, eli2);
+		assertTrue(gmo.equivalent(gmo3));
+	}
+	
+	public void testEquivalentModelObjectList() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
+		String id1 = "id1";
+		String id2 = "id2";
+		String text = "licenseText";
+		String prop = "prop";
+		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(id1, text);
+		ExtractedLicenseInfo eli2 = new ExtractedLicenseInfo(id2, text);
+		String id3 = "id3";
+		String id4 = "id4";
+		String text2 = "license text 2";
+		ExtractedLicenseInfo nextEli = new ExtractedLicenseInfo(id3, text2);
+		ExtractedLicenseInfo nextEli2 = new ExtractedLicenseInfo(id4, text2);
+		assertTrue(eli.equivalent(eli2));
+		assertFalse(eli.equals(eli2));
+		assertTrue(nextEli.equivalent(nextEli2));
+		assertFalse(nextEli.equals(nextEli2));
+		gmo.addPropertyValueToCollection(prop, eli);
+		gmo.addPropertyValueToCollection(prop, nextEli);
+		assertTrue(gmo.equivalent(gmo));
+		// same store
+		GenericModelObject gmo2 = new GenericModelObject(store, TEST_DOCUMENT_URI, "TestId2", true);
+		gmo2.addPropertyValueToCollection(prop, eli2);
+		gmo2.addPropertyValueToCollection(prop, nextEli2);
+		assertTrue(gmo.equivalent(gmo2));
+		assertTrue(gmo2.equivalent(gmo));
+		// different store
+		InMemSpdxStore store2 = new InMemSpdxStore();
+		GenericModelObject gmo3 = new GenericModelObject(store2, TEST_DOCUMENT_URI, TEST_ID, true);
+		gmo3.addPropertyValueToCollection(prop, eli2);
+		gmo3.addPropertyValueToCollection(prop, nextEli2);
 		assertTrue(gmo.equivalent(gmo3));
 		assertTrue(gmo3.equivalent(gmo2));
 	}

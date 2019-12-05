@@ -135,7 +135,7 @@ class StoredTypedItem extends TypedValue {
 		if (!(list instanceof List)) {
 			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyName);
 		}
-		return (List<Object>)list;
+		return Collections.unmodifiableList((List<Object>)list);
 	}
 	
 	/**
@@ -241,5 +241,10 @@ class StoredTypedItem extends TypedValue {
 			return false;
 		}
 		return value.getClass().isAssignableFrom(clazz);
+	}
+
+	public boolean isCollectionProperty(String propertyName) {
+		Object value = properties.get(propertyName);
+		return value instanceof List;
 	}
 }

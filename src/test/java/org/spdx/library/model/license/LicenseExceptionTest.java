@@ -24,6 +24,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -83,7 +84,7 @@ public class LicenseExceptionTest extends TestCase {
 				EXCEPTION_COMMENT1);
 		le.setDeprecated(true);
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.copyFrom(DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, DefaultModelStore.getDefaultModelStore());
+		ModelObject.copy(store, DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1,DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
 		LicenseException le2 = new LicenseException(store, DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, false);
 		
 		assertEquals(EXCEPTION_ID1, le2.getLicenseExceptionId());

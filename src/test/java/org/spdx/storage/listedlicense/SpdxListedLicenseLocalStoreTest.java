@@ -155,7 +155,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		String licenseText = result.getLicenseText();
 		assertTrue(licenseText.length() > 100);
 		assertTrue(result.getComment().length() > 5);
-		String sResult = result.getDeprecatedVersion();
 		assertEquals(LICENSE_LIST_URI, result.getDocumentUri());
 		assertTrue(result.getFsfLibre());
 		assertFalse(result.isDeprecated());
@@ -178,10 +177,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertEquals(ECOS_EXCEPTION_ID, result.getLicenseExceptionId());
 		assertEquals(ECOS_EXCEPTION_ID, result.getId());
 		assertTrue(result.getComment().length() > 5);
-		String sResult = result.getDeprecatedVersion();
 		assertEquals(LICENSE_LIST_URI, result.getDocumentUri());
-		sResult = result.getExample();
-		sResult = result.getLicenseExceptionTemplate();
 		assertTrue(result.getLicenseExceptionText().length() > 100);
 		assertEquals(ECOS_LICENSE_NAME, result.getName());
 		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
@@ -261,6 +257,12 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 
 		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
 		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+	}
+	
+	public void testIsCollectionProperty() throws Exception {
+		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
+		assertTrue(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED));
 	}
 
 }

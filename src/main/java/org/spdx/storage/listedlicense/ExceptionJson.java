@@ -231,4 +231,8 @@ public class ExceptionJson {
 		return String.class.isAssignableFrom(clazz);
 	}
 
+	public boolean isCollectionProperty(String propertyName) {
+		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName);
+	}
+
 }

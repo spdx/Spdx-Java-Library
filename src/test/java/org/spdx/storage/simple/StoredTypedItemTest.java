@@ -269,5 +269,16 @@ public class StoredTypedItemTest extends TestCase {
 		String emptyProperty = "emptyprop";
 		assertFalse(sti.isPropertyValueAssignableTo(emptyProperty, String.class));
 	}
+	
+	public void testIsCollectionProperty() throws InvalidSPDXAnalysisException {
+		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
+		// String
+		String sProperty = "stringprop";
+		sti.setValue(sProperty, "String 1");
+		String listProperty = "listProp";
+		sti.addValueToList(listProperty, "testValue");
+		assertTrue(sti.isCollectionProperty(listProperty));
+		assertFalse(sti.isCollectionProperty(sProperty));
+	}
 
 }

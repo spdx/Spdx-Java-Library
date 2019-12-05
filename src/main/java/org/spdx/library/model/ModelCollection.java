@@ -33,7 +33,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-class ModelCollection<T extends Object> implements Collection<Object> {
+public class ModelCollection<T extends Object> implements Collection<Object> {
 
 	private IModelStore modelStore;
 	private String documentUri;
@@ -47,7 +47,7 @@ class ModelCollection<T extends Object> implements Collection<Object> {
 	 * @param clazz The class of the elements to be stored in the collection
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore);
 		this.modelStore = modelStore;
 		Objects.requireNonNull(documentUri);
