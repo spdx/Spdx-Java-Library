@@ -39,6 +39,8 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  * Provides the primary interface to the storage class that access and stores the data for 
  * the model objects.
  * 
+ * This class includes several helper methods to manage the storage and retrieval of properties.
+ * 
  * Each model object is in itself stateless.  All state is maintained in the Model Store.  
  * The Document URI uniquely identifies the document containing the model object.
  * 
@@ -54,6 +56,12 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  *     A convenience method <code>Write.applyUpdatesInOneTransaction</code> will perform all updates within
  *     a single transaction. This method may result in higher performance updates for some Model Store implementations.
  *     Note that none of the updates will be applied until the storage manager update method is invoked.
+ * 
+ * Property values are restricted to the following types:
+ *   - String - Java Strings
+ *   - Booolean - Java Boolean or primitive boolean types
+ *   - ModelObject - A concrete subclass of this type
+ *   - Collection<T> - A Collection of type T where T is one of the supported non-collection types
  *     
  * This class also handles the conversion of a ModelObject to and from a TypeValue for storage in the ModelStore.
  *
@@ -204,8 +212,10 @@ public abstract class ModelObject implements SpdxConstants {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value);
-		} else {
+		} else if (value instanceof String || value instanceof Boolean) {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
+		} else {
+			throw new SpdxInvalidTypeException("Property value type not supported: "+value.getClass().getName());
 		}
 	}
 	
@@ -345,6 +355,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 */
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(value);
 		if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
@@ -353,8 +364,10 @@ public abstract class ModelObject implements SpdxConstants {
 				}
 			}
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else {
+		} else if (value instanceof String || value instanceof Boolean) {
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
+		} else {
+			throw new SpdxInvalidTypeException("Unsupported type to add to a collection: "+value.getClass().getName());
 		}
 	}
 	

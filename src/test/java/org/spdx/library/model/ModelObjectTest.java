@@ -89,7 +89,21 @@ public class ModelObjectTest extends TestCase {
 	
 	protected void addTestValues(ModelObject mo) throws InvalidSPDXAnalysisException {
 		for (Entry<String, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
-			mo.setPropertyValue(entry.getKey(), entry.getValue());
+			if (entry.getValue() instanceof TypedValue) {
+				TypedValue tv = (TypedValue)entry.getValue();
+				mo.setPropertyValue(entry.getKey(), SpdxModelFactory.createModelObject(mo.getModelStore(), 
+						mo.getDocumentUri(), tv.getId(), tv.getType()));
+			} else if (entry.getValue() instanceof List && 
+					((List<?>)(entry.getValue())).size() > 0 && ((List<?>)(entry.getValue())).get(0) instanceof TypedValue) {
+				@SuppressWarnings("unchecked")
+				List<TypedValue> list = (List<TypedValue>)entry.getValue();
+				for (TypedValue tv:list) {
+					mo.addPropertyValueToCollection(entry.getKey(),  SpdxModelFactory.createModelObject(mo.getModelStore(), 
+						mo.getDocumentUri(), tv.getId(), tv.getType()));
+				}
+			} else {
+				mo.setPropertyValue(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 	
