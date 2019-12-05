@@ -52,9 +52,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 
 	public LicenseException(String id, String name, String text,
 			Collection<String> seeAlso, String comment) throws InvalidSPDXAnalysisException {
-		super(id);
-		setName(name);
-		setLicenseExceptionText(text);
+		this(id, name, text);
 		setSeeAlso(seeAlso);
 		setComment(comment);
 	}
@@ -63,6 +61,12 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 			String template, Collection<String> seeAlso, String comment) throws InvalidSPDXAnalysisException {
 		this(id, name, text, seeAlso, comment);
 		setLicenseExceptionTemplate(template);
+	}
+
+	public LicenseException(String id, String name, String text) throws InvalidSPDXAnalysisException {
+		super(id);
+		setName(name);
+		setLicenseExceptionText(text);
 	}
 
 	/**
