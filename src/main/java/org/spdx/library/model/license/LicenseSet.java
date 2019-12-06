@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A specific form of license information where there is a set of licenses
@@ -48,6 +49,18 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	}
 
 	/**
+	 * Default model store and document URI initialized with members
+	 * @param members
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public LicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
+		super();
+		for (AnyLicenseInfo member:members) {
+			addMember(member);
+		}
+	}
+
+	/**
 	 * Sets the members of the license set.  Clears any previous members
 	 * @param licenseInfos New members for the set
 	 * @throws InvalidSPDXAnalysisException
@@ -66,6 +79,21 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
 		}
 		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(PROP_LICENSE_SET_MEMEBER));
+	}
+	
+	/**
+	 * Adds a member to the set
+	 * @param member
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void addMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(member);
+		this.addPropertyValueToCollection(PROP_LICENSE_SET_MEMEBER, member);
+	}
+	
+	public void removeMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(member);
+		this.removePropertyValueFromCollection(PROP_LICENSE_SET_MEMEBER, member);
 	}
 	
 	/* (non-Javadoc)

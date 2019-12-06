@@ -17,6 +17,7 @@
 package org.spdx.library.model.license;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,10 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 	public DisjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
+	}
+
+	public DisjunctiveLicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
+		super(members);
 	}
 
 	/* (non-Javadoc)

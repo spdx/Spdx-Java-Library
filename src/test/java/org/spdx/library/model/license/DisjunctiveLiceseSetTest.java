@@ -73,5 +73,47 @@ public class DisjunctiveLiceseSetTest extends TestCase {
 		verify = cls.verify();
 		assertEquals(0, verify.size());
 	}
+	
+	public void testAddMember() throws InvalidSPDXAnalysisException {
+		String id = modelStore.getNextId(IdType.Anonomous, DOCUMENT_URI);
+		DisjunctiveLicenseSet cls = new DisjunctiveLicenseSet(modelStore, DOCUMENT_URI, id, true);
+		cls.setMembers(Arrays.asList(NON_STD_LICENSES));
+		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(modelStore, DOCUMENT_URI, "LicenseRef-test", true);
+		eli.setExtractedText("test text");
+		List<String> verify = eli.verify();
+		assertEquals(0, verify.size());
+		verify = cls.verify();
+		assertEquals(0, verify.size());
+		cls.addMember(eli);
+		verify = cls.verify();
+		assertEquals(0, verify.size());
+		assertEquals(NON_STD_LICENSES.length+1, cls.getMembers().size());
+		assertTrue(cls.getMembers().contains(eli));
+		DisjunctiveLicenseSet cls2 = (DisjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET);
+		assertTrue(cls.equals(cls2));
+		assertEquals(NON_STD_LICENSES.length+1, cls2.getMembers().size());
+		assertTrue(cls2.getMembers().contains(eli));
+		verify = cls.verify();
+		assertEquals(0, verify.size());
+		verify = cls2.verify();
+		assertEquals(0, verify.size());
+	}
+	
+	public void testRemoveMember() throws InvalidSPDXAnalysisException {
+		String id = modelStore.getNextId(IdType.Anonomous, DOCUMENT_URI);
+		DisjunctiveLicenseSet cls = new DisjunctiveLicenseSet(modelStore, DOCUMENT_URI, id, true);
+		cls.setMembers(Arrays.asList(NON_STD_LICENSES));
+		cls.removeMember(NON_STD_LICENSES[0]);
+		assertEquals(NON_STD_LICENSES.length-1, cls.getMembers().size());
+		assertFalse(cls.getMembers().contains(NON_STD_LICENSES[0]));
+		DisjunctiveLicenseSet cls2 = (DisjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET);
+		assertTrue(cls.equals(cls2));
+		assertEquals(NON_STD_LICENSES.length-1, cls.getMembers().size());
+		assertFalse(cls.getMembers().contains(NON_STD_LICENSES[0]));
+		List<String> verify = cls2.verify();
+		assertEquals(0, verify.size());
+		verify = cls.verify();
+		assertEquals(0, verify.size());
+	}
 
 }

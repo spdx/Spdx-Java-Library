@@ -18,6 +18,7 @@ package org.spdx.library.model.license;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -200,6 +201,24 @@ public class SpdxListedLicense extends License {
 			return this.getLicenseId().equals(((SpdxListedLicense)compare).getLicenseId());	// for listed license, the license ID is the only thing that matters
 		} else {
 			return super.equivalent(compare);
+		}
+	}
+	
+	@Override
+	public boolean equals(Object compare) {
+		if (!(compare instanceof SpdxListedLicense)) {
+			return false;
+		}
+		return Objects.equals(getLicenseId(),((SpdxListedLicense)compare).getLicenseId());
+	}
+	
+	@Override
+	public int hashCode() {
+		String licId = getLicenseId();
+		if (Objects.isNull(licId)) {
+			return 91;
+		} else {
+			return 91 ^ licId.hashCode();
 		}
 	}
 

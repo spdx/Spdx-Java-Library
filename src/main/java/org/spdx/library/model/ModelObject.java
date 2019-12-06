@@ -71,6 +71,11 @@ public abstract class ModelObject implements SpdxConstants {
 	private IModelStore modelStore;
 	private String documentUri;
 	private String id;
+	/**
+	 * If set to true, a reference made to a model object stored in a different modelStore and/or
+	 * document will be copied to this modelStore and documentUri
+	 */
+	private boolean copyOnReference = true;
 
 	/**
 	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
@@ -191,9 +196,11 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName Name of the property associated with this object
 	 * @param value Value to associate with the property
+	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName, Object value) throws InvalidSPDXAnalysisException {
+	public static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, 
+			String stId, String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(stModelStore);
 		Objects.requireNonNull(stDocumentUri);
 		Objects.requireNonNull(stId);
@@ -204,14 +211,17 @@ public abstract class ModelObject implements SpdxConstants {
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
-				if (!stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
-					stModelStore.create(mValue.getDocumentUri(), mValue.getId(), mValue.getType());
+				if (!copyOnReference) {
+					throw(new InvalidSPDXAnalysisException("Can set a property value to a Model Object stored in a different model store"));
 				}
-				copy(stModelStore, stDocumentUri, mValue.getId(),mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType());
+				if (!stModelStore.exists(stDocumentUri, mValue.getId())) {
+					stModelStore.create(stDocumentUri, mValue.getId(), mValue.getType());
+				}
+				copy(stModelStore, stDocumentUri, mValue.getId(), mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType());
 			}
 			stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
 		} else if (value instanceof Collection) {
-			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value);
+			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
 		} else if (value instanceof String || value instanceof Boolean) {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		} else {
@@ -226,7 +236,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
+		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
 	}
 	
 	/**
@@ -237,7 +247,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 */
 	public ModelUpdate updatePropertyValue(String propertyName, Object value) {
 		return () ->{
-			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value);
+			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
 		};
 	}
 	
@@ -351,19 +361,23 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName  Name of the property
 	 * @param value to add
+	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Object value) throws InvalidSPDXAnalysisException {
+			String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value);
 		if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
-				if (!stModelStore.exists(mValue.getDocumentUri(), mValue.getId())) {
+				if (!stModelStore.exists(stDocumentUri, mValue.getId())) {
+					if (!copyOnReference) {
+						throw(new InvalidSPDXAnalysisException("Can set a property value to a Model Object stored in a different model store"));
+					}
 					copy(stModelStore, stDocumentUri, mValue.getId(), mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType());
 				}
 			}
-			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
+			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, new TypedValue(stDocumentUri, mValue.getId(), mValue.getType()));
 		} else if (value instanceof String || value instanceof Boolean) {
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
 		} else {
@@ -391,7 +405,13 @@ public abstract class ModelObject implements SpdxConstants {
 			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
 				List<Object> fromList = fromStore.getValueList(fromDocumentUri, fromId, propName);
 				for (Object listItem:fromList) {
-					toStore.addValueToCollection(toDocumentUri, toId, propName, listItem);
+					if (listItem instanceof TypedValue) {
+						TypedValue listItemTv = (TypedValue)listItem;
+						copy(toStore, toDocumentUri, listItemTv.getId(), fromStore, fromDocumentUri, listItemTv.getId(), listItemTv.getType());
+						toStore.setValue(toDocumentUri, toId, propName, new TypedValue(toDocumentUri, listItemTv.getId(), listItemTv.getType()));
+					} else {
+						toStore.addValueToCollection(toDocumentUri, toId, propName, listItem);
+					}
 				}
 			} else {
 				Optional<Object> result =  fromStore.getValue(fromDocumentUri, fromId, propName);
@@ -416,7 +436,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void addPropertyValueToCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		addValueToCollection(modelStore, documentUri, id, propertyName, value);
+		addValueToCollection(modelStore, documentUri, id, propertyName, value, copyOnReference);
 	}
 	
 	/**
@@ -428,7 +448,7 @@ public abstract class ModelObject implements SpdxConstants {
 	 */
 	public ModelUpdate updateAddPropertyValueToCollection(String propertyName, Object value) {
 		return () ->{
-			addValueToCollection(modelStore, documentUri, id, propertyName, value);
+			addValueToCollection(modelStore, documentUri, id, propertyName, value, copyOnReference);
 		};
 	}
 	
@@ -440,13 +460,14 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName name of the property
 	 * @param values collection of new properties
+	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static void replacePropertyValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Collection<?> values) throws InvalidSPDXAnalysisException {
+			String propertyName, Collection<?> values, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		clearValueCollection(stModelStore, stDocumentUri, stId, propertyName);
 		for (Object value:values) {
-			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value);
+			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value, copyOnReference);
 		}
 	}
 	
