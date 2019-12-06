@@ -28,6 +28,7 @@ import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
+import org.spdx.library.model.license.WithExceptionOperator;
 
 /**
  * @author gary
@@ -51,7 +52,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, true);
-		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return new WithExceptionOperator(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_FILE: throw new RuntimeException("Not implemented");  //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: throw new RuntimeException("Not implemented"); //TODO: Implement

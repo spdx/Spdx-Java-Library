@@ -137,8 +137,7 @@ public class WithExceptionOperatorTest extends TestCase {
 		assertEquals(EXCEPTION_NAME2, le1.getName());
 	}
 	
-	//TODO: Implement the following once LicenseInfoFactory has been implemented
-//	public void testClassPathException() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
-//		assertTrue(LicenseInfoFactory.parseSPDXLicenseString("GPL-2.0-only WITH Classpath-exception-2.0").verify().isEmpty());
-//	}
+	public void testClassPathException() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
+		assertTrue(LicenseInfoFactory.parseSPDXLicenseString("GPL-2.0-only WITH Classpath-exception-2.0").verify().isEmpty());
+	}
 }

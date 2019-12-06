@@ -240,9 +240,9 @@ public class StoredTypedItemTest extends TestCase {
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, TypedValue.class));
 		// Empty
 		String emptyProperty = "emptyprop";
-		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, String.class));
-		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, Boolean.class));
-		assertFalse(sti.isCollectionMembersAssignableTo(emptyProperty, TypedValue.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, String.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, Boolean.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, TypedValue.class));
 	}
 	
 	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {

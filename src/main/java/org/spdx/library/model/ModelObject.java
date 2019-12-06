@@ -408,7 +408,7 @@ public abstract class ModelObject implements SpdxConstants {
 					if (listItem instanceof TypedValue) {
 						TypedValue listItemTv = (TypedValue)listItem;
 						copy(toStore, toDocumentUri, listItemTv.getId(), fromStore, fromDocumentUri, listItemTv.getId(), listItemTv.getType());
-						toStore.setValue(toDocumentUri, toId, propName, new TypedValue(toDocumentUri, listItemTv.getId(), listItemTv.getType()));
+						toStore.addValueToCollection(toDocumentUri, toId, propName, new TypedValue(toDocumentUri, listItemTv.getId(), listItemTv.getType()));
 					} else {
 						toStore.addValueToCollection(toDocumentUri, toId, propName, listItem);
 					}

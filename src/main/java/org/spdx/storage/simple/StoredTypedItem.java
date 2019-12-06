@@ -220,7 +220,7 @@ class StoredTypedItem extends TypedValue {
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
 		Object value = properties.get(propertyName);
 		if (value == null) {
-			return false;
+			return true; // It is still assignable to since it is unassigned
 		}
 		if (!(value instanceof List)) {
 			return false;

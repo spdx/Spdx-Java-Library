@@ -509,9 +509,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, TypedValue.class));
 		// Empty
 		String emptyProperty = "emptyprop";
-		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
-		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, Boolean.class));
-		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, TypedValue.class));
+		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
+		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, Boolean.class));
+		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, TypedValue.class));
 	}
 	
 	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
