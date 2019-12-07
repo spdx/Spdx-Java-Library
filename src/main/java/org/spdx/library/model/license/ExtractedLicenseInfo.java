@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
@@ -70,7 +71,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 */
 	@Override
 	public String getType() {
-		return CLASS_SPDX_EXTRACTED_LICENSING_INFO;
+		return SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO;
 	}
 
 
@@ -89,7 +90,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getExtractedText() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_EXTRACTED_TEXT);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_EXTRACTED_TEXT);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -102,7 +103,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_EXTRACTED_TEXT, text);
+		setPropertyValue(SpdxConstants.PROP_EXTRACTED_TEXT, text);
 	}
 
 	/**

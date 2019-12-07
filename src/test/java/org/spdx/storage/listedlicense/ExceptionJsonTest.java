@@ -35,23 +35,23 @@ import junit.framework.TestCase;
  * @author gary
  *
  */
-public class ExceptionJsonTest extends TestCase implements SpdxConstants {
+public class ExceptionJsonTest extends TestCase {
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			PROP_LICENSE_EXCEPTION_ID, PROP_EXCEPTION_TEXT, 
-			PROP_STD_LICENSE_NAME, RDFS_PROP_COMMENT, PROP_EXCEPTION_TEMPLATE, 
-			PROP_EXAMPLE, PROP_LIC_DEPRECATED_VERSION
+			SpdxConstants.PROP_LICENSE_EXCEPTION_ID, SpdxConstants.PROP_EXCEPTION_TEXT, 
+			SpdxConstants.PROP_STD_LICENSE_NAME, SpdxConstants.RDFS_PROP_COMMENT, SpdxConstants.PROP_EXCEPTION_TEMPLATE, 
+			SpdxConstants.PROP_EXAMPLE, SpdxConstants.PROP_LIC_DEPRECATED_VERSION
 			);
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			PROP_LIC_ID_DEPRECATED
+			SpdxConstants.PROP_LIC_ID_DEPRECATED
 			);
 
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO);
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
@@ -95,7 +95,7 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 		String exceptionId = "SpdxexceptionId1";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
 		try {
-			ej.setTypedProperty("TestPropertyName", "SpdxId22", CLASS_SPDX_ELEMENT);
+			ej.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstants.CLASS_SPDX_ELEMENT);
 			fail("This shouldn't work");
 		} catch (InvalidSPDXAnalysisException e) {
 			// Expected
@@ -208,7 +208,7 @@ public class ExceptionJsonTest extends TestCase implements SpdxConstants {
 		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			json.append("\t\"");
-			if (RDFS_PROP_COMMENT.equals(valueName)) {
+			if (SpdxConstants.RDFS_PROP_COMMENT.equals(valueName)) {
 				json.append("licenseComments");	// Legacy value
 			} else {
 				json.append(valueName);

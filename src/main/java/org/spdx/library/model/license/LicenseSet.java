@@ -17,6 +17,7 @@
 package org.spdx.library.model.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
@@ -66,7 +67,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setMembers(Collection<AnyLicenseInfo> licenseInfos) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_SET_MEMEBER, licenseInfos);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER, licenseInfos);
 	}
 	
 	/**
@@ -75,10 +76,10 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<AnyLicenseInfo> getMembers() throws InvalidSPDXAnalysisException {
-		if (!isCollectionMembersAssignableTo(PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
+		if (!isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
 			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
 		}
-		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(PROP_LICENSE_SET_MEMEBER));
+		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER));
 	}
 	
 	/**
@@ -88,12 +89,12 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 */
 	public void addMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(member);
-		this.addPropertyValueToCollection(PROP_LICENSE_SET_MEMEBER, member);
+		this.addPropertyValueToCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, member);
 	}
 	
 	public void removeMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(member);
-		this.removePropertyValueFromCollection(PROP_LICENSE_SET_MEMEBER, member);
+		this.removePropertyValueFromCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, member);
 	}
 	
 	/* (non-Javadoc)

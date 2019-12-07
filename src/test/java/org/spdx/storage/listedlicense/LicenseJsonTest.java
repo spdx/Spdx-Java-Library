@@ -35,20 +35,20 @@ import junit.framework.TestCase;
  * @author gary
  *
  */
-public class LicenseJsonTest extends TestCase implements SpdxConstants {
+public class LicenseJsonTest extends TestCase {
 	
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			PROP_LICENSE_ID, PROP_LICENSE_TEXT, PROP_LICENSE_TEXT_HTML, 
-			PROP_STD_LICENSE_NAME, RDFS_PROP_COMMENT, PROP_STD_LICENSE_NOTICE,PROP_STD_LICENSE_HEADER_TEMPLATE,
-			PROP_LICENSE_HEADER_HTML, PROP_STD_LICENSE_TEMPLATE, PROP_EXAMPLE, PROP_LIC_DEPRECATED_VERSION
+			SpdxConstants.PROP_LICENSE_ID, SpdxConstants.PROP_LICENSE_TEXT, SpdxConstants.PROP_LICENSE_TEXT_HTML, 
+			SpdxConstants.PROP_STD_LICENSE_NAME, SpdxConstants.RDFS_PROP_COMMENT, SpdxConstants.PROP_STD_LICENSE_NOTICE,SpdxConstants.PROP_STD_LICENSE_HEADER_TEMPLATE,
+			SpdxConstants.PROP_LICENSE_HEADER_HTML, SpdxConstants.PROP_STD_LICENSE_TEMPLATE, SpdxConstants.PROP_EXAMPLE, SpdxConstants.PROP_LIC_DEPRECATED_VERSION
 			);
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			PROP_STD_LICENSE_OSI_APPROVED, PROP_STD_LICENSE_FSF_LIBRE, PROP_LIC_ID_DEPRECATED
+			SpdxConstants.PROP_STD_LICENSE_OSI_APPROVED, SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE, SpdxConstants.PROP_LIC_ID_DEPRECATED
 			);
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(RDFS_PROP_SEE_ALSO);
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO);
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
@@ -101,7 +101,7 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		try {
-			lj.setTypedProperty("TestPropertyName", "SpdxId22", CLASS_SPDX_ELEMENT);
+			lj.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstants.CLASS_SPDX_ELEMENT);
 			fail("This shouldn't work");
 		} catch (InvalidSPDXAnalysisException e) {
 			// Expected
@@ -212,7 +212,7 @@ public class LicenseJsonTest extends TestCase implements SpdxConstants {
 		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			json.append("\t\"");
-			if (RDFS_PROP_COMMENT.equals(valueName)) {
+			if (SpdxConstants.RDFS_PROP_COMMENT.equals(valueName)) {
 				json.append("licenseComments");	// Legacy value
 			} else {
 				json.append(valueName);

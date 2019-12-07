@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -63,7 +64,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public SimpleLicensingInfo getLicense() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 		if (!retval.isPresent()) {
 			throw new SpdxInvalidTypeException("Missing required license for OrLater operator");
 		}
@@ -78,7 +79,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setLicense(SimpleLicensingInfo license) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_SET_MEMEBER, license);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER, license);
 	}
 	
 	/* (non-Javadoc)
@@ -120,7 +121,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 
 	@Override
 	public String getType() {
-		return CLASS_OR_LATER_OPERATOR;
+		return SpdxConstants.CLASS_OR_LATER_OPERATOR;
 	}
 	
 	@Override

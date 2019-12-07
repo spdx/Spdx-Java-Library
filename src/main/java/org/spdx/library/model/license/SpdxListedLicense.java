@@ -109,7 +109,7 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseTextHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
-		Optional<String> licenseTextHtml = getStringPropertyValue(PROP_LICENSE_TEXT_HTML);
+		Optional<String> licenseTextHtml = getStringPropertyValue(SpdxConstants.PROP_LICENSE_TEXT_HTML);
 		if (licenseTextHtml.isPresent()) {
 			return licenseTextHtml.get();
 		} else {
@@ -133,7 +133,7 @@ public class SpdxListedLicense extends License {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setLicenseTextHtml(String licenseTextHtml) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_TEXT_HTML, licenseTextHtml);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_TEXT_HTML, licenseTextHtml);
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseHeaderHtml() throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
-		Optional<String> licenseHeaderHtml = getStringPropertyValue(PROP_LICENSE_HEADER_HTML);
+		Optional<String> licenseHeaderHtml = getStringPropertyValue(SpdxConstants.PROP_LICENSE_HEADER_HTML);
 		if (licenseHeaderHtml.isPresent()) {
 			return licenseHeaderHtml.get();
 		} else {
@@ -166,7 +166,7 @@ public class SpdxListedLicense extends License {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setLicenseHeaderHtml(String licenseHeaderHtml) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_HEADER_HTML, licenseHeaderHtml);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_HEADER_HTML, licenseHeaderHtml);
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public class SpdxListedLicense extends License {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getDeprecatedVersion() throws InvalidSPDXAnalysisException {
-		Optional<String> depVersion = getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		Optional<String> depVersion = getStringPropertyValue(SpdxConstants.PROP_LIC_DEPRECATED_VERSION);
 		if (depVersion.isPresent()) {
 			return depVersion.get();
 		} else {
@@ -187,7 +187,7 @@ public class SpdxListedLicense extends License {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDeprecatedVersion(String deprecatedVersion) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
+		setPropertyValue(SpdxConstants.PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
 	}
 
 	@Override

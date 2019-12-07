@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -50,7 +51,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo {
 	 */
 	@Override
 	public String toString() {
-		return NONE_VALUE;
+		return SpdxConstants.NONE_VALUE;
 	}
 	
 	@Override
@@ -79,7 +80,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo {
 
 	@Override
 	public String getType() {
-		return CLASS_NONE_LICENSE;
+		return SpdxConstants.CLASS_NONE_LICENSE;
 	}
 	
 	

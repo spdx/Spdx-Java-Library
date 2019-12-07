@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
@@ -75,7 +76,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getLicenseText() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_LICENSE_TEXT);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_LICENSE_TEXT);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -88,7 +89,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setLicenseText(String text) throws InvalidSPDXAnalysisException {
-		this.setPropertyValue(PROP_LICENSE_TEXT, text);
+		this.setPropertyValue(SpdxConstants.PROP_LICENSE_TEXT, text);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseHeader() throws InvalidSPDXAnalysisException {
-		Optional<String> standardLicenseHeader =  getStringPropertyValue(PROP_STD_LICENSE_NOTICE);
+		Optional<String> standardLicenseHeader =  getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_NOTICE);
 		if (standardLicenseHeader.isPresent()) {
 			return StringEscapeUtils.unescapeHtml4(standardLicenseHeader.get());
 		} else {
@@ -109,7 +110,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseHeaderTemplate() throws InvalidSPDXAnalysisException {
-		Optional<String> standardLicenseHeaderTemplate = getStringPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE);
+		Optional<String> standardLicenseHeaderTemplate = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_HEADER_TEMPLATE);
 		if (standardLicenseHeaderTemplate.isPresent()) {
 			return StringEscapeUtils.unescapeHtml4(standardLicenseHeaderTemplate.get());
 		} else {
@@ -122,7 +123,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setStandardLicenseHeaderTemplate(String standardLicenseHeaderTemplate) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_HEADER_TEMPLATE, standardLicenseHeaderTemplate);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_HEADER_TEMPLATE, standardLicenseHeaderTemplate);
 	}
 	
 	/**
@@ -130,14 +131,14 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setStandardLicenseHeader(String standardLicenseHeader) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_NOTICE, standardLicenseHeader);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_NOTICE, standardLicenseHeader);
 	}
 	/**
 	 * @return the template
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseTemplate() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_TEMPLATE);	
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_TEMPLATE);	
 		String standardLicenseTemplate = o.get();
 		if (!o.isPresent()) {
 			return "";
@@ -155,7 +156,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setStandardLicenseTemplate(String template) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_TEMPLATE, template);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_TEMPLATE, template);
 	}
 	
 	@Override
@@ -233,7 +234,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean isFsfLibre() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		Optional<Boolean> libre = getBooleanPropertyValue(SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE);
 		if (!libre.isPresent()) {
 			return false;
 		}
@@ -245,7 +246,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isNotFsfLibre() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> fsfLibre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		Optional<Boolean> fsfLibre = getBooleanPropertyValue(SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE);
 		return fsfLibre.isPresent() && !fsfLibre.get();
 	}
 	
@@ -254,7 +255,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public Boolean getFsfLibre() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> libre = getBooleanPropertyValue(PROP_STD_LICENSE_FSF_LIBRE);
+		Optional<Boolean> libre = getBooleanPropertyValue(SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE);
 		if (libre.isPresent()) {
 			return libre.get();
 		} else {
@@ -268,7 +269,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isOsiApproved() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> osiApproved = getBooleanPropertyValue(PROP_STD_LICENSE_OSI_APPROVED);
+		Optional<Boolean> osiApproved = getBooleanPropertyValue(SpdxConstants.PROP_STD_LICENSE_OSI_APPROVED);
 		return osiApproved.isPresent() && osiApproved.get();
 	}
 	
@@ -277,12 +278,12 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isDeprecated() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
+		Optional<Boolean> deprecated = getBooleanPropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED);
 		return deprecated.isPresent() && deprecated.get();
 	}
 	
 	public void setOsiApproved(Boolean osiApproved) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_OSI_APPROVED, osiApproved);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_OSI_APPROVED, osiApproved);
 	}
 	
 	/**
@@ -290,7 +291,7 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setFsfLibre(Boolean fsfLibre) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_FSF_LIBRE, fsfLibre);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE, fsfLibre);
 	}
 	
 	/**
@@ -298,11 +299,11 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
+		setPropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 	
 	public ModelUpdate updateSetDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
-		return updatePropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
+		return updatePropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 	
 	@Override

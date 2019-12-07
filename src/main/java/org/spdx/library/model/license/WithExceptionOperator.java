@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
@@ -70,7 +71,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	 */
 	@Override
 	public String getType() {
-		return CLASS_WITH_EXCEPTION_OPERATOR;
+		return SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR;
 	}
 	
 	/**
@@ -78,7 +79,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public AnyLicenseInfo getLicense() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 		if (!retval.isPresent()) {
 			throw new InvalidSPDXAnalysisException("Required license for exception is missing");
 		}
@@ -93,14 +94,14 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setLicense(AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_SET_MEMEBER, license);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER, license);
 	}
 	
 	/**
 	 * @return the exception
 	 */
 	public LicenseException getException() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(PROP_LICENSE_EXCEPTION);
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION);
 		if (!retval.isPresent()) {
 			throw new InvalidSPDXAnalysisException("Required exception is missing for with exception operator");
 		}
@@ -115,7 +116,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setException(LicenseException exception) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LICENSE_EXCEPTION, exception);
+		setPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION, exception);
 	}
 	
 	/* (non-Javadoc)
@@ -124,8 +125,8 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	@Override
 	public String toString() {
 		try {
-			Optional<Object> license = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
-			Optional<Object> exception = getObjectPropertyValue(PROP_LICENSE_EXCEPTION);
+			Optional<Object> license = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
+			Optional<Object> exception = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION);
 			if (!license.isPresent() || !exception.isPresent()) {
 				return "UNDEFINED WITH EXCEPTION";
 			}
@@ -142,7 +143,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
 		try {
-			Optional<Object> license = getObjectPropertyValue(PROP_LICENSE_SET_MEMEBER);
+			Optional<Object> license = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 			if (license.isPresent()) {
 				if (license.get() instanceof AnyLicenseInfo) {
 					retval.addAll(((AnyLicenseInfo)(license.get())).verify());
@@ -156,7 +157,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 			retval.add("Error getting license property of a With operator: "+e.getMessage());
 		}
 		try {
-			Optional<Object> exception = getObjectPropertyValue(PROP_LICENSE_EXCEPTION);
+			Optional<Object> exception = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION);
 			if (exception.isPresent()) {
 				if (exception.get() instanceof LicenseException) {
 					retval.addAll(((LicenseException)(exception.get())).verify());

@@ -81,6 +81,6 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo {
 
 	@Override
 	public String getType() {
-		return CLASS_NOASSERTION_LICENSE;
+		return SpdxConstants.CLASS_NOASSERTION_LICENSE;
 	}
 }

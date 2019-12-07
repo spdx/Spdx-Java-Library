@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * @author Gary O'Neall
  *
  */
-public interface SpdxConstants {
+public class SpdxConstants {
 
 	// Namespaces
 	public static final String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";

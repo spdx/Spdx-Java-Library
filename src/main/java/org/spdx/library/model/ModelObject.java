@@ -66,7 +66,7 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  * This class also handles the conversion of a ModelObject to and from a TypeValue for storage in the ModelStore.
  *
  */
-public abstract class ModelObject implements SpdxConstants {
+public abstract class ModelObject {
 
 	private IModelStore modelStore;
 	private String documentUri;
@@ -685,11 +685,11 @@ public abstract class ModelObject implements SpdxConstants {
 	 * @return type of the ID
 	 */
 	IdType idToIdType(String id) {
-		if (id.startsWith(NON_STD_LICENSE_ID_PRENUM)) {
+		if (id.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
-		} else if (id.startsWith(SPDX_ELEMENT_REF_PRENUM)) {
+		} else if (id.startsWith(SpdxConstants.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
-		} else if (id.startsWith(EXTERNAL_DOC_REF_PRENUM)) {
+		} else if (id.startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		} else if (ListedLicenses.getListedLicenses().isSpdxListedLicenseId(id)) {
 			return IdType.ListedLicense;

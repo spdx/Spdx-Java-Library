@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
@@ -68,7 +69,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getName() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_NAME);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -81,7 +82,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setName(String name) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_NAME, name);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_NAME, name);
 	}
 	
 	/**
@@ -89,7 +90,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getComment() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(RDFS_PROP_COMMENT);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.RDFS_PROP_COMMENT);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -102,7 +103,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setComment(String comment) throws InvalidSPDXAnalysisException {
-		setPropertyValue(RDFS_PROP_COMMENT, comment);
+		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
 	}
 	
 	/**
@@ -110,7 +111,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public Collection<String> getSeeAlso() throws InvalidSPDXAnalysisException {
-		return getStringCollection(RDFS_PROP_SEE_ALSO);
+		return getStringCollection(SpdxConstants.RDFS_PROP_SEE_ALSO);
 	}
 	/**
 	 * @param seeAlsoUrl the urls which are references to the same license to set
@@ -118,9 +119,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 */
 	public void setSeeAlso(Collection<String> seeAlsoUrl) throws InvalidSPDXAnalysisException {
 		if (seeAlsoUrl == null) {
-			clearValueCollection(RDFS_PROP_SEE_ALSO);
+			clearValueCollection(SpdxConstants.RDFS_PROP_SEE_ALSO);
 		} else {
-			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlsoUrl);
+			setPropertyValue(SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlsoUrl);
 		}
 	}
 }

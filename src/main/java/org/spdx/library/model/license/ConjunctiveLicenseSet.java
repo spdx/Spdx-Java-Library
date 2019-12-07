@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
@@ -173,6 +174,6 @@ public class ConjunctiveLicenseSet extends LicenseSet {
 
 	@Override
 	public String getType() {
-		return CLASS_SPDX_CONJUNCTIVE_LICENSE_SET;
+		return SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET;
 	}
 }

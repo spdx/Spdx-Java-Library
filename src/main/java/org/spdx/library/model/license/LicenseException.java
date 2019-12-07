@@ -36,7 +36,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  * 
  */
-public class LicenseException extends ModelObject implements SpdxConstants {
+public class LicenseException extends ModelObject {
 	
 	/**
 	 * Create a new LicenseException object
@@ -74,7 +74,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getComment() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(RDFS_PROP_COMMENT);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.RDFS_PROP_COMMENT);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -87,7 +87,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setComment(String comment) throws InvalidSPDXAnalysisException {
-		setPropertyValue(RDFS_PROP_COMMENT, comment);
+		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 */
 	@Deprecated
 	public String getExample() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_EXAMPLE);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_EXAMPLE);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -112,7 +112,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 */
 	@Deprecated
 	public void setExample(String example) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_EXAMPLE, example);
+		setPropertyValue(SpdxConstants.PROP_EXAMPLE, example);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getLicenseExceptionTemplate() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_EXCEPTION_TEMPLATE);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_EXCEPTION_TEMPLATE);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -141,7 +141,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setLicenseExceptionTemplate(String template) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_EXCEPTION_TEMPLATE, template);
+		setPropertyValue(SpdxConstants.PROP_EXCEPTION_TEMPLATE, template);
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public String getLicenseExceptionText() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_EXCEPTION_TEXT);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_EXCEPTION_TEXT);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -163,7 +163,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setLicenseExceptionText(String text) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_EXCEPTION_TEXT, text);
+		setPropertyValue(SpdxConstants.PROP_EXCEPTION_TEXT, text);
 	}
 	
 	
@@ -172,7 +172,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getName() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_STD_LICENSE_NAME);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_NAME);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -185,7 +185,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setName(String name) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_STD_LICENSE_NAME, name);
+		setPropertyValue(SpdxConstants.PROP_STD_LICENSE_NAME, name);
 	}
 	
 	/**
@@ -193,7 +193,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public Collection<String> getSeeAlso() throws InvalidSPDXAnalysisException {
-		return getStringCollection(RDFS_PROP_SEE_ALSO);
+		return getStringCollection(SpdxConstants.RDFS_PROP_SEE_ALSO);
 	}
 	/**
 	 * @param seeAlso the urls which are references to the same license to set
@@ -201,9 +201,9 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 */
 	public void setSeeAlso(Collection<String> seeAlso) throws InvalidSPDXAnalysisException {
 		if (seeAlso == null) {
-			clearValueCollection(RDFS_PROP_SEE_ALSO);
+			clearValueCollection(SpdxConstants.RDFS_PROP_SEE_ALSO);
 		} else {
-			setPropertyValue(RDFS_PROP_SEE_ALSO, seeAlso);
+			setPropertyValue(SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso);
 		}
 	}
 	
@@ -212,7 +212,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public boolean isDeprecated() throws InvalidSPDXAnalysisException {
-		Optional<Boolean> deprecated = getBooleanPropertyValue(PROP_LIC_ID_DEPRECATED);
+		Optional<Boolean> deprecated = getBooleanPropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED);
 		return deprecated.isPresent() && deprecated.get();
 	}
 	
@@ -221,7 +221,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LIC_ID_DEPRECATED, deprecated);
+		setPropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getDeprecatedVersion() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(PROP_LIC_DEPRECATED_VERSION);
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_LIC_DEPRECATED_VERSION);
 		if (o.isPresent()) {
 			return o.get();
 		} else {
@@ -242,7 +242,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDeprecatedVersion(String deprecatedVersion) throws InvalidSPDXAnalysisException {
-		setPropertyValue(PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
+		setPropertyValue(SpdxConstants.PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
 	}
 	
 	/* (non-Javadoc)
@@ -250,7 +250,7 @@ public class LicenseException extends ModelObject implements SpdxConstants {
 	 */
 	@Override
 	public String getType() {
-		return CLASS_SPDX_LICENSE_EXCEPTION;
+		return SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION;
 	}
 
 	/* (non-Javadoc)
