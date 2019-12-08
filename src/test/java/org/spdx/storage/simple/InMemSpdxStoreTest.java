@@ -235,17 +235,47 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], TEST_LIST_PROPERTY_VALUES[0]);
-		store.setValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0], TEST_LIST_PROPERTY_VALUES[0]);
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0], TEST_LIST_PROPERTY_VALUES[0]);
+		TEST_LIST_PROPERTY_VALUES[0].forEach(e -> {
+			try {
+				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], e);
+			} catch (InvalidSPDXAnalysisException e1) {
+				fail(e1.getMessage());
+			}
+		});
+		TEST_LIST_PROPERTY_VALUES[0].forEach(e -> {
+			try {
+				store.addValueToCollection(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0], e);
+			} catch (InvalidSPDXAnalysisException e1) {
+				fail(e1.getMessage());
+			}
+		});
+		TEST_LIST_PROPERTY_VALUES[0].forEach(e -> {
+			try {
+				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0], e);
+			} catch (InvalidSPDXAnalysisException e1) {
+				fail(e1.getMessage());
+			}
+		});
 
 		assertCollectionsEquals(TEST_LIST_PROPERTY_VALUES[0], store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).get());
 		assertCollectionsEquals(TEST_LIST_PROPERTY_VALUES[0], store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).get());
 		assertCollectionsEquals(TEST_LIST_PROPERTY_VALUES[0], store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).get());
 		store.removeProperty(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
-		store.setValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0], TEST_LIST_PROPERTY_VALUES[0]);
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0], TEST_LIST_PROPERTY_VALUES[0]);
+		TEST_LIST_PROPERTY_VALUES[0].forEach(e -> {
+			try {
+				store.addValueToCollection(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0], e);
+			} catch (InvalidSPDXAnalysisException e1) {
+				fail(e1.getMessage());
+			}
+		});
+		TEST_LIST_PROPERTY_VALUES[0].forEach(e -> {
+			try {
+				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0], e);
+			} catch (InvalidSPDXAnalysisException e1) {
+				fail(e1.getMessage());
+			}
+		});
 	}
 	
 	private void assertCollectionsEquals(Object c1, Object c2) {

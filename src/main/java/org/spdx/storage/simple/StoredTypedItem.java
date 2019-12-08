@@ -2,6 +2,7 @@ package org.spdx.storage.simple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
@@ -51,8 +53,19 @@ class StoredTypedItem extends TypedValue {
 	/**
 	 * @param propertyName Name of the property
 	 * @param value Value to be set
+	 * @throws SpdxInvalidTypeException 
 	 */
-	public void setValue(String propertyName, Object value) {
+	public void setValue(String propertyName, Object value) throws SpdxInvalidTypeException {
+		if (value instanceof ModelObject) {
+			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
+		} else if (value instanceof List || value instanceof Collection) {
+			throw new SpdxInvalidTypeException("Can not store list valudes directly.  Use addValueToCollection.");
+		} else if (!value.getClass().isPrimitive() && 
+				!value.getClass().isAssignableFrom(String.class) &&
+				!value.getClass().isAssignableFrom(Boolean.class) &&
+				!value.getClass().isAssignableFrom(TypedValue.class)) {
+			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
+		}
 		properties.put(propertyName, value);
 	}
 	
@@ -80,6 +93,9 @@ class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
+		if (value instanceof ModelObject) {
+			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
+		}
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
