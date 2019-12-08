@@ -45,6 +45,7 @@ import org.spdx.library.model.DuplicateSpdxIdException;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.library.model.license.SpdxListedLicenseException;
 
 import com.google.gson.Gson;
@@ -862,6 +863,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+		}
+	}
+	
+	@Override
+	public IdType getIdType(String id) {
+		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
+			return IdType.ListedLicense;
+		} else {
+			return IdType.Unkown;
 		}
 	}
 }

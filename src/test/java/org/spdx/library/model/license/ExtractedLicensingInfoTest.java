@@ -87,7 +87,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		ExtractedLicenseInfo lic = new ExtractedLicenseInfo(ID1, TEXT1);
 		lic.setComment(COMMENT1);
 		IModelStore modelStore = new InMemSpdxStore();
-		ModelObject.copy(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		ModelObject.copy(modelStore, DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		
 		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertEquals(ID1, lic2.getLicenseId());

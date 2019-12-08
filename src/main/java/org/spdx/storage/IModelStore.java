@@ -76,7 +76,8 @@ public interface IModelStore {
 		SpdxId, 			// ID's that start with SpdxRef-
 		ListedLicense, 		// ID's associated with listed licenses
 		Literal,			// ID's for pre-defined literals (such as NONE, NOASSERTION)
-		Anonomous};			// ID's for object only referenced internally
+		Anonomous, 			// ID's for object only referenced internally
+		Unkown};			// ID's that just don't fit any pattern
 
 	/**
 	 * @param documentUri the SPDX Document URI
@@ -244,4 +245,10 @@ public interface IModelStore {
 	 * @return true if the propertyName represents multiple values
 	 */
 	public boolean isCollectionProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param id
+	 * @return The type of ID based on the string format
+	 */
+	public IdType getIdType(String id);
 }

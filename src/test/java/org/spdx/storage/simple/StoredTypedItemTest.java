@@ -49,8 +49,8 @@ public class StoredTypedItemTest extends TestCase {
 	protected void setUp() throws Exception {
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
-			Arrays.asList(new TypedValue(TEST_DOCUMENTURI1, "typeId1", TEST_TYPE1), new TypedValue(TEST_DOCUMENTURI1, "typeId2", TEST_TYPE2))};
-			TEST_VALUE_PROPERTY_VALUES[3] = new TypedValue(TEST_DOCUMENTURI1, "typeId3", TEST_TYPE1);
+			Arrays.asList(new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2))};
+			TEST_VALUE_PROPERTY_VALUES[3] = new TypedValue("typeId3", TEST_TYPE1);
 	}
 
 	/* (non-Javadoc)
@@ -226,13 +226,13 @@ public class StoredTypedItemTest extends TestCase {
 		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, TypedValue.class));
 		// TypedValue
 		String tvProperty = "tvprop";
-		sti.addValueToList(tvProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		sti.addValueToList(tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, Boolean.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(tvProperty, TypedValue.class));
 		// Mixed
 		String mixedProperty = "mixedprop";
-		sti.addValueToList(mixedProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		sti.addValueToList(mixedProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		sti.addValueToList(mixedProperty, new Boolean(true));
 		sti.addValueToList(mixedProperty, "mixed value");
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, String.class));
@@ -261,7 +261,7 @@ public class StoredTypedItemTest extends TestCase {
 		assertFalse(sti.isPropertyValueAssignableTo(bProperty, TypedValue.class));
 		// TypedValue
 		String tvProperty = "tvprop";
-		sti.setValue(tvProperty, new TypedValue(TEST_DOCUMENTURI1, TEST_ID2, TEST_TYPE2));
+		sti.setValue(tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, String.class));
 		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, Boolean.class));
 		assertTrue(sti.isPropertyValueAssignableTo(tvProperty, TypedValue.class));

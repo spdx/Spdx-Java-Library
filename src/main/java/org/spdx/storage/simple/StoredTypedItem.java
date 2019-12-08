@@ -32,7 +32,7 @@ class StoredTypedItem extends TypedValue {
 	private ConcurrentHashMap<String, Object> properties = new ConcurrentHashMap<>();
 	
 	public StoredTypedItem(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
-		super(documentUri, id, type);
+		super(id, type);
 	}
 	
 	/**

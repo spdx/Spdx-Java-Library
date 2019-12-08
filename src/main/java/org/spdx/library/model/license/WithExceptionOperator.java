@@ -130,7 +130,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 			if (!license.isPresent() || !exception.isPresent()) {
 				return "UNDEFINED WITH EXCEPTION";
 			}
-			return license.get().toString() +" "+exception.get().toString();
+			return license.get().toString() +" WITH "+exception.get().toString();
 		} catch (Exception ex) {
 			return "UNDEFINED WITH EXCEPTION";
 		}

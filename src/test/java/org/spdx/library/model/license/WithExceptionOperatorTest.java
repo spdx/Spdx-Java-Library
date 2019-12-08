@@ -5,8 +5,8 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
-import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -80,11 +80,10 @@ public class WithExceptionOperatorTest extends TestCase {
 	public void testCopy() throws InvalidSPDXAnalysisException {
 		WithExceptionOperator weo1 = new WithExceptionOperator(license1, exception1);
 		IModelStore store = new InMemSpdxStore();
-		String newId = store.getNextId(IdType.Anonomous, DefaultModelStore.getDefaultDocumentUri());
-		ModelObject.copy(store, DefaultModelStore.getDefaultDocumentUri(), newId, 
+		TypedValue tv = ModelObject.copy(store, DefaultModelStore.getDefaultDocumentUri(), 
 				weo1.getModelStore(), weo1.getDocumentUri(), weo1.getId(), weo1.getType());
 		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObject(store, 
-				DefaultModelStore.getDefaultDocumentUri(), newId, SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR);
+				DefaultModelStore.getDefaultDocumentUri(), tv.getId(), SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)weo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();
 		assertEquals(lic1.getLicenseId(), lic1FromClone.getLicenseId());

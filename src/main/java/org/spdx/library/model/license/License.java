@@ -138,11 +138,11 @@ public abstract class License extends SimpleLicensingInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public String getStandardLicenseTemplate() throws InvalidSPDXAnalysisException {
-		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_TEMPLATE);	
-		String standardLicenseTemplate = o.get();
+		Optional<String> o = getStringPropertyValue(SpdxConstants.PROP_STD_LICENSE_TEMPLATE);			
 		if (!o.isPresent()) {
 			return "";
 		}
+		String standardLicenseTemplate = o.get();
 		if (standardLicenseTemplate != null && standardLicenseTemplate.endsWith(XML_LITERAL)) {
 			standardLicenseTemplate = standardLicenseTemplate.substring(0, standardLicenseTemplate.length()-XML_LITERAL.length());
 		}

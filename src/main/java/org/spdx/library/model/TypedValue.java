@@ -17,9 +17,8 @@ public class TypedValue {
 	
 	String id;
 	String type;
-	String documentUri;
 	
-	public TypedValue(String documentUri, String id, String type) throws SpdxInvalidIdException, SpdxInvalidTypeException {
+	public TypedValue(String id, String type) throws SpdxInvalidIdException, SpdxInvalidTypeException {
 		if (id == null) {
 			throw new SpdxInvalidIdException("Null value Id");
 		}
@@ -30,12 +29,8 @@ public class TypedValue {
 		if (!SPDX_CLASSES.contains(type) && !GenericModelObject.GENERIC_MODEL_OBJECT_TYPE.equals(type)) {
 			throw new SpdxInvalidTypeException(type + " is not a valid SPDX class");
 		}
-		if (documentUri == null) {
-			throw new SpdxInvalidIdException("Null value for document URI");
-		}
 		this.id = id;
 		this.type = type;
-		this.documentUri = documentUri;
 	}
 
 	/**
@@ -52,14 +47,6 @@ public class TypedValue {
 		return type;
 	}
 
-	
-	/**
-	 * @return the documentUri
-	 */
-	public String getDocumentUri() {
-		return documentUri;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
@@ -69,11 +56,11 @@ public class TypedValue {
 			return false;
 		}
 		TypedValue tv = (TypedValue)o;
-		return tv.getDocumentUri().equals(this.documentUri) && tv.getId().equals(this.id);
+		return tv.getId().equals(this.id) && tv.getType().equals(this.type);
 	}
 	
 	@Override
 	public int hashCode() {
-		return 181 ^ this.id.hashCode() ^ this.documentUri.hashCode();
+		return 181 ^ this.id.hashCode() ^ this.type.hashCode();
 	}
 }

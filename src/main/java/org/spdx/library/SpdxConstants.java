@@ -292,6 +292,7 @@ public class SpdxConstants {
 	// Standard value strings
 	public static String NONE_VALUE = "NONE";
 	public static String NOASSERTION_VALUE = "NOASSERTION";
+	public static final String[] LITERAL_VALUES = new String[]{NONE_VALUE, NOASSERTION_VALUE};
 	
 	// data license ID
 	public static final String SPDX_DATA_LICENSE_ID_VERSION_1_0 = "PDDL-1.0";
@@ -327,5 +328,4 @@ public class SpdxConstants {
 	public static final String LICENSEXML_ATTRIBUTE_ALT_MATCH = "match";
 	public static final String LICENSEXML_ELEMENT_BREAK = "br";
 	public static final String LICENSEXML_ELEMENT_TEXT = "text";
-	
 }

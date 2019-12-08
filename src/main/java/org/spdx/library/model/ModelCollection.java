@@ -17,12 +17,13 @@
  */
 package org.spdx.library.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.storage.IModelStore;
@@ -93,19 +94,22 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		}
 	}
 	
-	public List<Object> toImmutableList() {
+	/**
+	 * Converts any typed value objects to a ModelObject
+	 */
+	private Function<Object, Object> checkConvertTypedValue = value -> {
 		try {
-			ArrayList<Object> converted = new ArrayList<>();
-			List<Object> storedList = modelStore.getValueList(documentUri, id, propertyName);
-			for (Object element:storedList) {
-				if (element instanceof TypedValue) {
-					TypedValue tv = (TypedValue)element;
-					converted.add(SpdxModelFactory.createModelObject(modelStore, tv.getDocumentUri(), tv.getId(), tv.getType()));
-				} else {
-					converted.add(element);
-				}
-			}
-			return (List<Object>) Collections.unmodifiableList(converted);
+			return ModelObject.checkConvertTypedValue(value, documentUri, modelStore);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException(e);
+		}
+	};
+	
+	public List<Object> toImmutableList() {		
+		try {
+			return (List<Object>) Collections.unmodifiableList(
+					modelStore.getValueList(documentUri, id, propertyName).stream().map(checkConvertTypedValue)
+					.collect(Collectors.toList()));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}

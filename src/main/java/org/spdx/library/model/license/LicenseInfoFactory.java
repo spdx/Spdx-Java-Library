@@ -131,7 +131,7 @@ public class LicenseInfoFactory {
 	 * @param id exception ID
 	 * @return true if the exception ID is a supported SPDX listed exception
 	 */
-	public static boolean isSPdxListedExceptionId(String id) {
+	public static boolean isSpdxListedExceptionId(String id) {
 		return ListedLicenses.getListedLicenses().isSpdxListedExceptionId(id);
 	}
 

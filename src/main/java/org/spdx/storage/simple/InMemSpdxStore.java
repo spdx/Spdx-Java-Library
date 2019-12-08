@@ -19,11 +19,14 @@ package org.spdx.storage.simple;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -41,6 +44,7 @@ import org.spdx.library.model.ModelCollection;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -62,6 +66,7 @@ public class InMemSpdxStore implements IModelStore {
 	static Pattern SPDX_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"(\\d+)$");
 	static final String ANON_PREFIX = "__anon__";
 	static Pattern ANON_ID_PATTERN_NUMERIC = Pattern.compile(ANON_PREFIX+"(\\d+)$");
+	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstants.LITERAL_VALUES));
 	
 	/**
 	 * Map of Document URI to items stored in the document
@@ -282,7 +287,7 @@ public class InMemSpdxStore implements IModelStore {
 			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
 			while (valueIter.hasNext()) {
 				StoredTypedItem item = valueIter.next();
-				allItems.add(SpdxModelFactory.createModelObject(this, item.getDocumentUri(), item.getId(), item.getType()));
+				allItems.add(SpdxModelFactory.createModelObject(this, documentUri, item.getId(), item.getType()));
 			}
 		}
 		return Collections.unmodifiableList(allItems).stream();
@@ -322,6 +327,30 @@ public class InMemSpdxStore implements IModelStore {
 	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
 			throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).isCollectionProperty(propertyName);
+	}
+
+	@Override
+	public IdType getIdType(String id) {
+		if (ANON_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+			return IdType.Anonomous;
+		}
+		if (SpdxConstants.LICENSE_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+			return IdType.LicenseRef;
+		}
+		if (DOCUMENT_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+			return IdType.DocumentRef;
+		}
+		if (SPDX_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+			return IdType.SpdxId;
+		}
+		if (LITERAL_VALUE_SET.contains(id)) {
+			return IdType.Literal;
+		}
+		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
+			return IdType.ListedLicense;
+		} else {
+			return IdType.Unkown;
+		}
 	}
 
 }

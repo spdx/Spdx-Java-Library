@@ -168,7 +168,7 @@ public class LicenseExpressionParser {
 					}
 					token = tokens[tokenIndex++];
 					LicenseException licenseException = null;
-					if (LicenseInfoFactory.isSPdxListedExceptionId(token)) {
+					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
 						licenseException = LicenseInfoFactory.getListedExceptionById(token);
 					} else {
 						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);

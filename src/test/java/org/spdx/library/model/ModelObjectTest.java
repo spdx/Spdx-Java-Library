@@ -64,8 +64,8 @@ public class ModelObjectTest extends TestCase {
 	protected void setUp() throws Exception {
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
-			Arrays.asList(new TypedValue[] {new TypedValue(TEST_DOCUMENT_URI, "typeId1", TEST_TYPE1), new TypedValue(TEST_DOCUMENT_URI, "typeId2", TEST_TYPE2)})};
-			TEST_TYPED_PROP_VALUES = new TypedValue[] {new TypedValue(TEST_DOCUMENT_URI, "typeId1", TEST_TYPE1), new TypedValue(TEST_DOCUMENT_URI, "typeId2", TEST_TYPE2)};
+			Arrays.asList(new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)})};
+			TEST_TYPED_PROP_VALUES = new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)};
 			ALL_PROPERTY_VALUES = new HashMap<>();
 			for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {
 				ALL_PROPERTY_VALUES.put(TEST_STRING_VALUE_PROPERTIES[i], TEST_STRING_VALUE_PROPERTY_VALUES[i]);
@@ -508,7 +508,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
 		Collection<String> result = gmo.getStringCollection(TEST_LIST_PROPERTIES[0]);
-		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], new ArrayList(result)));
+		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], new ArrayList<>(result)));
 		try {
 			gmo.getStringCollection(TEST_LIST_PROPERTIES[1]);
 			fail("No exception on getting the wrong type");
@@ -670,7 +670,6 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
 		TypedValue result = gmo.toTypedValue();
-		assertEquals(TEST_DOCUMENT_URI, result.getDocumentUri());
 		assertEquals(TEST_ID, result.getId());
 		assertEquals(gmo.getType(), result.getType());
 	}
