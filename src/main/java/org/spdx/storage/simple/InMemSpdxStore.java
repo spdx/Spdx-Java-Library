@@ -199,11 +199,11 @@ public class InMemSpdxStore implements IModelStore {
 	private StoredTypedItem getItem(String documentUri, String id) throws InvalidSPDXAnalysisException {
 		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
 		if (idMap == null) {
-			throw new SpdxIdNotFoundException("Document URI "+documentUri+" was not found in the memory store.  The ID must first be created before getting property values.");
+			throw new SpdxIdNotFoundException("Document URI "+documentUri+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
 		StoredTypedItem item = idMap.get(id);
 		if (item == null) {
-			throw new SpdxIdNotFoundException("ID "+id+" was not found in the memory store.  The ID must first be created before getting property values.");
+			throw new SpdxIdNotFoundException("ID "+id+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
 		return item;
 	}

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.IndividuallValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -28,7 +29,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-public class SpdxNoneLicense extends AnyLicenseInfo {
+public class SpdxNoneLicense extends AnyLicenseInfo implements IndividuallValue {
 	
 	static final int NONE_LICENSE_HASHCODE = 147; // prime number - all none licenses should have the same hashcde
 	static final String NONE_LICENSE_ID = "SPDX_NONE_LICENSE";
@@ -81,6 +82,11 @@ public class SpdxNoneLicense extends AnyLicenseInfo {
 	@Override
 	public String getType() {
 		return SpdxConstants.CLASS_NONE_LICENSE;
+	}
+
+	@Override
+	public String getIndividualURI() {
+		return SpdxConstants.URI_VALUE_NONE;
 	}
 	
 	

@@ -257,7 +257,7 @@ public abstract class ModelObject {
 			}
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
-		} else if (value instanceof String || value instanceof Boolean) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividuallValue) {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Property value type not supported: "+value.getClass().getName());
@@ -271,6 +271,9 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		if (this instanceof IndividuallValue) {
+			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividuallValue)this).getIndividualURI());
+		}
 		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
 	}
 	
@@ -312,16 +315,25 @@ public abstract class ModelObject {
 	 */
 	public Optional<Boolean> getBooleanPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
-		Optional<Boolean> retval;
 		if (result.isPresent()) {
-			if (!(result.get() instanceof Boolean)) {
+			if (result.get() instanceof Boolean) {
+				return Optional.of((Boolean)result.get());
+			} else if (result.get() instanceof String) {
+				// try to convert
+				String sResult = ((String)result.get()).toLowerCase();
+				if ("true".equals(sResult)) {
+					return Optional.of(new Boolean(true));
+				} else if ("false".equals(sResult)) {
+					return Optional.of(new Boolean(false));
+				} else {
+					throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
+				}
+			} else {
 				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
 			}
-			retval = Optional.of((Boolean)result.get());
 		} else {
-			retval = Optional.empty();
+			return Optional.empty();
 		}
-		return retval;
 	}
 	
 	/**
@@ -415,7 +427,7 @@ public abstract class ModelObject {
 				}
 			}
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else if (value instanceof String || value instanceof Boolean) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividuallValue) {
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Unsupported type to add to a collection: "+value.getClass().getName());

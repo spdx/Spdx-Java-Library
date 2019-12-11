@@ -34,37 +34,49 @@ public class SpdxConstants {
 	public static final String OWL_NAMESPACE = "http://www.w3.org/2002/07/owl#";
 	public static final String RDF_POINTER_NAMESPACE = "http://www.w3.org/2009/pointers#";
 	
-	// RDF Properties
+	// RDF Properties - within the RDF_NAMESPACE
 	public static final String RDF_PROP_TYPE = "type";
 	public static final String RDF_PROP_RESOURCE = "resource";
+	public static final String[] RDF_PROPERTIES = new String[] {RDF_PROP_TYPE, RDF_PROP_RESOURCE};
 	
-	// OWL Properties
+	
+	// OWL Properties - within the OWL_NAMESPACE
 	public static final String PROP_OWL_SAME_AS = "sameAs";
-
+	public static final String[] OWL_PROPERTIES = new String[] {PROP_OWL_SAME_AS};
 	
-	// RDFS Properties
+	// RDFS Properties - within the RDFS_NAMESPACE
 	public static final String RDFS_PROP_COMMENT = "comment";
 	public static final String RDFS_PROP_LABEL = "label";
 	public static final String RDFS_PROP_SEE_ALSO = "seeAlso";
+	public static final String[] RDFS_PROPERTIES = new String[] {RDFS_PROP_COMMENT, RDFS_PROP_LABEL, RDFS_PROP_SEE_ALSO};
 	
-	// DOAP Class Names
+	// DOAP Class Names - within the DOAP_NAMESPACE
 	public static final String CLASS_DOAP_PROJECT = "Project";
+	public static final String[] DOAP_CLASSES = {CLASS_DOAP_PROJECT};
 	
-	// DOAP Project Property Names
+	// DOAP Project Property Names - within the DOAP_NAMESPACE
 	public static final String PROP_PROJECT_NAME = "name";
 	public static final String PROP_PROJECT_HOMEPAGE = "homepage";
+	public static final String[] DOAP_PROPERTIES = new String[] {PROP_PROJECT_NAME, PROP_PROJECT_HOMEPAGE};
 	
-	// Pointer Class Names
+	// Pointer Class Names - with in the RDF_POINTER_NAMESPACE
 	public static final String CLASS_POINTER_START_END_POINTER = "StartEndPointer";
 	public static final String CLASS_POINTER_BYTE_OFFSET_POINTER = "ByteOffsetPointer";
 	public static final String CLASS_POINTER_LINE_CHAR_POINTER = "LineCharPointer";
+	public static final String[] POINTER_CLASSES = new String[] {
+			CLASS_POINTER_START_END_POINTER, CLASS_POINTER_BYTE_OFFSET_POINTER, CLASS_POINTER_LINE_CHAR_POINTER
+			};
 	
-	// Pointer Properties
+	// Pointer Properties - with in the RDF_POINTER_NAMESPACE
 	public static final String PROP_POINTER_START_POINTER = "startPointer";
 	public static final String PROP_POINTER_END_POINTER = "endPointer";
 	public static final String PROP_POINTER_REFERENCE = "reference";
 	public static final String PROP_POINTER_OFFSET = "offset";
 	public static final String PROP_POINTER_LINE_NUMBER = "lineNumber";
+	public static final String[] POINTER_PROPERTIES = new String[] {
+			PROP_POINTER_START_POINTER, PROP_POINTER_END_POINTER, PROP_POINTER_REFERENCE, PROP_POINTER_OFFSET,
+			PROP_POINTER_LINE_NUMBER
+	};
 	
 	// SPDX Class Names
 	public static final String CLASS_SPDX_DOCUMENT = "SpdxDocument";
@@ -94,6 +106,7 @@ public class SpdxConstants {
 	public static final String CLASS_SPDX_SNIPPET = "Snippet";
 	public static final String CLASS_NONE_LICENSE = "SpdxNoneLicense";
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
+	
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
 			CLASS_SPDX_CREATION_INFO, CLASS_SPDX_CHECKSUM, CLASS_SPDX_ANY_LICENSE_INFO, 
 			CLASS_SPDX_SIMPLE_LICENSE_INFO, CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, CLASS_SPDX_DISJUNCTIVE_LICENSE_SET, 
