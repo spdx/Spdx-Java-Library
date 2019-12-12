@@ -278,8 +278,10 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter)
+	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter)
 			throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(documentUri);
+		Objects.requireNonNull(typeFilter);
 		List<ModelObject> allItems = new ArrayList<>();
 		Iterator<ConcurrentHashMap<String, StoredTypedItem>> docIter = this.documentValues.values().iterator();
 		while (docIter.hasNext()) {
@@ -287,7 +289,9 @@ public class InMemSpdxStore implements IModelStore {
 			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
 			while (valueIter.hasNext()) {
 				StoredTypedItem item = valueIter.next();
-				allItems.add(SpdxModelFactory.createModelObject(this, documentUri, item.getId(), item.getType()));
+				if (typeFilter.equals(item.getType())) {
+					allItems.add(SpdxModelFactory.createModelObject(this, documentUri, item.getId(), item.getType()));
+				}
 			}
 		}
 		return Collections.unmodifiableList(allItems).stream();

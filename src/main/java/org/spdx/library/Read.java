@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.spdx.library.model.ModelObject;
@@ -129,7 +128,7 @@ public class Read {
 	 * @param typeFilter Optional parameter to specify the type of objects to be retrieved
 	 * @return Stream of all items store within the document
 	 */
-	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, Optional<String> typeFilter) throws InvalidSPDXAnalysisException { 
+	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, String typeFilter) throws InvalidSPDXAnalysisException { 
 		return modelStore.getAllItems(documentUri, typeFilter);
 	}
 	
@@ -139,9 +138,9 @@ public class Read {
 	 * @return All packages stored for the document in the model store
 	 * @throws InvalidSPDXAnalysisException
 	 */
+	@SuppressWarnings("unchecked")
 	public static Stream<SpdxPackage> getAllPackages(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException {
-		//TODO: Figure out how to implement the proper type checking
-		return (Stream<SpdxPackage>)(getAllItems(modelStore, documentUri, Optional.of(SpdxConstants.CLASS_SPDX_PACKAGE)));
+		return (Stream<SpdxPackage>)(getAllItems(modelStore, documentUri, SpdxConstants.CLASS_SPDX_PACKAGE));
 	}
 	
 	/** The following can be achieve by fetching the list of relationships from the element

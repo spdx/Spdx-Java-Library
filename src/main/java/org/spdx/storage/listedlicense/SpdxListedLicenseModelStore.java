@@ -732,16 +732,21 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter)
+	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter)
 			throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(typeFilter);
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			List<ModelObject> allItems = new ArrayList<ModelObject>();
-			for (String licenseId:this.licenseIds) {
-				allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
+				for (String licenseId:this.licenseIds) {
+					allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+				}
 			}
-			for (String exceptionId:this.exceptionIds) {
-				allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+			if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(typeFilter)) {
+				for (String exceptionId:this.exceptionIds) {
+					allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+				}
 			}
 			return Collections.unmodifiableList(allItems).stream();
 		} finally {

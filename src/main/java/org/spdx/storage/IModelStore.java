@@ -152,7 +152,7 @@ public interface IModelStore {
 	 * @return Stream of all items store within the document
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Stream<? extends ModelObject> getAllItems(String documentUri, Optional<String> typeFilter) throws InvalidSPDXAnalysisException;
+	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Initiates a transaction
