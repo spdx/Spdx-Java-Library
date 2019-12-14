@@ -37,14 +37,15 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
-import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.library.model.license.SpdxListedLicenseException;
 
@@ -732,20 +733,20 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter)
+	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(typeFilter);
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			List<ModelObject> allItems = new ArrayList<ModelObject>();
-			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
+			List<TypedValue> allItems = new ArrayList<TypedValue>();
+			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
 				for (String licenseId:this.licenseIds) {
-					allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+					allItems.add(new TypedValue(licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
 				}
 			}
-			if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(typeFilter)) {
 				for (String exceptionId:this.exceptionIds) {
-					allItems.add(SpdxModelFactory.createModelObject(this, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
 				}
 			}
 			return Collections.unmodifiableList(allItems).stream();
@@ -755,7 +756,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException {
+	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException {
 		ListedLicenseStoreTransaction transaction = new ListedLicenseStoreTransaction();
 		transaction.begin(readWrite);
 		return transaction;

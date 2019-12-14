@@ -48,8 +48,8 @@ public class Write {
 	 * @throws IOException 
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static void applyUpdatesInOneTransaction(IModelStore modelStore, ModelUpdate... updates) throws InvalidSPDXAnalysisException, IOException {
-		applyUpdatesInOneTransaction(modelStore, Arrays.asList(updates));
+	public static void applyUpdatesInOneTransaction(String documentUri, IModelStore modelStore, ModelUpdate... updates) throws InvalidSPDXAnalysisException, IOException {
+		applyUpdatesInOneTransaction(documentUri, modelStore, Arrays.asList(updates));
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class Write {
 	 * @throws InvalidSPDXAnalysisException
 	 * @throws IOException
 	 */
-	public static void applyUpdatesInOneTransaction(IModelStore modelStore, Iterable<? extends ModelUpdate> updates) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(ReadWrite.WRITE)) {
+	public static void applyUpdatesInOneTransaction(String documentUri, IModelStore modelStore, Iterable<? extends ModelUpdate> updates) throws InvalidSPDXAnalysisException, IOException {
+		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE)) {
 			for (ModelUpdate update : updates) {
 				update.apply();
 			}
@@ -77,7 +77,7 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void deSerialize(ISerializableModelStore modelStore, String documentUri, InputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(ReadWrite.WRITE)) {
+		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE)) {
 			modelStore.deSerialize(documentUri, stream);
 		}
 	}

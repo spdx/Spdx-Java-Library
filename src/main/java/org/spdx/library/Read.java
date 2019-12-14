@@ -29,7 +29,9 @@ import java.util.stream.Stream;
 
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxDocument;
+import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.SpdxPackage;
+import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.ISerializableModelStore;
 import org.spdx.storage.IModelStore.ModelTransaction;
@@ -58,14 +60,12 @@ public class Read {
 		 * @throws IOException 
 		 */
 		public static List<SpdxDocument> get(IModelStore modelStore) throws InvalidSPDXAnalysisException, IOException {
-			try (ModelTransaction transaction = modelStore.beginTransaction(ReadWrite.READ)) {
-				List<String> documentUris = modelStore.getDocumentUris();
-				List<SpdxDocument> retval = new ArrayList<SpdxDocument>();
-				for (String documentUri:documentUris) {
-					retval.add(new SpdxDocument(modelStore, documentUri, false));
-				}
-				return retval;
+			List<String> documentUris = modelStore.getDocumentUris();
+			List<SpdxDocument> retval = new ArrayList<SpdxDocument>();
+			for (String documentUri:documentUris) {
+				retval.add(new SpdxDocument(modelStore, documentUri, false));
 			}
+			return retval;
 		}
 		
 		/**
@@ -76,7 +76,7 @@ public class Read {
 		 * @throws IOException 
 		 */
 		public static SpdxDocument get(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException, IOException {
-			try (ModelTransaction transaction = modelStore.beginTransaction(ReadWrite.READ)) {
+			try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.READ)) {
 				return new SpdxDocument(modelStore, documentUri, false);				
 			}
 		}
@@ -99,7 +99,7 @@ public class Read {
 	 * @param stream Output stream for serialization
 	 */
 	public static void serialize(ISerializableModelStore modelStore, String documentUri, OutputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(ReadWrite.READ)) {
+		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.READ)) {
 			modelStore.serialize(documentUri, stream);
 		}
 	}
@@ -129,7 +129,13 @@ public class Read {
 	 * @return Stream of all items store within the document
 	 */
 	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, String typeFilter) throws InvalidSPDXAnalysisException { 
-		return modelStore.getAllItems(documentUri, typeFilter);
+		return modelStore.getAllItems(documentUri, typeFilter).map((TypedValue tv) -> {
+			try {
+				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType());
+			} catch (InvalidSPDXAnalysisException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 	
 	/**

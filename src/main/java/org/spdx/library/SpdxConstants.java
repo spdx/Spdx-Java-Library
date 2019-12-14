@@ -117,6 +117,9 @@ public class SpdxConstants {
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE};
 	
+	// classes that use the listed license URI for their namespace
+	public static final String[] LISTED_LICENSE_URI_CLASSES = {CLASS_SPDX_LISTED_LICENSE, CLASS_SPDX_LICENSE_EXCEPTION};
+	
 	// General SPDX Properties
 	public static final String PROP_VALUE_NONE = "none";
 	public static final String URI_VALUE_NONE = SPDX_NAMESPACE  + PROP_VALUE_NONE;

@@ -115,6 +115,13 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "33", SpdxConstants.CLASS_SPDX_CHECKSUM);
 		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "34", nextId);
+		
+		// Document ID's
+		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", nextId);
+		store.create(TEST_DOCUMENT_URI1, SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "33", SpdxConstants.CLASS_EXTERNAL_DOC_REF);
+		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "34", nextId);
 	}
 	
 	public void testCreateExists() throws InvalidSPDXAnalysisException {
@@ -225,6 +232,12 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
 		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "1", nextId);
+		
+		// Document ID's
+		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", nextId);
+		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "1", nextId);
 	}
 	
 	public void testRemoveProperty() throws InvalidSPDXAnalysisException {
@@ -353,7 +366,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
-		ModelTransaction transaction = store.beginTransaction(ReadWrite.WRITE);
+		ModelTransaction transaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.WRITE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], value1);
 		transaction.commit();
 		assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
@@ -379,7 +392,7 @@ public class InMemSpdxStoreTest extends TestCase {
 					waiter.resume();	// release the main thread
 					logger.info("Woke up main thread");
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
-					ModelTransaction threadTransaction = store.beginTransaction(ReadWrite.READ);
+					ModelTransaction threadTransaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.READ);
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 					int retries = 0;
 					while (!getTestState().equals("step2") && retries < MAX_RETRIES) {
@@ -434,7 +447,7 @@ public class InMemSpdxStoreTest extends TestCase {
 					}
 					logger.info("Thread2 awoke from thread 1");
 					assertEquals("step3", getTestState());
-					ModelTransaction threadTransaction = store.beginTransaction(ReadWrite.WRITE);	// this should block waiting for thread1 transaction to complete
+					ModelTransaction threadTransaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.WRITE);	// this should block waiting for thread1 transaction to complete
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 					store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], value2);
 					waiter.assertEquals(value2, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
@@ -507,6 +520,33 @@ public class InMemSpdxStoreTest extends TestCase {
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws InvalidSPDXAnalysisException {
+
+		InMemSpdxStore store = new InMemSpdxStore();
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		// String
+		String sProperty = "stringprop";
+		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
+		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
+		// Boolean
+		String bProperty = "boolprop";
+		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, new Boolean(true));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
+		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
+		// TypedValue
+		String tvProperty = "tvprop";
+		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, String.class));
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
+		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
+		// Empty
+		String emptyProperty = "emptyprop";
+		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
+	}
+	
+	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		// String
@@ -542,32 +582,6 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, TypedValue.class));
-	}
-	
-	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
-		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		// String
-		String sProperty = "stringprop";
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
-		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
-		// Boolean
-		String bProperty = "boolprop";
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, new Boolean(true));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
-		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
-		// TypedValue
-		String tvProperty = "tvprop";
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, String.class));
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
-		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
-		// Empty
-		String emptyProperty = "emptyprop";
-		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 	}
 	
 	public void testIsCollectionProperty() throws InvalidSPDXAnalysisException {

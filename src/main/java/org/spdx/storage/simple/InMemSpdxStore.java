@@ -41,9 +41,8 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
 import org.spdx.library.model.ModelCollection;
-import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 
@@ -278,19 +277,19 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter)
+	public Stream<TypedValue> getAllItems(String documentUri, String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(documentUri);
 		Objects.requireNonNull(typeFilter);
-		List<ModelObject> allItems = new ArrayList<>();
+		List<TypedValue> allItems = new ArrayList<>();
 		Iterator<ConcurrentHashMap<String, StoredTypedItem>> docIter = this.documentValues.values().iterator();
 		while (docIter.hasNext()) {
 			ConcurrentHashMap<String, StoredTypedItem> itemMap = docIter.next();
 			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
 			while (valueIter.hasNext()) {
 				StoredTypedItem item = valueIter.next();
-				if (typeFilter.equals(item.getType())) {
-					allItems.add(SpdxModelFactory.createModelObject(this, documentUri, item.getId(), item.getType()));
+				if (Objects.isNull(typeFilter) || typeFilter.equals(item.getType())) {
+					allItems.add(item);
 				}
 			}
 		}
@@ -298,7 +297,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException {
+	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException {
 		InMemStoreTransaction transaction = new InMemStoreTransaction();
 		transaction.begin(readWrite);
 		return transaction;

@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.TypedValue;
 
 /**
- * Interface for storing and retrieving SPDX properties for SPDX documents.
+ * Service Provider Interface for storing and retrieving SPDX properties for SPDX documents.
  * 
  * The interface uses the SPDX document URI and an ID to identify specific objects stored.
  * 
@@ -152,15 +154,16 @@ public interface IModelStore {
 	 * @return Stream of all items store within the document
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Stream<? extends ModelObject> getAllItems(String documentUri, String typeFilter) throws InvalidSPDXAnalysisException;
+	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * Initiates a transaction
+	 * Initiates a transaction within an SPDX document.  Note: transactions spanning documents are not supported
+	 * @param documentUri Unique document URI
 	 * @param readWrite signal if any writes or updates is expected
 	 * @return transaction object to call commit and close when the transaction is complete
 	 * @throws IOException 
 	 */
-	public ModelTransaction beginTransaction(ReadWrite readWrite) throws IOException;
+	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException;
 
 	/**
 	 * Removes a value from a collection of values associated with a property
@@ -217,6 +220,7 @@ public interface IModelStore {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public List<Object> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	//TODO: Think about removing the getValueList interface and change to something like a stream or iterator
 
 	/**
 	 * @param documentUri the SPDX Document URI
