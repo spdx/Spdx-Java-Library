@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.IndividuallValue;
+import org.spdx.library.model.IndividualValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -29,7 +29,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-public class SpdxNoAssertionLicense extends AnyLicenseInfo implements IndividuallValue {
+public class SpdxNoAssertionLicense extends AnyLicenseInfo implements IndividualValue {
 	
 	static final String NOASSERTION_LICENSE_ID = "NOASSERTION_LICENSE_ID";
 	
@@ -88,5 +88,21 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 	@Override
 	public String getIndividualURI() {
 		return SpdxConstants.URI_VALUE_NOASSERTION;
+	}
+
+	@Override
+	public String getShortName() {
+		return "NOASSERTION";
+	}
+
+	@Override
+	public String getLongName() {
+		// TODO Auto-generated method stub
+		return "noassertion";
+	}
+
+	@Override
+	public String getNameSpace() {
+		return SpdxConstants.SPDX_NAMESPACE;
 	}
 }

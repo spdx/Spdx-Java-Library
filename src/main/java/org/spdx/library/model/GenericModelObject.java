@@ -76,5 +76,4 @@ public class GenericModelObject extends ModelObject {
 	public List<String> verify() {
 		return new ArrayList<>();
 	}
-
 }

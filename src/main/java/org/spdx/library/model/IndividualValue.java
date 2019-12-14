@@ -24,11 +24,26 @@ package org.spdx.library.model;
  * @author Gary O'Neall
  *
  */
-public interface IndividuallValue {
+public interface IndividualValue {
 	
 	/**
-	 * @return a unique identifier for this class.  Typically defined in the SPDX standard (e.g. NONE and NOASSERTION).
+	 * @return a unique identifier for this value.  Typically the namespace + the long name
 	 */
 	public String getIndividualURI();
+	
+	/**
+	 * @return the short name for the value - typically used in the SPDX Tag/Value format
+	 */
+	public String getShortName();
+	
+	/**
+	 * @return the unique long name for the value - typically the URI without the namespace
+	 */
+	public String getLongName();
+	
+	/**
+	 * @return The namespace used to create the individual URI
+	 */
+	public String getNameSpace();
 
 }

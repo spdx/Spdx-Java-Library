@@ -17,15 +17,28 @@
  */
 package org.spdx.library.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
 
 /**
- * @author gary
- *
+ * An SpdxElement is any thing described in SPDX, either a document or an SpdxItem. 
+ * SpdxElements can be related to other SpdxElements.
+ * 
+ * If a subproperty is used for the name property name, getNamePropertyName should be overridden.
+ * 
+ * @author Gary O'Neall
  */
 public abstract class SpdxElement extends ModelObject {
 
+	static final Logger logger = LoggerFactory.getLogger(SpdxElement.class);
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -39,7 +52,6 @@ public abstract class SpdxElement extends ModelObject {
 	 */
 	public SpdxElement(String id) throws InvalidSPDXAnalysisException {
 		super(id);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -52,7 +64,103 @@ public abstract class SpdxElement extends ModelObject {
 	public SpdxElement(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
-		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public List<String> verify() {
+		List<String> retval = new ArrayList<>();
+		try {
+			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: "));
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting annotations: "+e.getMessage());
+		}
+		try {
+			retval.addAll(verifyCollection(getRelationships(), "Relationship error: "));
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting relationships: "+e.getMessage());
+		}
+		addNameToWarnings(retval);
+		return retval;
+	}
+	
+	/**
+	 * Add the name of the element to all strings in the list
+	 * @param warnings
+	 */
+	protected void addNameToWarnings(List<String> warnings) {
+		if (warnings == null) {
+			return;
+		}
+		String localName = "[UNKNOWN]";
+		try {
+			Optional<String> name = getName();
+			if (name.isPresent()) {
+				localName = name.get();
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting name",e);
+		}
+		for (int i = 0; i < warnings.size(); i++) {
+			warnings.set(i, warnings.get(i)+" in "+localName);
+		}
+	}
+	
+	/**
+	 * @return Annotations
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public Collection<Annotation> getAnnotations() throws InvalidSPDXAnalysisException {
+		return (Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION);
+	}
+	
+	/**
+	 * @return Relationships
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public Collection<Relationship> getRelationships() throws InvalidSPDXAnalysisException {
+		return (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP);
+	}
+	
+	/**
+	 * @return the comment
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Optional<String> getComment() throws InvalidSPDXAnalysisException {
+		return this.getStringPropertyValue(SpdxConstants.RDFS_PROP_COMMENT);
+	}
+	
+	/**
+	 * Sets the comment
+	 * @param comment
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setcomment(String comment) throws InvalidSPDXAnalysisException {
+		this.setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
+	}
+	
+	
+	/**
+	 * @return the property name used for the Name property.  Override this function if using a subproperty of SPDX Name
+	 */
+	protected String getNamePropertyName() {
+		return SpdxConstants.PROP_NAME;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public Optional<String> getName() throws InvalidSPDXAnalysisException {
+		return this.getStringPropertyValue(getNamePropertyName());
+	}
+	
+	/**
+	 * Set the name
+	 * @param name
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setName(String name) throws InvalidSPDXAnalysisException {
+		this.setPropertyValue(getNamePropertyName(), name);
+	}
 }

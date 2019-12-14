@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -67,6 +69,8 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  *
  */
 public abstract class ModelObject {
+	
+	static final Logger logger = LoggerFactory.getLogger(ModelObject.class);
 
 	private IModelStore modelStore;
 	private String documentUri;
@@ -257,7 +261,7 @@ public abstract class ModelObject {
 			}
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividuallValue) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualValue) {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Property value type not supported: "+value.getClass().getName());
@@ -271,8 +275,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (this instanceof IndividuallValue) {
-			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividuallValue)this).getIndividualURI());
+		if (this instanceof IndividualValue) {
+			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualValue)this).getIndividualURI());
 		}
 		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
 	}
@@ -306,6 +310,24 @@ public abstract class ModelObject {
 			retval = Optional.empty();
 		}
 		return retval;
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	protected Optional<? extends Enum> getEnumValue(String propertyName, Class<? extends Enum> enumType) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		if (!result.isPresent()) {
+			return Optional.empty();
+		}
+		if (!(result.get() instanceof IndividualValue)) {
+			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
+		}
+		try {
+			return Optional.of(Enum.valueOf(enumType, ((IndividualValue)result.get()).getShortName()));
+		} catch (Exception e) {
+			logger.error("Exception converting to enum type", e);
+			throw new SpdxInvalidTypeException("Can not convert the individual value "+((IndividualValue)result.get()).getShortName()+ " to Enum type "+enumType.toString());
+		}
 	}
 	
 	/**
@@ -427,7 +449,7 @@ public abstract class ModelObject {
 				}
 			}
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividuallValue) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualValue) {
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Unsupported type to add to a collection: "+value.getClass().getName());
@@ -772,5 +794,49 @@ public abstract class ModelObject {
 	
 	TypedValue toTypedValue() throws InvalidSPDXAnalysisException {
 		return new TypedValue(this.id, this.getType());
+	}
+	
+	/**
+	 * Verifies all elements in a collection
+	 * @param collection
+	 * @param warningPrefix String to prefix any warning messages
+	 */
+	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix) {
+		List<String> retval = new ArrayList<>();
+		collection.forEach(action -> {
+			action.verify().forEach(warning -> {
+				if (Objects.nonNull(warningPrefix)) {
+					retval.add(warningPrefix + warning);
+				} else {
+					retval.add(warning);
+				}
+			});
+		});
+		return retval;
+	}
+	
+	// The following methods are helper methods to create Model Object subclasses using the same model store and document as this Model Object
+
+	/**
+	 * @param annotator This field identifies the person, organization or tool that has commented on a file, package, or the entire document.
+	 * @param annotationType This field describes the type of annotation.  Annotations are usually created when someone reviews the file, and if this is the case the annotation type should be REVIEW.   If the author wants to store extra information about one of the elements during creation, it is recommended to use the type of OTHER.
+	 * @param date Identify when the comment was made.  This is to be specified according to the combined date and time in the UTC format, as specified in the ISO 8601 standard.
+	 * @param comment
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Annotation createAnnotation(String annotator, AnnotationType annotationType, String date,
+			String comment) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(annotator);
+		Objects.requireNonNull(annotationType);
+		Objects.requireNonNull(date);
+		Objects.requireNonNull(comment);
+		Annotation retval = new Annotation(this.modelStore, this.documentUri, 
+				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+		retval.setAnnotationDate(date);
+		retval.setAnnotationType(annotationType);
+		retval.setAnnotator(annotator);
+		retval.setComment(comment);
+		return retval;
 	}
 }

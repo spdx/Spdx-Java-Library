@@ -40,6 +40,40 @@ import junit.framework.TestCase;
  *
  */
 public class ModelObjectTest extends TestCase {
+	
+	enum TestEnum implements IndividualValue {
+		ENUMVAL1("longValue1"),
+		ENUMVAL2("longValue2"),
+		ENUMVAL3("longValue3")
+		;
+		
+		private String longName;
+		
+		private TestEnum(String longName) {
+			this.longName = longName;
+		}
+
+		@Override
+		public String getIndividualURI() {
+			return getNameSpace() + getLongName();
+		}
+
+		@Override
+		public String getShortName() {
+			return this.toString();
+		}
+
+		@Override
+		public String getLongName() {
+			return this.longName;
+		}
+
+		@Override
+		public String getNameSpace() {
+			return "https://test.enum.namespace#";
+		}
+		
+	}
 
 	private static final String TEST_DOCUMENT_URI = "https://test.document.uri";
 	private static final String TEST_ID = "testId";
@@ -52,8 +86,11 @@ public class ModelObjectTest extends TestCase {
 	static final Object[] TEST_STRING_VALUE_PROPERTY_VALUES = new Object[] {"value1", "value2", "value3"};
 	static final String[] TEST_BOOLEAN_VALUE_PROPERTIES = new String[] {"boolProp1", "boolProp2"};
 	static final Object[] TEST_BOOLEAN_VALUE_PROPERTY_VALUES = new Object[] {true, false};
-	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3"};
+	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4"};
 	static final String[] TEST_TYPED_PROPERTIES = new String[] {"typeProp1", "typeProp2"};
+	static final String[] TEST_ENUM_PROPERTIES = new String[] {"enumProp1", "enumProp2"};
+	static final TestEnum[] TEST_ENUM_VALUES = new TestEnum[] {TestEnum.ENUMVAL1, TestEnum.ENUMVAL2};
+	
 	TypedValue[] TEST_TYPED_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	Map<String, Object> ALL_PROPERTY_VALUES;
@@ -64,7 +101,8 @@ public class ModelObjectTest extends TestCase {
 	protected void setUp() throws Exception {
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
-			Arrays.asList(new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)})};
+			Arrays.asList(new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)}),
+			Arrays.asList(new TestEnum[] {TestEnum.ENUMVAL2, TestEnum.ENUMVAL3})};
 			TEST_TYPED_PROP_VALUES = new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)};
 			ALL_PROPERTY_VALUES = new HashMap<>();
 			for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {
@@ -78,6 +116,9 @@ public class ModelObjectTest extends TestCase {
 			}
 			for (int i = 0; i < TEST_TYPED_PROPERTIES.length; i++) {
 				ALL_PROPERTY_VALUES.put(TEST_TYPED_PROPERTIES[i], TEST_TYPED_PROP_VALUES[i]);
+			}
+			for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
+				ALL_PROPERTY_VALUES.put(TEST_ENUM_PROPERTIES[i], TEST_ENUM_VALUES[i]);
 			}
 	}
 	/* (non-Javadoc)
@@ -672,6 +713,18 @@ public class ModelObjectTest extends TestCase {
 		TypedValue result = gmo.toTypedValue();
 		assertEquals(TEST_ID, result.getId());
 		assertEquals(gmo.getType(), result.getType());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void testGetEnumValue() throws InvalidSPDXAnalysisException, InstantiationException, IllegalAccessException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
+		addTestValues(gmo);
+		for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
+			Optional<TestEnum> result = (Optional<TestEnum>)gmo.getEnumValue(TEST_ENUM_PROPERTIES[i], TestEnum.class);
+			assertTrue(result.isPresent());
+			assertEquals(TEST_ENUM_VALUES[i], result.get());
+		}
 	}
 
 }

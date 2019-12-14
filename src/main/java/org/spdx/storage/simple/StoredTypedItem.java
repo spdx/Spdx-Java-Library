@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -17,17 +18,17 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.library.model.TypedValue;
+import org.spdx.library.model.IndividualValue;
 import org.spdx.storage.IModelStore;
 
 /**
- * @author gary
- *
- */
-/**
- * @author gary
+ * Individual item to be stored in memory
+ * 
+ * @author Gary O'Neall
  *
  */
 class StoredTypedItem extends TypedValue {
+
 	
 	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstants.ALL_SPDX_CLASSES));
 
@@ -56,6 +57,8 @@ class StoredTypedItem extends TypedValue {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public void setValue(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(value);
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (value instanceof List || value instanceof Collection) {
@@ -63,7 +66,8 @@ class StoredTypedItem extends TypedValue {
 		} else if (!value.getClass().isPrimitive() && 
 				!value.getClass().isAssignableFrom(String.class) &&
 				!value.getClass().isAssignableFrom(Boolean.class) &&
-				!value.getClass().isAssignableFrom(TypedValue.class)) {
+				!value.getClass().isAssignableFrom(TypedValue.class) &&
+				!(value instanceof IndividualValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
 		properties.put(propertyName, value);
@@ -75,6 +79,7 @@ class StoredTypedItem extends TypedValue {
 	 * @throws SpdxInvalidTypeException
 	 */
 	public void clearPropertyValueList(String propertyName) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
 		Object value = properties.getOrDefault(propertyName, new ArrayList<Object>());
 		if (value == null) {
 			throw new SpdxInvalidTypeException("No list for list property value for property "+propertyName);
@@ -93,6 +98,8 @@ class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(value);
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		}
@@ -123,6 +130,8 @@ class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings("rawtypes")
 	public boolean removeValueFromList(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(value);
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			return true;
@@ -144,6 +153,7 @@ class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Object> getValueList(String propertyName) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			return null;
@@ -159,6 +169,7 @@ class StoredTypedItem extends TypedValue {
 	 * @return the single value associated with the id, propertyName and document
 	 */
 	public Object getValue(String propertyName) {
+		Objects.requireNonNull(propertyName);
 		return properties.get(propertyName);
 	}
 	
@@ -167,6 +178,7 @@ class StoredTypedItem extends TypedValue {
 	 * @param propertyName Name of the property
 	 */
 	public void removeProperty(String propertyName) {
+		Objects.requireNonNull(propertyName);
 		properties.remove(propertyName);
 	}
 
@@ -177,6 +189,8 @@ class StoredTypedItem extends TypedValue {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void copyValuesFrom(String fromDocumentUri, IModelStore store) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(fromDocumentUri);
+		Objects.requireNonNull(store);
 		List<String> propertyNames = store.getPropertyValueNames(fromDocumentUri, this.getId());
 		for (String propertyName:propertyNames) {
 			Optional<Object> value = store.getValue(fromDocumentUri, getId(), propertyName);
@@ -193,6 +207,7 @@ class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings("rawtypes")
 	public int collectionSize(String propertyName) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
@@ -214,6 +229,8 @@ class StoredTypedItem extends TypedValue {
 
 	@SuppressWarnings("rawtypes")
 	public boolean collectionContains(String propertyName, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(value);
 		Object list = properties.get(propertyName);
 		if (list == null) {
 			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
@@ -234,6 +251,8 @@ class StoredTypedItem extends TypedValue {
 	}
 
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(clazz);
 		Object value = properties.get(propertyName);
 		if (value == null) {
 			return true; // It is still assignable to since it is unassigned
@@ -252,6 +271,8 @@ class StoredTypedItem extends TypedValue {
 	}
 
 	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) {
+		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(clazz);
 		Object value = properties.get(propertyName);
 		if (value == null) {
 			return false;
@@ -260,6 +281,7 @@ class StoredTypedItem extends TypedValue {
 	}
 
 	public boolean isCollectionProperty(String propertyName) {
+		Objects.requireNonNull(propertyName);
 		Object value = properties.get(propertyName);
 		return value instanceof List;
 	}

@@ -31,7 +31,10 @@ import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
 
 /**
- * @author gary
+ * Factory class to create ModelObjects based on the type
+ * Types are defined classes in the SpdxConstants class and map to the standard SPDX model
+ * 
+ * @author Gary O'Neall
  *
  */
 public class SpdxModelFactory {
