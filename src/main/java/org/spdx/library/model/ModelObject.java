@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
@@ -314,7 +316,7 @@ public abstract class ModelObject {
 	
 
 	@SuppressWarnings("rawtypes")
-	protected Optional<? extends Enum> getEnumValue(String propertyName, Class<? extends Enum> enumType) throws InvalidSPDXAnalysisException {
+	protected Optional<? extends Enum> getEnumPropertyValue(String propertyName, Class<? extends Enum> enumType) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
 		if (!result.isPresent()) {
 			return Optional.empty();
@@ -837,6 +839,31 @@ public abstract class ModelObject {
 		retval.setAnnotationType(annotationType);
 		retval.setAnnotator(annotator);
 		retval.setComment(comment);
+		return retval;
+	}
+	
+	/**
+	 * @param owningElement Source of the relationship
+	 * @param relatedSpdxElement The SPDX Element that is related
+	 * @param relationshipType Type of relationship - See the specification for a description of the types
+	 * @param comment optional comment for the relationship
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Relationship createRelationship(@Nullable SpdxElement owningElement, SpdxElement relatedElement, 
+			RelationshipType relationshipType, @Nullable String comment) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(relatedElement);
+		Objects.requireNonNull(relationshipType);
+		Relationship retval = new Relationship(this.modelStore, this.documentUri, 
+				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+		if (Objects.nonNull(owningElement)) {
+			retval.setOwningSpdxElement(owningElement);
+		}
+		retval.setRelatedSpdxElement(relatedElement);
+		retval.setRelationshipType(relationshipType);
+		if (Objects.nonNull(comment)) {
+			retval.setComment(comment);
+		}
 		return retval;
 	}
 }

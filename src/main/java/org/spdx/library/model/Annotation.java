@@ -69,7 +69,7 @@ public class Annotation extends ModelObject {
 
 	@SuppressWarnings("unchecked")
 	public Optional<AnnotationType> getAnnotationType() throws InvalidSPDXAnalysisException {
-		return (Optional<AnnotationType>)getEnumValue(SpdxConstants.PROP_ANNOTATION_TYPE, AnnotationType.class);
+		return (Optional<AnnotationType>)getEnumPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, AnnotationType.class);
 	}
 	
 	public void setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {

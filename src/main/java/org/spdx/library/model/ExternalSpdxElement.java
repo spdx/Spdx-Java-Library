@@ -20,48 +20,53 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
 
 /**
- * An SpdxDocument is a summary of the contents, provenance, ownership and licensing 
- * analysis of a specific software package. 
- * This is, effectively, the top level of SPDX information.
- * 
- * @author Gary O'Neall
+ * @author gary
+ *
  */
-public class SpdxDocument extends SpdxElement {
-	
+public class ExternalSpdxElement extends SpdxElement {
+
 	/**
-	 * @param modelStore Storage for the model objects
-	 * @param documentUri SPDX Document URI for the document associated with this model
-	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxDocument(IModelStore modelStore, String documentUri, boolean create) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, SpdxConstants.SPDX_DOCUMENT_ID, create);
+	public ExternalSpdxElement() throws InvalidSPDXAnalysisException {
+		super();
 	}
-	
+
 	/**
-	 * Obtains or creates an SPDX document using the default document store
+	 * @param id
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public ExternalSpdxElement(String id) throws InvalidSPDXAnalysisException {
+		super(id);
+	}
+
+	/**
+	 * @param modelStore
 	 * @param documentUri
+	 * @param id
+	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxDocument(String documentUri) throws InvalidSPDXAnalysisException {
-		super(DefaultModelStore.getDefaultModelStore(), documentUri, SpdxConstants.SPDX_DOCUMENT_ID, true);
+	public ExternalSpdxElement(IModelStore modelStore, String documentUri, String id, boolean create)
+			throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, id, create);
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#getType()
+	 */
 	@Override
 	public String getType() {
-		return SpdxConstants.CLASS_SPDX_DOCUMENT;
+		return SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE;
 	}
-
+	
 	@Override
 	public List<String> verify() {
-		// TODO Implement
 		return new ArrayList<>();
 	}
 

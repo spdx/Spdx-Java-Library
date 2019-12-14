@@ -42,7 +42,7 @@ public class SpdxModelFactory {
 	public static ModelObject createModelObject(IModelStore modelStore, String documentUri, String id,
 			String type) throws InvalidSPDXAnalysisException {
 		switch (type) {
-		case SpdxConstants.CLASS_SPDX_DOCUMENT: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_DOCUMENT: return new SpdxDocument(modelStore, documentUri, true); //Note: the ID is ignored
 		case SpdxConstants.CLASS_SPDX_PACKAGE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_CREATION_INFO: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_CHECKSUM: throw new RuntimeException("Not implemented"); //TODO: Implement
@@ -60,11 +60,11 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_ANNOTATION: throw new RuntimeException("Not implemented"); //TODO: Implement
-		case SpdxConstants.CLASS_RELATIONSHIP: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_RELATIONSHIP: return new Relationship(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: throw new RuntimeException("Not implemented"); //TODO: Implement
-		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return new ExternalSpdxElement(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_SNIPPET: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return new SpdxNoAssertionLicense(modelStore, documentUri);

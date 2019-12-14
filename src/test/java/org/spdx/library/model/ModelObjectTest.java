@@ -721,7 +721,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
-			Optional<TestEnum> result = (Optional<TestEnum>)gmo.getEnumValue(TEST_ENUM_PROPERTIES[i], TestEnum.class);
+			Optional<TestEnum> result = (Optional<TestEnum>)gmo.getEnumPropertyValue(TEST_ENUM_PROPERTIES[i], TestEnum.class);
 			assertTrue(result.isPresent());
 			assertEquals(TEST_ENUM_VALUES[i], result.get());
 		}
