@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -115,12 +117,56 @@ public abstract class SpdxElement extends ModelObject {
 	}
 	
 	/**
+	 * Add an annotation
+	 * @param annotation
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean addAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		return ((Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION)).add(annotation);
+	}
+	
+	/**
+	 * Remove an annotation
+	 * @param annotation
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean removeAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		return ((Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION)).remove(annotation);
+	}
+	
+	/**
 	 * @return Relationships
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Relationship> getRelationships() throws InvalidSPDXAnalysisException {
 		return (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP);
+	}
+	
+	/**
+	 * Add a relationship
+	 * @param relationship
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean addRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		return ((Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP)).add(relationship);
+	}
+	
+	/**
+	 * Remove a relationship
+	 * @param relationship
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean removeRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		return ((Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP)).remove(relationship);
 	}
 	
 	/**
@@ -136,7 +182,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @param comment
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setcomment(String comment) throws InvalidSPDXAnalysisException {
+	public void setComment(String comment) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
 	}
 	
@@ -162,5 +208,17 @@ public abstract class SpdxElement extends ModelObject {
 	 */
 	public void setName(String name) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(getNamePropertyName(), name);
+	}
+	
+	/**
+	 * @param relatedSpdxElement The SPDX Element that is related
+	 * @param relationshipType Type of relationship - See the specification for a description of the types
+	 * @param comment optional comment for the relationship
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Relationship createRelationship(SpdxElement relatedElement, 
+			RelationshipType relationshipType, @Nullable String comment) throws InvalidSPDXAnalysisException {
+		return super.createRelationship(this, relatedElement, relationshipType, comment);
 	}
 }

@@ -59,7 +59,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_FILE: throw new RuntimeException("Not implemented");  //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: throw new RuntimeException("Not implemented"); //TODO: Implement
-		case SpdxConstants.CLASS_ANNOTATION: throw new RuntimeException("Not implemented"); //TODO: Implement
+		case SpdxConstants.CLASS_ANNOTATION: return new Annotation(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_RELATIONSHIP: return new Relationship(modelStore, documentUri, id, true);
 		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("Not implemented"); //TODO: Implement
 		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("Not implemented"); //TODO: Implement
@@ -70,6 +70,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return new SpdxNoAssertionLicense(modelStore, documentUri);
 		case SpdxConstants.CLASS_NONE_LICENSE: return new SpdxNoneLicense(modelStore, documentUri);
 		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, true);
+		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new GenericSpdxElement(modelStore, documentUri, id, true);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}

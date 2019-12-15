@@ -26,7 +26,8 @@ public class TypedValue {
 		if (type == null) {
 			throw new SpdxInvalidTypeException("Null type");
 		}
-		if (!SPDX_CLASSES.contains(type) && !GenericModelObject.GENERIC_MODEL_OBJECT_TYPE.equals(type)) {
+		if (!SPDX_CLASSES.contains(type) && !GenericModelObject.GENERIC_MODEL_OBJECT_TYPE.equals(type)
+				&&!GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE.equals(type)) {
 			throw new SpdxInvalidTypeException(type + " is not a valid SPDX class");
 		}
 		this.id = id;

@@ -189,7 +189,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 				return 1;
 			}
 		}
-		if (myRelationshipType.isPresent()) {
+		if (!myRelationshipType.isPresent()) {
 			return -1;
 		}
 		int retval = myRelationshipType.get().getShortName().compareTo(oRelationshipType.get().getShortName());

@@ -60,11 +60,11 @@ public class RelationshipTest extends TestCase {
 				AnnotationType.REVIEW, DATE_NOW, "Comment2");
 		RELATED_ELEMENT1 = new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
-		RELATED_ELEMENT1.setcomment("related element comment 1");
+		RELATED_ELEMENT1.setComment("related element comment 1");
 		RELATED_ELEMENT2 = new ExternalSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
 				gmo.getModelStore().getNextId(IdType.DocumentRef,gmo.getDocumentUri()), true);
 		RELATED_ELEMENT2.setName("relatedElementName2");
-		RELATED_ELEMENT2.setcomment("related element comment 2");
+		RELATED_ELEMENT2.setComment("related element comment 2");
 	}
 
 	/* (non-Javadoc)
@@ -172,9 +172,24 @@ public class RelationshipTest extends TestCase {
 
 	/**
 	 * Test method for {@link org.spdx.library.model.Relationship#compareTo(org.spdx.library.model.Relationship)}.
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void testCompareTo() {
-		fail("Not yet implemented");
+	public void testCompareTo() throws InvalidSPDXAnalysisException {
+		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
+		String comment1 = "Comment1";
+		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT2, relationshipType1, comment1);
+		Relationship compare = gmo.createRelationship(null, RELATED_ELEMENT2, relationshipType1, comment1);
+		assertEquals(0, relationship.compareTo(compare));
+		assertEquals(0, compare.compareTo(relationship));
+		compare.setComment(null);
+		assertEquals(1, relationship.compareTo(compare));
+		assertEquals(-1, compare.compareTo(relationship));
+		compare.setRelatedSpdxElement(RELATED_ELEMENT1);
+		assertTrue(relationship.compareTo(compare) < 0);
+		assertTrue(compare.compareTo(relationship) > 0);
+		compare.setRelationshipType(RelationshipType.ANCESTOR_OF);
+		assertTrue(relationship.compareTo(compare) > 0);
+		assertTrue(compare.compareTo(relationship) < 0);
 	}
 
 }

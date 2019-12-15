@@ -106,9 +106,14 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	};
 	
 	public List<Object> toImmutableList() {		
+		// TODO: Change implementation of the model store to return an iterator rather than a list rather than use the list for all internal
+		// functions
 		try {
-			return (List<Object>) Collections.unmodifiableList(
-					modelStore.getValueList(documentUri, id, propertyName).stream().map(checkConvertTypedValue)
+			List<Object> modelStoreList = modelStore.getValueList(documentUri, id, propertyName);
+			if (Objects.isNull(modelStoreList)) {
+				return Collections.emptyList();
+			}
+			return (List<Object>) Collections.unmodifiableList(modelStoreList.stream().map(checkConvertTypedValue)
 					.collect(Collectors.toList()));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
