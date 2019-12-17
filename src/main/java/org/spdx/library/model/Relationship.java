@@ -107,7 +107,11 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 */
 	@SuppressWarnings("unchecked")
 	public Optional<RelationshipType> getRelationshipType() throws InvalidSPDXAnalysisException {
-		return (Optional<RelationshipType>)(Optional<?>)getEnumPropertyValue(SpdxConstants.PROP_RELATIONSHIP_TYPE, RelationshipType.class);
+		Optional<?> retval = getEnumPropertyValue(SpdxConstants.PROP_RELATIONSHIP_TYPE);
+		if (retval.isPresent() && !(retval.get() instanceof RelationshipType)) {
+			throw new SpdxInvalidTypeException("Invalid type for relationship type individual value: "+retval.get().toString());
+		}
+		return (Optional<RelationshipType>)retval;
 	}
 	
 	/**
@@ -192,7 +196,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 		if (!myRelationshipType.isPresent()) {
 			return -1;
 		}
-		int retval = myRelationshipType.get().getShortName().compareTo(oRelationshipType.get().getShortName());
+		int retval = myRelationshipType.get().toString().compareTo(oRelationshipType.get().toString());
 		if (retval != 0) {
 			return retval;
 		}

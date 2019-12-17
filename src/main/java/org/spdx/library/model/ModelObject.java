@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -314,9 +315,7 @@ public abstract class ModelObject {
 		return retval;
 	}
 	
-
-	@SuppressWarnings("rawtypes")
-	protected Optional<? extends Enum> getEnumPropertyValue(String propertyName, Class<? extends Enum> enumType) throws InvalidSPDXAnalysisException {
+	protected Optional<Enum<?>> getEnumPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
 		if (!result.isPresent()) {
 			return Optional.empty();
@@ -324,11 +323,12 @@ public abstract class ModelObject {
 		if (!(result.get() instanceof IndividualValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
 		}
-		try {
-			return Optional.of(Enum.valueOf(enumType, ((IndividualValue)result.get()).getShortName()));
-		} catch (Exception e) {
-			logger.error("Exception converting to enum type", e);
-			throw new SpdxInvalidTypeException("Can not convert the individual value "+((IndividualValue)result.get()).getShortName()+ " to Enum type "+enumType.toString());
+		Enum<?> retval = SpdxModelFactory.uriToEnum.get(((IndividualValue)result.get()).getIndividualURI());
+		if (Objects.isNull(retval)) {
+			logger.warn("Unknown individual value for enum: "+((IndividualValue)result.get()).getIndividualURI());
+			return Optional.empty();
+		} else {
+			return Optional.of(retval);
 		}
 	}
 	
@@ -666,6 +666,11 @@ public abstract class ModelObject {
 					if (!listsEquivalent((List<?>)myValue.get(), (List<?>)compareValue.get())) {
 						return false;
 					}
+				} else if (myValue.get() instanceof IndividualValue && compareValue.get() instanceof IndividualValue) {
+					if (!Objects.equals(((IndividualValue)myValue.get()).getIndividualURI(), ((IndividualValue)compareValue.get()).getIndividualURI())) {
+						return false;
+					}
+					// Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
 				} else if (myValue.get() instanceof ModelObject && compareValue.get() instanceof ModelObject) {
 					if (!((ModelObject)myValue.get()).equivalent(((ModelObject)compareValue.get()))) {
 						return false;
@@ -864,6 +869,47 @@ public abstract class ModelObject {
 		if (Objects.nonNull(comment)) {
 			retval.setComment(comment);
 		}
+		return retval;
+	}
+	
+	/**
+	 * @param algorithm Checksum algorithm
+	 * @param value Checksum value
+	 * @return Checksum using the same model store and document URI as this Model Object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Checksum createChecksum(ChecksumAlgorithm algorithm, String value) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(algorithm);
+		Objects.requireNonNull(value);
+		Checksum retval = new Checksum(this.modelStore, this.documentUri, 
+				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+		retval.setAlgorithm(algorithm);
+		retval.setValue(value);
+		return retval;
+	}
+	
+	/**
+	 * @param externalDocumentUri Document URI for the external document
+	 * @param checksum Checksum of the external Document
+	 * @param externalDocumentId ID to be used internally within this SPDX document
+	 * @return ExternalDocumentRef using the same model store and document URI as this Model Object
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ExternalDocumentRef createExternalDocumentRef(String externalDocumentId, String externalDocumentUri, Checksum checksum) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(externalDocumentUri);
+		Objects.requireNonNull(checksum);
+		Objects.requireNonNull(externalDocumentId);
+		if (!SpdxVerificationHelper.isValidExternalDocRef(externalDocumentId)) {
+			throw new InvalidSPDXAnalysisException("Invalid external document reference ID "+externalDocumentId+
+					".  Must be of the format "+SpdxConstants.EXTERNAL_DOC_REF_PATTERN.pattern());
+		}
+		if (!SpdxVerificationHelper.isValidUri(externalDocumentUri)) {
+			throw new InvalidSPDXAnalysisException("Invalid external document URI: "+externalDocumentUri);
+		}
+		ExternalDocumentRef retval = new ExternalDocumentRef(this.modelStore, this.documentUri, 
+				externalDocumentId, true);
+		retval.setChecksum(checksum);
+		retval.setSpdxDocumentNamespace(externalDocumentUri);
 		return retval;
 	}
 }

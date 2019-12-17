@@ -106,6 +106,7 @@ public class SpdxConstants {
 	public static final String CLASS_SPDX_SNIPPET = "Snippet";
 	public static final String CLASS_NONE_LICENSE = "SpdxNoneLicense";
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
+	public static final String CLASS_EXTERNAL_SPDX_ELEMENT = "ExternalSpdxElement";
 	
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
 			CLASS_SPDX_CREATION_INFO, CLASS_SPDX_CHECKSUM, CLASS_SPDX_ANY_LICENSE_INFO, 
@@ -115,7 +116,7 @@ public class SpdxConstants {
 			CLASS_SPDX_FILE, CLASS_SPDX_REVIEW, CLASS_SPDX_VERIFICATIONCODE, CLASS_ANNOTATION,
 			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
-			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE};
+			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT};
 	
 	// classes that use the listed license URI for their namespace
 	public static final String[] LISTED_LICENSE_URI_CLASSES = {CLASS_SPDX_LISTED_LICENSE, CLASS_SPDX_LICENSE_EXCEPTION};
@@ -269,7 +270,6 @@ public class SpdxConstants {
 	// ExternalDocumentRef properties
 	public static final String PROP_EXTERNAL_DOC_CHECKSUM = "checksum";
 	public static final String PROP_EXTERNAL_SPDX_DOCUMENT = "spdxDocument";
-	public static final String PROP_EXTERNAL_DOC_ID = "externalDocumentId";
 	
 	// External Reference properties
 	public static final String PROP_REFERENCE_CATEGORY = "referenceCategory";

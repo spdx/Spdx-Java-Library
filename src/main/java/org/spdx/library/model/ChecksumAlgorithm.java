@@ -17,17 +17,36 @@
  */
 package org.spdx.library.model;
 
+import org.spdx.library.SpdxConstants;
+
 /**
- * Classes which implement the IndividuallValue interface will be stored as a single value.  Theses classes
- * must NOT implement any properties themselves.  Any such properties will be lost during storage and retrieval.
+ * Enum constants for Checksum Algorithms
  * 
  * @author Gary O'Neall
  *
  */
-public interface IndividualValue {
+public enum ChecksumAlgorithm implements IndividualValue {
+	SHA1("checksumAlgorithm_sha1"),
+	MD5("checksumAlgorithm_md5"),
+	SHA256("checksumAlgorithm_sha256")
+	;
+
+	private String longName;
 	
-	/**
-	 * @return a unique identifier for this value.  Typically the namespace + the long name
-	 */
-	public String getIndividualURI();
+	private ChecksumAlgorithm(String longName) {
+		this.longName = longName;
+	}
+	@Override
+	public String getIndividualURI() {
+		return getNameSpace() + getLongName();
+	}
+
+	public String getLongName() {
+		return longName;
+	}
+
+	public String getNameSpace() {
+		return SpdxConstants.SPDX_NAMESPACE;
+	}
+
 }

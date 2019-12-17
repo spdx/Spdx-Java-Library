@@ -88,21 +88,4 @@ public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualValue {
 	public String getIndividualURI() {
 		return SpdxConstants.URI_VALUE_NONE;
 	}
-
-	@Override
-	public String getShortName() {
-		return "NONE";
-	}
-
-	@Override
-	public String getLongName() {
-		return "none";
-	}
-
-	@Override
-	public String getNameSpace() {
-		return SpdxConstants.SPDX_NAMESPACE;
-	}
-	
-	
 }

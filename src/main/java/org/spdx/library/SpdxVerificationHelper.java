@@ -16,8 +16,11 @@
 */
 package org.spdx.library;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import org.spdx.library.model.ChecksumAlgorithm;
 
 /**
  * Holds static methods used for verify various property values
@@ -203,5 +206,35 @@ public class SpdxVerificationHelper {
 	 */
 	public static boolean isValidExternalDocRef(String externalDocumentId) {
 		return SpdxConstants.EXTERNAL_DOC_REF_PATTERN.matcher(externalDocumentId).matches();
+	}
+
+	public static boolean isValidUri(String uri) {
+		try {
+			URI.create(uri);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	public static String verifyChecksumString(String checksum, ChecksumAlgorithm algorithm) {		
+		for (int i = 0; i < checksum.length(); i++) {
+			char c = checksum.charAt(i);
+			if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))) {
+				return "Invalid checksum string character at position "+String.valueOf(i);
+			}
+		}
+		
+		if (ChecksumAlgorithm.SHA1.equals(algorithm) && checksum.length() != 40) {
+			return "Invalid number of characters for checksum";
+		}
+	
+		if (ChecksumAlgorithm.SHA256.equals(algorithm) && checksum.length() != 64) {
+			return "Invalid number of characters for checksum";
+		}
+		if (ChecksumAlgorithm.MD5.equals(algorithm) && checksum.length() != 32) {
+			return "Invalid number of characters for checksum";
+		}
+		return null;	// if we got here, all OK
 	}
 }

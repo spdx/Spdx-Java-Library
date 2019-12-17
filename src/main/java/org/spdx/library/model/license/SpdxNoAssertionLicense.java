@@ -89,20 +89,4 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 	public String getIndividualURI() {
 		return SpdxConstants.URI_VALUE_NOASSERTION;
 	}
-
-	@Override
-	public String getShortName() {
-		return "NOASSERTION";
-	}
-
-	@Override
-	public String getLongName() {
-		// TODO Auto-generated method stub
-		return "noassertion";
-	}
-
-	@Override
-	public String getNameSpace() {
-		return SpdxConstants.SPDX_NAMESPACE;
-	}
 }

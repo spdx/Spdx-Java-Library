@@ -40,40 +40,6 @@ import junit.framework.TestCase;
  *
  */
 public class ModelObjectTest extends TestCase {
-	
-	enum TestEnum implements IndividualValue {
-		ENUMVAL1("longValue1"),
-		ENUMVAL2("longValue2"),
-		ENUMVAL3("longValue3")
-		;
-		
-		private String longName;
-		
-		private TestEnum(String longName) {
-			this.longName = longName;
-		}
-
-		@Override
-		public String getIndividualURI() {
-			return getNameSpace() + getLongName();
-		}
-
-		@Override
-		public String getShortName() {
-			return this.toString();
-		}
-
-		@Override
-		public String getLongName() {
-			return this.longName;
-		}
-
-		@Override
-		public String getNameSpace() {
-			return "https://test.enum.namespace#";
-		}
-		
-	}
 
 	private static final String TEST_DOCUMENT_URI = "https://test.document.uri";
 	private static final String TEST_ID = "testId";
@@ -89,7 +55,7 @@ public class ModelObjectTest extends TestCase {
 	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4"};
 	static final String[] TEST_TYPED_PROPERTIES = new String[] {"typeProp1", "typeProp2"};
 	static final String[] TEST_ENUM_PROPERTIES = new String[] {"enumProp1", "enumProp2"};
-	static final TestEnum[] TEST_ENUM_VALUES = new TestEnum[] {TestEnum.ENUMVAL1, TestEnum.ENUMVAL2};
+	static final ChecksumAlgorithm[] TEST_ENUM_VALUES = new ChecksumAlgorithm[] {ChecksumAlgorithm.MD5, ChecksumAlgorithm.SHA1};
 	
 	TypedValue[] TEST_TYPED_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
@@ -102,7 +68,7 @@ public class ModelObjectTest extends TestCase {
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
 			Arrays.asList(new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)}),
-			Arrays.asList(new TestEnum[] {TestEnum.ENUMVAL2, TestEnum.ENUMVAL3})};
+			Arrays.asList(new ChecksumAlgorithm[] {ChecksumAlgorithm.SHA256, ChecksumAlgorithm.SHA1})};
 			TEST_TYPED_PROP_VALUES = new TypedValue[] {new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)};
 			ALL_PROPERTY_VALUES = new HashMap<>();
 			for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {
@@ -721,7 +687,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
-			Optional<TestEnum> result = (Optional<TestEnum>)gmo.getEnumPropertyValue(TEST_ENUM_PROPERTIES[i], TestEnum.class);
+			Optional<Enum<?>> result = (Optional<Enum<?>>)(Optional<?>)gmo.getEnumPropertyValue(TEST_ENUM_PROPERTIES[i]);
 			assertTrue(result.isPresent());
 			assertEquals(TEST_ENUM_VALUES[i], result.get());
 		}

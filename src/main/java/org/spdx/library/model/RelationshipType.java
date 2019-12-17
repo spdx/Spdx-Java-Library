@@ -67,17 +67,11 @@ public enum RelationshipType implements IndividualValue {
 		return getNameSpace() + getLongName();
 	}
 
-	@Override
-	public String getShortName() {
-		return toString();
-	}
 
-	@Override
 	public String getLongName() {
 		return longName;
 	}
 
-	@Override
 	public String getNameSpace() {
 		return SpdxConstants.SPDX_NAMESPACE;
 	}

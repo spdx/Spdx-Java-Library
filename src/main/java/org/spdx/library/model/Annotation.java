@@ -69,7 +69,11 @@ public class Annotation extends ModelObject {
 
 	@SuppressWarnings("unchecked")
 	public Optional<AnnotationType> getAnnotationType() throws InvalidSPDXAnalysisException {
-		return (Optional<AnnotationType>)getEnumPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, AnnotationType.class);
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE);
+		if (retval.isPresent() && !(retval.get() instanceof AnnotationType)) {
+			throw new SpdxInvalidTypeException("Invalid enum type for "+retval.get().toString());
+		}
+		return (Optional<AnnotationType>)(Optional<?>)retval;
 	}
 	
 	public void setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {
