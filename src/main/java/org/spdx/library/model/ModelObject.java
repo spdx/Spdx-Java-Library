@@ -17,6 +17,7 @@
  */
 package org.spdx.library.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +35,9 @@ import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.IModelStore.ModelTransaction;
 import org.spdx.storage.IModelStore.ModelUpdate;
+import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * @author Gary O'Neall
@@ -80,7 +83,7 @@ public abstract class ModelObject {
 	private String id;
 
 	/**
-	 * Converts any typed value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
+	 * Converts any typed value or individual value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
 	 * @param value Value which may be a TypedValue
 	 * @param documenentUri Document URI to use when converting a typedValue
 	 * @param modelStore ModelStore to use in fetching or creating
@@ -88,7 +91,10 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Object checkConvertTypedValue(Object value, String documentUri, IModelStore modelStore) throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
+		if (value instanceof IndividualValue) {
+			SimpleUriValue suv = new SimpleUriValue((IndividualValue)value);
+			return suv.toModelObject(modelStore, documentUri);
+		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
 			return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType());
 		} else {
@@ -100,14 +106,16 @@ public abstract class ModelObject {
 	 * Converts any typed value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
 	 * @param value Value which may be a TypedValue
 	 * @param documenentUri Document URI to use when converting a typedValue
-	 * @param modelStore ModelStore to use in fetching or creating
+	 * @param stModelStore ModelStore to use in fetching or creating
 	 * @return the object itself unless it is a TypedValue, in which case a ModelObject is returned
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static Optional<Object> checkConvertOptionalTypedValue(Optional<Object> value, String documentUri, IModelStore modelStore) throws InvalidSPDXAnalysisException {
-		if (value.isPresent() && value.get() instanceof TypedValue) {
+	public static Optional<Object> checkConvertOptionalTypedValue(Optional<Object> value, String stDocumentUri, IModelStore stModelStore) throws InvalidSPDXAnalysisException {
+		if (value.isPresent() && value.get() instanceof IndividualValue) {
+			return Optional.of(new SimpleUriValue((IndividualValue)value.get()).toModelObject(stModelStore, stDocumentUri));
+		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
-			return Optional.of(SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType()));
+			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getId(), tv.getType()));
 		} else {
 			return value;
 		}
@@ -248,6 +256,9 @@ public abstract class ModelObject {
 		if (value == null) {
 			// we just remove the value
 			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
+		} else if (value instanceof IndividualValue) {
+			// Convert to a simple URI value to save storage
+			stModelStore.setValue(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
@@ -438,7 +449,9 @@ public abstract class ModelObject {
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value);
-		if (value instanceof ModelObject) {
+		if (value instanceof IndividualValue) {
+			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
+		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
 				if (!stModelStore.exists(stDocumentUri, mValue.getId())) {
@@ -478,7 +491,10 @@ public abstract class ModelObject {
 			if (fromStore.isCollectionProperty(fromDocumentUri, sourceId, propName)) {
 				List<Object> fromList = fromStore.getValueList(fromDocumentUri, sourceId, propName);
 				for (Object listItem:fromList) {
-					if (listItem instanceof TypedValue) {
+					if (listItem instanceof IndividualValue) {
+						toStore.addValueToCollection(
+								toDocumentUri, toId, propName, new SimpleUriValue((IndividualValue)listItem));
+					} else if (listItem instanceof TypedValue) {
 						TypedValue listItemTv = (TypedValue)listItem;
 						toStore.addValueToCollection(toDocumentUri, toId, propName, 
 								copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
@@ -490,7 +506,9 @@ public abstract class ModelObject {
 			} else {
 				Optional<Object> result =  fromStore.getValue(fromDocumentUri, sourceId, propName);
 				if (result.isPresent()) {
-					if (result.get() instanceof TypedValue) {
+					if (result.get() instanceof IndividualValue) {
+						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualValue)result.get()));
+					} else if (result.get() instanceof TypedValue) {
 						TypedValue tv = (TypedValue)result.get();
 						toStore.setValue(toDocumentUri, toId, propName, 
 								copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
@@ -577,7 +595,9 @@ public abstract class ModelObject {
 	 */
 	public static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (value instanceof ModelObject) {
+		if (value instanceof IndividualValue) {
+			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
+		} else if (value instanceof ModelObject) {
 			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
 		} else {
 			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, value);
@@ -705,6 +725,8 @@ public abstract class ModelObject {
 		int numRemainingComp = l2.size();
 		for (Object item:l1) {
 			if (l2.contains(item)) {
+				numRemainingComp--;
+			} else if (item instanceof IndividualValue && l2.contains(new SimpleUriValue((IndividualValue)item))) {
 				numRemainingComp--;
 			} else {
 				if (item instanceof ModelObject) {
@@ -895,7 +917,8 @@ public abstract class ModelObject {
 	 * @return ExternalDocumentRef using the same model store and document URI as this Model Object
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public ExternalDocumentRef createExternalDocumentRef(String externalDocumentId, String externalDocumentUri, Checksum checksum) throws InvalidSPDXAnalysisException {
+	public ExternalDocumentRef createExternalDocumentRef(String externalDocumentId, String externalDocumentUri, 
+			Checksum checksum) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(externalDocumentUri);
 		Objects.requireNonNull(checksum);
 		Objects.requireNonNull(externalDocumentId);
@@ -906,10 +929,36 @@ public abstract class ModelObject {
 		if (!SpdxVerificationHelper.isValidUri(externalDocumentUri)) {
 			throw new InvalidSPDXAnalysisException("Invalid external document URI: "+externalDocumentUri);
 		}
-		ExternalDocumentRef retval = new ExternalDocumentRef(this.modelStore, this.documentUri, 
-				externalDocumentId, true);
-		retval.setChecksum(checksum);
-		retval.setSpdxDocumentNamespace(externalDocumentUri);
-		return retval;
+		ModelTransaction transaction;
+		try {
+			transaction = getModelStore().beginTransaction(getDocumentUri(), ReadWrite.WRITE);
+		} catch (IOException e) {
+			logger.error("I/O error starting transaction",e);
+			throw new InvalidSPDXAnalysisException("I/O error starting transaction",e);
+		}
+		try {
+			if (getModelStore().exists(getDocumentUri(), externalDocumentId)) {
+				return new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
+						externalDocumentId, false);
+			} else {
+				ExternalDocumentRef retval = new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
+						externalDocumentId, true);
+				retval.setChecksum(checksum);
+				retval.setSpdxDocumentNamespace(externalDocumentUri);
+				// Need to add this to the list of document URI's
+				ModelObject.addValueToCollection(getModelStore(), getDocumentUri(), 
+						SpdxConstants.SPDX_DOCUMENT_ID, 
+						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, true);
+				return retval;
+			}
+		} finally {
+			try {
+				transaction.commit();
+				transaction.close();
+			} catch (IOException e) {
+				logger.error("I/O error committing transaction",e);
+				throw new InvalidSPDXAnalysisException("I/O error committing transaction",e);
+			}
+		}
 	}
 }

@@ -54,6 +54,10 @@ public class RelationshipTest extends TestCase {
 		super.setUp();
 		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
+		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
+		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.MD5, "595f44fec1e92a71d3e9e77456ba80d1");
+		ExternalDocumentRef externalDoc = gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef,gmo.getDocumentUri()), 
+				"https://external.doc/one", checksum);
 		ANNOTATION1 = gmo.createAnnotation("Annotator1",
 			AnnotationType.OTHER, DATE_NOW, "Comment1");
 		ANNOTATION2 = gmo.createAnnotation("Annotator2",
@@ -62,9 +66,7 @@ public class RelationshipTest extends TestCase {
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
 		RELATED_ELEMENT2 = new ExternalSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
-				gmo.getModelStore().getNextId(IdType.DocumentRef,gmo.getDocumentUri()), true);
-		RELATED_ELEMENT2.setName("relatedElementName2");
-		RELATED_ELEMENT2.setComment("related element comment 2");
+				externalDoc.getId() + ":SPDXRef-10", true);
 	}
 
 	/* (non-Javadoc)

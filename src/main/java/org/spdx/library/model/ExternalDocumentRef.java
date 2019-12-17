@@ -17,10 +17,14 @@
  */
 package org.spdx.library.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -28,6 +32,8 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.IModelStore.ModelTransaction;
+import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Information about an external SPDX document reference including the checksum.  
@@ -36,6 +42,64 @@ import org.spdx.storage.IModelStore.IdType;
  * @author Gary O'Neall
  */
 public class ExternalDocumentRef extends ModelObject implements Comparable<ExternalDocumentRef> {
+	
+	/**
+	 * Obtain an ExternalDocumentRef which maps to the document URI for the external SPDX document.
+	 * @param stModelStore Model Store for the document referring to the external SPDX document
+	 * @param stDocumentUri Document URI for the document referring to the external SPDX document
+	 * @param externalDocUri Document URI for the external document (a.k.a. eternalDocumentNamespace)
+	 * @param createExternalDocRef if true, create the external Doc ref if it is not a property of the SPDX Document
+	 * @return
+	 */
+	public static Optional<ExternalDocumentRef> getExternalDocRefByDocNamespace(IModelStore stModelStore,
+			String stDocumentUri, String externalDocUri, boolean createExternalDocRef) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(stModelStore);
+		Objects.requireNonNull(stDocumentUri);
+		Objects.requireNonNull(externalDocUri);
+		ModelTransaction transaction;
+		try {
+			transaction = stModelStore.beginTransaction(stDocumentUri, ReadWrite.WRITE);
+		} catch (IOException e) {
+			logger.error("IO Error creating model transaction",e);
+			throw new InvalidSPDXAnalysisException("IO Error creating model transaction",e);
+		}
+		try {
+			Collection<Object> existingExternalRefs = new ModelCollection<Object>(stModelStore,stDocumentUri,
+					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF);
+			for (Object externalRef:existingExternalRefs) {
+				if (!(externalRef instanceof ExternalDocumentRef)) {
+					logger.warn("Incorrect type for an external document ref: "+externalRef.getClass().toString());
+				} else {
+					Optional<String> externalRefNamespace = ((ExternalDocumentRef)externalRef).getSpdxDocumentNamespace();
+					if (!externalRefNamespace.isPresent()) {
+						logger.warn("Namespace missing for external doc ref "+((ExternalDocumentRef)externalRef).getId());
+					}
+					if (externalDocUri.equals(externalRefNamespace.get())) {
+						return Optional.of((ExternalDocumentRef)externalRef);
+					}
+				}
+			}
+			// if we got here, we didn't find an existing one
+			if (createExternalDocRef) {
+				ExternalDocumentRef retval = new ExternalDocumentRef(stModelStore, stDocumentUri,
+						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri), true);
+				retval.setSpdxDocumentNamespace(externalDocUri);
+				ModelObject.addValueToCollection(stModelStore, stDocumentUri, SpdxConstants.SPDX_DOCUMENT_ID, 
+						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, false);
+				return Optional.of(retval);
+			} else {
+				return Optional.empty();
+			}
+		} finally {
+			try {
+				transaction.commit();
+				transaction.close();
+			} catch (IOException e) {
+				logger.error("IO Error creating model transaction",e);
+				throw new InvalidSPDXAnalysisException("IO Error creating model transaction",e);
+			}
+		}
+	}
 
 	public ExternalDocumentRef() throws InvalidSPDXAnalysisException {
 		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.DocumentRef, DefaultModelStore.getDefaultDocumentUri()));
@@ -133,14 +197,18 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 	}
 	
-	public void setSpdxDocumentNamespace(String documentNamespace) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT,
-				new IndividualValue() {
-					@Override
-					public String getIndividualURI() {
-						return documentNamespace;
-					}
-		});
+	public void setSpdxDocumentNamespace(@Nullable String documentNamespace) throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(documentNamespace)) {
+			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, null);
+		} else {
+			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT,
+					new IndividualValue() {
+						@Override
+						public String getIndividualURI() {
+							return documentNamespace;
+						}
+			});
+		}
 	}
 	
 	/**
@@ -270,5 +338,4 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 		return retval;
 	}
-
 }

@@ -19,9 +19,11 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
@@ -32,7 +34,7 @@ import org.spdx.storage.IModelStore;
  * 
  * @author Gary O'Neall
  */
-public class ExternalSpdxElement extends SpdxElement {
+public class ExternalSpdxElement extends SpdxElement implements IndividualValue {
 	
 	// Note: the default empty constructor is not allowed since the element ID must follow a specific pattern
 
@@ -41,11 +43,7 @@ public class ExternalSpdxElement extends SpdxElement {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExternalSpdxElement(String id) throws InvalidSPDXAnalysisException {
-		super(id);
-		if (!SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id).matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form "+
-					SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.pattern()));
-		}
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, true);
 	}
 
 	/**
@@ -61,6 +59,7 @@ public class ExternalSpdxElement extends SpdxElement {
 		if (!SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id).matches()) {
 			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID"));
 		}
+		getExternalSpdxElementURI();	//this will check to make sure the external document reference is available
 	}
 	
 	/**
@@ -100,29 +99,82 @@ public class ExternalSpdxElement extends SpdxElement {
 		// we don't want to call super.verify since we really don't require those fields
 		List<String> retval = new ArrayList<>();
 		String id = this.getId();
-		if (!SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id).matches()) {				
+		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id);
+		if (!matcher.matches()) {				
 			retval.add("Invalid id format for an external document reference.  Must be of the form "+SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.pattern());
+		} else {
+			try {
+				externalDocumentIdToNamespace(matcher.group(1), getModelStore(), getDocumentUri());
+			} catch (InvalidSPDXAnalysisException e) {
+				retval.add(e.getMessage());
+			}
 		}
 		return retval;
 	}
 
 	public String getExternalSpdxElementURI() throws InvalidSPDXAnalysisException {
-		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(this.getId());
+		return externalSpdxElementIdToURI(getId(), getModelStore(), getDocumentUri());
+	}
+	
+	public static String externalSpdxElementIdToURI(String externalSpdxElementId,
+			IModelStore stModelStore, String stDocumentUri) throws InvalidSPDXAnalysisException {
+		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(externalSpdxElementId);
 		if (!matcher.matches()) {
 			logger.error("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		String externalDocumentUri;
-		externalDocumentUri = externalDocumentIdToNamespace(matcher.group(1));
+		externalDocumentUri = externalDocumentIdToNamespace(matcher.group(1), stModelStore, stDocumentUri);
 		if (externalDocumentUri.endsWith("#")) {
 			return externalDocumentUri + matcher.group(2);
 		} else {
 			return externalDocumentUri + "#" + matcher.group(2);
 		}
 	}
-
-	private String externalDocumentIdToNamespace(String externalDocumentId) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(getModelStore(), getDocumentUri(), 
+	
+	/**
+	 * Convert a URI to an ID for an External SPDX Element
+	 * @param uri URI with the external document namespace and the external SPDX ref in the form namespace#SPDXRef-XXX
+	 * @param stModelStore
+	 * @param stDocumentUri
+	 * @param createExternalDocRef if true, create the external doc ref if it is not already in the ModelStore
+	 * @return external SPDX element ID in the form DocumentRef-XX:SPDXRef-YY
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static String uriToExternalSpdxElementId(String uri,
+			IModelStore stModelStore, String stDocumentUri, boolean createExternalDocRef) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(uri);
+		Matcher matcher = SpdxConstants.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri);
+		if (!matcher.matches()) {
+			throw new InvalidSPDXAnalysisException("Invalid URI format: "+uri+".  Expects namespace#SPDXRef-XXX");
+		}
+		Optional<ExternalDocumentRef> externalDocRef = ExternalDocumentRef.getExternalDocRefByDocNamespace(stModelStore, stDocumentUri, 
+				matcher.group(1), createExternalDocRef);
+		if (!externalDocRef.isPresent()) {
+			logger.error("Could not find or create the external document reference for document namespace "+ matcher.group(1));
+			throw new InvalidSPDXAnalysisException("Could not find or create the external document reference for document namespace "+ matcher.group(1));
+		}
+		return externalDocRef.get().getId() + ":" + matcher.group(2);
+	}
+	
+	/**
+	 * Create an ExternalSpdxElement based on a URI of the form externaldocumentnamespace#SPDXRef-XXX
+	 * @param uri RI of the form externaldocumentnamespace#SPDXRef-XXX
+	 * @param stModelStore
+	 * @param stDocumentUri
+	 * @return ExternalSpdxRef
+	 * @param createExternalDocRef if true, create the external doc ref if it is not already in the ModelStore
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static ExternalSpdxElement uriToExternalSpdxElement(String uri,
+			IModelStore stModelStore, String stDocumentUri, boolean createExternalDocRef) throws InvalidSPDXAnalysisException {
+		return new ExternalSpdxElement(stModelStore, stDocumentUri, uriToExternalSpdxElementId(
+				uri, stModelStore, stDocumentUri, createExternalDocRef), true);
+	}
+	
+	private static String externalDocumentIdToNamespace(String externalDocumentId,
+			IModelStore stModelStore, String stDocumentUri) throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(stModelStore, stDocumentUri, 
 				externalDocumentId, SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!retval.isPresent()) {
 			throw(new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId));
@@ -140,5 +192,39 @@ public class ExternalSpdxElement extends SpdxElement {
 			return false;
 		}
 		return getId().equals(compare.getId());
+	}
+
+	@Override
+	public String getIndividualURI() {
+		try {
+			return getExternalSpdxElementURI();
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.error("Error getting external SPDX element URI",e);
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public boolean addAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not add annotations to an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	@Override
+	public boolean addRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not add relationshps to an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	@Override
+	public void setComment(String comment) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not set comment on an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	@Override
+	public void setName(String name) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not set the name on an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
 	}
 }

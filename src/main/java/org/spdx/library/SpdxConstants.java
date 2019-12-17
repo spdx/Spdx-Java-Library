@@ -302,6 +302,7 @@ public class SpdxConstants {
 	public static String EXTERNAL_DOC_REF_PRENUM = "DocumentRef-";
 	public static Pattern EXTERNAL_DOC_REF_PATTERN = Pattern.compile(EXTERNAL_DOC_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");
 	public static Pattern EXTERNAL_ELEMENT_REF_PATTERN = Pattern.compile("("+EXTERNAL_DOC_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+):("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");	
+	public static Pattern EXTERNAL_SPDX_ELEMENT_URI_PATTERN = Pattern.compile("(.+)#("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");
 	
 	public static Pattern SPDX_VERSION_PATTERN = Pattern.compile("^SPDX-(\\d+)\\.(\\d+)$");
 

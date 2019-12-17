@@ -692,5 +692,44 @@ public class ModelObjectTest extends TestCase {
 			assertEquals(TEST_ENUM_VALUES[i], result.get());
 		}
 	}
+	
+	public void testGetObjectValueIndividualValue()  throws InvalidSPDXAnalysisException {
+		Enum<?> TEST_ENUM = RelationshipType.DESCRIBES;
+		String ENUM_URI = RelationshipType.DESCRIBES.getIndividualURI();
+		String EXTERNAL_DOC_NAMSPACE = "https://test/namespace1";
+		String EXTERNAL_SPDX_ELEMENT_ID = SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "TEST";
+		String EXTERNAL_SPDX_URI = EXTERNAL_DOC_NAMSPACE + "#" + EXTERNAL_SPDX_ELEMENT_ID;
+		String NON_INTERESTING_URI = "https://nothing/to/see/here";
+		
+		InMemSpdxStore store = new InMemSpdxStore();
+		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
+		new SpdxDocument(store, TEST_DOCUMENT_URI, true);
+		
+		// External SPDX element
+		SimpleUriValue suv = new SimpleUriValue(EXTERNAL_SPDX_URI);
+		gmo.setPropertyValue(TEST_PROPERTY1, suv);
+		Optional<Object> result = gmo.getObjectPropertyValue(TEST_PROPERTY1);
+		assertTrue(result.isPresent());
+		assertTrue(result.get() instanceof ExternalSpdxElement);
+		ExternalSpdxElement externalElement = (ExternalSpdxElement)result.get();
+		assertEquals(EXTERNAL_SPDX_ELEMENT_ID, externalElement.getExternalElementId());
+		assertEquals(EXTERNAL_SPDX_URI, externalElement.getExternalSpdxElementURI());
+		
+		// Enum value
+		suv = new SimpleUriValue(ENUM_URI);
+		gmo.setPropertyValue(TEST_PROPERTY1, suv);
+		result = gmo.getObjectPropertyValue(TEST_PROPERTY1);
+		assertTrue(result.isPresent());
+		assertEquals(TEST_ENUM, result.get());
+		
+		// Simple URI value
+		
+		suv = new SimpleUriValue(NON_INTERESTING_URI);
+		gmo.setPropertyValue(TEST_PROPERTY1, suv);
+		result = gmo.getObjectPropertyValue(TEST_PROPERTY1);
+		assertTrue(result.isPresent());
+		assertTrue(result.get() instanceof SimpleUriValue);
+		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result.get()).getIndividualURI());
+	}
 
 }

@@ -95,7 +95,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	}
 	
 	/**
-	 * Converts any typed value objects to a ModelObject
+	 * Converts any typed or individual value objects to a ModelObject
 	 */
 	private Function<Object, Object> checkConvertTypedValue = value -> {
 		try {
