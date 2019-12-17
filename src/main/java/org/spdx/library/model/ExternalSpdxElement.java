@@ -34,7 +34,7 @@ import org.spdx.storage.IModelStore;
  * 
  * @author Gary O'Neall
  */
-public class ExternalSpdxElement extends SpdxElement implements IndividualValue {
+public class ExternalSpdxElement extends SpdxElement implements IndividualUriValue {
 	
 	// Note: the default empty constructor is not allowed since the element ID must follow a specific pattern
 
@@ -179,11 +179,11 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualValue 
 		if (!retval.isPresent()) {
 			throw(new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId));
 		}
-		if (!(retval.get() instanceof IndividualValue)) {
+		if (!(retval.get() instanceof IndividualUriValue)) {
 			logger.error("Invalid type returned for external document.  Expected IndividualValue, actual "+retval.get().getClass().toString());
 			throw new InvalidSPDXAnalysisException("Invalid type returned for external document.");
 		}
-		return ((IndividualValue)retval.get()).getIndividualURI();
+		return ((IndividualUriValue)retval.get()).getIndividualURI();
 	}
 	
 	@Override

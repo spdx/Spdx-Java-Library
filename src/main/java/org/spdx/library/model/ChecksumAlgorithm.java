@@ -25,7 +25,7 @@ import org.spdx.library.SpdxConstants;
  * @author Gary O'Neall
  *
  */
-public enum ChecksumAlgorithm implements IndividualValue {
+public enum ChecksumAlgorithm implements IndividualUriValue {
 	SHA1("checksumAlgorithm_sha1"),
 	MD5("checksumAlgorithm_md5"),
 	SHA256("checksumAlgorithm_sha256")

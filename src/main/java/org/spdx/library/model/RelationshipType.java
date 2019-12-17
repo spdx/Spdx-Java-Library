@@ -25,7 +25,7 @@ import org.spdx.library.SpdxConstants;
  * @author Gary O'Neall
  *
  */
-public enum RelationshipType implements IndividualValue {
+public enum RelationshipType implements IndividualUriValue {
 
 	DESCRIBES("relationshipType_describes"),
 	DESCRIBED_BY("relationshipType_describedBy"),

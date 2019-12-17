@@ -25,7 +25,7 @@ import org.spdx.library.SpdxConstants;
  * @author Gary O'Neall
  *
  */
-public enum AnnotationType implements IndividualValue {
+public enum AnnotationType implements IndividualUriValue {
 	
 	OTHER("annotationType_other"),
 	REVIEW("annotationType_review");

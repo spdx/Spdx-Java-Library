@@ -18,13 +18,13 @@
 package org.spdx.library.model;
 
 /**
- * Classes which implement the IndividuallValue interface will be stored as a single value.  Theses classes
+ * Classes which implement the IndividuallUriValue interface will be stored as a single value.  Theses classes
  * must NOT implement any properties themselves.  Any such properties will be lost during storage and retrieval.
  * 
  * @author Gary O'Neall
  *
  */
-public interface IndividualValue {
+public interface IndividualUriValue {
 	
 	/**
 	 * @return a unique identifier for this value.  Typically the namespace + the long name

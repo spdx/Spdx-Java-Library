@@ -91,8 +91,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Object checkConvertTypedValue(Object value, String documentUri, IModelStore modelStore) throws InvalidSPDXAnalysisException {
-		if (value instanceof IndividualValue) {
-			SimpleUriValue suv = new SimpleUriValue((IndividualValue)value);
+		if (value instanceof IndividualUriValue) {
+			SimpleUriValue suv = new SimpleUriValue((IndividualUriValue)value);
 			return suv.toModelObject(modelStore, documentUri);
 		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
@@ -111,8 +111,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Optional<Object> checkConvertOptionalTypedValue(Optional<Object> value, String stDocumentUri, IModelStore stModelStore) throws InvalidSPDXAnalysisException {
-		if (value.isPresent() && value.get() instanceof IndividualValue) {
-			return Optional.of(new SimpleUriValue((IndividualValue)value.get()).toModelObject(stModelStore, stDocumentUri));
+		if (value.isPresent() && value.get() instanceof IndividualUriValue) {
+			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, stDocumentUri));
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
 			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getId(), tv.getType()));
@@ -256,9 +256,9 @@ public abstract class ModelObject {
 		if (value == null) {
 			// we just remove the value
 			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
-		} else if (value instanceof IndividualValue) {
+		} else if (value instanceof IndividualUriValue) {
 			// Convert to a simple URI value to save storage
-			stModelStore.setValue(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
+			stModelStore.setValue(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
@@ -275,7 +275,7 @@ public abstract class ModelObject {
 			}
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualValue) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Property value type not supported: "+value.getClass().getName());
@@ -289,8 +289,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (this instanceof IndividualValue) {
-			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualValue)this).getIndividualURI());
+		if (this instanceof IndividualUriValue) {
+			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualUriValue)this).getIndividualURI());
 		}
 		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
 	}
@@ -331,12 +331,12 @@ public abstract class ModelObject {
 		if (!result.isPresent()) {
 			return Optional.empty();
 		}
-		if (!(result.get() instanceof IndividualValue)) {
+		if (!(result.get() instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
 		}
-		Enum<?> retval = SpdxModelFactory.uriToEnum.get(((IndividualValue)result.get()).getIndividualURI());
+		Enum<?> retval = SpdxModelFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
-			logger.warn("Unknown individual value for enum: "+((IndividualValue)result.get()).getIndividualURI());
+			logger.warn("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
 			return Optional.empty();
 		} else {
 			return Optional.of(retval);
@@ -449,8 +449,8 @@ public abstract class ModelObject {
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value);
-		if (value instanceof IndividualValue) {
-			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
+		if (value instanceof IndividualUriValue) {
+			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore)) {
@@ -464,7 +464,7 @@ public abstract class ModelObject {
 				}
 			}
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualValue) {
+		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
 			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
 		} else {
 			throw new SpdxInvalidTypeException("Unsupported type to add to a collection: "+value.getClass().getName());
@@ -491,9 +491,9 @@ public abstract class ModelObject {
 			if (fromStore.isCollectionProperty(fromDocumentUri, sourceId, propName)) {
 				List<Object> fromList = fromStore.getValueList(fromDocumentUri, sourceId, propName);
 				for (Object listItem:fromList) {
-					if (listItem instanceof IndividualValue) {
+					if (listItem instanceof IndividualUriValue) {
 						toStore.addValueToCollection(
-								toDocumentUri, toId, propName, new SimpleUriValue((IndividualValue)listItem));
+								toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)listItem));
 					} else if (listItem instanceof TypedValue) {
 						TypedValue listItemTv = (TypedValue)listItem;
 						toStore.addValueToCollection(toDocumentUri, toId, propName, 
@@ -506,8 +506,8 @@ public abstract class ModelObject {
 			} else {
 				Optional<Object> result =  fromStore.getValue(fromDocumentUri, sourceId, propName);
 				if (result.isPresent()) {
-					if (result.get() instanceof IndividualValue) {
-						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualValue)result.get()));
+					if (result.get() instanceof IndividualUriValue) {
+						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
 					} else if (result.get() instanceof TypedValue) {
 						TypedValue tv = (TypedValue)result.get();
 						toStore.setValue(toDocumentUri, toId, propName, 
@@ -595,8 +595,8 @@ public abstract class ModelObject {
 	 */
 	public static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (value instanceof IndividualValue) {
-			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualValue)value));
+		if (value instanceof IndividualUriValue) {
+			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
 		} else if (value instanceof ModelObject) {
 			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
 		} else {
@@ -686,8 +686,8 @@ public abstract class ModelObject {
 					if (!listsEquivalent((List<?>)myValue.get(), (List<?>)compareValue.get())) {
 						return false;
 					}
-				} else if (myValue.get() instanceof IndividualValue && compareValue.get() instanceof IndividualValue) {
-					if (!Objects.equals(((IndividualValue)myValue.get()).getIndividualURI(), ((IndividualValue)compareValue.get()).getIndividualURI())) {
+				} else if (myValue.get() instanceof IndividualUriValue && compareValue.get() instanceof IndividualUriValue) {
+					if (!Objects.equals(((IndividualUriValue)myValue.get()).getIndividualURI(), ((IndividualUriValue)compareValue.get()).getIndividualURI())) {
 						return false;
 					}
 					// Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
@@ -726,7 +726,7 @@ public abstract class ModelObject {
 		for (Object item:l1) {
 			if (l2.contains(item)) {
 				numRemainingComp--;
-			} else if (item instanceof IndividualValue && l2.contains(new SimpleUriValue((IndividualValue)item))) {
+			} else if (item instanceof IndividualUriValue && l2.contains(new SimpleUriValue((IndividualUriValue)item))) {
 				numRemainingComp--;
 			} else {
 				if (item instanceof ModelObject) {

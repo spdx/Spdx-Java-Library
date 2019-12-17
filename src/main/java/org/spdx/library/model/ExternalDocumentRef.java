@@ -181,8 +181,8 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		if (!docNamespace.isPresent()) {
 			return Optional.empty();
 		}
-		if (docNamespace.get() instanceof IndividualValue) {
-			String docUri = ((IndividualValue)(docNamespace.get())).getIndividualURI();
+		if (docNamespace.get() instanceof IndividualUriValue) {
+			String docUri = ((IndividualUriValue)(docNamespace.get())).getIndividualURI();
 			if (Objects.isNull(docUri)) {
 				logger.warn("Missing individual URI in doc namespace");
 				return Optional.empty();
@@ -202,7 +202,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, null);
 		} else {
 			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT,
-					new IndividualValue() {
+					new IndividualUriValue() {
 						@Override
 						public String getIndividualURI() {
 							return documentNamespace;

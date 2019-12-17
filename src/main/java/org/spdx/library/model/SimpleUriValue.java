@@ -31,12 +31,12 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-public class SimpleUriValue implements IndividualValue {
+public class SimpleUriValue implements IndividualUriValue {
 	
 	private String uri;
 
 
-	public SimpleUriValue(IndividualValue fromIndividualValue) throws InvalidSPDXAnalysisException {
+	public SimpleUriValue(IndividualUriValue fromIndividualValue) throws InvalidSPDXAnalysisException {
 		this(fromIndividualValue.getIndividualURI());
 	}
 	

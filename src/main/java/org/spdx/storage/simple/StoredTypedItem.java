@@ -18,7 +18,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.IndividualValue;
+import org.spdx.library.model.IndividualUriValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -67,7 +67,7 @@ class StoredTypedItem extends TypedValue {
 				!value.getClass().isAssignableFrom(String.class) &&
 				!value.getClass().isAssignableFrom(Boolean.class) &&
 				!value.getClass().isAssignableFrom(TypedValue.class) &&
-				!(value instanceof IndividualValue)) {
+				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
 		properties.put(propertyName, value);

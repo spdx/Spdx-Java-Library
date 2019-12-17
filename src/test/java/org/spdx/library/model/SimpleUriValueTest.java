@@ -53,12 +53,12 @@ public class SimpleUriValueTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.SimpleUriValue#SimpleUriValue(org.spdx.library.model.IndividualValue)}.
+	 * Test method for {@link org.spdx.library.model.SimpleUriValue#SimpleUriValue(org.spdx.library.model.IndividualUriValue)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testSimpleUriValueIndividualValue() throws InvalidSPDXAnalysisException {
 		SimpleUriValue value1 = new SimpleUriValue(NON_INTERESTING_URI);
-		SimpleUriValue value2 = new SimpleUriValue(new IndividualValue() {
+		SimpleUriValue value2 = new SimpleUriValue(new IndividualUriValue() {
 
 			@Override
 			public String getIndividualURI() {
