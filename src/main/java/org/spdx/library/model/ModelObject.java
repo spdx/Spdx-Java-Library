@@ -81,45 +81,6 @@ public abstract class ModelObject {
 	private IModelStore modelStore;
 	private String documentUri;
 	private String id;
-
-	/**
-	 * Converts any typed value or individual value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
-	 * @param value Value which may be a TypedValue
-	 * @param documenentUri Document URI to use when converting a typedValue
-	 * @param modelStore ModelStore to use in fetching or creating
-	 * @return the object itself unless it is a TypedValue, in which case a ModelObject is returned
-	 * @throws InvalidSPDXAnalysisException
-	 */
-	public static Object checkConvertTypedValue(Object value, String documentUri, IModelStore modelStore) throws InvalidSPDXAnalysisException {
-		if (value instanceof IndividualUriValue) {
-			SimpleUriValue suv = new SimpleUriValue((IndividualUriValue)value);
-			return suv.toModelObject(modelStore, documentUri);
-		} else if (value instanceof TypedValue) {
-			TypedValue tv = (TypedValue)value;
-			return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType());
-		} else {
-			return value;
-		}
-	};
-	
-	/**
-	 * Converts any typed value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
-	 * @param value Value which may be a TypedValue
-	 * @param documenentUri Document URI to use when converting a typedValue
-	 * @param stModelStore ModelStore to use in fetching or creating
-	 * @return the object itself unless it is a TypedValue, in which case a ModelObject is returned
-	 * @throws InvalidSPDXAnalysisException
-	 */
-	public static Optional<Object> checkConvertOptionalTypedValue(Optional<Object> value, String stDocumentUri, IModelStore stModelStore) throws InvalidSPDXAnalysisException {
-		if (value.isPresent() && value.get() instanceof IndividualUriValue) {
-			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, stDocumentUri));
-		} else if (value.isPresent() && value.get() instanceof TypedValue) {
-			TypedValue tv = (TypedValue)value.get();
-			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getId(), tv.getType()));
-		} else {
-			return value;
-		}
-	}
 	
 	/**
 	 * If set to true, a reference made to a model object stored in a different modelStore and/or
@@ -152,12 +113,12 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ModelObject(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore);
+		Objects.requireNonNull(documentUri);
+		Objects.requireNonNull(id);
 		this.modelStore = modelStore;
 		this.documentUri = documentUri;
 		this.id = id;
-		if (modelStore == null) {
-			throw new InvalidSPDXAnalysisException("Missing required model store") ;
-		}
 		if (!modelStore.exists(documentUri, id)) {
 			if (create) {
 				modelStore.create(documentUri, id, getType());
@@ -233,7 +194,7 @@ public abstract class ModelObject {
 		} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
 			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName));
 		} else {
-			return checkConvertOptionalTypedValue(stModelStore.getValue(stDocumentUri, stId, propertyName), stDocumentUri, stModelStore);
+			return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), stDocumentUri, stModelStore);
 		}
 	}
 
@@ -256,29 +217,11 @@ public abstract class ModelObject {
 		if (value == null) {
 			// we just remove the value
 			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
-		} else if (value instanceof IndividualUriValue) {
-			// Convert to a simple URI value to save storage
-			stModelStore.setValue(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
-		} else if (value instanceof ModelObject) {
-			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(stModelStore)) {
-				if (!copyOnReference) {
-					throw(new InvalidSPDXAnalysisException("Can set a property value to a Model Object stored in a different model store"));
-				}
-				if (!stModelStore.exists(stDocumentUri, mValue.getId())) {
-					stModelStore.create(stDocumentUri, mValue.getId(), mValue.getType());
-				}
-				stModelStore.setValue(stDocumentUri, stId, propertyName, copy(stModelStore, stDocumentUri, 
-						mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType()));
-			} else {
-				stModelStore.setValue(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-			}
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
-			stModelStore.setValue(stDocumentUri, stId, propertyName, value);
 		} else {
-			throw new SpdxInvalidTypeException("Property value type not supported: "+value.getClass().getName());
+			stModelStore.setValue(stDocumentUri, stId, propertyName, ModelStorageClassConverter.modelObjectToStoredObject(
+					value, stDocumentUri, stModelStore, copyOnReference));
 		}
 	}
 	
@@ -449,95 +392,8 @@ public abstract class ModelObject {
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value);
-		if (value instanceof IndividualUriValue) {
-			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
-		} else if (value instanceof ModelObject) {
-			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(stModelStore)) {
-				if (!stModelStore.exists(stDocumentUri, mValue.getId())) {
-					if (!copyOnReference) {
-						throw(new InvalidSPDXAnalysisException("Can set a property value to a Model Object stored in a different model store"));
-					}
-					stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, 
-							copy(stModelStore, stDocumentUri, mValue.getModelStore(), 
-									mValue.getDocumentUri(), mValue.getId(), mValue.getType()));
-				}
-			}
-			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, mValue.toTypedValue());
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
-			stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, value);
-		} else {
-			throw new SpdxInvalidTypeException("Unsupported type to add to a collection: "+value.getClass().getName());
-		}
-	}
-	
-	/**
-	 * Copy an item from one Model Object Store to another
-	 * @param toStore Model Store to copy to
-	 * @param toId Id to use in the copy
-	 * @param toDocumentUri Target document URI
-	 * @param fromStore Model Store containing the source item
-	 * @param fromDocumentUri Document URI for the source item
-	 * @param sourceId ID source ID
-	 * @param stType Type to copy
-	 * @throws InvalidSPDXAnalysisException
-	 */
-	private static void copy(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore, String fromDocumentUri, String sourceId, String stType) throws InvalidSPDXAnalysisException {
-		if (!toStore.exists(toDocumentUri, toId)) {
-			toStore.create(toDocumentUri, toId, stType);
-		}
-		List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, sourceId);
-		for (String propName:propertyNames) {
-			if (fromStore.isCollectionProperty(fromDocumentUri, sourceId, propName)) {
-				List<Object> fromList = fromStore.getValueList(fromDocumentUri, sourceId, propName);
-				for (Object listItem:fromList) {
-					if (listItem instanceof IndividualUriValue) {
-						toStore.addValueToCollection(
-								toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)listItem));
-					} else if (listItem instanceof TypedValue) {
-						TypedValue listItemTv = (TypedValue)listItem;
-						toStore.addValueToCollection(toDocumentUri, toId, propName, 
-								copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-										listItemTv.getId(), listItemTv.getType()));
-					} else {
-						toStore.addValueToCollection(toDocumentUri, toId, propName, listItem);
-					}
-				}
-			} else {
-				Optional<Object> result =  fromStore.getValue(fromDocumentUri, sourceId, propName);
-				if (result.isPresent()) {
-					if (result.get() instanceof IndividualUriValue) {
-						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
-					} else if (result.get() instanceof TypedValue) {
-						TypedValue tv = (TypedValue)result.get();
-						toStore.setValue(toDocumentUri, toId, propName, 
-								copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-										tv.getId(), tv.getType()));
-					} else {
-						toStore.setValue(toDocumentUri, toId, propName, result.get());
-					}
-				}
-			}
-		}
-	}
-	/**
-	 * Copy an item from one Model Object Store to another using the soure ID for the target unless it is anonomous
-	 * @param toStore Model Store to copy to
-	 * @param toDocumentUri Target document URI
-	 * @param fromStore Model Store containing the source item
-	 * @param fromDocumentUri Document URI for the source item
-	 * @param sourceId ID source ID
-	 * @param stType Type to copy
-	 * @return ID for the copied object
-	 * @throws InvalidSPDXAnalysisException
-	 */
-	public static TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, String fromDocumentUri, String sourceId, String stType) throws InvalidSPDXAnalysisException {
-		String toId = sourceId;
-		if (fromStore.getIdType(sourceId).equals(IdType.Anonomous)) {
-			toId = toStore.getNextId(IdType.Anonomous, toDocumentUri);
-		}
-		copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, stType);
-		return new TypedValue(toId, stType);
+		stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, 
+				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyOnReference));
 	}
 	
 	/**
@@ -582,7 +438,6 @@ public abstract class ModelObject {
 			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value, copyOnReference);
 		}
 	}
-	
 
 	/**
 	 * Remove a property value from a collection
@@ -595,13 +450,8 @@ public abstract class ModelObject {
 	 */
 	public static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		if (value instanceof IndividualUriValue) {
-			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, new SimpleUriValue((IndividualUriValue)value));
-		} else if (value instanceof ModelObject) {
-			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, ((ModelObject)value).toTypedValue());
-		} else {
-			stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, value);
-		}
+		stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, 
+				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, false));
 	}
 	
 	/**
@@ -648,12 +498,8 @@ public abstract class ModelObject {
 	}
 	
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException {
-		if (ModelObject.class.isAssignableFrom(clazz)) {
-			return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, TypedValue.class);
-			//TODO: We should also check the specific types in the typed values for a match
-		} else {
-			return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, clazz);
-		}
+		return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, 
+				ModelStorageClassConverter.modelClassToStoredClass(clazz));
 	}
 	
 	/**
@@ -798,7 +644,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void copyFrom(ModelObject source) throws InvalidSPDXAnalysisException {
-		copy(this.modelStore, this.documentUri, this.id, source.getModelStore(), source.getDocumentUri(), source.getId(), this.getType());
+		ModelStorageClassConverter.copy(this.modelStore, this.documentUri, this.id, 
+				source.getModelStore(), source.getDocumentUri(), source.getId(), this.getType());
 	}
 	
 	/**

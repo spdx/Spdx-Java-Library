@@ -3,7 +3,7 @@ package org.spdx.library.model.license;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.ModelStorageClassConverter;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
@@ -80,7 +80,7 @@ public class WithExceptionOperatorTest extends TestCase {
 	public void testCopy() throws InvalidSPDXAnalysisException {
 		WithExceptionOperator weo1 = new WithExceptionOperator(license1, exception1);
 		IModelStore store = new InMemSpdxStore();
-		TypedValue tv = ModelObject.copy(store, DefaultModelStore.getDefaultDocumentUri(), 
+		TypedValue tv = ModelStorageClassConverter.copy(store, DefaultModelStore.getDefaultDocumentUri(), 
 				weo1.getModelStore(), weo1.getDocumentUri(), weo1.getId(), weo1.getType());
 		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObject(store, 
 				DefaultModelStore.getDefaultDocumentUri(), tv.getId(), SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR);

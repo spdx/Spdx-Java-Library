@@ -99,7 +99,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	 */
 	private Function<Object, Object> checkConvertTypedValue = value -> {
 		try {
-			return ModelObject.checkConvertTypedValue(value, documentUri, modelStore);
+			return ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
