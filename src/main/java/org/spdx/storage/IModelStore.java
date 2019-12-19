@@ -78,7 +78,7 @@ public interface IModelStore {
 		SpdxId, 			// ID's that start with SpdxRef-
 		ListedLicense, 		// ID's associated with listed licenses
 		Literal,			// ID's for pre-defined literals (such as NONE, NOASSERTION)
-		Anonomous, 			// ID's for object only referenced internally
+		Anonymous, 			// ID's for object only referenced internally
 		Unkown};			// ID's that just don't fit any pattern
 
 	/**

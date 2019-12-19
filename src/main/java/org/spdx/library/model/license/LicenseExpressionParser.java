@@ -180,7 +180,7 @@ public class LicenseExpressionParser {
 					if (!((operand instanceof SimpleLicensingInfo) || (operand instanceof OrLaterOperator))) {
 						throw(new LicenseParserException("License with exception is not of type SimpleLicensingInfo or OrLaterOperator"));
 					}
-					WithExceptionOperator weo = new WithExceptionOperator(store, documentUri, store.getNextId(IdType.Anonomous, documentUri), true);
+					WithExceptionOperator weo = new WithExceptionOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), true);
 					weo.setLicense(operand);
 					weo.setException(licenseException);
 					operandStack.push(weo);			
@@ -271,7 +271,7 @@ public class LicenseExpressionParser {
 			if (!(license instanceof SimpleLicensingInfo)) {
 				throw(new LicenseParserException("Missing license for the '+' or later operator"));
 			}
-			OrLaterOperator olo = new OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonomous, documentUri), true);
+			OrLaterOperator olo = new OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), true);
 			olo.setLicense((SimpleLicensingInfo)license);
 			operandStack.push(olo);
 		} else {
@@ -302,7 +302,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				ConjunctiveLicenseSet retval = new ConjunctiveLicenseSet(store, documentUri, 
-						store.getNextId(IdType.Anonomous, documentUri), true);
+						store.getNextId(IdType.Anonymous, documentUri), true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);
 				return retval;
@@ -314,7 +314,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				DisjunctiveLicenseSet retval = new DisjunctiveLicenseSet(store, documentUri, 
-						store.getNextId(IdType.Anonomous, documentUri), true);
+						store.getNextId(IdType.Anonymous, documentUri), true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);
 				return retval;

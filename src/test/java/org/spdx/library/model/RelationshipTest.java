@@ -83,7 +83,7 @@ public class RelationshipTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = new Relationship(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getModelStore().getNextId(IdType.Anonomous, gmo.getDocumentUri()), true);
+		Relationship relationship = new Relationship(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), true);
 		assertEquals(2, relationship.verify().size());
 		relationship.setRelatedSpdxElement(RELATED_ELEMENT1);
 		assertEquals(1, relationship.verify().size());

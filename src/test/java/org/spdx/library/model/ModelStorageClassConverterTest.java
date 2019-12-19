@@ -1,11 +1,18 @@
 package org.spdx.library.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -124,11 +131,28 @@ public class ModelStorageClassConverterTest extends TestCase {
 	}
 
 	public void testCopyIModelStoreStringIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
-	}
-
-	public void testCopyIModelStoreStringStringIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		IModelStore store1 = new InMemSpdxStore();
+		IModelStore store2 = new InMemSpdxStore();
+		String docUri1 = "http://doc1/uri";
+		String docUri2 = "http://doc2/uri";
+		new SpdxDocument(store1, docUri1, true);
+		new SpdxDocument(store2, docUri2, true);
+		String id1 = "ID1";
+		String id2 = "ID2";
+		GenericSpdxElement element1 = new GenericSpdxElement(store1, docUri1, id1, true);
+		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
+		String date = format.format(new Date());
+		Annotation annotation = element1.createAnnotation("Annotator", AnnotationType.REVIEW, date, "Annotation Comment");
+		element1.addAnnotation(annotation);
+		String externalUri = "http://doc3/uri#" + SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "23";
+		ExternalSpdxElement externalElement = ExternalSpdxElement.uriToExternalSpdxElement(externalUri, store1, docUri1, true);
+		Relationship relationship = element1.createRelationship(externalElement, RelationshipType.BUILD_TOOL_OF, "relationshipComment");
+		element1.addRelationship(relationship);
+		element1.setName("ElementName");
+		ModelStorageClassConverter.copy(store2, docUri2, id2, store1, docUri1, id1, element1.getType());
+		GenericSpdxElement element2 = new GenericSpdxElement(store2, docUri2, id2, false);
+		assertTrue(element1.equivalent(element2));
+		assertTrue(element2.equivalent(element1));
 	}
 
 	public void testModelClassToStoredClass() {

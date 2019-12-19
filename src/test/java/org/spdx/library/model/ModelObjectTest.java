@@ -660,7 +660,7 @@ public class ModelObjectTest extends TestCase {
 	public void testIdToIdType() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
-		assertEquals(IdType.Anonomous, gmo.idToIdType("anything"));
+		assertEquals(IdType.Anonymous, gmo.idToIdType("anything"));
 		assertEquals(IdType.DocumentRef, gmo.idToIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "12"));
 		assertEquals(IdType.LicenseRef, gmo.idToIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM + "12"));
 		assertEquals(IdType.ListedLicense, gmo.idToIdType("Apache-2.0"));

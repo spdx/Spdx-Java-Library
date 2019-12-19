@@ -110,10 +110,10 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertEquals("SPDXRef-34", nextId);
 		
 		// Anonomous ID's
-		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
+		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
 		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "33", SpdxConstants.CLASS_SPDX_CHECKSUM);
-		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
+		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "34", nextId);
 		
 		// Document ID's
@@ -228,9 +228,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertEquals("SPDXRef-1", nextId);
 		
 		// Anonomous ID's
-		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
+		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
-		nextId = store.getNextId(IdType.Anonomous, TEST_DOCUMENT_URI1);
+		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "1", nextId);
 		
 		// Document ID's
@@ -598,7 +598,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testIdType()  throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		assertEquals(IdType.Anonomous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"23"));
+		assertEquals(IdType.Anonymous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"23"));
 		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"23"));
 		assertEquals(IdType.LicenseRef, store.getIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+"23"));
 		assertEquals(IdType.ListedLicense, store.getIdType("Apache-2.0"));

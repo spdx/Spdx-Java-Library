@@ -114,7 +114,7 @@ public class ModelStorageClassConverter {
 	}
 
 	/**
-	 * Copy an item from one Model Object Store to another using the soure ID for the target unless it is anonomous
+	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
 	 * @param toStore Model Store to copy to
 	 * @param toDocumentUri Target document URI
 	 * @param fromStore Model Store containing the source item
@@ -126,8 +126,8 @@ public class ModelStorageClassConverter {
 	 */
 	public static TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, String fromDocumentUri, String sourceId, String stType) throws InvalidSPDXAnalysisException {
 		String toId = sourceId;
-		if (fromStore.getIdType(sourceId).equals(IdType.Anonomous)) {
-			toId = toStore.getNextId(IdType.Anonomous, toDocumentUri);
+		if (fromStore.getIdType(sourceId).equals(IdType.Anonymous)) {
+			toId = toStore.getNextId(IdType.Anonymous, toDocumentUri);
 		}
 		copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, stType);
 		return new TypedValue(toId, stType);

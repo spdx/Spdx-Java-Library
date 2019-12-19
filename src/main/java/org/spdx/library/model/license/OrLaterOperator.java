@@ -55,7 +55,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 */
 	public OrLaterOperator(SimpleLicensingInfo license) throws InvalidSPDXAnalysisException {
 		super(license.getModelStore(), license.getDocumentUri(), 
-				license.getModelStore().getNextId(IdType.Anonomous, license.getDocumentUri()), true);
+				license.getModelStore().getNextId(IdType.Anonymous, license.getDocumentUri()), true);
 		setLicense(license);
 	}
 

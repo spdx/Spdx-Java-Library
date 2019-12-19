@@ -88,7 +88,7 @@ public class ExternalSpdxElementTest extends TestCase {
 		ExternalSpdxElement externalElement = new ExternalSpdxElement(ID1);
 		GenericSpdxElement element = new GenericSpdxElement(externalElement.getModelStore(), 
 				externalElement.getDocumentUri(), 
-				externalElement.getModelStore().getNextId(IdType.Anonomous, externalElement.getDocumentUri()), true);
+				externalElement.getModelStore().getNextId(IdType.Anonymous, externalElement.getDocumentUri()), true);
 		element.setName("Element1Name");
 		Relationship relationship = element.createRelationship(externalElement, RelationshipType.AMENDS, "External relationship");
 		GenericSpdxElement compare = new GenericSpdxElement(element.getModelStore(), element.getDocumentUri(),

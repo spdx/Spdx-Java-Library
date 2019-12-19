@@ -256,7 +256,7 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public synchronized String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
 		switch (idType) {
-		case Anonomous: return ANON_PREFIX+String.valueOf(nextAnonId++);
+		case Anonymous: return ANON_PREFIX+String.valueOf(nextAnonId++);
 		case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+String.valueOf(nextNextLicenseId++);
 		case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+String.valueOf(nextNextDocumentId++);
 		case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+String.valueOf(nextNextSpdxId++);
@@ -335,7 +335,7 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public IdType getIdType(String id) {
 		if (ANON_ID_PATTERN_NUMERIC.matcher(id).matches()) {
-			return IdType.Anonomous;
+			return IdType.Anonymous;
 		}
 		if (SpdxConstants.LICENSE_ID_PATTERN_NUMERIC.matcher(id).matches()) {
 			return IdType.LicenseRef;

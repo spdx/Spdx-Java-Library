@@ -93,7 +93,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ModelObject() throws InvalidSPDXAnalysisException {
-		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonomous, DefaultModelStore.getDefaultDocumentUri()));
+		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonymous, DefaultModelStore.getDefaultDocumentUri()));
 	}
 	
 	/**
@@ -664,7 +664,7 @@ public abstract class ModelObject {
 		} else if ("none".equalsIgnoreCase(id) || "noassertion".equalsIgnoreCase(id)) {
 			return IdType.Literal;
 		} else {
-			return IdType.Anonomous;
+			return IdType.Anonymous;
 		}
 	}
 	
@@ -708,7 +708,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(date);
 		Objects.requireNonNull(comment);
 		Annotation retval = new Annotation(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
 		retval.setAnnotationDate(date);
 		retval.setAnnotationType(annotationType);
 		retval.setAnnotator(annotator);
@@ -729,7 +729,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(relatedElement);
 		Objects.requireNonNull(relationshipType);
 		Relationship retval = new Relationship(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
 		if (Objects.nonNull(owningElement)) {
 			retval.setOwningSpdxElement(owningElement);
 		}
@@ -751,7 +751,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(algorithm);
 		Objects.requireNonNull(value);
 		Checksum retval = new Checksum(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonomous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
 		retval.setAlgorithm(algorithm);
 		retval.setValue(value);
 		return retval;
