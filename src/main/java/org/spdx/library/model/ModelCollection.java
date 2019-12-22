@@ -212,4 +212,32 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	/**
+	 * @return the modelStore
+	 */
+	public IModelStore getModelStore() {
+		return modelStore;
+	}
+
+	/**
+	 * @return the documentUri
+	 */
+	public String getDocumentUri() {
+		return documentUri;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @return the propertyName
+	 */
+	public String getPropertyName() {
+		return propertyName;
+	}
 }
