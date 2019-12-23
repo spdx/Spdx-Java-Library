@@ -808,4 +808,19 @@ public abstract class ModelObject {
 			}
 		}
 	}
+	
+
+	/**
+	 * @param creators Creators Identify who (or what, in the case of a tool) created the SPDX file.  If the SPDX file was created by an individual, indicate the person's name. 
+	 * @param date When the SPDX file was originally created. The date is to be specified according to combined date and time in UTC format as specified in ISO 8601 standard. 
+	 * @return creationInfo using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public SpdxCreatorInformation createCreationInfo(List<String> creators, String date) throws InvalidSPDXAnalysisException {
+		SpdxCreatorInformation retval = new SpdxCreatorInformation(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), true);
+		retval.getCreators().addAll(creators);
+		retval.setCreated(date);
+		return retval;
+	}
 }

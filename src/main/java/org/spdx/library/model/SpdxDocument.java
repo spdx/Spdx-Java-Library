@@ -17,13 +17,17 @@
  */
 package org.spdx.library.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
+import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -74,23 +78,33 @@ public class SpdxDocument extends SpdxElement {
 	 * @return the creationInfo
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public SPDXCreatorInformation getCreationInfo() throws InvalidSPDXAnalysisException {
-		
+	@SuppressWarnings("unchecked")
+	public Optional<SpdxCreatorInformation> getCreationInfo() throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_SPDX_CREATION_INFO);
+		if (retval.isPresent() && !(retval.get() instanceof SpdxCreatorInformation)) {
+			throw new SpdxInvalidTypeException("Invalid tpe for CreationInfo: "+retval.get().getClass().toString());
+		}
+		return (Optional<SpdxCreatorInformation>)(Optional<?>)retval;
 	}
 	
 	/**
 	 * @param creationInfo the creationInfo to set
 	 */
-	public void setCreationInfo(SPDXCreatorInformation creationInfo) throws InvalidSPDXAnalysisException {
-		
+	public void setCreationInfo(SpdxCreatorInformation creationInfo) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.PROP_SPDX_CREATION_INFO, creationInfo);
 	}
 
 	/**
 	 * @return the dataLicense
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public AnyLicenseInfo getDataLicense() throws InvalidSPDXAnalysisException {
-		
+	@SuppressWarnings("unchecked")
+	public Optional<AnyLicenseInfo> getDataLicense() throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE);
+		if (retval.isPresent() && !(retval.get() instanceof AnyLicenseInfo)) {
+			throw new SpdxInvalidTypeException("Invalid tpe for Data License: "+retval.get().getClass().toString());
+		}
+		return (Optional<AnyLicenseInfo>)(Optional<?>)retval;
 	}
 	
 	/**
@@ -98,152 +112,118 @@ public class SpdxDocument extends SpdxElement {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDataLicense(AnyLicenseInfo dataLicense) throws InvalidSPDXAnalysisException {
-		
+		setPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE, dataLicense);
 	}
 	
 	/**
 	 * @return the externalDocumentRefs
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection<ExternalDocumentRef> getExternalDocumentRefs() throws InvalidSPDXAnalysisException {
-		
+		return (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF);
 	}
 	
 	/**
 	 * @return the extractedLicenseInfos
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection<ExtractedLicenseInfo> getExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
-		
+		return (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES);
 	}
 	
 
 	/**
 	 * @return the specVersion
 	 */
-	public String getSpecVersion() throws InvalidSPDXAnalysisException {
-		
+	public Optional<String> getSpecVersion() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_SPDX_VERSION);
 	}
 	
 	/**
 	 * @param specVersion the specVersion to set
 	 */
 	public void setSpecVersion(String specVersion) throws InvalidSPDXAnalysisException {
-		
+		setPropertyValue(SpdxConstants.PROP_SPDX_VERSION, specVersion);
 	}
+	
+
 	
 	@Override
 	public List<String> verify() {
 		List<String> retval = super.verify();
 		// specVersion
 		String docSpecVersion = "";	// note - this is used later in verify to verify version specific info
-		if (this.specVersion == null || this.specVersion.isEmpty()) {
-			retval.add("Missing required SPDX version");
-			docSpecVersion = "UNKNOWN";
-		} else {
-			docSpecVersion = this.specVersion;
-			String verify = this.documentContainer.verifySpdxVersion(docSpecVersion);
-			if (verify != null) {
-				retval.add(verify);
-			}			
+		try {
+			Optional<String> specVersion = getSpecVersion();
+			if (!specVersion.isPresent()) {
+				retval.add("Missing required SPDX version");
+				docSpecVersion = "UNKNOWN";
+			} else {
+				docSpecVersion = specVersion.get();
+				String verify = Version.verifySpdxVersion(docSpecVersion);
+				if (verify != null) {
+					retval.add(verify);
+				}			
+			}
+		} catch(InvalidSPDXAnalysisException e) {
+			retval.add("Error getting spec version: "+e.getMessage());
 		}
+		
 		// creationInfo
 		try {
-			SPDXCreatorInformation creator = this.getCreationInfo();
-			if (creator == null) {
+			Optional<SpdxCreatorInformation> creator = this.getCreationInfo();
+			if (!creator.isPresent()) {
 				retval.add("Missing required Creator");
 			} else {
-				List<String> creatorVerification = creator.verify();
-				retval.addAll(creatorVerification);
+				retval.addAll(creator.get().verify());
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid creator information: "+e.getMessage());
-		}
-		// Reviewers
-		try {
-			SPDXReview[] reviews = this.getReviewers();
-			if (reviews != null) {
-				for (int i = 0; i < reviews.length; i++) {
-					List<String> reviewerVerification = reviews[i].verify();
-					retval.addAll(reviewerVerification);
-				}
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid reviewers: "+e.getMessage());
+			retval.add("Error getting creator information: "+e.getMessage());
 		}
 		// Extracted licensine infos
 		try {
-			ExtractedLicenseInfo[] extractedLicInfos = this.getExtractedLicenseInfos();
-			if (extractedLicInfos != null) {
-				for (int i = 0; i < extractedLicInfos.length; i++) {
-					List<String> extractedLicInfoVerification = extractedLicInfos[i].verify();
-					retval.addAll(extractedLicInfoVerification);
-				}
+			for (ExtractedLicenseInfo licInfo:getExtractedLicenseInfos()) {
+				retval.addAll(licInfo.verify());
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid extracted licensing info: "+e.getMessage());
+			retval.add("Error getting extracted licensing info: "+e.getMessage());
 		}
 		// data license
-		if (!docSpecVersion.equals(SpdxDocumentContainer.POINT_EIGHT_SPDX_VERSION) && 
-				!docSpecVersion.equals(SpdxDocumentContainer.POINT_NINE_SPDX_VERSION)) { // added as a mandatory field in 1.0
-			try {
-				AnyLicenseInfo dataLicense = this.getDataLicense();
-				if (dataLicense == null) {
-					retval.add("Missing required data license");
-				} else {
-					if (!(dataLicense instanceof SpdxListedLicense)) {
-						retval.add("Invalid license type for data license - must be an SPDX Listed license");
-					} else {
-						if (docSpecVersion.equals(SpdxDocumentContainer.ONE_DOT_ZERO_SPDX_VERSION)) 
-							{ 
-							if (!((SpdxListedLicense)dataLicense).getLicenseId().equals(
-									SpdxDocumentContainer.SPDX_DATA_LICENSE_ID_VERSION_1_0)) {
-								retval.add("Incorrect data license for SPDX version 1.0 document - found "+
-										((SpdxListedLicense)dataLicense).getLicenseId()+", expected "+
-										SpdxDocumentContainer.SPDX_DATA_LICENSE_ID_VERSION_1_0);
-							}
-						} else {
-							if (!((SpdxListedLicense)dataLicense).getLicenseId().equals(
-									SpdxDocumentContainer.SPDX_DATA_LICENSE_ID)) {
-								retval.add("Incorrect data license for SPDX document - found "+
-										((SpdxListedLicense)dataLicense).getLicenseId()+
-									", expected "+SpdxDocumentContainer.SPDX_DATA_LICENSE_ID);
-							}					
-						}
-					}
-				}
-			} catch (InvalidSPDXAnalysisException e) {
-				retval.add("Invalid data license: "+e.getMessage());
+		try {
+			Optional<AnyLicenseInfo> dataLicense = this.getDataLicense();
+			if (!dataLicense.isPresent()) {
+				retval.add("Missing required data license");
+			} else if (!(dataLicense.get() instanceof SpdxListedLicense)) {
+				retval.add("Invalid license type for data license - must be an SPDX Listed license");
+			} else if (!((SpdxListedLicense)dataLicense.get()).getLicenseId().equals(SpdxConstants.SPDX_DATA_LICENSE_ID)) {
+				retval.add("Incorrect data license for SPDX version 1.0 document - found "+
+						((SpdxListedLicense)dataLicense.get()).getLicenseId()+", expected "+
+						SpdxConstants.SPDX_DATA_LICENSE_ID);
 			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting data license: "+e.getMessage());
 		}
 		// External document references
 		try {
-			ExternalDocumentRef[] externalRefs = this.getExternalDocumentRefs();
-			for (int i = 0; i < externalRefs.length; i++) {
-				retval.addAll(externalRefs[i].verify());
+			for (ExternalDocumentRef externalRef:getExternalDocumentRefs()) {
+				retval.addAll(externalRef.verify());
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid external document references: "+e.getMessage());
+			retval.add("Error getting external document references: "+e.getMessage());
 		}
 		// documentDescribes relationships
 		try {
-			SpdxItem[] items = getDocumentDescribes();
-			if (items.length == 0) {
+			if (getDocumentDescribes().size() == 0) {
 				retval.add("Document must have at least one relationship of type DOCUMENT_DESCRIBES");
+				// Note - relationships are verified in the superclass.  This should also recursively
+				// verify any other important objects.
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid document items: "+e.getMessage());
+			retval.add("Error getting document describes: "+e.getMessage());
 		}
-		try {
-			List<SpdxElement> allElements = documentContainer.findAllElements();
-			for (SpdxElement element:allElements) {
-				if (!element.getId().equals(this.getId())) {
-					retval.addAll(element.verify());
-				}				
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid elements: "+e.getMessage());
-		}
+		//TODO: Figure out what to do with checking any "dangling items" not linked to the describes by
 		return retval;
 	}
 	
