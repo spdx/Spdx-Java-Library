@@ -817,6 +817,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public SpdxCreatorInformation createCreationInfo(List<String> creators, String date) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(creators);
+		Objects.requireNonNull(date);
 		SpdxCreatorInformation retval = new SpdxCreatorInformation(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), true);
 		retval.getCreators().addAll(creators);

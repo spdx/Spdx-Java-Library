@@ -62,7 +62,8 @@ public class RelationshipTest extends TestCase {
 			AnnotationType.OTHER, DATE_NOW, "Comment1");
 		ANNOTATION2 = gmo.createAnnotation("Annotator2",
 				AnnotationType.REVIEW, DATE_NOW, "Comment2");
-		RELATED_ELEMENT1 = new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
+		RELATED_ELEMENT1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
+				gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
 		RELATED_ELEMENT2 = new ExternalSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 

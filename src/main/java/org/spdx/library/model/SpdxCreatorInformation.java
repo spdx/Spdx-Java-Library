@@ -79,10 +79,12 @@ public class SpdxCreatorInformation extends ModelObject {
 	
 	/**
 	 * @param licenseListVersion An optional field for creators of the SPDX file to provide the version of the SPDX License List used when the SPDX file was created.
+	 * @return this for building more optons
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setLicenseListVersion(String licenseListVersion) throws InvalidSPDXAnalysisException {
+	public SpdxCreatorInformation setLicenseListVersion(String licenseListVersion) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_LICENSE_LIST_VERSION, licenseListVersion);
+		return this;
 	}
 
 	
@@ -95,10 +97,12 @@ public class SpdxCreatorInformation extends ModelObject {
 	
 	/**
 	 * @param comment
+	 * @return this for building more optons
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setComment(String comment) throws InvalidSPDXAnalysisException {
+	public SpdxCreatorInformation setComment(String comment) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
+		return this;
 	}
 	
 	/** 
@@ -111,10 +115,12 @@ public class SpdxCreatorInformation extends ModelObject {
 	
 	/**
 	 * @param created When the SPDX file was originally created. The date is to be specified according to combined date and time in UTC format as specified in ISO 8601 standard.
+	 * @return this for building more optons
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setCreated(String created) throws InvalidSPDXAnalysisException {
+	public SpdxCreatorInformation setCreated(String created) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_CREATION_CREATED, created);
+		return this;
 	}
 
 	/* (non-Javadoc)

@@ -19,6 +19,7 @@ package org.spdx.library;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 import org.spdx.library.model.ChecksumAlgorithm;
 
@@ -236,5 +237,21 @@ public class SpdxVerificationHelper {
 			return "Invalid number of characters for checksum";
 		}
 		return null;	// if we got here, all OK
+	}
+
+	/**
+	 * Verify a download location per section 3.7.5 of the spec
+	 * @param downloadLocation
+	 * @return null if a valid string otherwise a description of the error
+	 */
+	public static String verifyDownloadLocation(String downloadLocation) {
+		if (Objects.isNull(downloadLocation)) {
+			return "Download location is null";
+		} else if (SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(downloadLocation).matches()) {
+			return null;
+		} else {
+			return "Invalid download location pattern "+downloadLocation+".  Must match the pattern "+
+					SpdxConstants.DOWNLOAD_LOCATION_PATTERN.pattern();
+		}
 	}
 }

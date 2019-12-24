@@ -304,7 +304,15 @@ public class SpdxConstants {
 	public static Pattern EXTERNAL_ELEMENT_REF_PATTERN = Pattern.compile("("+EXTERNAL_DOC_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+):("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");	
 	public static Pattern EXTERNAL_SPDX_ELEMENT_URI_PATTERN = Pattern.compile("(.+)#("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");
 	
+	// SPDX version format
 	public static Pattern SPDX_VERSION_PATTERN = Pattern.compile("^SPDX-(\\d+)\\.(\\d+)$");
+	
+	// Download Location Format
+	private static final String SUPPORTED_DOWNLOAD_REPOS = "(git|hg|svn|bzr)";
+	private static final String URL_PATTERN = "(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/|ssh:\\/\\/|git:\\/\\/|svn:\\/\\/|sftp:\\/\\/|ftp:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)";
+	private static final String GIT_PATTERN = "(git\\+git@[a-zA-Z0-9\\.]+:[a-zA-Z0-9]+)";
+	private static final String BAZAAR_PATTERN = "(bzr\\+lp:[a-zA-Z0-9\\.]+)";
+	public static final Pattern DOWNLOAD_LOCATION_PATTERN = Pattern.compile("^(NONE|NOASSERTION|(("+SUPPORTED_DOWNLOAD_REPOS+"\\+)?"+URL_PATTERN+")|"+GIT_PATTERN+"|"+BAZAAR_PATTERN+")$", Pattern.CASE_INSENSITIVE);
 
 	// Standard value strings
 	public static String NONE_VALUE = "NONE";
