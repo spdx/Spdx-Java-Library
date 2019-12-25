@@ -106,6 +106,9 @@ public class SpdxModelFactory {
 		for (ChecksumAlgorithm algorithm:ChecksumAlgorithm.values()) {
 			map.put(algorithm.getIndividualURI(), algorithm);
 		}
+		for (ReferenceCategory referenceCategory:ReferenceCategory.values()) {
+			map.put(referenceCategory.getIndividualURI(), referenceCategory);
+		}
 		uriToEnum = Collections.unmodifiableMap(map);
 	}
 }

@@ -279,8 +279,8 @@ public abstract class ModelObject {
 		}
 		Enum<?> retval = SpdxModelFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
-			logger.warn("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
-			return Optional.empty();
+			logger.error("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
+			throw new InvalidSPDXAnalysisException("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
 		} else {
 			return Optional.of(retval);
 		}

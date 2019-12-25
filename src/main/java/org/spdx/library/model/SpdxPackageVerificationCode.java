@@ -17,11 +17,14 @@
  */
 package org.spdx.library.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -65,14 +68,6 @@ public class SpdxPackageVerificationCode extends ModelObject {
 		return SpdxConstants.CLASS_SPDX_VERIFICATIONCODE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
-	 */
-	@Override
-	public List<String> verify() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * @return the value of the verification code
@@ -90,5 +85,34 @@ public class SpdxPackageVerificationCode extends ModelObject {
 	public void setValue(String value) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_VERIFICATIONCODE_VALUE, value);
 	}
+	
+	/**
+	 * @return Collection containing files which have been excluded from the verification code calculation
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Collection<String> getExcludedFileNames() throws InvalidSPDXAnalysisException {
+		return this.getStringCollection(SpdxConstants.PROP_VERIFICATIONCODE_IGNORED_FILES);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#verify()
+	 */
+	@Override
+	public List<String> verify() {
+		List<String> retval = new ArrayList<>();
+		try {
+			Optional<String> value = this.getValue();
+			if (!value.isPresent() || value.get().isEmpty()) {
+				retval.add("Missing required verification code value");
+			} else {
+				String verify = SpdxVerificationHelper.verifyChecksumString(value.get(), ChecksumAlgorithm.SHA1);
+				if (verify != null) {
+					retval.add(verify);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting verification code value: "+e.getMessage());
+		}
+		return retval;
+	}
 }

@@ -21,6 +21,8 @@ import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -67,6 +69,11 @@ public class SimpleUriValue implements IndividualUriValue {
 			return retval;
 		} else if (SpdxConstants.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri).matches()) {
 			return ExternalSpdxElement.uriToExternalSpdxElement(uri, store, documentUri, true);
+		} else if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+			// Assume this is a None license since other NONE would be strings
+			return new SpdxNoneLicense(store, documentUri);
+		} else if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+			return new SpdxNoAssertionLicense(store, documentUri);
 		} else {
 			return this;
 		}
