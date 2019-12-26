@@ -32,6 +32,10 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
@@ -284,7 +288,7 @@ public abstract class ModelObject {
 		if (!(result.get() instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
 		}
-		Enum<?> retval = SpdxModelFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
+		Enum<?> retval = SpdxEnumFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
 			logger.error("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
 			throw new InvalidSPDXAnalysisException("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());

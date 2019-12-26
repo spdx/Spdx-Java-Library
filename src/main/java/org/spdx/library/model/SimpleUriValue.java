@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
@@ -64,7 +65,7 @@ public class SimpleUriValue implements IndividualUriValue {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Object toModelObject(IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
-		Object retval = SpdxModelFactory.uriToEnum.get(uri);
+		Object retval = SpdxEnumFactory.uriToEnum.get(uri);
 		if (Objects.nonNull(retval)) {
 			return retval;
 		} else if (SpdxConstants.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri).matches()) {

@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.storage.IModelStore;
 
 /**

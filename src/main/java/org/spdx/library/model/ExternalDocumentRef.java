@@ -29,6 +29,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelTransaction;

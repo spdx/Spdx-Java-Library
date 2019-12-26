@@ -21,6 +21,8 @@ import java.util.Arrays;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseInfoFactory;

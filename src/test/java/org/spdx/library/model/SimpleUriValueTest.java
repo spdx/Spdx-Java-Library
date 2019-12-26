@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
 

@@ -24,6 +24,7 @@ import java.util.Optional;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.referencetype.ListedReferenceTypes;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -143,7 +144,7 @@ public class ExternalRefTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ExternalRef#setReferenceCategory(org.spdx.library.model.ReferenceCategory)}.
+	 * Test method for {@link org.spdx.library.model.ExternalRef#setReferenceCategory(org.spdx.library.model.enumerations.ReferenceCategory)}.
 	 */
 	public void testSetReferenceCategory() throws InvalidSPDXAnalysisException {
 		ExternalRef er = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri), true);

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
 
@@ -91,7 +92,7 @@ public class ChecksumTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.Checksum#setAlgorithm(org.spdx.library.model.ChecksumAlgorithm)}.
+	 * Test method for {@link org.spdx.library.model.Checksum#setAlgorithm(org.spdx.library.model.enumerations.ChecksumAlgorithm)}.
 	 */
 	public void testSetAlgorithm() throws InvalidSPDXAnalysisException {
 		Checksum[] checksumReferences = new Checksum[TEST_CHECKSUMS.length];

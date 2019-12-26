@@ -89,28 +89,6 @@ public class SpdxModelFactory {
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}
-	
-	/**
-	 * Map of enum URI's to their Enum values
-	 */
-	public static Map<String, Enum<?>> uriToEnum;
-	
-	static {
-		Map<String, Enum<?>> map = new HashMap<>();
-		for (AnnotationType annotationType:AnnotationType.values()) {
-			map.put(annotationType.getIndividualURI(), annotationType);
-		}
-		for (RelationshipType relationshipType:RelationshipType.values()) {
-			map.put(relationshipType.getIndividualURI(), relationshipType);
-		}
-		for (ChecksumAlgorithm algorithm:ChecksumAlgorithm.values()) {
-			map.put(algorithm.getIndividualURI(), algorithm);
-		}
-		for (ReferenceCategory referenceCategory:ReferenceCategory.values()) {
-			map.put(referenceCategory.getIndividualURI(), referenceCategory);
-		}
-		uriToEnum = Collections.unmodifiableMap(map);
-	}
 
 	/**
 	 * @param type SPDX Type

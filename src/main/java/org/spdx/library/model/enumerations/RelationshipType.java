@@ -15,9 +15,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
+package org.spdx.library.model.enumerations;
 
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.IndividualUriValue;
 
 /**
  * Relationship types

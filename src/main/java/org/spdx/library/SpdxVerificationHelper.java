@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
-import org.spdx.library.model.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
 /**
  * Holds static methods used for verify various property values

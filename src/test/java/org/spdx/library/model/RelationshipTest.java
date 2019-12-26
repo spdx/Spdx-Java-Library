@@ -24,6 +24,9 @@ import java.util.Date;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;
@@ -95,7 +98,7 @@ public class RelationshipTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.Relationship#setRelationshipType(org.spdx.library.model.RelationshipType)}.
+	 * Test method for {@link org.spdx.library.model.Relationship#setRelationshipType(org.spdx.library.model.enumerations.RelationshipType)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testSetRelationshipType() throws InvalidSPDXAnalysisException {

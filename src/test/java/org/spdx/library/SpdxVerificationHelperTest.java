@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-import org.spdx.library.model.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
 
@@ -120,7 +120,7 @@ public class SpdxVerificationHelperTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyChecksumString(java.lang.String, org.spdx.library.model.ChecksumAlgorithm)}.
+	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyChecksumString(java.lang.String, org.spdx.library.model.enumerations.ChecksumAlgorithm)}.
 	 */
 	public void testVerifyChecksumString() {
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.MD5)));

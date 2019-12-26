@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 
 /**

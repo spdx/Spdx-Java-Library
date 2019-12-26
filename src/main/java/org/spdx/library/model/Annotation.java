@@ -24,6 +24,7 @@ import java.util.Optional;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.storage.IModelStore;
 
 /**

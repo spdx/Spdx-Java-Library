@@ -24,6 +24,7 @@ import java.util.Date;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.AnnotationType;
 
 import junit.framework.TestCase;
 

@@ -29,10 +29,11 @@ import java.util.Optional;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
-import org.spdx.library.model.license.License;
 import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.SimpleLicensingInfo;
 import org.spdx.library.model.license.SpdxListedLicense;
@@ -51,7 +52,6 @@ import junit.framework.TestCase;
  */
 public class ModelObjectTest extends TestCase {
 
-	private static final String docUri2 = "https://test.document.uri";
 	private static final String TEST_ID = "testId";
 	private static final Object TEST_VALUE1 = "value1";
 	private static final String TEST_PROPERTY1 = "property1";
