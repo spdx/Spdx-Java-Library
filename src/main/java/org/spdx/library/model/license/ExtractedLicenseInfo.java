@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spdx.compare.LicenseCompareHelper;
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 
 /**
  * An ExtractedLicensingInfo represents a license or licensing notice that was found in the package. 
@@ -38,6 +40,10 @@ import org.spdx.storage.IModelStore;
  *
  */
 public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Comparable<ExtractedLicenseInfo> {
+	
+	public ExtractedLicenseInfo() throws InvalidSPDXAnalysisException {
+		super(DefaultModelStore.getDefaultModelStore().getNextId(IdType.LicenseRef, DefaultModelStore.getDefaultDocumentUri()));
+	}
 	
 	public ExtractedLicenseInfo(String id) throws InvalidSPDXAnalysisException {
 		super(id);

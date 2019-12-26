@@ -277,6 +277,11 @@ class StoredTypedItem extends TypedValue {
 						logger.error("Error converting typed value to class",e);
 						return false;
 					} // else continue looping through other list values
+				} else if (o instanceof IndividualUriValue) {
+					if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)o).getIndividualURI()) ||
+							SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)o).getIndividualURI()))) {
+						return false;
+					}
 				} else {
 					return false;
 				}

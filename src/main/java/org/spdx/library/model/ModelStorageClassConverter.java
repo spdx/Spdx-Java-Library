@@ -94,7 +94,7 @@ public class ModelStorageClassConverter {
 			return new SimpleUriValue((IndividualUriValue)value);
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(stModelStore)) {
+			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(stDocumentUri)) {
 				if (!copyOnReference) {
 					throw(new InvalidSPDXAnalysisException("Can set a property value to a Model Object stored in a different model store"));
 				}
