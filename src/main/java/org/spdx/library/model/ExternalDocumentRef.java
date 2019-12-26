@@ -19,7 +19,6 @@ package org.spdx.library.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -64,8 +63,8 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			throw new InvalidSPDXAnalysisException("IO Error creating model transaction",e);
 		}
 		try {
-			Collection<Object> existingExternalRefs = new ModelCollection<Object>(stModelStore,stDocumentUri,
-					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF);
+			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
+					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
 			for (Object externalRef:existingExternalRefs) {
 				if (!(externalRef instanceof ExternalDocumentRef)) {
 					logger.warn("Incorrect type for an external document ref: "+externalRef.getClass().toString());

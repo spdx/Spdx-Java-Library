@@ -79,14 +79,11 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public AnyLicenseInfo getLicense() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
+		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 		if (!retval.isPresent()) {
 			throw new InvalidSPDXAnalysisException("Required license for exception is missing");
 		}
-		if (!(retval.get() instanceof AnyLicenseInfo)) {
-			throw new SpdxInvalidTypeException("License for exception is not of type AnyLicenseInfo");
-		}
-		return (AnyLicenseInfo)(retval.get());
+		return retval.get();
 	}
 	
 	/**

@@ -13,10 +13,13 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
+import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.IndividualUriValue;
 import org.spdx.storage.IModelStore;
@@ -29,6 +32,7 @@ import org.spdx.storage.IModelStore;
  */
 class StoredTypedItem extends TypedValue {
 
+	static final Logger logger = LoggerFactory.getLogger(TypedValue.class);
 	
 	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstants.ALL_SPDX_CLASSES));
 
@@ -263,8 +267,19 @@ class StoredTypedItem extends TypedValue {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		List<Object> list = (List)value;
 		for (Object o:list) {
-			if (!o.getClass().isAssignableFrom(clazz)) {
-				return false;
+			if (!clazz.isAssignableFrom(o.getClass())) {
+				if (o instanceof TypedValue) {
+					try {
+						if (!clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)o).getType()))) {
+							return false;
+						}
+					} catch (InvalidSPDXAnalysisException e) {
+						logger.error("Error converting typed value to class",e);
+						return false;
+					} // else continue looping through other list values
+				} else {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -277,7 +292,18 @@ class StoredTypedItem extends TypedValue {
 		if (value == null) {
 			return false;
 		}
-		return value.getClass().isAssignableFrom(clazz);
+		if (clazz.isAssignableFrom(value.getClass())) {
+			return true;
+		}
+		if (!(value instanceof TypedValue)) {
+			return false;
+		}
+		try {
+			return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType()));
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.error("Error converting typed value to class",e);
+			return false;
+		}
 	}
 
 	public boolean isCollectionProperty(String propertyName) {

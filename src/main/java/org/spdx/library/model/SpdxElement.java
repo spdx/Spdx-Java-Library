@@ -26,9 +26,11 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 
 /**
  * An SpdxElement is any thing described in SPDX, either a document or an SpdxItem. 
@@ -41,11 +43,15 @@ import org.spdx.storage.IModelStore;
 public abstract class SpdxElement extends ModelObject {
 
 	static final Logger logger = LoggerFactory.getLogger(SpdxElement.class);
+	
+	private Collection<Annotation> annotations;
+	private Collection<Relationship> relationships;
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxElement() throws InvalidSPDXAnalysisException {
-		super();
+		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonymous, DefaultModelStore.getDefaultDocumentUri()));
+		
 	}
 
 	/**
@@ -53,7 +59,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxElement(String id) throws InvalidSPDXAnalysisException {
-		super(id);
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, true);
 	}
 
 	/**
@@ -63,9 +69,12 @@ public abstract class SpdxElement extends ModelObject {
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
+	@SuppressWarnings("unchecked")
 	public SpdxElement(IModelStore modelStore, String documentUri, String id, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, create);
+		annotations = (Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION, Annotation.class);
+		relationships = (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP, Relationship.class);
 	}
 
 	@Override
@@ -111,9 +120,8 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return Annotations
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<Annotation> getAnnotations() throws InvalidSPDXAnalysisException {
-		return (Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION);
+		return annotations;
 	}
 	
 	/**
@@ -122,9 +130,8 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean addAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
-		return ((Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION)).add(annotation);
+		return annotations.add(annotation);
 	}
 	
 	/**
@@ -133,18 +140,16 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean removeAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
-		return ((Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_ANNOTATION)).remove(annotation);
+		return annotations.remove(annotation);
 	}
 	
 	/**
 	 * @return Relationships
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<Relationship> getRelationships() throws InvalidSPDXAnalysisException {
-		return (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP);
+		return relationships;
 	}
 	
 	/**
@@ -153,9 +158,8 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean addRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
-		return ((Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP)).add(relationship);
+		return relationships.add(relationship);
 	}
 	
 	/**
@@ -164,9 +168,8 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean removeRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
-		return ((Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_RELATIONSHIP)).remove(relationship);
+		return relationships.remove(relationship);
 	}
 	
 	/**

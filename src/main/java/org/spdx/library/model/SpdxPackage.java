@@ -107,9 +107,8 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @return the licenseDeclared
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public Optional<AnyLicenseInfo> getLicenseDeclared() throws InvalidSPDXAnalysisException {
-		return (Optional<AnyLicenseInfo>)(Optional<?>)getObjectPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
+		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 	}
 	
 	/**
@@ -129,7 +128,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Checksum> getChecksums() throws InvalidSPDXAnalysisException {
-		return (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_CHECKSUM);
+		return (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_CHECKSUM, Checksum.class);
 	}
 	
 	/**
@@ -321,7 +320,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<ExternalRef> getExternalRefs() throws InvalidSPDXAnalysisException {
-		return (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_EXTERNAL_REF);
+		return (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_EXTERNAL_REF, ExternalRef.class);
 	}
 	
 	/**
@@ -339,7 +338,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<SpdxFile> getFiles() throws InvalidSPDXAnalysisException {
-		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_FILE);
+		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_FILE, SpdxFile.class);
 	}
 	
 	/**

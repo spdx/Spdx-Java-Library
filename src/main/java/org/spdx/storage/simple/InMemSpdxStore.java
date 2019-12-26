@@ -247,7 +247,7 @@ public class InMemSpdxStore implements IModelStore {
 	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = getItem(documentUri, id);
 		if (item.isCollectionProperty(propertyName)) {
-			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyName));
+			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyName, null));
 		} else {
 			return Optional.ofNullable(item.getValue(propertyName));
 		}

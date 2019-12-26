@@ -79,7 +79,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 		if (!isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
 			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
 		}
-		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER));
+		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class));
 	}
 	
 	/**

@@ -64,7 +64,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public SimpleLicensingInfo getLicense() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
+		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 		if (!retval.isPresent()) {
 			throw new SpdxInvalidTypeException("Missing required license for OrLater operator");
 		}

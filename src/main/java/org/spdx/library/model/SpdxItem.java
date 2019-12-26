@@ -71,9 +71,8 @@ public abstract class SpdxItem extends SpdxElement {
 	/**
 	 * @return the licenseConcluded
 	 */
-	@SuppressWarnings("unchecked")
 	public Optional<AnyLicenseInfo> getLicenseConcluded() throws InvalidSPDXAnalysisException {
-		return (Optional<AnyLicenseInfo>)(Optional<?>)getObjectPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED);
+		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED);
 	}
 	
 	/**
@@ -87,7 +86,7 @@ public abstract class SpdxItem extends SpdxElement {
 	
 	@SuppressWarnings("unchecked")
 	Collection<AnyLicenseInfo> getLicenseInfoFromFiles() throws InvalidSPDXAnalysisException {
-		return (Collection<AnyLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(getLicenseInfoFromFilesPropertyName());
+		return (Collection<AnyLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(getLicenseInfoFromFilesPropertyName(), AnyLicenseInfo.class);
 	}
 	
 	/**

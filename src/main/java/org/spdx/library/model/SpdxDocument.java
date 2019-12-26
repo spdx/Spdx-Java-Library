@@ -98,13 +98,8 @@ public class SpdxDocument extends SpdxElement {
 	 * @return the dataLicense
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	public Optional<AnyLicenseInfo> getDataLicense() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE);
-		if (retval.isPresent() && !(retval.get() instanceof AnyLicenseInfo)) {
-			throw new SpdxInvalidTypeException("Invalid tpe for Data License: "+retval.get().getClass().toString());
-		}
-		return (Optional<AnyLicenseInfo>)(Optional<?>)retval;
+		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE);
 	}
 	
 	/**
@@ -121,7 +116,7 @@ public class SpdxDocument extends SpdxElement {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<ExternalDocumentRef> getExternalDocumentRefs() throws InvalidSPDXAnalysisException {
-		return (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF);
+		return (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
 	}
 	
 	/**
@@ -130,7 +125,7 @@ public class SpdxDocument extends SpdxElement {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<ExtractedLicenseInfo> getExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
-		return (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES);
+		return (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES, ExtractedLicenseInfo.class);
 	}
 	
 

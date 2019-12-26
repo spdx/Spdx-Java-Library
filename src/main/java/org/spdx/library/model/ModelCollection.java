@@ -25,7 +25,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -40,15 +45,17 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	private String documentUri;
 	private String id;
 	private String propertyName;
+	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
 	
 	/**
 	 * @param modelStore Storage for the model collection
 	 * @param documentUri SPDX Document URI for a document associated with this model collection
 	 * @param id ID for this collection - must be unique within the SPDX document
-	 * @param clazz The class of the elements to be stored in the collection
+	 * @param type The class of the elements to be stored in the collection if none, null if not known
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName, 
+			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore);
 		this.modelStore = modelStore;
 		Objects.requireNonNull(documentUri);
@@ -59,6 +66,14 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		this.propertyName = propertyName;
 		if (!modelStore.exists(documentUri, id)) {
 			throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
+		}
+		if (Objects.nonNull(type)) {
+			licensePrimitiveAssignable = type.isAssignableFrom(SpdxNoneLicense.class);
+			if (!modelStore.isCollectionMembersAssignableTo(documentUri, id, propertyName, type)) {
+				throw new SpdxInvalidTypeException("Incompatible type for property "+propertyName+": "+type.toString());
+			}
+		} else {
+			licensePrimitiveAssignable = false;
 		}
 	}
 
@@ -99,7 +114,16 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	 */
 	private Function<Object, Object> checkConvertTypedValue = value -> {
 		try {
-			return ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore);
+			Object retval = ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore);
+			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
+				String uri = ((IndividualUriValue)retval).getIndividualURI();
+				if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+					retval = new SpdxNoAssertionLicense();
+				} else if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+					retval = new SpdxNoneLicense();
+				}
+			}
+			return retval;
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}

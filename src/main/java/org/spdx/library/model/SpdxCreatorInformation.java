@@ -64,9 +64,8 @@ public class SpdxCreatorInformation extends ModelObject {
 	 * @return Creators Identify who (or what, in the case of a tool) created the SPDX file.  If the SPDX file was created by an individual, indicate the person's name. 
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<String> getCreators() throws InvalidSPDXAnalysisException {
-		return (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_CREATION_CREATOR);
+		return this.getStringCollection(SpdxConstants.PROP_CREATION_CREATOR);
 	}
 	
 	/**

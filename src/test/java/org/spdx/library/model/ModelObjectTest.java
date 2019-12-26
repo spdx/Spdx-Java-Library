@@ -367,9 +367,9 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
 		gmo.clearValueCollection(TEST_LIST_PROPERTIES[0]);
-		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).size());
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -382,12 +382,12 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		ModelUpdate mu = gmo.updateClearValueCollection(TEST_LIST_PROPERTIES[0]);
 		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 		mu.apply();
-		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).size());
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -400,13 +400,13 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		String newValue = "newValue";
 		expected.add(newValue);
 		gmo.addPropertyValueToCollection(TEST_LIST_PROPERTIES[0], newValue);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -419,15 +419,15 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		String newValue = "newValue";
 		ModelUpdate mu = gmo.updateAddPropertyValueToCollection(TEST_LIST_PROPERTIES[0], newValue);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected.add(newValue);
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -440,12 +440,12 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected = Arrays.asList("newList1", "newList2");
 		gmo.setPropertyValue(TEST_LIST_PROPERTIES[0], expected);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -456,14 +456,14 @@ public class ModelObjectTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		GenericModelObject gmo = new GenericModelObject(store, TEST_DOCUMENT_URI, TEST_ID, true);
 		addTestValues(gmo);
-		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		List<String> expected = Arrays.asList("newList1", "newList2");
 		ModelUpdate mu = gmo.updatePropertyValue(TEST_LIST_PROPERTIES[0], expected);
-		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -476,13 +476,13 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<Object> expected = new ArrayList<Object>((List<Object>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		Object removed = expected.get(0);
 		expected.remove(removed);
 		gmo.removePropertyValueFromCollection(TEST_LIST_PROPERTIES[0], removed);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -495,15 +495,15 @@ public class ModelObjectTest extends TestCase {
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<Object> expected = new ArrayList<Object>((List<Object>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		Object removed = expected.get(0);
 		ModelUpdate mu = gmo.updateRemovePropertyValueFromCollection(TEST_LIST_PROPERTIES[0], removed);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected.remove(removed);
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0]).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i]).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -731,5 +731,19 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(result.get() instanceof SimpleUriValue);
 		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result.get()).getIndividualURI());
 	}
+	
+	public void testGetAnyLicenseInfoPropertyValue()  throws InvalidSPDXAnalysisException {
+		fail("Not implemented");
+	}
+	
+	public void testAnyLicenseCollection()  throws InvalidSPDXAnalysisException {
+		fail("Not implemented");
+	}
+	
+	public void testTypeCheckedCollection()  throws InvalidSPDXAnalysisException {
+		fail("Not implemented");
+	}
+	
+	
 
 }

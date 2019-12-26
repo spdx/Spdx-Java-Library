@@ -32,7 +32,10 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ListedLicenses;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelTransaction;
@@ -192,7 +195,7 @@ public abstract class ModelObject {
 		if (!stModelStore.exists(stDocumentUri, stId)) {
 			return Optional.empty();
 		} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
-			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName));
+			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, null));
 		} else {
 			return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), stDocumentUri, stModelStore);
 		}
@@ -269,10 +272,14 @@ public abstract class ModelObject {
 		return retval;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected Optional<Enum<?>> getEnumPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
 		if (!result.isPresent()) {
 			return Optional.empty();
+		}
+		if (result.get() instanceof Enum) {
+			return (Optional<Enum<?>>)(Optional<?>)result;
 		}
 		if (!(result.get() instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
@@ -311,6 +318,35 @@ public abstract class ModelObject {
 			}
 		} else {
 			return Optional.empty();
+		}
+	}
+	
+	/**
+	 * Converts property values to an AnyLicenseInfo if possible - if NONE or NOASSERTION URI value, convert to the appropriate license
+	 * @param propertyName
+	 * @return AnyLicenseInfo
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public Optional<AnyLicenseInfo> getAnyLicenseInfoPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		if (!result.isPresent()) {
+			return Optional.empty();
+		} else if (result.get() instanceof AnyLicenseInfo) {
+			return (Optional<AnyLicenseInfo>)(Optional<?>)result;
+		} else if (result.get() instanceof IndividualUriValue) {
+			String uri = ((IndividualUriValue)result.get()).getIndividualURI();
+			if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+				return Optional.of(new SpdxNoneLicense());
+			} else if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+				return Optional.of(new SpdxNoAssertionLicense());
+			} else {
+				logger.error("Can not convert a URI value to a license: "+uri);
+				throw new SpdxInvalidTypeException("Can not convert a URI value to a license: "+uri);
+			}
+		} else {
+			logger.error("Invalid type for AnyLicenseInfo property: "+result.get().getClass().toString());
+			throw new SpdxInvalidTypeException("Invalid type for AnyLicenseInfo property: "+result.get().getClass().toString());
 		}
 	}
 	
@@ -480,8 +516,8 @@ public abstract class ModelObject {
 	 * @param propertyName Name of the property
 	 * @return collection of values associated with a property
 	 */
-	public ModelCollection<Object> getObjectPropertyValueCollection(String propertyName) throws InvalidSPDXAnalysisException {
-		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName);
+	public ModelCollection<?> getObjectPropertyValueCollection(String propertyName, Class<?> type) throws InvalidSPDXAnalysisException {
+		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName, type);
 	}
 	
 	/**
@@ -494,7 +530,7 @@ public abstract class ModelObject {
 		if (!isCollectionMembersAssignableTo(propertyName, String.class)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" does not contain a collection of Strings");
 		}
-		return (Collection<String>)(Collection<?>)getObjectPropertyValueCollection(propertyName);
+		return (Collection<String>)(Collection<?>)getObjectPropertyValueCollection(propertyName, String.class);
 	}
 	
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException {
