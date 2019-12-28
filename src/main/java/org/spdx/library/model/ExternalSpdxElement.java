@@ -223,7 +223,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	}
 	
 	@Override
-	public void setName(String name) throws InvalidSPDXAnalysisException {
+	public ExternalSpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		throw new InvalidSPDXAnalysisException("Can not set the name on an ExternalSpdxElement.  "
 				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
 	}

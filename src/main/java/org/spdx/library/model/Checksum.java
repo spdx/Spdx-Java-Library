@@ -215,6 +215,5 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 			}
 		}
 		return retval;
-	}
-
+	}	
 }

@@ -99,11 +99,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public boolean contains(Object o) {
 
 		try {
-			if (o instanceof ModelObject) {
-				return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyName, ((ModelObject)o).toTypedValue());
-			} else {
-				return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyName, o);
-			}
+			return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyName, ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, false));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -162,11 +158,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean add(Object element) {
 		try {
-			if (element instanceof ModelObject) {
-				return modelStore.addValueToCollection(documentUri, id, propertyName, ((ModelObject)element).toTypedValue());
-			} else {
-				return modelStore.addValueToCollection(documentUri, id, propertyName, element);
-			}
+			return modelStore.addValueToCollection(documentUri, id, propertyName, 
+					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, true));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -175,11 +168,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean remove(Object element) {
 		try {
-			if (element instanceof ModelObject) {
-				return modelStore.removeValueFromCollection(documentUri, id, propertyName, ((ModelObject)element).toTypedValue());
-			} else {
-				return modelStore.removeValueFromCollection(documentUri, id, propertyName, element);
-			}
+			return modelStore.removeValueFromCollection(documentUri, id, propertyName, 
+					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, true));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}

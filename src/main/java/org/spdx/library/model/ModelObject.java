@@ -848,7 +848,6 @@ public abstract class ModelObject {
 			}
 		}
 	}
-	
 
 	/**
 	 * @param creators Creators Identify who (or what, in the case of a tool) created the SPDX file.  If the SPDX file was created by an individual, indicate the person's name. 
@@ -864,5 +863,27 @@ public abstract class ModelObject {
 		retval.getCreators().addAll(creators);
 		retval.setCreated(date);
 		return retval;
+	}
+	
+	/**
+	 * Create an SpdxFileBuilder with all of the required properties - the build() method will build the file
+	 * @param id - ID - must be an SPDX ID type
+	 * @param name - File name
+	 * @param concludedLicense license concluded
+	 * @param seenLicense collection of seen licenses
+	 * @param copyrightText Copyright text
+	 * @param sha1 Sha1 checksum
+	 * @return SPDX file using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxFile.SpdxFileBuilder createFile(String id, String name, AnyLicenseInfo concludedLicense,
+			Collection<AnyLicenseInfo> seenLicense, String copyrightText, Checksum sha1) throws InvalidSPDXAnalysisException {
+		Objects.nonNull(id);
+		Objects.nonNull(name);
+		Objects.nonNull(sha1);
+		Objects.nonNull(concludedLicense);
+		Objects.nonNull(seenLicense);
+		Objects.nonNull(copyrightText);
+		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, name, concludedLicense, seenLicense, copyrightText, sha1);
 	}
 }

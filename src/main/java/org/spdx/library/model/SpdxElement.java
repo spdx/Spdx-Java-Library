@@ -97,11 +97,12 @@ public abstract class SpdxElement extends ModelObject {
 	
 	/**
 	 * Add the name of the element to all strings in the list
+	 * @return the same last after being modified (Note: a new list is not created - this modifies the warnings list)
 	 * @param warnings
 	 */
-	protected void addNameToWarnings(List<String> warnings) {
+	protected List<String> addNameToWarnings(List<String> warnings) {
 		if (warnings == null) {
-			return;
+			return new ArrayList<>();
 		}
 		String localName = "[UNKNOWN]";
 		try {
@@ -115,6 +116,7 @@ public abstract class SpdxElement extends ModelObject {
 		for (int i = 0; i < warnings.size(); i++) {
 			warnings.set(i, warnings.get(i)+" in "+localName);
 		}
+		return warnings;
 	}
 	
 	/**
@@ -208,10 +210,12 @@ public abstract class SpdxElement extends ModelObject {
 	/**
 	 * Set the name
 	 * @param name
+	 * @return this so that you can chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setName(String name) throws InvalidSPDXAnalysisException {
+	public SpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(getNamePropertyName(), name);
+		return this;
 	}
 	
 	/**

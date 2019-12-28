@@ -46,6 +46,9 @@ public class SpdxEnumFactory {
 		for (ReferenceCategory referenceCategory:ReferenceCategory.values()) {
 			map.put(referenceCategory.getIndividualURI(), referenceCategory);
 		}
+		for (FileType fileType:FileType.values()) {
+			map.put(fileType.getIndividualURI(), fileType);
+		}
 		uriToEnum = Collections.unmodifiableMap(map);
 	}
 

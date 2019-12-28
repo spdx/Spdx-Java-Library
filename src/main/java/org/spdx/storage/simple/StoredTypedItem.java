@@ -21,6 +21,7 @@ import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.TypedValue;
+import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.IndividualUriValue;
 import org.spdx.storage.IModelStore;
 
@@ -278,8 +279,14 @@ class StoredTypedItem extends TypedValue {
 						return false;
 					} // else continue looping through other list values
 				} else if (o instanceof IndividualUriValue) {
-					if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)o).getIndividualURI()) ||
-							SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)o).getIndividualURI()))) {
+					String uri = ((IndividualUriValue)o).getIndividualURI();
+					Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
+					if (Objects.nonNull(spdxEnum)) {
+						if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
+							return false;
+						}
+					} else if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(uri) ||
+							SpdxConstants.URI_VALUE_NOASSERTION.equals(uri))) {
 						return false;
 					}
 				} else {
@@ -300,15 +307,30 @@ class StoredTypedItem extends TypedValue {
 		if (clazz.isAssignableFrom(value.getClass())) {
 			return true;
 		}
-		if (!(value instanceof TypedValue)) {
-			return false;
+		if (value instanceof TypedValue) {
+			try {
+				return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType()));
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error converting typed value to class",e);
+				return false;
+			}
 		}
-		try {
-			return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType()));
-		} catch (InvalidSPDXAnalysisException e) {
-			logger.error("Error converting typed value to class",e);
-			return false;
+		if (value instanceof IndividualUriValue) {
+			String uri = ((IndividualUriValue)value).getIndividualURI();
+			if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+				return true;
+			}
+			if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+				return true;
+			}
+			Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
+			if (Objects.nonNull(spdxEnum)) {
+				return clazz.isAssignableFrom(spdxEnum.getClass());
+			} else {
+				return false;
+			}
 		}
+		return false;
 	}
 
 	public boolean isCollectionProperty(String propertyName) {

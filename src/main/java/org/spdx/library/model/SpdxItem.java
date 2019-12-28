@@ -78,10 +78,12 @@ public abstract class SpdxItem extends SpdxElement {
 	/**
 	 * Set the licenseConcluded
 	 * @param license
+	 * @return this so you can chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
+	public SpdxItem setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED, license);
+		return this;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -98,9 +100,17 @@ public abstract class SpdxItem extends SpdxElement {
 	
 	/**
 	 * @param copyrightText the copyrightText to set
+	 * @return myself - so you can chain setters
 	 */
-	public void setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
+	public SpdxItem setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_COPYRIGHT_TEXT, copyrightText);
+		return this;
+	}
+	
+	@Override 
+	public SpdxItem setName(String name) throws InvalidSPDXAnalysisException {
+		super.setName(name);
+		return this;
 	}
 	
 	/**
@@ -112,9 +122,11 @@ public abstract class SpdxItem extends SpdxElement {
 	
 	/**
 	 * @param licenseComments the licenseComment to set
+	 * @return this so you chan chain setters
 	 */
-	public void setLicenseComments(String licenseComments) throws InvalidSPDXAnalysisException {
+	public SpdxItem setLicenseComments(String licenseComments) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_LIC_COMMENTS, licenseComments);
+		return this;
 	}
 	
 	@Override
