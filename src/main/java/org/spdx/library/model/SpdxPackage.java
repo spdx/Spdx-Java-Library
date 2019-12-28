@@ -17,7 +17,10 @@
  */
 package org.spdx.library.model;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,6 +38,8 @@ import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.ModelTransaction;
+import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * A Package represents a collection of software files that are
@@ -69,6 +74,51 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public SpdxPackage(String id) throws InvalidSPDXAnalysisException {
 		super(id);
+	}
+
+	protected SpdxPackage(SpdxPackageBuilder spdxPackageBuilder) throws InvalidSPDXAnalysisException {
+		this(spdxPackageBuilder.modelStore, spdxPackageBuilder.documentUri, spdxPackageBuilder.id, true);
+		setCopyrightText(spdxPackageBuilder.copyrightText);
+		setName(spdxPackageBuilder.name);
+		setLicenseConcluded(spdxPackageBuilder.concludedLicense);
+		if (!spdxPackageBuilder.sha1.getAlgorithm().isPresent() || 
+				!spdxPackageBuilder.sha1.getAlgorithm().get().equals(ChecksumAlgorithm.SHA1)) {
+			throw new InvalidSPDXAnalysisException("Invalid SHA1 checksum algorithm for SpdxPackage.  Must be SHA1");
+		}
+		addChecksum(spdxPackageBuilder.sha1);
+		setLicenseDeclared(spdxPackageBuilder.licenseDeclared);
+		
+		// optional parameters - SpdxElement
+		getAnnotations().addAll(spdxPackageBuilder.annotations);
+		getRelationships().addAll(spdxPackageBuilder.relationships);
+		setComment(spdxPackageBuilder.comment);
+		
+		// optional parameters - SpdxItem
+		setLicenseComments(spdxPackageBuilder.licenseComments);
+		getLicenseInfoFromFiles().addAll(spdxPackageBuilder.licenseInfosFromFile);
+		
+		// optional parameters - SpdxPackage
+		Iterator<Checksum> iter = spdxPackageBuilder.checksums.iterator();
+		while (iter.hasNext()) {
+			Checksum cksum = iter.next();
+			if (!cksum.equals(spdxPackageBuilder.sha1)) {
+				getChecksums().add(cksum);
+			}
+		}
+
+		setDescription(spdxPackageBuilder.description);
+		setDownloadLocation(spdxPackageBuilder.downloadLocation);
+		getExternalRefs().addAll(spdxPackageBuilder.externalRefs);
+		getFiles().addAll(spdxPackageBuilder.files);
+		setHomepage(spdxPackageBuilder.homepage);
+		setOriginator(spdxPackageBuilder.originator);
+		setPackageFileName(spdxPackageBuilder.pacakgeFileName);
+		setPackageVerificationCode(spdxPackageBuilder.packageVerificationCode);
+		setSourceInfo(spdxPackageBuilder.sourceInfo);
+		setSummary(spdxPackageBuilder.summary);
+		setSupplier(spdxPackageBuilder.supplier);
+		setVersionInfo(spdxPackageBuilder.versionInfo);
+		setFilesAnalyzed(spdxPackageBuilder.filesAnalyzed);
 	}
 
 	@Override
@@ -243,7 +293,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setPackageVerificationCode(SpdxPackageVerificationCode verificationCode) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.PROP_PACKAGE_FILE_NAME, verificationCode);
+		setPropertyValue(SpdxConstants.PROP_PACKAGE_VERIFICATION_CODE, verificationCode);
 		return this;
 	}
 	
@@ -567,7 +617,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public String getSha1() throws InvalidSPDXAnalysisException {
 		for (Checksum checksum:getChecksums()) {
-			if (checksum.getAlgorithm().equals(ChecksumAlgorithm.SHA1)) {
+			if (checksum.getAlgorithm().get().equals(ChecksumAlgorithm.SHA1)) {
 				Optional<String> value = checksum.getValue();
 				if (value.isPresent()) {
 					return value.get();
@@ -576,6 +626,343 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		// No sha1 found, return an empty string
 		return "";
+	}
+	
+	public static class SpdxPackageBuilder {
+		// required fields - Model Object
+		IModelStore modelStore;
+		String documentUri;
+		String id;
+		
+		// required fields - SpdxElement
+		String name;
+		
+		// required fields - SpdxItem
+		AnyLicenseInfo concludedLicense;
+		String copyrightText;
+		
+		// required fields - SpdxPackage
+		AnyLicenseInfo licenseDeclared;
+		Checksum sha1;
+		
+		// optional fields - SpdxElement
+		Collection<Annotation> annotations = new ArrayList<Annotation>();
+		Collection<Relationship> relationships = new ArrayList<Relationship>();
+		String comment = null;
+		
+		// optional fields - SpdxItem
+		Collection<AnyLicenseInfo> licenseInfosFromFile; // required if isFilesAnalyzed is true
+		String licenseComments = null;
+		
+		// optional fields - SpdxPackage
+		Collection<Checksum> checksums = new ArrayList<Checksum>();
+		String description = null;
+		String downloadLocation = null;
+		Collection<ExternalRef> externalRefs = new ArrayList<ExternalRef>();
+		Collection<SpdxFile> files = new ArrayList<SpdxFile>(); // required if isFilesAnalyzed is true
+		String homepage = null;
+		String originator = null;
+		String pacakgeFileName = null;
+		SpdxPackageVerificationCode packageVerificationCode = null; // required if isFilesAnalyzed is true
+		String sourceInfo = null;
+		String summary = null;
+		String supplier = null;
+		String versionInfo = null;
+		boolean filesAnalyzed = true;
+				
+		/**
+		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false - note isFilesAnalyzed must be explicitly set to false
+		 * @param modelStore Storage for the model objects
+		 * @param documentUri SPDX Document URI for a document associated with this model
+		 * @param id ID for this object - must be unique within the SPDX document
+		 * @param name - File name
+		 * @param concludedLicense license concluded
+		 * @param licenseInfosFromFile collection of seen licenses
+		 * @param copyrightText Copyright text
+		 * @param sha1 - Sha1 checksum value
+		 * @param licenseDeclared - Declared license for the package
+		 */
+		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, String name,
+				AnyLicenseInfo concludedLicense, 
+				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
+			Objects.requireNonNull(modelStore);
+			Objects.requireNonNull(documentUri);
+			Objects.requireNonNull(id);
+			Objects.requireNonNull(name);
+			Objects.requireNonNull(concludedLicense);
+			Objects.requireNonNull(copyrightText);
+			Objects.requireNonNull(licenseDeclared);
+			Objects.requireNonNull(sha1);
+			this.modelStore = modelStore;
+			this.documentUri = documentUri;
+			this.id = id;
+			this.name = name;
+			this.concludedLicense = concludedLicense;
+			this.copyrightText = copyrightText;
+			this.sha1 = sha1;
+			this.licenseDeclared = licenseDeclared;
+		}
+		
+		/**
+		 * @param annotations Annotations
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setAnnotations(Collection<Annotation> annotations) {
+			Objects.requireNonNull(annotations);
+			this.annotations = annotations;
+			return this;
+		}
+		
+		/**
+		 * @param annotation Annotation to add
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addAnnotation(Annotation annotation) {
+			Objects.requireNonNull(annotation);
+			this.annotations.add(annotation);
+			return this;
+		}
+		
+		/**
+		 * @param relationships Relationships
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setRelationships(Collection<Relationship> relationships) {
+			Objects.requireNonNull(relationships);
+			this.relationships = relationships;
+			return this;
+		}
+		
+		/**
+		 * @param relationship Relationship to add
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addRelationship(Relationship relationship) {
+			Objects.requireNonNull(relationship);
+			this.relationships.add(relationship);
+			return this;
+		}
+		
+		/**
+		 * @param comment Comment
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setComment(@Nullable String comment) {
+			this.comment = comment;
+			return this;
+		}
+		
+		/**
+		 * @param licenseInfosFromFile License information from all files in the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setLicenseInfosFromFile(Collection<AnyLicenseInfo> licenseInfosFromFile) {
+			this.licenseInfosFromFile = licenseInfosFromFile;
+			return this;
+		}
+		
+		/**
+		 * @param licenseInfo license info for a file to be added to the collection of license infos
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addLicenseInfosFromFile(AnyLicenseInfo licenseInfo) {
+			this.licenseInfosFromFile.add(licenseInfo);
+			return this;
+		}
+		
+		/**
+		 * @param licenseComments license comments
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setLicenseComments(@Nullable String licenseComments) {
+			this.licenseComments = licenseComments;
+			return this;
+		}
+		
+		/**
+		 * @param checksums Checksum
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setChecksums(Collection<Checksum> checksums) {
+			Objects.requireNonNull(checksums);
+			this.checksums = checksums;
+			return this;
+		}
+		
+		/**
+		 * @param checksum Checksum to add
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addChecksum(Checksum checksum) {
+			Objects.requireNonNull(checksum);
+			this.checksums.add(checksum);
+			return this;
+		}
+		
+		/**
+		 * @param description long description
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setDescription(String description) {
+			Objects.requireNonNull(description);
+			this.description = description;
+			return this;
+		}
+		
+		/**
+		 * @param externalRefs external references to this package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setExternalRefs(Collection<ExternalRef> externalRefs) {
+			Objects.requireNonNull(externalRefs);
+			this.externalRefs = externalRefs;
+			return this;
+		}
+		
+		/**
+		 * @param externalRef external reference to this package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addExternalRef(ExternalRef externalRef) {
+			Objects.requireNonNull(externalRef);
+			this.externalRefs.add(externalRef);
+			return this;
+		}
+		
+		/**
+		 * @param files files contained in the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setFiles(Collection<SpdxFile> files) {
+			Objects.requireNonNull(files);
+			this.files = files;
+			return this;
+		}
+		
+		/**
+		 * @param file file to be added to the collection of files
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addFile(SpdxFile file) {
+			Objects.requireNonNull(file);
+			this.files.add(file);
+			return this;
+		}
+
+		/**
+		 * @param homepage package home page
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setHomepage(String homepage) {
+			Objects.requireNonNull(homepage);
+			this.homepage = homepage;
+			return this;
+		}
+		
+		/**
+		 * @param originator originator of the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setOriginator(String originator) {
+			Objects.requireNonNull(originator);
+			this.originator = originator;
+			return this;
+		}
+		
+		/**
+		 * @param packageFileName file name of the archive containing the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setPackageFileName(String packageFileName) {
+			Objects.requireNonNull(packageFileName);
+			this.pacakgeFileName = packageFileName;
+			return this;
+		}
+		
+		/**
+		 * @param packageVerificationCode Package verification code calculated from the files
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setPackageVerificationCode(SpdxPackageVerificationCode packageVerificationCode) {
+			Objects.requireNonNull(packageVerificationCode);
+			this.packageVerificationCode = packageVerificationCode;
+			return this;
+		}
+		
+		/**
+		 * @param sourceInfo Information on the source of the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setSourceInfo(String sourceInfo) {
+			Objects.requireNonNull(sourceInfo);
+			this.sourceInfo = sourceInfo;
+			return this;
+		}
+		
+		/**
+		 * @param summary Short description
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setSummary(String summary) {
+			Objects.requireNonNull(summary);
+			this.summary = summary;
+			return this;
+		}
+		
+		/**
+		 * @param supplier Package supplier
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setSupplier(String supplier) {
+			Objects.requireNonNull(supplier);
+			this.supplier = supplier;
+			return this;
+		}
+		
+		/**
+		 * @param versionInfo Package version
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setVersionInfo(String versionInfo) {
+			Objects.requireNonNull(versionInfo);
+			this.versionInfo = versionInfo;
+			return this;
+		}
+		
+		/**
+		 * @param filesAnalyzed if true, files were analyzed for this package - add additional required parameters files, verificationCode and licenseInfosFromFile
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setFilesAnalyzed(boolean filesAnalyzed) {
+			this.filesAnalyzed = filesAnalyzed;
+			return this;
+		}
+		
+		/**
+		 * @param downloadLocation download location for the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setDownloadLocation(String downloadLocation) {
+			Objects.requireNonNull(downloadLocation);
+			this.downloadLocation = downloadLocation;
+			return this;
+		}
+		
+		public SpdxPackage build() throws InvalidSPDXAnalysisException {
+			ModelTransaction transaction = null;
+			try {
+				transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE);
+				try {
+					return new SpdxPackage(this);
+				} finally {
+					transaction.commit();
+					transaction.close();
+				}
+			} catch (IOException e) {
+				logger.error("IO Exception in transaction for SPDX package build",e);
+				throw new InvalidSPDXAnalysisException("IO Exception in transaction for SPDX package build",e);
+			}
+		}
 	}
 
 }

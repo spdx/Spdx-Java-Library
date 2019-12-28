@@ -97,7 +97,7 @@ public class ModelCollectionTest extends TestCase {
 		List<String> compare = new ArrayList<String>(Arrays.asList(ELEMENTS));
 		assertTrue(mc.containsAll(compare));
 		compare.add("Another");
-		assertFalse(mc.contains(compare));
+		assertFalse(mc.containsAll(compare));
 	}
 
 	public void testAddAll() throws InvalidSPDXAnalysisException {

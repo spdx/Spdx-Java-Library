@@ -22,14 +22,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -216,17 +213,5 @@ public abstract class SpdxElement extends ModelObject {
 	public SpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		this.setPropertyValue(getNamePropertyName(), name);
 		return this;
-	}
-	
-	/**
-	 * @param relatedSpdxElement The SPDX Element that is related
-	 * @param relationshipType Type of relationship - See the specification for a description of the types
-	 * @param comment optional comment for the relationship
-	 * @return
-	 * @throws InvalidSPDXAnalysisException
-	 */
-	public Relationship createRelationship(SpdxElement relatedElement, 
-			RelationshipType relationshipType, @Nullable String comment) throws InvalidSPDXAnalysisException {
-		return super.createRelationship(this, relatedElement, relationshipType, comment);
 	}
 }

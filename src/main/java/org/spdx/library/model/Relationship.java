@@ -36,11 +36,6 @@ import org.spdx.storage.IModelStore;
 public class Relationship extends ModelObject implements Comparable<Relationship> {
 	
 	/**
-	 * Source of the relationship. This is not stored since the spdxElement should contain a reference to this
-	 */
-	private SpdxElement owningSpdxElement = null;
-
-	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Relationship() throws InvalidSPDXAnalysisException {
@@ -154,20 +149,6 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 */
 	public void setRelatedSpdxElement(SpdxElement relatedSpdxElement) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_RELATED_SPDX_ELEMENT, relatedSpdxElement);
-	}
-	
-	/**
-	 * @return the SPDX element which owns this relationship
-	 */
-	public Optional<SpdxElement> getOwningSpdxElement() {
-		return Optional.ofNullable(owningSpdxElement);
-	}
-	
-	/**
-	 * @param element the SPDX element which owns this relationship
-	 */
-	public void setOwningSpdxElement(SpdxElement element) {
-		this.owningSpdxElement = element;
 	}
 	
 	/* (non-Javadoc)

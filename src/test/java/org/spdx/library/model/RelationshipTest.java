@@ -104,7 +104,7 @@ public class RelationshipTest extends TestCase {
 	public void testSetRelationshipType() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT1, relationshipType1, comment1);
+		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
 		assertEquals(relationshipType1, relationship.getRelationshipType().get());
 		assertEquals(comment1, relationship.getComment().get());
@@ -120,7 +120,7 @@ public class RelationshipTest extends TestCase {
 	public void testSetComment() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT1, relationshipType1, comment1);
+		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
 		assertEquals(relationshipType1, relationship.getRelationshipType().get());
 		assertEquals(comment1, relationship.getComment().get());
@@ -136,7 +136,7 @@ public class RelationshipTest extends TestCase {
 	public void testSetRelatedSpdxElement() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT1, relationshipType1, comment1);
+		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
 		assertEquals(relationshipType1, relationship.getRelationshipType().get());
 		assertEquals(comment1, relationship.getComment().get());
@@ -147,12 +147,12 @@ public class RelationshipTest extends TestCase {
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT1, relationshipType1, comment1);
+		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
 		assertEquals(relationshipType1, relationship.getRelationshipType().get());
 		assertEquals(comment1, relationship.getComment().get());
 		assertTrue(relationship.equivalent(relationship));
-		Relationship relationship2 = gmo.createRelationship(null, RELATED_ELEMENT1, relationshipType1, comment1);
+		Relationship relationship2 = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertTrue(relationship.equivalent(relationship2));
 		assertTrue(relationship.equivalent(relationship2));
 		// related SPDX element
@@ -183,8 +183,8 @@ public class RelationshipTest extends TestCase {
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = gmo.createRelationship(null, RELATED_ELEMENT2, relationshipType1, comment1);
-		Relationship compare = gmo.createRelationship(null, RELATED_ELEMENT2, relationshipType1, comment1);
+		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT2, relationshipType1, comment1);
+		Relationship compare = gmo.createRelationship(RELATED_ELEMENT2, relationshipType1, comment1);
 		assertEquals(0, relationship.compareTo(compare));
 		assertEquals(0, compare.compareTo(relationship));
 		compare.setComment(null);

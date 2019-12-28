@@ -34,6 +34,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.AnyLicenseInfo;
@@ -757,22 +758,18 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param owningElement Source of the relationship
 	 * @param relatedSpdxElement The SPDX Element that is related
 	 * @param relationshipType Type of relationship - See the specification for a description of the types
 	 * @param comment optional comment for the relationship
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Relationship createRelationship(@Nullable SpdxElement owningElement, SpdxElement relatedElement, 
+	public Relationship createRelationship(SpdxElement relatedElement, 
 			RelationshipType relationshipType, @Nullable String comment) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(relatedElement);
 		Objects.requireNonNull(relationshipType);
 		Relationship retval = new Relationship(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
-		if (Objects.nonNull(owningElement)) {
-			retval.setOwningSpdxElement(owningElement);
-		}
 		retval.setRelatedSpdxElement(relatedElement);
 		retval.setRelationshipType(relationshipType);
 		if (Objects.nonNull(comment)) {
@@ -794,6 +791,22 @@ public abstract class ModelObject {
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
 		retval.setAlgorithm(algorithm);
 		retval.setValue(value);
+		return retval;
+	}
+	
+	/**
+	 * @param value Verification code calculated value
+	 * @param excludedFileNames file names of files excluded from the verification code calculation
+	 * @return Package verification code using the same model store and document URI as this Model Object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxPackageVerificationCode createPackageVerificationCode(String value, Collection<String> excludedFileNames) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(value);
+		Objects.requireNonNull(excludedFileNames);
+		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(this.modelStore, this.documentUri, 
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
+		retval.setValue(value);
+		retval.getExcludedFileNames().addAll(excludedFileNames);
 		return retval;
 	}
 	
@@ -866,6 +879,28 @@ public abstract class ModelObject {
 	}
 	
 	/**
+	 * @param category Reference category
+	 * @param referenceType Reference type
+	 * @param locator Reference locator
+	 * @param comment Optional comment
+	 * @return ExternalRef using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public ExternalRef createExternalRef(ReferenceCategory category, ReferenceType referenceType, 
+			String locator, @Nullable String comment) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(category);
+		Objects.requireNonNull(referenceType);
+		Objects.requireNonNull(locator);
+		ExternalRef retval = new ExternalRef(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), true);
+		retval.setReferenceCategory(category);
+		retval.setReferenceType(referenceType);
+		retval.setReferenceLocator(locator);
+		retval.setComment(comment);
+		return retval;
+	}
+	
+	/**
 	 * Create an SpdxFileBuilder with all of the required properties - the build() method will build the file
 	 * @param id - ID - must be an SPDX ID type
 	 * @param name - File name
@@ -876,14 +911,37 @@ public abstract class ModelObject {
 	 * @return SPDX file using the same modelStore and documentUri as this object
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxFile.SpdxFileBuilder createFile(String id, String name, AnyLicenseInfo concludedLicense,
+	public SpdxFile.SpdxFileBuilder createSpdxFile(String id, String name, AnyLicenseInfo concludedLicense,
 			Collection<AnyLicenseInfo> seenLicense, String copyrightText, Checksum sha1) throws InvalidSPDXAnalysisException {
-		Objects.nonNull(id);
-		Objects.nonNull(name);
-		Objects.nonNull(sha1);
-		Objects.nonNull(concludedLicense);
-		Objects.nonNull(seenLicense);
-		Objects.nonNull(copyrightText);
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(name);
+		Objects.requireNonNull(sha1);
+		Objects.requireNonNull(concludedLicense);
+		Objects.requireNonNull(seenLicense);
+		Objects.requireNonNull(copyrightText);
 		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, name, concludedLicense, seenLicense, copyrightText, sha1);
+	}
+	
+	/**
+	 * Create an SpdxPackageBuilder with all required fields for a filesAnalyzed=false using this objects model store and document URI
+	 * @param id - ID - must be an SPDX ID type
+	 * @param name - File name
+	 * @param concludedLicense license concluded
+	 * @param seenLicense collection of seen licenses
+	 * @param copyrightText Copyright text
+	 * @param sha1 Sha1 checksum
+	 * @param licenseDeclared Declared license for the package
+	 * @return SpdxPackageBuilder with all required fields for a filesAnalyzed=false
+	 */
+	public SpdxPackage.SpdxPackageBuilder createPackage(String id, String name,
+				AnyLicenseInfo concludedLicense, 
+				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(name);
+		Objects.requireNonNull(sha1);
+		Objects.requireNonNull(concludedLicense);
+		Objects.requireNonNull(licenseDeclared);
+		Objects.requireNonNull(copyrightText);
+		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, name, concludedLicense, copyrightText, sha1, licenseDeclared);
 	}
 }
