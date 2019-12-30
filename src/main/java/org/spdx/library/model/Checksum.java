@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -56,12 +59,14 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Checksum(IModelStore modelStore, String documentUri, String id, boolean create)
+	public Checksum(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/* (non-Javadoc)

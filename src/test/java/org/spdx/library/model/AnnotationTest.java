@@ -83,7 +83,7 @@ public class AnnotationTest extends TestCase {
 		assertEquals(COMMENT1, a.getComment().get());
 		a.setAnnotationType(REVIEW_ANNOTATION);
 		assertEquals(REVIEW_ANNOTATION, a.getAnnotationType().get());
-		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), false);
+		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
 		assertEquals(REVIEW_ANNOTATION, copy.getAnnotationType().get());
 	}
 
@@ -98,7 +98,7 @@ public class AnnotationTest extends TestCase {
 		assertEquals(COMMENT1, a.getComment().get());
 		a.setAnnotator(ANNOTATOR2);
 		assertEquals(ANNOTATOR2, a.getAnnotator().get());
-		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), false);
+		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
 		assertEquals(ANNOTATOR2, copy.getAnnotator().get());
 	}
 
@@ -113,7 +113,7 @@ public class AnnotationTest extends TestCase {
 		assertEquals(COMMENT1, a.getComment().get());
 		a.setComment(COMMENT2);
 		assertEquals(COMMENT2, a.getComment().get());
-		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), false);
+		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
 		assertEquals(COMMENT2, copy.getComment().get());
 	}
 
@@ -128,7 +128,7 @@ public class AnnotationTest extends TestCase {
 		assertEquals(COMMENT1, a.getComment().get());
 		a.setAnnotationDate(oldDate);
 		assertEquals(oldDate, a.getAnnotationDate().get());
-		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), false);
+		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
 		assertEquals(oldDate, copy.getAnnotationDate().get());
 	}
 	

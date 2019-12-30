@@ -20,10 +20,13 @@ package org.spdx.library.model.license;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -63,18 +66,23 @@ public class LicenseInfoFactory {
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
 	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, IModelStore store, String documentUri) throws InvalidLicenseStringException {
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
+			@Nullable String documentUri, @Nullable ModelCopyManager copyManager) throws InvalidLicenseStringException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
 		if (Objects.isNull(documentUri)) {
 			documentUri = DefaultModelStore.getDefaultDocumentUri();
 		}
+		if (Objects.isNull(copyManager)) {
+			copyManager = DefaultModelStore.getDefaultCopyManager();
+		}
 		try {
-			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, documentUri);
+			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, documentUri, copyManager);
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);
 		} catch (InvalidSPDXAnalysisException e) {
@@ -99,7 +107,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException {
-		return parseSPDXLicenseString(licenseString, null, null);
+		return parseSPDXLicenseString(licenseString, null, null, null);
 	}
 
 

@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -62,7 +63,8 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxFile(String id) throws InvalidSPDXAnalysisException {
-		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, true);
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, 
+				DefaultModelStore.getDefaultCopyManager(), true);
 	}
 
 	/**
@@ -73,16 +75,18 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	@SuppressWarnings("unchecked")
-	public SpdxFile(IModelStore modelStore, String documentUri, String id, boolean create)
+	public SpdxFile(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
-		fileTypes = (Collection<FileType>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_FILE_TYPE, FileType.class);
-		checksums = (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_FILE_CHECKSUM, Checksum.class);
+		super(modelStore, documentUri, id, copyManager, create);
+		fileTypes = (Collection<FileType>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_FILE_TYPE, FileType.class);
+		checksums = (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_FILE_CHECKSUM, Checksum.class);
 		fileContributors = this.getStringCollection(SpdxConstants.PROP_FILE_CONTRIBUTOR);
 	}
 
 	protected SpdxFile(SpdxFileBuilder spdxFileBuilder) throws InvalidSPDXAnalysisException {
-		this(spdxFileBuilder.modelStore, spdxFileBuilder.documentUri, spdxFileBuilder.id, true);
+		this(spdxFileBuilder.modelStore, spdxFileBuilder.documentUri, spdxFileBuilder.id, 
+				spdxFileBuilder.copyManager, true);
 		setCopyrightText(spdxFileBuilder.copyrightText);
 		setName(spdxFileBuilder.name);
 		setLicenseConcluded(spdxFileBuilder.concludedLicense);
@@ -303,6 +307,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		IModelStore modelStore;
 		String documentUri;
 		String id;
+		ModelCopyManager copyManager;
 		
 		// required fields - SpdxElement
 		String name;
@@ -334,13 +339,15 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @param modelStore Storage for the model objects
 		 * @param documentUri SPDX Document URI for a document associated with this model
 		 * @param id ID for this object - must be unique within the SPDX document
+		 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 		 * @param name - File name
 		 * @param concludedLicense license concluded
 		 * @param licenseInfosFromFile collection of seen licenses
 		 * @param copyrightText Copyright text
 		 * @param sha1 - Sha1 checksum value
 		 */
-		public SpdxFileBuilder(IModelStore modelStore, String documentUri, String id, String name,
+		public SpdxFileBuilder(IModelStore modelStore, String documentUri, String id, 
+				@Nullable ModelCopyManager copyManager, String name,
 				AnyLicenseInfo concludedLicense, Collection<AnyLicenseInfo> licenseInfosFromFile,
 				String copyrightText, Checksum sha1) {
 			Objects.requireNonNull(modelStore);
@@ -359,6 +366,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			this.licenseInfosFromFile = licenseInfosFromFile;
 			this.copyrightText = copyrightText;
 			this.sha1 = sha1;
+			this.copyManager = copyManager;
 		}
 		
 		/**

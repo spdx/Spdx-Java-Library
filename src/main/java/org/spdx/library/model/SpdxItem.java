@@ -24,6 +24,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
@@ -53,12 +54,14 @@ public abstract class SpdxItem extends SpdxElement {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxItem(IModelStore modelStore, String documentUri, String id, boolean create)
+	public SpdxItem(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/**
@@ -88,7 +91,7 @@ public abstract class SpdxItem extends SpdxElement {
 	
 	@SuppressWarnings("unchecked")
 	Collection<AnyLicenseInfo> getLicenseInfoFromFiles() throws InvalidSPDXAnalysisException {
-		return (Collection<AnyLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(getLicenseInfoFromFilesPropertyName(), AnyLicenseInfo.class);
+		return (Collection<AnyLicenseInfo>)(Collection<?>)this.getObjectPropertyValueSet(getLicenseInfoFromFilesPropertyName(), AnyLicenseInfo.class);
 	}
 	
 	/**

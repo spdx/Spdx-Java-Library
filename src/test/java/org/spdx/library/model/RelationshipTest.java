@@ -57,7 +57,7 @@ public class RelationshipTest extends TestCase {
 		super.setUp();
 		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
-		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
+		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.MD5, "595f44fec1e92a71d3e9e77456ba80d1");
 		ExternalDocumentRef externalDoc = gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef,gmo.getDocumentUri()), 
 				"https://external.doc/one", checksum);
@@ -66,11 +66,11 @@ public class RelationshipTest extends TestCase {
 		ANNOTATION2 = gmo.createAnnotation("Annotator2",
 				AnnotationType.REVIEW, DATE_NOW, "Comment2");
 		RELATED_ELEMENT1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
-				gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), true);
+				gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), gmo.getCopyManager(), true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
 		RELATED_ELEMENT2 = new ExternalSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
-				externalDoc.getId() + ":SPDXRef-10", true);
+				externalDoc.getId() + ":SPDXRef-10", gmo.getCopyManager(), true);
 	}
 
 	/* (non-Javadoc)
@@ -87,7 +87,7 @@ public class RelationshipTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.DESCENDANT_OF;
 		String comment1 = "Comment1";
-		Relationship relationship = new Relationship(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), true);
+		Relationship relationship = new Relationship(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getModelStore().getNextId(IdType.Anonymous, gmo.getDocumentUri()), gmo.getCopyManager(), true);
 		assertEquals(2, relationship.verify().size());
 		relationship.setRelatedSpdxElement(RELATED_ELEMENT1);
 		assertEquals(1, relationship.verify().size());

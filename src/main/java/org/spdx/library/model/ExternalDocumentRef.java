@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -48,11 +49,11 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @param stModelStore Model Store for the document referring to the external SPDX document
 	 * @param stDocumentUri Document URI for the document referring to the external SPDX document
 	 * @param externalDocUri Document URI for the external document (a.k.a. eternalDocumentNamespace)
-	 * @param createExternalDocRef if true, create the external Doc ref if it is not a property of the SPDX Document
+	 * @param copyManager if non-null, create the external Doc ref if it is not a property of the SPDX Document
 	 * @return
 	 */
 	public static Optional<ExternalDocumentRef> getExternalDocRefByDocNamespace(IModelStore stModelStore,
-			String stDocumentUri, String externalDocUri, boolean createExternalDocRef) throws InvalidSPDXAnalysisException {
+			String stDocumentUri, String externalDocUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(stModelStore);
 		Objects.requireNonNull(stDocumentUri);
 		Objects.requireNonNull(externalDocUri);
@@ -65,7 +66,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 		try {
 			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
-					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
+					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, copyManager, ExternalDocumentRef.class);
 			for (Object externalRef:existingExternalRefs) {
 				if (!(externalRef instanceof ExternalDocumentRef)) {
 					logger.warn("Incorrect type for an external document ref: "+externalRef.getClass().toString());
@@ -80,12 +81,12 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 				}
 			}
 			// if we got here, we didn't find an existing one
-			if (createExternalDocRef) {
+			if (Objects.nonNull(copyManager)) {
 				ExternalDocumentRef retval = new ExternalDocumentRef(stModelStore, stDocumentUri,
-						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri), true);
+						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri), copyManager, true);
 				retval.setSpdxDocumentNamespace(externalDocUri);
 				ModelObject.addValueToCollection(stModelStore, stDocumentUri, SpdxConstants.SPDX_DOCUMENT_ID, 
-						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, false);
+						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, copyManager);
 				return Optional.of(retval);
 			} else {
 				return Optional.empty();
@@ -121,12 +122,14 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ExternalDocumentRef(IModelStore modelStore, String documentUri, String id, boolean create)
+	public ExternalDocumentRef(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 		if (!SpdxVerificationHelper.isValidExternalDocRef(id)) {
 			throw new InvalidSPDXAnalysisException("Invalid external document reference ID "+id+
 					".  Must be of the format "+SpdxConstants.EXTERNAL_DOC_REF_PATTERN.pattern());
@@ -225,7 +228,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		if (this.getModelStore().exists(docNamespace.get(), SpdxConstants.SPDX_DOCUMENT_ID)) {
 			return (Optional<SpdxDocument>)(Optional<?>)Optional.of(SpdxModelFactory.createModelObject(
 					getModelStore(), docNamespace.get(), SpdxConstants.SPDX_DOCUMENT_ID, 
-					SpdxConstants.CLASS_SPDX_DOCUMENT));
+					SpdxConstants.CLASS_SPDX_DOCUMENT, getCopyManager()));
 		} else {
 			return Optional.empty();
 		}

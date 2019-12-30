@@ -19,7 +19,10 @@ package org.spdx.library.model;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
 
@@ -48,12 +51,14 @@ public class SpdxSnippet extends ModelObject {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxSnippet(IModelStore modelStore, String documentUri, String id, boolean create)
+	public SpdxSnippet(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/* (non-Javadoc)

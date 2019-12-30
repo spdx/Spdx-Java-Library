@@ -32,6 +32,7 @@ public class DefaultModelStore {
 	
 	static IModelStore defaultModelStore = new InMemSpdxStore();
 	static final String defaultDocumentUri = "http://www.spdx.org/documents/default_doc_uri_for_SPDX_tools";
+	static ModelCopyManager defaultCopyManager = new ModelCopyManager();
 	
 	private DefaultModelStore() {
 		// prevent instantiating class
@@ -50,6 +51,11 @@ public class DefaultModelStore {
 	 */
 	public static final void reset() {
 		defaultModelStore = new InMemSpdxStore();
+		defaultCopyManager = new ModelCopyManager();
+	}
+
+	public static ModelCopyManager getDefaultCopyManager() {
+		return defaultCopyManager;
 	}
 
 }

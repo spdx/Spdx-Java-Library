@@ -344,7 +344,7 @@ public class SpdxFileTest extends TestCase {
 				.build();
 		Collection<Checksum> result = file.getChecksums();
 		assertCollectionsSame(checksums1, result);
-		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), false);
+		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), gmo.getCopyManager(), false);
 		result = file2.getChecksums();
 		assertCollectionsSame(checksums1, result);
 		file.getChecksums().clear();
@@ -377,7 +377,7 @@ public class SpdxFileTest extends TestCase {
 		Collection<String> result = file.getFileContributors();
 		result = file.getFileContributors();
 		assertCollectionsSame(contributors, result);
-		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), false);
+		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), file.getCopyManager(), false);
 		result = file2.getFileContributors();
 		assertCollectionsSame(contributors, result);
 		file2.getFileContributors().clear();
@@ -399,7 +399,7 @@ public class SpdxFileTest extends TestCase {
 		file.setNoticeText(fileNotice);
 		String result  = file.getNoticeText().get();
 		assertEquals(fileNotice, result);
-		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), false);
+		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), file.getCopyManager(), false);
 		result = file2.getNoticeText().get();
 		assertEquals(fileNotice, file2.getNoticeText().get());
 		file2.setNoticeText(null);
@@ -438,7 +438,7 @@ public class SpdxFileTest extends TestCase {
 		assertEquals(file.getComment().get(), COMMENT1);
 		file.setLicenseComments("see if this works");
 		file.setComment(COMMENT2);
-		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), false);
+		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), file.getCopyManager(), false);
 		assertEquals(file2.getComment().get(), COMMENT2);
 		file2.setComment(COMMENT3);
 		assertEquals(file2.getComment().get(), COMMENT3);

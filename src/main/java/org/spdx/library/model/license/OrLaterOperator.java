@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
@@ -43,9 +46,10 @@ public class OrLaterOperator extends AnyLicenseInfo {
 		super(id);
 	}
 
-	public OrLaterOperator(IModelStore modelStore, String documentUri, String id, boolean create)
+	public OrLaterOperator(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 	
 	/**
@@ -55,7 +59,8 @@ public class OrLaterOperator extends AnyLicenseInfo {
 	 */
 	public OrLaterOperator(SimpleLicensingInfo license) throws InvalidSPDXAnalysisException {
 		super(license.getModelStore(), license.getDocumentUri(), 
-				license.getModelStore().getNextId(IdType.Anonymous, license.getDocumentUri()), true);
+				license.getModelStore().getNextId(IdType.Anonymous, license.getDocumentUri()),
+				license.getCopyManager(), true);
 		setLicense(license);
 	}
 

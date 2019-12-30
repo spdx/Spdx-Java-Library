@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.RelationshipType;
@@ -77,14 +78,17 @@ public class ModelObjectTest extends TestCase {
 	
 	IModelStore store;
 	String docUri;
+	ModelCopyManager copyManager;
 	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		DefaultModelStore.reset();
+		ModelStorageClassConverter.reset();
 		store = DefaultModelStore.getDefaultModelStore();
 		docUri = DefaultModelStore.getDefaultDocumentUri();
+		copyManager = DefaultModelStore.getDefaultCopyManager();
 		LicenseException lex = new LicenseException("Autoconf-exception-2.0", "Autoconf exception 2.0 name", "Autoconf exception 2.0 text");
 		ExtractedLicenseInfo eli1 = new ExtractedLicenseInfo(store.getNextId(IdType.LicenseRef, docUri));
 		eli1.setName("eli1");
@@ -201,14 +205,14 @@ public class ModelObjectTest extends TestCase {
 	
 	public void testModelObjectCreate() throws InvalidSPDXAnalysisException {
 		try {
-			new GenericModelObject(store, docUri, TEST_ID, false);
+			new GenericModelObject(store, docUri, TEST_ID, copyManager, false);
 			fail("This should not have worked since created is set to false and the ID does not exist");
 		} catch (InvalidSPDXAnalysisException ex) {
 			// expected
 		}
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		gmo.setPropertyValue(TEST_PROPERTY1, TEST_VALUE1);
-		GenericModelObject gmo2 = new GenericModelObject(store, docUri, TEST_ID, false);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, TEST_ID, copyManager, false);
 		assertTrue(gmo2.getStringPropertyValue(TEST_PROPERTY1).isPresent());
 		assertEquals(gmo2.getStringPropertyValue(TEST_PROPERTY1).get(), TEST_VALUE1);
 	}
@@ -218,7 +222,7 @@ public class ModelObjectTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetDocumentUri() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(docUri, gmo.getDocumentUri());
 	}
 
@@ -227,7 +231,7 @@ public class ModelObjectTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetId() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(TEST_ID, gmo.getId());
 	}
 
@@ -236,7 +240,7 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testGetModelStore() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(store, gmo.getModelStore());
 	}
 
@@ -244,7 +248,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#getPropertyValueNames()}.
 	 */
 	public void testGetPropertyValueNames() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		List<String> result = gmo.getPropertyValueNames();
 		assertEquals(0, result.size());
 		addTestValues(gmo);
@@ -259,7 +263,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#getObjectPropertyValue(java.lang.String)}.
 	 */
 	public void testGetObjectPropertyValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(0, gmo.getPropertyValueNames().size());
 		addTestValues(gmo);
 		for (Entry<String, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
@@ -282,7 +286,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#setPropertyValue(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testSetPropertyValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String prop = "property";
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
@@ -295,7 +299,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updatePropertyValue(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdatePropertyValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String prop = "property";
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
@@ -310,7 +314,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#getStringPropertyValue(java.lang.String)}.
 	 */
 	public void testGetStringPropertyValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {
 			assertEquals(TEST_STRING_VALUE_PROPERTY_VALUES[i], gmo.getStringPropertyValue(TEST_STRING_VALUE_PROPERTIES[i]).get());
@@ -327,7 +331,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#getBooleanPropertyValue(java.lang.String)}.
 	 */
 	public void testGetBooleanPropertyValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_BOOLEAN_VALUE_PROPERTIES.length; i++) {
 			assertEquals(TEST_BOOLEAN_VALUE_PROPERTY_VALUES[i], gmo.getBooleanPropertyValue(TEST_BOOLEAN_VALUE_PROPERTIES[i]).get());
@@ -344,7 +348,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#removeProperty(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testRemovePropertyIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String prop = "property";
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
@@ -359,7 +363,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updateRemoveProperty(java.lang.String)}.
 	 */
 	public void testUpdateRemoveProperty() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String prop = "property";
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
@@ -377,12 +381,12 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#clearValueCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testClearPropertyValueList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		gmo.clearValueCollection(TEST_LIST_PROPERTIES[0]);
-		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).size());
+		assertEquals(0, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).size());
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -390,16 +394,16 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updateClearValueCollection(java.lang.String)}.
 	 */
 	public void testUpdateClearPropertyValueList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		ModelUpdate mu = gmo.updateClearValueCollection(TEST_LIST_PROPERTIES[0]);
 		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 		mu.apply();
-		assertEquals(0, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).size());
+		assertEquals(0, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).size());
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -407,17 +411,17 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#addValueToCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testAddPropertyValueToList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		String newValue = "newValue";
 		expected.add(newValue);
 		gmo.addPropertyValueToCollection(TEST_LIST_PROPERTIES[0], newValue);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -425,19 +429,19 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updateAddPropertyValueToCollection(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdateAddPropertyValueToList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		String newValue = "newValue";
 		ModelUpdate mu = gmo.updateAddPropertyValueToCollection(TEST_LIST_PROPERTIES[0], newValue);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected.add(newValue);
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -445,16 +449,16 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#replacePropertyValueList(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.util.List)}.
 	 */
 	public void testReplacePropertyValueList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<String> expected = new ArrayList<String>((List<String>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected = Arrays.asList("newList1", "newList2");
 		gmo.setPropertyValue(TEST_LIST_PROPERTIES[0], expected);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -462,16 +466,16 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updateReplacePropertyValueList(java.lang.String, java.util.List)}.
 	 */
 	public void testUpdateReplacePropertyValueList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
-		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		List<String> expected = Arrays.asList("newList1", "newList2");
 		ModelUpdate mu = gmo.updatePropertyValue(TEST_LIST_PROPERTIES[0], expected);
-		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -479,17 +483,17 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#removePropertyValueFromCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testRemovePropertyValueFromList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<Object> expected = new ArrayList<Object>((List<Object>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		Object removed = expected.get(0);
 		expected.remove(removed);
 		gmo.removePropertyValueFromCollection(TEST_LIST_PROPERTIES[0], removed);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -497,19 +501,19 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#updateRemovePropertyValueFromCollection(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdateRemovePropertyValueFromList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		@SuppressWarnings("unchecked")
 		List<Object> expected = new ArrayList<Object>((List<Object>)TEST_LIST_PROPERTY_VALUES[0]);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		Object removed = expected.get(0);
 		ModelUpdate mu = gmo.updateRemovePropertyValueFromCollection(TEST_LIST_PROPERTIES[0], removed);
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		expected.remove(removed);
 		mu.apply();
-		assertTrue(compareLists(expected, gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
+		assertTrue(compareLists(expected, gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[0], null).toImmutableList()));
 		for (int i = 1; i < TEST_LIST_PROPERTIES.length; i++) {
-			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueCollection(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
+			assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[i], gmo.getObjectPropertyValueSet(TEST_LIST_PROPERTIES[i], null).toImmutableList()));
 		}
 	}
 
@@ -517,7 +521,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#getStringPropertyValueList(java.lang.String)}.
 	 */
 	public void testGetStringPropertyValueCollection() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		Collection<String> result = gmo.getStringCollection(TEST_LIST_PROPERTIES[0]);
 		assertTrue(compareLists(TEST_LIST_PROPERTY_VALUES[0], new ArrayList<>(result)));
@@ -533,24 +537,24 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject)}.
 	 */
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		assertTrue(gmo.equivalent(gmo));
 		// same store
-		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", true);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
 		addTestValues(gmo2);
 		assertTrue(gmo.equivalent(gmo2));
 		assertTrue(gmo2.equivalent(gmo));
 		// different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, true);
+		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo3);
 		assertTrue(gmo.equivalent(gmo3));
 		assertTrue(gmo3.equivalent(gmo2));
 	}
 	
 	public void testEquivalentModelObjectProp() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String id1 = "id1";
 		String id2 = "id2";
 		String text = "licenseText";
@@ -568,13 +572,13 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(gmo.equivalent(gmo));
 		// different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, true);
+		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.setPropertyValue(prop, eli2);
 		assertTrue(gmo.equivalent(gmo3));
 	}
 	
 	public void testEquivalentModelObjectList() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String id1 = "id1";
 		String id2 = "id2";
 		String text = "licenseText";
@@ -594,14 +598,14 @@ public class ModelObjectTest extends TestCase {
 		gmo.addPropertyValueToCollection(prop, nextEli);
 		assertTrue(gmo.equivalent(gmo));
 		// same store
-		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", true);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
 		gmo2.addPropertyValueToCollection(prop, eli2);
 		gmo2.addPropertyValueToCollection(prop, nextEli2);
 		assertTrue(gmo.equivalent(gmo2));
 		assertTrue(gmo2.equivalent(gmo));
 		// different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, true);
+		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.addPropertyValueToCollection(prop, eli2);
 		gmo3.addPropertyValueToCollection(prop, nextEli2);
 		assertTrue(gmo.equivalent(gmo3));
@@ -612,17 +616,17 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#equals(java.lang.Object)}.
 	 */
 	public void testEqualsObject() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		assertTrue(gmo.equals(gmo));
 		// different ID's
-		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", true);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
 		addTestValues(gmo2);
 		assertFalse(gmo.equals(gmo2));
 		assertFalse(gmo2.equals(gmo));
 		// same ID's, different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, true);
+		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo3);
 		assertTrue(gmo.equals(gmo3));
 		assertTrue(gmo3.equals(gmo));
@@ -632,7 +636,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#clone()}.
 	 */
 	public void testClone() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		ModelObject result = gmo.clone(store2);
@@ -645,14 +649,14 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#copyFrom(org.spdx.library.model.ModelObject)}.
 	 */
 	public void testCopyFrom() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
-		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "id2", true);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "id2", copyManager, true);
 		gmo2.copyFrom(gmo);
 		assertTrue(gmo.equivalent(gmo2));
 		// different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
-		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, true);
+		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.copyFrom(gmo3);
 		assertTrue(gmo.equivalent(gmo3));
 		assertTrue(gmo3.equivalent(gmo2));
@@ -662,7 +666,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#idToIdType(java.lang.String)}.
 	 */
 	public void testIdToIdType() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(IdType.Anonymous, gmo.idToIdType("anything"));
 		assertEquals(IdType.DocumentRef, gmo.idToIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "12"));
 		assertEquals(IdType.LicenseRef, gmo.idToIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM + "12"));
@@ -676,7 +680,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ModelObject#toTypedValue()}.
 	 */
 	public void testToTypeValue() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		TypedValue result = gmo.toTypedValue();
 		assertEquals(TEST_ID, result.getId());
@@ -685,7 +689,7 @@ public class ModelObjectTest extends TestCase {
 	
 	@SuppressWarnings("unchecked")
 	public void testGetEnumValue() throws InvalidSPDXAnalysisException, InstantiationException, IllegalAccessException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
 			Optional<Enum<?>> result = (Optional<Enum<?>>)(Optional<?>)gmo.getEnumPropertyValue(TEST_ENUM_PROPERTIES[i]);
@@ -702,8 +706,8 @@ public class ModelObjectTest extends TestCase {
 		String EXTERNAL_SPDX_URI = EXTERNAL_DOC_NAMSPACE + "#" + EXTERNAL_SPDX_ELEMENT_ID;
 		String NON_INTERESTING_URI = "https://nothing/to/see/here";
 		
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
-		new SpdxDocument(store, docUri, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		new SpdxDocument(store, docUri, copyManager, true);
 		
 		// External SPDX element
 		SimpleUriValue suv = new SimpleUriValue(EXTERNAL_SPDX_URI);
@@ -733,7 +737,7 @@ public class ModelObjectTest extends TestCase {
 	}
 	
 	public void testGetAnyLicenseInfoPropertyValue()  throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ANYLICENSEINFO_PROPERTIES.length; i++) {
 			Optional<AnyLicenseInfo> result = gmo.getAnyLicenseInfoPropertyValue(TEST_ANYLICENSEINFO_PROPERTIES[i]);
@@ -744,27 +748,27 @@ public class ModelObjectTest extends TestCase {
 	
 	@SuppressWarnings("unchecked")
 	public void testAnyLicenseCollection()  throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ANYLICENSEINFO_LIST_PROPERTIES.length; i++) {
-			ModelCollection<AnyLicenseInfo> result = (ModelCollection<AnyLicenseInfo>)(ModelCollection<?>)gmo.getObjectPropertyValueCollection(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], AnyLicenseInfo.class);
+			ModelCollection<AnyLicenseInfo> result = (ModelCollection<AnyLicenseInfo>)(ModelCollection<?>)gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], AnyLicenseInfo.class);
 			assertTrue(compareLists(TEST_ANYLICENSEINFO_LIST_PROP_VALUES[i], result.toImmutableList()));
 		}
 	}
 	
 	public void testTypeCheckedCollection()  throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, true);
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
-		gmo.getObjectPropertyValueCollection(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], AnyLicenseInfo.class);
-		gmo.getObjectPropertyValueCollection(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SimpleLicensingInfo.class);
+		gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], AnyLicenseInfo.class);
+		gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SimpleLicensingInfo.class);
 		try {
-			gmo.getObjectPropertyValueCollection(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SpdxFile.class);
+			gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SpdxFile.class);
 			fail("Type check should not have passed");
 		} catch (InvalidSPDXAnalysisException ex) {
 			// expected
 		}
 		try {
-			gmo.getObjectPropertyValueCollection(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SpdxListedLicense.class);
+			gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[0], SpdxListedLicense.class);
 			fail("Type check should not have passed");
 		} catch (InvalidSPDXAnalysisException ex) {
 			// expected

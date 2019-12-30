@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.referencetype.ListedReferenceTypes;
@@ -58,6 +59,7 @@ public class ExternalRefTest extends TestCase {
 		ExternalRef[] TEST_REFERENCES;
 		IModelStore store;
 		String docUri;
+		ModelCopyManager copyManager;
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -67,9 +69,10 @@ public class ExternalRefTest extends TestCase {
 		DefaultModelStore.reset();
 		store = DefaultModelStore.getDefaultModelStore();
 		docUri = DefaultModelStore.getDefaultDocumentUri();
+		copyManager = DefaultModelStore.getDefaultCopyManager();
 		TEST_REFERENCES = new ExternalRef[REFERENCE_CATEGORIES.length];
 		for (int i = 0; i < REFERENCE_CATEGORIES.length; i++) {
-			TEST_REFERENCES[i] = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+			TEST_REFERENCES[i] = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri), copyManager, true);
 			TEST_REFERENCES[i].setReferenceCategory(REFERENCE_CATEGORIES[i]);
 			TEST_REFERENCES[i].setReferenceType(new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[i]));
 			TEST_REFERENCES[i].setReferenceLocator(REFERENCE_LOCATORS[i]);
@@ -92,22 +95,22 @@ public class ExternalRefTest extends TestCase {
 		for (int i = 0; i < TEST_REFERENCES.length; i++) {
 			assertEquals(0, TEST_REFERENCES[i].verify().size());
 		}
-		ExternalRef noCategory = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+		ExternalRef noCategory = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		noCategory.setReferenceType(new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[0]));
 		noCategory.setReferenceLocator(REFERENCE_LOCATORS[0]);
 		noCategory.setComment(COMMENTS[0]);
 		assertEquals(1, noCategory.verify().size());
-		ExternalRef noReferenceType = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+		ExternalRef noReferenceType = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		noReferenceType.setReferenceCategory(REFERENCE_CATEGORIES[0]);
 		noReferenceType.setReferenceLocator(REFERENCE_LOCATORS[0]);
 		noReferenceType.setComment(COMMENTS[0]);
 		assertEquals(1, noReferenceType.verify().size());
-		ExternalRef noRferenceLocator = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+		ExternalRef noRferenceLocator = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		noRferenceLocator.setReferenceCategory(REFERENCE_CATEGORIES[0]);
 		noRferenceLocator.setReferenceType(new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[0]));
 		noRferenceLocator.setComment(COMMENTS[0]);
 		assertEquals(1, noRferenceLocator.verify().size());
-		ExternalRef noComment =new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+		ExternalRef noComment =new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		noComment.setReferenceCategory(REFERENCE_CATEGORIES[0]);
 		noComment.setReferenceType(new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[0]));
 		noComment.setReferenceLocator(REFERENCE_LOCATORS[0]);
@@ -119,7 +122,7 @@ public class ExternalRefTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
-		ExternalRef copy = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),true);
+		ExternalRef copy = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		copy.setComment(TEST_REFERENCES[2].getComment().get());
 		copy.setReferenceCategory(TEST_REFERENCES[2].getReferenceCategory().get());
 		copy.setReferenceLocator(TEST_REFERENCES[2].getReferenceLocator().get());
@@ -147,7 +150,7 @@ public class ExternalRefTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.ExternalRef#setReferenceCategory(org.spdx.library.model.enumerations.ReferenceCategory)}.
 	 */
 	public void testSetReferenceCategory() throws InvalidSPDXAnalysisException {
-		ExternalRef er = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri), true);
+		ExternalRef er = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager,  true);
 		er.setReferenceCategory(ReferenceCategory.PACKAGE_MANAGER);
 		Optional<ReferenceCategory> retval = er.getReferenceCategory();
 		assertTrue(retval.isPresent());

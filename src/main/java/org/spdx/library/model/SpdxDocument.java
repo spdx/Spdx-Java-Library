@@ -19,10 +19,12 @@ package org.spdx.library.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.RelationshipType;
@@ -40,14 +42,23 @@ import org.spdx.storage.IModelStore;
  */
 public class SpdxDocument extends SpdxElement {
 	
+	Collection<SpdxElement> documentDescribes;
+	Collection<ExternalDocumentRef> externalDocumentRefs;
+	Collection<ExtractedLicenseInfo> extractedLicenseInfos;
+	
 	/**
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for the document associated with this model
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxDocument(IModelStore modelStore, String documentUri, boolean create) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, SpdxConstants.SPDX_DOCUMENT_ID, create);
+	@SuppressWarnings("unchecked")
+	public SpdxDocument(IModelStore modelStore, String documentUri, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, SpdxConstants.SPDX_DOCUMENT_ID, copyManager, create);
+		documentDescribes = new RelatedElementCollection(this, RelationshipType.DESCRIBES);
+		externalDocumentRefs = (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
+		extractedLicenseInfos = (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES, ExtractedLicenseInfo.class);
 	}
 	
 	/**
@@ -56,7 +67,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxDocument(String documentUri) throws InvalidSPDXAnalysisException {
-		super(DefaultModelStore.getDefaultModelStore(), documentUri, SpdxConstants.SPDX_DOCUMENT_ID, true);
+		this(DefaultModelStore.getDefaultModelStore(), documentUri, DefaultModelStore.getDefaultCopyManager(), true);
 	}
 
 
@@ -71,8 +82,25 @@ public class SpdxDocument extends SpdxElement {
 	}
 
 
+	/**
+	 * @return collection of items described by this SPDX document
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public Collection<SpdxElement> getDocumentDescribes() throws InvalidSPDXAnalysisException {
-		return new RelatedElementCollection(this, RelationshipType.DESCRIBES);
+		return documentDescribes;
+	}
+	
+
+	/**
+	 * clear and reset document describes to the paramater collection
+	 * @param documentDescribes collection of items described by this SPDX document
+	 * @return this to chain setters
+	 */
+	public SpdxDocument setDocumentDescribes(List<SpdxItem> documentDescribes) {
+		Objects.requireNonNull(documentDescribes);
+		this.documentDescribes.clear();
+		this.documentDescribes.addAll(documentDescribes);
+		return this;
 	}
 	
 	/**
@@ -115,20 +143,39 @@ public class SpdxDocument extends SpdxElement {
 	 * @return the externalDocumentRefs
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<ExternalDocumentRef> getExternalDocumentRefs() throws InvalidSPDXAnalysisException {
-		return (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
+		return externalDocumentRefs;
 	}
-	
+
 	/**
 	 * @return the extractedLicenseInfos
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<ExtractedLicenseInfo> getExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
-		return (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES, ExtractedLicenseInfo.class);
+		return this.extractedLicenseInfos;
 	}
 	
+	/**
+	 * Add a license info to the collection of extracted license infos
+	 * @param licenseInfo
+	 * @return
+	 */
+	public boolean addExtractedLicenseInfos(ExtractedLicenseInfo licenseInfo) {
+		Objects.requireNonNull(licenseInfo);
+		return this.extractedLicenseInfos.add(licenseInfo);
+	}
+
+	/**
+	 * Clear the extractedLicenseInfos and add all elements from extractedLicenseInfos
+	 * @param extractedLicenseInfos
+	 * @return this to enable chaining of sets
+	 */
+	public SpdxDocument setExtractedLicenseInfos(List<ExtractedLicenseInfo> extractedLicenseInfos) {
+		Objects.requireNonNull(extractedLicenseInfos);
+		this.extractedLicenseInfos.clear();
+		this.extractedLicenseInfos.addAll(extractedLicenseInfos);
+		return this;
+	}
 
 	/**
 	 * @return the specVersion
@@ -149,6 +196,14 @@ public class SpdxDocument extends SpdxElement {
 	@Override
 	public List<String> verify() {
 		List<String> retval = super.verify();
+		// name
+		try {
+			if (!getName().isPresent() || getName().get().isEmpty()) {
+				retval.add("Missing required document name");
+			}
+		} catch (InvalidSPDXAnalysisException e1) {
+			retval.add("Error getting document name");
+		}
 		// specVersion
 		String docSpecVersion = "";	// note - this is used later in verify to verify version specific info
 		try {
@@ -222,5 +277,16 @@ public class SpdxDocument extends SpdxElement {
 		//TODO: Figure out what to do with checking any "dangling items" not linked to the describes by
 		return retval;
 	}
-	
+
+	/**
+	 * Clear the externalDocumentRefs and add all elements from externalDocumentRefs
+	 * @param externalDocumentRefs
+	 * @return this to enable chaining of sets
+	 */
+	public SpdxDocument setExternalDocumentRefs(Collection<ExternalDocumentRef> externalDocumentRefs) {
+		Objects.requireNonNull(externalDocumentRefs);
+		this.externalDocumentRefs.clear();
+		this.externalDocumentRefs.addAll(externalDocumentRefs);
+		return this;
+	}
 }

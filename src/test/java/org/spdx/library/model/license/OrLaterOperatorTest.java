@@ -89,7 +89,7 @@ public class OrLaterOperatorTest extends TestCase {
 	public void testCopyFrom() throws InvalidSPDXAnalysisException {
 		OrLaterOperator olo1 = new OrLaterOperator(license1);
 		IModelStore store = new InMemSpdxStore();
-		OrLaterOperator clone = new OrLaterOperator(store, "https://different.uri", "orLaterId", true);
+		OrLaterOperator clone = new OrLaterOperator(store, "https://different.uri", "orLaterId", olo1.getCopyManager(), true);
 		clone.copyFrom(olo1);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)olo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();
@@ -115,7 +115,7 @@ public class OrLaterOperatorTest extends TestCase {
 
 	public void testDuplicatedOrLaterId() throws InvalidSPDXAnalysisException {
 		OrLaterOperator olo1 = new OrLaterOperator(license1);
-		OrLaterOperator comp = new OrLaterOperator(olo1.getModelStore(), olo1.getDocumentUri(), olo1.getId(), false);
+		OrLaterOperator comp = new OrLaterOperator(olo1.getModelStore(), olo1.getDocumentUri(), olo1.getId(), olo1.getCopyManager(), false);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)olo1.getLicense();
 		assertEquals(LICENSE_ID1, lic1.getLicenseId());
 		assertEquals(LICENSE_TEXT1, lic1.getExtractedText());

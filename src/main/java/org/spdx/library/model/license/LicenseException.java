@@ -22,7 +22,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
@@ -43,11 +46,14 @@ public class LicenseException extends ModelObject {
 	 * @param modelStore container which includes the license exception
 	 * @param documentUri URI for the SPDX document containing the license exception
 	 * @param id identifier for the license exception
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param create if true, create the license exception if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public LicenseException(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+	public LicenseException(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
+			throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	public LicenseException(String id, String name, String text,

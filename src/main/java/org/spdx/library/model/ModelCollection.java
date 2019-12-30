@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxObjectNotInStoreException;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
@@ -45,16 +47,19 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	private String documentUri;
 	private String id;
 	private String propertyName;
+	private ModelCopyManager copyManager;
 	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
 	
 	/**
 	 * @param modelStore Storage for the model collection
 	 * @param documentUri SPDX Document URI for a document associated with this model collection
 	 * @param id ID for this collection - must be unique within the SPDX document
+	 * @param copyManager if non-null, use this to copy properties when referenced outside this model store
 	 * @param type The class of the elements to be stored in the collection if none, null if not known
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName, 
+	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName,
+			@Nullable ModelCopyManager copyManager,
 			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore);
 		this.modelStore = modelStore;
@@ -64,6 +69,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		this.id = id;
 		Objects.requireNonNull(propertyName);
 		this.propertyName = propertyName;
+		this.copyManager = copyManager;
 		if (!modelStore.exists(documentUri, id)) {
 			throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
 		}
@@ -99,7 +105,13 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public boolean contains(Object o) {
 
 		try {
-			return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyName, ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, false));
+			Object storedObject = null;
+			try {
+				storedObject = ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, null);
+			} catch (SpdxObjectNotInStoreException e1) {
+				return false;	// The exception is due to the model object not being in the store
+			}
+			return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyName, storedObject);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -110,7 +122,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	 */
 	private Function<Object, Object> checkConvertTypedValue = value -> {
 		try {
-			Object retval = ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore);
+			Object retval = ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore, copyManager);
 			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
 				String uri = ((IndividualUriValue)retval).getIndividualURI();
 				if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
@@ -159,7 +171,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public boolean add(Object element) {
 		try {
 			return modelStore.addValueToCollection(documentUri, id, propertyName, 
-					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, true));
+					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, copyManager));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -169,7 +181,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public boolean remove(Object element) {
 		try {
 			return modelStore.removeValueFromCollection(documentUri, id, propertyName, 
-					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, true));
+					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, null));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}

@@ -400,7 +400,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertTrue(pkg.isFilesAnalyzed());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertTrue(pkg2.isFilesAnalyzed());
 		pkg.setFilesAnalyzed(false);
 		assertFalse(pkg2.isFilesAnalyzed());
@@ -442,7 +442,7 @@ public class SpdxPackageTest extends TestCase {
 		
 		
 		assertEquals(LICENSE3, pkg.getLicenseDeclared().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(LICENSE3, pkg2.getLicenseDeclared().get());
 		pkg.setLicenseDeclared(LICENSE1);
 		assertEquals(LICENSE1, pkg.getLicenseDeclared().get());
@@ -456,7 +456,6 @@ public class SpdxPackageTest extends TestCase {
 	public void testAddChecksum() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
@@ -536,7 +535,7 @@ public class SpdxPackageTest extends TestCase {
 
 		
 		assertEquals(DESCRIPTION1, pkg.getDescription().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(DESCRIPTION1, pkg2.getDescription().get());
 		pkg.setDescription(DESCRIPTION2);
 		assertEquals(DESCRIPTION2, pkg2.getDescription().get());
@@ -578,7 +577,7 @@ public class SpdxPackageTest extends TestCase {
 
 		
 		assertEquals(DOWNLOAD_LOCATION1, pkg.getDownloadLocation().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(DOWNLOAD_LOCATION1, pkg2.getDownloadLocation().get());
 		pkg.setDownloadLocation(DOWNLOAD_LOCATION2);
 		assertEquals(DOWNLOAD_LOCATION2, pkg.getDownloadLocation().get());
@@ -620,7 +619,7 @@ public class SpdxPackageTest extends TestCase {
 
 		
 		assertEquals(HOMEPAGE1, pkg.getHomepage().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(HOMEPAGE1, pkg2.getHomepage().get());
 		pkg.setHomepage(HOMEPAGE2);
 		assertEquals(HOMEPAGE2, pkg2.getHomepage().get());
@@ -662,7 +661,7 @@ public class SpdxPackageTest extends TestCase {
 
 		
 		assertEquals(ORIGINATOR1, pkg.getOriginator().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(ORIGINATOR1, pkg2.getOriginator().get());
 		pkg.setOriginator(ORIGINATOR2);
 		assertEquals(ORIGINATOR2, pkg2.getOriginator().get());
@@ -703,7 +702,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertEquals(PACKAGEFILENAME1, pkg.getPackageFileName().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(PACKAGEFILENAME1, pkg2.getPackageFileName().get());
 		pkg.setPackageFileName(PACKAGEFILENAME2);
 		assertEquals(PACKAGEFILENAME2, pkg.getPackageFileName().get());
@@ -744,7 +743,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertTrue(VERIFICATION_CODE1.equivalent(pkg.getPackageVerificationCode().get()));
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);;
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);;
 		assertTrue(VERIFICATION_CODE1.equivalent(pkg2.getPackageVerificationCode().get()));
 		pkg.setPackageVerificationCode(VERIFICATION_CODE2);
 		assertTrue(VERIFICATION_CODE2.equivalent(pkg2.getPackageVerificationCode().get()));
@@ -785,7 +784,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertEquals(SOURCEINFO1, pkg.getSourceInfo().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(SOURCEINFO1, pkg2.getSourceInfo().get());
 		pkg.setSourceInfo(SOURCEINFO2);
 		assertEquals(SOURCEINFO2, pkg.getSourceInfo().get());
@@ -826,7 +825,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertEquals(SUMMARY1, pkg.getSummary().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(SUMMARY1, pkg2.getSummary().get());
 		pkg.setSummary(SUMMARY2);
 		assertEquals(SUMMARY2, pkg.getSummary().get());
@@ -867,7 +866,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertEquals(SUPPLIER1, pkg.getSupplier().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(SUPPLIER1, pkg2.getSupplier().get());
 		pkg.setSupplier(SUPPLIER2);
 		assertEquals(SUPPLIER2, pkg.getSupplier().get());
@@ -908,7 +907,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertEquals(VERSION1, pkg.getVersionInfo().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(VERSION1, pkg2.getVersionInfo().get());
 		pkg.setVersionInfo(VERSION2);
 		assertEquals(VERSION2, pkg2.getVersionInfo().get());
@@ -950,7 +949,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 
 		assertTrue(collectionsSame(externalRefs1, pkg.getExternalRefs()));
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertTrue(collectionsSame(externalRefs1, pkg2.getExternalRefs()));
 		pkg.addExternalRef(EXTERNAL_REF2);
 		assertTrue(collectionsSame(externalRefs2, pkg.getExternalRefs()));
@@ -1114,7 +1113,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertEquals(CHECKSUM1.getValue().get(), pkg.getSha1());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(CHECKSUM1.getValue().get(), pkg2.getSha1());
 		pkg2.getChecksums().clear();
 		String sha1Value = "5222e1c67a2d28fced849ee1bb76e7391b93eb12";
@@ -1156,7 +1155,7 @@ public class SpdxPackageTest extends TestCase {
 				.setExternalRefs(externalRefs)
 				.build();
 		assertEquals(LICENSE1, pkg.getLicenseConcluded().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(LICENSE1, pkg2.getLicenseConcluded().get());
 		pkg2.setLicenseConcluded(LICENSE2);
 		assertEquals(LICENSE2, pkg2.getLicenseConcluded().get());
@@ -1197,7 +1196,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertEquals(COPYRIGHT_TEXT1, pkg.getCopyrightText().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(COPYRIGHT_TEXT1, pkg2.getCopyrightText().get());
 		pkg.setCopyrightText(COPYRIGHT_TEXT2);
 		assertEquals(COPYRIGHT_TEXT2, pkg2.getCopyrightText().get());
@@ -1238,7 +1237,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertEquals(LICENSE_COMMENT1, pkg.getLicenseComments().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(LICENSE_COMMENT1, pkg2.getLicenseComments().get());
 		pkg2.setLicenseComments(LICENSE_COMMENT2);
 		assertEquals(LICENSE_COMMENT2, pkg2.getLicenseComments().get());
@@ -1280,7 +1279,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertTrue(collectionsSame(annotations1, pkg.getAnnotations()));
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertTrue(collectionsSame(annotations1, pkg2.getAnnotations()));
 		pkg2.addAnnotation(ANNOTATION2);
 		assertTrue(collectionsSame(annotations2, pkg2.getAnnotations()));
@@ -1321,7 +1320,7 @@ public class SpdxPackageTest extends TestCase {
 				.setExternalRefs(externalRefs)
 				.build();
 		assertTrue(collectionsSame(relationships1, pkg.getRelationships()));
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertTrue(collectionsSame(relationships1, pkg2.getRelationships()));
 		pkg2.addRelationship(RELATIONSHIP2);
 		assertTrue(collectionsSame(relationships2, pkg2.getRelationships()));
@@ -1362,7 +1361,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertEquals(PKG_COMMENT1, pkg.getComment().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(PKG_COMMENT1, pkg2.getComment().get());
 		pkg2.setComment(PKG_COMMENT2);
 		assertEquals(PKG_COMMENT2, pkg2.getComment().get());
@@ -1403,7 +1402,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertEquals(PKG_NAME1, pkg.getName().get());
-		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), false);
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
 		assertEquals(PKG_NAME1, pkg2.getName().get());
 		pkg2.setName(PKG_NAME2);
 		assertEquals(PKG_NAME2, pkg2.getName().get());

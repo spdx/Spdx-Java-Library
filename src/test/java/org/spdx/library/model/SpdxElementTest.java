@@ -62,11 +62,11 @@ public class SpdxElementTest extends TestCase {
 		ANNOTATION2 = gmo.createAnnotation("Annotator2",
 				AnnotationType.REVIEW, DATE_NOW, "Comment2");
 		RELATED_ELEMENT1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
-				gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), true);
+				gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), gmo.getCopyManager(), true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
 		RELATED_ELEMENT2 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
-				gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), true);
+				gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), gmo.getCopyManager(), true);
 		RELATED_ELEMENT2.setName("relatedElementName2");
 		RELATED_ELEMENT2.setComment("related element comment 2");
 	}
@@ -84,7 +84,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		String id = "elementId";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		assertEquals(0, element1.verify().size());
 		element1.setName(ELEMENT_NAME1);
 		assertEquals(0, element1.verify().size());
@@ -92,7 +92,7 @@ public class SpdxElementTest extends TestCase {
 
 	public void testAddRemoveAnnotations() throws InvalidSPDXAnalysisException {
 		String id = "elementId";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		element1.setName(ELEMENT_NAME1);
 		Collection<Annotation> annotations = element1.getAnnotations();
 		assertEquals(0, annotations.size());
@@ -124,7 +124,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	public void testGetRemoveRelationships() throws InvalidSPDXAnalysisException {
 		String id = "elementId";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		element1.setName(ELEMENT_NAME1);
 		Collection<Relationship> relationships = element1.getRelationships();
 		assertEquals(0, relationships.size());
@@ -159,7 +159,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	public void testSetcomment() throws InvalidSPDXAnalysisException {
 		String id = "elementId";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		element1.setName(ELEMENT_NAME1);
 		assertFalse(element1.getComment().isPresent());
 		element1.setComment(ELEMENT_COMMENT1);
@@ -175,7 +175,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	public void testSetName() throws InvalidSPDXAnalysisException {
 		String id = "elementId";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		assertFalse(element1.getName().isPresent());
 		element1.setName(ELEMENT_NAME1);
 		assertEquals(ELEMENT_NAME1, element1.getName().get());
@@ -187,9 +187,9 @@ public class SpdxElementTest extends TestCase {
 	
 	public void testEquivalentObject() throws InvalidSPDXAnalysisException {
 		String id1 = "elementId1";
-		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id1, true);
+		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id1, gmo.getCopyManager(), true);
 		String id2 = "elementId2";
-		SpdxElement element2 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id2, true);
+		SpdxElement element2 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id2, gmo.getCopyManager(), true);
 		Relationship relationship1 = element1.createRelationship(RELATED_ELEMENT1, RelationshipType.COPY_OF, "comment1");
 		Relationship relationship1_1 = element2.createRelationship(RELATED_ELEMENT1, RelationshipType.COPY_OF, "comment1");
 		Relationship relationship2 = element1.createRelationship(RELATED_ELEMENT2, RelationshipType.DYNAMIC_LINK, "comment2");

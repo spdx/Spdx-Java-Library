@@ -28,6 +28,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -60,12 +61,14 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxPackage(IModelStore modelStore, String documentUri, String id, boolean create)
+	public SpdxPackage(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/**
@@ -77,7 +80,8 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	protected SpdxPackage(SpdxPackageBuilder spdxPackageBuilder) throws InvalidSPDXAnalysisException {
-		this(spdxPackageBuilder.modelStore, spdxPackageBuilder.documentUri, spdxPackageBuilder.id, true);
+		this(spdxPackageBuilder.modelStore, spdxPackageBuilder.documentUri, spdxPackageBuilder.id, 
+				spdxPackageBuilder.copyManager, true);
 		setCopyrightText(spdxPackageBuilder.copyrightText);
 		setName(spdxPackageBuilder.name);
 		setLicenseConcluded(spdxPackageBuilder.concludedLicense);
@@ -179,7 +183,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Checksum> getChecksums() throws InvalidSPDXAnalysisException {
-		return (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_CHECKSUM, Checksum.class);
+		return (Collection<Checksum>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_PACKAGE_CHECKSUM, Checksum.class);
 	}
 	
 	/**
@@ -371,7 +375,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<ExternalRef> getExternalRefs() throws InvalidSPDXAnalysisException {
-		return (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_EXTERNAL_REF, ExternalRef.class);
+		return (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_EXTERNAL_REF, ExternalRef.class);
 	}
 	
 	/**
@@ -389,7 +393,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<SpdxFile> getFiles() throws InvalidSPDXAnalysisException {
-		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.PROP_PACKAGE_FILE, SpdxFile.class);
+		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_PACKAGE_FILE, SpdxFile.class);
 	}
 	
 	/**
@@ -633,6 +637,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		IModelStore modelStore;
 		String documentUri;
 		String id;
+		ModelCopyManager copyManager;
 		
 		// required fields - SpdxElement
 		String name;
@@ -682,8 +687,8 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @param sha1 - Sha1 checksum value
 		 * @param licenseDeclared - Declared license for the package
 		 */
-		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, String name,
-				AnyLicenseInfo concludedLicense, 
+		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, 
+				@Nullable ModelCopyManager copyManager, String name,AnyLicenseInfo concludedLicense, 
 				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
 			Objects.requireNonNull(modelStore);
 			Objects.requireNonNull(documentUri);
@@ -701,6 +706,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			this.copyrightText = copyrightText;
 			this.sha1 = sha1;
 			this.licenseDeclared = licenseDeclared;
+			this.copyManager = copyManager;
 		}
 		
 		/**

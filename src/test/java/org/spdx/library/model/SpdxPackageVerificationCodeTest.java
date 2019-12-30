@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -55,10 +56,11 @@ public class SpdxPackageVerificationCodeTest extends TestCase {
 		DefaultModelStore.reset();
 		IModelStore store = DefaultModelStore.getDefaultModelStore();
 		String docUri = DefaultModelStore.getDefaultDocumentUri();
+		ModelCopyManager copyManager = DefaultModelStore.getDefaultCopyManager();
 		VERIFICATION_CODES = new SpdxPackageVerificationCode[] {
-				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), true),
-				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), true),
-				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), true)
+				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), copyManager, true),
+				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), copyManager, true),
+				new SpdxPackageVerificationCode(store, docUri,store.getNextId(IdType.Anonymous, docUri), copyManager, true)
 			};
 		for (int i = 0; i < VERIFICATION_CODES.length; i++) {
 			VERIFICATION_CODES[i].setValue(VALUES[i]);

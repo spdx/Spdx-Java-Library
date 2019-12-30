@@ -78,17 +78,17 @@ public class SimpleUriValueTest extends TestCase {
 	 */
 	public void testToModelObject() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject();
-		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
-		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri());
+		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
+		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertTrue(result instanceof ExternalSpdxElement);
 		ExternalSpdxElement externalElement = (ExternalSpdxElement)result;
 		assertEquals(EXTERNAL_SPDX_ELEMENT_ID, externalElement.getExternalElementId());
 		assertEquals(EXTERNAL_SPDX_URI, externalElement.getExternalSpdxElementURI());
 		
-		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri());
+		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertEquals(TEST_ENUM, result);
 		
-		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri());
+		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertTrue(result instanceof SimpleUriValue);
 		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result).getIndividualURI());
 	}

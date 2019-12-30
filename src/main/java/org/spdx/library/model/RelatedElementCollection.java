@@ -61,9 +61,11 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	public RelatedElementCollection(SpdxElement owningElement,
 			@Nullable RelationshipType relationshipTypeFilter) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(owningElement);
 		this.owningElement = owningElement;
 		this.relationshipCollection = new ModelCollection<Relationship>(owningElement.getModelStore(),
-				owningElement.getDocumentUri(), owningElement.getId(), SpdxConstants.PROP_RELATIONSHIP, Relationship.class);
+				owningElement.getDocumentUri(), owningElement.getId(), SpdxConstants.PROP_RELATIONSHIP, 
+				owningElement.getCopyManager(), Relationship.class);
 		this.relationshipTypeFilter = relationshipTypeFilter;
 	}
 	

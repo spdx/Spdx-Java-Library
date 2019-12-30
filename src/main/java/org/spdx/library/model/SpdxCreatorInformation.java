@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.storage.IModelStore;
@@ -55,9 +56,9 @@ public class SpdxCreatorInformation extends ModelObject {
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxCreatorInformation(IModelStore modelStore, String documentUri, String id, boolean create)
-			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+	public SpdxCreatorInformation(IModelStore modelStore, String documentUri, String id, ModelCopyManager copyManager,
+			boolean create)	throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 	
 	/**

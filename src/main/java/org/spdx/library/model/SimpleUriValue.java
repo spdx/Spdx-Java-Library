@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
@@ -61,15 +62,16 @@ public class SimpleUriValue implements IndividualUriValue {
 	 * or returns itself otherwise
 	 * @param store
 	 * @param documentUri
+	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
 	 * @return Enum, ExternalSpdxElement or itself depending on the pattern
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Object toModelObject(IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+	public Object toModelObject(IModelStore store, String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Object retval = SpdxEnumFactory.uriToEnum.get(uri);
 		if (Objects.nonNull(retval)) {
 			return retval;
 		} else if (SpdxConstants.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri).matches()) {
-			return ExternalSpdxElement.uriToExternalSpdxElement(uri, store, documentUri, true);
+			return ExternalSpdxElement.uriToExternalSpdxElement(uri, store, documentUri, copyManager);
 		} else if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
 			// Assume this is a None license since other NONE would be strings
 			return new SpdxNoneLicense(store, documentUri);

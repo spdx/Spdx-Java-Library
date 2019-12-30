@@ -17,6 +17,7 @@
 package org.spdx.library.model.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
@@ -26,6 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * A specific form of license information where there is a set of licenses
@@ -44,9 +47,18 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 		super(id);
 	}
 
-	LicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
+	/**
+	 * @param modelStore
+	 * @param documentUri
+	 * @param id
+	 * @param create
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	LicenseSet(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/**
@@ -79,7 +91,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 		if (!isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
 			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
 		}
-		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class));
+		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueSet(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class));
 	}
 	
 	/**

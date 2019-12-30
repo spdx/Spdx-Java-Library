@@ -17,7 +17,10 @@
  */
 package org.spdx.library.model;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -49,12 +52,14 @@ public class GenericSpdxElement extends SpdxElement {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public GenericSpdxElement(IModelStore modelStore, String documentUri, String id, boolean create)
+	public GenericSpdxElement(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/* (non-Javadoc)

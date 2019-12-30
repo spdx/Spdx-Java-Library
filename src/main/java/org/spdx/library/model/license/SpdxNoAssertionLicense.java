@@ -43,7 +43,7 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 
 	public SpdxNoAssertionLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, NOASSERTION_LICENSE_ID, true);
+		super(modelStore, documentUri, NOASSERTION_LICENSE_ID, null, true);
 	}
 	
 	static final int NO_ASSERTION_HASHCODE = 89;	// prime number - all NoAssertion licenses should have the same hashcode

@@ -64,7 +64,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		String licenseHtml = "<html>html</html>";
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true, true, licenseHtml, false, null);
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(id, compLic.getLicenseId());
 		assertEquals(text, compLic.getLicenseText());
 		List<String> verify = stdl.verify();
@@ -95,12 +95,12 @@ public class SpdxListedLicenseTest extends TestCase {
 		String template = "template";
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, comments, standardLicenseHeader, template, true, false, null, false, null);
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(comments, compLic.getComment());
 		
 		compLic.setComment(comments2);
 		assertEquals(comments2, compLic.getComment());
-		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(comments2, compLic2.getComment());
 
 		List<String> verify = stdl.verify();
@@ -126,11 +126,11 @@ public class SpdxListedLicenseTest extends TestCase {
 		assertFalse(stdl.isFsfLibre());
 		stdl.setFsfLibre(true);
 		assertTrue(stdl.isFsfLibre());
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertTrue(stdl.isFsfLibre());
 		compLic.setFsfLibre(false);
 		assertFalse(compLic.isFsfLibre());
-		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertFalse(compLic2.isFsfLibre());
 		List<String> verify = stdl.verify();
 		assertEquals(0, verify.size());
@@ -143,7 +143,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		assertTrue(stdl2.getFsfLibre() == null);
 		assertFalse(stdl2.isFsfLibre());
 		assertFalse(stdl2.isNotFsfLibre());
-		SpdxListedLicense compLic3 = new SpdxListedLicense(stdl2.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic3 = new SpdxListedLicense(stdl2.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertTrue(compLic3.getFsfLibre() == null);
 		assertFalse(compLic3.isFsfLibre());
 		assertFalse(compLic3.isNotFsfLibre());
@@ -151,7 +151,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		assertFalse(compLic3.getFsfLibre() == null);
 		assertFalse(compLic3.isFsfLibre());
 		assertTrue(compLic3.isNotFsfLibre());
-		SpdxListedLicense compLic4 = new SpdxListedLicense(stdl2.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic4 = new SpdxListedLicense(stdl2.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertFalse(compLic4.getFsfLibre() == null);
 		assertFalse(compLic4.isFsfLibre());		
 		assertTrue(compLic4.isNotFsfLibre());
@@ -170,12 +170,12 @@ public class SpdxListedLicenseTest extends TestCase {
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, comments, standardLicenseHeader, template, true,null, null, false, null);
 		stdl.setDeprecated(true);
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(true, compLic.isDeprecated());
 		
 		compLic.setDeprecated(false);
 		assertEquals(false, compLic.isDeprecated());
-		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(false, compLic2.isDeprecated());
 		List<String> verify = stdl.verify();
 		assertEquals(0, verify.size());
@@ -195,14 +195,14 @@ public class SpdxListedLicenseTest extends TestCase {
 		String template = "template";
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true,null, null, false, null);
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(id, compLic.getLicenseId());
 		assertEquals(text, compLic.getLicenseText());
 
 		String newText = "new Text";
 		compLic.setLicenseText(newText);
 		assertEquals(newText, compLic.getLicenseText());
-		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(newText, compLic2.getLicenseText());
 		List<String> verify = stdl.verify();
 		assertEquals(0, verify.size());	
@@ -225,7 +225,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true, null, licenseHtml, true, deprecatedVersion);
 		IModelStore store = new InMemSpdxStore();
-		SpdxListedLicense lic2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, true);
+		SpdxListedLicense lic2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, stdl.getCopyManager(), true);
 		lic2.copyFrom(stdl);
 
 		assertEquals(id, lic2.getLicenseId());
@@ -280,7 +280,7 @@ public class SpdxListedLicenseTest extends TestCase {
 				sourceUrls, notes, standardLicenseHeader, template, true,null, null, false, null);
 		assertTrue(stdl.equivalent(stdl));
 		IModelStore store = new InMemSpdxStore();
-		SpdxListedLicense stdl2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, true);
+		SpdxListedLicense stdl2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, stdl.getCopyManager(), true);
 		stdl2.setLicenseText(text2);
 		stdl2.setName(name2);
 		stdl2.setSeeAlso(sourceUrls2);
@@ -289,7 +289,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		stdl2.setStandardLicenseTemplate(template2);
 		assertTrue(stdl2.equivalent(stdl));
 		
-		SpdxListedLicense stdl3 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, "Apache-2.0", true);
+		SpdxListedLicense stdl3 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, "Apache-2.0", stdl.getCopyManager(), true);
 		stdl3.setLicenseText(text);
 		stdl3.setSeeAlso(sourceUrls);
 		stdl3.setComment(notes);
@@ -315,13 +315,13 @@ public class SpdxListedLicenseTest extends TestCase {
 				sourceUrls, notes, standardLicenseHeader, template, true,null, null, false, null);
 		stdl.setStandardLicenseHeaderTemplate(standardLicenseHeaderTemplate);
 		assertEquals(standardLicenseHeaderTemplate, stdl.getStandardLicenseHeaderTemplate());
-		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(standardLicenseHeaderTemplate, compLic.getStandardLicenseHeaderTemplate());
 		
 		String newHeaderTemplate = "New standard license template";
 		compLic.setStandardLicenseHeaderTemplate(newHeaderTemplate);
 		assertEquals(newHeaderTemplate, compLic.getStandardLicenseHeaderTemplate());
-		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, false);
+		SpdxListedLicense compLic2 = new SpdxListedLicense(stdl.getModelStore(), stdl.getDocumentUri(), id, stdl.getCopyManager(), false);
 		assertEquals(newHeaderTemplate, compLic2.getStandardLicenseHeaderTemplate());
 		List<String> verify = stdl.verify();
 		assertEquals(0, verify.size());

@@ -21,7 +21,10 @@ package org.spdx.library.model.license;
 import java.util.Collection;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
@@ -50,11 +53,14 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @param modelStore container which includes the license
 	 * @param documentUri URI for the SPDX document containing the license
 	 * @param id identifier for the license
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param create if true, create the license if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	SimpleLicensingInfo(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+	SimpleLicensingInfo(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
+			throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 	
 	/**

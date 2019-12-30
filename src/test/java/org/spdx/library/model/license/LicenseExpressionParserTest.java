@@ -75,7 +75,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testSingleStdLicense() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0];
 		AnyLicenseInfo expected = STANDARD_LICENSES[0];
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -83,7 +84,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testSingleExtractedLicense() throws InvalidSPDXAnalysisException {
 		String parseString = NONSTD_IDS[0];
 		AnyLicenseInfo expected = NON_STD_LICENSES[0];
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -91,7 +93,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testOrLater() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0]+"+";
 		AnyLicenseInfo expected = new OrLaterOperator(STANDARD_LICENSES[0]);
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -99,7 +102,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testWithException() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0]+" WITH " + EXCEPTION_IDS[0];
 		AnyLicenseInfo expected = new WithExceptionOperator(STANDARD_LICENSES[0], LICENSE_EXCEPTIONS[0]);
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -107,7 +111,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testSimpleAnd() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0] + " AND " + NONSTD_IDS[0];
 		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -115,7 +120,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testSimpleOr() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0] + " OR " + NONSTD_IDS[0];
 		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -125,7 +131,8 @@ public class LicenseExpressionParserTest extends TestCase {
 					STD_IDS[2] + " AND " + STD_IDS[3];
 		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -135,7 +142,8 @@ public class LicenseExpressionParserTest extends TestCase {
 					STD_IDS[2] + " OR " + STD_IDS[3];
 		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -145,7 +153,8 @@ public class LicenseExpressionParserTest extends TestCase {
 					STD_IDS[2] + " OR " + STD_IDS[3] + ")";
 		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -156,7 +165,8 @@ public class LicenseExpressionParserTest extends TestCase {
 		DisjunctiveLicenseSet dls = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				NON_STD_LICENSES[1], dls})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 
@@ -167,7 +177,8 @@ public class LicenseExpressionParserTest extends TestCase {
 		ConjunctiveLicenseSet cls = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {NON_STD_LICENSES[1], STANDARD_LICENSES[2]})));
 		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				cls, STANDARD_LICENSES[3]})));
-		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
+				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
 }

@@ -17,15 +17,28 @@
  */
 package org.spdx.library.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.library.model.license.SimpleLicensingInfo;
+import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -69,15 +82,13 @@ public class SpdxDocumentTest extends TestCase {
 	private SpdxCreatorInformation CREATIONINFO2;
 	private Checksum CHECKSUM1;
 	private Checksum CHECKSUM2;
-	private ExternalDocumentRef EXTERNAL_REF1;
-	private ExternalDocumentRef EXTERNAL_REF2;
 	SpdxElement RELATED_ELEMENT1;
 	SpdxElement RELATED_ELEMENT2;
 	Relationship RELATIONSHIP1;
 	Relationship RELATIONSHIP2;
-//	SpdxFile FILE1;
-//	SpdxFile FILE2;
-//	SpdxFile FILE3;
+	SpdxFile FILE1;
+	SpdxFile FILE2;
+	SpdxFile FILE3;
 	SpdxPackage PACKAGE1;
 	SpdxPackage PACKAGE2;
 	SpdxPackage PACKAGE3;
@@ -104,54 +115,100 @@ public class SpdxDocumentTest extends TestCase {
 				.setLicenseListVersion(LICENSE_LISTV2);
 		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, SHA1_VALUE1);
 		CHECKSUM2 = gmo.createChecksum(ChecksumAlgorithm.SHA1, SHA1_VALUE2);
-		EXTERNAL_REF1 = gmo.createExternalDocumentRef(REFERENCED_DOC_URI1, DOCID1, CHECKSUM1);
-		EXTERNAL_REF2 = gmo.createExternalDocumentRef(REFERENCED_DOC_URI2, DOCID2, CHECKSUM2);
-		RELATED_ELEMENT1 = new GenericSpdxElement("relatedElementName1");
-		RELATED_ELEMENT2 = new GenericSpdxElement("relatedElementName2");
-//		RELATIONSHIP1 = new Relationship(RELATED_ELEMENT1, 
-//				RelationshipType.CONTAINS, "Relationship Comment1");
-//		RELATIONSHIP2 = new Relationship(RELATED_ELEMENT2, 
-//				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
-//		FILE1 = new SpdxFile("FileName1", "FileComment 1", 
-//				null, null,LICENSE1, new ExtractedLicenseInfo[] {LICENSE2}, 
-//				"File Copyright1", "License Comment1", new FileType[] {FileType.fileType_archive}, 
-//				new Checksum[] {CHECKSUM1},
-//				new String[] {"File Contrib1"}, "File Notice1", 
-//				new DoapProject[] {new DoapProject("Project1", "http://project.home.page/one")});
-//		FILE2 = new SpdxFile("FileName2", "FileComment 2", 
-//				null, null,LICENSE2, new ExtractedLicenseInfo[] {LICENSE3}, 
-//				"File Copyright2", "License Comment2", new FileType[] {FileType.fileType_source}, 
-//				new Checksum[] {CHECKSUM2},
-//				new String[] {"File Contrib2"}, "File Notice2", 
-//				new DoapProject[] {new DoapProject("Project2", "http://project.home.page/two")});
-//		FILE3 = new SpdxFile("FileName3", "FileComment 3", 
-//				null, null,LICENSE3, new ExtractedLicenseInfo[] {LICENSE1}, 
-//				"File Copyright3", "License Comment3", new FileType[] {FileType.fileType_text}, 
-//				new Checksum[] {CHECKSUM1},
-//				new String[] {"File Contrib3"}, "File Notice3", 
-//				new DoapProject[] {new DoapProject("Project3", "http://project.home.page/three")});
-//		PACKAGE1 = gmo.createSpdxPackage("Package 1", "Package Comments1", 
-//				null, null,LICENSE1, Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}), 
-//				"Pkg Copyright1", "Pkg License Comment 1", LICENSE2, new Checksum[] {CHECKSUM1},
-//				"Pkg Description 1", "Downlodlocation1", new SpdxFile[] {FILE1}, 
-//				"http://home.page/one", "Person: originator1", "packagename1", 
-//				new SpdxPackageVerificationCode("0000e1c67a2d28fced849ee1bb76e7391b93eb12", new String[] {"excludedfile1", "excluedfiles2"}),
-//				"sourceinfo1", "summary1", "Person: supplier1", "version1");
-//		PACKAGE1 = new SpdxPackage();
-//		PACKAGE2 = new SpdxPackage("Package 2", "Package Comments2", 
-//				null, null,LICENSE2, new SimpleLicensingInfo[] { LICENSE3}, 
-//				"Pkg Copyright2", "Pkg License Comment 2", LICENSE3, new Checksum[] {CHECKSUM2},
-//				"Pkg Description 2", "Downlodlocation2", new SpdxFile[] {FILE2, FILE3}, 
-//				"http://home.page/two", "Person: originator2", "packagename2", 
-//				new SpdxPackageVerificationCode("2222e1c67a2d28fced849ee1bb76e7391b93eb12", new String[] {"excludedfile3", "excluedfiles4"}),
-//				"sourceinfo2", "summary2", "Person: supplier2", "version2");
-//		PACKAGE3 = new SpdxPackage("Package 3", "Package Comments3", 
-//				null, null,LICENSE1, new SimpleLicensingInfo[] { LICENSE2}, 
-//				"Pkg Copyright3", "Pkg License Comment 3", LICENSE3, new Checksum[] {CHECKSUM1},
-//				"Pkg Description 3", "Downlodlocation3", new SpdxFile[] {FILE3}, 
-//				"http://home.page/three", "Person: originator3", "packagename3", 
-//				new SpdxPackageVerificationCode("3333e1c67a2d28fced849ee1bb76e7391b93eb12", new String[] {"excludedfile4", "excluedfiles5"}),
-//				"sourceinfo3", "summary3", "Person: supplier3", "version3");
+		RELATED_ELEMENT1 = new GenericSpdxElement();
+		RELATED_ELEMENT1.setName("relatedElementName1");
+		RELATED_ELEMENT2 = new GenericSpdxElement();
+		RELATED_ELEMENT2.setName("relatedElementName2");
+		RELATIONSHIP1 = gmo.createRelationship(RELATED_ELEMENT1, 
+				RelationshipType.CONTAINS, "Relationship Comment1");
+		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
+				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
+		FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"FileName1", LICENSE1, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE2}), 
+				"File Copyright1", CHECKSUM1)
+				.setComment("FileComment 1")
+				.setLicenseComments("License Comment1")
+				.setFileTypes(Arrays.asList(new FileType[] {FileType.ARCHIVE}))
+				.setFileContributors(Arrays.asList(new String[] {"File Contrib1"}))
+				.setNoticeText("File Notice1")
+				.build();
+
+		FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"FileName2", LICENSE2, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE3}), 
+				"File Copyright2", CHECKSUM2)
+				.setComment("FileComment 2")
+				.setLicenseComments("License Comment2")
+				.setFileTypes(Arrays.asList(new FileType[] {FileType.SOURCE}))
+				.setFileContributors(Arrays.asList(new String[] {"File Contrib2"}))
+				.setNoticeText("File Notice2")
+				.build();
+
+		FILE3 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"FileName3", LICENSE3, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE1}), 
+				"File Copyright2", CHECKSUM1)
+				.setComment("FileComment 3")
+				.setLicenseComments("License Comment3")
+				.setFileTypes(Arrays.asList(new FileType[] {FileType.TEXT}))
+				.setFileContributors(Arrays.asList(new String[] {"File Contrib3"}))
+				.setNoticeText("File Notice3")
+				.build();
+
+		PACKAGE1 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"Package 1", LICENSE1, "Pkg Copyright1", CHECKSUM1, LICENSE2)
+				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
+				.setComment("Package Comments1")
+				.setDescription("Pkg Description 1")
+				.setDownloadLocation("hg+https://hg.myproject.org/MyProject#src/somefile.c")
+				.setLicenseComments("Pkg License Comment 1")
+				.setFiles(Arrays.asList( new SpdxFile[] {FILE1}))
+				.setHomepage("http://home.page/one")
+				.setOriginator("Person: originator1")
+				.setPackageFileName("packagename1")
+				.setPackageVerificationCode(gmo.createPackageVerificationCode("0000e1c67a2d28fced849ee1bb76e7391b93eb12",
+						Arrays.asList(new String[] {"excludedfile1", "excluedfiles2"})))
+				.setSourceInfo("sourceinfo1")
+				.setSummary("summary1")
+				.setSupplier("Person: supplier1")
+				.setVersionInfo("version1")
+				.build();
+
+		PACKAGE2 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"Package 2", LICENSE2, "Pkg Copyright2", CHECKSUM2, LICENSE3)
+				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
+				.setComment("Package Comments2")
+				.setDescription("Pkg Description 2")
+				.setDownloadLocation("hg+https://hg.myproject.org/MyProject#src/someotherfile.c")
+				.setLicenseComments("Pkg License Comment 2")
+				.setFiles(Arrays.asList(new SpdxFile[] {FILE2, FILE3}))
+				.setHomepage("http://home.page/two")
+				.setOriginator("Person: originator2")
+				.setPackageFileName("packagename2")
+				.setPackageVerificationCode(gmo.createPackageVerificationCode("2222e1c67a2d28fced849ee1bb76e7391b93eb12",
+						Arrays.asList(new String[] {"excludedfile3", "excluedfiles4"})))
+				.setSourceInfo("sourceinfo2")
+				.setSummary("summary2")
+				.setSupplier("Person: supplier2")
+				.setVersionInfo("version2")
+				.build();
+
+		PACKAGE3 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"Package 3", LICENSE1, "Pkg Copyright3", CHECKSUM1, LICENSE3)
+				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
+				.setComment("Package Comments3")
+				.setDescription("Pkg Description 3")
+				.setDownloadLocation("hg+https://hg.myotherproject.org/MyProject#src/someotherfile.c")
+				.setLicenseComments("Pkg License Comment 3")
+				.setFiles(Arrays.asList(new SpdxFile[] {FILE3}))
+				.setHomepage("http://home.page/three")
+				.setOriginator("Person: originator3")
+				.setPackageFileName("packagename3")
+				.setPackageVerificationCode(gmo.createPackageVerificationCode("3333e1c67a2d28fced849ee1bb76e7391b93eb12",
+						Arrays.asList(new String[] {"excludedfile4", "excluedfiles5"})))
+				.setSourceInfo("sourceinfo3")
+				.setSummary("summary3")
+				.setSupplier("Person: supplier3")
+				.setVersionInfo("version3")
+				.build();
 	}
 
 	/* (non-Javadoc)
@@ -160,55 +217,433 @@ public class SpdxDocumentTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
+	
+	private boolean collectionsSame(Collection<? extends Object> c1, Collection<? extends Object> c2) {
+		if (c1.size() != c2.size()) {
+			return false;
+		}
+		for (Object c:c1) {
+			if (!c2.contains(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
+	/**
+	 * Per 1309, if no creation info is available in the model, we'll assign a creation date, as one is mandatory,
+	 * and the License List Version (because we know what version we have).
+	 */
+	public void testDefaultCreationInfo() throws InvalidSPDXAnalysisException {
+		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		assertNotNull(doc.getCreationInfo());
+		assertTrue("Mandatory creation date missing from new SPDX Document.", doc.getCreationInfo().get().getCreated().isPresent()
+				&& !doc.getCreationInfo().get().getCreated().get().isEmpty());
+		Optional<String> licenseListVersion = doc.getCreationInfo().get().getLicenseListVersion();
+		assertTrue(licenseListVersion.isPresent() && StringUtils.isNotBlank(licenseListVersion.get()));
+	}
+	
+	public void testEquivalent() throws InvalidSPDXAnalysisException {
+		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				PACKAGE1, FILE1, PACKAGE2, FILE2
+			});
+		doc.getAnnotations().addAll(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		List<Relationship> relationships = new ArrayList<>();
+		relationships.add(RELATIONSHIP1);
+		relationships.add(RELATIONSHIP2);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertTrue(collectionsSame(annotations, doc.getAnnotations()));
+		assertEquals(DOC_COMMENT1, doc.getComment().get());
+		assertEquals(CREATIONINFO1, doc.getCreationInfo().get());
+		assertEquals(CCO_DATALICENSE, doc.getDataLicense().get());
+		assertTrue(collectionsSame(externalDocumentRefs, doc.getExternalDocumentRefs()));
+		assertTrue(collectionsSame(extractedLicenseInfos, doc.getExtractedLicenseInfos()));
+		assertEquals(DOC_NAME1, doc.getName().get());
+		// assertTrue(collectionsSame(relationships, doc.getRelationships())); - gets messed up by adding the document describes
+		assertTrue(collectionsSame(items, doc.getDocumentDescribes()));
+		
+		assertTrue(doc.equivalent(doc));
+		
+		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
+		IModelStore model2 = new InMemSpdxStore();
+		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocument(model2, doc2Uri, gmo.getCopyManager());
+		doc2.setAnnotations(annotations);
+		doc2.setComment(DOC_COMMENT1);
+		doc2.setCreationInfo(CREATIONINFO1);
+		doc2.setDataLicense(CCO_DATALICENSE);
+		doc2.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc2.setExternalDocumentRefs(externalDocumentRefs);
+		doc2.setName(DOC_NAME1);
+		doc2.setRelationships(relationships);
+		doc2.setDocumentDescribes(items);
+		assertTrue(doc.equivalent(doc2));
+		// CreationInfo
+		doc2.setCreationInfo(CREATIONINFO2);
+		assertFalse(doc.equivalent(doc2));
+		doc2.setCreationInfo(CREATIONINFO1);
+		assertTrue(doc.equivalent(doc2));
+		// DataLicense
+		doc2.setDataLicense(LicenseInfoFactory.getListedLicenseById("APAFML"));
+		assertFalse(doc.equivalent(doc2));
+		doc2.setDataLicense(CCO_DATALICENSE);
+		assertTrue(doc.equivalent(doc2));
+		// ExternalDocumentRefs
+		doc2.setExternalDocumentRefs(Arrays.asList(new ExternalDocumentRef[] {externalDocRef1}));
+		assertFalse(doc.equivalent(doc2));
+		doc2.setExternalDocumentRefs(externalDocumentRefs);
+		assertTrue(doc.equivalent(doc2));
+		// ExtracteLicenseInfos
+		doc2.setExtractedLicenseInfos(Arrays.asList(new ExtractedLicenseInfo[] {LICENSE2}));
+		assertFalse(doc.equivalent(doc2));
+		doc2.setExtractedLicenseInfos(extractedLicenseInfos);
+		assertTrue(doc.equivalent(doc2));
+		// Items
+		doc2.addRelationship(doc2.createRelationship(FILE3, 
+				RelationshipType.DESCRIBES, ""));
+		doc2.addRelationship(doc2.createRelationship(PACKAGE3, 
+				RelationshipType.DESCRIBES, ""));
+		assertFalse(doc.equivalent(doc2));
+	}
+	
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#verify()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
-		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), true);
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		doc.setSpecVersion(Version.CURRENT_SPDX_VERSION);
+		List<String> result = doc.verify();
+		assertEquals(0, result.size());
+		// data license
+		doc.setDataLicense(LicenseInfoFactory.getListedLicenseById("AFL-3.0"));
+		result = doc.verify();
+		assertEquals(1, result.size());
+		// Name
+		doc.setName(null);
+		result = doc.verify();
+		assertEquals(2, result.size());
+		// SpecVersion
+		doc.setSpecVersion(null);
+		result = doc.verify();
+		assertEquals(3, result.size());
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#getDocumentDescribes()}.
 	 */
 	public void testGetDocumentDescribes() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		doc.setSpecVersion(Version.CURRENT_SPDX_VERSION);
+		
+		assertTrue(collectionsSame(items, doc.getDocumentDescribes()));
+		List<SpdxItem> expected = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		Relationship describes = doc.createRelationship(PACKAGE1, RelationshipType.DESCRIBES, "added relationship");
+		doc.addRelationship(describes);
+		doc.getDocumentDescribes().add(PACKAGE2);
+		assertTrue(collectionsSame(expected, doc.getDocumentDescribes()));
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#setCreationInfo(org.spdx.library.model.SpdxCreatorInformation)}.
 	 */
 	public void testSetCreationInfo() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertEquals(CREATIONINFO1, doc.getCreationInfo().get());
+		doc.setCreationInfo(CREATIONINFO2);
+		assertEquals(CREATIONINFO2, doc.getCreationInfo().get());
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#setDataLicense(org.spdx.library.model.license.AnyLicenseInfo)}.
 	 */
 	public void testSetDataLicense() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertEquals(CCO_DATALICENSE, doc.getDataLicense().get());
+		SpdxListedLicense lic = LicenseInfoFactory.getListedLicenseById("Apache-2.0");
+		doc.setDataLicense(lic);
+		assertEquals(lic, doc.getDataLicense().get());
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#getExternalDocumentRefs()}.
 	 */
 	public void testGetExternalDocumentRefs() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertTrue(collectionsSame(externalDocumentRefs, doc.getExternalDocumentRefs()));
+		Collection<ExternalDocumentRef> ref2 = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef2
+		});
+		doc.setExternalDocumentRefs(ref2);
+		assertTrue(collectionsSame(ref2, doc.getExternalDocumentRefs()));
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#getExtractedLicenseInfos()}.
 	 */
 	public void testGetExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertTrue(collectionsSame(extractedLicenseInfos, doc.getExtractedLicenseInfos()));
+		List<ExtractedLicenseInfo> infos2 = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE2, LICENSE3
+		});
+		doc.setExtractedLicenseInfos(infos2);
+		assertTrue(collectionsSame(infos2, doc.getExtractedLicenseInfos()));
+	}
+	
+	public void testAddExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertTrue(collectionsSame(extractedLicenseInfos, doc.getExtractedLicenseInfos()));
+
+		doc.addExtractedLicenseInfos(LICENSE2);
+		assertEquals(2, doc.getExtractedLicenseInfos().size());
+		doc.addExtractedLicenseInfos(LICENSE3);
+		assertEquals(3, doc.getExtractedLicenseInfos().size());
+		List<ExtractedLicenseInfo> expected = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2, LICENSE3
+		});
+		assertTrue(collectionsSame(expected, doc.getExtractedLicenseInfos()));
 	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxDocument#setSpecVersion(java.lang.String)}.
 	 */
 	public void testSetSpecVersion() throws InvalidSPDXAnalysisException {
-		fail("Not yet implemented");
+		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {
+				ANNOTATION1, ANNOTATION2	
+			});
+		ExternalDocumentRef externalDocRef1 = gmo.createExternalDocumentRef(DOCID1, REFERENCED_DOC_URI1, CHECKSUM1);
+		ExternalDocumentRef externalDocRef2 = gmo.createExternalDocumentRef(DOCID2, REFERENCED_DOC_URI2, CHECKSUM2);
+		List<ExternalDocumentRef> externalDocumentRefs = Arrays.asList(new ExternalDocumentRef[] {
+				externalDocRef1, externalDocRef2
+			});
+		List<ExtractedLicenseInfo> extractedLicenseInfos = Arrays.asList(new ExtractedLicenseInfo[] {
+				LICENSE1, LICENSE2
+			});
+		List<SpdxItem> items = Arrays.asList(new SpdxItem[] {
+				FILE1, FILE2, PACKAGE1, PACKAGE2
+			});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {
+					RELATIONSHIP1, RELATIONSHIP2
+			});
+		doc.setAnnotations(annotations);
+		doc.setComment(DOC_COMMENT1);
+		doc.setCreationInfo(CREATIONINFO1);
+		doc.setDataLicense(CCO_DATALICENSE);
+		doc.setExternalDocumentRefs(externalDocumentRefs);
+		doc.setExtractedLicenseInfos(extractedLicenseInfos);
+		doc.setName(DOC_NAME1);
+		doc.setRelationships(relationships);
+		doc.setDocumentDescribes(items);
+		assertFalse(doc.getSpecVersion().isPresent());
+		String ver = "2.1";
+		doc.setSpecVersion(ver);
+		assertEquals(ver, doc.getSpecVersion().get());
 	}
 
 }

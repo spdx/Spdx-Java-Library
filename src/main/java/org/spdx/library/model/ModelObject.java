@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.AnnotationType;
@@ -91,10 +92,10 @@ public abstract class ModelObject {
 	private String id;
 	
 	/**
-	 * If set to true, a reference made to a model object stored in a different modelStore and/or
+	 * If non null, a reference made to a model object stored in a different modelStore and/or
 	 * document will be copied to this modelStore and documentUri
 	 */
-	private boolean copyOnReference = true;
+	private ModelCopyManager copyManager = null;
 
 	/**
 	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
@@ -110,23 +111,27 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ModelObject(String id) throws InvalidSPDXAnalysisException {
-		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, true);
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, 
+				DefaultModelStore.getDefaultCopyManager(), true);
 	}
 	
 	/**
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
 	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param copyManager - if supplied, model objects will be implictly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelObject(IModelStore modelStore, String documentUri, String id, boolean create) throws InvalidSPDXAnalysisException {
+	public ModelObject(IModelStore modelStore, String documentUri, String id, @Nullable ModelCopyManager copyManager, 
+			boolean create) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore);
 		Objects.requireNonNull(documentUri);
 		Objects.requireNonNull(id);
 		this.modelStore = modelStore;
 		this.documentUri = documentUri;
 		this.id = id;
+		this.copyManager = copyManager;
 		if (!modelStore.exists(documentUri, id)) {
 			if (create) {
 				modelStore.create(documentUri, id, getType());
@@ -183,7 +188,7 @@ public abstract class ModelObject {
 	 * @return value associated with a property
 	 */
 	public Optional<Object> getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		return getObjectPropertyValue(modelStore, documentUri, id, propertyName);
+		return getObjectPropertyValue(modelStore, documentUri, id, propertyName, copyManager);
 	}
 	
 	/**
@@ -192,17 +197,19 @@ public abstract class ModelObject {
 	 * @param stDocumentUri
 	 * @param stId
 	 * @param propertyName
+	 * @param copyManager if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @return value associated with a property
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Optional<Object> getObjectPropertyValue(IModelStore stModelStore, String stDocumentUri,
-			String stId, String propertyName) throws InvalidSPDXAnalysisException {
+			String stId, String propertyName, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (!stModelStore.exists(stDocumentUri, stId)) {
 			return Optional.empty();
 		} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
-			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, null));
+			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, copyManager, null));
 		} else {
-			return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), stDocumentUri, stModelStore);
+			return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), 
+					stDocumentUri, stModelStore, copyManager);
 		}
 	}
 
@@ -213,11 +220,11 @@ public abstract class ModelObject {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName Name of the property associated with this object
 	 * @param value Value to associate with the property
-	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
+	 * @param copyManager if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, 
-			String stId, String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
+			String stId, String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(stModelStore);
 		Objects.requireNonNull(stDocumentUri);
 		Objects.requireNonNull(stId);
@@ -226,10 +233,10 @@ public abstract class ModelObject {
 			// we just remove the value
 			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
 		} else if (value instanceof Collection) {
-			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyOnReference);
+			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyManager);
 		} else {
 			stModelStore.setValue(stDocumentUri, stId, propertyName, ModelStorageClassConverter.modelObjectToStoredObject(
-					value, stDocumentUri, stModelStore, copyOnReference));
+					value, stDocumentUri, stModelStore, copyManager));
 		}
 	}
 	
@@ -243,7 +250,7 @@ public abstract class ModelObject {
 		if (this instanceof IndividualUriValue) {
 			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualUriValue)this).getIndividualURI());
 		}
-		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
+		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyManager);
 	}
 	
 	/**
@@ -254,7 +261,7 @@ public abstract class ModelObject {
 	 */
 	public ModelUpdate updatePropertyValue(String propertyName, Object value) {
 		return () ->{
-			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyOnReference);
+			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyManager);
 		};
 	}
 	
@@ -427,14 +434,14 @@ public abstract class ModelObject {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName  Name of the property
 	 * @param value to add
-	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
+	 * @param copyOnReference if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Object value, boolean copyOnReference) throws InvalidSPDXAnalysisException {
+			String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value);
 		stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, 
-				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyOnReference));
+				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyManager));
 	}
 	
 	/**
@@ -445,7 +452,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void addPropertyValueToCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		addValueToCollection(modelStore, documentUri, id, propertyName, value, copyOnReference);
+		addValueToCollection(modelStore, documentUri, id, propertyName, value, copyManager);
 	}
 	
 	/**
@@ -457,7 +464,7 @@ public abstract class ModelObject {
 	 */
 	public ModelUpdate updateAddPropertyValueToCollection(String propertyName, Object value) {
 		return () ->{
-			addValueToCollection(modelStore, documentUri, id, propertyName, value, copyOnReference);
+			addValueToCollection(modelStore, documentUri, id, propertyName, value, copyManager);
 		};
 	}
 	
@@ -469,14 +476,14 @@ public abstract class ModelObject {
 	 * @param stId ID of the item to associate the property with
 	 * @param propertyName name of the property
 	 * @param values collection of new properties
-	 * @param copyOnReference if true, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
+	 * @param copyManager if non-null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static void replacePropertyValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Collection<?> values, boolean copyOnReference) throws InvalidSPDXAnalysisException {
+			String propertyName, Collection<?> values, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		clearValueCollection(stModelStore, stDocumentUri, stId, propertyName);
 		for (Object value:values) {
-			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value, copyOnReference);
+			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value, copyManager);
 		}
 	}
 
@@ -492,7 +499,7 @@ public abstract class ModelObject {
 	public static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value) throws InvalidSPDXAnalysisException {
 		stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, 
-				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, false));
+				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, null));
 	}
 	
 	/**
@@ -519,10 +526,18 @@ public abstract class ModelObject {
 	
 	/**
 	 * @param propertyName Name of the property
-	 * @return collection of values associated with a property
+	 * @return Set of values associated with a property
+	 */
+	public ModelSet<?> getObjectPropertyValueSet(String propertyName, Class<?> type) throws InvalidSPDXAnalysisException {
+		return new ModelSet<Object>(this.modelStore, this.documentUri, this.id, propertyName, this.copyManager, type);
+	}
+	
+	/**
+	 * @param propertyName Name of the property
+	 * @return Collection of values associated with a property
 	 */
 	public ModelCollection<?> getObjectPropertyValueCollection(String propertyName, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName, type);
+		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName, this.copyManager, type);
 	}
 	
 	/**
@@ -535,7 +550,7 @@ public abstract class ModelObject {
 		if (!isCollectionMembersAssignableTo(propertyName, String.class)) {
 			throw new SpdxInvalidTypeException("Property "+propertyName+" does not contain a collection of Strings");
 		}
-		return (Collection<String>)(Collection<?>)getObjectPropertyValueCollection(propertyName, String.class);
+		return (Collection<String>)(Collection<?>)getObjectPropertyValueSet(propertyName, String.class);
 	}
 	
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException {
@@ -609,6 +624,9 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	private boolean listsEquivalent(List<?> l1, List<?> l2) throws InvalidSPDXAnalysisException {
+		if (l1.size() != l2.size()) {
+			return false;
+		}
 		int numRemainingComp = l2.size();
 		for (Object item:l1) {
 			if (l2.contains(item)) {
@@ -661,7 +679,11 @@ public abstract class ModelObject {
 			return false;
 		}
 		ModelObject comp = (ModelObject)o;
-		return Objects.equals(id, comp.getId()) && Objects.equals(documentUri, comp.getDocumentUri());
+		if (getModelStore().getIdType(id).equals(IdType.Anonymous)) {
+			return Objects.equals(modelStore, comp.getModelStore()) && Objects.equals(id, comp.getId()) && Objects.equals(documentUri, comp.getDocumentUri());
+		} else {
+			return Objects.equals(id, comp.getId()) && Objects.equals(documentUri, comp.getDocumentUri());
+		}
 	}
 	
 
@@ -673,7 +695,7 @@ public abstract class ModelObject {
 	 */
 	public ModelObject clone(IModelStore modelStore) {
 		try {
-			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType());
+			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -685,8 +707,22 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void copyFrom(ModelObject source) throws InvalidSPDXAnalysisException {
-		ModelStorageClassConverter.copy(this.modelStore, this.documentUri, this.id, 
+		if (Objects.isNull(copyManager)) {
+			throw new InvalidSPDXAnalysisException("Copying is not enabled for "+id);
+		}
+		copyManager.copy(this.modelStore, this.documentUri, this.id, 
 				source.getModelStore(), source.getDocumentUri(), source.getId(), this.getType());
+	}
+	
+	public void setCopyManager(ModelCopyManager copyManager) {
+		this.copyManager = copyManager;
+	}
+	
+	/**
+	 * @return the copy manager - value may be null if copies are not allowd
+	 */
+	public ModelCopyManager getCopyManager() {
+		return this.copyManager;
 	}
 	
 	/**
@@ -749,7 +785,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(date);
 		Objects.requireNonNull(comment);
 		Annotation retval = new Annotation(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), copyManager, true);
 		retval.setAnnotationDate(date);
 		retval.setAnnotationType(annotationType);
 		retval.setAnnotator(annotator);
@@ -769,7 +805,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(relatedElement);
 		Objects.requireNonNull(relationshipType);
 		Relationship retval = new Relationship(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setRelatedSpdxElement(relatedElement);
 		retval.setRelationshipType(relationshipType);
 		if (Objects.nonNull(comment)) {
@@ -788,7 +824,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(algorithm);
 		Objects.requireNonNull(value);
 		Checksum retval = new Checksum(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setAlgorithm(algorithm);
 		retval.setValue(value);
 		return retval;
@@ -804,7 +840,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(value);
 		Objects.requireNonNull(excludedFileNames);
 		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(this.modelStore, this.documentUri, 
-				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), true);
+				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setValue(value);
 		retval.getExcludedFileNames().addAll(excludedFileNames);
 		return retval;
@@ -839,16 +875,16 @@ public abstract class ModelObject {
 		try {
 			if (getModelStore().exists(getDocumentUri(), externalDocumentId)) {
 				return new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
-						externalDocumentId, false);
+						externalDocumentId, this.copyManager, false);
 			} else {
 				ExternalDocumentRef retval = new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
-						externalDocumentId, true);
+						externalDocumentId, this.copyManager, true);
 				retval.setChecksum(checksum);
 				retval.setSpdxDocumentNamespace(externalDocumentUri);
 				// Need to add this to the list of document URI's
 				ModelObject.addValueToCollection(getModelStore(), getDocumentUri(), 
 						SpdxConstants.SPDX_DOCUMENT_ID, 
-						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, true);
+						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, copyManager);
 				return retval;
 			}
 		} finally {
@@ -872,7 +908,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(creators);
 		Objects.requireNonNull(date);
 		SpdxCreatorInformation retval = new SpdxCreatorInformation(modelStore, documentUri, 
-				modelStore.getNextId(IdType.Anonymous, documentUri), true);
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.getCreators().addAll(creators);
 		retval.setCreated(date);
 		return retval;
@@ -892,7 +928,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(referenceType);
 		Objects.requireNonNull(locator);
 		ExternalRef retval = new ExternalRef(modelStore, documentUri, 
-				modelStore.getNextId(IdType.Anonymous, documentUri), true);
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setReferenceCategory(category);
 		retval.setReferenceType(referenceType);
 		retval.setReferenceLocator(locator);
@@ -919,7 +955,8 @@ public abstract class ModelObject {
 		Objects.requireNonNull(concludedLicense);
 		Objects.requireNonNull(seenLicense);
 		Objects.requireNonNull(copyrightText);
-		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, name, concludedLicense, seenLicense, copyrightText, sha1);
+		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, copyManager,
+				name, concludedLicense, seenLicense, copyrightText, sha1);
 	}
 	
 	/**
@@ -942,6 +979,7 @@ public abstract class ModelObject {
 		Objects.requireNonNull(concludedLicense);
 		Objects.requireNonNull(licenseDeclared);
 		Objects.requireNonNull(copyrightText);
-		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, name, concludedLicense, copyrightText, sha1, licenseDeclared);
+		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, copyManager,
+				name, concludedLicense, copyrightText, sha1, licenseDeclared);
 	}
 }

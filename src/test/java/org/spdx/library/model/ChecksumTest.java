@@ -98,7 +98,7 @@ public class ChecksumTest extends TestCase {
 		Checksum[] checksumReferences = new Checksum[TEST_CHECKSUMS.length];
 		for (int i = 0; i < checksumReferences.length; i++) {
 			checksumReferences[i] = new Checksum(TEST_CHECKSUMS[i].getModelStore(), TEST_CHECKSUMS[i].getDocumentUri(),
-					TEST_CHECKSUMS[i].getId(), false);
+					TEST_CHECKSUMS[i].getId(), TEST_CHECKSUMS[i].getCopyManager(), false);
 		}
 		ChecksumAlgorithm[] newAlgorithms = new ChecksumAlgorithm[] {
 				ALGORITHMS[2], ALGORITHMS[0], ALGORITHMS[1]
@@ -122,7 +122,7 @@ public class ChecksumTest extends TestCase {
 		Checksum[] checksumReferences = new Checksum[TEST_CHECKSUMS.length];
 		for (int i = 0; i < checksumReferences.length; i++) {
 			checksumReferences[i] = new Checksum(TEST_CHECKSUMS[i].getModelStore(), TEST_CHECKSUMS[i].getDocumentUri(),
-					TEST_CHECKSUMS[i].getId(), false);
+					TEST_CHECKSUMS[i].getId(), TEST_CHECKSUMS[i].getCopyManager(), false);
 		}
 		String[] newValues = new String[] {
 				VALUES[2], VALUES[0], VALUES[1]

@@ -20,7 +20,10 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -53,12 +56,14 @@ public class GenericModelObject extends ModelObject {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public GenericModelObject(IModelStore modelStore, String documentUri, String id, boolean create)
+	public GenericModelObject(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/* (non-Javadoc)

@@ -39,7 +39,7 @@ public class ExternalSpdxElementTest extends TestCase {
 		super.setUp();
 		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
-		doc = new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), true);
+		doc = new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3");
 		CHECKSUM2 = gmo.createChecksum(ChecksumAlgorithm.SHA1, "1086444D91D3A28ECA55124361F6DE2B93A9AE91");
 		CHECKSUM3 = gmo.createChecksum(ChecksumAlgorithm.SHA1, "571D85D7752CB4E5C6D919BAC21FD2BAAE9F2FCA");
@@ -90,11 +90,12 @@ public class ExternalSpdxElementTest extends TestCase {
 		ExternalSpdxElement externalElement = new ExternalSpdxElement(ID1);
 		GenericSpdxElement element = new GenericSpdxElement(externalElement.getModelStore(), 
 				externalElement.getDocumentUri(), 
-				externalElement.getModelStore().getNextId(IdType.Anonymous, externalElement.getDocumentUri()), true);
+				externalElement.getModelStore().getNextId(IdType.Anonymous, externalElement.getDocumentUri()), 
+				externalElement.getCopyManager(), true);
 		element.setName("Element1Name");
 		Relationship relationship = element.createRelationship(externalElement, RelationshipType.AMENDS, "External relationship");
 		GenericSpdxElement compare = new GenericSpdxElement(element.getModelStore(), element.getDocumentUri(),
-				element.getId(), false);
+				element.getId(), element.getCopyManager(), false);
 		element.addRelationship(relationship);
 		assertEquals("Element1Name", compare.getName().get());
 		assertEquals("Element1Name", element.getName().get());
@@ -116,25 +117,25 @@ public class ExternalSpdxElementTest extends TestCase {
 		String uri = DOCURI1 + "#" + SPDXID1;
 		String expected = DOCID1 + ":" + SPDXID1;
 		String result = ExternalSpdxElement.uriToExternalSpdxElementId(uri, gmo.getModelStore(),
-				gmo.getDocumentUri(), false);
+				gmo.getDocumentUri(), null);
 		assertEquals(expected, result);
 		uri = DOCURI2 + "#" + SPDXID2;
 		String generatedDocId = "DocumentRef-0";
 		expected = generatedDocId + ":" + SPDXID2;
 		try {
 			result = ExternalSpdxElement.uriToExternalSpdxElementId(uri, gmo.getModelStore(),
-					gmo.getDocumentUri(), false);
+					gmo.getDocumentUri(), null);
 			fail("Expected to fail since DOCID2 has not been created");
 		} catch (InvalidSPDXAnalysisException e) {
 			// expected
 		}
 		result = ExternalSpdxElement.uriToExternalSpdxElementId(uri, gmo.getModelStore(),
-				gmo.getDocumentUri(), true);
+				gmo.getDocumentUri(), gmo.getCopyManager());
 		assertEquals(expected, result);
 		uri = DOCURI2 + "#" + SPDXID3;
 		expected = generatedDocId + ":" + SPDXID3;
 		result = ExternalSpdxElement.uriToExternalSpdxElementId(uri, gmo.getModelStore(),
-				gmo.getDocumentUri(), false);
+				gmo.getDocumentUri(), null);
 		assertEquals(expected, result);
 	}
 }

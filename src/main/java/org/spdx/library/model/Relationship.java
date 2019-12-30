@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
@@ -54,12 +55,13 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
+	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Relationship(IModelStore modelStore, String documentUri, String id, boolean create)
-			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+	public Relationship(IModelStore modelStore, String documentUri, String id, ModelCopyManager copyManager,
+			boolean create)	throws InvalidSPDXAnalysisException {
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	/* (non-Javadoc)

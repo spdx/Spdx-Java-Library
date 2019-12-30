@@ -44,7 +44,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualUriValu
 
 	public SpdxNoneLicense(IModelStore modelStore, String documentUri)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, NONE_LICENSE_ID, true);
+		super(modelStore, documentUri, NONE_LICENSE_ID, null, true);
 	}
 
 	/* (non-Javadoc)

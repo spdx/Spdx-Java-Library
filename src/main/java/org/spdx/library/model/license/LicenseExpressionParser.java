@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Stack;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
@@ -64,10 +65,13 @@ public class LicenseExpressionParser {
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
 	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
-	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.	 * @return 
+	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @return the parsed license expression
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+	static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
+			String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw(new LicenseParserException("Empty license expression"));
 		}
@@ -80,7 +84,7 @@ public class LicenseExpressionParser {
 			return new SpdxNoneLicense();
 		} else {
 			try {
-				return parseLicenseExpression(tokens, store, documentUri);
+				return parseLicenseExpression(tokens, store, documentUri, copyManager);
 			} catch (EmptyStackException ex) {
 				throw(new LicenseParserException("Invalid license expression - check that every operator (e.g. AND and OR) has operators and that parenthesis are matched"));
 			}
@@ -128,10 +132,12 @@ public class LicenseExpressionParser {
 	 * @param tokens
 	 * @param store
 	 * @param documentUri
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
+			String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store);
 		Objects.requireNonNull(documentUri);
 		Objects.requireNonNull(tokens);
@@ -151,17 +157,17 @@ public class LicenseExpressionParser {
 					throw(new LicenseParserException("Missing right parenthesis"));
 				}
 				String[] nestedTokens = Arrays.copyOfRange(tokens, tokenIndex, rightParenIndex);
-				operandStack.push(parseLicenseExpression(nestedTokens, store, documentUri));
+				operandStack.push(parseLicenseExpression(nestedTokens, store, documentUri, copyManager));
 				tokenIndex = rightParenIndex + 1;		
 			} else if (OPERATOR_MAP.get(token) == null) {	// assumed to be a simple licensing type
-				operandStack.push(parseSimpleLicenseToken(token, store, documentUri));
+				operandStack.push(parseSimpleLicenseToken(token, store, documentUri, copyManager));
 			} else {
 				Operator operator = OPERATOR_MAP.get(token);
 				if (operator == Operator.WITH) {
 					// special processing here since With must be with an exception, not a licenseInfo
 					if (!operatorStack.isEmpty() && Operator.OR_LATER.equals(operatorStack.peek())) {
 						Operator tosOperator = operatorStack.pop();
-						evaluateExpression(tosOperator, operandStack, store, documentUri);
+						evaluateExpression(tosOperator, operandStack, store, documentUri, copyManager);
 					}
 					if (tokenIndex >= tokens.length) {
 						throw(new LicenseParserException("Missing exception clause"));
@@ -171,7 +177,8 @@ public class LicenseExpressionParser {
 					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
 						licenseException = LicenseInfoFactory.getListedExceptionById(token);
 					} else {
-						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, 
+								documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, copyManager);
 					}
 					AnyLicenseInfo operand = operandStack.pop();
 					if (operand == null) {
@@ -180,7 +187,7 @@ public class LicenseExpressionParser {
 					if (!((operand instanceof SimpleLicensingInfo) || (operand instanceof OrLaterOperator))) {
 						throw(new LicenseParserException("License with exception is not of type SimpleLicensingInfo or OrLaterOperator"));
 					}
-					WithExceptionOperator weo = new WithExceptionOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), true);
+					WithExceptionOperator weo = new WithExceptionOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 					weo.setLicense(operand);
 					weo.setException(licenseException);
 					operandStack.push(weo);			
@@ -189,7 +196,7 @@ public class LicenseExpressionParser {
 					while (!operatorStack.isEmpty() && 
 							operatorStack.peek().ordinal() <= operator.ordinal()) {
 						Operator tosOperator = operatorStack.pop();
-						evaluateExpression(tosOperator, operandStack, store, documentUri);
+						evaluateExpression(tosOperator, operandStack, store, documentUri, copyManager);
 					}
 					operatorStack.push(operator);
 				}
@@ -198,7 +205,7 @@ public class LicenseExpressionParser {
 		// go through the rest of the stack
 		while (!operatorStack.isEmpty()) {
 			Operator tosOperator = operatorStack.pop();
-			evaluateExpression(tosOperator, operandStack, store, documentUri);
+			evaluateExpression(tosOperator, operandStack, store, documentUri, copyManager);
 		}
 		AnyLicenseInfo retval = operandStack.pop();
 		if (!operandStack.isEmpty()) {
@@ -237,10 +244,12 @@ public class LicenseExpressionParser {
 	 * @param token
 	 * @param store
 	 * @param documentUri 
+	 * @param copyManager
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String documentUri,
+			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token);
 		Objects.requireNonNull(store);
 		Objects.requireNonNull(documentUri);
@@ -248,8 +257,8 @@ public class LicenseExpressionParser {
 			return LicenseInfoFactory.getListedLicenseById(token);
 		} else {
 			boolean exists = store.exists(documentUri, token);
-			ExtractedLicenseInfo localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(store, documentUri, 
-					token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			ExtractedLicenseInfo localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
+					store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
 			if (!exists) {
 				localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
 			}
@@ -261,17 +270,19 @@ public class LicenseExpressionParser {
 	 * Evaluate the given operator using paramaeters in the parameter stack
 	 * @param operator
 	 * @param operandStack
+	 * @param copyManager
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static void evaluateExpression(Operator operator,
-			Stack<AnyLicenseInfo> operandStack, IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+			Stack<AnyLicenseInfo> operandStack, IModelStore store, 
+			String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (operator == Operator.OR_LATER) {
 			// unary operator
 			AnyLicenseInfo license = operandStack.pop();
 			if (!(license instanceof SimpleLicensingInfo)) {
 				throw(new LicenseParserException("Missing license for the '+' or later operator"));
 			}
-			OrLaterOperator olo = new OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), true);
+			OrLaterOperator olo = new OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 			olo.setLicense((SimpleLicensingInfo)license);
 			operandStack.push(olo);
 		} else {
@@ -281,7 +292,7 @@ public class LicenseExpressionParser {
 			if (operand1 == null || operand2 == null) {
 				throw(new LicenseParserException("Missing operands for the "+operator.toString()+" operator"));
 			}
-			operandStack.push(evaluateBinary(operator, operand1, operand2, store, documentUri));
+			operandStack.push(evaluateBinary(operator, operand1, operand2, store, documentUri, copyManager));
 		}		
 	}
 
@@ -290,11 +301,13 @@ public class LicenseExpressionParser {
 	 * @param tosOperator
 	 * @param operand1
 	 * @param operand2
+	 * @param copyManager
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static AnyLicenseInfo evaluateBinary(Operator tosOperator,
-			AnyLicenseInfo operand1, AnyLicenseInfo operand2, IModelStore store, String documentUri) throws InvalidSPDXAnalysisException {
+			AnyLicenseInfo operand1, AnyLicenseInfo operand2, IModelStore store, 
+			String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (tosOperator == Operator.AND) {
 			if (operand1 instanceof ConjunctiveLicenseSet) {
 				// just merge into operand1
@@ -302,7 +315,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				ConjunctiveLicenseSet retval = new ConjunctiveLicenseSet(store, documentUri, 
-						store.getNextId(IdType.Anonymous, documentUri), true);
+						store.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);
 				return retval;
@@ -314,7 +327,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				DisjunctiveLicenseSet retval = new DisjunctiveLicenseSet(store, documentUri, 
-						store.getNextId(IdType.Anonymous, documentUri), true);
+						store.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);
 				return retval;

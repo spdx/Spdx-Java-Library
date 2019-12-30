@@ -22,7 +22,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
@@ -43,9 +46,18 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 		super(id);
 	}
 
-	public DisjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, boolean create)
+	/**
+	 * @param modelStore
+	 * @param documentUri
+	 * @param id
+	 * @param copyManager
+	 * @param create
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public DisjunctiveLicenseSet(IModelStore modelStore, String documentUri, String id, 
+			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, create);
+		super(modelStore, documentUri, id, copyManager, create);
 	}
 
 	public DisjunctiveLicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {

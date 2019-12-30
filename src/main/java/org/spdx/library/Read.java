@@ -63,7 +63,7 @@ public class Read {
 			List<String> documentUris = modelStore.getDocumentUris();
 			List<SpdxDocument> retval = new ArrayList<SpdxDocument>();
 			for (String documentUri:documentUris) {
-				retval.add(new SpdxDocument(modelStore, documentUri, false));
+				retval.add(new SpdxDocument(modelStore, documentUri, null, false));
 			}
 			return retval;
 		}
@@ -77,7 +77,7 @@ public class Read {
 		 */
 		public static SpdxDocument get(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException, IOException {
 			try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.READ)) {
-				return new SpdxDocument(modelStore, documentUri, false);				
+				return new SpdxDocument(modelStore, documentUri, null, false);				
 			}
 		}
 		
@@ -128,10 +128,11 @@ public class Read {
 	 * @param typeFilter Optional parameter to specify the type of objects to be retrieved
 	 * @return Stream of all items store within the document
 	 */
-	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, String typeFilter) throws InvalidSPDXAnalysisException { 
+	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, 
+			String typeFilter) throws InvalidSPDXAnalysisException { 
 		return modelStore.getAllItems(documentUri, typeFilter).map((TypedValue tv) -> {
 			try {
-				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType());
+				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType(), null);
 			} catch (InvalidSPDXAnalysisException e) {
 				throw new RuntimeException(e);
 			}
