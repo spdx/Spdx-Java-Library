@@ -57,9 +57,9 @@ public class SpdxElementTest extends TestCase {
 		super.setUp();
 		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
-		ANNOTATION1 = gmo.createAnnotation("Annotator1",
+		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1",
 			AnnotationType.OTHER, DATE_NOW, "Comment1");
-		ANNOTATION2 = gmo.createAnnotation("Annotator2",
+		ANNOTATION2 = gmo.createAnnotation("Person: Annotator2",
 				AnnotationType.REVIEW, DATE_NOW, "Comment2");
 		RELATED_ELEMENT1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), 
 				gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), gmo.getCopyManager(), true);

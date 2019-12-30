@@ -145,7 +145,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		GenericSpdxElement element1 = new GenericSpdxElement(store1, docUri1, id1, copyManager, true);
 		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
 		String date = format.format(new Date());
-		Annotation annotation = element1.createAnnotation("Annotator", AnnotationType.REVIEW, date, "Annotation Comment");
+		Annotation annotation = element1.createAnnotation("Person: Annotator", AnnotationType.REVIEW, date, "Annotation Comment");
 		element1.addAnnotation(annotation);
 		String externalUri = "http://doc3/uri#" + SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "23";
 		ExternalSpdxElement externalElement = ExternalSpdxElement.uriToExternalSpdxElement(externalUri, store1, docUri1, copyManager);

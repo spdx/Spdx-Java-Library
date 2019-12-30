@@ -73,16 +73,29 @@ public class Annotation extends ModelObject {
 		return SpdxConstants.CLASS_ANNOTATION;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Optional<AnnotationType> getAnnotationType() throws InvalidSPDXAnalysisException {
+	public AnnotationType getAnnotationType() throws InvalidSPDXAnalysisException {
 		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE);
 		if (retval.isPresent() && !(retval.get() instanceof AnnotationType)) {
 			throw new SpdxInvalidTypeException("Invalid enum type for "+retval.get().toString());
 		}
-		return (Optional<AnnotationType>)(Optional<?>)retval;
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof AnnotationType)) {
+				throw new SpdxInvalidTypeException("Invalid enum type for "+retval.get().toString());
+			}
+			return (AnnotationType)retval.get();
+		} else {
+			logger.warn("Missing required annotation type, returning type missing for "+getId());
+			return AnnotationType.MISSING;
+		}
 	}
 	
 	public void setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {
+		if (type == null) {
+			throw new InvalidSPDXAnalysisException("Annotation type is required - null value for type is not accepted");
+		}
+		if (AnnotationType.MISSING.equals(type)) {
+			throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
+		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, type);
 	}
 	
@@ -90,19 +103,42 @@ public class Annotation extends ModelObject {
 	 * @return the annotator
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Optional<String> getAnnotator() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_ANNOTATOR);
+	public String getAnnotator() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_ANNOTATOR);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("Missing required annotator for "+getId());
+			return "";
+		}
 	}
 	
+	/**
+	 * @param annotator
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public void setAnnotator(String annotator) throws InvalidSPDXAnalysisException {
+		if (annotator == null || annotator.isEmpty()) {
+			throw new InvalidSPDXAnalysisException("Annotator is required - can not be null or empty");
+		}
+		String verify = SpdxVerificationHelper.verifyAnnotator(annotator);
+		if (verify != null && !verify.isEmpty()) {
+			throw new InvalidSPDXAnalysisException(verify);
+		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATOR, annotator);
 	}
 	
 	/**
 	 * @return the comment
 	 */
-	public Optional<String> getComment() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.RDFS_PROP_COMMENT);
+	public String getComment() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.RDFS_PROP_COMMENT);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("Missing required comment for "+getId());
+			return "";
+		}
 	}
 	
 	/**
@@ -111,14 +147,23 @@ public class Annotation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setComment(String comment) throws InvalidSPDXAnalysisException {
+		if (comment == null || comment.isEmpty()) {
+			throw new InvalidSPDXAnalysisException("Comment is required - can not be null or empty");
+		}
 		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
 	}
 	
 	/**
 	 * @return the date
 	 */
-	public Optional<String> getAnnotationDate() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE);
+	public String getAnnotationDate() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("Missing required annotation date for "+getId());
+			return "";
+		}
 	}
 	
 	/**
@@ -127,6 +172,13 @@ public class Annotation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setAnnotationDate(String date) throws InvalidSPDXAnalysisException {
+		if (date == null || date.isEmpty()) {
+			throw new InvalidSPDXAnalysisException("Date is required - can not be null or empty");
+		}
+		String dateVerify = SpdxVerificationHelper.verifyDate(date);
+		if (dateVerify != null && !dateVerify.isEmpty()) {
+			throw new InvalidSPDXAnalysisException(dateVerify);
+		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE, date);
 	}
 
@@ -137,40 +189,34 @@ public class Annotation extends ModelObject {
 	public List<String> verify() {
 		List<String> retval = new ArrayList<String>();
 		try {
-			if (!getAnnotationType().isPresent()) {
+			if (AnnotationType.MISSING.equals(getAnnotationType())) {
 				retval.add("Missing annotationtype for Annotation");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting annotationtype for Annotation: "+e.getMessage());
 		}
 		try {
-			Optional<String> annotator;
-			annotator = getAnnotator();
-			if (!annotator.isPresent()) {
-				retval.add("Missing annotator for Annotation");
-			} else {
-				String v = SpdxVerificationHelper.verifyAnnotator(annotator.get());
-				if (v != null && !v.isEmpty()) {
-					retval.add(v + ":" + annotator.get());
-				}
+			String annotator = getAnnotator();
+			String v = SpdxVerificationHelper.verifyAnnotator(annotator);
+			if (v != null && !v.isEmpty()) {
+				retval.add(v + ":" + annotator);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting annotator for Annotation: "+e.getMessage());
 		}
 		try {
-			if (!getComment().isPresent()) {
+			if (getComment().isEmpty()) {
 				retval.add("Missing required comment for Annotation");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting comment for Annotation: "+e.getMessage());
 		}
 		try {
-			Optional<String> date;
-			date = getAnnotationDate();
-			if (!date.isPresent()) {
+			String date = getAnnotationDate();
+			if (date.isEmpty()) {
 				retval.add("Missing required date for Annotation");
 			} else {
-				String dateVerify = SpdxVerificationHelper.verifyDate(date.get());
+				String dateVerify = SpdxVerificationHelper.verifyDate(date);
 				if (dateVerify != null && !dateVerify.isEmpty()) {
 					retval.add(dateVerify);
 				}

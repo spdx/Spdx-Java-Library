@@ -68,23 +68,23 @@ public class AnnotationTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		Annotation a = new GenericModelObject().createAnnotation(ANNOTATOR1, OTHER_ANNOTATION, date, COMMENT1);
 		assertEquals(0, a.verify().size());
-		a.setAnnotationType(null);
-		a.setAnnotator(null);
-		a.setAnnotationDate(null);
-		a.setComment(null);
+		a.setPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, null);
+		a.setPropertyValue(SpdxConstants.PROP_ANNOTATOR, null);
+		a.setPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE, null);
+		a.setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, null);
 		assertEquals(4, a.verify().size());
 	}
 	
 	public void testSetAnnotationType() throws InvalidSPDXAnalysisException {
 		Annotation a = new GenericModelObject().createAnnotation(ANNOTATOR1, OTHER_ANNOTATION, date, COMMENT1);
-		assertEquals(ANNOTATOR1, a.getAnnotator().get());
-		assertEquals(OTHER_ANNOTATION, a.getAnnotationType().get());
-		assertEquals(date, a.getAnnotationDate().get());
-		assertEquals(COMMENT1, a.getComment().get());
+		assertEquals(ANNOTATOR1, a.getAnnotator());
+		assertEquals(OTHER_ANNOTATION, a.getAnnotationType());
+		assertEquals(date, a.getAnnotationDate());
+		assertEquals(COMMENT1, a.getComment());
 		a.setAnnotationType(REVIEW_ANNOTATION);
-		assertEquals(REVIEW_ANNOTATION, a.getAnnotationType().get());
+		assertEquals(REVIEW_ANNOTATION, a.getAnnotationType());
 		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
-		assertEquals(REVIEW_ANNOTATION, copy.getAnnotationType().get());
+		assertEquals(REVIEW_ANNOTATION, copy.getAnnotationType());
 	}
 
 	/**
@@ -92,14 +92,14 @@ public class AnnotationTest extends TestCase {
 	 */
 	public void testSetAnnotator() throws InvalidSPDXAnalysisException {
 		Annotation a = new GenericModelObject().createAnnotation(ANNOTATOR1, OTHER_ANNOTATION, date, COMMENT1);	
-		assertEquals(ANNOTATOR1, a.getAnnotator().get());
-		assertEquals(OTHER_ANNOTATION, a.getAnnotationType().get());
-		assertEquals(date, a.getAnnotationDate().get());
-		assertEquals(COMMENT1, a.getComment().get());
+		assertEquals(ANNOTATOR1, a.getAnnotator());
+		assertEquals(OTHER_ANNOTATION, a.getAnnotationType());
+		assertEquals(date, a.getAnnotationDate());
+		assertEquals(COMMENT1, a.getComment());
 		a.setAnnotator(ANNOTATOR2);
-		assertEquals(ANNOTATOR2, a.getAnnotator().get());
+		assertEquals(ANNOTATOR2, a.getAnnotator());
 		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
-		assertEquals(ANNOTATOR2, copy.getAnnotator().get());
+		assertEquals(ANNOTATOR2, copy.getAnnotator());
 	}
 
 	/**
@@ -107,14 +107,14 @@ public class AnnotationTest extends TestCase {
 	 */
 	public void testSetComment() throws InvalidSPDXAnalysisException {
 		Annotation a = new GenericModelObject().createAnnotation(ANNOTATOR1, OTHER_ANNOTATION, date, COMMENT1);
-		assertEquals(ANNOTATOR1, a.getAnnotator().get());
-		assertEquals(OTHER_ANNOTATION, a.getAnnotationType().get());
-		assertEquals(date, a.getAnnotationDate().get());
-		assertEquals(COMMENT1, a.getComment().get());
+		assertEquals(ANNOTATOR1, a.getAnnotator());
+		assertEquals(OTHER_ANNOTATION, a.getAnnotationType());
+		assertEquals(date, a.getAnnotationDate());
+		assertEquals(COMMENT1, a.getComment());
 		a.setComment(COMMENT2);
-		assertEquals(COMMENT2, a.getComment().get());
+		assertEquals(COMMENT2, a.getComment());
 		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
-		assertEquals(COMMENT2, copy.getComment().get());
+		assertEquals(COMMENT2, copy.getComment());
 	}
 
 	/**
@@ -122,14 +122,14 @@ public class AnnotationTest extends TestCase {
 	 */
 	public void testSetAnnotationDate() throws InvalidSPDXAnalysisException {
 		Annotation a = new GenericModelObject().createAnnotation(ANNOTATOR1, OTHER_ANNOTATION, date, COMMENT1);
-		assertEquals(ANNOTATOR1, a.getAnnotator().get());
-		assertEquals(OTHER_ANNOTATION, a.getAnnotationType().get());
-		assertEquals(date, a.getAnnotationDate().get());
-		assertEquals(COMMENT1, a.getComment().get());
+		assertEquals(ANNOTATOR1, a.getAnnotator());
+		assertEquals(OTHER_ANNOTATION, a.getAnnotationType());
+		assertEquals(date, a.getAnnotationDate());
+		assertEquals(COMMENT1, a.getComment());
 		a.setAnnotationDate(oldDate);
-		assertEquals(oldDate, a.getAnnotationDate().get());
+		assertEquals(oldDate, a.getAnnotationDate());
 		Annotation copy = new Annotation(a.getModelStore(), a.getDocumentUri(), a.getId(), a.getCopyManager(), false);
-		assertEquals(oldDate, copy.getAnnotationDate().get());
+		assertEquals(oldDate, copy.getAnnotationDate());
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {

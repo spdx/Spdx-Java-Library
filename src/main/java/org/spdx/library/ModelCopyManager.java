@@ -54,7 +54,7 @@ public class ModelCopyManager {
 			new ConcurrentHashMap<>();
 
 	/**
-	 * 
+	 * Create a ModelCopyManager with default options
 	 */
 	public ModelCopyManager() {
 		
@@ -203,7 +203,7 @@ public class ModelCopyManager {
 		String toId = getCopiedId(fromStore, fromDocumentUri, sourceId, toStore, toDocumentUri);
 		if (Objects.isNull(toId)) {
 			switch (fromStore.getIdType(sourceId)) {
-				case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri);
+				case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri); break;
 				case LicenseRef: // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?
 				case DocumentRef: // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?
 				case SpdxId:  // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?

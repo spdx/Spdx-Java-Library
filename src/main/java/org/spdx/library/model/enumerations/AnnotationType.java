@@ -29,7 +29,8 @@ import org.spdx.library.model.IndividualUriValue;
 public enum AnnotationType implements IndividualUriValue {
 	
 	OTHER("annotationType_other"),
-	REVIEW("annotationType_review");
+	REVIEW("annotationType_review"), 
+	MISSING("not_allowed");
 	
 	private String longName;
 	
