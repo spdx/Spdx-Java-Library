@@ -85,8 +85,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setCopyrightText(spdxPackageBuilder.copyrightText);
 		setName(spdxPackageBuilder.name);
 		setLicenseConcluded(spdxPackageBuilder.concludedLicense);
-		if (!spdxPackageBuilder.sha1.getAlgorithm().isPresent() || 
-				!spdxPackageBuilder.sha1.getAlgorithm().get().equals(ChecksumAlgorithm.SHA1)) {
+		if (!spdxPackageBuilder.sha1.getAlgorithm().equals(ChecksumAlgorithm.SHA1)) {
 			throw new InvalidSPDXAnalysisException("Invalid SHA1 checksum algorithm for SpdxPackage.  Must be SHA1");
 		}
 		addChecksum(spdxPackageBuilder.sha1);
@@ -621,10 +620,10 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public String getSha1() throws InvalidSPDXAnalysisException {
 		for (Checksum checksum:getChecksums()) {
-			if (checksum.getAlgorithm().get().equals(ChecksumAlgorithm.SHA1)) {
-				Optional<String> value = checksum.getValue();
-				if (value.isPresent()) {
-					return value.get();
+			if (checksum.getAlgorithm().equals(ChecksumAlgorithm.SHA1)) {
+				String value = checksum.getValue();
+				if (!value.isEmpty()) {
+					return value;
 				}
 			}
 		}

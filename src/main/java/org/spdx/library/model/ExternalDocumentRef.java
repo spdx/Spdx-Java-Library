@@ -272,8 +272,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 				retval.add("Missing checksum for external document "+uri);
 			} else {
 				retval.addAll(checksum.get().verify());
-				if (!checksum.get().getAlgorithm().isPresent() || 
-						checksum.get().getAlgorithm().get() != ChecksumAlgorithm.SHA1) {
+				if (checksum.get().getAlgorithm() != ChecksumAlgorithm.SHA1) {
 					retval.add("Checksum algorithm is not SHA1 for external reference "+uri);
 				}
 			}

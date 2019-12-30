@@ -286,7 +286,7 @@ class StoredTypedItem extends TypedValue {
 							return false;
 						}
 					} else if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(uri) ||
-							SpdxConstants.URI_VALUE_NOASSERTION.equals(uri))) {
+							SpdxConstants.URI_VALUE_NONE.equals(uri))) {
 						return false;
 					}
 				} else {

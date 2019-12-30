@@ -1112,9 +1112,9 @@ public class SpdxPackageTest extends TestCase {
 				.setExternalRefs(externalRefs)
 				.build();
 		
-		assertEquals(CHECKSUM1.getValue().get(), pkg.getSha1());
+		assertEquals(CHECKSUM1.getValue(), pkg.getSha1());
 		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
-		assertEquals(CHECKSUM1.getValue().get(), pkg2.getSha1());
+		assertEquals(CHECKSUM1.getValue(), pkg2.getSha1());
 		pkg2.getChecksums().clear();
 		String sha1Value = "5222e1c67a2d28fced849ee1bb76e7391b93eb12";
 		pkg2.getChecksums().add(gmo.createChecksum(ChecksumAlgorithm.SHA1, sha1Value));

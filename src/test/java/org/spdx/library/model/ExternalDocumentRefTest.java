@@ -66,7 +66,7 @@ public class ExternalDocumentRefTest extends TestCase {
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
-		Checksum checksumCopy = gmo.createChecksum(CHECKSUM1.getAlgorithm().get(), CHECKSUM1.getValue().get());
+		Checksum checksumCopy = gmo.createChecksum(CHECKSUM1.getAlgorithm(), CHECKSUM1.getValue());
 		ExternalDocumentRef edf2 = gmo.createExternalDocumentRef(DOCUMENT_ID2, DOCUMENT_URI1, checksumCopy);
 		assertTrue(edf.equivalent(edf2));
 		edf2.setSpdxDocumentNamespace(DOCUMENT_URI2);

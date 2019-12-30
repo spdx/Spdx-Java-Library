@@ -90,11 +90,13 @@ public class Annotation extends ModelObject {
 	}
 	
 	public void setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {
-		if (type == null) {
-			throw new InvalidSPDXAnalysisException("Annotation type is required - null value for type is not accepted");
-		}
-		if (AnnotationType.MISSING.equals(type)) {
-			throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
+		if (strict) {
+			if (type == null) {
+				throw new InvalidSPDXAnalysisException("Annotation type is required - null value for type is not accepted");
+			}
+			if (AnnotationType.MISSING.equals(type)) {
+				throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
+			}
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, type);
 	}
@@ -118,12 +120,14 @@ public class Annotation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setAnnotator(String annotator) throws InvalidSPDXAnalysisException {
-		if (annotator == null || annotator.isEmpty()) {
-			throw new InvalidSPDXAnalysisException("Annotator is required - can not be null or empty");
-		}
-		String verify = SpdxVerificationHelper.verifyAnnotator(annotator);
-		if (verify != null && !verify.isEmpty()) {
-			throw new InvalidSPDXAnalysisException(verify);
+		if (strict) {
+			if (annotator == null || annotator.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Annotator is required - can not be null or empty");
+			}
+			String verify = SpdxVerificationHelper.verifyAnnotator(annotator);
+			if (verify != null && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATOR, annotator);
 	}
@@ -147,8 +151,10 @@ public class Annotation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setComment(String comment) throws InvalidSPDXAnalysisException {
-		if (comment == null || comment.isEmpty()) {
-			throw new InvalidSPDXAnalysisException("Comment is required - can not be null or empty");
+		if (strict) {
+			if (comment == null || comment.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Comment is required - can not be null or empty");
+			}
 		}
 		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
 	}
@@ -172,12 +178,14 @@ public class Annotation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setAnnotationDate(String date) throws InvalidSPDXAnalysisException {
-		if (date == null || date.isEmpty()) {
-			throw new InvalidSPDXAnalysisException("Date is required - can not be null or empty");
-		}
-		String dateVerify = SpdxVerificationHelper.verifyDate(date);
-		if (dateVerify != null && !dateVerify.isEmpty()) {
-			throw new InvalidSPDXAnalysisException(dateVerify);
+		if (strict) {
+			if (date == null || date.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Date is required - can not be null or empty");
+			}
+			String dateVerify = SpdxVerificationHelper.verifyDate(date);
+			if (dateVerify != null && !dateVerify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(dateVerify);
+			}
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE, date);
 	}

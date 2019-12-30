@@ -19,6 +19,7 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -83,18 +84,18 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	@Override
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
-		Optional<ChecksumAlgorithm> algorithm;
+		ChecksumAlgorithm algorithm;
 		try {
 			algorithm = getAlgorithm();
-			if (!algorithm.isPresent()) {
+			if (ChecksumAlgorithm.MISSING.equals(algorithm)) {
 				retval.add("Missing required algorithm");
 			} else {
 				try {
-					Optional<String> checksumValue = getValue();
-					if (!checksumValue.isPresent() || checksumValue.get().isEmpty()) {
+					String checksumValue = getValue();
+					if (checksumValue.isEmpty()) {
 						retval.add("Missing required checksum value");
 					} else {
-						String verify = SpdxVerificationHelper.verifyChecksumString(checksumValue.get(), algorithm.get());
+						String verify = SpdxVerificationHelper.verifyChecksumString(checksumValue, algorithm);
 						if (verify != null) {
 							retval.add(verify);
 						}
@@ -111,48 +112,91 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 		return retval;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Optional<ChecksumAlgorithm> getAlgorithm() throws InvalidSPDXAnalysisException {
+	/**
+	 * @return the ChecksumAlgorithm  MISSING denotes that there was no algorithm stored
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public ChecksumAlgorithm getAlgorithm() throws InvalidSPDXAnalysisException {
 		Optional<?> retval = getEnumPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM);
-		if (retval.isPresent() && !(retval.get() instanceof ChecksumAlgorithm)) {
-			logger.error("Invalid type for checksum algorithm: "+retval.get().getClass().toString());
-			throw new SpdxInvalidTypeException("Invalid type for checksum algorithm: "+retval.get().getClass().toString());
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof ChecksumAlgorithm)) {
+				logger.error("Invalid type for checksum algorithm: "+retval.get().getClass().toString());
+				throw new SpdxInvalidTypeException("Invalid type for checksum algorithm: "+retval.get().getClass().toString());
+			}
+			return (ChecksumAlgorithm)retval.get();
+		} else {
+			return ChecksumAlgorithm.MISSING;
 		}
-		return (Optional<ChecksumAlgorithm>)retval;
 	}
 
-	public Optional<String> getValue() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_CHECKSUM_VALUE);
-	}
 
-	public void setAlgorithm(ChecksumAlgorithm algorithm) throws InvalidSPDXAnalysisException {
+	/**
+	 * Set the checksum algorithm.  This should only be called by factory classes since they should not be
+	 * modified once created and stored.
+	 * @param algorithm
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	protected void setAlgorithm(ChecksumAlgorithm algorithm) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(algorithm)) {
+				throw new InvalidSPDXAnalysisException("Can not set required checksum algorithm to null");
+			}
+			if (ChecksumAlgorithm.MISSING.equals(algorithm)) {
+				throw new InvalidSPDXAnalysisException("Can not set required checksum algorithm to MISSING.  This is only used when no algorithm value was found.");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM, algorithm);
 	}
 
-	public void setValue(String value) throws InvalidSPDXAnalysisException {
+	/**
+	 * @return the checksum algorithm or an empty string if no algorithm value was stored
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public String getValue() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_CHECKSUM_VALUE);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			return "";
+		}
+	}
+	
+	protected void setValue(String value) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(value)) {
+				throw new InvalidSPDXAnalysisException("Can not set required checksum value to null");
+			}
+			ChecksumAlgorithm algorithm = getAlgorithm();
+			if (!ChecksumAlgorithm.MISSING.equals(algorithm)) {
+				String verify = SpdxVerificationHelper.verifyChecksumString(value, algorithm);
+				if (verify != null && !verify.isEmpty()) {
+					throw new InvalidSPDXAnalysisException(verify);
+				}
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_CHECKSUM_VALUE, value);
 	}
 	
 	@Override
 	public String toString() {
-		Optional<ChecksumAlgorithm> algorithm;
+		ChecksumAlgorithm algorithm;
 		try {
 			algorithm = getAlgorithm();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting algorithm",e);
-			algorithm = Optional.empty();
+			algorithm = ChecksumAlgorithm.MISSING;
 		}
-		Optional<String> checksumValue;
+		String checksumValue;
 		try {
 			checksumValue = getValue();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting value",e);
-			checksumValue = Optional.empty();
+			checksumValue = "";
 		}
-		if (!algorithm.isPresent() || !checksumValue.isPresent()) {
+		if (ChecksumAlgorithm.MISSING.equals(algorithm) || checksumValue.isEmpty()) {
 			return "[EMPTY-CHECKSUM]";
 		} else {
-			return (algorithm.get().toString()+" "+checksumValue.get());
+			return (algorithm.toString()+" "+checksumValue);
 		}
 	}
 
@@ -161,63 +205,37 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	 */
 	@Override
 	public int compareTo(Checksum compare) {
-		Optional<ChecksumAlgorithm> algorithm;
+		ChecksumAlgorithm algorithm;
 		try {
 			algorithm = getAlgorithm();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting algorithm",e);
-			algorithm = Optional.empty();
+			algorithm = ChecksumAlgorithm.MISSING;
 		}
-		Optional<String> checksumValue;
+		String checksumValue;
 		try {
 			checksumValue = getValue();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting value",e);
-			checksumValue = Optional.empty();
+			checksumValue = "";
 		}
-		Optional<ChecksumAlgorithm> compareAlgorithm;
+		ChecksumAlgorithm compareAlgorithm;
 		try {
 			compareAlgorithm = compare.getAlgorithm();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting compare algorithm",e);
-			compareAlgorithm = Optional.empty();
+			compareAlgorithm = ChecksumAlgorithm.MISSING;
 		}
-		Optional<String> compareChecksumValue;
+		String compareChecksumValue;
 		try {
 			compareChecksumValue = compare.getValue();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting compare value",e);
-			compareChecksumValue = Optional.empty();
+			compareChecksumValue = "";
 		}
-		int retval = 0;
-		if (!algorithm.isPresent()) {
-			if (compareAlgorithm.isPresent()) {
-				retval = 1;
-			} else {
-				retval = 0;
-			}
-		} else {
-			if (!compareAlgorithm.isPresent()) {
-				retval = -1;
-			} else {
-				retval = algorithm.get().toString().compareTo(compareAlgorithm.get().toString());
-			}
-			
-		} 
+		int retval = algorithm.toString().compareTo(compareAlgorithm.toString());
 		if (retval == 0) {
-			if (!checksumValue.isPresent()) {
-				if (compareChecksumValue.isPresent()) {
-					retval = 1;
-				} else {
-					retval = 0;
-				}
-			} else {
-				if (!compareChecksumValue.isPresent()) {
-					retval = -1;
-				} else {
-					retval = checksumValue.get().compareTo(compareChecksumValue.get());
-				}
-			}
+			retval = checksumValue.compareTo(compareChecksumValue);
 		}
 		return retval;
 	}	

@@ -29,7 +29,8 @@ import org.spdx.library.model.IndividualUriValue;
 public enum ChecksumAlgorithm implements IndividualUriValue {
 	SHA1("checksumAlgorithm_sha1"),
 	MD5("checksumAlgorithm_md5"),
-	SHA256("checksumAlgorithm_sha256")
+	SHA256("checksumAlgorithm_sha256"), 
+	MISSING("InvalidMissingChecksum")
 	;
 
 	private String longName;

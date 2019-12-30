@@ -96,6 +96,11 @@ public abstract class ModelObject {
 	 * document will be copied to this modelStore and documentUri
 	 */
 	private ModelCopyManager copyManager = null;
+	
+	/**
+	 * if true, checks input values for setters to verify valid SPDX inputs
+	 */
+	protected boolean strict = true;
 
 	/**
 	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
@@ -171,6 +176,20 @@ public abstract class ModelObject {
 	 */
 	public IModelStore getModelStore() {
 		return this.modelStore;
+	}
+	
+	/**
+	 * @return if strict input checking is enabled
+	 */
+	public boolean isStrict() {
+		return strict;
+	}
+	
+	/**
+	 * @param strict if true, inputs will be validated against the SPDX spec
+	 */
+	public void setStrct(boolean strict) {
+		this.strict = strict;
 	}
 	
 	//The following methods are to manage the properties associated with the model object

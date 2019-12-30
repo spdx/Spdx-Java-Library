@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
@@ -84,10 +85,12 @@ public class ChecksumTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "0123456789abcdef0123456789abcdef01234567");
 		List<String> verify = checksum.verify();
-		assertEquals(0, verify.size());
-		checksum.setValue("BadValue");
+		
+		checksum.setPropertyValue(SpdxConstants.PROP_CHECKSUM_VALUE, "Bad value");
 		assertEquals(1, checksum.verify().size());
-		checksum.setAlgorithm(null);
+		checksum.setValue("0123456789abcdef0123456789abcdef01234567");
+		assertEquals(0, verify.size());
+		checksum.setPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM, null);
 		assertEquals(1, checksum.verify().size());
 	}
 
@@ -104,13 +107,13 @@ public class ChecksumTest extends TestCase {
 				ALGORITHMS[2], ALGORITHMS[0], ALGORITHMS[1]
 		};
 		for (int i = 0;i < checksumReferences.length; i++) {
-			assertEquals(ALGORITHMS[i], TEST_CHECKSUMS[i].getAlgorithm().get());
-			assertEquals(ALGORITHMS[i], checksumReferences[i].getAlgorithm().get());
+			assertEquals(ALGORITHMS[i], TEST_CHECKSUMS[i].getAlgorithm());
+			assertEquals(ALGORITHMS[i], checksumReferences[i].getAlgorithm());
 			checksumReferences[i].setAlgorithm(newAlgorithms[i]);
-			assertEquals(newAlgorithms[i], TEST_CHECKSUMS[i].getAlgorithm().get());
-			assertEquals(newAlgorithms[i], checksumReferences[i].getAlgorithm().get());
-			assertEquals(VALUES[i], TEST_CHECKSUMS[i].getValue().get());
-			assertEquals(VALUES[i], checksumReferences[i].getValue().get());
+			assertEquals(newAlgorithms[i], TEST_CHECKSUMS[i].getAlgorithm());
+			assertEquals(newAlgorithms[i], checksumReferences[i].getAlgorithm());
+			assertEquals(VALUES[i], TEST_CHECKSUMS[i].getValue());
+			assertEquals(VALUES[i], checksumReferences[i].getValue());
 		}
 	}
 
@@ -125,16 +128,16 @@ public class ChecksumTest extends TestCase {
 					TEST_CHECKSUMS[i].getId(), TEST_CHECKSUMS[i].getCopyManager(), false);
 		}
 		String[] newValues = new String[] {
-				VALUES[2], VALUES[0], VALUES[1]
+				MD5_VALUE2, SHA1_VALUE2, SHA256_VALUE2
 		};
 		for (int i = 0;i < checksumReferences.length; i++) {
-			assertEquals(VALUES[i], TEST_CHECKSUMS[i].getValue().get());
-			assertEquals(VALUES[i], checksumReferences[i].getValue().get());
+			assertEquals(VALUES[i], TEST_CHECKSUMS[i].getValue());
+			assertEquals(VALUES[i], checksumReferences[i].getValue());
 			checksumReferences[i].setValue(newValues[i]);
-			assertEquals(newValues[i], TEST_CHECKSUMS[i].getValue().get());
-			assertEquals(newValues[i], checksumReferences[i].getValue().get());
-			assertEquals(ALGORITHMS[i], TEST_CHECKSUMS[i].getAlgorithm().get());
-			assertEquals(ALGORITHMS[i], checksumReferences[i].getAlgorithm().get());
+			assertEquals(newValues[i], TEST_CHECKSUMS[i].getValue());
+			assertEquals(newValues[i], checksumReferences[i].getValue());
+			assertEquals(ALGORITHMS[i], TEST_CHECKSUMS[i].getAlgorithm());
+			assertEquals(ALGORITHMS[i], checksumReferences[i].getAlgorithm());
 		}
 	}
 
@@ -148,9 +151,9 @@ public class ChecksumTest extends TestCase {
 			assertTrue(TEST_CHECKSUMS[i].toString().contains(VALUES[i]));
 		}
 		Checksum checksum = gmo.createChecksum(ALGORITHMS[0], VALUES[0]);
-		checksum.setAlgorithm(null);
+		checksum.setPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM, null);
 		assertTrue(checksum.toString().contains("EMPTY"));
-		checksum.setValue(null);
+		checksum.setPropertyValue(SpdxConstants.PROP_CHECKSUM_VALUE, null);
 		assertTrue(checksum.toString().contains("EMPTY"));
 		checksum.setAlgorithm(ALGORITHMS[0]);
 		assertTrue(checksum.toString().contains("EMPTY"));
@@ -171,16 +174,6 @@ public class ChecksumTest extends TestCase {
 		checksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		assertTrue(checksum.compareTo(checksum2) > 0);
 		assertTrue(checksum2.compareTo(checksum) < 0);
-		checksum.setValue(null);
-		assertTrue(checksum.compareTo(checksum2) > 0);
-		assertTrue(checksum2.compareTo(checksum) < 0);
-		checksum2.setAlgorithm(null);
-		assertTrue(checksum.compareTo(checksum2) < 0);
-		assertTrue(checksum2.compareTo(checksum) > 0);
-		checksum.setAlgorithm(null);
-		checksum2.setValue(null);
-		assertEquals(0, checksum.compareTo(checksum2));
-		assertEquals(0, checksum2.compareTo(checksum));
 	}
 
 }

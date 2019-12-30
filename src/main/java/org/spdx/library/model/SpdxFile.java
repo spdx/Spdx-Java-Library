@@ -128,9 +128,9 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 */
 	public String getSha1() throws InvalidSPDXAnalysisException {
 		for (Checksum checksum:checksums) {
-			if (checksum.getAlgorithm().isPresent() && checksum.getAlgorithm().get().equals(ChecksumAlgorithm.SHA1)) {
-				if (checksum.getValue().isPresent()) {
-					return checksum.getValue().get();
+			if (checksum.getAlgorithm().equals(ChecksumAlgorithm.SHA1)) {
+				if (!checksum.getValue().isEmpty()) {
+					return checksum.getValue();
 				}
 			}
 		}

@@ -138,9 +138,6 @@ public class LicenseExpressionParser {
 	 */
 	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
 			String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(store);
-		Objects.requireNonNull(documentUri);
-		Objects.requireNonNull(tokens);
 		if (tokens == null || tokens.length == 0) {
 			throw(new LicenseParserException("Expected license expression"));
 		}

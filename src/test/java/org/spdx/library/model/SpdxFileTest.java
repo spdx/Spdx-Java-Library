@@ -165,7 +165,7 @@ public class SpdxFileTest extends TestCase {
 				.setComment(comment)
 				.setLicenseComments(licenseComment)
 				.build();
-		assertEquals(SHA1.getValue().get(), file.getSha1());
+		assertEquals(SHA1.getValue(), file.getSha1());
 		String sha2 = "2123456789abcdef0123456789abcdef01234567";
 		file.getChecksums().clear();
 		file.addChecksum(gmo.createChecksum(ChecksumAlgorithm.SHA1, sha2));
@@ -301,7 +301,7 @@ public class SpdxFileTest extends TestCase {
 		file2.getFileTypes().remove(FileType.ARCHIVE);
 		assertTrue(file.equivalent(file2));
 		// checksum
-		Checksum added = gmo.createChecksum(ChecksumAlgorithm.SHA256, "1123456789abcdef0123456789abcdef01234567");
+		Checksum added = gmo.createChecksum(ChecksumAlgorithm.SHA256, "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08");
 		file2.addChecksum(added);
 		assertFalse(file.equivalent(file2));
 		file2.getChecksums().remove(added);

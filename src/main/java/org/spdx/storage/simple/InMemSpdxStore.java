@@ -126,9 +126,7 @@ public class InMemSpdxStore implements IModelStore {
 			idMap = documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
 		}
 		updateNextIds(id);
-		idMap.putIfAbsent(id, value);
-		Object checkWhatWasPut = idMap.get(id);
-		if (!value.equals(checkWhatWasPut)) {
+		if (!(idMap.putIfAbsent(id, value) == null)) {
 			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 		}
 	}
