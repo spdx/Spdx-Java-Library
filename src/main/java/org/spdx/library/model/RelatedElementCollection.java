@@ -75,9 +75,9 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 			if (item instanceof Relationship) {
 				Relationship relationship = (Relationship)item;
 				try {
-					Optional<RelationshipType> relationshipType = relationship.getRelationshipType();
+					RelationshipType relationshipType = relationship.getRelationshipType();
 					if (Objects.isNull(this.relationshipTypeFilter) || 
-							(relationshipType.isPresent() && this.relationshipTypeFilter.equals(relationshipType.get()))) {
+							(this.relationshipTypeFilter.equals(relationshipType))) {
 						Optional<SpdxElement> relatedElement = relationship.getRelatedSpdxElement();
 						if (relatedElement.isPresent()) {
 							retval.add(relatedElement.get());
@@ -180,8 +180,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 					try {
 						if (relationship.getRelatedSpdxElement().isPresent() && 
 								relationship.getRelatedSpdxElement().get().equals(o) &&
-								relationship.getRelationshipType().isPresent() && 
-								relationship.getRelationshipType().get().equals(relationshipTypeFilter)) {
+								relationship.getRelationshipType().equals(relationshipTypeFilter)) {
 							return relationshipCollection.remove(relationship);
 						}
 					} catch (InvalidSPDXAnalysisException e) {

@@ -102,7 +102,7 @@ public class ExternalSpdxElementTest extends TestCase {
 		Collection<Relationship> relCollection = compare.getRelationships();
 		Relationship[] relArray = relCollection.toArray(new Relationship[1]);
 		Relationship compareRelationship = relArray[0];
-		assertEquals(RelationshipType.AMENDS, compareRelationship.getRelationshipType().get());
+		assertEquals(RelationshipType.AMENDS, compareRelationship.getRelationshipType());
 		assertEquals("External relationship", compareRelationship.getComment().get());
 		ExternalSpdxElement compareRelatedElement = (ExternalSpdxElement)compareRelationship.getRelatedSpdxElement().get();
 		assertEquals(ID1, compareRelatedElement.getId());

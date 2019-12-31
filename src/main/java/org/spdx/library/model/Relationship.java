@@ -19,7 +19,6 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -90,7 +89,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			retval.add("Error getting related SPDX element for relationship: "+e.getMessage());
 		}
 		try {
-			if (!getRelationshipType().isPresent()) {
+			if (RelationshipType.MISSING.equals(getRelationshipType())) {
 				retval.add("Missing relationship type");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -103,13 +102,16 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 * @return the relationshipType
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
-	public Optional<RelationshipType> getRelationshipType() throws InvalidSPDXAnalysisException {
+	public RelationshipType getRelationshipType() throws InvalidSPDXAnalysisException {
 		Optional<?> retval = getEnumPropertyValue(SpdxConstants.PROP_RELATIONSHIP_TYPE);
-		if (retval.isPresent() && !(retval.get() instanceof RelationshipType)) {
-			throw new SpdxInvalidTypeException("Invalid type for relationship type individual value: "+retval.get().toString());
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof RelationshipType)) {
+				throw new SpdxInvalidTypeException("Invalid type for relationship type individual value: "+retval.get().toString());
+			}
+			return (RelationshipType)retval.get();
+		} else {
+			return RelationshipType.MISSING;
 		}
-		return (Optional<RelationshipType>)retval;
 	}
 	
 	/**
@@ -118,7 +120,12 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setRelationshipType(RelationshipType type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(type);
+		if (RelationshipType.MISSING.equals(type)) {
+			throw new InvalidSPDXAnalysisException("Can not set required relationshipType to MISSING");
+		}
+		if (strict && type == null) {
+			throw new InvalidSPDXAnalysisException("Can not set required relationshipType to null");
+		}
 		setPropertyValue(SpdxConstants.PROP_RELATIONSHIP_TYPE, type);
 	}
 	
@@ -158,29 +165,21 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 */
 	@Override
 	public int compareTo(Relationship o) {
-		Optional<RelationshipType> myRelationshipType;
+		RelationshipType myRelationshipType;
 		try {
 			myRelationshipType = getRelationshipType();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting my relationship type",e);
-			myRelationshipType = Optional.empty();
+			myRelationshipType = RelationshipType.MISSING;
 		}
-		Optional<RelationshipType> oRelationshipType;
+		RelationshipType oRelationshipType;
 		try {
 			oRelationshipType = o.getRelationshipType();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting compare relationship type",e);
-			oRelationshipType = Optional.empty();
+			oRelationshipType = RelationshipType.MISSING;
 		}
-		if (!oRelationshipType.isPresent()) {
-			if (myRelationshipType.isPresent()) {
-				return 1;
-			}
-		}
-		if (!myRelationshipType.isPresent()) {
-			return -1;
-		}
-		int retval = myRelationshipType.get().toString().compareTo(oRelationshipType.get().toString());
+		int retval = myRelationshipType.toString().compareTo(oRelationshipType.toString());
 		if (retval != 0) {
 			return retval;
 		}

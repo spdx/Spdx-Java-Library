@@ -106,11 +106,11 @@ public class RelationshipTest extends TestCase {
 		String comment1 = "Comment1";
 		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
-		assertEquals(relationshipType1, relationship.getRelationshipType().get());
+		assertEquals(relationshipType1, relationship.getRelationshipType());
 		assertEquals(comment1, relationship.getComment().get());
 		RelationshipType relationshipType2  = RelationshipType.COPY_OF;
 		relationship.setRelationshipType(relationshipType2);
-		assertEquals(relationshipType2, relationship.getRelationshipType().get());
+		assertEquals(relationshipType2, relationship.getRelationshipType());
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class RelationshipTest extends TestCase {
 		String comment1 = "Comment1";
 		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
-		assertEquals(relationshipType1, relationship.getRelationshipType().get());
+		assertEquals(relationshipType1, relationship.getRelationshipType());
 		assertEquals(comment1, relationship.getComment().get());
 		String comment2 = "Comment Number 2";
 		relationship.setComment(comment2);
@@ -138,7 +138,7 @@ public class RelationshipTest extends TestCase {
 		String comment1 = "Comment1";
 		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
-		assertEquals(relationshipType1, relationship.getRelationshipType().get());
+		assertEquals(relationshipType1, relationship.getRelationshipType());
 		assertEquals(comment1, relationship.getComment().get());
 		relationship.setRelatedSpdxElement(RELATED_ELEMENT2);
 		assertEquals(RELATED_ELEMENT2, relationship.getRelatedSpdxElement().get());
@@ -149,7 +149,7 @@ public class RelationshipTest extends TestCase {
 		String comment1 = "Comment1";
 		Relationship relationship = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);
 		assertEquals(RELATED_ELEMENT1, relationship.getRelatedSpdxElement().get());
-		assertEquals(relationshipType1, relationship.getRelationshipType().get());
+		assertEquals(relationshipType1, relationship.getRelationshipType());
 		assertEquals(comment1, relationship.getComment().get());
 		assertTrue(relationship.equivalent(relationship));
 		Relationship relationship2 = gmo.createRelationship(RELATED_ELEMENT1, relationshipType1, comment1);

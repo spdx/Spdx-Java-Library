@@ -214,7 +214,7 @@ public class RelatedElementCollectionTest extends TestCase {
 		describeGe.add(relatedElement);
 		assertTrue(describeGe.contains(relatedElement));
 		Relationship[] allRelationships = ge.getRelationships().toArray(new Relationship[1]);
-		assertEquals(RelationshipType.DESCRIBES, allRelationships[0].getRelationshipType().get());
+		assertEquals(RelationshipType.DESCRIBES, allRelationships[0].getRelationshipType());
 		assertEquals(relatedElement, allRelationships[0].getRelatedSpdxElement().get());
 	}
 
