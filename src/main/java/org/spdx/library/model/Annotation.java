@@ -94,9 +94,9 @@ public class Annotation extends ModelObject {
 			if (type == null) {
 				throw new InvalidSPDXAnalysisException("Annotation type is required - null value for type is not accepted");
 			}
-			if (AnnotationType.MISSING.equals(type)) {
-				throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
-			}
+		}
+		if (AnnotationType.MISSING.equals(type)) {
+			throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, type);
 	}

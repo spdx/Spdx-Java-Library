@@ -28,7 +28,13 @@ import org.spdx.library.InvalidSPDXAnalysisException;
  * @author Gary O'Neall
  */
 public class ReferenceType extends SimpleUriValue implements Comparable<ReferenceType> {
+	
+	public static final String MISSING_REFERENCE_TYPE_URI = "http://spdx.org/rdf/refeferences/MISSING";
 
+	public static ReferenceType getMissingReferenceType() throws InvalidSPDXAnalysisException {
+		return new ReferenceType(MISSING_REFERENCE_TYPE_URI);
+	}
+	
 	public ReferenceType(IndividualUriValue uri) throws InvalidSPDXAnalysisException {
 		super(uri);
 	}

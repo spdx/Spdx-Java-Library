@@ -19,7 +19,6 @@ package org.spdx.library.model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -124,9 +123,9 @@ public class ExternalRefTest extends TestCase {
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		ExternalRef copy = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager, true);
 		copy.setComment(TEST_REFERENCES[2].getComment().get());
-		copy.setReferenceCategory(TEST_REFERENCES[2].getReferenceCategory().get());
-		copy.setReferenceLocator(TEST_REFERENCES[2].getReferenceLocator().get());
-		copy.setReferenceType(TEST_REFERENCES[2].getReferenceType().get());
+		copy.setReferenceCategory(TEST_REFERENCES[2].getReferenceCategory());
+		copy.setReferenceLocator(TEST_REFERENCES[2].getReferenceLocator());
+		copy.setReferenceType(TEST_REFERENCES[2].getReferenceType());
 	
 		assertEquals(0, copy.compareTo(TEST_REFERENCES[2]));
 		assertTrue(TEST_REFERENCES[0].compareTo(TEST_REFERENCES[1]) < 0);
@@ -152,16 +151,15 @@ public class ExternalRefTest extends TestCase {
 	public void testSetReferenceCategory() throws InvalidSPDXAnalysisException {
 		ExternalRef er = new ExternalRef(store, docUri, store.getNextId(IdType.Anonymous, docUri),copyManager,  true);
 		er.setReferenceCategory(ReferenceCategory.PACKAGE_MANAGER);
-		Optional<ReferenceCategory> retval = er.getReferenceCategory();
-		assertTrue(retval.isPresent());
-		assertEquals(ReferenceCategory.PACKAGE_MANAGER, retval.get());
+		ReferenceCategory retval = er.getReferenceCategory();
+		assertEquals(ReferenceCategory.PACKAGE_MANAGER, retval);
 		ReferenceCategory[] changedCategories = new ReferenceCategory[] {
 			REFERENCE_CATEGORIES[1], REFERENCE_CATEGORIES[2], REFERENCE_CATEGORIES[0]
 		};
 		for (int i = 0; i < TEST_REFERENCES.length; i++) {
-			assertEquals(REFERENCE_CATEGORIES[i], TEST_REFERENCES[i].getReferenceCategory().get());
+			assertEquals(REFERENCE_CATEGORIES[i], TEST_REFERENCES[i].getReferenceCategory());
 			TEST_REFERENCES[i].setReferenceCategory(changedCategories[i]);
-			assertEquals(changedCategories[i], TEST_REFERENCES[i].getReferenceCategory().get());
+			assertEquals(changedCategories[i], TEST_REFERENCES[i].getReferenceCategory());
 		}
 	}
 
@@ -176,9 +174,9 @@ public class ExternalRefTest extends TestCase {
 			new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[0])
 		};
 		for (int i = 0; i < TEST_REFERENCES.length; i++) {
-			assertEquals(REFERENCE_TYPE_NAMES[i], ListedReferenceTypes.getListedReferenceTypes().getListedReferenceName(new URI(TEST_REFERENCES[i].getReferenceType().get().getIndividualURI())));
+			assertEquals(REFERENCE_TYPE_NAMES[i], ListedReferenceTypes.getListedReferenceTypes().getListedReferenceName(new URI(TEST_REFERENCES[i].getReferenceType().getIndividualURI())));
 			TEST_REFERENCES[i].setReferenceType(changedTypes[i]);
-			assertEquals(changedTypes[i].getIndividualURI(), TEST_REFERENCES[i].getReferenceType().get().getIndividualURI());
+			assertEquals(changedTypes[i].getIndividualURI(), TEST_REFERENCES[i].getReferenceType().getIndividualURI());
 		}
 	}
 
@@ -190,9 +188,9 @@ public class ExternalRefTest extends TestCase {
 			"changed1", "changed2", "changed3"
 		};
 		for (int i = 0; i < TEST_REFERENCES.length; i++) {
-			assertEquals(REFERENCE_LOCATORS[i], TEST_REFERENCES[i].getReferenceLocator().get());
+			assertEquals(REFERENCE_LOCATORS[i], TEST_REFERENCES[i].getReferenceLocator());
 			TEST_REFERENCES[i].setReferenceLocator(changedLocators[i]);
-			assertEquals(changedLocators[i], TEST_REFERENCES[i].getReferenceLocator().get());
+			assertEquals(changedLocators[i], TEST_REFERENCES[i].getReferenceLocator());
 		}
 	}
 

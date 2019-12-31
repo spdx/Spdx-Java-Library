@@ -141,9 +141,9 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 			if (Objects.isNull(algorithm)) {
 				throw new InvalidSPDXAnalysisException("Can not set required checksum algorithm to null");
 			}
-			if (ChecksumAlgorithm.MISSING.equals(algorithm)) {
-				throw new InvalidSPDXAnalysisException("Can not set required checksum algorithm to MISSING.  This is only used when no algorithm value was found.");
-			}
+		}
+		if (ChecksumAlgorithm.MISSING.equals(algorithm)) {
+			throw new InvalidSPDXAnalysisException("Can not set required checksum algorithm to MISSING.  This is only used when no algorithm value was found.");
 		}
 		setPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM, algorithm);
 	}

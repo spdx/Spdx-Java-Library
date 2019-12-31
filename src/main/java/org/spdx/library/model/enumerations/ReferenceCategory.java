@@ -29,7 +29,8 @@ import org.spdx.library.model.IndividualUriValue;
 public enum ReferenceCategory implements IndividualUriValue {
 	PACKAGE_MANAGER("referenceCategory_packageManager"),
 	SECURITY("referenceCategory_security"),
-	OTHER("referenceCategory_other")
+	OTHER("referenceCategory_other"), 
+	MISSING("invalid_missing")
 	;
 
 private String longName;
