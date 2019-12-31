@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -109,8 +110,14 @@ public class SpdxCreatorInformation extends ModelObject {
 	 * @return When the SPDX file was originally created. The date is to be specified according to combined date and time in UTC format as specified in ISO 8601 standard. 
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Optional<String> getCreated() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_CREATION_CREATED);
+	public String getCreated() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_CREATION_CREATED);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("Missing created date");
+			return "";
+		}
 	}
 	
 	/**
@@ -119,6 +126,15 @@ public class SpdxCreatorInformation extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxCreatorInformation setCreated(String created) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(created)) {
+				throw new InvalidSPDXAnalysisException("Can not set required created date to null");
+			}
+			String verify = SpdxVerificationHelper.verifyDate(created);
+			if (Objects.nonNull(verify) && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_CREATION_CREATED, created);
 		return this;
 	}
@@ -146,17 +162,15 @@ public class SpdxCreatorInformation extends ModelObject {
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting creators",e);
 		}
-		Optional<String> created;
+		String created;
 		try {
 			created = getCreated();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting created",e);
-			created = Optional.empty();
+			created = "";
 		}
-		if (created.isPresent()) {
-			sb.append("; Created on ");
-			sb.append(created.get());
-		}
+		sb.append("; Created on ");
+		sb.append(created);
 		Optional<String> licenseListVerion;
 		try {
 			licenseListVerion = getLicenseListVersion();
@@ -205,11 +219,11 @@ public class SpdxCreatorInformation extends ModelObject {
 			retval.add("Error getting creators: "+e.getMessage());
 		}
 		try {
-			Optional<String> creationDate = this.getCreated();
-			if (!creationDate.isPresent()) {
+			String creationDate = this.getCreated();
+			if (creationDate.isEmpty()) {
 				retval.add("Missing required created date");
 			} else {
-				String verify = SpdxVerificationHelper.verifyDate(creationDate.get());
+				String verify = SpdxVerificationHelper.verifyDate(creationDate);
 				if (verify != null) {
 					retval.add(verify);
 				}

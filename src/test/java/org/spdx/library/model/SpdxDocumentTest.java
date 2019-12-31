@@ -237,8 +237,7 @@ public class SpdxDocumentTest extends TestCase {
 	public void testDefaultCreationInfo() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertNotNull(doc.getCreationInfo());
-		assertTrue("Mandatory creation date missing from new SPDX Document.", doc.getCreationInfo().get().getCreated().isPresent()
-				&& !doc.getCreationInfo().get().getCreated().get().isEmpty());
+		assertTrue("Mandatory creation date missing from new SPDX Document.", !doc.getCreationInfo().get().getCreated().isEmpty());
 		Optional<String> licenseListVersion = doc.getCreationInfo().get().getLicenseListVersion();
 		assertTrue(licenseListVersion.isPresent() && StringUtils.isNotBlank(licenseListVersion.get()));
 	}

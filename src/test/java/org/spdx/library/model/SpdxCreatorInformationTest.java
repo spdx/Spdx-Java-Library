@@ -30,6 +30,7 @@ public class SpdxCreatorInformationTest extends TestCase {
 
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		SpdxCreatorInformation ci = new SpdxCreatorInformation();
+		ci.setStrct(false);
 		assertEquals(2, ci.verify().size());
 		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
 		String date = format.format(new Date());
@@ -95,10 +96,10 @@ public class SpdxCreatorInformationTest extends TestCase {
 		String date = format.format(new Date());
 		SpdxCreatorInformation ci = gmo.createCreationInfo(creators, date);
 		assertEquals(0, ci.verify().size());
-		assertEquals(date, ci.getCreated().get());
+		assertEquals(date, ci.getCreated());
 		String oldDate = format.format(new Date(10101));
 		ci.setCreated(oldDate);
-		assertEquals(oldDate, ci.getCreated().get());
+		assertEquals(oldDate, ci.getCreated());
 		assertEquals(0, ci.verify().size());
 	}
 
