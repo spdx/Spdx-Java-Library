@@ -161,6 +161,11 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 		}
 	}
 	
+	/**
+	 * Set the value - this should only be called by factory methods
+	 * @param value
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	protected void setValue(String value) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (Objects.isNull(value)) {

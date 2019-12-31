@@ -173,9 +173,10 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	
 	/**
 	 * @param checksum the checksum to set
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setChecksum(Checksum checksum) throws InvalidSPDXAnalysisException {
+	public ExternalDocumentRef setChecksum(Checksum checksum) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (Objects.isNull(checksum)) {
 				throw new InvalidSPDXAnalysisException("Null value for a required checksum");
@@ -189,6 +190,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			}
 		}
 		setPropertyValue(SpdxConstants.PROP_EXTERNAL_DOC_CHECKSUM, checksum);
+		return this;
 	}
 	
 	/**
@@ -216,7 +218,12 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 	}
 	
-	public void setSpdxDocumentNamespace(@Nullable String documentNamespace) throws InvalidSPDXAnalysisException {
+	/**
+	 * Set the document namespace
+	 * @param documentNamespace
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public ExternalDocumentRef setSpdxDocumentNamespace(String documentNamespace) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(documentNamespace)) {
 			if (strict) {
 				throw new InvalidSPDXAnalysisException("Null value for a required docment namespace");
@@ -235,6 +242,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 						}
 			});
 		}
+		return this;
 	}
 	
 	/**
@@ -259,10 +267,12 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 
 	/**
 	 * @param spdxDocument the spdxDocument to set
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setSpdxDocument(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+	public ExternalDocumentRef setSpdxDocument(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		setSpdxDocumentNamespace(documentToDocumentUri(spdxDocument));
+		return this;
 	}
 	
 	/* (non-Javadoc)

@@ -117,9 +117,10 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	/**
 	 * Set the relationship type
 	 * @param type
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setRelationshipType(RelationshipType type) throws InvalidSPDXAnalysisException {
+	public Relationship setRelationshipType(RelationshipType type) throws InvalidSPDXAnalysisException {
 		if (RelationshipType.MISSING.equals(type)) {
 			throw new InvalidSPDXAnalysisException("Can not set required relationshipType to MISSING");
 		}
@@ -127,6 +128,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			throw new InvalidSPDXAnalysisException("Can not set required relationshipType to null");
 		}
 		setPropertyValue(SpdxConstants.PROP_RELATIONSHIP_TYPE, type);
+		return this;
 	}
 	
 	/**
@@ -138,10 +140,12 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	
 	/**
 	 * @param comment the comment to set
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setComment(String comment) throws InvalidSPDXAnalysisException {
+	public Relationship setComment(String comment) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
+		return this;
 	}
 	
 	/**
@@ -154,10 +158,12 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	
 	/**
 	 * @param relatedSpdxElement the relatedSpdxElement to set
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setRelatedSpdxElement(SpdxElement relatedSpdxElement) throws InvalidSPDXAnalysisException {
+	public Relationship setRelatedSpdxElement(SpdxElement relatedSpdxElement) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.PROP_RELATED_SPDX_ELEMENT, relatedSpdxElement);
+		return this;
 	}
 	
 	/* (non-Javadoc)

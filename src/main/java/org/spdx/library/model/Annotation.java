@@ -73,6 +73,10 @@ public class Annotation extends ModelObject {
 		return SpdxConstants.CLASS_ANNOTATION;
 	}
 
+	/**
+	 * @return annotation type
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public AnnotationType getAnnotationType() throws InvalidSPDXAnalysisException {
 		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE);
 		if (retval.isPresent() && !(retval.get() instanceof AnnotationType)) {
@@ -89,7 +93,12 @@ public class Annotation extends ModelObject {
 		}
 	}
 	
-	public void setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {
+	/**
+	 * @param type
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Annotation setAnnotationType(AnnotationType type) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (type == null) {
 				throw new InvalidSPDXAnalysisException("Annotation type is required - null value for type is not accepted");
@@ -99,6 +108,7 @@ public class Annotation extends ModelObject {
 			throw new InvalidSPDXAnalysisException("Can not set value to MISSING for annotation type.  This is reserved for when the value is not present in the store.");
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_TYPE, type);
+		return this;
 	}
 	
 	/**
@@ -117,9 +127,10 @@ public class Annotation extends ModelObject {
 	
 	/**
 	 * @param annotator
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setAnnotator(String annotator) throws InvalidSPDXAnalysisException {
+	public Annotation setAnnotator(String annotator) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (annotator == null || annotator.isEmpty()) {
 				throw new InvalidSPDXAnalysisException("Annotator is required - can not be null or empty");
@@ -130,6 +141,7 @@ public class Annotation extends ModelObject {
 			}
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATOR, annotator);
+		return this;
 	}
 	
 	/**
@@ -148,15 +160,17 @@ public class Annotation extends ModelObject {
 	/**
 	 * Set the comment
 	 * @param comment
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setComment(String comment) throws InvalidSPDXAnalysisException {
+	public Annotation setComment(String comment) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (comment == null || comment.isEmpty()) {
 				throw new InvalidSPDXAnalysisException("Comment is required - can not be null or empty");
 			}
 		}
 		setPropertyValue(SpdxConstants.RDFS_PROP_COMMENT, comment);
+		return this;
 	}
 	
 	/**
@@ -175,9 +189,10 @@ public class Annotation extends ModelObject {
 	/**
 	 * Set the annotation date
 	 * @param date
+	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void setAnnotationDate(String date) throws InvalidSPDXAnalysisException {
+	public Annotation setAnnotationDate(String date) throws InvalidSPDXAnalysisException {
 		if (strict) {
 			if (date == null || date.isEmpty()) {
 				throw new InvalidSPDXAnalysisException("Date is required - can not be null or empty");
@@ -188,6 +203,7 @@ public class Annotation extends ModelObject {
 			}
 		}
 		setPropertyValue(SpdxConstants.PROP_ANNOTATION_DATE, date);
+		return this;
 	}
 
 	/* (non-Javadoc)
