@@ -112,7 +112,7 @@ public class ExternalSpdxElementTest extends TestCase {
 	}
 	
 	public void testUriToExternalSpdxElementId() throws InvalidSPDXAnalysisException {
-		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.MD5, "595f44fec1e92a71d3e9e77456ba80d1");
+		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3");
 		gmo.createExternalDocumentRef(DOCID1, DOCURI1, checksum);
 		String uri = DOCURI1 + "#" + SPDXID1;
 		String expected = DOCID1 + ":" + SPDXID1;

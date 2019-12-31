@@ -71,11 +71,11 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 				if (!(externalRef instanceof ExternalDocumentRef)) {
 					logger.warn("Incorrect type for an external document ref: "+externalRef.getClass().toString());
 				} else {
-					Optional<String> externalRefNamespace = ((ExternalDocumentRef)externalRef).getSpdxDocumentNamespace();
-					if (!externalRefNamespace.isPresent()) {
+					String externalRefNamespace = ((ExternalDocumentRef)externalRef).getSpdxDocumentNamespace();
+					if (externalRefNamespace.isEmpty()) {
 						logger.warn("Namespace missing for external doc ref "+((ExternalDocumentRef)externalRef).getId());
 					}
-					if (externalDocUri.equals(externalRefNamespace.get())) {
+					if (externalDocUri.equals(externalRefNamespace)) {
 						return Optional.of((ExternalDocumentRef)externalRef);
 					}
 				}
@@ -102,6 +102,10 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 	}
 
+	/**
+	 * Default model store, copy manager, and document URI
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public ExternalDocumentRef() throws InvalidSPDXAnalysisException {
 		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.DocumentRef, DefaultModelStore.getDefaultDocumentUri()));
 	}
@@ -119,11 +123,11 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	}
 
 	/**
-	 * @param modelStore
-	 * @param documentUri
-	 * @param id
-	 * @param copyManager
-	 * @param create
+	 * @param modelStore Storage for the model objects
+	 * @param documentUri SPDX Document URI for a document associated with this model
+	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param copyManager - if supplied, model objects will be implictly copied into this model store and document URI when referenced by setting methods
+	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExternalDocumentRef(IModelStore modelStore, String documentUri, String id, 
@@ -172,28 +176,40 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setChecksum(Checksum checksum) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(checksum)) {
+				throw new InvalidSPDXAnalysisException("Null value for a required checksum");
+			}
+			List<String> verify = checksum.verify();
+			if (verify.size() > 0) {
+				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
+			}
+			if (!ChecksumAlgorithm.SHA1.equals(checksum.getAlgorithm())) {
+				throw new InvalidSPDXAnalysisException("Checksum algorithm must be of type SHA1");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_EXTERNAL_DOC_CHECKSUM, checksum);
 	}
 	
 	/**
-	 * @return the spdxDocumentNamespace
+	 * @return the spdxDocumentNamespace or empty string if no namespace
 	 */
-	@SuppressWarnings("unchecked")
-	public Optional<String> getSpdxDocumentNamespace() throws InvalidSPDXAnalysisException {
+	public String getSpdxDocumentNamespace() throws InvalidSPDXAnalysisException {
 		Optional<Object> docNamespace = getObjectPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!docNamespace.isPresent()) {
-			return Optional.empty();
+			logger.warn("SPDX document namespace not found");
+			return "";
 		}
 		if (docNamespace.get() instanceof IndividualUriValue) {
 			String docUri = ((IndividualUriValue)(docNamespace.get())).getIndividualURI();
 			if (Objects.isNull(docUri)) {
 				logger.warn("Missing individual URI in doc namespace");
-				return Optional.empty();
+				return "";
 			}
-			return Optional.of(docUri);
+			return docUri;
 		} else if (docNamespace.get() instanceof String) {
 			logger.warn("Spdx Document Namespace is of type literal string.  Reccomended type is IndividualValue");
-			return (Optional<String>)(Optional<?>)docNamespace;
+			return (String)docNamespace.get();
 		} else {
 			logger.error("SPDX document namespace is not of type IndividualValue or String.  Type="+docNamespace.get().getClass().toString());
 			throw new SpdxInvalidTypeException("SPDX document namespace is not of type IndividualValue or String");
@@ -202,8 +218,15 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	
 	public void setSpdxDocumentNamespace(@Nullable String documentNamespace) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(documentNamespace)) {
-			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, null);
+			if (strict) {
+				throw new InvalidSPDXAnalysisException("Null value for a required docment namespace");
+			} else {
+				setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, null);
+			}
 		} else {
+			if (strict && !SpdxVerificationHelper.isValidUri(documentNamespace)) {
+				throw new InvalidSPDXAnalysisException("Invalid document namespace.  Must be a valid URI.");
+			}
 			setPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT,
 					new IndividualUriValue() {
 						@Override
@@ -221,13 +244,13 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 */
 	@SuppressWarnings("unchecked")
 	public Optional<SpdxDocument> getSpdxDocument() throws InvalidSPDXAnalysisException {
-		Optional<String> docNamespace = getSpdxDocumentNamespace();
-		if (!docNamespace.isPresent()) {
+		String docNamespace = getSpdxDocumentNamespace();
+		if (docNamespace.isEmpty()) {
 			return Optional.empty();
 		}
-		if (this.getModelStore().exists(docNamespace.get(), SpdxConstants.SPDX_DOCUMENT_ID)) {
+		if (this.getModelStore().exists(docNamespace, SpdxConstants.SPDX_DOCUMENT_ID)) {
 			return (Optional<SpdxDocument>)(Optional<?>)Optional.of(SpdxModelFactory.createModelObject(
-					getModelStore(), docNamespace.get(), SpdxConstants.SPDX_DOCUMENT_ID, 
+					getModelStore(), docNamespace, SpdxConstants.SPDX_DOCUMENT_ID, 
 					SpdxConstants.CLASS_SPDX_DOCUMENT, getCopyManager()));
 		} else {
 			return Optional.empty();
@@ -249,15 +272,14 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
 		String uri = "UNKNOWN";
-		Optional<String> spdxDocumentNamespace;
+		String spdxDocumentNamespace;
 		try {
 			spdxDocumentNamespace = getSpdxDocumentNamespace();
-			if (!spdxDocumentNamespace.isPresent()) {
+			if (spdxDocumentNamespace.isEmpty()) {
 				retval.add("Missing required external document URI");
 			} else {
-				uri = spdxDocumentNamespace.get();
-				if (!SpdxVerificationHelper.isValidUri(uri)) {
-					retval.add("Invalid URI for external Spdx Document URI: "+spdxDocumentNamespace.get());
+				if (!SpdxVerificationHelper.isValidUri(spdxDocumentNamespace)) {
+					retval.add("Invalid URI for external Spdx Document URI: "+spdxDocumentNamespace);
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -289,29 +311,21 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	@Override
 	public int compareTo(ExternalDocumentRef o) {
 		int retval = 0;
-		Optional<String> myDocumentNamespace;
+		String myDocumentNamespace;
 		try {
 			myDocumentNamespace = getSpdxDocumentNamespace();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting document namepsace",e);
-			myDocumentNamespace = Optional.empty();
+			myDocumentNamespace = "";
 		}
-		Optional<String> compareDocumentNamespace;
+		String compareDocumentNamespace;
 		try {
 			compareDocumentNamespace = o.getSpdxDocumentNamespace();
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting compare document namepsace",e);
-			compareDocumentNamespace = Optional.empty();
+			compareDocumentNamespace = "";
 		}
-		if (!compareDocumentNamespace.isPresent()) {
-			if (myDocumentNamespace.isPresent()) {
-				return 1;
-			}
-		} else if (!myDocumentNamespace.isPresent()) {
-			return -1;
-		} else {
-			retval = myDocumentNamespace.get().compareTo(compareDocumentNamespace.get());
-		}
+		retval = myDocumentNamespace.compareTo(compareDocumentNamespace);
 		if (retval != 0) {
 			return retval;
 		}

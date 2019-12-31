@@ -86,6 +86,7 @@ public class ExternalDocumentRefTest extends TestCase {
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
+		edf.setStrct(false);
 		assertEquals(0, edf.verify().size());
 		edf.setChecksum(null);
 		assertEquals(1, edf.verify().size());
@@ -109,9 +110,9 @@ public class ExternalDocumentRefTest extends TestCase {
 
 	public void testsetSpdxDocumentNamespace() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
-		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace());
 		edf.setSpdxDocumentNamespace(DOCUMENT_URI2);
-		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace());
 	}
 	/**
 	 * Test method for {@link org.spdx.library.model.ExternalDocumentRef#setSpdxDocument(org.spdx.library.model.SpdxDocument)}.
@@ -123,17 +124,17 @@ public class ExternalDocumentRefTest extends TestCase {
 		doc2.setName("DocumentName2");
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI2, CHECKSUM1);
 		ExternalDocumentRef edf2 = new ExternalDocumentRef(edf.getModelStore(), edf.getDocumentUri(), edf.getId(), edf.getCopyManager(), false);
-		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace().get());
-		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace());
+		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace());
 		edf.setSpdxDocument(doc1);
-		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace());
 		assertEquals("DocumentName1", edf.getSpdxDocument().get().getName().get());
-		assertEquals(DOCUMENT_URI1, edf2.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI1, edf2.getSpdxDocumentNamespace());
 		assertEquals("DocumentName1", edf2.getSpdxDocument().get().getName().get());
 		edf.setSpdxDocument(doc2);
-		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace());
 		assertEquals("DocumentName2", edf.getSpdxDocument().get().getName().get());
-		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace());
 		assertEquals("DocumentName2", edf2.getSpdxDocument().get().getName().get());
 	}
 
@@ -144,12 +145,12 @@ public class ExternalDocumentRefTest extends TestCase {
 	public void testSetExternalDocumentId() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
 		ExternalDocumentRef edf2 = new ExternalDocumentRef(edf.getModelStore(), edf.getDocumentUri(), edf.getId(), edf.getCopyManager(), false);
-		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace().get());
-		assertEquals(DOCUMENT_URI1, edf2.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI1, edf.getSpdxDocumentNamespace());
+		assertEquals(DOCUMENT_URI1, edf2.getSpdxDocumentNamespace());
 
 		edf.setSpdxDocumentNamespace(DOCUMENT_URI2);
-		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace().get());
-		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace().get());
+		assertEquals(DOCUMENT_URI2, edf.getSpdxDocumentNamespace());
+		assertEquals(DOCUMENT_URI2, edf2.getSpdxDocumentNamespace());
 	}
 
 	/**
@@ -159,6 +160,8 @@ public class ExternalDocumentRefTest extends TestCase {
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
 		ExternalDocumentRef edf2 = gmo.createExternalDocumentRef(DOCUMENT_ID2, DOCUMENT_URI1, CHECKSUM1);
+		edf.setStrct(false);
+		edf2.setStrct(false);
 		assertEquals(0, edf.compareTo(edf2));
 		assertEquals(0, edf2.compareTo(edf));
 		edf.setChecksum(CHECKSUM2);

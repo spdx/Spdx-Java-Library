@@ -58,7 +58,7 @@ public class RelationshipTest extends TestCase {
 		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
 		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
-		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.MD5, "595f44fec1e92a71d3e9e77456ba80d1");
+		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3");
 		ExternalDocumentRef externalDoc = gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef,gmo.getDocumentUri()), 
 				"https://external.doc/one", checksum);
 		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1",
