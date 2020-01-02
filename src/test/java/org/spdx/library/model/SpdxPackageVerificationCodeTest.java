@@ -93,12 +93,12 @@ public class SpdxPackageVerificationCodeTest extends TestCase {
 	public void testSetValue() throws InvalidSPDXAnalysisException {
 		for (int i  = 0; i < VERIFICATION_CODES.length; i++) {
 			SpdxPackageVerificationCode comp = VERIFICATION_CODES[i];
-			assertEquals(VALUES[i], comp.getValue().get());
+			assertEquals(VALUES[i], comp.getValue());
 			for (String excluded:SKIPPED_FILES[i]) {
 				assertTrue(comp.getExcludedFileNames().contains(excluded));
 			}
 			comp.setValue(VALUES2[i]);
-			assertEquals(VALUES2[i], comp.getValue().get());
+			assertEquals(VALUES2[i], comp.getValue());
 		}
 	}
 
@@ -119,7 +119,7 @@ public class SpdxPackageVerificationCodeTest extends TestCase {
 			for (String excluded:SKIPPED_FILES2[i]) {
 				assertTrue(comp.getExcludedFileNames().contains(excluded));
 			}
-			assertEquals(VALUES[i], comp.getValue().get());
+			assertEquals(VALUES[i], comp.getValue());
 		}
 	}
 

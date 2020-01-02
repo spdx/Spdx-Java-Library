@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -79,8 +80,14 @@ public class SpdxPackageVerificationCode extends ModelObject {
 	 * @return the value of the verification code
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Optional<String> getValue() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_VERIFICATIONCODE_VALUE);
+	public String getValue() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_VERIFICATIONCODE_VALUE);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("No value found - returning empty string");
+			return "";
+		}
 	}
 	
 	/**
@@ -89,6 +96,9 @@ public class SpdxPackageVerificationCode extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setValue(String value) throws InvalidSPDXAnalysisException {
+		if (strict && (Objects.isNull(value) || value.isEmpty())) {
+			throw new InvalidSPDXAnalysisException("Can not set required verification code value to null or empty string");
+		}
 		setPropertyValue(SpdxConstants.PROP_VERIFICATIONCODE_VALUE, value);
 	}
 	
@@ -107,11 +117,11 @@ public class SpdxPackageVerificationCode extends ModelObject {
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
 		try {
-			Optional<String> value = this.getValue();
-			if (!value.isPresent() || value.get().isEmpty()) {
+			String value = this.getValue();
+			if (value.isEmpty()) {
 				retval.add("Missing required verification code value");
 			} else {
-				String verify = SpdxVerificationHelper.verifyChecksumString(value.get(), ChecksumAlgorithm.SHA1);
+				String verify = SpdxVerificationHelper.verifyChecksumString(value, ChecksumAlgorithm.SHA1);
 				if (verify != null) {
 					retval.add(verify);
 				}

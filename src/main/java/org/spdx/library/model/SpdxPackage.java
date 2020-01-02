@@ -568,7 +568,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			Optional<SpdxPackageVerificationCode> verificationCode = this.getPackageVerificationCode();
 			if (!verificationCode.isPresent() && filesAnalyzed) {
 				retval.add("Missing required package verification code for package " + pkgName);
-			} else if (verificationCode.isPresent() && verificationCode.get().getValue().isPresent() && !filesAnalyzed) {
+			} else if (verificationCode.isPresent() && !verificationCode.get().getValue().isEmpty() && !filesAnalyzed) {
 				retval.add("Verification code must not be included when files not analyzed.");
 			} else if (filesAnalyzed) {
 				List<String> verify = verificationCode.get().verify();
