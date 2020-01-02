@@ -139,18 +139,33 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	
 	@Override
 	public SpdxFile setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(copyrightText) || copyrightText.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Can not set required copyright text to null or empty");
+			}
+		}
 		super.setCopyrightText(copyrightText);
 		return this;
 	}
 	
 	@Override
-	public SpdxFile setName(String name) throws InvalidSPDXAnalysisException {
+	public SpdxFile setName(@Nullable String name) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(name) || name.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Can not set required name to null or empty");
+			}
+		}
 		super.setName(name);
 		return this;
 	}
 	
 	@Override 
 	public SpdxFile setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(license)) {
+				throw new InvalidSPDXAnalysisException("Can not set required concluded license to null");
+			}
+		}
 		super.setLicenseConcluded(license);
 		return this;
 	}
@@ -507,5 +522,4 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			}
 		}
 	}
-
 }
