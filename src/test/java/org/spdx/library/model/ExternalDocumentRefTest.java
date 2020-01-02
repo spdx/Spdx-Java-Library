@@ -86,7 +86,7 @@ public class ExternalDocumentRefTest extends TestCase {
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
-		edf.setStrct(false);
+		edf.setStrict(false);
 		assertEquals(0, edf.verify().size());
 		edf.setChecksum(null);
 		assertEquals(1, edf.verify().size());
@@ -160,8 +160,8 @@ public class ExternalDocumentRefTest extends TestCase {
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		ExternalDocumentRef edf = gmo.createExternalDocumentRef(DOCUMENT_ID1, DOCUMENT_URI1, CHECKSUM1);
 		ExternalDocumentRef edf2 = gmo.createExternalDocumentRef(DOCUMENT_ID2, DOCUMENT_URI1, CHECKSUM1);
-		edf.setStrct(false);
-		edf2.setStrct(false);
+		edf.setStrict(false);
+		edf2.setStrict(false);
 		assertEquals(0, edf.compareTo(edf2));
 		assertEquals(0, edf2.compareTo(edf));
 		edf.setChecksum(CHECKSUM2);

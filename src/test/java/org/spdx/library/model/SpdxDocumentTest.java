@@ -244,7 +244,7 @@ public class SpdxDocumentTest extends TestCase {
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
-		doc.setStrct(false);
+		doc.setStrict(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -288,7 +288,7 @@ public class SpdxDocumentTest extends TestCase {
 		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
 		IModelStore model2 = new InMemSpdxStore();
 		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocument(model2, doc2Uri, gmo.getCopyManager());
-		doc2.setStrct(false);
+		doc2.setStrict(false);
 		doc2.setAnnotations(annotations);
 		doc2.setComment(DOC_COMMENT1);
 		doc2.setCreationInfo(CREATIONINFO1);
@@ -333,7 +333,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
-		doc.setStrct(false);
+		doc.setStrict(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -382,7 +382,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testGetDocumentDescribes() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
-		doc.setStrct(false);
+		doc.setStrict(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -462,7 +462,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testSetDataLicense() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
-		doc.setStrct(false);
+		doc.setStrict(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});

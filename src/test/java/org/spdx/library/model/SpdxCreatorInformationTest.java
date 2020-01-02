@@ -30,7 +30,7 @@ public class SpdxCreatorInformationTest extends TestCase {
 
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		SpdxCreatorInformation ci = new SpdxCreatorInformation();
-		ci.setStrct(false);
+		ci.setStrict(false);
 		assertEquals(2, ci.verify().size());
 		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
 		String date = format.format(new Date());

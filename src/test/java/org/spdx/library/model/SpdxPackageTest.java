@@ -213,6 +213,7 @@ public class SpdxPackageTest extends TestCase {
 				.setSourceInfo(SOURCEINFO1)
 				.setExternalRefs(externalRefs)
 				.build();
+		pkg.setStrict(false);
 		List<String> result = pkg.verify();
 		assertEquals(0, result.size());
 		// verification code
@@ -441,12 +442,12 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		
-		assertEquals(LICENSE3, pkg.getLicenseDeclared().get());
+		assertEquals(LICENSE3, pkg.getLicenseDeclared());
 		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
-		assertEquals(LICENSE3, pkg2.getLicenseDeclared().get());
+		assertEquals(LICENSE3, pkg2.getLicenseDeclared());
 		pkg.setLicenseDeclared(LICENSE1);
-		assertEquals(LICENSE1, pkg.getLicenseDeclared().get());
-		assertEquals(LICENSE1, pkg2.getLicenseDeclared().get());
+		assertEquals(LICENSE1, pkg.getLicenseDeclared());
+		assertEquals(LICENSE1, pkg2.getLicenseDeclared());
 	}
 
 	/**

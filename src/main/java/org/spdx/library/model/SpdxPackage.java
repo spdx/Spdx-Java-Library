@@ -158,11 +158,16 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 	
 	/**
-	 * @return the licenseDeclared
+	 * @return the licenseDeclared or NOASSERTION if no license declared is found
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Optional<AnyLicenseInfo> getLicenseDeclared() throws InvalidSPDXAnalysisException {
-		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
+	public AnyLicenseInfo getLicenseDeclared() throws InvalidSPDXAnalysisException {
+		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			return new SpdxNoAssertionLicense(getModelStore(), getDocumentUri());
+		}
 	}
 	
 	/**
@@ -172,6 +177,11 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setLicenseDeclared(@Nullable AnyLicenseInfo licenseDeclared) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(licenseDeclared)) {
+				throw new InvalidSPDXAnalysisException("Can not set required license declared to null");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE, licenseDeclared);
 		return this;
 	}
@@ -226,6 +236,12 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setDownloadLocation(String downloadLocation) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(downloadLocation)) {
+			String verify = SpdxVerificationHelper.verifyDownloadLocation(downloadLocation);
+			if (Objects.nonNull(verify) && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_DOWNLOAD_URL, downloadLocation);
 		return this;
 	}
@@ -243,6 +259,11 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setHomepage(String homepage) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(homepage)) {
+			if (!SpdxVerificationHelper.isValidUri(homepage)) {
+				throw new InvalidSPDXAnalysisException(homepage + " is not a valid URI");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_PROJECT_HOMEPAGE, homepage);
 		return this;
 	}
@@ -260,6 +281,13 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setOriginator(String originator) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(originator)) {
+			String verify = SpdxVerificationHelper.verifyOriginator(originator);
+			if (Objects.nonNull(verify) && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
+			
+		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_ORIGINATOR, originator);
 		return this;
 	}
@@ -282,12 +310,18 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 	
 	/**
-	 * @return the packageVerificationCode
+	 * @return the packageVerificationCode, null if not present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public Optional<SpdxPackageVerificationCode> getPackageVerificationCode() throws InvalidSPDXAnalysisException {
-		return (Optional<SpdxPackageVerificationCode>) (Optional<?>)getObjectPropertyValue(SpdxConstants.PROP_PACKAGE_VERIFICATION_CODE);
+		Optional<?> retval = getObjectPropertyValue(SpdxConstants.PROP_PACKAGE_VERIFICATION_CODE);
+		if (!retval.isPresent()) {
+			return Optional.empty();
+		}
+		if (!(retval.get() instanceof SpdxPackageVerificationCode)) {
+			throw new InvalidSPDXAnalysisException("Invalid type - expecting SpdxVerificationCode, type was "+retval.get().getClass().toString());
+		}
+		return Optional.of((SpdxPackageVerificationCode)retval.get());
 	}
 	
 	/**
@@ -296,6 +330,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setPackageVerificationCode(SpdxPackageVerificationCode verificationCode) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.isNull(verificationCode) && isFilesAnalyzed()) {
+			throw new InvalidSPDXAnalysisException("Can not set required verificationCode to null");
+		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_VERIFICATION_CODE, verificationCode);
 		return this;
 	}
@@ -347,6 +384,12 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setSupplier(String supplier) throws InvalidSPDXAnalysisException {
+		if (Objects.nonNull(supplier) && strict) {
+			String verify = SpdxVerificationHelper.verifySupplier(supplier);
+			if (Objects.nonNull(verify) && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_SUPPLIER, supplier);
 		return this;
 	}
@@ -402,6 +445,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage addFile(SpdxFile file) throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(file)) {
+			throw new InvalidSPDXAnalysisException("Can not add null file to a package");
+		}
 		getFiles().add(file);
 		return this;
 	}
@@ -462,7 +508,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 
 		// license declared - mandatory - 1 (need to change return values)
 		try {
-			Optional<AnyLicenseInfo> declaredLicense = this.getLicenseDeclared();
+			Optional<AnyLicenseInfo> declaredLicense = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 			if (!declaredLicense.isPresent()) {
 				retval.add("Missing required declared license for package "+pkgName);
 			} else {

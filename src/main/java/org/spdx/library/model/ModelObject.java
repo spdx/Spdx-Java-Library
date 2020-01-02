@@ -188,7 +188,7 @@ public abstract class ModelObject {
 	/**
 	 * @param strict if true, inputs will be validated against the SPDX spec
 	 */
-	public void setStrct(boolean strict) {
+	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}
 	
