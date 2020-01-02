@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -237,13 +238,14 @@ public class SpdxDocumentTest extends TestCase {
 	public void testDefaultCreationInfo() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertNotNull(doc.getCreationInfo());
-		assertTrue("Mandatory creation date missing from new SPDX Document.", !doc.getCreationInfo().get().getCreated().isEmpty());
-		Optional<String> licenseListVersion = doc.getCreationInfo().get().getLicenseListVersion();
+		assertTrue("Mandatory creation date missing from new SPDX Document.", !doc.getCreationInfo().getCreated().isEmpty());
+		Optional<String> licenseListVersion = doc.getCreationInfo().getLicenseListVersion();
 		assertTrue(licenseListVersion.isPresent() && StringUtils.isNotBlank(licenseListVersion.get()));
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		doc.setStrct(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -274,8 +276,8 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setDocumentDescribes(items);
 		assertTrue(collectionsSame(annotations, doc.getAnnotations()));
 		assertEquals(DOC_COMMENT1, doc.getComment().get());
-		assertEquals(CREATIONINFO1, doc.getCreationInfo().get());
-		assertEquals(CCO_DATALICENSE, doc.getDataLicense().get());
+		assertEquals(CREATIONINFO1, doc.getCreationInfo());
+		assertEquals(CCO_DATALICENSE, doc.getDataLicense());
 		assertTrue(collectionsSame(externalDocumentRefs, doc.getExternalDocumentRefs()));
 		assertTrue(collectionsSame(extractedLicenseInfos, doc.getExtractedLicenseInfos()));
 		assertEquals(DOC_NAME1, doc.getName().get());
@@ -287,6 +289,7 @@ public class SpdxDocumentTest extends TestCase {
 		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
 		IModelStore model2 = new InMemSpdxStore();
 		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocument(model2, doc2Uri, gmo.getCopyManager());
+		doc2.setStrct(false);
 		doc2.setAnnotations(annotations);
 		doc2.setComment(DOC_COMMENT1);
 		doc2.setCreationInfo(CREATIONINFO1);
@@ -331,6 +334,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		doc.setStrct(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -379,6 +383,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testGetDocumentDescribes() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		doc.setStrct(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -448,9 +453,9 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		assertEquals(CREATIONINFO1, doc.getCreationInfo().get());
+		assertEquals(CREATIONINFO1, doc.getCreationInfo());
 		doc.setCreationInfo(CREATIONINFO2);
-		assertEquals(CREATIONINFO2, doc.getCreationInfo().get());
+		assertEquals(CREATIONINFO2, doc.getCreationInfo());
 	}
 
 	/**
@@ -458,6 +463,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	public void testSetDataLicense() throws InvalidSPDXAnalysisException {
 		SpdxDocument doc = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), gmo.getCopyManager(), true);
+		doc.setStrct(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
 			});
@@ -484,10 +490,10 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		assertEquals(CCO_DATALICENSE, doc.getDataLicense().get());
+		assertEquals(CCO_DATALICENSE, doc.getDataLicense());
 		SpdxListedLicense lic = LicenseInfoFactory.getListedLicenseById("Apache-2.0");
 		doc.setDataLicense(lic);
-		assertEquals(lic, doc.getDataLicense().get());
+		assertEquals(lic, doc.getDataLicense());
 	}
 
 	/**
@@ -639,10 +645,10 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		assertFalse(doc.getSpecVersion().isPresent());
-		String ver = "2.1";
+		assertTrue(doc.getSpecVersion().isEmpty());
+		String ver = "SPDX-2.1";
 		doc.setSpecVersion(ver);
-		assertEquals(ver, doc.getSpecVersion().get());
+		assertEquals(ver, doc.getSpecVersion());
 	}
 
 }

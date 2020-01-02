@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -31,6 +33,7 @@ import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -104,22 +107,31 @@ public class SpdxDocument extends SpdxElement {
 	}
 	
 	/**
-	 * @return the creationInfo
+	 * @return the creationInfo, null if no creationInfo in the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
-	public Optional<SpdxCreatorInformation> getCreationInfo() throws InvalidSPDXAnalysisException {
+	public @Nullable SpdxCreatorInformation getCreationInfo() throws InvalidSPDXAnalysisException {
 		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.PROP_SPDX_CREATION_INFO);
-		if (retval.isPresent() && !(retval.get() instanceof SpdxCreatorInformation)) {
-			throw new SpdxInvalidTypeException("Invalid tpe for CreationInfo: "+retval.get().getClass().toString());
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof SpdxCreatorInformation)) {
+				throw new SpdxInvalidTypeException("Invalid tpe for CreationInfo: "+retval.get().getClass().toString());
+			}
+			return (SpdxCreatorInformation)retval.get();
+		} else {
+			logger.warn("No creation info for document "+getName());
+			return null;
 		}
-		return (Optional<SpdxCreatorInformation>)(Optional<?>)retval;
 	}
 	
 	/**
 	 * @param creationInfo the creationInfo to set
 	 */
 	public void setCreationInfo(SpdxCreatorInformation creationInfo) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(creationInfo)) {
+				throw new InvalidSPDXAnalysisException("Can not set required creation info to null");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_SPDX_CREATION_INFO, creationInfo);
 	}
 
@@ -127,8 +139,14 @@ public class SpdxDocument extends SpdxElement {
 	 * @return the dataLicense
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Optional<AnyLicenseInfo> getDataLicense() throws InvalidSPDXAnalysisException {
-		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE);
+	public AnyLicenseInfo getDataLicense() throws InvalidSPDXAnalysisException {
+		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("No data license for "+getName());
+			return new SpdxNoneLicense();
+		}
 	}
 	
 	/**
@@ -136,6 +154,16 @@ public class SpdxDocument extends SpdxElement {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setDataLicense(AnyLicenseInfo dataLicense) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(dataLicense)) {
+				throw new InvalidSPDXAnalysisException("Can not set required data license to null");
+			}
+			if (!(dataLicense instanceof SpdxListedLicense)) {
+				throw new InvalidSPDXAnalysisException("Invalid license type for data license - must be an SPDX Listed license");
+			} else if (!((SpdxListedLicense)dataLicense).getLicenseId().equals(SpdxConstants.SPDX_DATA_LICENSE_ID)) {
+				throw new InvalidSPDXAnalysisException("Incorrect data license.  Must be "+SpdxConstants.SPDX_DATA_LICENSE_ID);
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_SPDX_DATA_LICENSE, dataLicense);
 	}
 	
@@ -180,14 +208,28 @@ public class SpdxDocument extends SpdxElement {
 	/**
 	 * @return the specVersion
 	 */
-	public Optional<String> getSpecVersion() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_SPDX_VERSION);
+	public String getSpecVersion() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_SPDX_VERSION);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
 	 * @param specVersion the specVersion to set
 	 */
 	public void setSpecVersion(String specVersion) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(specVersion)) {
+				throw new InvalidSPDXAnalysisException("Can not set required spec version to null");
+			}
+			String verify = Version.verifySpdxVersion(specVersion);
+			if (Objects.nonNull(verify) && !verify.isEmpty()) {
+				throw new InvalidSPDXAnalysisException(verify);
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_SPDX_VERSION, specVersion);
 	}
 	
@@ -207,13 +249,12 @@ public class SpdxDocument extends SpdxElement {
 		// specVersion
 		String docSpecVersion = "";	// note - this is used later in verify to verify version specific info
 		try {
-			Optional<String> specVersion = getSpecVersion();
-			if (!specVersion.isPresent()) {
+			String specVersion = getSpecVersion();
+			if (specVersion.isEmpty()) {
 				retval.add("Missing required SPDX version");
 				docSpecVersion = "UNKNOWN";
 			} else {
-				docSpecVersion = specVersion.get();
-				String verify = Version.verifySpdxVersion(docSpecVersion);
+				String verify = Version.verifySpdxVersion(specVersion);
 				if (verify != null) {
 					retval.add(verify);
 				}			
@@ -224,11 +265,11 @@ public class SpdxDocument extends SpdxElement {
 		
 		// creationInfo
 		try {
-			Optional<SpdxCreatorInformation> creator = this.getCreationInfo();
-			if (!creator.isPresent()) {
+			SpdxCreatorInformation creator = this.getCreationInfo();
+			if (Objects.isNull(creator)) {
 				retval.add("Missing required Creator");
 			} else {
-				retval.addAll(creator.get().verify());
+				retval.addAll(creator.verify());
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting creator information: "+e.getMessage());
@@ -243,14 +284,14 @@ public class SpdxDocument extends SpdxElement {
 		}
 		// data license
 		try {
-			Optional<AnyLicenseInfo> dataLicense = this.getDataLicense();
-			if (!dataLicense.isPresent()) {
+			AnyLicenseInfo dataLicense = this.getDataLicense();
+			if (dataLicense.toString().equals("NONE")) {
 				retval.add("Missing required data license");
-			} else if (!(dataLicense.get() instanceof SpdxListedLicense)) {
+			} else if (!(dataLicense instanceof SpdxListedLicense)) {
 				retval.add("Invalid license type for data license - must be an SPDX Listed license");
-			} else if (!((SpdxListedLicense)dataLicense.get()).getLicenseId().equals(SpdxConstants.SPDX_DATA_LICENSE_ID)) {
+			} else if (!((SpdxListedLicense)dataLicense).getLicenseId().equals(SpdxConstants.SPDX_DATA_LICENSE_ID)) {
 				retval.add("Incorrect data license for SPDX version 1.0 document - found "+
-						((SpdxListedLicense)dataLicense.get()).getLicenseId()+", expected "+
+						((SpdxListedLicense)dataLicense).getLicenseId()+", expected "+
 						SpdxConstants.SPDX_DATA_LICENSE_ID);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
