@@ -247,12 +247,10 @@ public class SpdxDocument extends SpdxElement {
 			retval.add("Error getting document name");
 		}
 		// specVersion
-		String docSpecVersion = "";	// note - this is used later in verify to verify version specific info
 		try {
 			String specVersion = getSpecVersion();
 			if (specVersion.isEmpty()) {
 				retval.add("Missing required SPDX version");
-				docSpecVersion = "UNKNOWN";
 			} else {
 				String verify = Version.verifySpdxVersion(specVersion);
 				if (verify != null) {
