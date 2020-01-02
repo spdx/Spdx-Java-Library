@@ -19,6 +19,7 @@ package org.spdx.library.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -26,6 +27,7 @@ import javax.annotation.Nullable;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 
@@ -74,8 +76,14 @@ public abstract class SpdxItem extends SpdxElement {
 	/**
 	 * @return the licenseConcluded
 	 */
-	public Optional<AnyLicenseInfo> getLicenseConcluded() throws InvalidSPDXAnalysisException {
-		return getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED);
+	public AnyLicenseInfo getLicenseConcluded() throws InvalidSPDXAnalysisException {
+		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("No license concluded stored, returning NOASSERTION");
+			return new SpdxNoAssertionLicense(getModelStore(), getDocumentUri());
+		}
 	}
 	
 	/**
@@ -85,6 +93,11 @@ public abstract class SpdxItem extends SpdxElement {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxItem setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(license)) {
+				throw new InvalidSPDXAnalysisException("Can not set required concluded license to null");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED, license);
 		return this;
 	}
@@ -95,10 +108,16 @@ public abstract class SpdxItem extends SpdxElement {
 	}
 	
 	/**
-	 * @return the copyrightText
+	 * @return the copyrightText, empty string if no copyright was set
 	 */
-	public Optional<String> getCopyrightText() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.PROP_COPYRIGHT_TEXT);
+	public String getCopyrightText() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_COPYRIGHT_TEXT);
+		if (retval.isPresent()) {
+			return retval.get();
+		} else {
+			logger.warn("Missing required copyright text.  Returning empty string");
+			return "";
+		}
 	}
 	
 	/**
@@ -106,6 +125,11 @@ public abstract class SpdxItem extends SpdxElement {
 	 * @return myself - so you can chain setters
 	 */
 	public SpdxItem setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
+		if (strict) {
+			if (Objects.isNull(copyrightText) || copyrightText.isEmpty()) {
+				throw new InvalidSPDXAnalysisException("Can not set required copyright text to null or empty string");
+			}
+		}
 		setPropertyValue(SpdxConstants.PROP_COPYRIGHT_TEXT, copyrightText);
 		return this;
 	}
@@ -148,7 +172,7 @@ public abstract class SpdxItem extends SpdxElement {
 
 		Optional<AnyLicenseInfo> concluded;
 		try {
-			concluded = getLicenseConcluded();
+			concluded = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_LICENSE_CONCLUDED);
 			if (!concluded.isPresent()) {
 				retval.add("Missing required concluded license for "+name);
 			} else {

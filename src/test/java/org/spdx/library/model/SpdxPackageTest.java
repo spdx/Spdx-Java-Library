@@ -1154,12 +1154,12 @@ public class SpdxPackageTest extends TestCase {
 				.setSourceInfo(SOURCEINFO1)
 				.setExternalRefs(externalRefs)
 				.build();
-		assertEquals(LICENSE1, pkg.getLicenseConcluded().get());
+		assertEquals(LICENSE1, pkg.getLicenseConcluded());
 		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
-		assertEquals(LICENSE1, pkg2.getLicenseConcluded().get());
+		assertEquals(LICENSE1, pkg2.getLicenseConcluded());
 		pkg2.setLicenseConcluded(LICENSE2);
-		assertEquals(LICENSE2, pkg2.getLicenseConcluded().get());
-		assertEquals(LICENSE2, pkg.getLicenseConcluded().get());
+		assertEquals(LICENSE2, pkg2.getLicenseConcluded());
+		assertEquals(LICENSE2, pkg.getLicenseConcluded());
 	}
 
 	/**
@@ -1195,12 +1195,12 @@ public class SpdxPackageTest extends TestCase {
 				.setExternalRefs(externalRefs)
 				.build();
 		
-		assertEquals(COPYRIGHT_TEXT1, pkg.getCopyrightText().get());
+		assertEquals(COPYRIGHT_TEXT1, pkg.getCopyrightText());
 		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
-		assertEquals(COPYRIGHT_TEXT1, pkg2.getCopyrightText().get());
+		assertEquals(COPYRIGHT_TEXT1, pkg2.getCopyrightText());
 		pkg.setCopyrightText(COPYRIGHT_TEXT2);
-		assertEquals(COPYRIGHT_TEXT2, pkg2.getCopyrightText().get());
-		assertEquals(COPYRIGHT_TEXT2, pkg.getCopyrightText().get());
+		assertEquals(COPYRIGHT_TEXT2, pkg2.getCopyrightText());
+		assertEquals(COPYRIGHT_TEXT2, pkg.getCopyrightText());
 	}
 
 	/**
