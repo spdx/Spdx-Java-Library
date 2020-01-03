@@ -61,9 +61,11 @@ public class ModelObjectTest extends TestCase {
 
 	static final String[] TEST_STRING_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3"};
 	static final Object[] TEST_STRING_VALUE_PROPERTY_VALUES = new Object[] {"value1", "value2", "value3"};
+	static final String[] TEST_INTEGER_VALUE_PROPERTIES = new String[] {"intProp1", "intProp2", "Intprop3"};
+	static final Object[] TEST_INTEGER_VALUE_PROPERTY_VALUES = new Object[] {new Integer(3), new Integer(0), new Integer(-1)};
 	static final String[] TEST_BOOLEAN_VALUE_PROPERTIES = new String[] {"boolProp1", "boolProp2"};
 	static final Object[] TEST_BOOLEAN_VALUE_PROPERTY_VALUES = new Object[] {true, false};
-	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4"};
+	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4", "listProp5"};
 	static final String[] TEST_MODEL_OJBECT_PROPERTIES = new String[] {"typeProp1", "typeProp2"};
 	static final String[] TEST_ENUM_PROPERTIES = new String[] {"enumProp1", "enumProp2"};
 	static final ChecksumAlgorithm[] TEST_ENUM_VALUES = new ChecksumAlgorithm[] {ChecksumAlgorithm.MD5, ChecksumAlgorithm.SHA1};
@@ -99,7 +101,8 @@ public class ModelObjectTest extends TestCase {
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
 			Arrays.asList(new ModelObject[] {lex, eli1}),
-			Arrays.asList(new ChecksumAlgorithm[] {ChecksumAlgorithm.SHA256, ChecksumAlgorithm.SHA1})};
+			Arrays.asList(new ChecksumAlgorithm[] {ChecksumAlgorithm.SHA256, ChecksumAlgorithm.SHA1}),
+			Arrays.asList(new Integer[] {1, 3, 5})};
 		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObject[] {lex, eli1};
 		TEST_ANYLICENSEINFO_PROP_VALUES = new AnyLicenseInfo[] {new SpdxListedLicense("Apache-2.0"), eli1, new SpdxNoneLicense()};
 		TEST_ANYLICENSEINFO_LIST_PROP_VALUES = new List<?>[] {Arrays.asList(new AnyLicenseInfo[] {new SpdxListedLicense("MIT"), eli1, new SpdxListedLicense("GPL-2.0-only")}),
@@ -128,6 +131,9 @@ public class ModelObjectTest extends TestCase {
 		}
 		for (int i = 0; i < TEST_ANYLICENSEINFO_LIST_PROPERTIES.length; i++) {
 			ALL_PROPERTY_VALUES.put(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], TEST_ANYLICENSEINFO_LIST_PROP_VALUES[i]);
+		}
+		for (int i = 0; i < TEST_INTEGER_VALUE_PROPERTIES.length; i++) {
+			ALL_PROPERTY_VALUES.put(TEST_INTEGER_VALUE_PROPERTIES[i], TEST_INTEGER_VALUE_PROPERTY_VALUES[i]);
 		}
 	}
 	/* (non-Javadoc)
@@ -321,6 +327,20 @@ public class ModelObjectTest extends TestCase {
 		}
 		try {
 			gmo.getStringPropertyValue(TEST_BOOLEAN_VALUE_PROPERTIES[0]);
+			fail("No exception on getting the wrong type");
+		} catch(SpdxInvalidTypeException ex) {
+			// expected
+		}
+	}
+	
+	public void testGetIntegerPropertyValue() throws InvalidSPDXAnalysisException {
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		addTestValues(gmo);
+		for (int i = 0; i < TEST_INTEGER_VALUE_PROPERTIES.length; i++) {
+			assertEquals(TEST_INTEGER_VALUE_PROPERTY_VALUES[i], gmo.getIntegerPropertyValue(TEST_INTEGER_VALUE_PROPERTIES[i]).get());
+		}
+		try {
+			gmo.getIntegerPropertyValue(TEST_BOOLEAN_VALUE_PROPERTIES[0]);
 			fail("No exception on getting the wrong type");
 		} catch(SpdxInvalidTypeException ex) {
 			// expected

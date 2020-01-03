@@ -113,6 +113,9 @@ public class SpdxModelFactory {
 		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, copyManager, true);
 		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new GenericSpdxElement(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return new ExternalSpdxElement(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return new LineCharPointer(modelStore, documentUri, id, copyManager, true);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}
@@ -154,6 +157,10 @@ public class SpdxModelFactory {
 		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return GenericModelObject.class;
 		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return GenericSpdxElement.class;
 		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return ExternalSpdxElement.class;
+		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return StartEndPointer.class;
+		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return ByteOffsetPointer.class;
+		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return LineCharPointer.class;
+
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}

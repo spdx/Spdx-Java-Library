@@ -118,7 +118,7 @@ public class ModelStorageClassConverter {
 			} else {
 				return mValue.toTypedValue();
 			}
-		} else if (value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
+		} else if (value instanceof Integer || value instanceof String || value instanceof Boolean || value instanceof IndividualUriValue) {
 			return value;
 		} else if (Objects.isNull(value)) {
 			throw new SpdxInvalidTypeException("Property value is null");

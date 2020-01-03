@@ -303,6 +303,25 @@ public abstract class ModelObject {
 		return retval;
 	}
 	
+	/**
+	 * @param propertyName Name of a property
+	 * @return the Optional Integer value associated with a property, null if no value is present
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<Integer> getIntegerPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		Optional<Integer> retval;
+		if (result.isPresent()) {
+			if (!(result.get() instanceof Integer)) {
+				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Integer");
+			}
+			retval = Optional.of((Integer)result.get());
+		} else {
+			retval = Optional.empty();
+		}
+		return retval;
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected Optional<Enum<?>> getEnumPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
@@ -1000,5 +1019,51 @@ public abstract class ModelObject {
 		Objects.requireNonNull(copyrightText);
 		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, copyrightText, sha1, licenseDeclared);
+	}
+
+	/**
+	 * @param referencedElement
+	 * @param offset
+	 * @return ByteOffsetPointer using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ByteOffsetPointer createByteOffsetPointer(SpdxElement referencedElement, int offset) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(referencedElement);
+		ByteOffsetPointer retval = new ByteOffsetPointer(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
+		retval.setReference(referencedElement);
+		retval.setOffset(offset);
+		return retval;
+	}
+
+	/**
+	 * @param referencedElement
+	 * @param lineNumber
+	 * @return LineCharPointer using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public LineCharPointer createLineCharPointer(SpdxElement referencedElement, int lineNumber) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(referencedElement);
+		LineCharPointer retval = new LineCharPointer(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
+		retval.setReference(referencedElement);
+		retval.setLineNumber(lineNumber);
+		return retval;
+	}
+	
+	/**
+	 * @param startPointer
+	 * @param endPointer
+	 * @return StartEndPointer using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public StartEndPointer createStartEndPointer(SinglePointer startPointer, SinglePointer endPointer) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(startPointer);
+		Objects.requireNonNull(endPointer);
+		StartEndPointer retval = new StartEndPointer(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
+		retval.setStartPointer(startPointer);
+		retval.setEndPointer(endPointer);
+		return retval;
 	}
 }

@@ -71,6 +71,7 @@ class StoredTypedItem extends TypedValue {
 		} else if (!value.getClass().isPrimitive() && 
 				!value.getClass().isAssignableFrom(String.class) &&
 				!value.getClass().isAssignableFrom(Boolean.class) &&
+				!value.getClass().isAssignableFrom(Integer.class) &&
 				!value.getClass().isAssignableFrom(TypedValue.class) &&
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
