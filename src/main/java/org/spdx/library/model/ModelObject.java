@@ -207,7 +207,11 @@ public abstract class ModelObject {
 	 * @return value associated with a property
 	 */
 	public Optional<Object> getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		return getObjectPropertyValue(modelStore, documentUri, id, propertyName, copyManager);
+		Optional<Object> retval = getObjectPropertyValue(modelStore, documentUri, id, propertyName, copyManager);
+		if (retval.isPresent() && retval.get() instanceof ModelObject && !strict) {
+			((ModelObject)retval.get()).setStrict(strict);
+		}
+		return retval;
 	}
 	
 	/**
@@ -1065,5 +1069,30 @@ public abstract class ModelObject {
 		retval.setStartPointer(startPointer);
 		retval.setEndPointer(endPointer);
 		return retval;
+	}
+	
+	/**
+	 * Create an SpdxSnippetBuilder with all of the required properties - the build() method will build the file
+	 * @param id - ID - must be an SPDX ID type
+	 * @param name - File name
+	 * @param concludedLicense license concluded
+	 * @param seenLicense collection of seen licenses
+	 * @param copyrightText Copyright text
+	 * @param snippetFromFile File where the snippet is located
+	 * @param startByte first byte of the snippet in the file
+	 * @param endByte last byte of the snippet in the file
+	 * @return SPDX snippet using the same modelStore and documentUri as this object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxSnippet.SpdxSnippetBuilder createSpdxSnippet(String id, String name, AnyLicenseInfo concludedLicense,
+			Collection<AnyLicenseInfo> seenLicense, String copyrightText, 
+			SpdxFile snippetFromFile, int startByte, int endByte) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(name);
+		Objects.requireNonNull(concludedLicense);
+		Objects.requireNonNull(seenLicense);
+		Objects.requireNonNull(copyrightText);
+		return new SpdxSnippet.SpdxSnippetBuilder(modelStore, documentUri, id, copyManager,
+				name, concludedLicense, seenLicense, copyrightText, snippetFromFile, startByte, endByte);
 	}
 }

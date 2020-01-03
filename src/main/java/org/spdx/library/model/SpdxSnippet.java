@@ -17,6 +17,7 @@
  */
 package org.spdx.library.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +30,11 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.IModelStore.ModelTransaction;
+import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Snippets can optionally be used when a file is known to have some content that has been included from another original source.  
@@ -75,6 +79,34 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		super(modelStore, documentUri, id, copyManager, create);
 		allRanges = new ModelCollection(modelStore, documentUri, id, SpdxConstants.PROP_SNIPPET_RANGE, copyManager, StartEndPointer.class);
 	}
+	
+	/**
+	 * @param spdxSnippetBuilder
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxSnippet(SpdxSnippetBuilder spdxSnippetBuilder) throws InvalidSPDXAnalysisException {
+		this(spdxSnippetBuilder.modelStore, spdxSnippetBuilder.documentUri, spdxSnippetBuilder.id, 
+				spdxSnippetBuilder.copyManager, true);
+		setCopyrightText(spdxSnippetBuilder.copyrightText);
+		setName(spdxSnippetBuilder.name);
+		setLicenseConcluded(spdxSnippetBuilder.concludedLicense);
+		getLicenseInfoFromFiles().addAll(spdxSnippetBuilder.licenseInfosFromFile);
+		setSnippetFromFile(spdxSnippetBuilder.snippetFromFile);	// Note: this should be before the byterange so that the file in the byte range is properly set
+		setByteRange(spdxSnippetBuilder.startByte, spdxSnippetBuilder.endByte);
+		
+		// optional parameters - SpdxElement
+		getAnnotations().addAll(spdxSnippetBuilder.annotations);
+		getRelationships().addAll(spdxSnippetBuilder.relationships);
+		setComment(spdxSnippetBuilder.comment);
+		
+		// optional parameters - SpdxItem
+		setLicenseComments(spdxSnippetBuilder.licenseComments);
+		
+		// optional parameters - SpdxSnippet
+		if (spdxSnippetBuilder.startLine > 0) {
+			setLineRange(spdxSnippetBuilder.startLine, spdxSnippetBuilder.endLine);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.ModelObject#getType()
@@ -118,6 +150,9 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		// Update the references in the ranges
 		StartEndPointer byteRange = getByteRange();
 		if (byteRange != null) {
+			if (!strict) {
+				byteRange.setStrict(strict);
+			}
 			if (byteRange.getStartPointer() != null) {
 				byteRange.getStartPointer().setReference(snippetFromFile);
 			}
@@ -127,6 +162,9 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		}
 		Optional<StartEndPointer> lineRange = getLineRange();
 		if (lineRange.isPresent()) {
+			if (!strict) {
+				lineRange.get().setStrict(strict);
+			}
 			if (lineRange.get().getStartPointer() != null) {
 				lineRange.get().getStartPointer().setReference(snippetFromFile);
 			}
@@ -155,22 +193,24 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 	}
 	
 	/**
-	 * @param byteRange the byteRange to set
+	 * @param startByte first byte of the range
+	 * @param endByte end byte of the range
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public SpdxSnippet setByteRange(StartEndPointer byteRange) throws InvalidSPDXAnalysisException {
-		if (strict && Objects.isNull(byteRange)) {
-			throw new InvalidSPDXAnalysisException("Can not set required byte range to null");
+	public SpdxSnippet setByteRange(int startByte, int endByte) throws InvalidSPDXAnalysisException {
+		SpdxFile snippetFromFile = getSnippetFromFile();
+		if (strict) {
+			if (endByte <= startByte) {
+				throw new InvalidSPDXAnalysisException("Ending byte of a range must be greater than the starting byte");
+			}
+			if (Objects.isNull(snippetFromFile)) {
+				throw new InvalidSPDXAnalysisException("Snippets from file must be set prior to setting byte range");
+			}
 		}
-		if (Objects.nonNull(byteRange) && !(byteRange.getStartPointer() instanceof ByteOffsetPointer)) {
-			logger.error("Invalid start pointer type for byte offset range.  Must be ByteOffsetPointer");
-			throw new InvalidSPDXAnalysisException("Invalid start pointer type for byte offset range.  Must be ByteOffsetPointer");
-		}
-		if (Objects.nonNull(byteRange) && !(byteRange.getEndPointer() instanceof ByteOffsetPointer)) {
-			logger.error("Invalid end pointer type for byte offset range.  Must be ByteOffsetPointer");
-			throw new InvalidSPDXAnalysisException("Invalid end pointer type for byte offset range.  Must be ByteOffsetPointer");
-		}
+		ByteOffsetPointer startPointer = createByteOffsetPointer(snippetFromFile, startByte);
+		ByteOffsetPointer endPointer = createByteOffsetPointer(snippetFromFile, endByte);
+		StartEndPointer byteRange = createStartEndPointer(startPointer, endPointer);
 		List<StartEndPointer> existing = new ArrayList<StartEndPointer>();
 		for (StartEndPointer range:allRanges) {
 			if (range.getStartPointer() instanceof ByteOffsetPointer) {
@@ -178,9 +218,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			}
 		}
 		allRanges.removeAll(existing);
-		if (Objects.nonNull(byteRange)) {
-			allRanges.add(byteRange);
-		}
+		allRanges.add(byteRange);
 		return this;
 	}
 	
@@ -206,15 +244,24 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public SpdxSnippet setLineRange(StartEndPointer lineRange) throws InvalidSPDXAnalysisException {
-		if (Objects.nonNull(lineRange) && !(lineRange.getStartPointer() instanceof LineCharPointer)) {
-			logger.error("Invalid start pointer type for line offset range.  Must be LineCharPointer");
-			throw new InvalidSPDXAnalysisException("Invalid start pointer type for line offset range.  Must be LineCharPointer");
+	/**
+	 * @param lineRange
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxSnippet setLineRange(int startLine, int endLine) throws InvalidSPDXAnalysisException {
+		SpdxFile snippetFromFile = getSnippetFromFile();
+		if (strict) {
+			if (endLine <= startLine) {
+				throw new InvalidSPDXAnalysisException("Ending line of a range must be greater than the starting line");
+			}
+			if (Objects.isNull(snippetFromFile)) {
+				throw new InvalidSPDXAnalysisException("Snippets from file must be set prior to setting line range");
+			}
 		}
-		if (Objects.nonNull(lineRange) && !(lineRange.getEndPointer() instanceof LineCharPointer)) {
-			logger.error("Invalid end pointer type for line offset range.  Must be LineCharPointer");
-			throw new InvalidSPDXAnalysisException("Invalid end pointer type for line offset range.  Must be LineCharPointer");
-		}
+		LineCharPointer startPointer = createLineCharPointer(snippetFromFile, startLine);
+		LineCharPointer endPointer = createLineCharPointer(snippetFromFile, endLine);
+		StartEndPointer lineRange = createStartEndPointer(startPointer, endPointer);
 		List<StartEndPointer> existing = new ArrayList<StartEndPointer>();
 		for (StartEndPointer range:allRanges) {
 			if (range.getStartPointer() instanceof LineCharPointer) {
@@ -223,12 +270,35 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		}
 		allRanges.removeAll(existing);
 		if (Objects.nonNull(lineRange)) {
+			setPointerReferences(lineRange);
 			allRanges.add(lineRange);
 		}
 		return this;
 	}
 	
 	
+	/**
+	 * Set the reference for the pointers to the snippetFromFile
+	 * @param pointer
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	private void setPointerReferences(@Nullable StartEndPointer pointer) throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(pointer)) {
+			return;
+		}
+		SpdxFile fromFile = getSnippetFromFile();
+		if (Objects.nonNull(fromFile)) {
+			SinglePointer startPointer = pointer.getStartPointer();
+			if (Objects.nonNull(startPointer)) {
+				startPointer.setReference(fromFile);
+			}
+			SinglePointer endPointer = pointer.getEndPointer();
+			if (Objects.nonNull(endPointer)) {
+				endPointer.setReference(fromFile);
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.ModelObject#verify()
 	 */
@@ -373,5 +443,162 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			sb.append("[No byte range set]");
 		}
 		return sb.toString();
+	}
+	
+	public static class SpdxSnippetBuilder {
+		// required fields - Model Object
+		IModelStore modelStore;
+		String documentUri;
+		String id;
+		ModelCopyManager copyManager;
+		
+		// required fields - SpdxElement
+		String name;
+		
+		// required fields - SpdxItem
+		AnyLicenseInfo concludedLicense;
+		Collection<AnyLicenseInfo> licenseInfosFromFile;
+		String copyrightText;
+		
+		// required fields - SpdxSnippet
+		SpdxFile snippetFromFile;
+		int startByte;
+		int endByte;
+		
+		// optional fields - SpdxElement
+		Collection<Annotation> annotations = new ArrayList<Annotation>();
+		Collection<Relationship> relationships = new ArrayList<Relationship>();
+		String comment = null;
+		
+		// optional fields - SpdxItem
+		String licenseComments = null;
+		
+		// optional fields - SpdxSnippet
+		int startLine = -1;
+		int endLine = -1;
+		
+		/**
+		 * Build a snippet with the required parameters
+		 * @param modelStore Storage for the model objects
+		 * @param documentUri SPDX Document URI for a document associated with this model
+		 * @param id ID for this object - must be unique within the SPDX document
+		 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+		 * @param name - File name
+		 * @param concludedLicense license concluded
+		 * @param licenseInfosFromFile collection of seen licenses
+		 * @param copyrightText Copyright text
+		 * @param snippetFromFile File where the snippet is located
+		 * @param startByte first byte of the snippet in the file
+		 * @param endByte end byte of the snippet in the file
+		 */
+		public SpdxSnippetBuilder(IModelStore modelStore, String documentUri, String id, 
+				@Nullable ModelCopyManager copyManager, String name,
+				AnyLicenseInfo concludedLicense, Collection<AnyLicenseInfo> licenseInfosFromFile,
+				String copyrightText, SpdxFile snippetFromFile, int startByte, int endByte) {
+			Objects.requireNonNull(modelStore);
+			Objects.requireNonNull(documentUri);
+			Objects.requireNonNull(id);
+			Objects.requireNonNull(name);
+			Objects.requireNonNull(concludedLicense);
+			Objects.requireNonNull(licenseInfosFromFile);
+			Objects.requireNonNull(copyrightText);
+			Objects.requireNonNull(snippetFromFile);
+			this.modelStore = modelStore;
+			this.documentUri = documentUri;
+			this.id = id;
+			this.name = name;
+			this.concludedLicense = concludedLicense;
+			this.licenseInfosFromFile = licenseInfosFromFile;
+			this.copyrightText = copyrightText;
+			this.startByte = startByte;
+			this.endByte = endByte;
+			this.snippetFromFile = snippetFromFile;
+			this.copyManager = copyManager;
+		}
+		
+		/**
+		 * @param annotations Annotations
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setAnnotations(Collection<Annotation> annotations) {
+			Objects.requireNonNull(annotations);
+			this.annotations = annotations;
+			return this;
+		}
+		
+		/**
+		 * @param annotation Annotation to add
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder addAnnotation(Annotation annotation) {
+			Objects.requireNonNull(annotation);
+			this.annotations.add(annotation);
+			return this;
+		}
+		
+		/**
+		 * @param relationships Relationships
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setRelationship(Collection<Relationship> relationships) {
+			Objects.requireNonNull(relationships);
+			this.relationships = relationships;
+			return this;
+		}
+		
+		/**
+		 * @param relationship Relationship to add
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder addRelationship(Relationship relationship) {
+			Objects.requireNonNull(relationship);
+			this.relationships.add(relationship);
+			return this;
+		}
+		
+		/**
+		 * @param comment Comment
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setComment(@Nullable String comment) {
+			this.comment = comment;
+			return this;
+		}
+		
+		/**
+		 * @param licenseComments
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setLicenseComments(@Nullable String licenseComments) {
+			this.licenseComments = licenseComments;
+			return this;
+		}
+		
+		/**
+		 * @param startLine first line of the snippet
+		 * @param endLine end line of the snippet
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setLineRange(int startLine, int endLine) {
+			this.startLine = startLine;
+			this.endLine = endLine;
+			return this;
+		}
+		
+		public SpdxSnippet build() throws InvalidSPDXAnalysisException {
+			ModelTransaction transaction = null;
+			try {
+				transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE);
+				try {
+					return new SpdxSnippet(this);
+				} finally {
+					transaction.commit();
+					transaction.close();
+				}
+			} catch (IOException e) {
+				logger.error("IO Exception in transaction for SPDX snippet build",e);
+				throw new InvalidSPDXAnalysisException("IO Exception in transaction for SPDX snippet build",e);
+			}
+		}
 	}
 }

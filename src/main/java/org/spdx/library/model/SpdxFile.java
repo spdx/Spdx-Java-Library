@@ -432,6 +432,10 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			this.comment = comment;
 			return this;
 		}
+		/**
+		 * @param licenseComments
+		 * @return this to continue the build
+		 */
 		public SpdxFileBuilder setLicenseComments(@Nullable String licenseComments) {
 			this.licenseComments = licenseComments;
 			return this;

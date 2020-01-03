@@ -181,10 +181,10 @@ public abstract class SpdxItem extends SpdxElement {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting license concluded: "+e.getMessage());
 		}
-		Optional<String> copyrightText;
+		String copyrightText;
 		try {
-			copyrightText = getComment();
-			if (!copyrightText.isPresent() || copyrightText.get().isEmpty()) {
+			copyrightText = getCopyrightText();
+			if (copyrightText.isEmpty()) {
 				retval.add("Missing required copyright text for "+name);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
