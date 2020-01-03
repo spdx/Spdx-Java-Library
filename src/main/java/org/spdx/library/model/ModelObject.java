@@ -39,6 +39,8 @@ import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
@@ -1094,5 +1096,29 @@ public abstract class ModelObject {
 		Objects.requireNonNull(copyrightText);
 		return new SpdxSnippet.SpdxSnippetBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, seenLicense, copyrightText, snippetFromFile, startByte, endByte);
+	}
+	
+	/**
+	 * @param members
+	 * @return  ConjunctiveLicenseSet with default model store and document URI initialized with members
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ConjunctiveLicenseSet createConjunctiveLicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
+		ConjunctiveLicenseSet retval = new ConjunctiveLicenseSet(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
+		retval.setMembers(members);
+		return retval;
+	}
+	
+	/**
+	 * @param members
+	 * @return  DisjunctiveLicenseSet with default model store and document URI initialized with members
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public DisjunctiveLicenseSet createDisjunctiveLicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
+		DisjunctiveLicenseSet retval = new DisjunctiveLicenseSet(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
+		retval.setMembers(members);
+		return retval;
 	}
 }

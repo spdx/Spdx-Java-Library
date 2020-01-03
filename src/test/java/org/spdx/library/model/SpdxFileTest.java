@@ -81,22 +81,22 @@ public class SpdxFileTest extends TestCase {
 		DISJUNCTIVE_LICENSES = new DisjunctiveLicenseSet[3];
 		CONJUNCTIVE_LICENSES = new ConjunctiveLicenseSet[2];
 		
-		DISJUNCTIVE_LICENSES[0] = new DisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[0] = gmo.createDisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				NON_STD_LICENSES[0], NON_STD_LICENSES[1], STANDARD_LICENSES[1]
 		}));
-		CONJUNCTIVE_LICENSES[0] = new ConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[0] = gmo.createConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				STANDARD_LICENSES[0], NON_STD_LICENSES[0], STANDARD_LICENSES[1]
 		}));
-		CONJUNCTIVE_LICENSES[1] = new ConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[1] = gmo.createConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[0], NON_STD_LICENSES[2]
 		}));
-		DISJUNCTIVE_LICENSES[1] = new DisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[1] = gmo.createDisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				CONJUNCTIVE_LICENSES[1], NON_STD_LICENSES[0], STANDARD_LICENSES[0]
 		}));
-		DISJUNCTIVE_LICENSES[2] = new DisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[2] = gmo.createDisjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[1], CONJUNCTIVE_LICENSES[0], STANDARD_LICENSES[2]
 		}));
-		COMPLEX_LICENSE = new ConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
+		COMPLEX_LICENSE = gmo.createConjunctiveLicenseSet(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[2], NON_STD_LICENSES[2], CONJUNCTIVE_LICENSES[1]
 		}));
 	}

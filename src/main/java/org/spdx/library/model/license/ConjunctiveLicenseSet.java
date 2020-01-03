@@ -17,7 +17,6 @@
 package org.spdx.library.model.license;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -58,16 +57,6 @@ public class ConjunctiveLicenseSet extends LicenseSet {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-	}
-
-	/**
-	 * Default model store and document URI initialized with members
-	 * @param members
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public ConjunctiveLicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
-		super(members);
-		
 	}
 
 	/* (non-Javadoc)

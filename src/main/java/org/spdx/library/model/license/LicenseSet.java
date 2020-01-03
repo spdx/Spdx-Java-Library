@@ -16,11 +16,13 @@
 */
 package org.spdx.library.model.license;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,13 +40,23 @@ import javax.annotation.Nullable;
  */
 public abstract class LicenseSet extends AnyLicenseInfo {
 	
+	Collection<AnyLicenseInfo> members;
 	
+	
+	/**
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public LicenseSet() throws InvalidSPDXAnalysisException {
-		super();
+		this(DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonymous, DefaultModelStore.getDefaultDocumentUri()));
 	}
 
+	/**
+	 * @param id
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public LicenseSet(String id) throws InvalidSPDXAnalysisException {
-		super(id);
+		this(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), id, 
+				DefaultModelStore.getDefaultCopyManager(), true);
 	}
 
 	/**
@@ -55,22 +67,12 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @throws InvalidSPDXAnalysisException
 	 */
+	@SuppressWarnings("unchecked")
 	LicenseSet(IModelStore modelStore, String documentUri, String id, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-	}
-
-	/**
-	 * Default model store and document URI initialized with members
-	 * @param members
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public LicenseSet(Collection<AnyLicenseInfo> members) throws InvalidSPDXAnalysisException {
-		super();
-		for (AnyLicenseInfo member:members) {
-			addMember(member);
-		}
+		members = (Collection<AnyLicenseInfo>)(Collection<?>)getObjectPropertyValueSet(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class);
 	}
 
 	/**
@@ -86,12 +88,8 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @return Members of the license set
 	 * @throws SpdxInvalidTypeException 
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<AnyLicenseInfo> getMembers() throws InvalidSPDXAnalysisException {
-		if (!isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class)) {
-			throw new SpdxInvalidTypeException("Expecting AnyLicenseInfo for license set member type");
-		}
-		return (Collection<AnyLicenseInfo>)(Collection<?>)(getObjectPropertyValueSet(SpdxConstants.PROP_LICENSE_SET_MEMEBER, AnyLicenseInfo.class));
+		return members;
 	}
 	
 	/**
@@ -101,12 +99,12 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 */
 	public void addMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(member);
-		this.addPropertyValueToCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, member);
+		members.add(member);
 	}
 	
 	public void removeMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(member);
-		this.removePropertyValueFromCollection(SpdxConstants.PROP_LICENSE_SET_MEMEBER, member);
+		members.remove(member);
 	}
 	
 	/* (non-Javadoc)

@@ -23,6 +23,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.GenericModelObject;
 
 import junit.framework.TestCase;
 
@@ -46,6 +47,8 @@ public class LicenseInfoFactoryTest extends TestCase {
 		ConjunctiveLicenseSet[] CONJUNCTIVE_LICENSES;
 		
 		ConjunctiveLicenseSet COMPLEX_LICENSE;
+		
+		GenericModelObject gmo;
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -53,6 +56,7 @@ public class LicenseInfoFactoryTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		DefaultModelStore.reset();
+		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
 			NON_STD_LICENSES[i] = new ExtractedLicenseInfo(NONSTD_IDS[i], NONSTD_TEXTS[i]);
@@ -69,22 +73,22 @@ public class LicenseInfoFactoryTest extends TestCase {
 		DISJUNCTIVE_LICENSES = new DisjunctiveLicenseSet[3];
 		CONJUNCTIVE_LICENSES = new ConjunctiveLicenseSet[2];
 		
-		DISJUNCTIVE_LICENSES[0] = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[0] = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				NON_STD_LICENSES[0], NON_STD_LICENSES[1], STANDARD_LICENSES[1]
 		})));
-		CONJUNCTIVE_LICENSES[0] = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[0] = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				STANDARD_LICENSES[0], NON_STD_LICENSES[0], STANDARD_LICENSES[1]
 		})));
-		CONJUNCTIVE_LICENSES[1] = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[1] = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[0], NON_STD_LICENSES[2]
 		})));
-		DISJUNCTIVE_LICENSES[1] = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[1] = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				CONJUNCTIVE_LICENSES[1], NON_STD_LICENSES[0], STANDARD_LICENSES[0]
 		})));
-		DISJUNCTIVE_LICENSES[2] = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[2] = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[1], CONJUNCTIVE_LICENSES[0], STANDARD_LICENSES[2]
 		})));
-		COMPLEX_LICENSE = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
+		COMPLEX_LICENSE = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[2], NON_STD_LICENSES[2], CONJUNCTIVE_LICENSES[1]
 		})));
 	}

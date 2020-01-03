@@ -24,6 +24,7 @@ import java.util.Arrays;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.GenericModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -46,11 +47,13 @@ public class LicenseExpressionParserTest extends TestCase {
 	LicenseException[] LICENSE_EXCEPTIONS;
 	IModelStore modelStore;
 	static final String TEST_DOCUMENT_URI = "https://test.doc.uri";
+	GenericModelObject gmo;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
 		DefaultModelStore.reset();
+		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
 			NON_STD_LICENSES[i] = new ExtractedLicenseInfo(NONSTD_IDS[i], NONSTD_TEXTS[i]);
@@ -110,7 +113,7 @@ public class LicenseExpressionParserTest extends TestCase {
 
 	public void testSimpleAnd() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0] + " AND " + NONSTD_IDS[0];
-		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
+		AnyLicenseInfo expected = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
 				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
@@ -119,7 +122,7 @@ public class LicenseExpressionParserTest extends TestCase {
 
 	public void testSimpleOr() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[0] + " OR " + NONSTD_IDS[0];
-		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
+		AnyLicenseInfo expected = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[0], NON_STD_LICENSES[0]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
 				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
@@ -129,7 +132,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testLargerAnd() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[1] + " AND " + NONSTD_IDS[1] + " AND " +
 					STD_IDS[2] + " AND " + STD_IDS[3];
-		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
+		AnyLicenseInfo expected = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
 				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
@@ -140,7 +143,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testLargerOr() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[1] + " OR " + NONSTD_IDS[1] + " OR " +
 					STD_IDS[2] + " OR " + STD_IDS[3];
-		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
+		AnyLicenseInfo expected = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
 				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
@@ -151,7 +154,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testOuterParens() throws InvalidSPDXAnalysisException {
 		String parseString = "(" + STD_IDS[1] + " OR " + NONSTD_IDS[1] + " OR " +
 					STD_IDS[2] + " OR " + STD_IDS[3] + ")";
-		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
+		AnyLicenseInfo expected = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
 				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
@@ -162,8 +165,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testInnerParens() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[1] + " AND " + NONSTD_IDS[1] + " AND " +
 				"(" + STD_IDS[2] + " OR " + STD_IDS[3] + ")";
-		DisjunctiveLicenseSet dls = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
-		AnyLicenseInfo expected = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
+		DisjunctiveLicenseSet dls = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
+		AnyLicenseInfo expected = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				NON_STD_LICENSES[1], dls})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
 				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
@@ -174,8 +177,8 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testAndOrPrecedence() throws InvalidSPDXAnalysisException {
 		String parseString = STD_IDS[1] + " OR " + NONSTD_IDS[1] + " AND " +
 				STD_IDS[2] + " OR " + STD_IDS[3];
-		ConjunctiveLicenseSet cls = new ConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {NON_STD_LICENSES[1], STANDARD_LICENSES[2]})));
-		AnyLicenseInfo expected = new DisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
+		ConjunctiveLicenseSet cls = gmo.createConjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {NON_STD_LICENSES[1], STANDARD_LICENSES[2]})));
+		AnyLicenseInfo expected = gmo.createDisjunctiveLicenseSet(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				cls, STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
 				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
