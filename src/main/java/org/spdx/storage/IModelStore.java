@@ -17,7 +17,6 @@
  */
 package org.spdx.storage;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -44,29 +43,13 @@ import org.spdx.library.model.TypedValue;
  */
 public interface IModelStore {
 	
+	public interface IModelStoreLock {
+		public void unlock();
+	}
+	
 	@FunctionalInterface
 	public static interface ModelUpdate {
 		void apply() throws InvalidSPDXAnalysisException;
-	}
-	
-	public enum ReadWrite {
-		READ,
-		WRITE,
-		READ_WRITE
-	}
-	
-	/**
-	 * Transaction to provide ACID properties around modifications made between begin and commit
-	 *
-	 */
-	public interface ModelTransaction extends AutoCloseable {
-		/**
-		 * @param readWrite
-		 * @throws IOException
-		 */
-		void begin(ReadWrite readWrite) throws IOException;
-		void commit() throws IOException;
-		void close() throws IOException;
 	}
 	
 	/**
@@ -155,15 +138,18 @@ public interface IModelStore {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter) throws InvalidSPDXAnalysisException;
-
+	
 	/**
-	 * Initiates a transaction within an SPDX document.  Note: transactions spanning documents are not supported
-	 * @param documentUri Unique document URI
-	 * @param readWrite signal if any writes or updates is expected
-	 * @return transaction object to call commit and close when the transaction is complete
-	 * @throws IOException 
+	 * Enter a critical section. leaveCriticialSection must be called.
+	 * @param readLockRequested true implies a read lock, false implies write lock.
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException;
+	public IModelStoreLock enterCriticalSection(String documentUri, boolean readLockRequested) throws InvalidSPDXAnalysisException;
+	
+	/**
+	 * Leave a critical section. Releases the lock form the matching enterCriticalSection
+	 */
+	public void leaveCriticalSection(IModelStoreLock lock);
 
 	/**
 	 * Removes a value from a collection of values associated with a property

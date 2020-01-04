@@ -17,7 +17,6 @@
  */
 package org.spdx.storage.simple;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
@@ -78,37 +76,24 @@ public class InMemSpdxStore implements IModelStore {
 	
 	private final ReadWriteLock transactionLock = new ReentrantReadWriteLock();
 	
-	public class InMemStoreTransaction implements ModelTransaction {
-
-		Lock lock;
-		@Override
-		public void begin(ReadWrite readWrite) throws IOException {
-			Objects.requireNonNull(readWrite);
-			if (ReadWrite.READ == readWrite) {
-				lock = transactionLock.readLock();
-			} else {
-				lock = transactionLock.writeLock();
-			}
-			lock.lock();
-		}
+	private final IModelStoreLock readLock = new IModelStoreLock() {
 
 		@Override
-		public void commit() throws IOException {
-			if (lock != null) {
-				lock.unlock();
-				lock = null;
-			}
+		public void unlock() {
+			transactionLock.readLock().unlock();
 		}
+		
+	};
+	
+	private final IModelStoreLock writeLock = new IModelStoreLock() {
 
 		@Override
-		public void close() throws IOException {
-			if (lock != null) {
-				logger.warn("Uncommitted transaction");
-				lock.unlock();
-			}
+		public void unlock() {
+			transactionLock.writeLock().unlock();
 		}
-	}
-
+		
+	};
+	
 	@Override
 	public boolean exists(String documentUri, String id) {
 		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
@@ -296,13 +281,6 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException {
-		InMemStoreTransaction transaction = new InMemStoreTransaction();
-		transaction.begin(readWrite);
-		return transaction;
-	}
-
-	@Override
 	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).collectionSize(propertyName);
 	}
@@ -353,6 +331,22 @@ public class InMemSpdxStore implements IModelStore {
 		} else {
 			return IdType.Unkown;
 		}
+	}
+	
+	@Override
+	public IModelStoreLock enterCriticalSection(String documentUri, boolean readLockRequested) {
+		if (readLockRequested) {
+			this.transactionLock.readLock().lock();
+			return readLock;
+		} else {
+			this.transactionLock.writeLock().lock();
+			return writeLock;
+		}
+	}
+
+	@Override
+	public void leaveCriticalSection(IModelStoreLock lock) {
+		lock.unlock();
 	}
 
 }

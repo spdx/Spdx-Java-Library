@@ -17,7 +17,6 @@
  */
 package org.spdx.library.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +31,8 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.IModelStore.ModelTransaction;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Information about an external SPDX document reference including the checksum.  
@@ -57,13 +55,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		Objects.requireNonNull(stModelStore);
 		Objects.requireNonNull(stDocumentUri);
 		Objects.requireNonNull(externalDocUri);
-		ModelTransaction transaction;
-		try {
-			transaction = stModelStore.beginTransaction(stDocumentUri, ReadWrite.WRITE);
-		} catch (IOException e) {
-			logger.error("IO Error creating model transaction",e);
-			throw new InvalidSPDXAnalysisException("IO Error creating model transaction",e);
-		}
+		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
 		try {
 			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
 					SpdxConstants.SPDX_DOCUMENT_ID, SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, copyManager, ExternalDocumentRef.class);
@@ -92,13 +84,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 				return Optional.empty();
 			}
 		} finally {
-			try {
-				transaction.commit();
-				transaction.close();
-			} catch (IOException e) {
-				logger.error("IO Error creating model transaction",e);
-				throw new InvalidSPDXAnalysisException("IO Error creating model transaction",e);
-			}
+			stModelStore.leaveCriticalSection(lock);
 		}
 	}
 

@@ -30,9 +30,8 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.TypedValue;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.IModelStore.ModelTransaction;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 import junit.framework.TestCase;
 import net.jodah.concurrentunit.Waiter;
@@ -362,14 +361,14 @@ public class InMemSpdxStoreTest extends TestCase {
 	}
 	
 	//TODO: Fix the following test - it is flakey.  Times out about 1 out of 5 times.  Test problem, not a problem with the code under test
-	public void testTransaction() throws InvalidSPDXAnalysisException, IOException, InterruptedException, TimeoutException {
+	public void testLock() throws InvalidSPDXAnalysisException, IOException, InterruptedException, TimeoutException {
 		final InMemSpdxStore store = new InMemSpdxStore();
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
-		ModelTransaction transaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.WRITE);
+		IModelStoreLock lock = store.enterCriticalSection(TEST_DOCUMENT_URI1, false);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], value1);
-		transaction.commit();
+		lock.unlock();
 		assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 		/* Expected program flow
 		 * Step1: thread1 run verifies that the property is still value1
@@ -393,7 +392,7 @@ public class InMemSpdxStoreTest extends TestCase {
 					waiter.resume();	// release the main thread
 					logger.info("Woke up main thread");
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
-					ModelTransaction threadTransaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.READ);
+					IModelStoreLock transactionLock = store.enterCriticalSection(TEST_DOCUMENT_URI1, true);
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 					int retries = 0;
 					while (!getTestState().equals("step2") && retries < MAX_RETRIES) {
@@ -409,8 +408,7 @@ public class InMemSpdxStoreTest extends TestCase {
 					waiter.resume(); // wake thread 2 back up
 					logger.info("Woke up thread2");
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
-					threadTransaction.commit();
-					threadTransaction.close();
+					transactionLock.unlock();
 					retries = 0;
 					while (!getTestState().equals("step4") && retries < MAX_RETRIES) {
 						logger.info("Thread 1 waiting for thread 2");
@@ -448,12 +446,11 @@ public class InMemSpdxStoreTest extends TestCase {
 					}
 					logger.info("Thread2 awoke from thread 1");
 					assertEquals("step3", getTestState());
-					ModelTransaction threadTransaction = store.beginTransaction(TEST_DOCUMENT_URI1, ReadWrite.WRITE);	// this should block waiting for thread1 transaction to complete
+					IModelStoreLock transactionLock2 = store.enterCriticalSection(TEST_DOCUMENT_URI1, false);	// this should block waiting for thread1 transaction to complete
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 					store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], value2);
 					waiter.assertEquals(value2, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
-					threadTransaction.commit();
-					threadTransaction.close();
+					transactionLock2.unlock();
 					waiter.assertEquals("step3",setTestState("step4"));
 					logger.info("Waking up Thread1");
 					waiter.resume();	// wakeup thread1

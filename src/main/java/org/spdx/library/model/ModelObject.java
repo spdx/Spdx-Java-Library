@@ -17,7 +17,6 @@
  */
 package org.spdx.library.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,10 +48,9 @@ import org.spdx.library.model.pointer.LineCharPointer;
 import org.spdx.library.model.pointer.SinglePointer;
 import org.spdx.library.model.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.IModelStore.ModelTransaction;
 import org.spdx.storage.IModelStore.ModelUpdate;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * @author Gary O'Neall
@@ -913,13 +911,7 @@ public abstract class ModelObject {
 		if (!SpdxVerificationHelper.isValidUri(externalDocumentUri)) {
 			throw new InvalidSPDXAnalysisException("Invalid external document URI: "+externalDocumentUri);
 		}
-		ModelTransaction transaction;
-		try {
-			transaction = getModelStore().beginTransaction(getDocumentUri(), ReadWrite.WRITE);
-		} catch (IOException e) {
-			logger.error("I/O error starting transaction",e);
-			throw new InvalidSPDXAnalysisException("I/O error starting transaction",e);
-		}
+		IModelStoreLock lock = getModelStore().enterCriticalSection( getDocumentUri(), false);
 		try {
 			if (getModelStore().exists(getDocumentUri(), externalDocumentId)) {
 				return new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
@@ -936,13 +928,7 @@ public abstract class ModelObject {
 				return retval;
 			}
 		} finally {
-			try {
-				transaction.commit();
-				transaction.close();
-			} catch (IOException e) {
-				logger.error("I/O error committing transaction",e);
-				throw new InvalidSPDXAnalysisException("I/O error committing transaction",e);
-			}
+			getModelStore().leaveCriticalSection(lock);
 		}
 	}
 

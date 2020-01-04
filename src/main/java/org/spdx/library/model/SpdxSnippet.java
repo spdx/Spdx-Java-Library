@@ -17,7 +17,6 @@
  */
 package org.spdx.library.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,9 +35,8 @@ import org.spdx.library.model.pointer.LineCharPointer;
 import org.spdx.library.model.pointer.SinglePointer;
 import org.spdx.library.model.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.IModelStore.ModelTransaction;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Snippets can optionally be used when a file is known to have some content that has been included from another original source.  
@@ -590,18 +588,11 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		}
 		
 		public SpdxSnippet build() throws InvalidSPDXAnalysisException {
-			ModelTransaction transaction = null;
+			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
 			try {
-				transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE);
-				try {
-					return new SpdxSnippet(this);
-				} finally {
-					transaction.commit();
-					transaction.close();
-				}
-			} catch (IOException e) {
-				logger.error("IO Exception in transaction for SPDX snippet build",e);
-				throw new InvalidSPDXAnalysisException("IO Exception in transaction for SPDX snippet build",e);
+				return new SpdxSnippet(this);
+			} finally {
+				modelStore.leaveCriticalSection(lock);
 			}
 		}
 	}

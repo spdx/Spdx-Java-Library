@@ -33,9 +33,8 @@ import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.SpdxPackage;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.ISerializableModelStore;
-import org.spdx.storage.IModelStore.ModelTransaction;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Supports reading SPDX documents from an existing ModelStore
@@ -76,8 +75,11 @@ public class Read {
 		 * @throws IOException 
 		 */
 		public static SpdxDocument get(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException, IOException {
-			try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.READ)) {
+			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, true);
+			try {
 				return new SpdxDocument(modelStore, documentUri, null, false);				
+			} finally {
+				modelStore.leaveCriticalSection(lock);
 			}
 		}
 		
@@ -99,8 +101,11 @@ public class Read {
 	 * @param stream Output stream for serialization
 	 */
 	public static void serialize(ISerializableModelStore modelStore, String documentUri, OutputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.READ)) {
+		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, true);
+		try {
 			modelStore.serialize(documentUri, stream);
+		} finally {
+			modelStore.leaveCriticalSection(lock);
 		}
 	}
 	

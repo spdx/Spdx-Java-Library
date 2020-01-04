@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
@@ -73,39 +72,26 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	String licenseListVersion = DEFAULT_LICENSE_LIST_VERSION;
 	private int nextId=0;
 	private final ReadWriteLock listedLicenseModificationLock = new ReentrantReadWriteLock();
+	
+	private final IModelStoreLock readLock = new IModelStoreLock() {
+
+		@Override
+		public void unlock() {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		
+	};
+	
+	private final IModelStoreLock writeLock = new IModelStoreLock() {
+
+		@Override
+		public void unlock() {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+		
+	};
 
 	Gson gson = new Gson();	// we should be able to reuse since all access is within write locks
-
-	public class ListedLicenseStoreTransaction implements ModelTransaction {
-
-		Lock lock;
-		@Override
-		public void begin(ReadWrite readWrite) throws IOException {
-			Objects.requireNonNull(readWrite);
-			if (ReadWrite.READ == readWrite) {
-				lock = listedLicenseModificationLock.readLock();
-			} else {
-				lock = listedLicenseModificationLock.writeLock();
-			}
-			lock.lock();
-		}
-
-		@Override
-		public void commit() throws IOException {
-			if (lock != null) {
-				lock.unlock();
-				lock = null;
-			}
-		}
-
-		@Override
-		public void close() throws IOException {
-			if (lock != null) {
-				logger.warn("Uncommitted transaction");
-				lock.unlock();
-			}
-		}
-	}
 	
 	public SpdxListedLicenseModelStore() throws InvalidSPDXAnalysisException {
 		loadIds();
@@ -754,13 +740,8 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			listedLicenseModificationLock.readLock().unlock();
 		}
 	}
-
-	@Override
-	public ModelTransaction beginTransaction(String documentUri, ReadWrite readWrite) throws IOException {
-		ListedLicenseStoreTransaction transaction = new ListedLicenseStoreTransaction();
-		transaction.begin(readWrite);
-		return transaction;
-	}
+	
+	
 	
 	@Override
 	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
@@ -879,5 +860,22 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else {
 			return IdType.Unkown;
 		}
+	}
+	
+
+	@Override
+	public IModelStoreLock enterCriticalSection(String documentUri, boolean readLockRequested) {
+		if (readLockRequested) {
+			this.listedLicenseModificationLock.readLock().lock();
+			return readLock;
+		} else {
+			this.listedLicenseModificationLock.writeLock().lock();
+			return writeLock;
+		}
+	}
+
+	@Override
+	public void leaveCriticalSection(IModelStoreLock lock) {
+		lock.unlock();
 	}
 }

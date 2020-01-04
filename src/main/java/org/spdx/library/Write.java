@@ -26,9 +26,8 @@ import java.util.Objects;
 
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.ISerializableModelStore;
-import org.spdx.storage.IModelStore.ModelTransaction;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.ModelUpdate;
-import org.spdx.storage.IModelStore.ReadWrite;
 
 /**
  * Static class to provide write operations to the model.  
@@ -60,11 +59,13 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void applyUpdatesInOneTransaction(String documentUri, IModelStore modelStore, Iterable<? extends ModelUpdate> updates) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE)) {
+		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+		try {
 			for (ModelUpdate update : updates) {
 				update.apply();
 			}
-			transaction.commit();
+		} finally {
+			modelStore.leaveCriticalSection(lock);
 		}
 	}
 	
@@ -77,8 +78,11 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void deSerialize(ISerializableModelStore modelStore, String documentUri, InputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		try (ModelTransaction transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE)) {
+		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+		try {
 			modelStore.deSerialize(documentUri, stream);
+		} finally {
+			modelStore.leaveCriticalSection(lock);
 		}
 	}
 	

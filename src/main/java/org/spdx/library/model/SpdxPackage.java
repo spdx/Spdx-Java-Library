@@ -17,7 +17,6 @@
  */
 package org.spdx.library.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,8 +38,7 @@ import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
 import org.spdx.storage.IModelStore;
-import org.spdx.storage.IModelStore.ModelTransaction;
-import org.spdx.storage.IModelStore.ReadWrite;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 
 /**
  * A Package represents a collection of software files that are
@@ -1000,19 +998,13 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		public SpdxPackage build() throws InvalidSPDXAnalysisException {
-			ModelTransaction transaction = null;
+			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
 			try {
-				transaction = modelStore.beginTransaction(documentUri, ReadWrite.WRITE);
-				try {
-					return new SpdxPackage(this);
-				} finally {
-					transaction.commit();
-					transaction.close();
-				}
-			} catch (IOException e) {
-				logger.error("IO Exception in transaction for SPDX package build",e);
-				throw new InvalidSPDXAnalysisException("IO Exception in transaction for SPDX package build",e);
+				return new SpdxPackage(this);
+			} finally {
+				modelStore.leaveCriticalSection(lock);
 			}
+
 		}
 	}
 
