@@ -17,6 +17,10 @@
  */
 package org.spdx.library;
 
+import java.util.Objects;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -31,8 +35,9 @@ import org.spdx.storage.simple.InMemSpdxStore;
 public class DefaultModelStore {
 	
 	static IModelStore defaultModelStore = new InMemSpdxStore();
-	static final String defaultDocumentUri = "http://www.spdx.org/documents/default_doc_uri_for_SPDX_tools";
+	static String defaultDocumentUri = "http://www.spdx.org/documents/default_doc_uri_for_SPDX_tools";
 	static ModelCopyManager defaultCopyManager = new ModelCopyManager();
+	private static final ReadWriteLock lock = new ReentrantReadWriteLock();
 	
 	private DefaultModelStore() {
 		// prevent instantiating class
@@ -43,19 +48,48 @@ public class DefaultModelStore {
 	}
 	
 	public static String getDefaultDocumentUri() {
-		return defaultDocumentUri;
+		lock.readLock().lock();
+		try {
+			return defaultDocumentUri;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 	
 	/**
 	 * Clears the default model store by replacing the default model store with a new one
 	 */
 	public static final void reset() {
-		defaultModelStore = new InMemSpdxStore();
-		defaultCopyManager = new ModelCopyManager();
+		lock.writeLock().lock();
+		try {
+			defaultModelStore = new InMemSpdxStore();
+			defaultCopyManager = new ModelCopyManager();
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+	
+	public static final void reset(IModelStore newModelStore, String newDefaultDocumentUri, ModelCopyManager newDefaultCopyManager) {
+		Objects.requireNonNull(newModelStore);
+		Objects.requireNonNull(newDefaultDocumentUri);
+		Objects.requireNonNull(newDefaultCopyManager);
+		lock.writeLock().lock();
+		try {
+			defaultModelStore = newModelStore;
+			defaultDocumentUri = newDefaultDocumentUri;
+			defaultCopyManager = newDefaultCopyManager;
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	public static ModelCopyManager getDefaultCopyManager() {
-		return defaultCopyManager;
+		lock.readLock().lock();
+		try {
+			return defaultCopyManager;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 }

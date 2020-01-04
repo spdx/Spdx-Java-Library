@@ -19,6 +19,7 @@ package org.spdx.library.model;
 
 import java.util.List;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.pointer.ByteOffsetPointer;
 import org.spdx.library.model.pointer.LineCharPointer;
@@ -52,6 +53,7 @@ public class StartEndPointerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
 		REFERENCED1 = new GenericSpdxElement();
 		REFERENCED1.setName(REFERENCED_ELEMENT_NAME1);

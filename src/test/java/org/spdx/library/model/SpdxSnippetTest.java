@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.AnnotationType;
@@ -94,6 +95,7 @@ public class SpdxSnippetTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		DefaultModelStore.reset();
 		gmo = new GenericModelObject();
 		ANNOTATION1 = gmo.createAnnotation("Organization: Annotator1", 
 				AnnotationType.OTHER, DATE_NOW, "Comment 1");
