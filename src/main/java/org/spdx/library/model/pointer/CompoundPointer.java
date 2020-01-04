@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
+package org.spdx.library.model.pointer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,8 @@ import javax.annotation.Nullable;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**

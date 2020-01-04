@@ -20,6 +20,10 @@ package org.spdx.library.model;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.pointer.ByteOffsetPointer;
+import org.spdx.library.model.pointer.LineCharPointer;
+import org.spdx.library.model.pointer.SinglePointer;
+import org.spdx.library.model.pointer.StartEndPointer;
 
 import junit.framework.TestCase;
 
@@ -67,7 +71,7 @@ public class StartEndPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.StartEndPointer#verify()}.
+	 * Test method for {@link org.spdx.library.model.pointer.StartEndPointer#verify()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
@@ -99,7 +103,7 @@ public class StartEndPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.StartEndPointer#setEndPointer(org.spdx.library.model.SinglePointer)}.
+	 * Test method for {@link org.spdx.library.model.pointer.StartEndPointer#setEndPointer(org.spdx.library.model.pointer.SinglePointer)}.
 	 */
 	public void testSetEndPointer() throws InvalidSPDXAnalysisException {
 		StartEndPointer sop = gmo.createStartEndPointer(BOP_POINTER1, BOP_POINTER2);
@@ -132,7 +136,7 @@ public class StartEndPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.StartEndPointer#setStartPointer(org.spdx.library.model.SinglePointer)}.
+	 * Test method for {@link org.spdx.library.model.pointer.StartEndPointer#setStartPointer(org.spdx.library.model.pointer.SinglePointer)}.
 	 */
 	public void testSetStartPointerSinglePointer() throws InvalidSPDXAnalysisException {
 		StartEndPointer sop = gmo.createStartEndPointer(BOP_POINTER1, BOP_POINTER2);
@@ -151,7 +155,7 @@ public class StartEndPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.StartEndPointer#compareTo(org.spdx.library.model.StartEndPointer)}.
+	 * Test method for {@link org.spdx.library.model.pointer.StartEndPointer#compareTo(org.spdx.library.model.pointer.StartEndPointer)}.
 	 */
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		StartEndPointer sop1 = gmo.createStartEndPointer(BOP_POINTER1, BOP_POINTER2);

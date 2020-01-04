@@ -32,6 +32,9 @@ import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.model.pointer.ByteOffsetPointer;
+import org.spdx.library.model.pointer.LineCharPointer;
+import org.spdx.library.model.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;
@@ -260,7 +263,7 @@ public class SpdxSnippetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.SpdxSnippet#setByteRange(org.spdx.library.model.StartEndPointer)}.
+	 * Test method for {@link org.spdx.library.model.SpdxSnippet#setByteRange(org.spdx.library.model.pointer.StartEndPointer)}.
 	 */
 	public void testSetByteRange() throws InvalidSPDXAnalysisException {
 		SpdxSnippet snippet = gmo.createSpdxSnippet(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 
@@ -281,7 +284,7 @@ public class SpdxSnippetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.SpdxSnippet#setLineRange(org.spdx.library.model.StartEndPointer)}.
+	 * Test method for {@link org.spdx.library.model.SpdxSnippet#setLineRange(org.spdx.library.model.pointer.StartEndPointer)}.
 	 */
 	public void testSetLineRange() throws InvalidSPDXAnalysisException {
 		SpdxSnippet snippet = gmo.createSpdxSnippet(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.pointer.ByteOffsetPointer;
 
 import junit.framework.TestCase;
 

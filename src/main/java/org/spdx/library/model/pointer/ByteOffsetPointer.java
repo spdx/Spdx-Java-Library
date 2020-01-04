@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
+package org.spdx.library.model.pointer;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,15 +27,16 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.storage.IModelStore;
 
 /**
+ * Byte offset pointer per RDF 2.3.2.2 ByteOffsetPointer Class
  * @author Gary O'Neall
  *
  */
-public class LineCharPointer extends SinglePointer {
+public class ByteOffsetPointer extends SinglePointer {
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public LineCharPointer() throws InvalidSPDXAnalysisException {
+	public ByteOffsetPointer() throws InvalidSPDXAnalysisException {
 		super();
 	}
 
@@ -43,7 +44,7 @@ public class LineCharPointer extends SinglePointer {
 	 * @param id
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public LineCharPointer(String id) throws InvalidSPDXAnalysisException {
+	public ByteOffsetPointer(String id) throws InvalidSPDXAnalysisException {
 		super(id);
 	}
 
@@ -55,50 +56,57 @@ public class LineCharPointer extends SinglePointer {
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public LineCharPointer(IModelStore modelStore, String documentUri, String id, ModelCopyManager copyManager,
+	public ByteOffsetPointer(IModelStore modelStore, String documentUri, String id, ModelCopyManager copyManager,
 			boolean create) throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 	}
-	
-	/**
-	 * @return the lineNumber, -1 if no lineNumber is stored
+
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#getType()
 	 */
-	public int getLineNumber() throws InvalidSPDXAnalysisException {
-		Optional<Integer> retval = getIntegerPropertyValue(SpdxConstants.PROP_POINTER_LINE_NUMBER);
-		if (retval.isPresent()) {
-			return retval.get();
-		} else {
-			logger.warn("Missing line number");
-			return -1;
-		}
+	@Override
+	public String getType() {
+		return SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER;
 	}
 	
 	/**
-	 * @param lineNumber the lineNumber to set
+	 * @return the offset, -1 if no offset is stored
 	 */
-	public void setLineNumber(Integer lineNumber) throws InvalidSPDXAnalysisException  {
+	public int getOffset() throws InvalidSPDXAnalysisException {
+		Optional<Integer> retval = getIntegerPropertyValue(SpdxConstants.PROP_POINTER_OFFSET);
+		if (!retval.isPresent()) {
+			return -1;
+		}
+		return retval.get();
+	}
+	
+	/**
+	 * @param offset the offset to set
+	 */
+	public void setOffset(Integer offset) throws InvalidSPDXAnalysisException {
 		if (strict) {
-			if (Objects.isNull(lineNumber)) {
-				throw new InvalidSPDXAnalysisException("Can not set required lineNumber to null");
+			if (Objects.isNull(offset) || offset < 0) {
+				throw new InvalidSPDXAnalysisException("Can not set required offset to null or less than zero");
 			}
 		}
-		setPropertyValue(SpdxConstants.PROP_POINTER_LINE_NUMBER, lineNumber);
+		setPropertyValue(SpdxConstants.PROP_POINTER_OFFSET, offset);
 	}
 	
 	@Override
 	public List<String> verify() {
 		List<String> retval = super.verify();
-		int lineNumber;
+		int offset;
 		try {
-			lineNumber = getLineNumber();
-			if (lineNumber == -1) {
-				retval.add("Missing line number value");
-			} else if (lineNumber < 0) {
-				retval.add("Line number most not be negative for a line offset pointer: "+Integer.toString(lineNumber));
+			offset = getOffset();
+			if (offset == -1) {
+				retval.add("Missing byte offset offset value");
+			} else if (offset < 0) {
+				retval.add("Offset most not be negative for a byte pointer: "+Integer.toString(offset));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting line number: "+e.getMessage());
+			retval.add("Error getting offset: "+e.getMessage());
 		}
+
 		return retval;
 	}
 
@@ -114,49 +122,36 @@ public class LineCharPointer extends SinglePointer {
 		if (retval != 0) {
 			return retval;
 		}
-		if (!(o instanceof LineCharPointer)) {
+		if (!(o instanceof ByteOffsetPointer)) {
 			return 1;
 		}
-		int compLine;
-		try {
-			compLine = ((LineCharPointer)o).getLineNumber();
-		} catch (InvalidSPDXAnalysisException e) {
-			logger.warn("Error getting comp line",e);
-			compLine = -1;
-		}
-		int line;
-		try {
-			line = getLineNumber();
-		} catch (InvalidSPDXAnalysisException e) {
-			logger.warn("Error getting line",e);
-			line = -1;
-		}
-		return Integer.compare(line, compLine);
-	}
 
+		int compByteOffset;
+		try {
+			compByteOffset = ((ByteOffsetPointer)o).getOffset();
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting compare offset",e);
+			compByteOffset = -1;
+		}
+		Integer myOffset;
+		try {
+			myOffset = getOffset();
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting offset",e);
+			myOffset = -1;
+		}
+		return myOffset.compareTo(compByteOffset);
+	}
+	
 	@Override
 	public String toString() {
-		int lineNumber;
+		int offset;
 		try {
-			lineNumber = getLineNumber();
-			if (lineNumber != -1) {
-				return "line number " + Integer.toString(lineNumber);
-			} else {
-				return "Unknown line number";
-			}
+			offset = getOffset();
+			return "byte offset " +Integer.toString(offset);
 		} catch (InvalidSPDXAnalysisException e) {
-			logger.warn("Error getting line number",e);
-			return "[ERROR]";
+			logger.warn("Error getting offset",e);
+			return "Unknown byte offset";
 		}
-
 	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#getType()
-	 */
-	@Override
-	public String getType() {
-		return SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER;
-	}
-
 }

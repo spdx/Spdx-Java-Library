@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model;
+package org.spdx.library.model.pointer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,14 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.SpdxElement;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -37,6 +42,8 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  */
 public abstract class SinglePointer extends ModelObject implements Comparable<SinglePointer> {
+	
+	static final Logger logger = LoggerFactory.getLogger(SinglePointer.class);
 
 	/**
 	 * @throws InvalidSPDXAnalysisException

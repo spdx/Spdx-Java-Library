@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.pointer.LineCharPointer;
 
 import junit.framework.TestCase;
 
@@ -58,7 +59,7 @@ public class LineCharPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.LineCharPointer#verify()}.
+	 * Test method for {@link org.spdx.library.model.pointer.LineCharPointer#verify()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
@@ -79,7 +80,7 @@ public class LineCharPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.LineCharPointer#setLineNumber(java.lang.Integer)}.
+	 * Test method for {@link org.spdx.library.model.pointer.LineCharPointer#setLineNumber(java.lang.Integer)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testSetLineNumber() throws InvalidSPDXAnalysisException {
@@ -103,7 +104,7 @@ public class LineCharPointerTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.LineCharPointer#compareTo(org.spdx.library.model.SinglePointer)}.
+	 * Test method for {@link org.spdx.library.model.pointer.LineCharPointer#compareTo(org.spdx.library.model.SinglePointer)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testCompareTo() throws InvalidSPDXAnalysisException {

@@ -37,6 +37,9 @@ import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
+import org.spdx.library.model.pointer.ByteOffsetPointer;
+import org.spdx.library.model.pointer.LineCharPointer;
+import org.spdx.library.model.pointer.StartEndPointer;
 
 /**
  * Factory class to create ModelObjects based on the type
