@@ -18,6 +18,7 @@
 package org.spdx.library.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -139,7 +140,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	
 	/**
 	 * Convert a URI to an ID for an External SPDX Element
-	 * @param uri URI with the external document namespace and the external SPDX ref in the form namespace#SPDXRef-XXX
+	 * @param uri URI with the external document namespace and the external SPDX ref in the form namespace#SPDXRef-[NUM]
 	 * @param stModelStore
 	 * @param stDocumentUri
 	 * @param copyManager if true, create the external doc ref if it is not already in the ModelStore
@@ -163,8 +164,8 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	}
 	
 	/**
-	 * Create an ExternalSpdxElement based on a URI of the form externaldocumentnamespace#SPDXRef-XXX
-	 * @param uri RI of the form externaldocumentnamespace#SPDXRef-XXX
+	 * Create an ExternalSpdxElement based on a URI of the form externaldocumentnamespace#SPDXRef-[NUM]
+	 * @param uri RI of the form externaldocumentnamespace#SPDXRef-[NUM]
 	 * @param stModelStore
 	 * @param stDocumentUri
 	 * @return ExternalSpdxRef
@@ -231,5 +232,89 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public ExternalSpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		throw new InvalidSPDXAnalysisException("Can not set the name on an ExternalSpdxElement.  "
 				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	/**
+	 * @return Annotations
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@Override
+	public Collection<Annotation> getAnnotations() throws InvalidSPDXAnalysisException {
+		return new ArrayList<Annotation>();
+	}
+	
+	/**
+	 * Clears and resets the annotations collection to the parameter
+	 * @param annotations
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	@Override
+	public SpdxElement setAnnotations(Collection<Annotation> annotations) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not set annotations to an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+
+	/**
+	 * Remove an annotation
+	 * @param annotation
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@Override
+	public boolean removeAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can remove set annotations to an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	/**
+	 * @return Relationships
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@Override
+	public Collection<Relationship> getRelationships() throws InvalidSPDXAnalysisException {
+		return new ArrayList<Relationship>();
+	}
+	
+	/**
+	 * clear and reset the relationships to the paramater relationship
+	 * @param relationships
+	 * @return this to chain sets
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	@Override
+	public SpdxElement setRelationships(Collection<Relationship> relationships) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not set relationships on an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	/**
+	 * Remove a relationship
+	 * @param relationship
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@Override
+	public boolean removeRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not remove relationships on an ExternalSpdxElement.  "
+				+ "These changes must be done to the local SPDX element in the document which defines the SPDX element.");
+	}
+	
+	/**
+	 * @return the comment
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	@Override
+	public Optional<String> getComment() throws InvalidSPDXAnalysisException {
+		return Optional.empty();
+	}
+	
+	/**
+	 * @return the name
+	 */
+	@Override
+	public Optional<String> getName() throws InvalidSPDXAnalysisException {
+		return Optional.empty();
 	}
 }

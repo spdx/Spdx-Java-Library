@@ -55,16 +55,18 @@ public class SpdxConstants {
 	public static final String[] DOAP_CLASSES = {CLASS_DOAP_PROJECT};
 	
 	// DOAP Project Property Names - within the DOAP_NAMESPACE
-	public static final String PROP_PROJECT_NAME = "name";
 	public static final String PROP_PROJECT_HOMEPAGE = "homepage";
-	public static final String[] DOAP_PROPERTIES = new String[] {PROP_PROJECT_NAME, PROP_PROJECT_HOMEPAGE};
+	public static final String[] DOAP_PROPERTIES = new String[] {PROP_PROJECT_HOMEPAGE};
 	
 	// Pointer Class Names - with in the RDF_POINTER_NAMESPACE
 	public static final String CLASS_POINTER_START_END_POINTER = "StartEndPointer";
 	public static final String CLASS_POINTER_BYTE_OFFSET_POINTER = "ByteOffsetPointer";
 	public static final String CLASS_POINTER_LINE_CHAR_POINTER = "LineCharPointer";
+	public static final String CLASS_POINTER_COMPOUNT_POINTER = "CompoundPointer";
+	public static final String CLASS_SINGLE_POINTER = "SinglePointer";
 	public static final String[] POINTER_CLASSES = new String[] {
-			CLASS_POINTER_START_END_POINTER, CLASS_POINTER_BYTE_OFFSET_POINTER, CLASS_POINTER_LINE_CHAR_POINTER
+			CLASS_POINTER_START_END_POINTER, CLASS_POINTER_BYTE_OFFSET_POINTER, 
+			CLASS_POINTER_LINE_CHAR_POINTER, CLASS_POINTER_COMPOUNT_POINTER, CLASS_SINGLE_POINTER
 			};
 	
 	// Pointer Properties - with in the RDF_POINTER_NAMESPACE
@@ -84,12 +86,12 @@ public class SpdxConstants {
 	public static final String CLASS_SPDX_CREATION_INFO = "CreationInfo";
 	public static final String CLASS_SPDX_CHECKSUM = "Checksum";
 	public static final String CLASS_SPDX_ANY_LICENSE_INFO = "AnyLicenseInfo";
-	public static final String CLASS_SPDX_SIMPLE_LICENSE_INFO = "SimpleLicenseInfo";
+	public static final String CLASS_SPDX_SIMPLE_LICENSE_INFO = "SimpleLicensingInfo";
 	public static final String CLASS_SPDX_CONJUNCTIVE_LICENSE_SET = "ConjunctiveLicenseSet";
 	public static final String CLASS_SPDX_DISJUNCTIVE_LICENSE_SET = "DisjunctiveLicenseSet";
 	public static final String CLASS_SPDX_EXTRACTED_LICENSING_INFO = "ExtractedLicensingInfo";
 	public static final String CLASS_SPDX_LICENSE = "License";
-	public static final String CLASS_SPDX_LISTED_LICENSE = "SpdxListedLicense";
+	public static final String CLASS_SPDX_LISTED_LICENSE = "ListedLicense";
 	public static final String CLASS_SPDX_LICENSE_EXCEPTION = "LicenseException";
 	public static final String CLASS_OR_LATER_OPERATOR = "OrLaterOperator";
 	public static final String CLASS_WITH_EXCEPTION_OPERATOR = "WithExceptionOperator";
@@ -108,6 +110,7 @@ public class SpdxConstants {
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
 	public static final String CLASS_EXTERNAL_SPDX_ELEMENT = "ExternalSpdxElement";
 	
+	// all classes used including classes in non-SPDX namespaces
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
 			CLASS_SPDX_CREATION_INFO, CLASS_SPDX_CHECKSUM, CLASS_SPDX_ANY_LICENSE_INFO, 
 			CLASS_SPDX_SIMPLE_LICENSE_INFO, CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, CLASS_SPDX_DISJUNCTIVE_LICENSE_SET, 
@@ -117,11 +120,21 @@ public class SpdxConstants {
 			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT,
-			CLASS_POINTER_START_END_POINTER, CLASS_POINTER_BYTE_OFFSET_POINTER, CLASS_POINTER_LINE_CHAR_POINTER};
+			// DOAP Namespace
+			CLASS_DOAP_PROJECT,
+			// RDF Pointer Namespace
+			CLASS_POINTER_START_END_POINTER, CLASS_POINTER_BYTE_OFFSET_POINTER, 
+			CLASS_POINTER_COMPOUNT_POINTER, CLASS_POINTER_LINE_CHAR_POINTER, CLASS_SINGLE_POINTER};
 	
 	// classes that use the listed license URI for their namespace
 	public static final String[] LISTED_LICENSE_URI_CLASSES = {CLASS_SPDX_LISTED_LICENSE, CLASS_SPDX_LICENSE_EXCEPTION};
 	
+	// Enumeration class names
+	public static final String ENUM_FILE_TYPE = "FileType";
+	public static final String ENUM_ANNOTATION_TYPE = "AnnotationType";
+	public static final String ENUM_CHECKSUM_ALGORITHM_TYPE = "ChecksumAlgorithm";
+	public static final String ENUM_REFERENCE_CATEGORY_TYPE = "ReferenceCategory";
+	public static final String ENUM_REFERENCE_RELATIONSHIP_TYPE = "RelationshipType";
 	// General SPDX Properties
 	public static final String PROP_VALUE_NONE = "none";
 	public static final String URI_VALUE_NONE = SPDX_NAMESPACE  + PROP_VALUE_NONE;

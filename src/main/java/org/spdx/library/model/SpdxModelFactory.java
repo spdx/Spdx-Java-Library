@@ -22,23 +22,33 @@ import org.spdx.storage.IModelStore.IdType;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.Version;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.ReferenceCategory;
+import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.OrLaterOperator;
+import org.spdx.library.model.license.SimpleLicensingInfo;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
+import org.spdx.library.model.license.License;
 import org.spdx.library.model.pointer.ByteOffsetPointer;
+import org.spdx.library.model.pointer.CompoundPointer;
 import org.spdx.library.model.pointer.LineCharPointer;
+import org.spdx.library.model.pointer.SinglePointer;
 import org.spdx.library.model.pointer.StartEndPointer;
 
 /**
@@ -134,12 +144,12 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_PACKAGE: return SpdxPackage.class;
 		case SpdxConstants.CLASS_SPDX_CREATION_INFO: return SpdxCreatorInformation.class;
 		case SpdxConstants.CLASS_SPDX_CHECKSUM: return Checksum.class;
-		case SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO: throw new InvalidSPDXAnalysisException("Can not create abstract AnyLicensing Info.  Must specify one of the concrete classes");
-		case SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO:  throw new InvalidSPDXAnalysisException("Can not create abstract SimpleLicensingInfo.  Must specify one of the concrete classes");
+		case SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO: return AnyLicenseInfo.class;
+		case SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO:  return SimpleLicensingInfo.class;
 		case SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return ConjunctiveLicenseSet.class;
 		case SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return DisjunctiveLicenseSet.class;
 		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return ExtractedLicenseInfo.class;
-		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
+		case SpdxConstants.CLASS_SPDX_LICENSE: return License.class;
 		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return SpdxListedLicense.class;
 		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return LicenseException.class;
 		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return OrLaterOperator.class;
@@ -149,11 +159,11 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: return SpdxPackageVerificationCode.class;
 		case SpdxConstants.CLASS_ANNOTATION: return Annotation.class;
 		case SpdxConstants.CLASS_RELATIONSHIP: return Relationship.class;
-		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("SPDX item is an abstract item and can not be created.");
-		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("SPDX element is an abstract item and can not be created.");
+		case SpdxConstants.CLASS_SPDX_ITEM: return SpdxItem.class;
+		case SpdxConstants.CLASS_SPDX_ELEMENT: return SpdxElement.class;
 		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return ExternalDocumentRef.class;
 		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return ExternalRef.class;
-		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE:  throw new RuntimeException("Reference type can only be created with a type supplied.");
+		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE:  return ReferenceType.class;
 		case SpdxConstants.CLASS_SPDX_SNIPPET: return SpdxSnippet.class;
 		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return SpdxNoAssertionLicense.class;
 		case SpdxConstants.CLASS_NONE_LICENSE: return SpdxNoneLicense.class;
@@ -163,8 +173,30 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return StartEndPointer.class;
 		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return ByteOffsetPointer.class;
 		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return LineCharPointer.class;
+		case SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER: return CompoundPointer.class;
+		case SpdxConstants.CLASS_SINGLE_POINTER: return SinglePointer.class;
+		case SpdxConstants.ENUM_FILE_TYPE: return FileType.class;
+		case SpdxConstants.ENUM_ANNOTATION_TYPE: return Annotation.class;
+		case SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE: return ChecksumAlgorithm.class;
+		case SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE: return ReferenceCategory.class;
+		case SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE: return RelationshipType.class;
 
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
+	}
+
+	/**
+	 * @param classUri URI for the class type
+	 * @return class represented by the URI
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static Class<?> classUriToClass(String classUri) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(classUri, "Missing required class URI");
+		int indexOfPound = classUri.lastIndexOf('#');
+		if (indexOfPound < 1) {
+			throw new InvalidSPDXAnalysisException("Invalid class URI: "+classUri);
+		}
+		String type = classUri.substring(indexOfPound+1);
+		return typeToClass(type);
 	}
 }

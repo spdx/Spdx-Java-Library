@@ -19,10 +19,8 @@ package org.spdx.storage.listedlicense;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.ModelObject;
 
 /**
  * @author Gary O'Neall

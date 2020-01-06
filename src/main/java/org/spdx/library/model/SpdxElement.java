@@ -44,8 +44,8 @@ public abstract class SpdxElement extends ModelObject {
 
 	static final Logger logger = LoggerFactory.getLogger(SpdxElement.class);
 	
-	private Collection<Annotation> annotations;
-	private Collection<Relationship> relationships;
+	private Collection<Annotation> annotations = null;
+	private Collection<Relationship> relationships = null;
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -70,18 +70,20 @@ public abstract class SpdxElement extends ModelObject {
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	@SuppressWarnings("unchecked")
 	public SpdxElement(IModelStore modelStore, String documentUri, String id, ModelCopyManager copyManager,
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-		annotations = (Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_ANNOTATION, Annotation.class);
-		relationships = (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_RELATIONSHIP, Relationship.class);
+		// we can not create the annotations and relationships until referenced since ExternalSpdxElement can not create them
 	}
 
 	@Override
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: "));
+		try {
+			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: "));
+		} catch (InvalidSPDXAnalysisException e1) {
+			retval.add("Error getting annotation: "+e1.getMessage());
+		}
 		try {
 			retval.addAll(verifyCollection(getRelationships(), "Relationship error: "));
 		} catch (InvalidSPDXAnalysisException e) {
@@ -89,6 +91,20 @@ public abstract class SpdxElement extends ModelObject {
 		}
 		addNameToWarnings(retval);
 		return retval;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private synchronized void checkCreateAnnotations() throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(this.annotations)) {
+			this.annotations = (Collection<Annotation>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_ANNOTATION, Annotation.class);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private synchronized void checkCreateRelationships() throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(this.relationships)) {
+			this.relationships = (Collection<Relationship>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_RELATIONSHIP, Relationship.class);
+		}
 	}
 	
 	/**
@@ -119,7 +135,8 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return Annotations
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public Collection<Annotation> getAnnotations() {
+	public Collection<Annotation> getAnnotations() throws InvalidSPDXAnalysisException {
+		checkCreateAnnotations();
 		return annotations;
 	}
 	
@@ -127,8 +144,10 @@ public abstract class SpdxElement extends ModelObject {
 	 * Clears and resets the annotations collection to the parameter
 	 * @param annotations
 	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public SpdxElement setAnnotations(Collection<Annotation> annotations) {
+	public SpdxElement setAnnotations(Collection<Annotation> annotations) throws InvalidSPDXAnalysisException {
+		checkCreateAnnotations();
 		Objects.requireNonNull(annotations);
 		this.annotations.clear();
 		this.annotations.addAll(annotations);
@@ -142,6 +161,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean addAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		checkCreateAnnotations();
 		return annotations.add(annotation);
 	}
 	
@@ -152,6 +172,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean removeAnnotation(Annotation annotation) throws InvalidSPDXAnalysisException {
+		checkCreateAnnotations();
 		return annotations.remove(annotation);
 	}
 	
@@ -160,6 +181,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Collection<Relationship> getRelationships() throws InvalidSPDXAnalysisException {
+		checkCreateRelationships();
 		return relationships;
 	}
 	
@@ -167,9 +189,11 @@ public abstract class SpdxElement extends ModelObject {
 	 * clear and reset the relationships to the paramater relationship
 	 * @param relationships
 	 * @return this to chain sets
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public SpdxElement setRelationships(Collection<Relationship> relationships) {
+	public SpdxElement setRelationships(Collection<Relationship> relationships) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(relationships);
+		checkCreateRelationships();
 		this.relationships.clear();
 		this.relationships.addAll(relationships);
 		return this;
@@ -182,6 +206,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean addRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		checkCreateRelationships();
 		return relationships.add(relationship);
 	}
 	
@@ -192,6 +217,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean removeRelationship(Relationship relationship) throws InvalidSPDXAnalysisException {
+		checkCreateRelationships();
 		return relationships.remove(relationship);
 	}
 	

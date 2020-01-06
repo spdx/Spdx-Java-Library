@@ -129,7 +129,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	
 	@Override
 	protected String getNamePropertyName() {
-		return SpdxConstants.PROP_PROJECT_NAME;
+		return SpdxConstants.PROP_NAME;
 	}
 	
 	/**

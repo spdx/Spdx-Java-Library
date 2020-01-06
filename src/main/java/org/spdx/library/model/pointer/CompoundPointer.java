@@ -115,5 +115,10 @@ public abstract class CompoundPointer extends ModelObject {
 		}
 		return retval;
 	}
+	
+	@Override
+	public String getType() {
+		return SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER;
+	}
 
 }

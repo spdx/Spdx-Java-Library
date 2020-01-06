@@ -25,7 +25,6 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.enumerations.RelationshipType;
-
 import junit.framework.TestCase;
 
 /**
@@ -188,7 +187,7 @@ public class RelatedElementCollectionTest extends TestCase {
 			assertTrue(allRelatedElements.contains(iter.next()));
 		}
 	}
-
+	
 	/**
 	 * Test method for {@link org.spdx.library.model.RelatedElementCollection#toArray()}.
 	 */
@@ -197,10 +196,29 @@ public class RelatedElementCollectionTest extends TestCase {
 		RelatedElementCollection descendantCollection = new RelatedElementCollection(element, RelationshipType.DESCENDANT_OF);
 		RelatedElementCollection ammendsCollection = new RelatedElementCollection(element, RelationshipType.AMENDS);
 		RelatedElementCollection allCollection = new RelatedElementCollection(element, null);
-		assertTrue(Arrays.deepEquals(relatedDescribesOfElements.toArray(), describesCollection.toArray()));
-		assertTrue(Arrays.deepEquals(relatedDescendentOfElements.toArray(), descendantCollection.toArray()));
-		assertTrue(Arrays.deepEquals(relatedAmendsElements.toArray(), ammendsCollection.toArray()));
-		assertTrue(Arrays.deepEquals(allRelatedElements.toArray(), allCollection.toArray()));
+		assertTrue(ArraysSameDifferentOrder(relatedDescribesOfElements.toArray(), describesCollection.toArray()));
+		assertTrue(ArraysSameDifferentOrder(relatedDescendentOfElements.toArray(), descendantCollection.toArray()));
+		assertTrue(ArraysSameDifferentOrder(relatedAmendsElements.toArray(), ammendsCollection.toArray()));
+		assertTrue(ArraysSameDifferentOrder(allRelatedElements.toArray(), allCollection.toArray()));
+	}
+	
+	private boolean ArraysSameDifferentOrder(Object[] a1, Object[] a2) {
+		if (a1.length != a2.length) {
+			return false;
+		}
+		for (Object o1:a1) {
+			boolean found = false;
+			for (Object o2:a2) {
+				if (java.util.Objects.equals(o1, o2)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
