@@ -95,9 +95,9 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void readFile(ISerializableModelStore modelStore, String documentUri, Path filePath) throws InvalidSPDXAnalysisException, IOException {
-		Objects.requireNonNull(modelStore);
-		Objects.requireNonNull(documentUri);
-		Objects.requireNonNull(filePath);
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		Objects.requireNonNull(filePath, "File path can not be null");
 		try (InputStream is = Files.newInputStream(filePath)) {
 			deSerialize(modelStore, documentUri, is);
 		}

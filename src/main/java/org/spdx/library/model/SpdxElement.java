@@ -148,7 +148,7 @@ public abstract class SpdxElement extends ModelObject {
 	 */
 	public SpdxElement setAnnotations(Collection<Annotation> annotations) throws InvalidSPDXAnalysisException {
 		checkCreateAnnotations();
-		Objects.requireNonNull(annotations);
+		Objects.requireNonNull(annotations, "Annotations can not be null");
 		this.annotations.clear();
 		this.annotations.addAll(annotations);
 		return this;
@@ -192,7 +192,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public SpdxElement setRelationships(Collection<Relationship> relationships) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(relationships);
+		Objects.requireNonNull(relationships, "Relationships can not be null");
 		checkCreateRelationships();
 		this.relationships.clear();
 		this.relationships.addAll(relationships);

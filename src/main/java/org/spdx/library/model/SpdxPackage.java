@@ -733,14 +733,14 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, 
 				@Nullable ModelCopyManager copyManager, String name,AnyLicenseInfo concludedLicense, 
 				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
-			Objects.requireNonNull(modelStore);
-			Objects.requireNonNull(documentUri);
-			Objects.requireNonNull(id);
-			Objects.requireNonNull(name);
-			Objects.requireNonNull(concludedLicense);
-			Objects.requireNonNull(copyrightText);
-			Objects.requireNonNull(licenseDeclared);
-			Objects.requireNonNull(sha1);
+			Objects.requireNonNull(modelStore, "Model store can not be null");
+			Objects.requireNonNull(documentUri, "Document URI can not be null");
+			Objects.requireNonNull(id, "ID can not be null");
+			Objects.requireNonNull(name, "Name can not be null");
+			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
+			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
+			Objects.requireNonNull(licenseDeclared, "License declared can not be null");
+			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;
@@ -757,7 +757,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setAnnotations(Collection<Annotation> annotations) {
-			Objects.requireNonNull(annotations);
+			Objects.requireNonNull(annotations, "Annotations can not be null");
 			this.annotations = annotations;
 			return this;
 		}
@@ -767,7 +767,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder addAnnotation(Annotation annotation) {
-			Objects.requireNonNull(annotation);
+			Objects.requireNonNull(annotation, "Annotation can not be null");
 			this.annotations.add(annotation);
 			return this;
 		}
@@ -777,7 +777,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setRelationships(Collection<Relationship> relationships) {
-			Objects.requireNonNull(relationships);
+			Objects.requireNonNull(relationships, "Relationships can not be null");
 			this.relationships = relationships;
 			return this;
 		}
@@ -787,7 +787,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder addRelationship(Relationship relationship) {
-			Objects.requireNonNull(relationship);
+			Objects.requireNonNull(relationship, "Relationship can not be null");
 			this.relationships.add(relationship);
 			return this;
 		}
@@ -833,7 +833,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setChecksums(Collection<Checksum> checksums) {
-			Objects.requireNonNull(checksums);
+			Objects.requireNonNull(checksums, "Checksums can not be null");
 			this.checksums = checksums;
 			return this;
 		}
@@ -843,7 +843,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder addChecksum(Checksum checksum) {
-			Objects.requireNonNull(checksum);
+			Objects.requireNonNull(checksum, "Checksum can not be null");
 			this.checksums.add(checksum);
 			return this;
 		}
@@ -853,7 +853,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setDescription(String description) {
-			Objects.requireNonNull(description);
+			Objects.requireNonNull(description, "Description can not be null");
 			this.description = description;
 			return this;
 		}
@@ -863,7 +863,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setExternalRefs(Collection<ExternalRef> externalRefs) {
-			Objects.requireNonNull(externalRefs);
+			Objects.requireNonNull(externalRefs, "External Refs can not be null");
 			this.externalRefs = externalRefs;
 			return this;
 		}
@@ -873,7 +873,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder addExternalRef(ExternalRef externalRef) {
-			Objects.requireNonNull(externalRef);
+			Objects.requireNonNull(externalRef, "External ref can not be null");
 			this.externalRefs.add(externalRef);
 			return this;
 		}
@@ -883,7 +883,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setFiles(Collection<SpdxFile> files) {
-			Objects.requireNonNull(files);
+			Objects.requireNonNull(files, "Files can not be null");
 			this.files = files;
 			return this;
 		}
@@ -893,7 +893,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder addFile(SpdxFile file) {
-			Objects.requireNonNull(file);
+			Objects.requireNonNull(file, "File can not be null");
 			this.files.add(file);
 			return this;
 		}
@@ -903,7 +903,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setHomepage(String homepage) {
-			Objects.requireNonNull(homepage);
+			Objects.requireNonNull(homepage, "Homepage can not be null");
 			this.homepage = homepage;
 			return this;
 		}
@@ -913,7 +913,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setOriginator(String originator) {
-			Objects.requireNonNull(originator);
+			Objects.requireNonNull(originator, "Orinator can not be null");
 			this.originator = originator;
 			return this;
 		}
@@ -923,7 +923,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setPackageFileName(String packageFileName) {
-			Objects.requireNonNull(packageFileName);
+			Objects.requireNonNull(packageFileName, "Package file name can not be null");
 			this.pacakgeFileName = packageFileName;
 			return this;
 		}
@@ -933,7 +933,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setPackageVerificationCode(SpdxPackageVerificationCode packageVerificationCode) {
-			Objects.requireNonNull(packageVerificationCode);
+			Objects.requireNonNull(packageVerificationCode, "Package verification code can not be null");
 			this.packageVerificationCode = packageVerificationCode;
 			return this;
 		}
@@ -943,7 +943,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setSourceInfo(String sourceInfo) {
-			Objects.requireNonNull(sourceInfo);
+			Objects.requireNonNull(sourceInfo, "Source info can not be null");
 			this.sourceInfo = sourceInfo;
 			return this;
 		}
@@ -953,7 +953,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setSummary(String summary) {
-			Objects.requireNonNull(summary);
+			Objects.requireNonNull(summary, "Summary can not be null");
 			this.summary = summary;
 			return this;
 		}
@@ -963,7 +963,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setSupplier(String supplier) {
-			Objects.requireNonNull(supplier);
+			Objects.requireNonNull(supplier, "Supplier can not be null");
 			this.supplier = supplier;
 			return this;
 		}
@@ -973,7 +973,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setVersionInfo(String versionInfo) {
-			Objects.requireNonNull(versionInfo);
+			Objects.requireNonNull(versionInfo, "Version can not be null");
 			this.versionInfo = versionInfo;
 			return this;
 		}
@@ -992,7 +992,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setDownloadLocation(String downloadLocation) {
-			Objects.requireNonNull(downloadLocation);
+			Objects.requireNonNull(downloadLocation, "Download location can not be null");
 			this.downloadLocation = downloadLocation;
 			return this;
 		}

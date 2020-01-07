@@ -135,13 +135,13 @@ public class ModelCopyManager {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void copy(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore, String fromDocumentUri, String fromId, String type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(toStore);
-		Objects.requireNonNull(toDocumentUri);
-		Objects.requireNonNull(fromStore);
-		Objects.requireNonNull(fromDocumentUri);
-		Objects.requireNonNull(fromId);
-		Objects.requireNonNull(toId);
-		Objects.requireNonNull(type);
+		Objects.requireNonNull(toStore, "ToStore can not be null");
+		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
+		Objects.requireNonNull(fromStore, "FromStore can not be null");
+		Objects.requireNonNull(fromDocumentUri, "From Document URI can not be null");
+		Objects.requireNonNull(fromId, "From ID can not be null");
+		Objects.requireNonNull(toId, "To ID can not be null");
+		Objects.requireNonNull(type, "Type can not be null");
 		if (!toStore.exists(toDocumentUri, toId)) {
 			toStore.create(toDocumentUri, toId, type);
 		}
@@ -194,12 +194,12 @@ public class ModelCopyManager {
 	 */
 	public TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, 
 			String fromDocumentUri, String sourceId, String type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(toStore);
-		Objects.requireNonNull(toDocumentUri);
-		Objects.requireNonNull(fromStore);
-		Objects.requireNonNull(fromDocumentUri);
-		Objects.requireNonNull(sourceId);
-		Objects.requireNonNull(type);
+		Objects.requireNonNull(toStore, "To Store can not be null");
+		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
+		Objects.requireNonNull(fromStore, "From Store can not be null");
+		Objects.requireNonNull(fromDocumentUri, "From Document URI can not be null");
+		Objects.requireNonNull(sourceId, "Source ID can not be null");
+		Objects.requireNonNull(type, "Type can not be null");
 		String toId = getCopiedId(fromStore, fromDocumentUri, sourceId, toStore, toDocumentUri);
 		if (Objects.isNull(toId)) {
 			switch (fromStore.getIdType(sourceId)) {

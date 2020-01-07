@@ -70,9 +70,9 @@ public class DefaultModelStore {
 	}
 	
 	public static final void reset(IModelStore newModelStore, String newDefaultDocumentUri, ModelCopyManager newDefaultCopyManager) {
-		Objects.requireNonNull(newModelStore);
-		Objects.requireNonNull(newDefaultDocumentUri);
-		Objects.requireNonNull(newDefaultCopyManager);
+		Objects.requireNonNull(newModelStore, "Model store can not be null");
+		Objects.requireNonNull(newDefaultDocumentUri, "Document URI can not be null");
+		Objects.requireNonNull(newDefaultCopyManager, "Copy manager can not be null");
 		lock.writeLock().lock();
 		try {
 			defaultModelStore = newModelStore;

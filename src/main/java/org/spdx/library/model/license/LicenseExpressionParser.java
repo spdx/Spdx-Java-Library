@@ -75,8 +75,8 @@ public class LicenseExpressionParser {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw(new LicenseParserException("Empty license expression"));
 		}
-		Objects.requireNonNull(store);
-		Objects.requireNonNull(documentUri);
+		Objects.requireNonNull(store, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		String[] tokens  = tokenizeExpression(expression);
 		if (tokens.length == 1 && tokens[0].equals(SpdxConstants.NOASSERTION_VALUE)) {
 			return new SpdxNoAssertionLicense();
@@ -247,9 +247,9 @@ public class LicenseExpressionParser {
 	 */
 	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String documentUri,
 			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(token);
-		Objects.requireNonNull(store);
-		Objects.requireNonNull(documentUri);
+		Objects.requireNonNull(token, "Token can not be null");
+		Objects.requireNonNull(store, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {
 			return LicenseInfoFactory.getListedLicenseById(token);
 		} else {

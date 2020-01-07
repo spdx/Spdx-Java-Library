@@ -363,14 +363,14 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 				@Nullable ModelCopyManager copyManager, String name,
 				AnyLicenseInfo concludedLicense, Collection<AnyLicenseInfo> licenseInfosFromFile,
 				String copyrightText, Checksum sha1) {
-			Objects.requireNonNull(modelStore);
-			Objects.requireNonNull(documentUri);
-			Objects.requireNonNull(id);
-			Objects.requireNonNull(name);
-			Objects.requireNonNull(concludedLicense);
-			Objects.requireNonNull(licenseInfosFromFile);
-			Objects.requireNonNull(copyrightText);
-			Objects.requireNonNull(sha1);
+			Objects.requireNonNull(modelStore, "Model store can not be null");
+			Objects.requireNonNull(documentUri, "Document URI can not be null");
+			Objects.requireNonNull(id, "ID can not be null");
+			Objects.requireNonNull(name, "Name can not be null");
+			Objects.requireNonNull(concludedLicense, "Concluded can not be null");
+			Objects.requireNonNull(licenseInfosFromFile, "License info from files can not be null");
+			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
+			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;
@@ -387,7 +387,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder setAnnotations(Collection<Annotation> annotations) {
-			Objects.requireNonNull(annotations);
+			Objects.requireNonNull(annotations, "Annotations can not be null");
 			this.annotations = annotations;
 			return this;
 		}
@@ -397,7 +397,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder addAnnotation(Annotation annotation) {
-			Objects.requireNonNull(annotation);
+			Objects.requireNonNull(annotation, "Annotations can not be null");
 			this.annotations.add(annotation);
 			return this;
 		}
@@ -407,7 +407,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder setRelationship(Collection<Relationship> relationships) {
-			Objects.requireNonNull(relationships);
+			Objects.requireNonNull(relationships, "Relationships can not be null");
 			this.relationships = relationships;
 			return this;
 		}
@@ -417,7 +417,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder addRelationship(Relationship relationship) {
-			Objects.requireNonNull(relationship);
+			Objects.requireNonNull(relationship, "Relationships can not be null");
 			this.relationships.add(relationship);
 			return this;
 		}
@@ -444,7 +444,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder setChecksums(Collection<Checksum> checksums) {
-			Objects.requireNonNull(checksums);
+			Objects.requireNonNull(checksums, "Checksums can not be null");
 			this.checksums = checksums;
 			return this;
 		}
@@ -454,7 +454,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder addChecksum(Checksum checksum) {
-			Objects.requireNonNull(checksum);
+			Objects.requireNonNull(checksum, "Checksum can not be null");
 			this.checksums.add(checksum);
 			return this;
 		}
@@ -464,7 +464,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder setFileContributors(Collection<String> fileContributors) {
-			Objects.requireNonNull(fileContributors);
+			Objects.requireNonNull(fileContributors, "File contributors can not be null");
 			this.fileContributors = fileContributors;
 			return this;
 		}
@@ -474,7 +474,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder addFileContributor(String fileContributor) {
-			Objects.requireNonNull(fileContributor);
+			Objects.requireNonNull(fileContributor, "File contributor can not be null");
 			this.fileContributors.add(fileContributor);
 			return this;
 		}
@@ -484,7 +484,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder setFileTypes(Collection<FileType> fileTypes) {
-			Objects.requireNonNull(fileTypes);
+			Objects.requireNonNull(fileTypes, "File types can not be null");
 			this.fileTypes = fileTypes;
 			return this;
 		}
@@ -494,7 +494,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @return this to continue the build
 		 */
 		public SpdxFileBuilder addFileType(FileType fileType) {
-			Objects.requireNonNull(fileType);
+			Objects.requireNonNull(fileType, "file type can not be null");
 			this.fileTypes.add(fileType);
 			return this;
 		}

@@ -721,7 +721,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(typeFilter);
+		Objects.requireNonNull(typeFilter, "Type filter can not be null");
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			List<TypedValue> allItems = new ArrayList<TypedValue>();

@@ -263,8 +263,8 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public Stream<TypedValue> getAllItems(String documentUri, String typeFilter)
 			throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(documentUri);
-		Objects.requireNonNull(typeFilter);
+		Objects.requireNonNull(documentUri, "Document URi can not be null");
+		Objects.requireNonNull(typeFilter, "Type filter can not be null");
 		List<TypedValue> allItems = new ArrayList<>();
 		Iterator<ConcurrentHashMap<String, StoredTypedItem>> docIter = this.documentValues.values().iterator();
 		while (docIter.hasNext()) {

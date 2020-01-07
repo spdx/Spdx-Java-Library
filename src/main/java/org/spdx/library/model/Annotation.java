@@ -31,7 +31,8 @@ import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.storage.IModelStore;
 
 /**
- * @author gary
+ * An Annotation is a comment on an SpdxItem by an agent.
+ * @author Gary O'Neall
  *
  */
 public class Annotation extends ModelObject {

@@ -100,7 +100,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @return this to chain setters
 	 */
 	public SpdxDocument setDocumentDescribes(List<SpdxItem> documentDescribes) {
-		Objects.requireNonNull(documentDescribes);
+		Objects.requireNonNull(documentDescribes, "Document describes can not be null");
 		this.documentDescribes.clear();
 		this.documentDescribes.addAll(documentDescribes);
 		return this;
@@ -189,7 +189,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @return
 	 */
 	public boolean addExtractedLicenseInfos(ExtractedLicenseInfo licenseInfo) {
-		Objects.requireNonNull(licenseInfo);
+		Objects.requireNonNull(licenseInfo, "License info can not be null");
 		return this.extractedLicenseInfos.add(licenseInfo);
 	}
 
@@ -199,7 +199,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @return this to enable chaining of sets
 	 */
 	public SpdxDocument setExtractedLicenseInfos(List<ExtractedLicenseInfo> extractedLicenseInfos) {
-		Objects.requireNonNull(extractedLicenseInfos);
+		Objects.requireNonNull(extractedLicenseInfos, "Extracted license infos can not be null");
 		this.extractedLicenseInfos.clear();
 		this.extractedLicenseInfos.addAll(extractedLicenseInfos);
 		return this;
@@ -323,7 +323,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @return this to enable chaining of sets
 	 */
 	public SpdxDocument setExternalDocumentRefs(Collection<ExternalDocumentRef> externalDocumentRefs) {
-		Objects.requireNonNull(externalDocumentRefs);
+		Objects.requireNonNull(externalDocumentRefs, "External document refs can not be null");
 		this.externalDocumentRefs.clear();
 		this.externalDocumentRefs.addAll(externalDocumentRefs);
 		return this;

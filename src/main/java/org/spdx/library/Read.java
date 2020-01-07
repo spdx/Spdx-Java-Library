@@ -118,9 +118,9 @@ public class Read {
 	 * @throws IOException
 	 */
 	public static void writeToFile(ISerializableModelStore modelStore, String documentUri, Path filePath) throws InvalidSPDXAnalysisException, IOException {
-		Objects.requireNonNull(modelStore);
-		Objects.requireNonNull(documentUri);
-		Objects.requireNonNull(filePath);
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		Objects.requireNonNull(filePath, "File path can not be null");
 		Files.createFile(filePath);
 		try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
 			modelStore.serialize(documentUri, fos);

@@ -134,9 +134,9 @@ public abstract class ModelObject {
 	 */
 	public ModelObject(IModelStore modelStore, String documentUri, String id, @Nullable ModelCopyManager copyManager, 
 			boolean create) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(modelStore);
-		Objects.requireNonNull(documentUri);
-		Objects.requireNonNull(id);
+		Objects.requireNonNull(modelStore, "Model Store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		Objects.requireNonNull(id, "ID can not be null");
 		this.modelStore = modelStore;
 		this.documentUri = documentUri;
 		this.id = id;
@@ -252,10 +252,10 @@ public abstract class ModelObject {
 	 */
 	protected static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, 
 			String stId, String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(stModelStore);
-		Objects.requireNonNull(stDocumentUri);
-		Objects.requireNonNull(stId);
-		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(stModelStore, "Model Store can not be null");
+		Objects.requireNonNull(stDocumentUri, "Document Uri can not be null");
+		Objects.requireNonNull(stId, "ID can not be null");
+		Objects.requireNonNull(propertyName, "Property name can not be null");
 		if (value == null) {
 			// we just remove the value
 			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
@@ -485,7 +485,7 @@ public abstract class ModelObject {
 	 */
 	protected static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(value);
+		Objects.requireNonNull(value, "Value can not be null");
 		stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, 
 				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyManager));
 	}
@@ -826,10 +826,10 @@ public abstract class ModelObject {
 	 */
 	public Annotation createAnnotation(String annotator, AnnotationType annotationType, String date,
 			String comment) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(annotator);
-		Objects.requireNonNull(annotationType);
-		Objects.requireNonNull(date);
-		Objects.requireNonNull(comment);
+		Objects.requireNonNull(annotator, "Annotator can not be null");
+		Objects.requireNonNull(annotationType, "AnnotationType can not be null");
+		Objects.requireNonNull(date, "Date can not be null");
+		Objects.requireNonNull(comment, "Comment can not be null");
 		Annotation retval = new Annotation(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), copyManager, true);
 		retval.setAnnotationDate(date);
@@ -848,8 +848,8 @@ public abstract class ModelObject {
 	 */
 	public Relationship createRelationship(SpdxElement relatedElement, 
 			RelationshipType relationshipType, @Nullable String comment) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(relatedElement);
-		Objects.requireNonNull(relationshipType);
+		Objects.requireNonNull(relatedElement, "Related Element can not be null");
+		Objects.requireNonNull(relationshipType, "Relationship type can not be null");
 		Relationship retval = new Relationship(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setRelatedSpdxElement(relatedElement);
@@ -867,8 +867,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Checksum createChecksum(ChecksumAlgorithm algorithm, String value) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(algorithm);
-		Objects.requireNonNull(value);
+		Objects.requireNonNull(algorithm, "Algorithm can not be null");
+		Objects.requireNonNull(value, "Value can not be null");
 		Checksum retval = new Checksum(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setAlgorithm(algorithm);
@@ -883,8 +883,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackageVerificationCode createPackageVerificationCode(String value, Collection<String> excludedFileNames) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(value);
-		Objects.requireNonNull(excludedFileNames);
+		Objects.requireNonNull(value, "Value can not be null");
+		Objects.requireNonNull(excludedFileNames, "Excluded Files can not be null");
 		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous, this.documentUri), this.copyManager, true);
 		retval.setValue(value);
@@ -901,9 +901,9 @@ public abstract class ModelObject {
 	 */
 	public ExternalDocumentRef createExternalDocumentRef(String externalDocumentId, String externalDocumentUri, 
 			Checksum checksum) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(externalDocumentUri);
-		Objects.requireNonNull(checksum);
-		Objects.requireNonNull(externalDocumentId);
+		Objects.requireNonNull(externalDocumentUri, "External document URI can not be null");
+		Objects.requireNonNull(checksum, "Checksum can not be null");
+		Objects.requireNonNull(externalDocumentId, "External document ID can not be null");
 		if (!SpdxVerificationHelper.isValidExternalDocRef(externalDocumentId)) {
 			throw new InvalidSPDXAnalysisException("Invalid external document reference ID "+externalDocumentId+
 					".  Must be of the format "+SpdxConstants.EXTERNAL_DOC_REF_PATTERN.pattern());
@@ -939,8 +939,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public SpdxCreatorInformation createCreationInfo(List<String> creators, String date) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(creators);
-		Objects.requireNonNull(date);
+		Objects.requireNonNull(creators, "Creators can not be null");
+		Objects.requireNonNull(date, "Date can not be null");
 		SpdxCreatorInformation retval = new SpdxCreatorInformation(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.getCreators().addAll(creators);
@@ -958,9 +958,9 @@ public abstract class ModelObject {
 	 */
 	public ExternalRef createExternalRef(ReferenceCategory category, ReferenceType referenceType, 
 			String locator, @Nullable String comment) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(category);
-		Objects.requireNonNull(referenceType);
-		Objects.requireNonNull(locator);
+		Objects.requireNonNull(category, "Category can not be null");
+		Objects.requireNonNull(referenceType, "Reference type can not be null");
+		Objects.requireNonNull(locator, "Locator can not be null");
 		ExternalRef retval = new ExternalRef(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setReferenceCategory(category);
@@ -983,12 +983,12 @@ public abstract class ModelObject {
 	 */
 	public SpdxFile.SpdxFileBuilder createSpdxFile(String id, String name, AnyLicenseInfo concludedLicense,
 			Collection<AnyLicenseInfo> seenLicense, String copyrightText, Checksum sha1) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(id);
-		Objects.requireNonNull(name);
-		Objects.requireNonNull(sha1);
-		Objects.requireNonNull(concludedLicense);
-		Objects.requireNonNull(seenLicense);
-		Objects.requireNonNull(copyrightText);
+		Objects.requireNonNull(id, "ID can not be null");
+		Objects.requireNonNull(name, "Name can not be null");
+		Objects.requireNonNull(sha1, "Sha1 can not be null");
+		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
+		Objects.requireNonNull(seenLicense, "Seen license can not be null");
+		Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, seenLicense, copyrightText, sha1);
 	}
@@ -1007,12 +1007,12 @@ public abstract class ModelObject {
 	public SpdxPackage.SpdxPackageBuilder createPackage(String id, String name,
 				AnyLicenseInfo concludedLicense, 
 				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
-		Objects.requireNonNull(id);
-		Objects.requireNonNull(name);
-		Objects.requireNonNull(sha1);
-		Objects.requireNonNull(concludedLicense);
-		Objects.requireNonNull(licenseDeclared);
-		Objects.requireNonNull(copyrightText);
+		Objects.requireNonNull(id, "ID can not be null");
+		Objects.requireNonNull(name, "Name can not be null");
+		Objects.requireNonNull(sha1, "Sha1 can not be null");
+		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
+		Objects.requireNonNull(licenseDeclared, "License declared can not be null");
+		Objects.requireNonNull(copyrightText, "copyright text can not be null");
 		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, copyrightText, sha1, licenseDeclared);
 	}
@@ -1024,7 +1024,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ByteOffsetPointer createByteOffsetPointer(SpdxElement referencedElement, int offset) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(referencedElement);
+		Objects.requireNonNull(referencedElement, "Referenced element can not be null");
 		ByteOffsetPointer retval = new ByteOffsetPointer(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setReference(referencedElement);
@@ -1039,7 +1039,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public LineCharPointer createLineCharPointer(SpdxElement referencedElement, int lineNumber) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(referencedElement);
+		Objects.requireNonNull(referencedElement, "Referenced element can not be null");
 		LineCharPointer retval = new LineCharPointer(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setReference(referencedElement);
@@ -1054,8 +1054,8 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public StartEndPointer createStartEndPointer(SinglePointer startPointer, SinglePointer endPointer) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(startPointer);
-		Objects.requireNonNull(endPointer);
+		Objects.requireNonNull(startPointer, "Start pointer can not be null");
+		Objects.requireNonNull(endPointer, "End pointer can not be null");
 		StartEndPointer retval = new StartEndPointer(modelStore, documentUri, 
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setStartPointer(startPointer);
@@ -1079,11 +1079,11 @@ public abstract class ModelObject {
 	public SpdxSnippet.SpdxSnippetBuilder createSpdxSnippet(String id, String name, AnyLicenseInfo concludedLicense,
 			Collection<AnyLicenseInfo> seenLicense, String copyrightText, 
 			SpdxFile snippetFromFile, int startByte, int endByte) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(id);
-		Objects.requireNonNull(name);
-		Objects.requireNonNull(concludedLicense);
-		Objects.requireNonNull(seenLicense);
-		Objects.requireNonNull(copyrightText);
+		Objects.requireNonNull(id, "ID can not be null");
+		Objects.requireNonNull(name, "Name can not be null");
+		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
+		Objects.requireNonNull(seenLicense, "Seen license can not be null");
+		Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 		return new SpdxSnippet.SpdxSnippetBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, seenLicense, copyrightText, snippetFromFile, startByte, endByte);
 	}

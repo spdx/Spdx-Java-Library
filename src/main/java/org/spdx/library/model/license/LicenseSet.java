@@ -98,12 +98,12 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void addMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(member);
+		Objects.requireNonNull(member, "Member can not be null");
 		members.add(member);
 	}
 	
 	public void removeMember(AnyLicenseInfo member) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(member);
+		Objects.requireNonNull(member, "Member can not be null");
 		members.remove(member);
 	}
 	

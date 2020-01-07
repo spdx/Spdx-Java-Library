@@ -149,7 +149,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	 */
 	public static String uriToExternalSpdxElementId(String uri,
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(uri);
+		Objects.requireNonNull(uri, "URI can not be null");
 		Matcher matcher = SpdxConstants.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri);
 		if (!matcher.matches()) {
 			throw new InvalidSPDXAnalysisException("Invalid URI format: "+uri+".  Expects namespace#SPDXRef-XXX");

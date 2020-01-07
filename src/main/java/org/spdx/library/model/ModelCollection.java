@@ -61,13 +61,13 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public ModelCollection(IModelStore modelStore, String documentUri, String id, String propertyName,
 			@Nullable ModelCopyManager copyManager,
 			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(modelStore);
+		Objects.requireNonNull(modelStore, "Model store can not be null");
 		this.modelStore = modelStore;
-		Objects.requireNonNull(documentUri);
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		this.documentUri = documentUri;
-		Objects.requireNonNull(id);
+		Objects.requireNonNull(id, "ID can not be null");
 		this.id = id;
-		Objects.requireNonNull(propertyName);
+		Objects.requireNonNull(propertyName, "Property name can not be null");
 		this.propertyName = propertyName;
 		this.copyManager = copyManager;
 		if (!modelStore.exists(documentUri, id)) {

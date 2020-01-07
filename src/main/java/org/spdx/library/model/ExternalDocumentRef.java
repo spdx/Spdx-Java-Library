@@ -52,9 +52,9 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 */
 	public static Optional<ExternalDocumentRef> getExternalDocRefByDocNamespace(IModelStore stModelStore,
 			String stDocumentUri, String externalDocUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(stModelStore);
-		Objects.requireNonNull(stDocumentUri);
-		Objects.requireNonNull(externalDocUri);
+		Objects.requireNonNull(stModelStore, "Model store can not be null");
+		Objects.requireNonNull(stDocumentUri, "Document URI can not be null");
+		Objects.requireNonNull(externalDocUri, "External document URI can not be null");
 		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
 		try {
 			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
@@ -140,7 +140,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @return
 	 */
 	private String documentToDocumentUri(SpdxDocument document) {
-		Objects.requireNonNull(document);
+		Objects.requireNonNull(document, "Document can not be null");
 		String retval = document.getDocumentUri();
 		if (retval.endsWith("#")) {
 			retval = retval.substring(0, retval.length()-1);

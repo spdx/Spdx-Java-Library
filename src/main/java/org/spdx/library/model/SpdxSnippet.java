@@ -497,14 +497,14 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 				@Nullable ModelCopyManager copyManager, String name,
 				AnyLicenseInfo concludedLicense, Collection<AnyLicenseInfo> licenseInfosFromFile,
 				String copyrightText, SpdxFile snippetFromFile, int startByte, int endByte) {
-			Objects.requireNonNull(modelStore);
-			Objects.requireNonNull(documentUri);
-			Objects.requireNonNull(id);
-			Objects.requireNonNull(name);
-			Objects.requireNonNull(concludedLicense);
-			Objects.requireNonNull(licenseInfosFromFile);
-			Objects.requireNonNull(copyrightText);
-			Objects.requireNonNull(snippetFromFile);
+			Objects.requireNonNull(modelStore, "Model store can not be null");
+			Objects.requireNonNull(documentUri, "Document URI can not be null");
+			Objects.requireNonNull(id, "ID can not be null");
+			Objects.requireNonNull(name, "Name can not be null");
+			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
+			Objects.requireNonNull(licenseInfosFromFile, "License info from file can not be null");
+			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
+			Objects.requireNonNull(snippetFromFile, "Snippet from file can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;
@@ -523,7 +523,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		 * @return this to continue the build
 		 */
 		public SpdxSnippetBuilder setAnnotations(Collection<Annotation> annotations) {
-			Objects.requireNonNull(annotations);
+			Objects.requireNonNull(annotations, "Annotations can not be null");
 			this.annotations = annotations;
 			return this;
 		}
@@ -533,7 +533,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		 * @return this to continue the build
 		 */
 		public SpdxSnippetBuilder addAnnotation(Annotation annotation) {
-			Objects.requireNonNull(annotation);
+			Objects.requireNonNull(annotation, "Annotation can not be null");
 			this.annotations.add(annotation);
 			return this;
 		}
@@ -543,7 +543,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		 * @return this to continue the build
 		 */
 		public SpdxSnippetBuilder setRelationship(Collection<Relationship> relationships) {
-			Objects.requireNonNull(relationships);
+			Objects.requireNonNull(relationships, "Relationships can not be null");
 			this.relationships = relationships;
 			return this;
 		}
@@ -553,7 +553,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		 * @return this to continue the build
 		 */
 		public SpdxSnippetBuilder addRelationship(Relationship relationship) {
-			Objects.requireNonNull(relationship);
+			Objects.requireNonNull(relationship, "Relationship can not be null");
 			this.relationships.add(relationship);
 			return this;
 		}

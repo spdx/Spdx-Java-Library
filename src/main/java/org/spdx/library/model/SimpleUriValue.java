@@ -45,7 +45,7 @@ public class SimpleUriValue implements IndividualUriValue {
 	}
 	
 	public SimpleUriValue(String uri) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(uri);
+		Objects.requireNonNull(uri, "URI can not be null");
 		this.uri = uri;
 	}
 
