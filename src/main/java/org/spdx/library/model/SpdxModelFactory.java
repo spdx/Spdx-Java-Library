@@ -21,9 +21,16 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
@@ -60,7 +67,62 @@ import org.spdx.library.model.pointer.StartEndPointer;
  */
 public class SpdxModelFactory {
 	
-
+	static final Logger logger = LoggerFactory.getLogger(SpdxModelFactory.class);
+	
+	public static Map<String, Class<?>> SPDX_TYPE_TO_CLASS;
+	public static Map<Class<?>, String> SPDX_CLASS_TO_TYPE;
+	static {
+		Map<String, Class<?>> typeToClass = new HashMap<>();
+		typeToClass.put(SpdxConstants.CLASS_SPDX_DOCUMENT, SpdxDocument.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_PACKAGE, SpdxPackage.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_CREATION_INFO, SpdxCreatorInformation.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_CHECKSUM, Checksum.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO, AnyLicenseInfo.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO, SimpleLicensingInfo.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, ConjunctiveLicenseSet.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET, DisjunctiveLicenseSet.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, ExtractedLicenseInfo.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_LICENSE, License.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_LISTED_LICENSE, SpdxListedLicense.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, LicenseException.class);
+		typeToClass.put(SpdxConstants.CLASS_OR_LATER_OPERATOR, OrLaterOperator.class);
+		typeToClass.put(SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR, WithExceptionOperator.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_FILE, SpdxFile.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_VERIFICATIONCODE, SpdxPackageVerificationCode.class);
+		typeToClass.put(SpdxConstants.CLASS_ANNOTATION, Annotation.class);
+		typeToClass.put(SpdxConstants.CLASS_RELATIONSHIP, Relationship.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_ITEM, SpdxItem.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_ELEMENT, SpdxElement.class);
+		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE, ExternalRef.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_REFERENCE_TYPE, ReferenceType.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_SNIPPET, SpdxSnippet.class);
+		typeToClass.put(SpdxConstants.CLASS_NOASSERTION_LICENSE, SpdxNoAssertionLicense.class);
+		typeToClass.put(SpdxConstants.CLASS_NONE_LICENSE, SpdxNoneLicense.class);
+		typeToClass.put(GenericModelObject.GENERIC_MODEL_OBJECT_TYPE, GenericModelObject.class);
+		typeToClass.put(GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE, GenericSpdxElement.class);
+		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT, ExternalSpdxElement.class);
+		typeToClass.put(SpdxConstants.CLASS_POINTER_START_END_POINTER, StartEndPointer.class);
+		typeToClass.put(SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER, ByteOffsetPointer.class);
+		typeToClass.put(SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER, LineCharPointer.class);
+		typeToClass.put(SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER, CompoundPointer.class);
+		typeToClass.put(SpdxConstants.CLASS_SINGLE_POINTER, SinglePointer.class);
+		typeToClass.put(SpdxConstants.ENUM_FILE_TYPE, FileType.class);
+		typeToClass.put(SpdxConstants.ENUM_ANNOTATION_TYPE, Annotation.class);
+		typeToClass.put(SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE, ChecksumAlgorithm.class);
+		typeToClass.put(SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE, ReferenceCategory.class);
+		typeToClass.put(SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE, RelationshipType.class);
+		SPDX_TYPE_TO_CLASS = Collections.unmodifiableMap(typeToClass);
+		
+		Map<Class<?>, String> classToType = new HashMap<>();
+		for (Entry<String, Class<?>> entry:typeToClass.entrySet()) {
+			classToType.put(entry.getValue(), entry.getKey());
+		}
+		
+		SPDX_CLASS_TO_TYPE = Collections.unmodifiableMap(classToType);
+	}
+	
+	
 	/**
 	 * Create an SPDX document with default values for creator, created, licenseListVersion, data license and specVersion
 	 * @param modelStore Where to store the SPDX Document
@@ -139,50 +201,30 @@ public class SpdxModelFactory {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static Class<? extends Object> typeToClass(String type) throws InvalidSPDXAnalysisException {
-		switch (type) {
-		case SpdxConstants.CLASS_SPDX_DOCUMENT: return SpdxDocument.class;
-		case SpdxConstants.CLASS_SPDX_PACKAGE: return SpdxPackage.class;
-		case SpdxConstants.CLASS_SPDX_CREATION_INFO: return SpdxCreatorInformation.class;
-		case SpdxConstants.CLASS_SPDX_CHECKSUM: return Checksum.class;
-		case SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO: return AnyLicenseInfo.class;
-		case SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO:  return SimpleLicensingInfo.class;
-		case SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return ConjunctiveLicenseSet.class;
-		case SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return DisjunctiveLicenseSet.class;
-		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return ExtractedLicenseInfo.class;
-		case SpdxConstants.CLASS_SPDX_LICENSE: return License.class;
-		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return SpdxListedLicense.class;
-		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return LicenseException.class;
-		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return OrLaterOperator.class;
-		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return WithExceptionOperator.class;
-		case SpdxConstants.CLASS_SPDX_FILE: return SpdxFile.class;
-		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("SPDX Review class is no longer supported");
-		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: return SpdxPackageVerificationCode.class;
-		case SpdxConstants.CLASS_ANNOTATION: return Annotation.class;
-		case SpdxConstants.CLASS_RELATIONSHIP: return Relationship.class;
-		case SpdxConstants.CLASS_SPDX_ITEM: return SpdxItem.class;
-		case SpdxConstants.CLASS_SPDX_ELEMENT: return SpdxElement.class;
-		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return ExternalDocumentRef.class;
-		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return ExternalRef.class;
-		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE:  return ReferenceType.class;
-		case SpdxConstants.CLASS_SPDX_SNIPPET: return SpdxSnippet.class;
-		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return SpdxNoAssertionLicense.class;
-		case SpdxConstants.CLASS_NONE_LICENSE: return SpdxNoneLicense.class;
-		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return GenericModelObject.class;
-		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return GenericSpdxElement.class;
-		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return ExternalSpdxElement.class;
-		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return StartEndPointer.class;
-		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return ByteOffsetPointer.class;
-		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return LineCharPointer.class;
-		case SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER: return CompoundPointer.class;
-		case SpdxConstants.CLASS_SINGLE_POINTER: return SinglePointer.class;
-		case SpdxConstants.ENUM_FILE_TYPE: return FileType.class;
-		case SpdxConstants.ENUM_ANNOTATION_TYPE: return Annotation.class;
-		case SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE: return ChecksumAlgorithm.class;
-		case SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE: return ReferenceCategory.class;
-		case SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE: return RelationshipType.class;
-
-		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
+		Class<?> retval = SPDX_TYPE_TO_CLASS.get(type);
+		if (Objects.isNull(retval)) {
+			throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
+		return retval;
+	}
+	
+	public static Stream<?> getElements(IModelStore store, String documentUri, ModelCopyManager copyManager, 
+			Class<?> spdxClass) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(store, "Store must not be null");
+		Objects.requireNonNull(documentUri, "documentUri must not be null");
+		Objects.requireNonNull(spdxClass, "spdxClass must not be null");
+		String type = SPDX_CLASS_TO_TYPE.get(spdxClass);
+		if (Objects.isNull(type)) {
+			throw new InvalidSPDXAnalysisException("Unknow SPDX class: "+spdxClass.toString());
+		}
+		return store.getAllItems(documentUri, type).map(tv -> {
+			try {
+				return createModelObject(store, documentUri, tv.getId(), tv.getType(), copyManager);
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error creating model object",e);
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	/**

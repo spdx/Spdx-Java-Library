@@ -57,6 +57,7 @@ public enum RelationshipType implements IndividualUriValue {
 	TEST_CASE_OF("relationshipType_testcaseOf"),
 	PREREQUISITE_FOR("relationshipType_prerequisiteFor"),
 	HAS_PREREQUISITE("relationshipType_hasPrerequisite"), 
+	VARIANT_OF("relationshipType_variantOf"),
 	MISSING("relationshipType_INVALID_MISSING");
 	
 	private String longName;

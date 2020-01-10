@@ -103,7 +103,7 @@ public abstract class SpdxItem extends SpdxElement {
 	}
 	
 	@SuppressWarnings("unchecked")
-	Collection<AnyLicenseInfo> getLicenseInfoFromFiles() throws InvalidSPDXAnalysisException {
+	public Collection<AnyLicenseInfo> getLicenseInfoFromFiles() throws InvalidSPDXAnalysisException {
 		return (Collection<AnyLicenseInfo>)(Collection<?>)this.getObjectPropertyValueSet(getLicenseInfoFromFilesPropertyName(), AnyLicenseInfo.class);
 	}
 	
