@@ -75,22 +75,29 @@ public abstract class SpdxElement extends ModelObject {
 		super(modelStore, documentUri, id, copyManager, create);
 		// we can not create the annotations and relationships until referenced since ExternalSpdxElement can not create them
 	}
-
-	@Override
-	public List<String> verify() {
+	
+	public List<String> verify(boolean verifyRelationships) {
 		List<String> retval = new ArrayList<>();
 		try {
 			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: "));
 		} catch (InvalidSPDXAnalysisException e1) {
 			retval.add("Error getting annotation: "+e1.getMessage());
 		}
-		try {
-			retval.addAll(verifyCollection(getRelationships(), "Relationship error: "));
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting relationships: "+e.getMessage());
+		if (verifyRelationships) {
+			try {
+				retval.addAll(verifyCollection(getRelationships(), "Relationship error: "));
+			} catch (InvalidSPDXAnalysisException e) {
+				retval.add("Error getting relationships: "+e.getMessage());
+			}
 		}
 		addNameToWarnings(retval);
 		return retval;
+	}
+	
+
+	@Override
+	public List<String> verify() {
+		return verify(true);
 	}
 	
 	@SuppressWarnings("unchecked")

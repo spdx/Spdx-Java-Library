@@ -83,7 +83,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			if (!relatedSpdxElement.isPresent()) {
 				retval.add("Missing related SPDX element");
 			} else {
-				retval.addAll(relatedSpdxElement.get().verify());
+				retval.addAll(relatedSpdxElement.get().verify(false));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting related SPDX element for relationship: "+e.getMessage());
