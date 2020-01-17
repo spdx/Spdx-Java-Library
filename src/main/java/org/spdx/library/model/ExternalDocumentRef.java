@@ -103,7 +103,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	public ExternalDocumentRef(String id) throws InvalidSPDXAnalysisException {
 		super(id);
 		if (!SpdxVerificationHelper.isValidExternalDocRef(id)) {
-			throw new InvalidSPDXAnalysisException("Invalid external document reference ID "+id+
+			logger.warn("Invalid external document reference ID "+id+
 					".  Must be of the format "+SpdxConstants.EXTERNAL_DOC_REF_PATTERN.pattern());
 		}
 	}
@@ -121,7 +121,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		if (!SpdxVerificationHelper.isValidExternalDocRef(id)) {
-			throw new InvalidSPDXAnalysisException("Invalid external document reference ID "+id+
+			logger.warn("Invalid external document reference ID "+id+
 					".  Must be of the format "+SpdxConstants.EXTERNAL_DOC_REF_PATTERN.pattern());
 		}
 	}
@@ -267,6 +267,9 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	@Override
 	public List<String> verify() {
 		List<String> retval = new ArrayList<>();
+		if (!getId().startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
+			retval.add("Invalid external ref ID: "+getId()+".  Must start with "+SpdxConstants.EXTERNAL_DOC_REF_PRENUM+".");
+		}
 		String uri = "UNKNOWN";
 		String spdxDocumentNamespace;
 		try {

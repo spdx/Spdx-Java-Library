@@ -48,6 +48,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	private String id;
 	private String propertyName;
 	private ModelCopyManager copyManager;
+	private Class<?> type;
 	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
 	
 	/**
@@ -74,6 +75,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 			throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
 		}
 		if (Objects.nonNull(type)) {
+			this.type = type;
 			licensePrimitiveAssignable = type.isAssignableFrom(SpdxNoneLicense.class);
 			if (!modelStore.isCollectionMembersAssignableTo(documentUri, id, propertyName, type)) {
 				throw new SpdxInvalidTypeException("Incompatible type for property "+propertyName+": "+type.toString());
@@ -129,6 +131,15 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 					retval = new SpdxNoAssertionLicense();
 				} else if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
 					retval = new SpdxNoneLicense();
+				}
+			}
+			if (Objects.nonNull(this.type) && !this.type.isAssignableFrom(retval.getClass())) {
+				if (retval instanceof IndividualUriValue) {
+					throw new SpdxInvalidTypeException("No enumeration was found for URI "+((IndividualUriValue)retval).getIndividualURI()+
+							" for type "+type.toString());
+				} else {
+					throw new SpdxInvalidTypeException("A collection element of type "+retval.getClass().toString()+
+							" was found in a collection of type "+type.toString());
 				}
 			}
 			return retval;

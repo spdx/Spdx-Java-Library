@@ -21,12 +21,15 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.IndividualUriValue;
 
 /**
- * @author gary
+ * File Type is intrinsic to the file, independent of how the file is being used.  
+ * A file may have more than one file type assigned to it.
+ * 
+ * @author Gary O'Neall
  *
  */
 public enum FileType implements IndividualUriValue {
 	APPLICATION("fileType_application"),
-	ARCHIVE("fileType_application"),
+	ARCHIVE("fileType_archive"),
 	AUDIO("fileType_audio"),
 	BINARY("fileType_binary"),
 	DOCUMENTATION("fileType_documentation"),

@@ -19,6 +19,8 @@ package org.spdx.library.model;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
@@ -36,6 +38,8 @@ import org.spdx.storage.IModelStore;
  *
  */
 public class SimpleUriValue implements IndividualUriValue {
+	
+	static final Logger logger = LoggerFactory.getLogger(SimpleUriValue.class);
 	
 	private String uri;
 
@@ -78,6 +82,7 @@ public class SimpleUriValue implements IndividualUriValue {
 		} else if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
 			return new SpdxNoAssertionLicense(store, documentUri);
 		} else {
+			logger.warn("URI "+uri+" does not match any model object or enumeration");
 			return this;
 		}
 	}
