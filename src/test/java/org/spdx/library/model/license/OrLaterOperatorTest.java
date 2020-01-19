@@ -93,7 +93,6 @@ public class OrLaterOperatorTest extends TestCase {
 		clone.copyFrom(olo1);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)olo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();
-		assertEquals(lic1.getLicenseId(), lic1FromClone.getLicenseId());
 		assertEquals(lic1.getExtractedText(), lic1FromClone.getExtractedText());
 	}
 

@@ -41,10 +41,11 @@ public interface ISerializableModelStore extends IModelStore {
 	
 	/**
 	 * Deserialize / read an SPDX document from a stream
-	 * @param documentUri URI for the document to be input
 	 * @param stream input stream to deserialize from
+	 * @param overwrite if true, allow any existing documents with the same documentUri to be overwritten
+	 * @return document URI of the document
 	 * @throws InvalidSPDXAnalysisException
 	 * @throws IOException
 	 */
-	public void deSerialize(String documentUri, InputStream stream) throws InvalidSPDXAnalysisException, IOException;
+	public String deSerialize(InputStream stream, boolean overwrite) throws InvalidSPDXAnalysisException, IOException;
 }

@@ -145,6 +145,7 @@ public class ModelCopyManager {
 		if (!toStore.exists(toDocumentUri, toId)) {
 			toStore.create(toDocumentUri, toId, type);
 		}
+		putCopiedId(fromStore, fromDocumentUri, fromId, toStore, toDocumentUri, toId);
 		List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
 		for (String propName:propertyNames) {
 			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
@@ -178,7 +179,6 @@ public class ModelCopyManager {
 				}
 			}
 		}
-		putCopiedId(fromStore, fromDocumentUri, fromId, toStore, toDocumentUri, toId);
 	}
 	
 	/**
@@ -204,19 +204,13 @@ public class ModelCopyManager {
 		if (Objects.isNull(toId)) {
 			switch (fromStore.getIdType(sourceId)) {
 				case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri); break;
-				case LicenseRef: // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?
-				case DocumentRef: // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?
-				case SpdxId:  // TODO: Think about if we should handle this ID type differently - check for collisions?  Always generate a new ID?
+				case LicenseRef: toId = toStore.getNextId(IdType.LicenseRef, toDocumentUri); break;
+				case DocumentRef: toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri); break;
+				case SpdxId: toId = toStore.getNextId(IdType.SpdxId, toDocumentUri); break;
 				case ListedLicense:
 				case Literal:
 				case Unkown:
 				default: toId = sourceId;
-			}
-			
-			if (fromStore.getIdType(sourceId).equals(IdType.Anonymous)) {
-				toId = toStore.getNextId(IdType.Anonymous, toDocumentUri);
-			} else if (fromStore.getIdType(sourceId).equals(IdType.DocumentRef)) {
-				
 			}
 			copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, type);
 		}

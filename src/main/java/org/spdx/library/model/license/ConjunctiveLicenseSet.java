@@ -169,8 +169,44 @@ public class ConjunctiveLicenseSet extends LicenseSet {
 	 * @see org.spdx.rdfparser.model.IRdfModel#equivalent(org.spdx.rdfparser.model.IRdfModel)
 	 */
 	@Override
-	public boolean equivalent(ModelObject compare) {
-		return this.equals(compare);
+	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+		if (!(compare instanceof ConjunctiveLicenseSet)) {
+			return false;
+		}
+		return setsEquivalent((ConjunctiveLicenseSet)compare);
+	}
+
+	protected boolean setsEquivalent(ConjunctiveLicenseSet compare) throws InvalidSPDXAnalysisException {
+		List<AnyLicenseInfo> compInfos;
+		try {
+			compInfos = compare.getFlattenedMembers();
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException("Error getting compare license set members",e);
+		}
+		List<AnyLicenseInfo> myInfos;
+		try {
+			myInfos = this.getFlattenedMembers();
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException("Error getting license set members",e);
+		}
+		if (compInfos.size() != myInfos.size()) {
+			return false;
+		}
+		for (AnyLicenseInfo myInfo:myInfos) {
+			if (!compInfos.contains(myInfo)) {
+				boolean found = false;
+				for (AnyLicenseInfo compInfo:compInfos) {
+					if (myInfo.equivalent(compInfo)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override

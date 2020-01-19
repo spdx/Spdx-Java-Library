@@ -87,7 +87,6 @@ public class WithExceptionOperatorTest extends TestCase {
 				DefaultModelStore.getDefaultDocumentUri(), tv.getId(), SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR, copyManager);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)weo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();
-		assertEquals(lic1.getLicenseId(), lic1FromClone.getLicenseId());
 		assertEquals(lic1.getExtractedText(), lic1FromClone.getExtractedText());
 		LicenseException le1 = weo1.getException();
 		LicenseException le1FromClone = clone.getException();

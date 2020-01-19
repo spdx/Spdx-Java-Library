@@ -24,8 +24,8 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.ModelStorageClassConverter;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -89,10 +89,10 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		lic.setComment(COMMENT1);
 		IModelStore modelStore = new InMemSpdxStore();
 		ModelCopyManager copyManager = new ModelCopyManager();
-		copyManager.copy(modelStore, DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		TypedValue copy = copyManager.copy(modelStore, DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-		assertEquals(ID1, lic2.getLicenseId());
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), copy.getId(), SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
+		assertEquals(copy.getId(), lic2.getLicenseId());
 		assertEquals(TEXT1, lic2.getExtractedText());
 		assertEquals(COMMENT1, lic2.getComment());
 	}

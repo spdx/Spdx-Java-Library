@@ -80,7 +80,7 @@ public class Write {
 	public static void deSerialize(ISerializableModelStore modelStore, String documentUri, InputStream stream) throws InvalidSPDXAnalysisException, IOException {
 		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
 		try {
-			modelStore.deSerialize(documentUri, stream);
+			modelStore.deSerialize(stream, false);
 		} finally {
 			modelStore.leaveCriticalSection(lock);
 		}
