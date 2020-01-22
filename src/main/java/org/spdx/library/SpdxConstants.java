@@ -154,6 +154,13 @@ public class SpdxConstants {
 	public static final String PROP_SPDX_EXTERNAL_DOC_REF = "externalDocumentRef";
 	public static final String SPDX_DOCUMENT_ID = "SPDXRef-DOCUMENT";
 	
+	// SPDX Document properties for JSON and YAML files
+	public static final String PROP_DOCUMENT_DESCRIBES = "documentDescribes"; //TODO: This is not yet approved in the spec - see issue #
+	public static final String PROP_DOCUMENT_FILES = "files"; //TODO: This is not yet approved in the spec - see issue #
+	public static final String PROP_DOCUMENT_PACKAGES = "packages"; //TODO: This is not yet approved in the spec - see issue #
+	public static final String PROP_DOCUMENT_SNIPPETS = "snippets"; //TODO: This is not yet approved in the spec - see issue #
+	public static final String PROP_DOCUMENT_RELATIONSHIPS = "relationships"; //TODO: This is not yet approved in the spec - see issue #
+	
 	// SPDX CreationInfo Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
 	public static final String PROP_CREATION_CREATOR = "creator";
@@ -237,7 +244,8 @@ public class SpdxConstants {
 	public static final String PROP_LIC_DEPRECATED_VERSION = "deprecatedVersion";
 	
 	// SPDX Listed License constants
-	public static final String LISTED_LICENSE_DOCUMENT_URI = "https://spdx.org/licenses/";
+	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";
+	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/"; //NOTE: http: rather than https:
 	
 	// SpdxElement Properties
 	public static final String PROP_NAME = "name";
@@ -280,6 +288,7 @@ public class SpdxConstants {
 	// SPDX Relationship Properties
 	public static final String PROP_RELATED_SPDX_ELEMENT = "relatedSpdxElement";
 	public static final String PROP_RELATIONSHIP_TYPE = "relationshipType";
+	public static final String PROP_SPDX_ELEMENTID = "spdxElementId";
 	
 	// ExternalDocumentRef properties
 	public static final String PROP_EXTERNAL_DOC_CHECKSUM = "checksum";
@@ -300,7 +309,6 @@ public class SpdxConstants {
 	
 	// Date format
 	public static final String SPDX_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-	public static final String STANDARD_LICENSE_URL = "http://spdx.org/licenses";
 	
 	// license ID format
 	public static String NON_STD_LICENSE_ID_PRENUM = "LicenseRef-";

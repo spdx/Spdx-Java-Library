@@ -39,19 +39,19 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	@Override
 	InputStream getTocInputStream() throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + LICENSE_TOC_FILENAME);
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME);
 		return tocUrl.openStream();
 	}
 
 	@Override
 	InputStream getLicenseInputStream(String licenseId) throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + licenseId + JSON_SUFFIX);
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX);
 		return tocUrl.openStream();
 	}
 
 	@Override
 	InputStream getExceptionTocInputStream() throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI + EXCEPTION_TOC_FILENAME);
+		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME);
 		return tocUrl.openStream();
 	}
 

@@ -161,7 +161,7 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
     public boolean isSpdxListedLicenseId(String licenseId) {
-		return this.licenseModelStore.isSpdxListedLicenseId(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId);
+		return this.licenseModelStore.isSpdxListedLicenseId(SpdxConstants.LISTED_LICENSE_URL, licenseId);
 	}
     
     /**
@@ -169,7 +169,7 @@ public class ListedLicenses {
      * @return true if the exceptionId belongs to an SPDX listed exception
      */
     public boolean isSpdxListedExceptionId(String exceptionId) {
-    	return this.licenseModelStore.isSpdxListedExceptionId(SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId);
+    	return this.licenseModelStore.isSpdxListedExceptionId(SpdxConstants.LISTED_LICENSE_URL, exceptionId);
     }
 	
 	/**
@@ -178,11 +178,11 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		return (SpdxListedLicense)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null);
+		return (SpdxListedLicense)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null);
 	}
 	
 	public LicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (LicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
+		return (LicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
 	}
 	
 	/**

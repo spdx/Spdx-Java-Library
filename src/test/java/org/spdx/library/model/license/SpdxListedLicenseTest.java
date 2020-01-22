@@ -225,7 +225,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true, null, licenseHtml, true, deprecatedVersion);
 		IModelStore store = new InMemSpdxStore();
-		SpdxListedLicense lic2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, stdl.getCopyManager(), true);
+		SpdxListedLicense lic2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_URL, id, stdl.getCopyManager(), true);
 		lic2.copyFrom(stdl);
 
 		assertEquals(id, lic2.getLicenseId());
@@ -280,7 +280,7 @@ public class SpdxListedLicenseTest extends TestCase {
 				sourceUrls, notes, standardLicenseHeader, template, true,null, null, false, null);
 		assertTrue(stdl.equivalent(stdl));
 		IModelStore store = new InMemSpdxStore();
-		SpdxListedLicense stdl2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, id, stdl.getCopyManager(), true);
+		SpdxListedLicense stdl2 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_URL, id, stdl.getCopyManager(), true);
 		stdl2.setLicenseText(text2);
 		stdl2.setName(name2);
 		stdl2.setSeeAlso(sourceUrls2);
@@ -289,7 +289,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		stdl2.setStandardLicenseTemplate(template2);
 		assertTrue(stdl2.equivalent(stdl));
 		
-		SpdxListedLicense stdl3 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_DOCUMENT_URI, "Apache-2.0", stdl.getCopyManager(), true);
+		SpdxListedLicense stdl3 = new SpdxListedLicense(store, SpdxConstants.LISTED_LICENSE_URL, "Apache-2.0", stdl.getCopyManager(), true);
 		stdl3.setLicenseText(text);
 		stdl3.setSeeAlso(sourceUrls);
 		stdl3.setComment(notes);
