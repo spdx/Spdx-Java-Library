@@ -145,7 +145,8 @@ public class SpdxConstants {
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
 	public static final String PROP_SPDX_REVIEWED_BY = "reviewed";
 	public static final String PROP_SPDX_EXTRACTED_LICENSES = "hasExtractedLicensingInfo";
-	public static final String PROP_SPDX_VERSION = "specVersion";
+	public static final String PROP_SPDX_VERSION = "specVersion"; // TODO: Migrate this to PROP_SPDX_SPEC_VERSION in 3.0.  See issue 
+	public static final String PROP_SPDX_SPDX_VERSION = "spdxVersion";
 	public static final String PROP_SPDX_CREATION_INFO = "creationInfo";
 	public static final String PROP_SPDX_PACKAGE = "describesPackage";
 	@Deprecated		// since 2.0  Planned to be removed in next major spec revision
