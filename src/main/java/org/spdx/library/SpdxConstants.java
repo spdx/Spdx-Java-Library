@@ -140,6 +140,7 @@ public class SpdxConstants {
 	public static final String URI_VALUE_NONE = SPDX_NAMESPACE  + PROP_VALUE_NONE;
 	public static final String PROP_VALUE_NOASSERTION = "noassertion";
 	public static final String URI_VALUE_NOASSERTION = SPDX_NAMESPACE + PROP_VALUE_NOASSERTION;
+	public static final String SPDX_IDENTIFIER = "SPDXID";
 	
 	// SPDX Document Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace

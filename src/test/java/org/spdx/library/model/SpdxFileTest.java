@@ -443,4 +443,20 @@ public class SpdxFileTest extends TestCase {
 		file2.setComment(COMMENT3);
 		assertEquals(file2.getComment().get(), COMMENT3);
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void testDependency() throws InvalidSPDXAnalysisException {
+		SpdxFile file = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"filename", COMPLEX_LICENSE, Arrays.asList(CONJUNCTIVE_LICENSES), SpdxConstants.NOASSERTION_VALUE, SHA1)
+				.build();
+		SpdxFile dep = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"dependency", STANDARD_LICENSES[0], Arrays.asList(STANDARD_LICENSES[0]), SpdxConstants.NOASSERTION_VALUE, SHA1)
+				.build();
+		Collection<SpdxFile> result = file.getFileDependency();
+		assertEquals(0, result.size());
+		result.add(dep);
+		result = file.getFileDependency();
+		assertEquals(1, result.size());
+		assertTrue(result.contains(dep));
+	}
 }

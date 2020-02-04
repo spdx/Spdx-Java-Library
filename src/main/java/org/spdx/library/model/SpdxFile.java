@@ -254,6 +254,16 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		setPropertyValue(SpdxConstants.PROP_FILE_NOTICE, noticeText);
 		return this;
 	}
+	
+	/**
+	 * @return file dependencies - note: this is deprecated, use relationships between files rather than this field
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public Collection<SpdxFile> getFileDependency() throws InvalidSPDXAnalysisException {
+		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_FILE_FILE_DEPENDENCY, SpdxFile.class);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.ModelObject#verify()
