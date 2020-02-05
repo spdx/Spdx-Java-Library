@@ -314,13 +314,13 @@ public class InMemSpdxStore implements IModelStore {
 		if (ANON_ID_PATTERN_NUMERIC.matcher(id).matches()) {
 			return IdType.Anonymous;
 		}
-		if (SpdxConstants.LICENSE_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+		if (SpdxConstants.LICENSE_ID_PATTERN.matcher(id).matches()) {
 			return IdType.LicenseRef;
 		}
-		if (DOCUMENT_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+		if (SpdxConstants.EXTERNAL_DOC_REF_PATTERN.matcher(id).matches()) {
 			return IdType.DocumentRef;
 		}
-		if (SPDX_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+		if (SpdxConstants.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches()) {
 			return IdType.SpdxId;
 		}
 		if (LITERAL_VALUE_SET.contains(id)) {
