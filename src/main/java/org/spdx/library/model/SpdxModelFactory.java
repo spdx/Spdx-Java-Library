@@ -20,6 +20,10 @@ package org.spdx.library.model;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -206,6 +211,34 @@ public class SpdxModelFactory {
 			throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 		return retval;
+	}
+	
+	/**
+	 * @param parentType type of the parent
+	 * @param property
+	 * @return the property type for a property within a parent class
+	 * @throws IntrospectionException
+	 */
+	public static Optional<String> getPropertyType(String parentType, String property) {
+		Objects.requireNonNull(parentType);
+		Objects.requireNonNull(property);
+		Class<?> clazz = SPDX_TYPE_TO_CLASS.get(parentType);
+		if (Objects.isNull(clazz)) {
+			return Optional.empty();
+		}
+		BeanInfo info;
+		try {
+			info = Introspector.getBeanInfo(clazz);
+			for (PropertyDescriptor pd:info.getPropertyDescriptors()) {
+				if (pd.getName().equals(property)) {
+					return Optional.of(pd.getPropertyType().toString());
+				}
+			}
+			return Optional.empty();
+		} catch (IntrospectionException e) {
+			logger.warn("Introspection exception getting property type for parent type "+parentType+" property "+property,e);
+			return Optional.empty();
+		} 
 	}
 	
 	public static Stream<?> getElements(IModelStore store, String documentUri, ModelCopyManager copyManager, 

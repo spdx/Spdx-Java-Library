@@ -155,6 +155,7 @@ public class SpdxConstants {
 	public static final String PROP_SPDX_DATA_LICENSE = "dataLicense";
 	public static final String PROP_SPDX_EXTERNAL_DOC_REF = "externalDocumentRef";
 	public static final String SPDX_DOCUMENT_ID = "SPDXRef-DOCUMENT";
+	public static final String PROP_DOCUMENT_NAMESPACE = "documentNamespace";
 	
 	// SPDX Document properties for JSON and YAML files
 	public static final String PROP_DOCUMENT_DESCRIBES = "documentDescribes"; //TODO: This is not yet approved in the spec - see issue #

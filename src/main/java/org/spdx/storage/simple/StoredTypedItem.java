@@ -31,7 +31,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-class StoredTypedItem extends TypedValue {
+public class StoredTypedItem extends TypedValue {
 
 	static final Logger logger = LoggerFactory.getLogger(TypedValue.class);
 	

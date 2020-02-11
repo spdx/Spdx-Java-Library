@@ -68,7 +68,7 @@ public class InMemSpdxStore implements IModelStore {
 	/**
 	 * Map of Document URI to items stored in the document
 	 */
-	ConcurrentHashMap<String, ConcurrentHashMap<String, StoredTypedItem>> documentValues = new ConcurrentHashMap<>();
+	protected ConcurrentHashMap<String, ConcurrentHashMap<String, StoredTypedItem>> documentValues = new ConcurrentHashMap<>();
 	private int nextNextLicenseId = 0;
 	private int nextNextDocumentId = 0;
 	private int nextNextSpdxId = 0;
