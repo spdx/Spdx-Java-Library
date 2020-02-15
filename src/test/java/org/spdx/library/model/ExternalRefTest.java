@@ -176,7 +176,8 @@ public class ExternalRefTest extends TestCase {
 		for (int i = 0; i < TEST_REFERENCES.length; i++) {
 			assertEquals(REFERENCE_TYPE_NAMES[i], ListedReferenceTypes.getListedReferenceTypes().getListedReferenceName(new URI(TEST_REFERENCES[i].getReferenceType().getIndividualURI())));
 			TEST_REFERENCES[i].setReferenceType(changedTypes[i]);
-			assertEquals(changedTypes[i].getIndividualURI(), TEST_REFERENCES[i].getReferenceType().getIndividualURI());
+			ReferenceType refType = TEST_REFERENCES[i].getReferenceType();
+			assertEquals(changedTypes[i].getIndividualURI(), refType.getIndividualURI());
 		}
 	}
 

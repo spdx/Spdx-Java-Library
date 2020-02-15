@@ -40,6 +40,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.Version;
+import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
 import org.spdx.library.model.enumerations.ReferenceCategory;
@@ -106,6 +107,7 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.CLASS_NONE_LICENSE, SpdxNoneLicense.class);
 		typeToClass.put(GenericModelObject.GENERIC_MODEL_OBJECT_TYPE, GenericModelObject.class);
 		typeToClass.put(GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE, GenericSpdxElement.class);
+		typeToClass.put(GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE, GenericSpdxItem.class);
 		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT, ExternalSpdxElement.class);
 		typeToClass.put(SpdxConstants.CLASS_POINTER_START_END_POINTER, StartEndPointer.class);
 		typeToClass.put(SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER, ByteOffsetPointer.class);
@@ -113,7 +115,7 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER, CompoundPointer.class);
 		typeToClass.put(SpdxConstants.CLASS_SINGLE_POINTER, SinglePointer.class);
 		typeToClass.put(SpdxConstants.ENUM_FILE_TYPE, FileType.class);
-		typeToClass.put(SpdxConstants.ENUM_ANNOTATION_TYPE, Annotation.class);
+		typeToClass.put(SpdxConstants.ENUM_ANNOTATION_TYPE, AnnotationType.class);
 		typeToClass.put(SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE, ChecksumAlgorithm.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE, ReferenceCategory.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE, RelationshipType.class);
@@ -192,6 +194,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_NONE_LICENSE: return new SpdxNoneLicense(modelStore, documentUri);
 		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, copyManager, true);
 		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new GenericSpdxElement(modelStore, documentUri, id, copyManager, true);
+		case GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE: return new GenericSpdxItem(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return new ExternalSpdxElement(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, true);

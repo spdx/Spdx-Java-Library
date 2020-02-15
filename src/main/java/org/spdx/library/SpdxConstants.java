@@ -141,6 +141,7 @@ public class SpdxConstants {
 	public static final String PROP_VALUE_NOASSERTION = "noassertion";
 	public static final String URI_VALUE_NOASSERTION = SPDX_NAMESPACE + PROP_VALUE_NOASSERTION;
 	public static final String SPDX_IDENTIFIER = "SPDXID";
+	public static final String EXTERNAL_DOCUMENT_REF_IDENTIFIER = "externalDocumentId";
 	
 	// SPDX Document Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
@@ -296,6 +297,7 @@ public class SpdxConstants {
 	// ExternalDocumentRef properties
 	public static final String PROP_EXTERNAL_DOC_CHECKSUM = "checksum";
 	public static final String PROP_EXTERNAL_SPDX_DOCUMENT = "spdxDocument";
+	public static final String PROP_EXTERNAL_DOCUMENT_ID = "externalDocumentId";
 	
 	// External Reference properties
 	public static final String PROP_REFERENCE_CATEGORY = "referenceCategory";

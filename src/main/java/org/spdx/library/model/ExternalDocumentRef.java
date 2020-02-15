@@ -72,7 +72,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 					}
 				}
 			}
-			// if we got here, we didn't find an existing one
+			// if we got here, we didn't find an existing one, need to create one
 			if (Objects.nonNull(copyManager)) {
 				ExternalDocumentRef retval = new ExternalDocumentRef(stModelStore, stDocumentUri,
 						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri), copyManager, true);
@@ -112,7 +112,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
 	 * @param id ID for this object - must be unique within the SPDX document
-	 * @param copyManager - if supplied, model objects will be implictly copied into this model store and document URI when referenced by setting methods
+	 * @param copyManager - if supplied, model objects will be implicitly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */

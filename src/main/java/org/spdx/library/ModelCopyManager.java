@@ -202,19 +202,23 @@ public class ModelCopyManager {
 		Objects.requireNonNull(type, "Type can not be null");
 		String toId = getCopiedId(fromStore, fromDocumentUri, sourceId, toStore, toDocumentUri);
 		if (Objects.isNull(toId)) {
-			if (SpdxConstants.CLASS_EXTERNAL_DOC_REF.equals(type)) {
-				toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri);
-			} else {
-				switch (fromStore.getIdType(sourceId)) {
-					case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri); break;
-					case LicenseRef: toId = toStore.getNextId(IdType.LicenseRef, toDocumentUri); break;
-					case DocumentRef: toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri); break;
-					case SpdxId: toId = toStore.getNextId(IdType.SpdxId, toDocumentUri); break;
-					case ListedLicense:
-					case Literal:
-					case Unkown:
-					default: toId = sourceId;
+			if (fromStore.getIdType(sourceId) == IdType.Anonymous || toStore.exists(toDocumentUri, sourceId)) {
+				if (SpdxConstants.CLASS_EXTERNAL_DOC_REF.equals(type)) {
+					toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri);
+				} else {
+					switch (fromStore.getIdType(sourceId)) {
+						case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri); break;
+						case LicenseRef: toId = toStore.getNextId(IdType.LicenseRef, toDocumentUri); break;
+						case DocumentRef: toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri); break;
+						case SpdxId: toId = toStore.getNextId(IdType.SpdxId, toDocumentUri); break;
+						case ListedLicense:
+						case Literal:
+						case Unkown:
+						default: toId = sourceId;
+					}
 				}
+			} else {
+				toId = sourceId;
 			}
 			copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, type);
 		}
