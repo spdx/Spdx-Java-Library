@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
 import org.spdx.library.model.Checksum;

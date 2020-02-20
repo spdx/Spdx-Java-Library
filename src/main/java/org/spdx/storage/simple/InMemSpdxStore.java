@@ -265,9 +265,8 @@ public class InMemSpdxStore implements IModelStore {
 			throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(documentUri, "Document URi can not be null");
 		List<TypedValue> allItems = new ArrayList<>();
-		Iterator<ConcurrentHashMap<String, StoredTypedItem>> docIter = this.documentValues.values().iterator();
-		while (docIter.hasNext()) {
-			ConcurrentHashMap<String, StoredTypedItem> itemMap = docIter.next();
+		ConcurrentHashMap<String, StoredTypedItem> itemMap = this.documentValues.get(documentUri);
+		if (Objects.nonNull(itemMap)) {
 			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
 			while (valueIter.hasNext()) {
 				StoredTypedItem item = valueIter.next();

@@ -1,4 +1,4 @@
-package org.spdx.compare;
+package org.spdx.utility.compare;
 
 /**
  * @author Gary O'Neall

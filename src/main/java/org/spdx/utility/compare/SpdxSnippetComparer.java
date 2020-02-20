@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.SpdxDocument;
 import org.spdx.library.model.SpdxFile;
@@ -87,7 +86,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 				document2 = entry.getKey();
 			}
 		}
-		if (snippet2 != null) {
+		if (snippet2 != null && snippet2.getByteRange() != null) {
 			try {
 				if (!snippet2.getByteRange().equivalent(snippet.getByteRange())) {
 					this.byteRangeEquals = false;

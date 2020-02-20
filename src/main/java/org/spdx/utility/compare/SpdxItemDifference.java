@@ -19,7 +19,6 @@ package org.spdx.utility.compare;
 
 import java.util.List;
 
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
 import org.spdx.library.model.Relationship;

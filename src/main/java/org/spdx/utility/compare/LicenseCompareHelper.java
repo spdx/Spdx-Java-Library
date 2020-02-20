@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.compare;
+package org.spdx.utility.compare;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.spdx.compare.CompareTemplateOutputHandler.DifferenceDescription;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
@@ -46,6 +45,7 @@ import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
+import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 
 /**
  * Primarily a static class of helper functions for comparing two SPDX licenses

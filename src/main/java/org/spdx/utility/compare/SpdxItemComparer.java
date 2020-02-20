@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.spdx.compare.LicenseCompareHelper;
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
 import org.spdx.library.model.Relationship;
@@ -42,8 +40,8 @@ import org.spdx.library.model.license.AnyLicenseInfo;
  *
  */
 public class SpdxItemComparer {
-	private boolean inProgress = false;
-	private boolean differenceFound = false;
+	private boolean itemInProgress = false;
+	private boolean itemDifferenceFound = false;
 	private boolean concludedLicenseEquals = true;
 	private boolean seenLicenseEquals = true;
 	protected String name = null;
@@ -92,7 +90,7 @@ public class SpdxItemComparer {
 	 */
 	public void addDocumentItem(SpdxDocument spdxDocument,
 			SpdxItem spdxItem) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		if (this.inProgress) {
+		if (this.itemInProgress) {
 			throw(new SpdxCompareException("Trying to add a document item while another document item is being added."));
 		}
 		if (this.name == null) {
@@ -103,8 +101,7 @@ public class SpdxItemComparer {
 			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxItem.getName()+", expecting "+this.name));
 		}
-		this.inProgress = true;
-		this.differenceFound = false;
+		this.itemInProgress = true;
 		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
 		if (iter.hasNext()) {
 			Entry<SpdxDocument, SpdxItem> entry = iter.next();
@@ -112,24 +109,24 @@ public class SpdxItemComparer {
 			Map<String, String> licenseXlationMap = this.extractedLicenseIdMap.get(spdxDocument).get(entry.getKey());
 			if (!SpdxComparer.stringsEqual(spdxItem.getComment(), itemB.getComment())) {
 				this.commentsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			// Concluded License
 			if (!LicenseCompareHelper.isLicenseEqual(spdxItem.getLicenseConcluded(), 
 					itemB.getLicenseConcluded(), licenseXlationMap)) {
 				this.concludedLicenseEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			// Copyrights
 			if (!SpdxComparer.stringsEqual(spdxItem.getCopyrightText(), itemB.getCopyrightText())) {
 				this.copyrightsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			// license comments
 			if (!SpdxComparer.stringsEqual(spdxItem.getLicenseComments(),
 					itemB.getLicenseComments())) {
 				this.licenseCommmentsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			// Seen licenses
 			compareLicenseInfosInFiles(spdxDocument, spdxItem.getLicenseInfoFromFiles());
@@ -139,7 +136,7 @@ public class SpdxItemComparer {
 			compareAnnotation(spdxDocument, spdxItem.getAnnotations());
 		}
 		this.documentItem.put(spdxDocument, spdxItem);
-		this.inProgress = false;
+		this.itemInProgress = false;
 	}	
 	
 	/**
@@ -169,13 +166,13 @@ public class SpdxItemComparer {
 			List<Annotation> uniqueAnnotations = SpdxComparer.findUniqueAnnotations(annotations, compareAnnotations);
 			if (uniqueAnnotations.size() > 0) {
 				this.annotationsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			uniqueDocAnnotations.put(entry.getKey(), uniqueAnnotations);
 			uniqueAnnotations = SpdxComparer.findUniqueAnnotations(compareAnnotations, annotations);
 			if (uniqueAnnotations.size() > 0) {
 				this.annotationsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			compareDocAnnotations.put(spdxDocument, uniqueAnnotations);
 		}
@@ -208,13 +205,13 @@ public class SpdxItemComparer {
 			List<Relationship> uniqueRelationships = SpdxComparer.findUniqueRelationships(relationships, compareRelationships);
 			if (uniqueRelationships.size() > 0) {
 				this.relationshipsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			uniqueDocRelationship.put(entry.getKey(), uniqueRelationships);
 			uniqueRelationships = SpdxComparer.findUniqueRelationships(compareRelationships, relationships);
 			if (uniqueRelationships.size() > 0) {
 				this.relationshipsEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			uniqueCompareRelationship.put(spdxDocument, uniqueRelationships);
 		}
@@ -253,7 +250,7 @@ public class SpdxItemComparer {
 			compareLicenseCollections(licenses, compareLicenses, uniqueInDoc, uniqueInCompare, licenseXlationMap);
 			if (uniqueInDoc.size() > 0 || uniqueInCompare.size() > 0) {
 				this.seenLicenseEquals = false;
-				this.differenceFound = true;
+				this.itemDifferenceFound = true;
 			}
 			uniqueDocLicenses.put(entry.getKey(), uniqueInDoc);
 			uniqueCompareLicenses.put(spdxDocument, uniqueInCompare);
@@ -378,7 +375,7 @@ public class SpdxItemComparer {
 	 * 
 	 */
 	protected void checkInProgress() throws SpdxCompareException {
-		if (inProgress) {
+		if (itemInProgress) {
 			throw(new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed"));
 		}
 	}
@@ -397,7 +394,7 @@ public class SpdxItemComparer {
 	public boolean isDifferenceFound() throws SpdxCompareException {
 		checkInProgress();
 		checkCompareMade();
-		return this.differenceFound;
+		return this.itemDifferenceFound;
 	}
 	
 	
@@ -407,7 +404,7 @@ public class SpdxItemComparer {
 	public boolean isInProgress() throws SpdxCompareException {
 		checkInProgress();
 		checkCompareMade();
-		return inProgress;
+		return itemInProgress;
 	}
 
 

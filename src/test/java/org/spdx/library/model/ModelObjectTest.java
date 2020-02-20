@@ -677,7 +677,7 @@ public class ModelObjectTest extends TestCase {
 		// different store
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
-		gmo3.copyFrom(gmo3);
+		gmo3.copyFrom(gmo);
 		assertTrue(gmo.equivalent(gmo3));
 		assertTrue(gmo3.equivalent(gmo2));
 	}

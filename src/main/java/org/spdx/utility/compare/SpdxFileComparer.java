@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
 import org.spdx.library.model.Checksum;

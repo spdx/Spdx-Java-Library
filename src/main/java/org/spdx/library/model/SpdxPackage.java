@@ -648,7 +648,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		try {
 			Optional<String> compVersion = pkg.getVersionInfo();
-			if (compVersion != null) {
+			if (compVersion.isPresent()) {
 				compNameVersion = compNameVersion + compVersion.get();
 			}
 		} catch (InvalidSPDXAnalysisException e) {

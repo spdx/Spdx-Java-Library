@@ -40,6 +40,8 @@ import javax.annotation.Nullable;
  */
 public abstract class LicenseSet extends AnyLicenseInfo {
 	
+	//TODO: Check for recursive references when adding or setting license ID's - currently, this ends badly in an infinite loop on toString
+	
 	Collection<AnyLicenseInfo> members;
 	
 	

@@ -29,8 +29,8 @@ import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.spdx.compare.LicenseCompareHelper;
-import org.spdx.compare.SpdxCompareException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
 import org.spdx.library.model.Checksum;
@@ -65,6 +65,8 @@ import org.spdx.library.model.license.ExtractedLicenseInfo;
  *
  */
 public class SpdxComparer {
+	
+	static final Logger logger = LoggerFactory.getLogger(SpdxComparer.class);
 	
 	private List<SpdxDocument> spdxDocs = null;
 	private boolean differenceFound = false;
@@ -366,7 +368,7 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;	// skip comparing to ourself
 				}
-				Collection<Relationship> relationshipsB = spdxDocs.get(i).getRelationships();
+				Collection<Relationship> relationshipsB = spdxDocs.get(j).getRelationships();
 
 				// find any creators in A that are not in B
 				List<Relationship> uniqueA = findUniqueRelationships(relationshipsA, relationshipsB);
@@ -770,16 +772,23 @@ public class SpdxComparer {
 	private void addPackageComparers(SpdxDocument spdxDocument,
 			List<SpdxPackage> pkgs, Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> extractedLicenseIdMap) throws SpdxCompareException {
 		try {
-			for (int i = 0; i < pkgs.size(); i++) {
-				if (!pkgs.get(i).getName().isPresent()) {
-					throw new SpdxCompareException("Missing package name for package comparer");
+			List<String> addedPackageNames = new ArrayList<String>();
+			for (SpdxPackage pkg:pkgs) {
+				if (!pkg.getName().isPresent()) {
+					logger.warn("Missing package name for package comparer.  Skipping unnamed package");
+					continue;
 				}
-				SpdxPackageComparer mpc = this.packageComparers.get(pkgs.get(i).getName().get());
+				if (addedPackageNames.contains(pkg.getName().get())) {
+					logger.warn("Duplicate package names: "+pkg.getName().get()+".  Only comparing the first instance");
+					continue;
+				}
+				SpdxPackageComparer mpc = this.packageComparers.get(pkg.getName().get());
 				if (mpc == null) {
 					mpc = new SpdxPackageComparer(extractedLicenseIdMap);
-					this.packageComparers.put(pkgs.get(i).getName().get(), mpc);
+					this.packageComparers.put(pkg.getName().get(), mpc);
 				}
-				mpc.addDocumentPackage(spdxDocument, pkgs.get(i));
+				mpc.addDocumentPackage(spdxDocument, pkg);
+				addedPackageNames.add(pkg.getName().get());
 			}
 		} catch (InvalidSPDXAnalysisException ex) {
 			throw new SpdxCompareException("Error getting package name", ex);
@@ -1809,22 +1818,14 @@ public class SpdxComparer {
 	 * @return Package comparers where there is at least one difference
 	 * @throws SpdxCompareException 
 	 */
-	public SpdxPackageComparer[] getPackageDifferences() throws SpdxCompareException {
+	public List<SpdxPackageComparer> getPackageDifferences() throws SpdxCompareException {
 		Collection<SpdxPackageComparer> comparers = this.packageComparers.values();
 		Iterator<SpdxPackageComparer> iter = comparers.iterator();
-		int count = 0;
-		while (iter.hasNext()) {
-			if (iter.next().isDifferenceFound()) {
-				count++;
-			}
-		}
-		SpdxPackageComparer[] retval = new SpdxPackageComparer[count];		
-		iter = comparers.iterator();
-		int i = 0;
+		List<SpdxPackageComparer> retval = new ArrayList<>();		
 		while (iter.hasNext()) {
 			SpdxPackageComparer comparer = iter.next();
 			if (comparer.isDifferenceFound()) {
-				retval[i++] = comparer;
+				retval.add(comparer);
 			}
 		}
 		return retval;

@@ -23,7 +23,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
@@ -32,6 +31,7 @@ import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.ModelUpdate;
+import org.spdx.utility.compare.LicenseCompareHelper;
 
 /**
  * Describes a license

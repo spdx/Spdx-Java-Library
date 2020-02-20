@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.spdx.compare.LicenseCompareHelper;
-import org.spdx.compare.SpdxCompareException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Checksum;
 import org.spdx.library.model.ExternalRef;
@@ -151,7 +149,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 		checkInProgress();
 		if (this.name == null && spdxPackage.getName().isPresent()) {
 			this.name = spdxPackage.getName().get();
-		} else if (!this.name.equals(spdxPackage.getName())) {
+		} else if (!this.name.equals(spdxPackage.getName().get())) {
 			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxPackage.getName()+", expecting "+this.name));
 		}

@@ -650,7 +650,7 @@ public abstract class ModelObject {
 				comparePropertyValueNames.remove(propertyName);
 			} else {
 				// No property value
-				if (!this.getObjectPropertyValue(propertyName).isPresent()) {
+				if (this.getObjectPropertyValue(propertyName).isPresent()) {
 					return false;
 				}
 			}
@@ -1110,5 +1110,10 @@ public abstract class ModelObject {
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setMembers(members);
 		return retval;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getType() + " " + this.id;
 	}
 }

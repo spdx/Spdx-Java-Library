@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import org.spdx.compare.LicenseCompareHelper;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -34,6 +33,7 @@ import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.utility.compare.LicenseCompareHelper;
 
 /**
  * An ExtractedLicensingInfo represents a license or licensing notice that was found in the package. 
