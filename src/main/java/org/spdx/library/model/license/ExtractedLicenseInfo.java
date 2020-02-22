@@ -185,7 +185,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 			// Only test for the text - other fields do not need to equal to be considered equivalent
 			return LicenseCompareHelper.isLicenseTextEquivalent(this.getExtractedText(), ((ExtractedLicenseInfo)compare).getExtractedText());
 		} else {
-			return super.equivalent(compare);
+			return false;
 		}
 	}
 	
