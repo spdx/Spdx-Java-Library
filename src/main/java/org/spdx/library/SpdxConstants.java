@@ -33,6 +33,7 @@ public class SpdxConstants {
 	public static final String DOAP_NAMESPACE = "http://usefulinc.com/ns/doap#";
 	public static final String OWL_NAMESPACE = "http://www.w3.org/2002/07/owl#";
 	public static final String RDF_POINTER_NAMESPACE = "http://www.w3.org/2009/pointers#";
+	public static final String XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 	
 	// RDF Properties - within the RDF_NAMESPACE
 	public static final String RDF_PROP_TYPE = "type";
