@@ -100,8 +100,11 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 		return SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		// we don't want to call super.verify since we really don't require those fields
 		List<String> retval = new ArrayList<>();
 		String id = this.getId();

@@ -208,10 +208,10 @@ public class Annotation extends ModelObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.model.IRdfModel#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	public List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<String>();
 		try {
 			if (AnnotationType.MISSING.equals(getAnnotationType())) {

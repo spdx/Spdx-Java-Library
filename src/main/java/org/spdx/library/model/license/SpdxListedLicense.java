@@ -97,8 +97,8 @@ public class SpdxListedLicense extends License {
 	}
 
 	@Override 
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		try {
 			if (this.isDeprecated()) {
 				retval.add(this.getLicenseId() + " is deprecated.");

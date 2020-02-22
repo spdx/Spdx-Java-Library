@@ -78,10 +78,10 @@ public class ExternalRef extends ModelObject implements Comparable<ExternalRef> 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		try {
 			ReferenceCategory referenceCategory = getReferenceCategory();

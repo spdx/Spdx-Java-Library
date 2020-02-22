@@ -29,7 +29,9 @@ import java.util.Stack;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.ModelStorageClassConverter;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -189,7 +191,7 @@ public class LicenseExpressionParser {
 					weo.setException(licenseException);
 					operandStack.push(weo);			
 				} else {
-					// process in order of prcedence using the shunting yard algorithm
+					// process in order of precedence using the shunting yard algorithm
 					while (!operatorStack.isEmpty() && 
 							operatorStack.peek().ordinal() <= operator.ordinal()) {
 						Operator tosOperator = operatorStack.pop();
@@ -250,15 +252,26 @@ public class LicenseExpressionParser {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		boolean exists = store.exists(documentUri, token);
+		
 		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {
-			return LicenseInfoFactory.getListedLicenseById(token);
+			if (exists) {
+				return (AnyLicenseInfo) ModelStorageClassConverter.storedObjectToModelObject(
+						new TypedValue(token, SpdxConstants.CLASS_SPDX_LISTED_LICENSE), 
+						documentUri, store, copyManager);
+			} else {
+				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(token);
+				if (Objects.nonNull(copyManager)) {
+					// copy to the local store
+					copyManager.copy(store, documentUri, token, listedLicense.getModelStore(), 
+							listedLicense.getDocumentUri(), token, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+				}
+				return listedLicense;
+			}
 		} else {
-			boolean exists = store.exists(documentUri, token);
 			ExtractedLicenseInfo localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
 					store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-			if (!exists) {
-				localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
-			}
+			localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
 			return localLicense;
 		}
 	}

@@ -450,9 +450,12 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		String pkgName = "UNKNOWN PACKAGE";
 		try {
 			Optional<String> name = getName();
@@ -494,7 +497,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// checksum
 		try {
 			for (Checksum checksum:getChecksums()) {
-				List<String> checksumVerify = checksum.verify();
+				List<String> checksumVerify = checksum.verify(verifiedIds);
 				addNameToWarnings(checksumVerify);
 				retval.addAll(checksumVerify);
 			}
@@ -510,7 +513,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			if (!declaredLicense.isPresent()) {
 				retval.add("Missing required declared license for package "+pkgName);
 			} else {
-				List<String> verify = declaredLicense.get().verify();
+				List<String> verify = declaredLicense.get().verify(verifiedIds);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -523,7 +526,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			} else {
 				boolean foundNonSimpleLic = false;
 				for (AnyLicenseInfo lic:getLicenseInfoFromFiles()) {
-					List<String> verify = lic.verify();
+					List<String> verify = lic.verify(verifiedIds);
 					addNameToWarnings(verify);
 					retval.addAll(verify);
 					if (!(lic instanceof SimpleLicensingInfo ||
@@ -552,7 +555,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 					retval.add("Warning: Found analyzed files for package "+pkgName+" when analyzedFiles is set to false.");
 				}
 				for (SpdxFile file:getFiles()) {
-					List<String> verify = file.verify();
+					List<String> verify = file.verify(verifiedIds);
 					addNameToWarnings(verify);
 					retval.addAll(verify);
 				}
@@ -569,7 +572,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			} else if (verificationCode.isPresent() && !verificationCode.get().getValue().isEmpty() && !filesAnalyzed) {
 				retval.add("Verification code must not be included when files not analyzed.");
 			} else if (filesAnalyzed) {
-				List<String> verify = verificationCode.get().verify();
+				List<String> verify = verificationCode.get().verify(verifiedIds);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -604,7 +607,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// External refs
 		try {
 			for (ExternalRef externalRef:getExternalRefs()) {
-				retval.addAll(externalRef.verify());
+				retval.addAll(externalRef.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid external refs: " + e.getMessage());

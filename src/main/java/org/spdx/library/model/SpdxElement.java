@@ -76,28 +76,28 @@ public abstract class SpdxElement extends ModelObject {
 		// we can not create the annotations and relationships until referenced since ExternalSpdxElement can not create them
 	}
 	
-	public List<String> verify(boolean verifyRelationships) {
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
+	 */
+	@Override
+	protected List<String> _verify(List<String> verifiedElementIds) {
 		List<String> retval = new ArrayList<>();
+		if (verifiedElementIds.contains(this.getId())) {
+			return retval;
+		}
+		verifiedElementIds.add(this.getId());
 		try {
-			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: "));
+			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: ", verifiedElementIds));
 		} catch (InvalidSPDXAnalysisException e1) {
 			retval.add("Error getting annotation: "+e1.getMessage());
 		}
-		if (verifyRelationships) {
-			try {
-				retval.addAll(verifyCollection(getRelationships(), "Relationship error: "));
-			} catch (InvalidSPDXAnalysisException e) {
-				retval.add("Error getting relationships: "+e.getMessage());
-			}
+		try {
+			retval.addAll(verifyCollection(getRelationships(), "Relationship error: ", verifiedElementIds));
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting relationships: "+e.getMessage());
 		}
 		addNameToWarnings(retval);
 		return retval;
-	}
-	
-
-	@Override
-	public List<String> verify() {
-		return verify(true);
 	}
 	
 	@SuppressWarnings("unchecked")

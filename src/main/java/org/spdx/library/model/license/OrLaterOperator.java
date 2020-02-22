@@ -104,11 +104,8 @@ public class OrLaterOperator extends AnyLicenseInfo {
 		return license.toString() + "+";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
-	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		SimpleLicensingInfo license;
 		try {
@@ -116,7 +113,7 @@ public class OrLaterOperator extends AnyLicenseInfo {
 			if (license == null) {
 				retval.add("Missing required license for a License Or Later operator");
 			} else {
-				retval.addAll(license.verify());
+				retval.addAll(license.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Exception getting license for OrLater: "+e.getMessage());

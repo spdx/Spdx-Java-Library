@@ -139,16 +139,16 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		try {
 			Optional<Object> license = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_SET_MEMEBER);
 			if (license.isPresent()) {
 				if (license.get() instanceof AnyLicenseInfo) {
-					retval.addAll(((AnyLicenseInfo)(license.get())).verify());
+					retval.addAll(((AnyLicenseInfo)(license.get())).verify(verifiedIds));
 				} else {
 					retval.add("Invalid type for With Operator license");
 				}
@@ -162,7 +162,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 			Optional<Object> exception = getObjectPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION);
 			if (exception.isPresent()) {
 				if (exception.get() instanceof LicenseException) {
-					retval.addAll(((LicenseException)(exception.get())).verify());
+					retval.addAll(((LicenseException)(exception.get())).verify(verifiedIds));
 				} else {
 					retval.add("Invalid type for With Operator exception");
 				}

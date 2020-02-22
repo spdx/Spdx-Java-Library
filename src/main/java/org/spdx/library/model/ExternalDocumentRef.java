@@ -167,7 +167,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (Objects.isNull(checksum)) {
 				throw new InvalidSPDXAnalysisException("Null value for a required checksum");
 			}
-			List<String> verify = checksum.verify();
+			List<String> verify = checksum.verify(new ArrayList<String>());
 			if (verify.size() > 0) {
 				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
 			}
@@ -262,10 +262,10 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		if (!getId().startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			retval.add("Invalid external ref ID: "+getId()+".  Must start with "+SpdxConstants.EXTERNAL_DOC_REF_PRENUM+".");
@@ -292,7 +292,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (!checksum.isPresent()) {
 				retval.add("Missing checksum for external document "+uri);
 			} else {
-				retval.addAll(checksum.get().verify());
+				retval.addAll(checksum.get().verify(verifiedIds));
 				if (checksum.get().getAlgorithm() != ChecksumAlgorithm.SHA1) {
 					retval.add("Checksum algorithm is not SHA1 for external reference "+uri);
 				}

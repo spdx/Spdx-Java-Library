@@ -108,18 +108,15 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 		Objects.requireNonNull(member, "Member can not be null");
 		members.remove(member);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
-	 */
+
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		Iterator<AnyLicenseInfo> iter;
 		try {
 			iter = getMembers().iterator();
 			while (iter.hasNext()) {
-				retval.addAll(iter.next().verify());
+				retval.addAll(iter.next().verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Exception getting license set members: "+e.getMessage());

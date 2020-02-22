@@ -122,16 +122,19 @@ public class StartEndPointer extends CompoundPointer implements Comparable<Start
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.pointer.CompoundPointer#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		SinglePointer endPointer;
 		try {
 			endPointer = getEndPointer();
 			if (endPointer == null) {
 				retval.add("Missing required end pointer");
 			} else {
-				retval.addAll(endPointer.verify());
+				retval.addAll(endPointer.verify(verifiedIds));
 				try {
 					SinglePointer startPointer = getStartPointer();
 					if (startPointer != null && startPointer instanceof ByteOffsetPointer && !(endPointer instanceof ByteOffsetPointer)) {

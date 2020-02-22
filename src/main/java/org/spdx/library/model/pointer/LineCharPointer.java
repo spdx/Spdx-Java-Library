@@ -85,9 +85,12 @@ public class LineCharPointer extends SinglePointer {
 		setPropertyValue(SpdxConstants.PROP_POINTER_LINE_NUMBER, lineNumber);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		int lineNumber;
 		try {
 			lineNumber = getLineNumber();

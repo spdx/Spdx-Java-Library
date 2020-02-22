@@ -122,7 +122,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @return
 	 */
 	@Override
-    public List<String> verify() {
+    protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		String id = this.getLicenseId();
 		if (id == null || id.isEmpty()) {
@@ -187,6 +187,10 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 		} else {
 			return super.equivalent(compare);
 		}
-		
+	}
+	
+	@Override
+	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		return equivalent(compare);
 	}
 }

@@ -156,9 +156,12 @@ public abstract class SpdxItem extends SpdxElement {
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		String name = "UNKNOWN";
 		Optional<String> myName;
 		try {
@@ -176,7 +179,7 @@ public abstract class SpdxItem extends SpdxElement {
 			if (!concluded.isPresent()) {
 				retval.add("Missing required concluded license for "+name);
 			} else {
-				retval.addAll(concluded.get().verify());
+				retval.addAll(concluded.get().verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting license concluded: "+e.getMessage());
@@ -192,7 +195,7 @@ public abstract class SpdxItem extends SpdxElement {
 		}
 
 		try {
-			this.verifyCollection(getLicenseInfoFromFiles(), "SPDX Item "+name+" ");
+			this.verifyCollection(getLicenseInfoFromFiles(), "SPDX Item "+name+" ", verifiedIds);
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting license information from files: "+e.getMessage());
 		}

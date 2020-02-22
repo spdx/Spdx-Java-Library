@@ -177,10 +177,10 @@ public abstract class License extends SimpleLicensingInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		String id = this.getLicenseId();
 		if (id == null || id.isEmpty()) {

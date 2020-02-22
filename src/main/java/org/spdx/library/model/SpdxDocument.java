@@ -235,9 +235,12 @@ public class SpdxDocument extends SpdxElement {
 	
 
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		// name
 		try {
 			if (!getName().isPresent() || getName().get().isEmpty()) {
@@ -267,7 +270,7 @@ public class SpdxDocument extends SpdxElement {
 			if (Objects.isNull(creator)) {
 				retval.add("Missing required Creator");
 			} else {
-				retval.addAll(creator.verify());
+				retval.addAll(creator.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting creator information: "+e.getMessage());
@@ -275,7 +278,7 @@ public class SpdxDocument extends SpdxElement {
 		// Extracted licensine infos
 		try {
 			for (ExtractedLicenseInfo licInfo:getExtractedLicenseInfos()) {
-				retval.addAll(licInfo.verify());
+				retval.addAll(licInfo.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting extracted licensing info: "+e.getMessage());
@@ -298,7 +301,7 @@ public class SpdxDocument extends SpdxElement {
 		// External document references
 		try {
 			for (ExternalDocumentRef externalRef:getExternalDocumentRefs()) {
-				retval.addAll(externalRef.verify());
+				retval.addAll(externalRef.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting external document references: "+e.getMessage());

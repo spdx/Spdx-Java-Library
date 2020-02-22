@@ -266,11 +266,11 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		String fileName = "UNKNOWN";
 		try {
 			Optional<String> myName = this.getName();
@@ -283,7 +283,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			retval.add("Error getting file name");
 		}
 		for (Checksum checksum:checksums) {
-			retval.addAll(addNameToWarnings(checksum.verify()));
+			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds)));
 		}
 		String sha1;
 		try {

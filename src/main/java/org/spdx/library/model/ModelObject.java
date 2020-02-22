@@ -157,9 +157,33 @@ public abstract class ModelObject {
 	public abstract String getType();
 	
 	/**
+	 * Implementation of the specific verifications for this model object
+	 * @param verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	public abstract List<String> verify();
+	protected abstract List<String> _verify(List<String> verifiedIds);
+	
+	/**
+	 * @param verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
+	 * @return Any verification errors or warnings associated with this object
+	 */
+	public List<String> verify(List<String> verifiedIds) {
+		if (verifiedIds.contains(this.id)) {
+			return new ArrayList<>();
+		} else {
+			verifiedIds.add(id);
+			return _verify(verifiedIds);
+		}
+	}
+	
+	/**
+	 * @return Any verification errors or warnings associated with this object
+	 */
+	public List<String> verify() {
+		return verify(new ArrayList<String>());
+	}
+	
+	//TODO add verify()
 	
 	/**
 	 * @return the Document URI for this object
@@ -609,12 +633,24 @@ public abstract class ModelObject {
 	 * @return true if all the properties have the same or equivalent values
 	 */
 	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+		return equivalent(compare, false);
+	}
+	
+	/**
+	 * @param compare
+	 * @param ignoreRelatedElements if true, do not compare properties relatedSpdxElement - used to prevent infinite recursion
+	 * @return true if all the properties have the same or equivalent values
+	 */
+	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 		if (!this.getClass().equals(compare.getClass())) {
 			return false;
 		}
 		List<String> propertyValueNames = getPropertyValueNames();
 		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
 		for (String propertyName:propertyValueNames) {
+			if (ignoreRelatedElements && SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName)) {
+				continue;
+			}
 			if (comparePropertyValueNames.contains(propertyName)) {
 				Optional<Object> myValue = this.getObjectPropertyValue(propertyName);
 				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
@@ -627,11 +663,11 @@ public abstract class ModelObject {
 				} else if (myValue.get() instanceof ModelCollection && compareValue.get() instanceof ModelCollection) {
 					List<?> myList = ((ModelCollection<?>)myValue.get()).toImmutableList();
 					List<?> compareList = ((ModelCollection<?>)compareValue.get()).toImmutableList();
-					if (!listsEquivalent(myList, compareList)) {
+					if (!listsEquivalent(myList, compareList, ignoreRelatedElements)) {
 						return false;
 					}
 				} else if (myValue.get() instanceof List && compareValue.get() instanceof List) {
-					if (!listsEquivalent((List<?>)myValue.get(), (List<?>)compareValue.get())) {
+					if (!listsEquivalent((List<?>)myValue.get(), (List<?>)compareValue.get(), ignoreRelatedElements)) {
 						return false;
 					}
 				} else if (myValue.get() instanceof IndividualUriValue && compareValue.get() instanceof IndividualUriValue) {
@@ -640,7 +676,8 @@ public abstract class ModelObject {
 					}
 					// Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
 				} else if (myValue.get() instanceof ModelObject && compareValue.get() instanceof ModelObject) {
-					if (!((ModelObject)myValue.get()).equivalent(((ModelObject)compareValue.get()))) {
+					if (!((ModelObject)myValue.get()).equivalent(((ModelObject)compareValue.get()), 
+							SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName) ? true : ignoreRelatedElements)) {
 						return false;
 					}
 					
@@ -666,10 +703,11 @@ public abstract class ModelObject {
 	/**
 	 * @param l1
 	 * @param l2
+	 * @param ignoreRelatedElements if true, do not compare properties relatedSpdxElement - used to prevent infinite recursion
 	 * @return true if the two lists are equivalent
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private boolean listsEquivalent(List<?> l1, List<?> l2) throws InvalidSPDXAnalysisException {
+	private boolean listsEquivalent(List<?> l1, List<?> l2, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 		if (l1.size() != l2.size()) {
 			return false;
 		}
@@ -685,7 +723,7 @@ public abstract class ModelObject {
 					boolean found = false;
 					for (Object compareItem:l2) {
 						if (compareItem instanceof ModelObject) {
-							if (((ModelObject)item).equivalent(((ModelObject)compareItem))) {
+							if (((ModelObject)item).equivalent(((ModelObject)compareItem), ignoreRelatedElements)) {
 								found = true;
 								break;
 							}
@@ -797,13 +835,14 @@ public abstract class ModelObject {
 	
 	/**
 	 * Verifies all elements in a collection
-	 * @param collection
+	 * @param collection collection to be verifies
+	 * @verifiedIds verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
 	 * @param warningPrefix String to prefix any warning messages
 	 */
-	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix) {
+	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		collection.forEach(action -> {
-			action.verify().forEach(warning -> {
+			action.verify(verifiedIds).forEach(warning -> {
 				if (Objects.nonNull(warningPrefix)) {
 					retval.add(warningPrefix + warning);
 				} else {

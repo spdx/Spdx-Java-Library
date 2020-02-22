@@ -76,7 +76,7 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		return new ArrayList<>();
 	}
 

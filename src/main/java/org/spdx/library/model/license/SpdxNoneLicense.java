@@ -75,7 +75,7 @@ public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualUriValu
 	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		return new ArrayList<>();
 	}
 

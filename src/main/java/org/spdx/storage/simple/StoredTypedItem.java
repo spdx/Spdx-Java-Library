@@ -108,6 +108,13 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
+		} else if (!value.getClass().isPrimitive() && 
+				!value.getClass().isAssignableFrom(String.class) &&
+				!value.getClass().isAssignableFrom(Boolean.class) &&
+				!value.getClass().isAssignableFrom(Integer.class) &&
+				!value.getClass().isAssignableFrom(TypedValue.class) &&
+				!(value instanceof IndividualUriValue)) {
+			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
 		Object list = properties.get(propertyName);
 		if (list == null) {

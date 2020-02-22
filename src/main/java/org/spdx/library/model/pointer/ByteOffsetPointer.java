@@ -92,9 +92,12 @@ public class ByteOffsetPointer extends SinglePointer {
 		setPropertyValue(SpdxConstants.PROP_POINTER_OFFSET, offset);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
+	 */
 	@Override
-	public List<String> verify() {
-		List<String> retval = super.verify();
+	protected List<String> _verify(List<String> verifiedIds) {
+		List<String> retval = super._verify(verifiedIds);
 		int offset;
 		try {
 			offset = getOffset();

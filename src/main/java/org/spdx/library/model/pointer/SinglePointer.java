@@ -102,10 +102,10 @@ public abstract class SinglePointer extends ModelObject implements Comparable<Si
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		ArrayList<String> retval = new ArrayList<String>();
 		SpdxElement reference;
 		try {
@@ -113,7 +113,7 @@ public abstract class SinglePointer extends ModelObject implements Comparable<Si
 			if (Objects.isNull(reference)) {
 				retval.add("Missing required reference field");
 			} else {
-				retval.addAll(reference.verify());
+				retval.addAll(reference.verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting reference: "+e.getMessage());

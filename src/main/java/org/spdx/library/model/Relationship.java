@@ -72,10 +72,10 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.ModelObject#verify()
+	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	public List<String> verify() {
+	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		Optional<SpdxElement> relatedSpdxElement;
 		try {
@@ -83,7 +83,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			if (!relatedSpdxElement.isPresent()) {
 				retval.add("Missing related SPDX element");
 			} else {
-				retval.addAll(relatedSpdxElement.get().verify(false));
+				retval.addAll(relatedSpdxElement.get().verify(verifiedIds));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting related SPDX element for relationship: "+e.getMessage());
@@ -238,5 +238,24 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			return -1;
 		}
 		return myComment.get().compareTo(compComment.get());
+	}
+	
+	@Override
+	public String toString() {
+		try {
+			Optional<SpdxElement> relatedElement = getRelatedSpdxElement();
+			StringBuilder sb = new StringBuilder();
+			sb.append(getRelationshipType().toString());
+			sb.append(" ");
+			if (relatedElement.isPresent()) {
+				sb.append(relatedElement.get().toString());
+			} else {
+				sb.append("[Missing related element]");
+			}
+			return sb.toString();
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.error("Error in toString: ",e);
+			return "Error: "+e.getMessage();
+		}
 	}
 }
