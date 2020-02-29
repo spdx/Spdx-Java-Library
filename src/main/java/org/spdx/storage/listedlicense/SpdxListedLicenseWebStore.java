@@ -19,7 +19,9 @@ package org.spdx.storage.listedlicense;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -30,29 +32,45 @@ import org.spdx.library.SpdxConstants;
  */
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
+	private static final int READ_TIMEOUT = 5000;
+
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxListedLicenseWebStore() throws InvalidSPDXAnalysisException {
 		super();
 	}
+	
+	private InputStream getUrlInputStream(URL url) throws IOException {
+		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+		connection.setReadTimeout(READ_TIMEOUT);
+		int status = connection.getResponseCode();
+		if (status != HttpURLConnection.HTTP_OK && 
+			(status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+						|| status == HttpURLConnection.HTTP_SEE_OTHER)) {
+				// redirect
+			String redirectUrl = connection.getHeaderField("Location");
+			if (Objects.isNull(redirectUrl) || redirectUrl.isEmpty()) {
+				throw new IOException("Invalid redirect URL response");
+			}
+			connection = (HttpURLConnection)new URL(redirectUrl).openConnection();
+		}
+		return connection.getInputStream();
+	}
 
 	@Override
 	InputStream getTocInputStream() throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME);
-		return tocUrl.openStream();
+		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME));
 	}
 
 	@Override
 	InputStream getLicenseInputStream(String licenseId) throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX);
-		return tocUrl.openStream();
+		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX));
 	}
 
 	@Override
 	InputStream getExceptionTocInputStream() throws IOException {
-		URL tocUrl = new URL(SpdxConstants.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME);
-		return tocUrl.openStream();
+		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME));
 	}
 
 	@Override
