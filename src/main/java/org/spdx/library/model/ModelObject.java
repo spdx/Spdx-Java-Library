@@ -220,6 +220,23 @@ public abstract class ModelObject {
 		this.strict = strict;
 	}
 	
+	/**
+	 * Enter a critical section. leaveCriticialSection must be called.
+	 * @param readLockRequested true implies a read lock, false implies write lock.
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public IModelStoreLock enterCriticalSection(boolean readLockRequested) throws InvalidSPDXAnalysisException {
+		return this.getModelStore().enterCriticalSection(this.getDocumentUri(), readLockRequested);
+	}
+	
+	/**
+	 * Leave a critical section. Releases the lock form the matching enterCriticalSection
+	 */
+	public void leaveCriticalSection(IModelStoreLock lock) {
+		this.getModelStore().leaveCriticalSection(lock);
+	}
+
+	
 	//The following methods are to manage the properties associated with the model object
 	/**
 	 * @return all names of property values currently associated with this object

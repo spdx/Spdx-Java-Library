@@ -123,9 +123,9 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), sti.getValueList(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).size());
 		sti.clearPropertyValueList(TEST_LIST_PROPERTIES[0]);
-		assertEquals(0, sti.getValueList(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(0, InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).size());
 	}
 
 
@@ -139,11 +139,11 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), sti.getValueList(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).size());
 		String newValue = "new Value";
 		sti.addValueToList(TEST_LIST_PROPERTIES[0], newValue);
-		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size()+1, sti.getValueList(TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(sti.getValueList(TEST_LIST_PROPERTIES[0]).contains(newValue));
+		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size()+1, InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).size());
+		assertTrue(InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).contains(newValue));
 	}
 
 	/**
@@ -156,9 +156,9 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), sti.getValueList(TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(TEST_LIST_PROPERTY_VALUES[0].size(), InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).size());
 		for (Object val:TEST_LIST_PROPERTY_VALUES[0]) {
-			assertTrue(sti.getValueList(TEST_LIST_PROPERTIES[0]).contains(val));
+			assertTrue(InMemSpdxStoreTest.toImmutableList(sti.getValueList(TEST_LIST_PROPERTIES[0])).contains(val));
 		}
 	}
 	

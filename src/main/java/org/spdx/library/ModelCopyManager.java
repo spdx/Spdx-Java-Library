@@ -17,6 +17,7 @@
  */
 package org.spdx.library;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -149,8 +150,9 @@ public class ModelCopyManager {
 		List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
 		for (String propName:propertyNames) {
 			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-				List<Object> fromList = fromStore.getValueList(fromDocumentUri, fromId, propName);
-				for (Object listItem:fromList) {
+				Iterator<Object> fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
+				while (fromListIter.hasNext()) {
+					Object listItem = fromListIter.next();
 					Object toStoreItem;
 					if (listItem instanceof IndividualUriValue) {
 						toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);

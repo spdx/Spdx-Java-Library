@@ -21,8 +21,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,13 +211,19 @@ public class InMemSpdxStoreTest extends TestCase {
 		String value2 = "value2";
 		assertTrue(store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
 		assertTrue(store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2));
-		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertEquals(2, toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
 	}
 	
+	static List<?> toImmutableList(Iterator<Object> listValues) {
+		return (List<Object>) Collections.unmodifiableList(StreamSupport.stream(
+				Spliterators.spliteratorUnknownSize(listValues, Spliterator.ORDERED), false)
+				.collect(Collectors.toList()));
+	}
+
 	public void testGetNextId() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		// License ID's
@@ -317,13 +329,13 @@ public class InMemSpdxStoreTest extends TestCase {
 		String value2 = "value2";
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
-		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertEquals(2, toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
 		store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]);
-		assertEquals(0, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
+		assertEquals(0, toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
 	}
 	
 	public void copyFrom() throws InvalidSPDXAnalysisException {
@@ -338,9 +350,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		ModelCopyManager copyManager = new ModelCopyManager();
 		copyManager.copy(store2, TEST_DOCUMENT_URI2, store, TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_VALUE_PROPERTIES[0]));
-		assertEquals(2, store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store2.getValueList(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertEquals(2, toImmutableList(store2.listValues(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
+		assertTrue(toImmutableList(store2.listValues(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
+		assertTrue(toImmutableList(store2.listValues(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
 	}
 	
 	public void testRemoveListItem() throws InvalidSPDXAnalysisException {
@@ -350,13 +362,13 @@ public class InMemSpdxStoreTest extends TestCase {
 		String value2 = "value2";
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value2);
-		assertEquals(2, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertEquals(2, toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
 		assertTrue(store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
-		assertEquals(1, store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).size());
-		assertFalse(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value1));
-		assertTrue(store.getValueList(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).contains(value2));
+		assertEquals(1, toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
+		assertFalse(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
+		assertTrue(toImmutableList(store.listValues(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
 		assertFalse("Already removed - should return false",store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1));
 	}
 	

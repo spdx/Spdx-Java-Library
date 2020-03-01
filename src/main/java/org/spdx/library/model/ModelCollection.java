@@ -22,8 +22,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nullable;
 
@@ -50,6 +53,26 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	private ModelCopyManager copyManager;
 	private Class<?> type;
 	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
+	
+	class ModelCollectionIterator implements Iterator<Object> {
+		
+		private Iterator<Object> storageIterator;
+
+		public ModelCollectionIterator(Iterator<Object> storageIterator) {
+			this.storageIterator = storageIterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return storageIterator.hasNext();
+		}
+
+		@Override
+		public Object next() {
+			return checkConvertTypedValue(storageIterator.next());
+		}
+		
+	}
 	
 	/**
 	 * @param modelStore Storage for the model collection
@@ -119,10 +142,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		}
 	}
 	
-	/**
-	 * Converts any typed or individual value objects to a ModelObject
-	 */
-	private Function<Object, Object> checkConvertTypedValue = value -> {
+	private Object checkConvertTypedValue(Object value) {
 		try {
 			Object retval = ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore, copyManager);
 			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
@@ -146,26 +166,27 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	/**
+	 * Converts any typed or individual value objects to a ModelObject
+	 */
+	private Function<Object, Object> checkConvertTypedValue = value -> {
+		return checkConvertTypedValue(value);
 	};
 	
 	public List<Object> toImmutableList() {		
-		// TODO: Change implementation of the model store to return an iterator rather than a list rather than use the list for all internal
-		// functions
-		try {
-			List<Object> modelStoreList = modelStore.getValueList(documentUri, id, propertyName);
-			if (Objects.isNull(modelStoreList)) {
-				return Collections.emptyList();
-			}
-			return (List<Object>) Collections.unmodifiableList(modelStoreList.stream().map(checkConvertTypedValue)
-					.collect(Collectors.toList()));
-		} catch (InvalidSPDXAnalysisException e) {
-			throw new RuntimeException(e);
-		}
+		return (List<Object>) Collections.unmodifiableList(StreamSupport.stream(
+				Spliterators.spliteratorUnknownSize(this.iterator(), Spliterator.ORDERED), false).map(checkConvertTypedValue)
+				.collect(Collectors.toList()));
 	}
 
 	@Override
 	public Iterator<Object> iterator() {
-		return toImmutableList().iterator();
+		try {
+			return new ModelCollectionIterator(modelStore.listValues(documentUri, id, propertyName));
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

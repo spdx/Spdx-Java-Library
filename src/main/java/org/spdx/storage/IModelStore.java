@@ -17,6 +17,7 @@
  */
 package org.spdx.storage;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -202,11 +203,10 @@ public interface IModelStore {
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
 	 * @param propertyName Name of the property
-	 * @return List of values associated with the id, propertyName and document
+	 * @return Iterator over the list of values associated with the id, propertyName and document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public List<Object> getValueList(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
-	//TODO: Think about removing the getValueList interface and change to something like a stream or iterator
+	public Iterator<Object> listValues(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI

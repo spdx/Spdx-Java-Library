@@ -165,16 +165,16 @@ public class StoredTypedItem extends TypedValue {
 	 * @throws SpdxInvalidTypeException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Object> getValueList(String propertyName) throws SpdxInvalidTypeException {
+	public Iterator<Object> getValueList(String propertyName) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			return null;
+			return Collections.emptyIterator();
 		}
 		if (!(list instanceof List)) {
 			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyName);
 		}
-		return Collections.unmodifiableList((List<Object>)list);
+		return ((List<Object>)list).iterator();
 	}
 	
 	/**

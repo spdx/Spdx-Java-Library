@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -530,12 +531,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getValueList(java.lang.String, java.lang.String, java.lang.String)
+	/**
+	 * @param documentUri
+	 * @param id
+	 * @param propertyName
+	 * @return List of values for the propertyName for id within documentUri
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<Object> getValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	protected List<Object> getValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -564,6 +568,14 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.spdx.storage.IModelStore#getValueList(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Iterator<Object> listValues(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+		return getValueList(documentUri, id, propertyName).iterator();
 	}
 
 	/* (non-Javadoc)

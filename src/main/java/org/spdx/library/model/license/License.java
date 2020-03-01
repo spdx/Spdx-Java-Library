@@ -308,6 +308,11 @@ public abstract class License extends SimpleLicensingInfo {
 		setPropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED, deprecated);
 	}
 	
+	/**
+	 * @param deprecated
+	 * @return a ModelUpdate that can be applied through the ModelObject
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public ModelUpdate updateSetDeprecated(Boolean deprecated) throws InvalidSPDXAnalysisException {
 		return updatePropertyValue(SpdxConstants.PROP_LIC_ID_DEPRECATED, deprecated);
 	}

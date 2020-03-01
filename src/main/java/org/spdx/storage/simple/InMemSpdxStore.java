@@ -221,7 +221,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public List<Object> getValueList(String documentUri, String id, String propertyName)
+	public Iterator<Object> listValues(String documentUri, String id, String propertyName)
 			throws InvalidSPDXAnalysisException {
 		return getItem(documentUri, id).getValueList(propertyName);
 	}
