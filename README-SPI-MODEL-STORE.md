@@ -8,6 +8,15 @@ NOTE: This README is currently under development.
 
 ## Storing and Retrieving Values
 
+### Converting Object Types
+The class org.spdx.library.ModelStorageClassConverter contains static methods to convert object types supported by the SPI.
+
+storedObjectToModelObject will convert a stored object to a Model object.
+
+modelObjectToStoredObject will convert a model object to a stored object.
+
+These methods should be used to avoid common errors when converting between supported object types. 
+
 ## Using the Serialization interfaces
 
 Note: You can extend the default org.spdx.storage.simple.InMemSpdxStore with a couple of serialization / de-serialization methods to implement a storage interface to a serializeable format (such as a JSON or YAML file).
