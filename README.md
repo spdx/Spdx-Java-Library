@@ -1,4 +1,6 @@
 # Spdx-Java-Library
+![Java CI with Maven](https://github.com/spdx/Spdx-Java-Library/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 Java library which implements the Java object model for SPDX and provides useful helper functions.
 
 ## Storage Interface
