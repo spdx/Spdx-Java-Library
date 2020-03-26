@@ -12,6 +12,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.license.ExternalExtractedLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -58,6 +59,15 @@ public class ModelStorageClassConverterTest extends TestCase {
 		assertTrue(result instanceof ExternalSpdxElement);
 		ExternalSpdxElement external = (ExternalSpdxElement)result;
 		assertTrue(external.getId().contains(externalDocElementId));
+		// ExternalLicenseRef
+		String externalLicenseRefId = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + "525";
+		String externalLicenseRefUri = externalDocUri + "#" + externalLicenseRefId;
+		suv = new SimpleUriValue(externalLicenseRefUri);
+		result = ModelStorageClassConverter.storedObjectToModelObject(suv, gmo.getDocumentUri(), 
+				gmo.getModelStore(), gmo.getCopyManager());
+		assertTrue(result instanceof ExternalExtractedLicenseInfo);
+		ExternalExtractedLicenseInfo externalLic = (ExternalExtractedLicenseInfo)result;
+		assertTrue(externalLic.getId().contains(externalLicenseRefId));
 		// String
 		String expected = "expected";
 		result = ModelStorageClassConverter.storedObjectToModelObject(expected, gmo.getDocumentUri(), 
@@ -142,18 +152,21 @@ public class ModelStorageClassConverterTest extends TestCase {
 		new SpdxDocument(store2, docUri2, copyManager, true);
 		String id1 = "ID1";
 		String id2 = "ID2";
-		GenericSpdxElement element1 = new GenericSpdxElement(store1, docUri1, id1, copyManager, true);
+		GenericSpdxItem element1 = new GenericSpdxItem(store1, docUri1, id1, copyManager, true);
 		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
 		String date = format.format(new Date());
 		Annotation annotation = element1.createAnnotation("Person: Annotator", AnnotationType.REVIEW, date, "Annotation Comment");
 		element1.addAnnotation(annotation);
 		String externalUri = "http://doc3/uri#" + SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "23";
 		ExternalSpdxElement externalElement = ExternalSpdxElement.uriToExternalSpdxElement(externalUri, store1, docUri1, copyManager);
+		String externalLicenseUri = "http://doc3/uri#" + SpdxConstants.NON_STD_LICENSE_ID_PRENUM + "55";
 		Relationship relationship = element1.createRelationship(externalElement, RelationshipType.BUILD_TOOL_OF, "relationshipComment");
 		element1.addRelationship(relationship);
+		ExternalExtractedLicenseInfo externalLicense = ExternalExtractedLicenseInfo.uriToExternalExtractedLicense(externalLicenseUri, store1, docUri1, copyManager);
+		element1.setLicenseConcluded(externalLicense);
 		element1.setName("ElementName");
 		copyManager.copy(store2, docUri2, id2, store1, docUri1, id1, element1.getType());
-		GenericSpdxElement element2 = new GenericSpdxElement(store2, docUri2, id2, copyManager, false);
+		GenericSpdxItem element2 = new GenericSpdxItem(store2, docUri2, id2, copyManager, false);
 		assertTrue(element1.equivalent(element2));
 		assertTrue(element2.equivalent(element1));
 	}

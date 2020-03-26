@@ -121,10 +121,22 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 		return retval;
 	}
 
+	/**
+	 * @return the External URI associated with this external SPDX element
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public String getExternalSpdxElementURI() throws InvalidSPDXAnalysisException {
 		return externalSpdxElementIdToURI(getId(), getModelStore(), getDocumentUri(), getCopyManager());
 	}
 	
+	/**
+	 * @param externalSpdxElementId
+	 * @param stModelStore
+	 * @param stDocumentUri
+	 * @param copyManager
+	 * @return The URI associated with the external SPDX element with the ID externalSpdxElementId
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public static String externalSpdxElementIdToURI(String externalSpdxElementId,
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(externalSpdxElementId);
@@ -181,7 +193,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 				uri, stModelStore, stDocumentUri, copyManager), copyManager, true);
 	}
 	
-	private static String externalDocumentIdToNamespace(String externalDocumentId,
+	public static String externalDocumentIdToNamespace(String externalDocumentId,
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Optional<Object> retval = getObjectPropertyValue(stModelStore, stDocumentUri, 
 				externalDocumentId, SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, copyManager);
