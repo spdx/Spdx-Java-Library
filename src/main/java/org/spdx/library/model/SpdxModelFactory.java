@@ -48,6 +48,7 @@ import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.ListedLicenses;
@@ -119,6 +120,7 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE, ChecksumAlgorithm.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE, ReferenceCategory.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE, RelationshipType.class);
+		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE, ExternalExtractedLicenseInfo.class);
 		SPDX_TYPE_TO_CLASS = Collections.unmodifiableMap(typeToClass);
 		
 		Map<Class<?>, String> classToType = new HashMap<>();
@@ -188,6 +190,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("SPDX element is an abstract item and can not be created.");
 		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return new ExternalDocumentRef(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return new ExternalRef(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE: return new ExternalExtractedLicenseInfo(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE:  throw new RuntimeException("Reference type can only be created with a type supplied.");
 		case SpdxConstants.CLASS_SPDX_SNIPPET: return new SpdxSnippet(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return new SpdxNoAssertionLicense(modelStore, documentUri);

@@ -110,6 +110,7 @@ public class SpdxConstants {
 	public static final String CLASS_NONE_LICENSE = "SpdxNoneLicense";
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
 	public static final String CLASS_EXTERNAL_SPDX_ELEMENT = "ExternalSpdxElement";
+	public static final String CLASS_EXTERNAL_EXTRACTED_LICENSE = "ExternalExtractedLicenseInfo";
 	
 	// all classes used including classes in non-SPDX namespaces
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
@@ -121,6 +122,7 @@ public class SpdxConstants {
 			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT,
+			CLASS_EXTERNAL_EXTRACTED_LICENSE,
 			// DOAP Namespace
 			CLASS_DOAP_PROJECT,
 			// RDF Pointer Namespace
@@ -331,6 +333,8 @@ public class SpdxConstants {
 	public static Pattern EXTERNAL_DOC_REF_PATTERN = Pattern.compile(EXTERNAL_DOC_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");
 	public static Pattern EXTERNAL_ELEMENT_REF_PATTERN = Pattern.compile("(.+[0-9a-zA-Z\\.\\-\\+]+):("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");	
 	public static Pattern EXTERNAL_SPDX_ELEMENT_URI_PATTERN = Pattern.compile("(.+)#("+SPDX_ELEMENT_REF_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");
+	public static Pattern EXTERNAL_EXTRACTED_LICENSE_URI_PATTERN = Pattern.compile("(.+)#("+NON_STD_LICENSE_ID_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");
+	public static Pattern EXTERNAL_EXTRACTED_LICENSE_PATTERN = Pattern.compile("(.+[0-9a-zA-Z\\.\\-\\+]+):("+NON_STD_LICENSE_ID_PRENUM+"[0-9a-zA-Z\\.\\-\\+]+)$");	
 	
 	// SPDX version format
 	public static Pattern SPDX_VERSION_PATTERN = Pattern.compile("^SPDX-(\\d+)\\.(\\d+)$");

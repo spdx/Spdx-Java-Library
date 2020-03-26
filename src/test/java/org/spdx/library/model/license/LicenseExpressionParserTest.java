@@ -24,7 +24,10 @@ import java.util.Arrays;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.Checksum;
 import org.spdx.library.model.GenericModelObject;
+import org.spdx.library.model.SpdxDocument;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -45,6 +48,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	ExtractedLicenseInfo[] NON_STD_LICENSES;
 	SpdxListedLicense[] STANDARD_LICENSES;
 	LicenseException[] LICENSE_EXCEPTIONS;
+	static final String DOCID = SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "DOCID1";
 	IModelStore modelStore;
 	static final String TEST_DOCUMENT_URI = "https://test.doc.uri";
 	GenericModelObject gmo;
@@ -69,6 +73,10 @@ public class LicenseExpressionParserTest extends TestCase {
 		for (int i = 0; i < EXCEPTION_IDS.length; i++) {
 			LICENSE_EXCEPTIONS[i] = new LicenseException(EXCEPTION_IDS[i], EXCEPTION_NAMES[i], EXCEPTION_TEXTS[i]);
 		}
+		
+		SpdxDocument doc = new SpdxDocument(modelStore, TEST_DOCUMENT_URI, null, true);
+		Checksum checksum = doc.createChecksum(ChecksumAlgorithm.SHA1, "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3");
+		doc.createExternalDocumentRef(DOCID, "http://external.doc", checksum);
 	}
 
 	protected void tearDown() throws Exception {
@@ -183,5 +191,13 @@ public class LicenseExpressionParserTest extends TestCase {
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
 				DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
+	}
+	
+	public void testExternalLicenseRef() throws InvalidSPDXAnalysisException {
+		String externalExtractedId = DOCID + ":" + SpdxConstants.NON_STD_LICENSE_ID_PRENUM + "232";
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(externalExtractedId, 
+				modelStore, TEST_DOCUMENT_URI, null);
+		assertTrue(result instanceof ExternalExtractedLicenseInfo);
+		assertEquals(externalExtractedId, ((ExternalExtractedLicenseInfo)result).getId());
 	}
 }

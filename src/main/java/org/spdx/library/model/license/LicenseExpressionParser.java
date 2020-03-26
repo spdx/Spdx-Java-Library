@@ -252,10 +252,11 @@ public class LicenseExpressionParser {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
-		boolean exists = store.exists(documentUri, token);
-		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {
-			
-			if (!exists) {
+		if (token.contains(":")) {
+			// External License Ref
+			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager, true);
+		} else if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	
+			if (!store.exists(documentUri, token)) {
 				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(token);
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
@@ -269,7 +270,7 @@ public class LicenseExpressionParser {
 		} else {
 			ExtractedLicenseInfo localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
 					store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-			if (!exists) {
+			if (!store.exists(documentUri, token)) {
 				localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
 			}
 			return localLicense;
