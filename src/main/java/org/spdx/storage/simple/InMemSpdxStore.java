@@ -66,7 +66,7 @@ public class InMemSpdxStore implements IModelStore {
 	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstants.LITERAL_VALUES));
 	
 	/**
-	 * Map of Document URI to items stored in the document
+	 * Map of Document URI to items stored in the document.  The key for the items map is the lowercase of the item ID.
 	 */
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, StoredTypedItem>> documentValues = new ConcurrentHashMap<>();
 	private int nextNextLicenseId = 0;
@@ -100,7 +100,7 @@ public class InMemSpdxStore implements IModelStore {
 		if (idMap == null) {
 			return false;
 		}
-		return idMap.containsKey(id);
+		return idMap.containsKey(id.toLowerCase());
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class InMemSpdxStore implements IModelStore {
 			idMap = documentValues.putIfAbsent(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
 		}
 		updateNextIds(id);
-		if (!(idMap.putIfAbsent(id, value) == null)) {
+		if (Objects.nonNull(idMap.putIfAbsent(id.toLowerCase(), value))) {
 			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 		}
 	}
@@ -178,12 +178,19 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Gets the item from the hashmap
+	 * @param documentUri
+	 * @param id
+	 * @return
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	private StoredTypedItem getItem(String documentUri, String id) throws InvalidSPDXAnalysisException {
 		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
 		if (idMap == null) {
 			throw new SpdxIdNotFoundException("Document URI "+documentUri+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
-		StoredTypedItem item = idMap.get(id);
+		StoredTypedItem item = idMap.get(id.toLowerCase());
 		if (item == null) {
 			throw new SpdxIdNotFoundException("ID "+id+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
@@ -345,6 +352,19 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public void leaveCriticalSection(IModelStoreLock lock) {
 		lock.unlock();
+	}
+
+	@Override
+	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		if (Objects.isNull(idMap)) {
+			return Optional.empty();
+		}
+		StoredTypedItem item = idMap.get(caseInsensisitiveId.toLowerCase());
+		if (Objects.isNull(item)) {
+			return Optional.empty();
+		}
+		return Optional.of(item.getId());
 	}
 
 }

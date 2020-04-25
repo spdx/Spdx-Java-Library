@@ -606,7 +606,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isCollectionProperty(TEST_DOCUMENT_URI1, TEST_ID1, sProperty));
 	}
 	
-	public void testIdType()  throws InvalidSPDXAnalysisException {
+	public void testIdType() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		assertEquals(IdType.Anonymous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"23"));
 		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"23"));
@@ -616,5 +616,20 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertEquals(IdType.Literal, store.getIdType("NONE"));
 		assertEquals(IdType.Literal, store.getIdType("NOASSERTION"));
 		assertEquals(IdType.SpdxId, store.getIdType(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"123"));
+	}
+	
+	public void testGetCaseSensisitiveId() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		String expected = "TestIdOne";
+		String lower = expected.toLowerCase();
+		store.create(TEST_DOCUMENT_URI1, expected, SpdxConstants.CLASS_ANNOTATION);
+		assertEquals(expected, store.getCaseSensisitiveId(TEST_DOCUMENT_URI1, lower).get());
+		assertFalse(store.getCaseSensisitiveId(TEST_DOCUMENT_URI1, "somethingNotThere").isPresent());
+		try {
+			store.create(TEST_DOCUMENT_URI1, lower, SpdxConstants.CLASS_ANNOTATION);
+			fail("This should be a duplicate ID failure");
+		} catch (InvalidSPDXAnalysisException e) {
+			// expected
+		}
 	}
 }

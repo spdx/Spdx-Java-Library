@@ -273,7 +273,7 @@ public class LicenseExpressionParser {
 					documentUri, store, copyManager);
 		} else {
 			// LicenseRef
-			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(token);
+			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(documentUri, token);
 			ExtractedLicenseInfo localLicense = null;
 			if (caseSensitiveId.isPresent()) {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
