@@ -1368,6 +1368,48 @@ public class SpdxPackageTest extends TestCase {
 		assertEquals(PKG_COMMENT2, pkg2.getComment().get());
 		assertEquals(PKG_COMMENT2, pkg.getComment().get());
 	}
+	
+	public void testSetAttributionText() throws InvalidSPDXAnalysisException {
+		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
+		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
+		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
+		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
+		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
+		
+		String ATT1 = "attribution 1";
+		String ATT2 = "attribution 2";
+
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+				.setChecksums(checksums)
+				.setComment(PKG_COMMENT1)
+				.setAnnotations(annotations)
+				.setRelationships(relationships)
+				.setLicenseInfosFromFile(licenseFromFiles)
+				.setLicenseComments(LICENSE_COMMENT1)
+				.setDescription(DESCRIPTION1)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFiles(files)
+				.setHomepage(HOMEPAGE1)
+				.setOriginator(ORIGINATOR1)
+				.setPackageFileName(PACKAGEFILENAME1)
+				.setPackageVerificationCode(VERIFICATION_CODE1)
+				.setSummary(SUMMARY1)
+				.setSupplier(SUPPLIER1)
+				.setVersionInfo(VERSION1)
+				.setSourceInfo(SOURCEINFO1)
+				.setExternalRefs(externalRefs)
+				.setAttributionText(ATT1)
+				.build();
+		
+		assertEquals(ATT1, pkg.getAttributionText().get());
+		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
+		assertEquals(ATT1, pkg2.getAttributionText().get());
+		pkg2.setAttributionText(ATT2);
+		assertEquals(ATT2, pkg2.getAttributionText().get());
+		assertEquals(ATT2, pkg.getAttributionText().get());
+	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.SpdxElement#setName(java.lang.String)}.

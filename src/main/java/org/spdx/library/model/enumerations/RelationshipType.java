@@ -58,7 +58,22 @@ public enum RelationshipType implements IndividualUriValue {
 	PREREQUISITE_FOR("relationshipType_prerequisiteFor"),
 	HAS_PREREQUISITE("relationshipType_hasPrerequisite"), 
 	VARIANT_OF("relationshipType_variantOf"),
-	MISSING("relationshipType_INVALID_MISSING");
+	MISSING("relationshipType_INVALID_MISSING"),
+	BUILD_DEPENDENCY_OF("relationshipType_buildDependencyOf"),
+	DEPENDENCY_MANIFEST_OF("relationshipType_dependencyManifestOf"),
+	DEPENDENCY_OF("relationshipType_dependencyOf"),
+	DEPENDS_ON("relationshipType_dependsOn"),
+	DEV_DEPENDENCY_OF("relationshipType_devDependencyOf"),
+	DEV_TOOL_OF("relationshipType_devToolOf"),
+	EXAMPLE_OF("relationshipType_exampleOf"),
+	OPTIONAL_DEPENDENCY_OF("relationshipType_optionalDependencyOf"),
+	PROVIDED_DEPENDENCY_OF("relationshipType_providedDependencyOf"),
+	RUNTIME_DEPENDENCY_OF("relationshipType_runtimeDependencyOf"),
+	TEST_DEPENDENCY_OF("relationshipType_testDependencyOf"),
+	TEST_OF("relationshipType_testOf"),
+	TEST_TOOL_OF("relationshipType_testToolOf"),
+	NONE("relationshipType_none"),
+	NOASSERTION("relationshipType_noAssertion");
 	
 	private String longName;
 	

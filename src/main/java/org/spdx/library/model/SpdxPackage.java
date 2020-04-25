@@ -97,6 +97,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxPackageBuilder.licenseComments);
 		getLicenseInfoFromFiles().addAll(spdxPackageBuilder.licenseInfosFromFile);
+		setAttributionText(spdxPackageBuilder.attributionText);
 		
 		// optional parameters - SpdxPackage
 		Iterator<Checksum> iter = spdxPackageBuilder.checksums.iterator();
@@ -704,6 +705,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// optional fields - SpdxItem
 		Collection<AnyLicenseInfo> licenseInfosFromFile; // required if isFilesAnalyzed is true
 		String licenseComments = null;
+		String attributionText = null;
 		
 		// optional fields - SpdxPackage
 		Collection<Checksum> checksums = new ArrayList<Checksum>();
@@ -1000,6 +1002,19 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			return this;
 		}
 		
+		/**
+		 * @param attributionText Attribution text for the package
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setAttributionText(String attributionText) {
+			this.attributionText = attributionText;
+			return this;
+		}
+		
+		/**
+		 * @return the SPDX package
+		 * @throws InvalidSPDXAnalysisException
+		 */
 		public SpdxPackage build() throws InvalidSPDXAnalysisException {
 			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
 			try {

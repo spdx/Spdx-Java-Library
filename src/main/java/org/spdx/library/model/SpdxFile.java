@@ -98,6 +98,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxFileBuilder.licenseComments);
+		setAttributionText(spdxFileBuilder.attributionText);
 		
 		// optional parameters - SpdxFile
 		Iterator<Checksum> iter = spdxFileBuilder.checksums.iterator();
@@ -350,6 +351,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		
 		// optional fields - SpdxItem
 		String licenseComments = null;
+		String attributionText = null;
 		
 		// optional fields - SpdxFile
 		Collection<Checksum> checksums = new ArrayList<Checksum>();
@@ -515,6 +517,15 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 */
 		public SpdxFileBuilder setNoticeText(@Nullable String noticeText) {
 			this.noticeText = noticeText;
+			return this;
+		}
+		
+		/**
+		 * @param attributionText Attribution text for the file
+		 * @return this to continue the build
+		 */
+		public SpdxFileBuilder setAttributionText(@Nullable String attributionText) {
+			this.attributionText = attributionText;
 			return this;
 		}
 		

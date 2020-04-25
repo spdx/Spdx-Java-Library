@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Stack;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -174,7 +175,8 @@ public class LicenseExpressionParser {
 					token = tokens[tokenIndex++];
 					LicenseException licenseException = null;
 					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
-						licenseException = LicenseInfoFactory.getListedExceptionById(token);
+						Optional<String> exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
+						licenseException = LicenseInfoFactory.getListedExceptionById(exceptionId.get());
 					} else {
 						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, 
 								documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, copyManager);
@@ -256,8 +258,10 @@ public class LicenseExpressionParser {
 			// External License Ref
 			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager, true);
 		} else if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	
-			if (!store.exists(documentUri, token)) {
-				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(token);
+			// listed license
+			Optional<String> licenseId = LicenseInfoFactory.listedLicenseIdCaseSensitive(token);
+			if (!store.exists(documentUri, licenseId.get())) {
+				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId.get());
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, documentUri, token, listedLicense.getModelStore(), 
@@ -265,12 +269,18 @@ public class LicenseExpressionParser {
 				}
 			}
 			return (AnyLicenseInfo) ModelStorageClassConverter.storedObjectToModelObject(
-					new TypedValue(token, SpdxConstants.CLASS_SPDX_LISTED_LICENSE), 
+					new TypedValue(licenseId.get(), SpdxConstants.CLASS_SPDX_LISTED_LICENSE), 
 					documentUri, store, copyManager);
 		} else {
-			ExtractedLicenseInfo localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
-					store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-			if (!store.exists(documentUri, token)) {
+			// LicenseRef
+			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(token);
+			ExtractedLicenseInfo localLicense = null;
+			if (caseSensitiveId.isPresent()) {
+				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
+				
+			} else {
+				localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
+						store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
 				localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
 			}
 			return localLicense;

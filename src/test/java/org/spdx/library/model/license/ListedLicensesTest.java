@@ -123,4 +123,19 @@ public class ListedLicensesTest extends TestCase {
 	public void testGetExceptionIds() throws InvalidSPDXAnalysisException {
 		assertTrue(ListedLicenses.getListedLicenses().getSpdxListedExceptionIds().size() >= NUM_3_7_EXCEPTION);
 	}
+	
+	public void testListedLicenseIdCaseSensitive() {
+		String expected = "Apache-2.0";
+		String lower = expected.toLowerCase();
+		assertEquals(expected, ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive(lower).get());
+		assertFalse(ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive("NotaLicenseId").isPresent());
+	}
+	
+	public void testListedExceptionIdCaseSensitive() {
+		String expected = "Classpath-exception-2.0";
+		String lower = expected.toLowerCase();
+		assertEquals(expected, ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive(lower).get());
+		assertFalse(ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive("NotAnExceptionId").isPresent());
+	}
+	
 }
