@@ -444,6 +444,22 @@ public class SpdxFileTest extends TestCase {
 		assertEquals(file2.getComment().get(), COMMENT3);
 	}
 	
+	public void testSetAttributionText() throws InvalidSPDXAnalysisException {
+		String ATT1 = "attribution 1";
+		String ATT2 = "attribution 2";
+		String ATT3 = "attribution 3";
+		SpdxFile file = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"filename", COMPLEX_LICENSE, Arrays.asList(CONJUNCTIVE_LICENSES), SpdxConstants.NOASSERTION_VALUE, SHA1)
+				.setAttributionText(ATT1)
+				.build();
+		assertEquals(file.getAttributionText().get(), ATT1);
+		file.setAttributionText(ATT2);
+		SpdxFile file2 = new SpdxFile(file.getModelStore(), file.getDocumentUri(), file.getId(), file.getCopyManager(), false);
+		assertEquals(file2.getAttributionText().get(), ATT2);
+		file2.setAttributionText(ATT3);
+		assertEquals(file2.getAttributionText().get(), ATT3);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void testDependency() throws InvalidSPDXAnalysisException {
 		SpdxFile file = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),

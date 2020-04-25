@@ -99,6 +99,13 @@ public class LicenseExpressionParserTest extends TestCase {
 				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
 		assertTrue(expected.equals(result));
 	}
+	
+	public void testUninitializedExtractedLicense() throws InvalidSPDXAnalysisException {
+		String parseString = "LicenseRef-3242";
+		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, DefaultModelStore.getDefaultModelStore(), 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultCopyManager());
+		assertEquals(parseString, result.getId());
+	}
 
 
 	public void testOrLater() throws InvalidSPDXAnalysisException {

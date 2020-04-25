@@ -292,7 +292,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, 
-			String stId, String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			String stId, String propertyName, @Nullable Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(stModelStore, "Model Store can not be null");
 		Objects.requireNonNull(stDocumentUri, "Document Uri can not be null");
 		Objects.requireNonNull(stId, "ID can not be null");
@@ -314,7 +314,7 @@ public abstract class ModelObject {
 	 * @param value Value to associate with the property
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	protected void setPropertyValue(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+	protected void setPropertyValue(String propertyName, @Nullable Object value) throws InvalidSPDXAnalysisException {
 		if (this instanceof IndividualUriValue) {
 			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualUriValue)this).getIndividualURI());
 		}

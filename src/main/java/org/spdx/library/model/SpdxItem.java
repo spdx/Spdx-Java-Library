@@ -134,6 +134,24 @@ public abstract class SpdxItem extends SpdxElement {
 		return this;
 	}
 	
+	/**
+	 * @return attribution text, empty string if no 
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getAttributionText() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_ATTRIBUTION_TEXT);
+	}
+	
+	/**
+	 * @param attributionText Attribution text to set
+	 * @return myself - so you can chain setters
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxItem setAttributionText(@Nullable String attributionText) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.PROP_ATTRIBUTION_TEXT, attributionText);
+		return this;
+	}
+	
 	@Override 
 	public SpdxItem setName(String name) throws InvalidSPDXAnalysisException {
 		super.setName(name);

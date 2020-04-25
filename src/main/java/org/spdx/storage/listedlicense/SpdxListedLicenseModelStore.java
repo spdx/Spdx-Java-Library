@@ -26,13 +26,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
@@ -54,6 +52,8 @@ import com.google.gson.Gson;
 /**
  * Read-only model store for the SPDX listed licenses
  * 
+ * License and exception ID's can be case insensitive
+ * 
  * @author Gary O'Neall
  *
  */
@@ -66,8 +66,14 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final String JSON_SUFFIX = ".json";
 	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstants.LISTED_LICENSE_URL}));
 	
-	Set<String> licenseIds = new HashSet<>();
-	Set<String> exceptionIds = new HashSet<>();
+	/**
+	 * Map of lower case to correct case license IDs
+	 */
+	Map<String, String> licenseIds = new HashMap<>();
+	/**
+	 * Map of lower case to correct case exception IDs
+	 */
+	Map<String, String> exceptionIds = new HashMap<>();
 	Map<String, LicenseJson> listedLicenseCache = null;
 	Map<String, ExceptionJson> listedExceptionCache = null;
 	String licenseListVersion = DEFAULT_LICENSE_LIST_VERSION;
@@ -131,7 +137,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
         try {
             listedLicenseCache = new HashMap<>(); // clear the cache
             listedExceptionCache = new HashMap<>();
-            licenseIds = new HashSet<>(); //Clear the listed license IDs to avoid stale licenses.
+            licenseIds = new HashMap<>(); //Clear the listed license IDs to avoid stale licenses.
              //NOTE: This includes deprecated licenses - should this be changed to only return non-deprecated licenses?
             InputStream tocStream = null;
             BufferedReader reader = null;
@@ -191,7 +197,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			return false;
 		}
-		return (this.licenseIds.contains(id) || this.exceptionIds.contains(id));
+		return (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase()));
 	}
 
 	/* (non-Javadoc)
@@ -207,15 +213,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {
-			if (this.licenseIds.contains(id) || this.exceptionIds.contains(id)) {
+			if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 				logger.error("Duplicate SPDX ID on create: "+id);;
 				throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 			}
 			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
-				this.licenseIds.add(id);
+				this.licenseIds.put(id.toLowerCase(), id);
 				this.listedLicenseCache.put(id, new LicenseJson(id));
 			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
-				this.exceptionIds.add(id);
+				this.exceptionIds.put(id.toLowerCase(), id);
 				this.listedExceptionCache.put(id,  new ExceptionJson(id));
 			}
 		} finally {
@@ -238,19 +244,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
 		}
 		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(id);
+			LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
 			return license.getPropertyValueNames();
 		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(id);
+			ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
 			return exc.getPropertyValueNames();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
@@ -259,16 +265,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	/**
-	 * @param id License ID
+	 * @param idCaseInsensitive License ID case insensitive
 	 * @return License JSON for the ID - reading from the input stream if needed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private LicenseJson fetchLicenseJson(String id) throws InvalidSPDXAnalysisException {
+	private LicenseJson fetchLicenseJson(String idCaseInsensitive) throws InvalidSPDXAnalysisException {
+		String idLowerCase = idCaseInsensitive.toLowerCase();
+		String id = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (!this.licenseIds.contains(id)) {
-				logger.error("Attemting to get property values on non-existent ID "+id);
-				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			id = this.licenseIds.get(idLowerCase);
+			if (Objects.isNull(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+idCaseInsensitive);
+				throw new SpdxIdNotFoundException("ID "+idCaseInsensitive+" not found.");
 			}
 			if (this.listedLicenseCache.containsKey(id)) {
 				return this.listedLicenseCache.get(id);
@@ -280,9 +289,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.writeLock().lock();
 		try {
 			// have to retest since we were unlocked
-			if (!this.licenseIds.contains(id)) {
-				logger.error("Attemting to get property values on non-existent ID "+id);
-				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			id = this.licenseIds.get(idLowerCase);
+			if (Objects.isNull(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+idCaseInsensitive);
+				throw new SpdxIdNotFoundException("ID "+idCaseInsensitive+" not found.");
 			}
 			if (!this.listedLicenseCache.containsKey(id)) {
 	            InputStream jsonStream = null;
@@ -326,16 +336,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	/**
-	 * @param id License ID
+	 * @param idCaseInsensitive Exception ID case insensitive
 	 * @return Exception JSON for the ID - reading from the input stream if needed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private ExceptionJson fetchExceptionJson(String id) throws InvalidSPDXAnalysisException {
+	private ExceptionJson fetchExceptionJson(String idCaseInsensitive) throws InvalidSPDXAnalysisException {
+		String idLower = idCaseInsensitive.toLowerCase();
+		String id = null; // case sensitive ID
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (!this.exceptionIds.contains(id)) {
-				logger.error("Attemting to get property values on non-existent ID "+id);
-				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			id = this.exceptionIds.get(idLower);
+			if (Objects.isNull(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+idCaseInsensitive);
+				throw new SpdxIdNotFoundException("ID "+idCaseInsensitive+" not found.");
 			}
 			if (this.listedExceptionCache.containsKey(id)) {
 				return this.listedExceptionCache.get(id);
@@ -347,9 +360,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.writeLock().lock();
 		try {
 			// have to retest since we were unlocked
-			if (!this.exceptionIds.contains(id)) {
-				logger.error("Attemting to get property values on non-existent ID "+id);
-				throw new SpdxIdNotFoundException("ID "+id+" not found.");
+			id = this.exceptionIds.get(idLower);
+			if (Objects.isNull(id)) {
+				logger.error("Attemting to get property values on non-existent ID "+idCaseInsensitive);
+				throw new SpdxIdNotFoundException("ID "+idCaseInsensitive+" not found.");
 			}
 			if (!this.listedExceptionCache.containsKey(id)) {
 	            InputStream jsonStream = null;
@@ -408,9 +422,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -443,9 +457,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -478,9 +492,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -511,9 +525,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -550,9 +564,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -593,9 +607,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -637,7 +651,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		this.listedLicenseModificationLock.readLock().lock();
 		try {
 			List<String> retval = new ArrayList<>();
-			retval.addAll(this.licenseIds);
+			retval.addAll(this.licenseIds.values());
 			return retval;
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
@@ -658,7 +672,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		this.listedLicenseModificationLock.readLock().lock();
 		try {
 			List<String> retval = new ArrayList<>();
-			retval.addAll(this.exceptionIds);
+			retval.addAll(this.exceptionIds.values());
 			return retval;
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
@@ -673,7 +687,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	public boolean isSpdxListedLicenseId(String listedLicenseDocumentUri, String licenseId) {
 		this.listedLicenseModificationLock.readLock().lock();
 		try {
-			return this.licenseIds.contains(licenseId);
+			return this.licenseIds.containsKey(licenseId.toLowerCase());
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
 		}
@@ -687,7 +701,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	public boolean isSpdxListedExceptionId(String listedLicenseDocumentUri, String exceptionId) {
 		this.listedLicenseModificationLock.readLock().lock();
 		try {
-			return this.exceptionIds.contains(exceptionId);
+			return this.exceptionIds.containsKey(exceptionId.toLowerCase());
 		} finally {
 			this.listedLicenseModificationLock.readLock().unlock();
 		}
@@ -705,9 +719,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -738,12 +752,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		try {
 			List<TypedValue> allItems = new ArrayList<TypedValue>();
 			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
-				for (String licenseId:this.licenseIds) {
+				for (String licenseId:this.licenseIds.values()) {
 					allItems.add(new TypedValue(licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
 				}
 			}
 			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(typeFilter)) {
-				for (String exceptionId:this.exceptionIds) {
+				for (String exceptionId:this.exceptionIds.values()) {
 					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
 				}
 			}
@@ -779,9 +793,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -812,9 +826,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -845,9 +859,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isExceptionId = false;
 		listedLicenseModificationLock.readLock().lock();
 		try {
-			if (licenseIds.contains(id)) {
+			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
-			} else if (exceptionIds.contains(id)) {
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
 			}
 		} finally {
@@ -889,5 +903,35 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public void leaveCriticalSection(IModelStoreLock lock) {
 		lock.unlock();
+	}
+	
+	@Override
+	public Optional<String> listedLicenseIdCaseSensitive(String licenseId) {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			return Optional.ofNullable(this.licenseIds.get(licenseId.toLowerCase()));
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+	}
+	
+	
+	@Override
+	public Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			return Optional.ofNullable(this.exceptionIds.get(exceptionId.toLowerCase()));
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+	}
+	
+	@Override
+	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
+		Optional<String> retval = listedLicenseIdCaseSensitive(caseInsensisitiveId);
+		if (retval.isPresent()) {
+			return retval;
+		}
+		return listedExceptionIdCaseSensitive(caseInsensisitiveId);
 	}
 }

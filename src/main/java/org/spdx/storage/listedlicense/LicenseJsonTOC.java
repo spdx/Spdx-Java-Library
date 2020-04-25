@@ -15,8 +15,8 @@
  */
 package org.spdx.storage.listedlicense;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -106,13 +106,16 @@ public class LicenseJsonTOC {
 		return licenses;
 	}
 	
-	public Set<String> getLicenseIds() {
-		Set<String> retval = new HashSet<>();
+	/**
+	 * @return map of lower case to correct case license IDs
+	 */
+	public Map<String, String> getLicenseIds() {
+		Map<String, String> retval = new HashMap<>();
 		if (licenses == null) {
 			return retval;
 		}
 		for (LicenseJson license:licenses) {
-			retval.add(license.licenseId);
+			retval.put(license.licenseId.toLowerCase(), license.licenseId);
 		}
 		return retval;
 	}

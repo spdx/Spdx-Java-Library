@@ -20,6 +20,7 @@ package org.spdx.library.model.license;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -156,7 +157,7 @@ public class ListedLicenses {
 	
 
 	/**
-	 * @param licenseId
+	 * @param licenseId case insensitive
 	 * @return true if the licenseId belongs to an SPDX listed license
 	 * @throws InvalidSPDXAnalysisException 
 	 */
@@ -165,7 +166,7 @@ public class ListedLicenses {
 	}
     
     /**
-     * @param exceptionId
+     * @param exceptionId case insensitive
      * @return true if the exceptionId belongs to an SPDX listed exception
      */
     public boolean isSpdxListedExceptionId(String exceptionId) {
@@ -210,6 +211,22 @@ public class ListedLicenses {
 	 */
 	public List<String> getSpdxListedExceptionIds() {
 		return this.licenseModelStore.getSpdxListedExceptionIds();
+	}
+
+	/**
+	 * @param licenseId case insensitive license ID
+	 * @return the case sensitive license ID
+	 */
+	public Optional<String> listedLicenseIdCaseSensitive(String licenseId) {
+		return this.licenseModelStore.listedLicenseIdCaseSensitive(licenseId);
+	}
+
+	/**
+	 * @param exceptionId case insensitive exception ID
+	 * @return case sensitive ID
+	 */
+	public Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
+		return this.licenseModelStore.listedExceptionIdCaseSensitive(exceptionId);
 	}  
 
 }

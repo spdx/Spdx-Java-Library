@@ -30,7 +30,13 @@ public enum ChecksumAlgorithm implements IndividualUriValue {
 	SHA1("checksumAlgorithm_sha1"),
 	MD5("checksumAlgorithm_md5"),
 	SHA256("checksumAlgorithm_sha256"), 
-	MISSING("InvalidMissingChecksum")
+	MISSING("InvalidMissingChecksum"),
+	SHA224("checksumAlgorithm_sha224"),
+	SHA384("checksumAlgorithm_sha384"),
+	SHA512("checksumAlgorithm_sha512"),
+	MD2("checksumAlgorithm_md2"),
+	MD4("checksumAlgorithm_md4"),
+	MD6("checksumAlgorithm_md6")
 	;
 
 	private String longName;

@@ -19,6 +19,7 @@ package org.spdx.library.model.license;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -113,7 +114,7 @@ public class LicenseInfoFactory {
 
 
 	/**
-	 * @param licenseID
+	 * @param licenseID case insensitive
 	 * @return true if the licenseID belongs to an SPDX listed license
 	 * @throws InvalidSPDXAnalysisException 
 	 */
@@ -150,6 +151,22 @@ public class LicenseInfoFactory {
 	 */
 	public static LicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionById(id);
+	}
+
+	/**
+	 * @param licenseId case insensitive license ID
+	 * @return the case sensitive license ID
+	 */
+	public static Optional<String> listedLicenseIdCaseSensitive(String licenseId) {
+		return ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive(licenseId);
+	}
+
+	/**
+	 * @param exceptionId case insensitive exception ID
+	 * @return case sensitive ID
+	 */
+	public static Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
+		return ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive(exceptionId);
 	}
 
 }

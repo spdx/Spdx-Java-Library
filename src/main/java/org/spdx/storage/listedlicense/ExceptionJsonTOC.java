@@ -17,8 +17,8 @@
  */
 package org.spdx.storage.listedlicense;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -100,13 +100,16 @@ public class ExceptionJsonTOC {
 		return exceptions;
 	}
 	
-	public Set<String> getExceptionIds() {
-		Set<String> retval = new HashSet<>();
+	/**
+	 * @return map of lower case to correct case exception IDs
+	 */
+	public Map<String, String> getExceptionIds() {
+		Map<String, String> retval = new HashMap<>();
 		if (exceptions == null) {
 			return retval;
 		}
 		for (ExceptionJson licenseException:exceptions) {
-			retval.add(licenseException.licenseExceptionId);
+			retval.put(licenseException.licenseExceptionId.toLowerCase(), licenseException.licenseExceptionId);
 		}
 		return retval;
 	}

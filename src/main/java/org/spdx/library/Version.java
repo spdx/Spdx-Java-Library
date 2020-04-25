@@ -38,14 +38,15 @@ public class Version {
 	public static final String ONE_DOT_TWO_SPDX_VERSION = "SPDX-1.2";
 	public static final String TWO_POINT_ZERO_VERSION = "SPDX-2.0";
 	public static final String TWO_POINT_ONE_VERSION = "SPDX-2.1";
-	public static final String CURRENT_SPDX_VERSION = TWO_POINT_ONE_VERSION;
+	public static final String TWO_POINT_TWO_VERSION = "SPDX-2.2";
+	public static final String CURRENT_SPDX_VERSION = TWO_POINT_TWO_VERSION;
 	
 	public static final Set<String> SUPPORTED_SPDX_VERSIONS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[]{
 			ONE_DOT_ZERO_SPDX_VERSION, ONE_DOT_ONE_SPDX_VERSION, ONE_DOT_TWO_SPDX_VERSION, TWO_POINT_ZERO_VERSION,
-			TWO_POINT_ONE_VERSION
+			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION
 	})));
 	
-	public static final String CURRENT_IMPLEMENTATION_VERSION = "2.1.9";
+	public static final String CURRENT_IMPLEMENTATION_VERSION = "2.2.0";
 	
 	public static String verifySpdxVersion(String spdxVersion) {
 		if (!spdxVersion.startsWith("SPDX-")) {

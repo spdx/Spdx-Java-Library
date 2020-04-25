@@ -241,4 +241,13 @@ public interface IModelStore {
 	 * @return The type of ID based on the string format
 	 */
 	public IdType getIdType(String id);
+
+	/**
+	 * In SPDX 2.2 license refs are allowed to be matched case insensitive.  This function will return
+	 * the case sensitivie ID (e.g. if you have LicenseRef-ABC, calling this function with licenseref-abc will return LicenseRef-ABC
+	 * @param documentUri the SPDX Document URI
+	 * @param caseInsensisitiveId
+	 * @return the case sensitive ID if it exists
+	 */
+	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId);
 }

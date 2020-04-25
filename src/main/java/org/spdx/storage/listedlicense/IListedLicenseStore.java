@@ -18,6 +18,7 @@
 package org.spdx.storage.listedlicense;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.storage.IModelStore;
 
@@ -57,5 +58,17 @@ public interface IListedLicenseStore extends IModelStore {
 	 * @return list of SPDX exception IDs
 	 */
 	List<String> getSpdxListedExceptionIds();
+
+	/**
+	 * @param licenseId case insensitive license ID
+	 * @return the case sensitive license ID
+	 */
+	Optional<String> listedLicenseIdCaseSensitive(String licenseId);
+
+	/**
+	 * @param exceptionId case insensitive exception ID
+	 * @return case sensitive ID
+	 */
+	Optional<String> listedExceptionIdCaseSensitive(String exceptionId);
 
 }

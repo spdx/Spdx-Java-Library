@@ -132,4 +132,14 @@ public class LicenseInfoFactoryTest extends TestCase {
 		assertTrue(order1.equivalent(order2));
 	}
 
+	public void testParseSPDXLicenseStringMixedCase() throws InvalidSPDXAnalysisException {
+		String parseString = COMPLEX_LICENSE.toString();
+		// Local license ID's 
+		String lowerCaseLicenseRef = parseString.replace("LicenseRef-", "licenseref-");
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString(lowerCaseLicenseRef);
+		assertEquals(COMPLEX_LICENSE, result);
+		String lowerCaseCecil = parseString.replace("CECILL-B", "CECILL-B".toLowerCase());
+		result = LicenseInfoFactory.parseSPDXLicenseString(lowerCaseCecil);
+		assertEquals(COMPLEX_LICENSE, result);
+	}
 }
