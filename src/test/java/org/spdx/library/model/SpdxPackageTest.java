@@ -1400,15 +1400,18 @@ public class SpdxPackageTest extends TestCase {
 				.setVersionInfo(VERSION1)
 				.setSourceInfo(SOURCEINFO1)
 				.setExternalRefs(externalRefs)
-				.setAttributionText(ATT1)
+				.addAttributionText(ATT1)
 				.build();
 		
-		assertEquals(ATT1, pkg.getAttributionText().get());
+		assertEquals(1, pkg.getAttributionText().size());
+		assertTrue(pkg.getAttributionText().contains(ATT1));
+		pkg.getAttributionText().add(ATT2);
 		SpdxPackage pkg2 = new SpdxPackage(pkg.getModelStore(), pkg.getDocumentUri(), pkg.getId(), pkg.getCopyManager(), false);
-		assertEquals(ATT1, pkg2.getAttributionText().get());
-		pkg2.setAttributionText(ATT2);
-		assertEquals(ATT2, pkg2.getAttributionText().get());
-		assertEquals(ATT2, pkg.getAttributionText().get());
+		assertEquals(2, pkg2.getAttributionText().size());
+		assertTrue(pkg2.getAttributionText().contains(ATT1));
+		assertTrue(pkg2.getAttributionText().contains(ATT2));
+		pkg2.getAttributionText().clear();
+		assertEquals(0, pkg2.getAttributionText().size());
 	}
 
 	/**

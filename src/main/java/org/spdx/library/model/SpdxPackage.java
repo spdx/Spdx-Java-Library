@@ -97,7 +97,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxPackageBuilder.licenseComments);
 		getLicenseInfoFromFiles().addAll(spdxPackageBuilder.licenseInfosFromFile);
-		setAttributionText(spdxPackageBuilder.attributionText);
+		getAttributionText().addAll(spdxPackageBuilder.attributionText);
 		
 		// optional parameters - SpdxPackage
 		Iterator<Checksum> iter = spdxPackageBuilder.checksums.iterator();
@@ -705,7 +705,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// optional fields - SpdxItem
 		Collection<AnyLicenseInfo> licenseInfosFromFile; // required if isFilesAnalyzed is true
 		String licenseComments = null;
-		String attributionText = null;
+		Collection<String> attributionText = new ArrayList<String>();
 		
 		// optional fields - SpdxPackage
 		Collection<Checksum> checksums = new ArrayList<Checksum>();
@@ -1006,8 +1006,19 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @param attributionText Attribution text for the package
 		 * @return this to continue the build
 		 */
-		public SpdxPackageBuilder setAttributionText(String attributionText) {
+		public SpdxPackageBuilder setAttributionText(Collection<String> attributionText) {
+			Objects.requireNonNull(attributionText, "Attribution text collection can not be null");
 			this.attributionText = attributionText;
+			return this;
+		}
+		
+		/**
+		 * @param attribution attribution to add to the attribution text
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder addAttributionText(String attribution) {
+			Objects.requireNonNull(attributionText, "Attribution text can not be null");
+			this.attributionText.add(attribution);
 			return this;
 		}
 		

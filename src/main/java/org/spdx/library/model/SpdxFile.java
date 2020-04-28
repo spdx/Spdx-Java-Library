@@ -98,7 +98,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxFileBuilder.licenseComments);
-		setAttributionText(spdxFileBuilder.attributionText);
+		getAttributionText().addAll(spdxFileBuilder.attributionText);
 		
 		// optional parameters - SpdxFile
 		Iterator<Checksum> iter = spdxFileBuilder.checksums.iterator();
@@ -351,7 +351,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		
 		// optional fields - SpdxItem
 		String licenseComments = null;
-		String attributionText = null;
+		Collection<String> attributionText = new ArrayList<String>();
 		
 		// optional fields - SpdxFile
 		Collection<Checksum> checksums = new ArrayList<Checksum>();
@@ -524,8 +524,20 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 * @param attributionText Attribution text for the file
 		 * @return this to continue the build
 		 */
-		public SpdxFileBuilder setAttributionText(@Nullable String attributionText) {
+		public SpdxFileBuilder setAttributionText(Collection<String> attributionText) {
+			Objects.requireNonNull(attributionText, "Attribution text collection can not be null");
 			this.attributionText = attributionText;
+			return this;
+		}
+		
+		/**
+		 * Add attribution to the attribution text collection
+		 * @param attribution
+		 * @return
+		 */
+		public SpdxFileBuilder addAttributionText(String attribution) {
+			Objects.requireNonNull(attribution, "Attribution text can not be null");
+			this.attributionText.add(attribution);
 			return this;
 		}
 		
