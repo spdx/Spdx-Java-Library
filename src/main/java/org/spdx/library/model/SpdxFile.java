@@ -286,20 +286,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		for (Checksum checksum:checksums) {
 			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds)));
 		}
-		String sha1;
-		try {
-			sha1 = getSha1();
-			if (sha1 == null || sha1.isEmpty()) {
-				retval.add("Missing required SHA1 hashcode value for "+fileName);
-			} else {
-				String warning = SpdxVerificationHelper.verifyChecksumString(sha1, ChecksumAlgorithm.SHA1);
-				if (warning != null) {
-					retval.add(warning + " for file "+fileName);
-				}
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting sha1");
-		}
 		return retval;
 	}
 
