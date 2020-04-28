@@ -54,6 +54,7 @@ public class SpdxItemComparer {
 	private boolean copyrightsEquals = true;
 	private boolean licenseCommmentsEquals = true;
 	private boolean relationshipsEquals = true;
+	private boolean attributionTextEquals = true;
 	/**
 	 * Map of unique relationships between two documents
 	 */
@@ -126,6 +127,11 @@ public class SpdxItemComparer {
 			if (!SpdxComparer.stringsEqual(spdxItem.getLicenseComments(),
 					itemB.getLicenseComments())) {
 				this.licenseCommmentsEquals = false;
+				this.itemDifferenceFound = true;
+			}
+			// attributionText
+			if (!SpdxComparer.collectionsEquals(spdxItem.getAttributionText(), itemB.getAttributionText())) {
+				this.attributionTextEquals = false;
 				this.itemDifferenceFound = true;
 			}
 			// Seen licenses
@@ -461,6 +467,13 @@ public class SpdxItemComparer {
 		return annotationsEquals;
 	}
 
+
+	/**
+	 * @return the attributionTextEquals
+	 */
+	public boolean isAttributionTextEquals() {
+		return attributionTextEquals;
+	}
 
 	/**
 	 * Get annotations that are in docA but not in docB

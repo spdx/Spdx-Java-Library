@@ -17,5 +17,13 @@ There are a couple of static classes that help common usage scenarios:
 - org.spdx.library.SPDXModelFactory supports the creation of specific model objects
 - org.spdx.library.model.license.LicenseInfoFactory supports the parsing of SPDX license expressions, creation, and comparison of SPDX licenses
 
+## Update for new properties or classes
+To update Spdx-Java-Library, the following is a very brief checklist:
+
+  1. Update the SpdxContants with any new or changed properties and classes
+  2. Update the Java code representing the model
+  3. Update the SpdxComparer/SpdxFileComparer in the org.spdx.compare package
+  4. Update unit tests
+
 ## Development Status
 Note: This library is in development and likely contains defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.
