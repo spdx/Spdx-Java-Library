@@ -171,6 +171,9 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (verify.size() > 0) {
 				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
 			}
+			if (!ChecksumAlgorithm.SHA1.equals(checksum.getAlgorithm())) {
+				throw new InvalidSPDXAnalysisException("Checksum algorithm must be of type SHA1");
+			}
 		}
 		setPropertyValue(SpdxConstants.PROP_EXTERNAL_DOC_CHECKSUM, checksum);
 		return this;
@@ -290,6 +293,9 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 				retval.add("Missing checksum for external document "+uri);
 			} else {
 				retval.addAll(checksum.get().verify(verifiedIds));
+				if (checksum.get().getAlgorithm() != ChecksumAlgorithm.SHA1) {
+					retval.add("Checksum algorithm is not SHA1 for external reference "+uri);
+				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.error("error getting checksum",e);
