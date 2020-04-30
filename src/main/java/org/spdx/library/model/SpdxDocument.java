@@ -209,7 +209,7 @@ public class SpdxDocument extends SpdxElement {
 	 * @return the specVersion
 	 */
 	public String getSpecVersion() throws InvalidSPDXAnalysisException {
-		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_SPDX_SPDX_VERSION);
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.PROP_SPDX_SPEC_VERSION);
 		if (retval.isPresent()) {
 			return retval.get();
 		} else {
@@ -230,7 +230,7 @@ public class SpdxDocument extends SpdxElement {
 				throw new InvalidSPDXAnalysisException(verify);
 			}
 		}
-		setPropertyValue(SpdxConstants.PROP_SPDX_SPDX_VERSION, specVersion);
+		setPropertyValue(SpdxConstants.PROP_SPDX_SPEC_VERSION, specVersion);
 	}
 	
 
