@@ -151,9 +151,8 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	/**
 	 * @return the relatedSpdxElement
 	 */
-	@SuppressWarnings("unchecked")
 	public Optional<SpdxElement> getRelatedSpdxElement() throws InvalidSPDXAnalysisException {
-		return (Optional<SpdxElement>)(Optional<?>)getObjectPropertyValue(SpdxConstants.PROP_RELATED_SPDX_ELEMENT);
+		return getElementPropertyValue(SpdxConstants.PROP_RELATED_SPDX_ELEMENT);
 	}
 	
 	/**
