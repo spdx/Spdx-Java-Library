@@ -30,6 +30,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 
 /**
  * A Checksum is value that allows the contents of a file to be authenticated. 
@@ -68,6 +69,28 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
+	}
+	
+	/**
+	 * Create a checksum with an anonomous ID
+	 * @param modelStore
+	 * @param documentUri
+	 * @param algorithm
+	 * @param value
+	 * @return
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static Checksum create(IModelStore modelStore, String documentUri, 
+			ChecksumAlgorithm algorithm, String value) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore, "Missing required model store");
+		Objects.requireNonNull(documentUri, "Missing required document URI");
+		Objects.requireNonNull(algorithm, "Missing required algorithm");
+		Objects.requireNonNull(value, "Missing required value");
+		Checksum retval = new Checksum(modelStore, documentUri, 
+				modelStore.getNextId(IdType.Anonymous, documentUri), null, true);
+		retval.setAlgorithm(algorithm);
+		retval.setValue(value);
+		return retval;
 	}
 
 	/* (non-Javadoc)

@@ -80,6 +80,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	protected SpdxPackage(SpdxPackageBuilder spdxPackageBuilder) throws InvalidSPDXAnalysisException {
 		this(spdxPackageBuilder.modelStore, spdxPackageBuilder.documentUri, spdxPackageBuilder.id, 
 				spdxPackageBuilder.copyManager, true);
+		setFilesAnalyzed(spdxPackageBuilder.filesAnalyzed);	// this must be done first since it impact validation
 		setCopyrightText(spdxPackageBuilder.copyrightText);
 		setName(spdxPackageBuilder.name);
 		setLicenseConcluded(spdxPackageBuilder.concludedLicense);
@@ -120,7 +121,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setSummary(spdxPackageBuilder.summary);
 		setSupplier(spdxPackageBuilder.supplier);
 		setVersionInfo(spdxPackageBuilder.versionInfo);
-		setFilesAnalyzed(spdxPackageBuilder.filesAnalyzed);
 	}
 
 	@Override
@@ -703,7 +703,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		String comment = null;
 		
 		// optional fields - SpdxItem
-		Collection<AnyLicenseInfo> licenseInfosFromFile; // required if isFilesAnalyzed is true
+		Collection<AnyLicenseInfo> licenseInfosFromFile = new ArrayList<>(); // required if isFilesAnalyzed is true
 		String licenseComments = null;
 		Collection<String> attributionText = new ArrayList<String>();
 		

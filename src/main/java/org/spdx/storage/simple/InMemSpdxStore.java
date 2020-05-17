@@ -367,4 +367,13 @@ public class InMemSpdxStore implements IModelStore {
 		return Optional.of(item.getId());
 	}
 
+	@Override
+	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		try {
+			return Optional.of(getItem(documentUri, id));
+		} catch(SpdxIdNotFoundException ex) {
+			return Optional.empty();
+		}
+	}
+
 }
