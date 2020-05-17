@@ -632,4 +632,12 @@ public class InMemSpdxStoreTest extends TestCase {
 			// expected
 		}
 	}
+	
+	public void testGetTypedValue() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		assertEquals(SpdxConstants.CLASS_ANNOTATION, store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID1).get().getType());
+		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID2).isPresent());
+		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI2, TEST_ID1).isPresent());
+	}
 }

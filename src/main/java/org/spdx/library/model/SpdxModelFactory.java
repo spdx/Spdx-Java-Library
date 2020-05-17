@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -168,44 +170,60 @@ public class SpdxModelFactory {
 	 */
 	public static ModelObject createModelObject(IModelStore modelStore, String documentUri, String id,
 			String type, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		return getModelObject(modelStore, documentUri, id, type, copyManager, true);
+	 }
+	
+	/**
+	 * Create a model object in a model store given the document URI, ID and type
+	 * @param modelStore model store where the object is to be created
+	 * @param documentUri document URI for the stored item
+	 * @param id ID for the item
+	 * @param type SPDX class or type
+	 * @param copyManager if non-null, allows for copying of properties from other model stores or document URI's when referenced
+	 * @param create if true, create the model object if it does not already exist
+	 * @return a ModelObject of type type
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static ModelObject getModelObject(IModelStore modelStore, String documentUri, String id,
+			String type, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
 		switch (type) {
-		case SpdxConstants.CLASS_SPDX_DOCUMENT: return new SpdxDocument(modelStore, documentUri, copyManager, true); //Note: the ID is ignored
-		case SpdxConstants.CLASS_SPDX_PACKAGE: return new SpdxPackage(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_CREATION_INFO: return new SpdxCreatorInformation(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_CHECKSUM: return new Checksum(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_SPDX_DOCUMENT: return new SpdxDocument(modelStore, documentUri, copyManager, create); //Note: the ID is ignored
+		case SpdxConstants.CLASS_SPDX_PACKAGE: return new SpdxPackage(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_CREATION_INFO: return new SpdxCreatorInformation(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_CHECKSUM: return new Checksum(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_ANY_LICENSE_INFO: throw new InvalidSPDXAnalysisException("Can not create abstract AnyLicensing Info.  Must specify one of the concrete classes");
 		case SpdxConstants.CLASS_SPDX_SIMPLE_LICENSE_INFO:  throw new InvalidSPDXAnalysisException("Can not create abstract SimpleLicensingInfo.  Must specify one of the concrete classes");
-		case SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return new ConjunctiveLicenseSet(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return new DisjunctiveLicenseSet(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return new ExtractedLicenseInfo(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return new ConjunctiveLicenseSet(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return new DisjunctiveLicenseSet(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return new ExtractedLicenseInfo(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
-		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return new WithExceptionOperator(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_FILE: return new SpdxFile(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return new WithExceptionOperator(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_FILE: return new SpdxFile(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_REVIEW: throw new RuntimeException("SPDX Review class is no longer supported");
-		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: return new SpdxPackageVerificationCode(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_ANNOTATION: return new Annotation(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_RELATIONSHIP: return new Relationship(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_SPDX_VERIFICATIONCODE: return new SpdxPackageVerificationCode(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_ANNOTATION: return new Annotation(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_RELATIONSHIP: return new Relationship(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("SPDX item is an abstract item and can not be created.");
 		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("SPDX element is an abstract item and can not be created.");
 		case SpdxConstants.CLASS_SPDX_NONE_ELEMENT: return new SpdxNoneElement(modelStore, documentUri);
 		case SpdxConstants.CLASS_SPDX_NOASSERTION_ELEMENT: return new SpdxNoAssertionElement(modelStore, documentUri);
-		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return new ExternalDocumentRef(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return new ExternalRef(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE: return new ExternalExtractedLicenseInfo(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return new ExternalDocumentRef(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return new ExternalRef(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE: return new ExternalExtractedLicenseInfo(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_REFERENCE_TYPE:  throw new RuntimeException("Reference type can only be created with a type supplied.");
-		case SpdxConstants.CLASS_SPDX_SNIPPET: return new SpdxSnippet(modelStore, documentUri, id, copyManager, true);
+		case SpdxConstants.CLASS_SPDX_SNIPPET: return new SpdxSnippet(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_NOASSERTION_LICENSE: return new SpdxNoAssertionLicense(modelStore, documentUri);
 		case SpdxConstants.CLASS_NONE_LICENSE: return new SpdxNoneLicense(modelStore, documentUri);
-		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, copyManager, true);
-		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new GenericSpdxElement(modelStore, documentUri, id, copyManager, true);
-		case GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE: return new GenericSpdxItem(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return new ExternalSpdxElement(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, true);
-		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return new LineCharPointer(modelStore, documentUri, id, copyManager, true);
+		case GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new GenericModelObject(modelStore, documentUri, id, copyManager, create);
+		case GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new GenericSpdxElement(modelStore, documentUri, id, copyManager, create);
+		case GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE: return new GenericSpdxItem(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_EXTERNAL_SPDX_ELEMENT: return new ExternalSpdxElement(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return new LineCharPointer(modelStore, documentUri, id, copyManager, create);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}
@@ -221,34 +239,6 @@ public class SpdxModelFactory {
 			throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 		return retval;
-	}
-	
-	/**
-	 * @param parentType type of the parent
-	 * @param property
-	 * @return the property type for a property within a parent class
-	 * @throws IntrospectionException
-	 */
-	public static Optional<String> getPropertyType(String parentType, String property) {
-		Objects.requireNonNull(parentType);
-		Objects.requireNonNull(property);
-		Class<?> clazz = SPDX_TYPE_TO_CLASS.get(parentType);
-		if (Objects.isNull(clazz)) {
-			return Optional.empty();
-		}
-		BeanInfo info;
-		try {
-			info = Introspector.getBeanInfo(clazz);
-			for (PropertyDescriptor pd:info.getPropertyDescriptors()) {
-				if (pd.getName().equals(property)) {
-					return Optional.of(pd.getPropertyType().toString());
-				}
-			}
-			return Optional.empty();
-		} catch (IntrospectionException e) {
-			logger.warn("Introspection exception getting property type for parent type "+parentType+" property "+property,e);
-			return Optional.empty();
-		} 
 	}
 	
 	public static Stream<?> getElements(IModelStore store, String documentUri, ModelCopyManager copyManager, 
@@ -283,5 +273,28 @@ public class SpdxModelFactory {
 		}
 		String type = classUri.substring(indexOfPound+1);
 		return typeToClass(type);
+	}
+
+	/**
+	 * @param modelStore Store for the model
+	 * @param documentUri Document URI for for the ID
+	 * @param copyManager Optional copy manager for copying any properties from other model
+	 * @param id ID for the model object
+	 * @return ModelObject with the ID in the model store
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static Optional<ModelObject> getModelObject(IModelStore modelStore, String documentUri,
+			String id, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		Optional<TypedValue> tv = modelStore.getTypedValue(documentUri, id);
+		if (tv.isPresent()) {
+			String type = tv.get().getType();
+			try {
+				return Optional.of(getModelObject(modelStore, documentUri, id, type, copyManager, false));
+			} catch(SpdxIdNotFoundException ex) {
+				return Optional.empty();	// There is a window where the ID disappears between getTypedValue and getModelObject
+			}
+		} else {
+			return Optional.empty();
+		}
 	}
 }

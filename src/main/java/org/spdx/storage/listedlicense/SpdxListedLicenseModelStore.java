@@ -708,6 +708,17 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
+	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		if (isSpdxListedLicenseId(documentUri, id)) {
+			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+		} else if (isSpdxListedExceptionId(documentUri, id)) {
+			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+		} else {
+			return Optional.empty();
+		}
+	}
+	
+	@Override
 	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+

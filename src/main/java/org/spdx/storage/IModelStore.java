@@ -250,4 +250,11 @@ public interface IModelStore {
 	 * @return the case sensitive ID if it exists
 	 */
 	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId);
+
+	/**
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @return type TypedValue containing the type of the ModelObject related to the ID
+	 */
+	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException;
 }

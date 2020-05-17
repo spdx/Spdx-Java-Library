@@ -171,9 +171,6 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (verify.size() > 0) {
 				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
 			}
-			if (!ChecksumAlgorithm.SHA1.equals(checksum.getAlgorithm())) {
-				throw new InvalidSPDXAnalysisException("Checksum algorithm must be of type SHA1");
-			}
 		}
 		setPropertyValue(SpdxConstants.PROP_EXTERNAL_DOC_CHECKSUM, checksum);
 		return this;
