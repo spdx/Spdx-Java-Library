@@ -103,6 +103,8 @@ public class SpdxConstants {
 	public static final String CLASS_RELATIONSHIP = "Relationship";
 	public static final String CLASS_SPDX_ITEM = "SpdxItem";
 	public static final String CLASS_SPDX_ELEMENT = "SpdxElement";
+	public static final String CLASS_SPDX_NONE_ELEMENT = "SpdxNoneElement";
+	public static final String CLASS_SPDX_NOASSERTION_ELEMENT = "SpdxNoAssertionElement";
 	public static final String CLASS_EXTERNAL_DOC_REF = "ExternalDocumentRef";
 	public static final String CLASS_SPDX_EXTERNAL_REFERENCE = "ExternalRef";
 	public static final String CLASS_SPDX_REFERENCE_TYPE = "ReferenceType";
@@ -119,7 +121,8 @@ public class SpdxConstants {
 			CLASS_SPDX_EXTRACTED_LICENSING_INFO, CLASS_SPDX_LICENSE, CLASS_SPDX_LISTED_LICENSE, 
 			CLASS_SPDX_LICENSE_EXCEPTION, CLASS_OR_LATER_OPERATOR, CLASS_WITH_EXCEPTION_OPERATOR,
 			CLASS_SPDX_FILE, CLASS_SPDX_REVIEW, CLASS_SPDX_VERIFICATIONCODE, CLASS_ANNOTATION,
-			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, CLASS_EXTERNAL_DOC_REF,
+			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, 
+			CLASS_SPDX_NONE_ELEMENT, CLASS_SPDX_NOASSERTION_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT,
 			CLASS_EXTERNAL_EXTRACTED_LICENSE,
@@ -151,7 +154,7 @@ public class SpdxConstants {
 	public static final String PROP_SPDX_REVIEWED_BY = "reviewed";
 	public static final String PROP_SPDX_EXTRACTED_LICENSES = "hasExtractedLicensingInfo";
 	public static final String PROP_SPDX_VERSION = "specVersion"; // TODO: Migrate this to PROP_SPDX_SPEC_VERSION in 3.0.  See issue 
-	public static final String PROP_SPDX_SPDX_VERSION = "spdxVersion";
+	public static final String PROP_SPDX_SPEC_VERSION = "spdxVersion";
 	public static final String PROP_SPDX_CREATION_INFO = "creationInfo";
 	public static final String PROP_SPDX_PACKAGE = "describesPackage";
 	@Deprecated		// since 2.0  Planned to be removed in next major spec revision

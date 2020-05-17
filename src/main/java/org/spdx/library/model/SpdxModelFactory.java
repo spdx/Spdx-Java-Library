@@ -100,6 +100,8 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.CLASS_RELATIONSHIP, Relationship.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_ITEM, SpdxItem.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_ELEMENT, SpdxElement.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_NONE_ELEMENT, SpdxNoneElement.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_NOASSERTION_ELEMENT, SpdxNoAssertionElement.class);
 		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE, ExternalRef.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_REFERENCE_TYPE, ReferenceType.class);
@@ -188,6 +190,8 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_RELATIONSHIP: return new Relationship(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_SPDX_ITEM: throw new RuntimeException("SPDX item is an abstract item and can not be created.");
 		case SpdxConstants.CLASS_SPDX_ELEMENT: throw new RuntimeException("SPDX element is an abstract item and can not be created.");
+		case SpdxConstants.CLASS_SPDX_NONE_ELEMENT: return new SpdxNoneElement(modelStore, documentUri);
+		case SpdxConstants.CLASS_SPDX_NOASSERTION_ELEMENT: return new SpdxNoAssertionElement(modelStore, documentUri);
 		case SpdxConstants.CLASS_EXTERNAL_DOC_REF: return new ExternalDocumentRef(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_SPDX_EXTERNAL_REFERENCE: return new ExternalRef(modelStore, documentUri, id, copyManager, true);
 		case SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE: return new ExternalExtractedLicenseInfo(modelStore, documentUri, id, copyManager, true);

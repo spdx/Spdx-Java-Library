@@ -450,6 +450,35 @@ public abstract class ModelObject {
 	}
 	
 	/**
+	 * Converts property values to an SpdxElement if possible - if NONE or NOASSERTION URI value, convert to the appropriate SpdxElement
+	 * @param propertyName name of the property
+	 * @return SpdxElement stored
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	protected Optional<SpdxElement> getElementPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyName);
+		if (!result.isPresent()) {
+			return Optional.empty();
+		} else if (result.get() instanceof SpdxElement) {
+			return (Optional<SpdxElement>)(Optional<?>)result;
+		} else if (result.get() instanceof IndividualUriValue) {
+			String uri = ((IndividualUriValue)result.get()).getIndividualURI();
+			if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+				return Optional.of(new SpdxNoneElement());
+			} else if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+				return Optional.of(new SpdxNoAssertionElement());
+			} else {
+				logger.error("Can not convert a URI value to an SPDX element: "+uri);
+				throw new SpdxInvalidTypeException("Can not convert a URI value to an SPDX element: "+uri);
+			}
+		} else {
+			logger.error("Invalid type for SpdxElement property: "+result.get().getClass().toString());
+			throw new SpdxInvalidTypeException("Invalid type for SpdxElement property: "+result.get().getClass().toString());
+		}
+	}
+	
+	/**
 	 * Removes a property and its value from the model store if it exists
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
