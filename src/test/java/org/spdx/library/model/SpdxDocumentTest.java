@@ -154,7 +154,8 @@ public class SpdxDocumentTest extends TestCase {
 				.build();
 
 		PACKAGE1 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"Package 1", LICENSE1, "Pkg Copyright1", CHECKSUM1, LICENSE2)
+				"Package 1", LICENSE1, "Pkg Copyright1", LICENSE2)
+				.addChecksum(CHECKSUM1)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
 				.setComment("Package Comments1")
 				.setDescription("Pkg Description 1")
@@ -173,7 +174,8 @@ public class SpdxDocumentTest extends TestCase {
 				.build();
 
 		PACKAGE2 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"Package 2", LICENSE2, "Pkg Copyright2", CHECKSUM2, LICENSE3)
+				"Package 2", LICENSE2, "Pkg Copyright2", LICENSE3)
+				.addChecksum(CHECKSUM2)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
 				.setComment("Package Comments2")
 				.setDescription("Pkg Description 2")
@@ -192,7 +194,8 @@ public class SpdxDocumentTest extends TestCase {
 				.build();
 
 		PACKAGE3 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"Package 3", LICENSE1, "Pkg Copyright3", CHECKSUM1, LICENSE3)
+				"Package 3", LICENSE1, "Pkg Copyright3", LICENSE3)
+				.addChecksum(CHECKSUM1)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
 				.setComment("Package Comments3")
 				.setDescription("Pkg Description 3")

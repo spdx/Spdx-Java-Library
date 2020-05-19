@@ -404,7 +404,8 @@ public class SpdxComparerTest extends TestCase {
 				.setLicenseComments("LicenseComment2")
 				.setLineRange(LINE2_1, LINE2_2)
 				.build();
-		pkgA1 = gmo.createPackage("SPDXRef-pkgA1", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDA)
+		pkgA1 = gmo.createPackage("SPDXRef-pkgA1", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)
@@ -423,7 +424,8 @@ public class SpdxComparerTest extends TestCase {
 				.setSupplier(SUPPLIERA)
 				.setVersionInfo(VERSIONINFOA)
 				.build();
-		pkgA2 = gmo.createPackage("SPDXRef-pkgA2", NAMEB, LICENSE_CONCLUDEDA, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDA)
+		pkgA2 = gmo.createPackage("SPDXRef-pkgA2", NAMEB, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)
@@ -443,7 +445,8 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 		
-		pkgA1_1 = gmo.createPackage("SPDXRef-pkgA11", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDA)
+		pkgA1_1 = gmo.createPackage("SPDXRef-pkgA11", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)
@@ -463,7 +466,8 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 		
-		pkgA1_2 = gmo.createPackage("SPDXRef-pkgA12", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDA)
+		pkgA1_2 = gmo.createPackage("SPDXRef-pkgA12", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)
@@ -483,7 +487,8 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 
-		pkgB1 = gmo.createPackage("SPDXRef-pkgB1", NAMEA, LICENSE_CONCLUDEDB, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDB)
+		pkgB1 = gmo.createPackage("SPDXRef-pkgB1", NAMEA, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)
@@ -503,7 +508,8 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 
-		pkgB2 = gmo.createPackage("SPDXRef-pkgB2", NAMEB, LICENSE_CONCLUDEDB, COPYRIGHTA, CHECKSUM1, LICENSE_DECLAREDB)
+		pkgB2 = gmo.createPackage("SPDXRef-pkgB2", NAMEB, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
+				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTB)
 				.setAnnotations(ANNOTATIONSA)
 				.setRelationships(RELATIONSHIPSA)

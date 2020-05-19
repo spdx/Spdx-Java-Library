@@ -1091,15 +1091,14 @@ public abstract class ModelObject {
 	 */
 	public SpdxPackage.SpdxPackageBuilder createPackage(String id, String name,
 				AnyLicenseInfo concludedLicense, 
-				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
+				String copyrightText, AnyLicenseInfo licenseDeclared) {
 		Objects.requireNonNull(id, "ID can not be null");
 		Objects.requireNonNull(name, "Name can not be null");
-		Objects.requireNonNull(sha1, "Sha1 can not be null");
 		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
 		Objects.requireNonNull(licenseDeclared, "License declared can not be null");
 		Objects.requireNonNull(copyrightText, "copyright text can not be null");
 		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, copyManager,
-				name, concludedLicense, copyrightText, sha1, licenseDeclared);
+				name, concludedLicense, copyrightText, licenseDeclared);
 	}
 
 	/**
