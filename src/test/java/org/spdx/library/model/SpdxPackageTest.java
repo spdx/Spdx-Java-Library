@@ -187,13 +187,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -232,14 +232,14 @@ public class SpdxPackageTest extends TestCase {
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id1 = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		String id2 = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id1, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id1, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -261,7 +261,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		assertTrue(pkg.equivalent(pkg));
-		SpdxPackage pkg2 = gmo.createPackage(id2, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg2 = gmo.createPackage(id2, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -373,13 +373,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetFilesAnalyzed() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -414,13 +414,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetLicenseDeclared() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -462,8 +462,8 @@ public class SpdxPackageTest extends TestCase {
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
-//				.setChecksums(checksums)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
+				.addChecksum(CHECKSUM1)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
 				.setRelationships(relationships)
@@ -507,13 +507,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetDescription() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -549,13 +549,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetDownloadLocation() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -591,13 +591,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetHomepage() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -633,13 +633,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetOriginator() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -675,13 +675,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetPackageFileName() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -716,13 +716,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetPackageVerificationCode() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -757,13 +757,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetSourceInfo() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -798,13 +798,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetSummary() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -839,13 +839,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetSupplier() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -880,13 +880,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetVersionInfo() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -921,14 +921,14 @@ public class SpdxPackageTest extends TestCase {
 	public void testAddExternalRef() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs1 = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		List<ExternalRef> externalRefs2 = Arrays.asList(new ExternalRef[] {EXTERNAL_REF2, EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -963,13 +963,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testAddFile() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1003,13 +1003,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testCompareTo() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
 		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+				PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1031,7 +1031,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		SpdxPackage sameName = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+				PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1053,7 +1053,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 		
 		SpdxPackage pkg3 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				PKG_NAME2, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+				PKG_NAME2, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1086,13 +1086,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testGetSha1() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1129,13 +1129,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetLicenseConcluded() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1169,13 +1169,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetCopyrightText() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1210,13 +1210,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetLicenseComments()  throws InvalidSPDXAnalysisException{
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1252,13 +1252,13 @@ public class SpdxPackageTest extends TestCase {
 		List<Annotation> annotations1 = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Annotation> annotations2 = Arrays.asList(new Annotation[] {ANNOTATION1, ANNOTATION2});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations1)
@@ -1294,13 +1294,13 @@ public class SpdxPackageTest extends TestCase {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships1 = Arrays.asList(new Relationship[] {RELATIONSHIP1});
 		List<Relationship> relationships2 = Arrays.asList(new Relationship[] {RELATIONSHIP1, RELATIONSHIP2});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1334,13 +1334,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetComment() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1372,7 +1372,7 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetAttributionText() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
@@ -1381,7 +1381,7 @@ public class SpdxPackageTest extends TestCase {
 		String ATT1 = "attribution 1";
 		String ATT2 = "attribution 2";
 
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)
@@ -1420,13 +1420,13 @@ public class SpdxPackageTest extends TestCase {
 	public void testSetNameString() throws InvalidSPDXAnalysisException {
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {ANNOTATION1});
 		List<Relationship> relationships = Arrays.asList(new Relationship[] {RELATIONSHIP1});
-		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3});
+		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
 		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
 		
-		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, CHECKSUM1, LICENSE3)
+		SpdxPackage pkg = gmo.createPackage(id, PKG_NAME1, LICENSE1, COPYRIGHT_TEXT1, LICENSE3)
 				.setChecksums(checksums)
 				.setComment(PKG_COMMENT1)
 				.setAnnotations(annotations)

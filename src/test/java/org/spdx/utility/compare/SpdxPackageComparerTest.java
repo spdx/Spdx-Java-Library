@@ -408,7 +408,8 @@ public class SpdxPackageComparerTest extends TestCase {
 			String originator, String packageFilename, SpdxPackageVerificationCode verificationCode,
 			String sourceinfo, String summary, String supplier, String versioninfo, 
 			boolean filesAnalyzed, Collection<ExternalRef> externalRefs, Checksum sha1) throws InvalidSPDXAnalysisException {
-		return doc.createPackage("SPDXRef-"+name, name, licenseConcluded, copyright, sha1, licenseDeclared)
+		return doc.createPackage("SPDXRef-"+name, name, licenseConcluded, copyright,  licenseDeclared)
+				.addChecksum(sha1)
 				.setComment(comment)
 				.setAnnotations(annotations)
 				.setRelationships(relationships)

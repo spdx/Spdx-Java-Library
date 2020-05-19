@@ -84,10 +84,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setCopyrightText(spdxPackageBuilder.copyrightText);
 		setName(spdxPackageBuilder.name);
 		setLicenseConcluded(spdxPackageBuilder.concludedLicense);
-		if (!spdxPackageBuilder.sha1.getAlgorithm().equals(ChecksumAlgorithm.SHA1)) {
-			throw new InvalidSPDXAnalysisException("Invalid SHA1 checksum algorithm for SpdxPackage.  Must be SHA1");
-		}
-		addChecksum(spdxPackageBuilder.sha1);
 		setLicenseDeclared(spdxPackageBuilder.licenseDeclared);
 		
 		// optional parameters - SpdxElement
@@ -101,13 +97,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		getAttributionText().addAll(spdxPackageBuilder.attributionText);
 		
 		// optional parameters - SpdxPackage
-		Iterator<Checksum> iter = spdxPackageBuilder.checksums.iterator();
-		while (iter.hasNext()) {
-			Checksum cksum = iter.next();
-			if (!cksum.equals(spdxPackageBuilder.sha1)) {
-				getChecksums().add(cksum);
-			}
-		}
+		getChecksums().addAll(spdxPackageBuilder.checksums);
 
 		setDescription(spdxPackageBuilder.description);
 		setDownloadLocation(spdxPackageBuilder.downloadLocation);
@@ -695,7 +685,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		
 		// required fields - SpdxPackage
 		AnyLicenseInfo licenseDeclared;
-		Checksum sha1;
 		
 		// optional fields - SpdxElement
 		Collection<Annotation> annotations = new ArrayList<Annotation>();
@@ -732,12 +721,11 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @param concludedLicense license concluded
 		 * @param licenseInfosFromFile collection of seen licenses
 		 * @param copyrightText Copyright text
-		 * @param sha1 - Sha1 checksum value
 		 * @param licenseDeclared - Declared license for the package
 		 */
 		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, 
 				@Nullable ModelCopyManager copyManager, String name,AnyLicenseInfo concludedLicense, 
-				String copyrightText, Checksum sha1, AnyLicenseInfo licenseDeclared) {
+				String copyrightText, AnyLicenseInfo licenseDeclared) {
 			Objects.requireNonNull(modelStore, "Model store can not be null");
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
@@ -745,14 +733,12 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
 			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 			Objects.requireNonNull(licenseDeclared, "License declared can not be null");
-			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;
 			this.name = name;
 			this.concludedLicense = concludedLicense;
 			this.copyrightText = copyrightText;
-			this.sha1 = sha1;
 			this.licenseDeclared = licenseDeclared;
 			this.copyManager = copyManager;
 		}
