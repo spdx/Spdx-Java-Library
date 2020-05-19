@@ -376,4 +376,12 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Remove all existing elements, properties, and values for a document including the document itself
+	 * @param documentUri
+	 */
+	public void clear(String documentUri) {
+		Objects.requireNonNull(documentUri, "Document uri can not be null");
+		this.documentValues.put(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
+	}
 }
