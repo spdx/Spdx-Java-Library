@@ -470,8 +470,11 @@ public class SpdxItemComparer {
 
 	/**
 	 * @return the attributionTextEquals
+	 * @throws SpdxCompareException 
 	 */
-	public boolean isAttributionTextEquals() {
+	public boolean isAttributionTextEquals() throws SpdxCompareException {
+		checkInProgress();
+		checkCompareMade();
 		return attributionTextEquals;
 	}
 

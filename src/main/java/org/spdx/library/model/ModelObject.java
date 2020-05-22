@@ -702,10 +702,22 @@ public abstract class ModelObject {
 				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
 				if (!myValue.isPresent()) {
 					if (compareValue.isPresent()) {
-						return false;
+						if (compareValue.get() instanceof ModelCollection) {
+							if (((ModelCollection<?>)compareValue.get()).size() > 0) {
+								return false;
+							}
+						} else {
+							return false;
+						}
 					}
 				} else if (!compareValue.isPresent()) {
-					return false;
+					if (myValue.get() instanceof ModelCollection) {
+						if (((ModelCollection<?>)myValue.get()).size() > 0) {
+							return false;
+						}
+					} else {
+						return false;
+					}
 				} else if (myValue.get() instanceof ModelCollection && compareValue.get() instanceof ModelCollection) {
 					List<?> myList = ((ModelCollection<?>)myValue.get()).toImmutableList();
 					List<?> compareList = ((ModelCollection<?>)compareValue.get()).toImmutableList();
@@ -734,7 +746,13 @@ public abstract class ModelObject {
 			} else {
 				// No property value
 				if (this.getObjectPropertyValue(propertyName).isPresent()) {
-					return false;
+					if (this.getObjectPropertyValue(propertyName).get() instanceof ModelCollection) {
+						if (((ModelCollection<?>)(this.getObjectPropertyValue(propertyName).get())).size() > 0) {
+							return false;
+						}
+					} else {
+						return false;
+					}
 				}
 			}
 		}
@@ -887,15 +905,15 @@ public abstract class ModelObject {
 	 */
 	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
-		collection.forEach(action -> {
-			action.verify(verifiedIds).forEach(warning -> {
+		for (ModelObject mo:collection) {
+			for (String warning:mo.verify()) {
 				if (Objects.nonNull(warningPrefix)) {
 					retval.add(warningPrefix + warning);
 				} else {
 					retval.add(warning);
 				}
-			});
-		});
+			}
+		}
 		return retval;
 	}
 	

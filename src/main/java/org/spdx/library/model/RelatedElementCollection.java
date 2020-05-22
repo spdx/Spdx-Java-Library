@@ -71,7 +71,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	
 	public List<SpdxElement> toImmutableList() {
 		List<SpdxElement> retval = new ArrayList<>();
-		relationshipCollection.toImmutableList().forEach(item -> {
+		for (Object item:relationshipCollection.toImmutableList()) {
 			if (item instanceof Relationship) {
 				Relationship relationship = (Relationship)item;
 				try {
@@ -87,7 +87,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 					logger.warn("error getting relationship type - skipping relationship",e);
 				}
 			}
-		});
+		}
 		return Collections.unmodifiableList(retval);
 	}
 

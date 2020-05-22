@@ -35,7 +35,7 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-public class Annotation extends ModelObject {
+public class Annotation extends ModelObject implements Comparable<Annotation> {
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
@@ -251,5 +251,50 @@ public class Annotation extends ModelObject {
 		}
 		
 		return retval;
+	}
+
+	@Override
+	public int compareTo(Annotation o) {
+		try {
+			if (o == null) {
+				return 1;
+			}
+			if (o.getAnnotationDate() == null) {
+				if (this.getAnnotationDate() != null) {
+					return 1;
+				}
+			}
+			if (this.getAnnotationDate() == null) {
+				return -1;
+			}
+			int retval = this.getAnnotationDate().compareTo(o.getAnnotationDate());
+			if (retval != 0) {
+				return retval;
+			}
+			if (o.getAnnotator() == null) {
+				if (this.getAnnotator() != null) {
+					return 1;
+				}
+			}
+			if (this.getAnnotator() == null) {
+				return -1;
+			}
+			retval = this.getAnnotator().compareToIgnoreCase(o.getAnnotator());
+			if (retval != 0) {
+				return retval;
+			}
+			if (o.getAnnotationType() == null) {
+				if (this.getAnnotationType() != null) {
+					return 1;
+				}
+			}
+			if (this.getAnnotationType() == null) {
+				return -1;
+			}
+			return this.getAnnotationType().compareTo(o.getAnnotationType());
+		} catch(InvalidSPDXAnalysisException ex) {
+			logger.warn("Error when comparing",ex);
+			return -1;
+		}
 	}
 }
