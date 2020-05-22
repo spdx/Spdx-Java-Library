@@ -285,6 +285,15 @@ public class SpdxModelFactory {
 	 */
 	public static Optional<ModelObject> getModelObject(IModelStore modelStore, String documentUri,
 			String id, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		if (id.contains(":")) {
+			// External document ref
+			try {
+				return Optional.of(new ExternalSpdxElement(modelStore, documentUri, id, copyManager, true));
+			} catch(InvalidSPDXAnalysisException ex) {
+				logger.warn("Attempting to get a model object for an invalid SPDX ID.  Returning empty");
+				return Optional.empty();
+			}
+		}
 		Optional<TypedValue> tv = modelStore.getTypedValue(documentUri, id);
 		if (tv.isPresent()) {
 			String type = tv.get().getType();
@@ -294,7 +303,13 @@ public class SpdxModelFactory {
 				return Optional.empty();	// There is a window where the ID disappears between getTypedValue and getModelObject
 			}
 		} else {
-			return Optional.empty();
+			if (SpdxConstants.NOASSERTION_VALUE.equals(id)) {
+				return Optional.of(new SpdxNoAssertionElement());
+			} else if (SpdxConstants.NONE_VALUE.equals(id)) {
+				return Optional.of(new SpdxNoneElement());
+			} else {
+				return Optional.empty();
+			}
 		}
 	}
 }

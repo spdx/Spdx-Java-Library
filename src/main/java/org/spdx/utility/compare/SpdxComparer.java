@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,6 +197,7 @@ public class SpdxComparer {
 	 * Compare the snippets in the documents
 	 * @throws SpdxCompareException 
 	 */
+	@SuppressWarnings("unchecked")
 	private void compareSnippets() throws SpdxCompareException {
 		// This will be a complete NXN comparison of all documents filling in the uniqueSnippets map
 		if (this.spdxDocs == null || this.spdxDocs.size() < 1) {
@@ -205,12 +207,10 @@ public class SpdxComparer {
 		this.snippetComparers.clear();
 		// N x N comparison of all snippets
 		for (int i = 0; i < spdxDocs.size(); i++) {
-			List<SpdxSnippet> snippetsA = new ArrayList<>();
+			List<SpdxSnippet> snippetsA;
 			try {
-				SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
-						SpdxSnippet.class).forEach(snippet -> {
-							snippetsA.add((SpdxSnippet)snippet);						
-						});
+				snippetsA = (List<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
+						SpdxSnippet.class).collect(Collectors.toList());
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
 					throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(i).getName(), e));
@@ -229,12 +229,10 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;
 				}
-				List<SpdxSnippet> snippetsB = new ArrayList<>();
+				List<SpdxSnippet> snippetsB;
 				try {
-					SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
-							SpdxSnippet.class).forEach(snippet -> {
-								snippetsB.add((SpdxSnippet)snippet);						
-							});
+					snippetsB = (List<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
+							SpdxSnippet.class).collect(Collectors.toList());
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
 						throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(j).getName(), e));
@@ -425,16 +423,15 @@ public class SpdxComparer {
 	 * @throws SpdxCompareException 
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	private void compareFiles() throws InvalidSPDXAnalysisException, SpdxCompareException {
 		this.uniqueFiles.clear();
 		this.fileDifferences.clear();
 		// N x N comparison of all files
 		for (int i = 0; i < spdxDocs.size(); i++) {
-			List<SpdxFile> filesListA = new ArrayList<>();
-			SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
-					null, SpdxFile.class).forEach(file -> {
-						filesListA.add((SpdxFile)file);
-					});
+			List<SpdxFile> filesListA;
+			filesListA = (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
+					null, SpdxFile.class).collect(Collectors.toList());
 			// note - the file arrays MUST be sorted for the comparator methods to work
 			Collections.sort(filesListA);
 			SpdxFile[] filesA = filesListA.toArray(new SpdxFile[filesListA.size()]);
@@ -451,11 +448,9 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;
 				}
-				List<SpdxFile> filesListB = new ArrayList<>();
-				SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
-						null, SpdxFile.class).forEach(file -> {
-							filesListB.add((SpdxFile)file);
-						});
+				List<SpdxFile> filesListB;
+				filesListB = (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
+						null, SpdxFile.class).collect(Collectors.toList());
 				//Note that the files arrays must be sorted for the find methods to work
 				Collections.sort(filesListB);
 				SpdxFile[] filesB = filesListB.toArray(new SpdxFile[filesListB.size()]);
@@ -488,13 +483,11 @@ public class SpdxComparer {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<SpdxPackage> collectAllPackages(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		List<SpdxPackage> retval = new ArrayList<>();
-		SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-				null, SpdxPackage.class).forEach(pkg -> {
-					retval.add((SpdxPackage)pkg);
-				});
-		return retval;
+		return (List<SpdxPackage>)SpdxModelFactory.getElements(
+				spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
+				null, SpdxPackage.class).collect(Collectors.toList());
 	}
 
 	/**
@@ -504,13 +497,10 @@ public class SpdxComparer {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		List<SpdxFile> retval = new ArrayList<>();
-		SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-				null, SpdxFile.class).forEach(file -> {
-					retval.add((SpdxFile)file);
-				});
-		return retval;
+		return (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
+				null, SpdxFile.class).collect(Collectors.toList());
 	}
 
 	/**

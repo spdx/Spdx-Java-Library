@@ -318,6 +318,16 @@ public class ExternalRef extends ModelObject implements Comparable<ExternalRef> 
 		return this;
 	}
 	
+	@Override public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		if (!(compare instanceof ExternalRef)) {
+			return false;
+		}
+		ExternalRef compareEf = (ExternalRef)compare;
+		return Objects.equals(this.getReferenceLocator(), compareEf.getReferenceLocator()) &&
+				Objects.equals(getComment(), compareEf.getComment()) &&
+				Objects.equals(getReferenceCategory(), compareEf.getReferenceCategory());
+		// we ignore the reference type since it may be local to the document and a different URI
+	}
 	
 	@Override
 	public String toString() {

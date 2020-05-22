@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -793,17 +794,17 @@ public class SpdxComparerTest extends TestCase {
 		doc.setExtractedLicenseInfos(newExtractedLicenseInfos);
 		// fix up all references to the old licenses
 		// files
-		SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class).forEach(element -> {
+		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class).collect(Collectors.toList())) {
 			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		});
+		};
 		// packages
-		SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class).forEach(element -> {
+		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class).collect(Collectors.toList())) {
 			fixExtractedLicenseIdPackage((SpdxPackage)element, oldToNewLicIds);
-		});
+		}
 		// snippets
-		SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class).forEach(element -> {
+		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class).collect(Collectors.toList())) {
 			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		});
+		}
 		// NOTE - we're ignoring document data license
 	}
 

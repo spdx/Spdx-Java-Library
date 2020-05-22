@@ -1,6 +1,8 @@
 package org.spdx.library.model;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -65,12 +67,14 @@ public class SpdxModelFactoryTest extends TestCase {
 		assertEquals(SpdxFile.class, SpdxModelFactory.typeToClass(SpdxConstants.CLASS_SPDX_FILE));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testGetElements() throws InvalidSPDXAnalysisException {
 		ModelObject file1 = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstants.CLASS_SPDX_FILE, copyManager);
 		ModelObject file2 = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID2, 
 				SpdxConstants.CLASS_SPDX_FILE, copyManager);
-		SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class).forEach(element -> {
+		for (SpdxElement element:(List<SpdxElement>)(SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class).collect(Collectors.toList()))) {
+			
 			assertTrue(element instanceof SpdxFile);
 			SpdxFile result = (SpdxFile)element;
 			if (result.getId().equals(ID1)) {
@@ -86,7 +90,7 @@ public class SpdxModelFactoryTest extends TestCase {
 					fail("Error: "+e.getMessage());
 				}
 			}
-		});
+		}
 	}
 
 	public void testClassUriToClass() throws InvalidSPDXAnalysisException {
