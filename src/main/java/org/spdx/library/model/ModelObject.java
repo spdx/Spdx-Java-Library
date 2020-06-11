@@ -340,16 +340,26 @@ public abstract class ModelObject {
 	 */
 	protected Optional<String> getStringPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
 		Optional<Object> result = getObjectPropertyValue(propertyName);
-		Optional<String> retval;
 		if (result.isPresent()) {
-			if (!(result.get() instanceof String)) {
+			if (result.get() instanceof String) {
+				return Optional.of((String)result.get());
+			} else if (result.get() instanceof IndividualUriValue) {
+				String uri = ((IndividualUriValue)result.get()).getIndividualURI();
+				if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+					return Optional.of(SpdxConstants.NONE_VALUE);
+				} else if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+					return Optional.of(SpdxConstants.NOASSERTION_VALUE);
+				} else {
+					logger.error("Can not convert a URI value to String: "+uri);
+					throw new SpdxInvalidTypeException("Can not convert a URI value to String: "+uri);
+				}
+			} else {
+				logger.error("Property "+propertyName+" is not of type String");
 				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type String");
 			}
-			retval = Optional.of((String)result.get());
 		} else {
-			retval = Optional.empty();
+			return Optional.empty();
 		}
-		return retval;
 	}
 	
 	/**
