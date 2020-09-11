@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.SpdxIdInUseException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -662,5 +663,57 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertTrue(store.exists(TEST_DOCUMENT_URI2, id1));
 		assertTrue(store.exists(TEST_DOCUMENT_URI2, id2));
+	}
+	
+	public void testDeleteInUse() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		String id1 = "TestId1";
+		String id2 = "testId2";
+		String id3 = "testId3";
+		String id4 = "testId4";
+		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id2, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		TypedValue tv3 = new TypedValue(id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv3);
+		TypedValue tv4 = new TypedValue(id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv4);
+		store.setValue(TEST_DOCUMENT_URI1, id3, "property", new TypedValue(id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
+		
+		try {
+			store.delete(TEST_DOCUMENT_URI1, id3);
+			fail("id3 is in the listProperty for id2");
+		} catch (SpdxIdInUseException ex) {
+			// expected - id3 is in the listProperty for id2
+		}
+		try {
+			store.delete(TEST_DOCUMENT_URI1, id4);
+			fail("id4 is in the listProperty for id2");
+		} catch (SpdxIdInUseException ex) {
+			// expected - id4 is in the listProperty for id2
+		}
+		try {
+			store.delete(TEST_DOCUMENT_URI1, id1);
+			fail("id1 is in the property for id3");
+		} catch (SpdxIdInUseException ex) {
+			// expected - id1 is in the property for id3
+		}
+		store.removeValueFromCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv4);
+		store.delete(TEST_DOCUMENT_URI1, id4);
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id4));
+		try {
+			store.delete(TEST_DOCUMENT_URI1, id3);
+			fail("id3 is in the listProperty for id2");
+		} catch (SpdxIdInUseException ex) {
+			// expected - id3 is in the listProperty for id2
+		}
+		store.removeProperty(TEST_DOCUMENT_URI1, id3, "property");
+		store.delete(TEST_DOCUMENT_URI1, id1);
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id1));
+		store.delete(TEST_DOCUMENT_URI1, id2);
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
+		store.delete(TEST_DOCUMENT_URI1, id3);
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id3));
 	}
 }

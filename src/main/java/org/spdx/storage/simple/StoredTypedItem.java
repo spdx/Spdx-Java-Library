@@ -346,4 +346,30 @@ public class StoredTypedItem extends TypedValue {
 		Object value = properties.get(propertyName);
 		return value instanceof List;
 	}
+
+	/**
+	 * @param elementId id for the element to check
+	 * @return true if an element using the id is used as a value in a collection
+	 */
+	public boolean usesId(String elementId) {
+		if (Objects.isNull(elementId)) {
+			return false;
+		}
+		Iterator<Object> allValues = this.properties.values().iterator();
+		while (allValues.hasNext()) {
+			Object value = allValues.next();
+			if (value instanceof List && ((List<?>)value).size() > 0 && ((List<?>)value).get(0) instanceof TypedValue) {
+				for (Object listValue:(List<?>)value) {
+					if (listValue instanceof TypedValue && ((TypedValue) listValue).getId().toLowerCase().equals(elementId.toLowerCase())) {
+						return true;
+					}
+				}
+			} else if (value instanceof TypedValue) {
+				if (((TypedValue)value).getId().toLowerCase().equals(elementId.toLowerCase())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
