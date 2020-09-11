@@ -20,10 +20,6 @@ package org.spdx.library.model;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;

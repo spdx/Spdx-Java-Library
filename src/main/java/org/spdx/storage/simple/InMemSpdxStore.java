@@ -384,4 +384,19 @@ public class InMemSpdxStore implements IModelStore {
 		Objects.requireNonNull(documentUri, "Document uri can not be null");
 		this.documentValues.put(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
 	}
+
+	@Override
+	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(documentUri, "Missing Document URI");
+		Objects.requireNonNull(id, "Missing ID");
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		if (Objects.isNull(idMap)) {
+			logger.error("Error deleting - documentUri "+documentUri+" does not exits.");
+			throw new SpdxIdNotFoundException("Error deleting - documentUri "+documentUri+" does not exits.");
+		}
+		if (Objects.isNull(idMap.remove(id.toLowerCase()))) {
+			logger.error("Error deleting - ID "+id+" does not exist.");
+			throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
+		}
+	}
 }

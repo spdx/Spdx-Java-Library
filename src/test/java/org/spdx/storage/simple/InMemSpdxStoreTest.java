@@ -640,4 +640,27 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID2).isPresent());
 		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI2, TEST_ID1).isPresent());
 	}
+	
+	public void testDelete() throws InvalidSPDXAnalysisException {
+		InMemSpdxStore store = new InMemSpdxStore();
+		String id1 = "TestId1";
+		String id2 = "testId2";
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id1));
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
+		assertFalse(store.exists(TEST_DOCUMENT_URI2, id1));
+		assertFalse(store.exists(TEST_DOCUMENT_URI2, id2));
+		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id2, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		assertTrue(store.exists(TEST_DOCUMENT_URI1, id1));
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
+		assertTrue(store.exists(TEST_DOCUMENT_URI2, id1));
+		assertTrue(store.exists(TEST_DOCUMENT_URI2, id2));
+		
+		store.delete(TEST_DOCUMENT_URI1, id1);
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id1));
+		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
+		assertTrue(store.exists(TEST_DOCUMENT_URI2, id1));
+		assertTrue(store.exists(TEST_DOCUMENT_URI2, id2));
+	}
 }

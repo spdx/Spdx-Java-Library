@@ -264,5 +264,24 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertTrue(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
 		assertFalse(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED));
 	}
+	
+	public void testDelete() throws Exception {
+		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
+		String nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+		String result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID).get();
+		assertEquals(nextId, result);
+		assertTrue(slll.exists(LICENSE_LIST_URI, nextId));
+		slll.delete(LICENSE_LIST_URI, nextId);
+		assertFalse(slll.exists(LICENSE_LIST_URI, nextId));
+		
+		nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
+		assertEquals(nextId, result);
+		assertTrue(slll.exists(LICENSE_LIST_URI, nextId));
+		slll.delete(LICENSE_LIST_URI, nextId);
+		assertFalse(slll.exists(LICENSE_LIST_URI, nextId));
+	}
 
 }

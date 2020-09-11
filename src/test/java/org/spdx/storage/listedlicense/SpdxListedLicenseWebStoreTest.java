@@ -120,7 +120,34 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	 */
 	public void testGetLicenseListVersion() throws InvalidSPDXAnalysisException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
-		assertTrue(LICENSE_LIST_VERSION.compareTo(sllw.getLicenseListVersion()) <= 0);
+		assertTrue(compareVersionStrings(LICENSE_LIST_VERSION,sllw.getLicenseListVersion()) <= 0);
+	}
+	
+	int compareVersionStrings(String versionA, String versionB) {
+		String[] versionPartsA = versionA.split("\\.");
+		String[] versionPartsB = versionB.split("\\.");
+		// loop through all the parts and return immediately if there is a non-equal result
+		for (int i = 0; i < versionPartsA.length; i++) {
+			int result = 0;
+			if (versionPartsB.length < i-1) {
+				return 1;	// versionA > versionB since everything else is equal and it has one more part
+			}
+			try {
+				result = Integer.compare(Integer.parseInt(versionPartsA[i].trim()), Integer.parseInt(versionPartsB[i].trim()));
+
+			} catch(NumberFormatException ex) {
+				// compare using text
+				result = versionPartsA[i].trim().compareTo(versionPartsB[i].trim());
+			}
+			if (result != 0) {
+				return result;
+			}
+		}
+		if (versionPartsB.length > versionPartsA.length) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 	
 	public void testGetValue() throws InvalidSPDXAnalysisException {
@@ -251,5 +278,24 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		assertTrue(sllw.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
 		assertFalse(sllw.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED));
+	}
+	
+	public void testDelete() throws Exception {
+		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
+		String nextId = sllw.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
+		sllw.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
+		String result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID).get();
+		assertEquals(nextId, result);
+		assertTrue(sllw.exists(LICENSE_LIST_URI, nextId));
+		sllw.delete(LICENSE_LIST_URI, nextId);
+		assertFalse(sllw.exists(LICENSE_LIST_URI, nextId));
+		
+		nextId = sllw.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
+		sllw.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+		result = (String)sllw.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
+		assertEquals(nextId, result);
+		assertTrue(sllw.exists(LICENSE_LIST_URI, nextId));
+		sllw.delete(LICENSE_LIST_URI, nextId);
+		assertFalse(sllw.exists(LICENSE_LIST_URI, nextId));
 	}
 }
