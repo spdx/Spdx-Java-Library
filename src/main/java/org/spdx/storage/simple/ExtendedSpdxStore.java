@@ -261,5 +261,10 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 		}
 		
 	}
+	
+	@Override
+	public void delete(String documentUri, String elementId) throws InvalidSPDXAnalysisException {
+		baseStore.delete(documentUri, elementId);
+	}
 
 }
