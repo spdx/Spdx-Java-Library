@@ -945,4 +945,29 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		return listedExceptionIdCaseSensitive(caseInsensisitiveId);
 	}
+	
+	@Override
+	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+			logger.error("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+		}
+		listedLicenseModificationLock.writeLock().lock();;
+		try {
+			if (licenseIds.containsKey(id.toLowerCase())) {
+				this.listedLicenseCache.remove(id);
+				this.licenseIds.remove(id.toLowerCase());
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
+				this.listedExceptionCache.remove(id);
+				this.exceptionIds.remove(id.toLowerCase());
+			} else {
+				logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
+				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			}
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
 }

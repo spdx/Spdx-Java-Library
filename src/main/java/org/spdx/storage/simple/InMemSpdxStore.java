@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.DuplicateSpdxIdException;
 import org.spdx.library.model.ModelCollection;
+import org.spdx.library.model.SpdxIdInUseException;
 import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.LicenseInfoFactory;
@@ -383,5 +385,29 @@ public class InMemSpdxStore implements IModelStore {
 	public void clear(String documentUri) {
 		Objects.requireNonNull(documentUri, "Document uri can not be null");
 		this.documentValues.put(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
+	}
+
+	@Override
+	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(documentUri, "Missing Document URI");
+		Objects.requireNonNull(id, "Missing ID");
+		ConcurrentHashMap<String, StoredTypedItem> idMap = documentValues.get(documentUri);
+		if (Objects.isNull(idMap)) {
+			logger.error("Error deleting - documentUri "+documentUri+" does not exits.");
+			throw new SpdxIdNotFoundException("Error deleting - documentUri "+documentUri+" does not exits.");
+		}
+		// Need to check if it is in use
+		Iterator<Entry<String, StoredTypedItem>> idEntries = idMap.entrySet().iterator();
+		while (idEntries.hasNext()) {
+			Entry<String, StoredTypedItem> idEntry = idEntries.next();
+			if (idEntry.getValue().usesId(id)) {
+				logger.error("Can not delete ID "+id+".  It is in use by element ID "+idEntry.getKey());
+				throw new SpdxIdInUseException("Can not delete ID "+id+".  It is in use by element ID "+idEntry.getKey());
+			}
+		}
+		if (Objects.isNull(idMap.remove(id.toLowerCase()))) {
+			logger.error("Error deleting - ID "+id+" does not exist.");
+			throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
+		}
 	}
 }

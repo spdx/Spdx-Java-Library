@@ -257,4 +257,11 @@ public interface IModelStore {
 	 * @return type TypedValue containing the type of the ModelObject related to the ID
 	 */
 	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException;
+	/**
+	 * Deletes an item from the document
+	 * @param documentUri the SPDX Document URI
+	 * @param id unique ID within the SPDX document
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException;
 }
