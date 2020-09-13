@@ -143,6 +143,9 @@ public class ModelCopyManager {
 		Objects.requireNonNull(fromId, "From ID can not be null");
 		Objects.requireNonNull(toId, "To ID can not be null");
 		Objects.requireNonNull(type, "Type can not be null");
+		if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri) && fromId.equals(toId)) {
+			return;	// trying to copy the same thing!
+		}
 		if (!toStore.exists(toDocumentUri, toId)) {
 			toStore.create(toDocumentUri, toId, type);
 		}
@@ -158,8 +161,12 @@ public class ModelCopyManager {
 						toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
 					} else if (listItem instanceof TypedValue) {
 						TypedValue listItemTv = (TypedValue)listItem;
-						toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-										listItemTv.getId(), listItemTv.getType());
+						if (toStore.equals(fromStore) && toDocumentUri.equals(fromDocumentUri)) {
+							toStoreItem = listItemTv;
+						} else {
+							toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
+											listItemTv.getId(), listItemTv.getType());
+						}
 					} else {
 						toStoreItem = listItem;
 					}
@@ -172,9 +179,13 @@ public class ModelCopyManager {
 						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
 					} else if (result.get() instanceof TypedValue) {
 						TypedValue tv = (TypedValue)result.get();
-						toStore.setValue(toDocumentUri, toId, propName, 
-								copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-										tv.getId(), tv.getType()));
+						if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri)) {
+							toStore.setValue(toDocumentUri, toId, propName, tv);
+						} else {
+							toStore.setValue(toDocumentUri, toId, propName, 
+									copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
+											tv.getId(), tv.getType()));
+						}
 					} else {
 						toStore.setValue(toDocumentUri, toId, propName, result.get());
 					}
