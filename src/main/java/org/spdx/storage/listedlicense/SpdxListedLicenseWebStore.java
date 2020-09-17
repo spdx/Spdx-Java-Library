@@ -77,4 +77,9 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	InputStream getExceptionInputStream(String exceptionId) throws IOException {
 		return getLicenseInputStream(exceptionId);	// Same URL using exception ID rather than license ID
 	}
+	
+	@Override
+	public void close() throws Exception {
+		// Nothing to do for the either the in-memory or the web store
+	}
 }

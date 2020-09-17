@@ -410,4 +410,9 @@ public class InMemSpdxStore implements IModelStore {
 			throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
 		}
 	}
+
+	@Override
+	public void close() throws Exception {
+		// Nothing to do for the in-memory store
+	}
 }

@@ -42,7 +42,7 @@ import org.spdx.library.model.TypedValue;
  * @author Gary O'Neall
  *
  */
-public interface IModelStore {
+public interface IModelStore extends AutoCloseable {
 	
 	public interface IModelStoreLock {
 		public void unlock();
