@@ -62,6 +62,13 @@ public class DefaultModelStore {
 	public static final void reset() {
 		lock.writeLock().lock();
 		try {
+			if (Objects.nonNull(defaultModelStore)) {
+				try {
+					defaultModelStore.close();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
 			defaultModelStore = new InMemSpdxStore();
 			defaultCopyManager = new ModelCopyManager();
 		} finally {
