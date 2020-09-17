@@ -219,8 +219,8 @@ public class StoredTypedItemTest extends TestCase {
 		assertFalse(sti.isCollectionMembersAssignableTo(sProperty, TypedValue.class));
 		// Boolean
 		String bProperty = "boolprop";
-		sti.addValueToList(bProperty, new Boolean(true));
-		sti.addValueToList(bProperty, new Boolean(false));
+		sti.addValueToList(bProperty, Boolean.valueOf(true));
+		sti.addValueToList(bProperty, Boolean.valueOf(false));
 		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, String.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(bProperty, Boolean.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, TypedValue.class));
@@ -233,7 +233,7 @@ public class StoredTypedItemTest extends TestCase {
 		// Mixed
 		String mixedProperty = "mixedprop";
 		sti.addValueToList(mixedProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
-		sti.addValueToList(mixedProperty, new Boolean(true));
+		sti.addValueToList(mixedProperty, Boolean.valueOf(true));
 		sti.addValueToList(mixedProperty, "mixed value");
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, Boolean.class));
@@ -255,7 +255,7 @@ public class StoredTypedItemTest extends TestCase {
 		assertFalse(sti.isPropertyValueAssignableTo(sProperty, TypedValue.class));
 		// Boolean
 		String bProperty = "boolprop";
-		sti.setValue(bProperty, new Boolean(true));
+		sti.setValue(bProperty, Boolean.valueOf(true));
 		assertFalse(sti.isPropertyValueAssignableTo(bProperty, String.class));
 		assertTrue(sti.isPropertyValueAssignableTo(bProperty, Boolean.class));
 		assertFalse(sti.isPropertyValueAssignableTo(bProperty, TypedValue.class));
