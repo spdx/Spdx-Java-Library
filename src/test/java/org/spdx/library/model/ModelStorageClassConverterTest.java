@@ -49,7 +49,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		String externalDocUri = "http://externalDoc";
 		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3");
-		ExternalDocumentRef ref = gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef, gmo.getDocumentUri()),
+		gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef, gmo.getDocumentUri()),
 				externalDocUri, checksum);
 		String externalDocElementId = SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "11";
 		String externalRefUri = externalDocUri + "#" + externalDocElementId;
@@ -97,7 +97,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		String externalDocUri = "http://externalDoc";
 		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3");
-		ExternalDocumentRef ref = gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef, gmo.getDocumentUri()),
+		gmo.createExternalDocumentRef(gmo.getModelStore().getNextId(IdType.DocumentRef, gmo.getDocumentUri()),
 				externalDocUri, checksum);
 		String externalDocElementId = SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "11";
 		String externalRefUri = externalDocUri + "#" + externalDocElementId;

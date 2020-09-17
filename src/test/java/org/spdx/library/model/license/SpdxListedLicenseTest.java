@@ -344,6 +344,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, false, 
 				true, textHtml, false, null);
+		stdl.setStandardLicenseHeaderTemplate(standardLicenseHeaderTemplate);
 		stdl.setLicenseHeaderHtml(standardLicenseHeaderHtml);
 		assertEquals(textHtml, stdl.getLicenseTextHtml());
 		assertEquals(standardLicenseHeaderHtml, stdl.getLicenseHeaderHtml());

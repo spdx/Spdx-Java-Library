@@ -137,7 +137,6 @@ public class LicenseJsonTest extends TestCase {
 	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJson#clearPropertyValueList(java.lang.String)}.
 	 * @throws InvalidSpdxPropertyException 
 	 */
-	@SuppressWarnings("unchecked")
 	public void testAddClearGetPropertyValueList() throws InvalidSpdxPropertyException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
@@ -195,7 +194,6 @@ public class LicenseJsonTest extends TestCase {
 		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
 		}
-		@SuppressWarnings("unchecked")
 		List<String> seeAlsoResult = (List<String>)lj.getValueList("seeAlso");
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
@@ -246,7 +244,6 @@ public class LicenseJsonTest extends TestCase {
 		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
 		}
-		@SuppressWarnings("unchecked")
 		List<String> seeAlsoResult = (List<String>)lj.getValueList("seeAlso");
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {

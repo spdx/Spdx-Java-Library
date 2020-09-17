@@ -131,21 +131,21 @@ public class SpdxComparerTest extends TestCase {
 		LICENSE_XLATION_MAP.put("LicenseRef-3", "LicenseRef-6");
 	}
 	
-	Integer OFFSET1_1 = new Integer(2342);
+	Integer OFFSET1_1 = Integer.valueOf(2342);
 	ByteOffsetPointer BOP_POINTER1_1;
-	Integer LINE1_1 = new Integer(113);
+	Integer LINE1_1 = Integer.valueOf(113);
 	LineCharPointer LCP_POINTER1_1; 
-	Integer OFFSET2_1 = new Integer(444);
+	Integer OFFSET2_1 = Integer.valueOf(444);
 	ByteOffsetPointer BOP_POINTER2_1;
-	Integer LINE2_1 = new Integer(23422);
+	Integer LINE2_1 = Integer.valueOf(23422);
 	LineCharPointer LCP_POINTER2_1; 
-	Integer OFFSET1_2 = new Integer(3542);
+	Integer OFFSET1_2 = Integer.valueOf(3542);
 	ByteOffsetPointer BOP_POINTER1_2;
-	Integer LINE1_2 = new Integer(555);
+	Integer LINE1_2 = Integer.valueOf(555);
 	LineCharPointer LCP_POINTER1_2; 
-	Integer OFFSET2_2 = new Integer(2444);
+	Integer OFFSET2_2 = Integer.valueOf(2444);
 	ByteOffsetPointer BOP_POINTER2_2;
-	Integer LINE2_2 = new Integer(23428);
+	Integer LINE2_2 = Integer.valueOf(23428);
 	
 	private ExtractedLicenseInfo LICENSEA1;
 	private ExtractedLicenseInfo LICENSEA2;
