@@ -395,6 +395,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		 * step4: thread2 completes the write transaction, both threads verify value updated 
 		 */
 		final Waiter waiter = new Waiter();
+		@SuppressWarnings("unused")
 		final Thread thread1 = new Thread(null, null, "Thread1") {
 			@Override
 			public void run() {
@@ -439,6 +440,7 @@ public class InMemSpdxStoreTest extends TestCase {
 			}
 		};
 		
+		@SuppressWarnings("unused")
 		final Thread thread2 = new Thread(null ,null, "thread2") {
 			@Override
 			public void run() {

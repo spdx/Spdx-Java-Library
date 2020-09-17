@@ -406,9 +406,9 @@ public abstract class ModelObject {
 				// try to convert
 				String sResult = ((String)result.get()).toLowerCase();
 				if ("true".equals(sResult)) {
-					return Optional.of(new Boolean(true));
+					return Optional.of(Boolean.valueOf(true));
 				} else if ("false".equals(sResult)) {
-					return Optional.of(new Boolean(false));
+					return Optional.of(Boolean.valueOf(false));
 				} else {
 					throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
 				}

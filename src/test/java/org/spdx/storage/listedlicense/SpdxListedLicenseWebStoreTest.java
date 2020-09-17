@@ -183,7 +183,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		String licenseText = result.getLicenseText();
 		assertTrue(licenseText.length() > 100);
 		assertTrue(result.getComment().length() > 5);
-		String sResult = result.getDeprecatedVersion();
+		result.getDeprecatedVersion();
 		assertEquals(LICENSE_LIST_URI, result.getDocumentUri());
 		assertTrue(result.getFsfLibre());
 		assertFalse(result.isDeprecated());
@@ -200,16 +200,17 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		assertEquals(SpdxConstants.CLASS_SPDX_LISTED_LICENSE, (result.getType()));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void testCreateException() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		LicenseException result = (LicenseException)SpdxModelFactory.createModelObject(sllw, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
 		assertEquals(ECOS_EXCEPTION_ID, result.getLicenseExceptionId());
 		assertEquals(ECOS_EXCEPTION_ID, result.getId());
 		assertTrue(result.getComment().length() > 5);
-		String sResult = result.getDeprecatedVersion();
+		result.getDeprecatedVersion();
 		assertEquals(LICENSE_LIST_URI, result.getDocumentUri());
-		sResult = result.getExample();
-		sResult = result.getLicenseExceptionTemplate();
+		result.getExample();
+		result.getLicenseExceptionTemplate();
 		assertTrue(result.getLicenseExceptionText().length() > 100);
 		assertEquals(ECOS_LICENSE_NAME, result.getName());
 		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
