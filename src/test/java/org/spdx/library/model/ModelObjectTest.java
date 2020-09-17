@@ -62,7 +62,7 @@ public class ModelObjectTest extends TestCase {
 	static final String[] TEST_STRING_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3"};
 	static final Object[] TEST_STRING_VALUE_PROPERTY_VALUES = new Object[] {"value1", "value2", "value3"};
 	static final String[] TEST_INTEGER_VALUE_PROPERTIES = new String[] {"intProp1", "intProp2", "Intprop3"};
-	static final Object[] TEST_INTEGER_VALUE_PROPERTY_VALUES = new Object[] {new Integer(3), new Integer(0), new Integer(-1)};
+	static final Object[] TEST_INTEGER_VALUE_PROPERTY_VALUES = new Object[] {Integer.valueOf(3), Integer.valueOf(0), Integer.valueOf(-1)};
 	static final String[] TEST_BOOLEAN_VALUE_PROPERTIES = new String[] {"boolProp1", "boolProp2"};
 	static final Object[] TEST_BOOLEAN_VALUE_PROPERTY_VALUES = new Object[] {true, false};
 	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4", "listProp5"};
