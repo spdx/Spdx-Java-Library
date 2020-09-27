@@ -63,7 +63,11 @@ public class SpdxItemDifference {
 			List<Annotation> uniqueAnnotationsA,
 			List<Annotation> uniqueAnnotationsB
 			) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		this.name = itemA.getName().get();
+		if (itemA.getName().isPresent()) {
+			this.name = itemA.getName().get();
+		} else {
+			this.name = "";
+		}
 		if (itemA.getComment().isPresent()) {
 			this.commentA = itemA.getComment().get();
 		} else {
