@@ -749,7 +749,7 @@ public abstract class ModelObject {
 						return false;
 					}
 					
-				} else if (!Objects.equals(myValue, compareValue)) {	// Present, not a list, and not a TypedValue
+				} else if (!OptionalObjectsEquivalent(myValue, compareValue)) {	// Present, not a list, and not a TypedValue
 					return false;
 				}
 				comparePropertyValueNames.remove(propertyName);
@@ -772,6 +772,53 @@ public abstract class ModelObject {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Compares 2 simple optional objects considering NONE and NOASSERTION values which are equivalent to their strings
+	 * @param valueA
+	 * @param valueB
+	 * @return
+	 */
+	private boolean OptionalObjectsEquivalent(Optional<Object> valueA, Optional<Object> valueB) {
+		if (Objects.equals(valueA, valueB)) {
+			return true;
+		}
+		if (!valueA.isPresent()) {
+			return false;
+		}
+		if (!valueB.isPresent()) {
+			return false;
+		}
+		if (valueA.get() instanceof IndividualUriValue) {
+			if (SpdxConstants.URI_VALUE_NONE.equals(((IndividualUriValue)valueA.get()).getIndividualURI()) && SpdxConstants.NONE_VALUE.equals(valueB.get())) {
+				return true;
+			}
+			if (SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)valueA.get()).getIndividualURI()) && SpdxConstants.NOASSERTION_VALUE.equals(valueB.get())) {
+				return true;
+			}
+		}
+		if (valueB.get() instanceof IndividualUriValue) {
+			if (SpdxConstants.URI_VALUE_NONE.equals(((IndividualUriValue)valueB.get()).getIndividualURI()) && SpdxConstants.NONE_VALUE.equals(valueA.get())) {
+				return true;
+			}
+			if (SpdxConstants.URI_VALUE_NOASSERTION.equals(((IndividualUriValue)valueB.get()).getIndividualURI()) && SpdxConstants.NOASSERTION_VALUE.equals(valueA.get())) {
+				return true;
+			}
+		}
+		if (valueA.get() instanceof String && valueB.get() instanceof String) {
+			return normalizeString((String)valueA.get()).equals(normalizeString((String)valueB.get()));
+		}
+		return false;
+	}
+
+	/**
+	 * Normalize a string for dos and linux linefeeds
+	 * @param s
+	 * @return linux style only linefeeds
+	 */
+	private Object normalizeString(String s) {
+		return s.replaceAll("\r\n", "\n").trim();
 	}
 
 	/**
