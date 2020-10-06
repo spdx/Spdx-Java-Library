@@ -52,6 +52,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public SpdxPackage() throws InvalidSPDXAnalysisException {
 		super();
+		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
+			this.setFilesAnalyzed(true);	// Set default value
+		}
 	}
 
 	/**
@@ -66,6 +69,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
+		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
+			this.setFilesAnalyzed(true);	// Set default value
+		}
 	}
 
 	/**
@@ -74,6 +80,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public SpdxPackage(String id) throws InvalidSPDXAnalysisException {
 		super(id);
+		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
+			this.setFilesAnalyzed(true);	// Set default value
+		}
 	}
 
 	protected SpdxPackage(SpdxPackageBuilder spdxPackageBuilder) throws InvalidSPDXAnalysisException {

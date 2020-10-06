@@ -498,7 +498,7 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+	public List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		return (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
 				null, SpdxFile.class).collect(Collectors.toList());
 	}
@@ -858,9 +858,9 @@ public class SpdxComparer {
 	private void compareDocumentContents() throws SpdxCompareException {
 		documentContentsEquals = true;
 		try {
-			for (int i = 0; i < spdxDocs.size(); i++) {
+			for (int i = 0; i < spdxDocs.size()-1; i++) {
 				Collection<SpdxElement> itemsA = spdxDocs.get(i).getDocumentDescribes();
-				for (int j = i; j < spdxDocs.size(); j++) {
+				for (int j = i+1; j < spdxDocs.size(); j++) {
 					Collection<SpdxElement> itemsB = spdxDocs.get(j).getDocumentDescribes();
 					if (!collectionsEquivalent(itemsA, itemsB)) {
 						this.documentContentsEquals = false;
@@ -952,7 +952,7 @@ public class SpdxComparer {
 					continue;	// no need to compare to ourself;
 				}
 				Map<String, String> idMap = new HashMap<>();
-				List<SpdxLicenseDifference> alDifferences = new ArrayList<>();;
+				List<SpdxLicenseDifference> alDifferences = new ArrayList<>();
 				Collection<ExtractedLicenseInfo> extractedLicensesB = spdxDocs.get(j).getExtractedLicenseInfos();
 				List<ExtractedLicenseInfo> uniqueLicenses = new ArrayList<>();
 				compareLicenses(extractedLicensesA, extractedLicensesB,
@@ -1062,7 +1062,7 @@ public class SpdxComparer {
 	 * @param stringsB
 	 * @return
 	 */
-	static boolean stringCollectionsEqual(Collection<String> stringsA, Collection<String> stringsB) {
+	public static boolean stringCollectionsEqual(Collection<String> stringsA, Collection<String> stringsB) {
 		if (stringsA == null) {
 			return stringsB == null;
 		} else {
