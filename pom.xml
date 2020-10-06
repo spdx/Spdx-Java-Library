@@ -181,7 +181,7 @@
 			<configuration>
 				<quiet>true</quiet>
 				<source>8</source>
-				<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+				<javadocExecutable>${env.JAVA_HOME}/bin/javadoc</javadocExecutable>
 				<additionalparam>-Xdoclint:none</additionalparam>
 			</configuration>
 			<executions>
