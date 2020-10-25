@@ -31,6 +31,7 @@ import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
@@ -46,6 +47,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	
 	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
 	static final String ZPL_2_1_TEXT = "TestFiles" + File.separator + "ZPL-2.1.txt";
+	static final String GPL_3_TEXT = "TestFiles" + File.separator + "GPL-3.0-test.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -633,5 +635,12 @@ public class LicenseCompareHelperTest extends TestCase {
 		String t1 = "This is a test of space";
 		String t2 = "This is\u2060a\u2007test\u202Fof space";
 		assertTrue(LicenseCompareHelper.isLicenseTextEquivalent(t1, t2));
+	}
+	
+	public void testIsTextStandardLicenseGpl3() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		SpdxListedLicense gpl3 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
+		String compareText = UnitTestHelper.fileToText(GPL_3_TEXT);
+		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(gpl3, compareText);
+		assertFalse(result.isDifferenceFound());
 	}
 }
