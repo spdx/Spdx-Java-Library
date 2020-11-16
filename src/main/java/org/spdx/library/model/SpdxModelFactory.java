@@ -45,6 +45,7 @@ import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.CrossRef;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
@@ -220,6 +221,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return new LineCharPointer(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_CROSS_REF: return new CrossRef(modelStore, documentUri, id, copyManager, create);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}

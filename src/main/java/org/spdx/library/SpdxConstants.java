@@ -113,6 +113,7 @@ public class SpdxConstants {
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
 	public static final String CLASS_EXTERNAL_SPDX_ELEMENT = "ExternalSpdxElement";
 	public static final String CLASS_EXTERNAL_EXTRACTED_LICENSE = "ExternalExtractedLicenseInfo";
+	public static final String CLASS_CROSS_REF = "CrossRef";
 	
 	// all classes used including classes in non-SPDX namespaces
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
@@ -125,7 +126,7 @@ public class SpdxConstants {
 			CLASS_SPDX_NONE_ELEMENT, CLASS_SPDX_NOASSERTION_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT,
-			CLASS_EXTERNAL_EXTRACTED_LICENSE,
+			CLASS_EXTERNAL_EXTRACTED_LICENSE, CLASS_CROSS_REF,
 			// DOAP Namespace
 			CLASS_DOAP_PROJECT,
 			// RDF Pointer Namespace
@@ -257,6 +258,15 @@ public class SpdxConstants {
 	// SPDX Listed License constants
 	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";
 	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/"; //NOTE: http: rather than https:
+	
+	// crossrefs details (crossRef) properties
+	public static final String PROP_CROSS_REF_IS_VALID = "isValid";
+	public static final String PROP_CROSS_REF_WAYBACK_LINK = "isWayBackLink";
+	public static final String PROP_CROSS_REF_MATCH = "match";
+	public static final String PROP_CROSS_REF_URL = "url";
+	public static final String PROP_CROSS_REF_IS_LIVE = "isLive";
+	public static final String PROP_CROSS_REF_TIMESTAMP = "timestamp";
+	public static final String PROP_CROSS_REF_ORDER = "order";
 	
 	// SpdxElement Properties
 	public static final String PROP_NAME = "name";

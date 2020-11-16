@@ -25,6 +25,7 @@ import java.util.List;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
+import org.spdx.library.model.license.CrossRef;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 
@@ -287,13 +288,16 @@ public class LicenseJson {
 	}
 
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
-		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
+		if (SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
+			return String.class.isAssignableFrom(clazz);
+		} else if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			return CrossRef.class.isAssignableFrom(clazz);
+		} else {
 			return false;
 		}
-		return String.class.isAssignableFrom(clazz);
 	}
 
 	public boolean isCollectionProperty(String propertyName) {
-		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName);
+		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName) || SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName);
 	}
 }
