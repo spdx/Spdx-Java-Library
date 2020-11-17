@@ -44,7 +44,7 @@ public class ExceptionJsonTest extends TestCase {
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
 			SpdxConstants.PROP_LICENSE_EXCEPTION_ID, SpdxConstants.PROP_EXCEPTION_TEXT, 
 			SpdxConstants.PROP_STD_LICENSE_NAME, SpdxConstants.RDFS_PROP_COMMENT, SpdxConstants.PROP_EXCEPTION_TEMPLATE, 
-			SpdxConstants.PROP_EXAMPLE, SpdxConstants.PROP_LIC_DEPRECATED_VERSION
+			SpdxConstants.PROP_EXAMPLE, SpdxConstants.PROP_LIC_DEPRECATED_VERSION, SpdxConstants.PROP_EXCEPTION_TEXT_HTML
 			);
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(

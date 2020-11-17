@@ -50,6 +50,7 @@ import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseException;
+import org.spdx.library.model.license.ListedLicenseException;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SimpleLicensingInfo;
@@ -196,6 +197,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
 		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION: return new ListedLicenseException(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return new WithExceptionOperator(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_FILE: return new SpdxFile(modelStore, documentUri, id, copyManager, create);

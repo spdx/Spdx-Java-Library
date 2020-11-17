@@ -25,7 +25,7 @@ import java.util.List;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.LicenseException;
+import org.spdx.library.model.license.ListedLicenseException;
 
 /**
  * Simple POJO to hold the license exception data loaded from a JSON file
@@ -40,7 +40,7 @@ public class ExceptionJson {
 	static final List<String> PROPERTY_VALUE_NAMES = Collections.unmodifiableList(Arrays.asList(
 			"licenseExceptionText", "name",  "licenseExceptionTemplate",
 			"example", "isDeprecatedLicenseId", "deprecatedVersion", 
-			"comment", "licenseExceptionId", "seeAlso"));	//NOTE: This list must be updated if any new properties are added
+			"comment", "licenseExceptionId", "seeAlso", "exceptionTextHtml"));	//NOTE: This list must be updated if any new properties are added
 
 	String licenseExceptionText;
 	String name;
@@ -52,6 +52,7 @@ public class ExceptionJson {
 	String licenseComments;	//TODO:  This is for legacy JSON files - this should be removed in 3.0.  See https://github.com/spdx/spdx-spec/issues/158
 	String comment;
 	String licenseExceptionId;
+	String exceptionTextHtml;
 	
 	public ExceptionJson(String id) {
 		this.licenseExceptionId = id;
@@ -121,6 +122,11 @@ public class ExceptionJson {
 				}
 				licenseExceptionId = (String)value;
 				break;
+			case "exceptionTextHtml":
+				if (!(value instanceof String)) {
+					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
+				}
+				exceptionTextHtml = (String)value;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}
 	}
@@ -166,6 +172,7 @@ public class ExceptionJson {
 				if (comment != null) return comment;
 				return licenseComments;
 			case "licenseExceptionId": return licenseExceptionId;
+			case "exceptionTextHtml": return exceptionTextHtml;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}
 	}
@@ -183,13 +190,14 @@ public class ExceptionJson {
 			comment = null;
 			licenseComments = null; break;
 		case "licenseExceptionId": licenseExceptionId = null; break;
+		case "exceptionTextHtml": exceptionTextHtml = null; break;
 		default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 	}
 
 	}
 
 	@SuppressWarnings("deprecation")
-	public void copyFrom(LicenseException fromException) throws InvalidSPDXAnalysisException {
+	public void copyFrom(ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		this.comment = fromException.getComment();
 		this.deprecatedVersion = fromException.getDeprecatedVersion();
 		this.example = fromException.getExample();
@@ -200,6 +208,7 @@ public class ExceptionJson {
 		this.licenseExceptionText = fromException.getLicenseExceptionText();
 		this.name = fromException.getName();
 		this.seeAlso = new ArrayList<String>(fromException.getSeeAlso());
+		this.exceptionTextHtml = fromException.getExceptionTextHtml();
 	}
 
 	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
@@ -217,6 +226,7 @@ public class ExceptionJson {
 		case "example": 
 		case "comment": 
 		case "deprecatedVersion":
+		case "exceptionTextHtml":
 		case "licenseExceptionId": return String.class.isAssignableFrom(clazz);
 		case "seeAlso": return false;
 		case "isDeprecatedLicenseId": return Boolean.class.isAssignableFrom(clazz);

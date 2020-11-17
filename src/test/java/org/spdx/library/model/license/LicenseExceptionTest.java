@@ -54,7 +54,7 @@ public class LicenseExceptionTest extends TestCase {
 	static final String EXCEPTION_ID1 = "id1";
 	static final String EXCEPTION_NAME1 = "name1";
 	static final String EXCEPTION_TEXT1 = "exception text one";
-	static final String EXCEPTION_TEMPLATE1 = "exception text one <<beginOptiona>>extra<<endOptional>>";
+	static final String EXCEPTION_TEMPLATE1 = "exception text one <<beginOptional>>extra<<endOptional>>";
 	static final List<String> EXCEPTION_SEEALSO1 = Arrays.asList(new String[] {"http://url1", "http://url2"});
 	static final String EXCEPTION_COMMENT1 = "comment1";
 	static final String EXCEPTION_EXAMPLE1 = "example1";
@@ -66,6 +66,8 @@ public class LicenseExceptionTest extends TestCase {
 	static final String EXCEPTION_COMMENT2 = "comment2";
 	static final String EXCEPTION_EXAMPLE2 = "example2";
 	static final String TEST_NAMESPACE = "http://spdx.org/test/namespace";
+	private static final String EXCEPTION_HTML_TEXT1 = "exception text one \n<div class=\"optional-license-text\">\nextra</div>\n";
+	private static final String EXCEPTION_HTML_TEXT2 = "<strong>exception text one extra</strong>";
 	
 	public void testLicenseException() throws InvalidSPDXAnalysisException {
 		LicenseException le = new LicenseException(EXCEPTION_ID1,
@@ -366,5 +368,17 @@ public class LicenseExceptionTest extends TestCase {
 		le2.setLicenseExceptionTemplate(EXCEPTION_TEMPLATE1);
 		assertTrue(le.equivalent(le2));
 	}
+	 
+	 public void testListedLicenseException() throws InvalidSPDXAnalysisException {
+			ListedLicenseException le = new ListedLicenseException(EXCEPTION_ID1,
+					EXCEPTION_NAME1, EXCEPTION_TEXT1, EXCEPTION_TEMPLATE1, EXCEPTION_SEEALSO1,
+					EXCEPTION_COMMENT1);
+			// No HTML set yet
+			String result = le.getExceptionTextHtml();
+			assertEquals(EXCEPTION_HTML_TEXT1, result);
+			le.setExceptionTextHtml(EXCEPTION_HTML_TEXT2);
+			result = le.getExceptionTextHtml();
+			assertEquals(EXCEPTION_HTML_TEXT2, result);
+	 }
 
 }

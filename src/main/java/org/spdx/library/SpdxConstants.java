@@ -94,6 +94,7 @@ public class SpdxConstants {
 	public static final String CLASS_SPDX_LICENSE = "License";
 	public static final String CLASS_SPDX_LISTED_LICENSE = "ListedLicense";
 	public static final String CLASS_SPDX_LICENSE_EXCEPTION = "LicenseException";
+	public static final String CLASS_SPDX_LISTED_LICENSE_EXCEPTION = "ListedLicenseException";
 	public static final String CLASS_OR_LATER_OPERATOR = "OrLaterOperator";
 	public static final String CLASS_WITH_EXCEPTION_OPERATOR = "WithExceptionOperator";
 	public static final String CLASS_SPDX_FILE = "File";
@@ -120,7 +121,7 @@ public class SpdxConstants {
 			CLASS_SPDX_CREATION_INFO, CLASS_SPDX_CHECKSUM, CLASS_SPDX_ANY_LICENSE_INFO, 
 			CLASS_SPDX_SIMPLE_LICENSE_INFO, CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, CLASS_SPDX_DISJUNCTIVE_LICENSE_SET, 
 			CLASS_SPDX_EXTRACTED_LICENSING_INFO, CLASS_SPDX_LICENSE, CLASS_SPDX_LISTED_LICENSE, 
-			CLASS_SPDX_LICENSE_EXCEPTION, CLASS_OR_LATER_OPERATOR, CLASS_WITH_EXCEPTION_OPERATOR,
+			CLASS_SPDX_LICENSE_EXCEPTION, CLASS_SPDX_LISTED_LICENSE_EXCEPTION, CLASS_OR_LATER_OPERATOR, CLASS_WITH_EXCEPTION_OPERATOR,
 			CLASS_SPDX_FILE, CLASS_SPDX_REVIEW, CLASS_SPDX_VERIFICATIONCODE, CLASS_ANNOTATION,
 			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, 
 			CLASS_SPDX_NONE_ELEMENT, CLASS_SPDX_NOASSERTION_ELEMENT, CLASS_EXTERNAL_DOC_REF,
@@ -250,6 +251,7 @@ public class SpdxConstants {
 	public static final String PROP_LICENSE_EXCEPTION_ID = "licenseExceptionId";
 	public static final String PROP_EXAMPLE = "example";
 	public static final String PROP_EXCEPTION_TEXT = "licenseExceptionText";
+	public static final String PROP_EXCEPTION_TEXT_HTML = "exceptionTextHtml";
 	public static final String PROP_EXCEPTION_TEMPLATE = "licenseExceptionTemplate";
 	public static final String PROP_LICENSE_EXCEPTION = "licenseException";
 	public static final String PROP_LIC_ID_DEPRECATED = "isDeprecatedLicenseId";

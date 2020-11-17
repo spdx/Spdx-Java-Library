@@ -182,8 +182,8 @@ public class ListedLicenses {
 		return (SpdxListedLicense)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null);
 	}
 	
-	public LicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (LicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
+	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
+		return (ListedLicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, exceptionId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 	}
 	
 	/**
