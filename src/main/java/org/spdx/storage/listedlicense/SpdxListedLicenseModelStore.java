@@ -536,7 +536,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
@@ -592,7 +592,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
@@ -652,7 +652,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
 			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
-			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 				final Iterator<Object> crossRefJsonIter = valueList.iterator();
 				return new Iterator<Object>() {
 

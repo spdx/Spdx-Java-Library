@@ -272,7 +272,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		
 		// license crossRefs
 		license.getCrossRef().clear();
-		assertEquals(0, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF));
+		assertEquals(0, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
 		IModelStore simpleModelStore = new InMemSpdxStore();
 		String docUri = "http://some.other.doc";
 		CrossRef crossRef1 = new CrossRef(simpleModelStore, docUri, simpleModelStore.getNextId(IdType.Anonymous, docUri), copyManager, true);
@@ -283,7 +283,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		license.getCrossRef().add(crossRef1);
 		license.getCrossRef().add(crossRef2);
 		result.clear();
-		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF);
+		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF);
 		List<TypedValue> tvResult = new ArrayList<>();
 		while (resultIter.hasNext()) {
 			TypedValue tv = (TypedValue)resultIter.next();
@@ -293,11 +293,11 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		List<CrossRef> result2 = (List<CrossRef>)(List<?>)Arrays.asList(license.getCrossRef().toArray());
 		assertEquals(2, result.size());
 		assertEquals(2, result2.size());
-		assertEquals(2, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF));
+		assertEquals(2, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
 		assertTrue(UnitTestHelper.isListsEquivalent(crossRefs, (List<CrossRef>)(List<?>)result));
 		assertTrue(UnitTestHelper.isListsEquivalent(crossRefs, result2));
 		for (TypedValue tv:tvResult) {
-			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, tv));
+			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, tv));
 		}
 		for (CrossRef crossRef:crossRefs) {
 			// collectionContains
@@ -309,9 +309,9 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		slll.create(LICENSE_LIST_URI, newCrossRefId, SpdxConstants.CLASS_CROSS_REF);
 		slll.setValue(LICENSE_LIST_URI, newCrossRefId, SpdxConstants.PROP_CROSS_REF_URL, "http://url3");
 		TypedValue newCrossRefTv = new TypedValue(newCrossRefId, SpdxConstants.CLASS_CROSS_REF);
-		slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, newCrossRefTv);
-		assertEquals(3, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF));
-		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, newCrossRefTv));
+		slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv);
+		assertEquals(3, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
+		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv));
 		boolean found = false;
 		for (CrossRef cr:license.getCrossRef()) {
 			if (cr.equivalent(crossRef3)) {
@@ -320,8 +320,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 			}
 		}
 		assertTrue(found);
-		slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, newCrossRefTv);
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, newCrossRefTv));
+		slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv);
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv));
 		found = false;
 		for (CrossRef cr:license.getCrossRef()) {
 			if (cr.equivalent(crossRef3)) {
@@ -337,8 +337,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
 		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
 		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, CrossRef.class));
-		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, String.class));
+		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, CrossRef.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, String.class));
 		slll.close();
 	}
 	

@@ -256,6 +256,7 @@ public class SpdxConstants {
 	public static final String PROP_LICENSE_EXCEPTION = "licenseException";
 	public static final String PROP_LIC_ID_DEPRECATED = "isDeprecatedLicenseId";
 	public static final String PROP_LIC_DEPRECATED_VERSION = "deprecatedVersion";
+	public static final String PROP_CROSS_REF = "crossRef";
 	
 	// SPDX Listed License constants
 	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";

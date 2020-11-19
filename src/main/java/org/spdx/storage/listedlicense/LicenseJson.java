@@ -191,7 +191,7 @@ public class LicenseJson {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public boolean addCrossRefValueToList(String propertyName, CrossRefJson value) throws InvalidSPDXAnalysisException {
-		if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+		if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 			return crossRef.add(value);
 		} else {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a crossRef list type");
@@ -211,7 +211,7 @@ public class LicenseJson {
 				throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 			}
 			return seeAlso.add((String)value);
-		} else if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+		} else if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 			if (!(value instanceof CrossRefJson)) {
 				throw new InvalidSpdxPropertyException("Expected CrossRefJson type for "+propertyName);
 			}
@@ -337,7 +337,7 @@ public class LicenseJson {
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
 		if (SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
 			return String.class.isAssignableFrom(clazz);
-		} else if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+		} else if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
 			return CrossRef.class.isAssignableFrom(clazz);
 		} else {
 			return false;
@@ -345,6 +345,6 @@ public class LicenseJson {
 	}
 
 	public boolean isCollectionProperty(String propertyName) {
-		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName) || SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName);
+		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName) || SpdxConstants.PROP_CROSS_REF.equals(propertyName);
 	}
 }

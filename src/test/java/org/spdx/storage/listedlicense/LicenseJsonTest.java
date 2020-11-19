@@ -49,7 +49,7 @@ public class LicenseJsonTest extends TestCase {
 			);
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO, SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF);
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO, SpdxConstants.PROP_CROSS_REF);
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
@@ -365,7 +365,7 @@ public class LicenseJsonTest extends TestCase {
 		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, CrossRef.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_CROSS_REF, CrossRef.class));
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {

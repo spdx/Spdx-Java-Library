@@ -48,7 +48,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	@SuppressWarnings("unchecked")
 	SimpleLicensingInfo(String id) throws InvalidSPDXAnalysisException {
 		super(id);
-		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, CrossRef.class);
+		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF, CrossRef.class);
+		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 	}
 	
 	/**
