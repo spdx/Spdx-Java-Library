@@ -54,6 +54,10 @@ import com.google.gson.Gson;
  * 
  * License and exception ID's can be case insensitive
  * 
+ * License information is stored in a LicenseJson file with the ID being Listed License ID
+ * License Exception information is stored in an ExceptionJson file with the ID being the Listed Exception ID
+ * CrossRef information is stored within the LicenseJson file.  Id's are anonymous and generated. 
+ * 
  * @author Gary O'Neall
  *
  */
@@ -65,6 +69,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
 	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstants.LISTED_LICENSE_URL}));
+	private static final String ANONOMOUS_ID_PREFIX = "SpdxLicenseGeneratedId-";
 	
 	/**
 	 * Map of lower case to correct case license IDs
@@ -76,6 +81,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	Map<String, String> exceptionIds = new HashMap<>();
 	Map<String, LicenseJson> listedLicenseCache = null;
 	Map<String, ExceptionJson> listedExceptionCache = null;
+	Map<String, CrossRefJson> crossRefs = new HashMap<>();
 	String licenseListVersion = DEFAULT_LICENSE_LIST_VERSION;
 	private int nextId=0;
 	private final ReadWriteLock listedLicenseModificationLock = new ReentrantReadWriteLock();
@@ -197,7 +203,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			return false;
 		}
-		return (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase()));
+			return this.licenseIds.containsKey(id.toLowerCase()) || 
+					this.exceptionIds.containsKey(id.toLowerCase()) ||
+					this.crossRefs.containsKey(id);
 	}
 
 	/* (non-Javadoc)
@@ -213,14 +221,22 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {
-			if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
-				logger.error("Duplicate SPDX ID on create: "+id);;
-				throw new DuplicateSpdxIdException("ID "+id+" already exists.");
-			}
-			if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
+			if (SpdxConstants.CLASS_CROSS_REF.equals(type)) {
+				CrossRefJson crossRef = new CrossRefJson();
+				crossRef.setId(id);
+				this.crossRefs.put(id, crossRef);
+			} else if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
+				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
+					logger.error("Duplicate SPDX ID on create: "+id);;
+					throw new DuplicateSpdxIdException("ID "+id+" already exists.");
+				}
 				this.licenseIds.put(id.toLowerCase(), id);
 				this.listedLicenseCache.put(id, new LicenseJson(id));
 			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
+				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
+					logger.error("Duplicate SPDX ID on create: "+id);;
+					throw new DuplicateSpdxIdException("ID "+id+" already exists.");
+				}
 				this.exceptionIds.put(id.toLowerCase(), id);
 				this.listedExceptionCache.put(id,  new ExceptionJson(id));
 			}
@@ -242,12 +258,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -258,9 +277,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
 			return exc.getPropertyValueNames();
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.getPropertyValueNames();
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -420,12 +441,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -436,9 +460,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			exc.setPrimativeValue(propertyName, value);
+		} else if (Objects.nonNull(crossRef)) {
+			crossRef.setPrimativeValue(propertyName, value);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -455,12 +481,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -471,9 +500,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			exc.clearPropertyValueList(propertyName);
+		}else if (Objects.nonNull(crossRef)) {
+			crossRef.clearPropertyValueList(propertyName);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -490,25 +521,48 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.addPrimitiveValueToList(propertyName, value);
+			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+				if (!(value instanceof TypedValue)) {
+					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
+				}
+				TypedValue tv = (TypedValue)value;
+				if (!SpdxConstants.CLASS_CROSS_REF.equals(tv.getType())) {
+					logger.error("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
+				}
+				CrossRefJson crj = crossRefs.get(tv.getId());
+				if (Objects.isNull(crj)) {
+					logger.error("CrossRef with ID "+tv.getId()+" does not exist in the store.");
+					throw new InvalidSPDXAnalysisException("CrossRef with ID "+tv.getId()+" does not exist in the store.");	
+				}
+				return license.addCrossRefValueToList(propertyName, crj);
+			} else {
+				return license.addPrimitiveValueToList(propertyName, value);
+			}
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return exc.addPrimitiveValueToList(propertyName, value);
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.addPrimitiveValueToList(propertyName, value);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -523,37 +577,57 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.removePrimitiveValueToList(propertyName, value);
+			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+				if (!(value instanceof TypedValue)) {
+					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
+				}
+				TypedValue tv = (TypedValue)value;
+				if (!SpdxConstants.CLASS_CROSS_REF.equals(tv.getType())) {
+					logger.error("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
+				}
+				CrossRefJson crj = crossRefs.get(tv.getId());
+				if (Objects.isNull(crj)) {
+					logger.error("CrossRef with ID "+tv.getId()+" does not exist in the store.");
+					throw new InvalidSPDXAnalysisException("CrossRef with ID "+tv.getId()+" does not exist in the store.");	
+				}
+				return license.removePrimitiveValueToList(propertyName, crj);
+			} else {
+				return license.removePrimitiveValueToList(propertyName, value);
+			}
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return exc.removePrimitiveValueToList(propertyName, value);
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.removePrimitiveValueToList(propertyName, value);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 	
-	/**
-	 * @param documentUri
-	 * @param id
-	 * @param propertyName
-	 * @return List of values for the propertyName for id within documentUri
-	 * @throws InvalidSPDXAnalysisException
+	/* (non-Javadoc)
+	 * @see org.spdx.storage.IModelStore#getValueList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<Object> getValueList(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	@Override
+	public Iterator<Object> listValues(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -562,34 +636,78 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (Objects.nonNull(crossRef)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return (List<Object>)(List<?>)license.getValueList(propertyName);
+			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
+			if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+				final Iterator<Object> crossRefJsonIter = valueList.iterator();
+				return new Iterator<Object>() {
+
+					@Override
+					public boolean hasNext() {
+						return crossRefJsonIter.hasNext();
+					}
+
+					@Override
+					public Object next() {
+						Object nextVal = crossRefJsonIter.next();
+						if (Objects.isNull(nextVal)) {
+							return null;
+						}
+						if (!(nextVal instanceof CrossRefJson)) {
+							throw new RuntimeException(new InvalidSPDXAnalysisException("Invalid type for "+propertyName+".  Must be of type CrossRefJson"));
+						}
+						CrossRefJson nextCrossRef = (CrossRefJson)nextVal;
+						listedLicenseModificationLock.writeLock().lock();
+						String crossRefId = nextCrossRef.getId();
+						try {
+							if (Objects.isNull(crossRefId)) {
+								// Need to create an ID and store it in the cache
+								try {
+									crossRefId = getNextId(IdType.Anonymous, SpdxConstants.LISTED_LICENSE_URL);
+								} catch (InvalidSPDXAnalysisException e) {
+									logger.error("Error getting next Anonymous ID",e);
+									throw new RuntimeException(e);
+								}
+								nextCrossRef.setId(crossRefId);
+								crossRefs.put(crossRefId, nextCrossRef);
+							}
+						} finally {
+							listedLicenseModificationLock.writeLock().unlock();
+						}
+						try {
+							return new TypedValue(crossRefId, SpdxConstants.CLASS_CROSS_REF);
+						} catch (InvalidSPDXAnalysisException e) {
+							logger.error("Error creating TypedValue for CrossRef",e);
+							throw new RuntimeException(e);
+						}
+					}
+				};
+			} else {
+				return valueList.iterator();
+			}			
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return (List<Object>)(List<?>)exc.getValueList(propertyName);
+			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).iterator();
+		} else if (Objects.nonNull(crossRef)) {
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).iterator();
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getValueList(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
-		return getValueList(documentUri, id, propertyName).iterator();
 	}
 
 	/* (non-Javadoc)
@@ -605,12 +723,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -621,9 +742,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return Optional.ofNullable(exc.getValue(propertyName));
+		} else if (Objects.nonNull(crossRef)) {
+			return Optional.ofNullable(crossRef.getValue(propertyName));
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -640,7 +763,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		this.listedLicenseModificationLock.writeLock().lock();
 		try {
-			return "SpdxLicenseGeneratedId-"+String.valueOf(this.nextId++);
+			if (IdType.Anonymous.equals(idType)) {
+				return ANONOMOUS_ID_PREFIX + String.valueOf(this.nextId++);
+			} else {
+				return "listedLicenseId_" + String.valueOf(this.nextId++);
+			}
 		} finally {
 			this.listedLicenseModificationLock.writeLock().unlock();
 		}
@@ -713,6 +840,8 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
 		} else if (isSpdxListedExceptionId(documentUri, id)) {
 			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+		} else if (crossRefs.containsKey(id)) {
+			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
 		} else {
 			return Optional.empty();
 		}
@@ -728,12 +857,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -744,9 +876,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			exc.removeProperty(propertyName);
+		} else if (Objects.nonNull(crossRef)) {
+			crossRef.removeProperty(propertyName);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 		
@@ -772,6 +906,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
 				}
 			}
+			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_CROSS_REF.equals(typeFilter)) {
+				for (String crossRefId:crossRefs.keySet()) {
+					allItems.add(new TypedValue(crossRefId, SpdxConstants.CLASS_CROSS_REF));
+				}
+			}
 			return Collections.unmodifiableList(allItems).stream();
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -780,15 +919,91 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return getValueList(documentUri, id, propertyName).size();
+		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+			logger.error("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+		}
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.containsKey(id.toLowerCase())) {
+				isLicenseId = true;
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
+				isExceptionId = true;
+			} else if (Objects.nonNull(crossRef)) {
+				crossRef = crossRefs.get(id);
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			return ((List<Object>)(List<?>)license.getValueList(propertyName)).size();		
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).size();
+		} else if (Objects.nonNull(crossRef)) {
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).size();
+		} else {
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
 			throws InvalidSPDXAnalysisException {
-		return getValueList(documentUri, id, propertyName).contains(value);
+		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+			logger.error("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
+					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+		}
+		boolean isLicenseId = false;
+		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.containsKey(id.toLowerCase())) {
+				isLicenseId = true;
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
+				isExceptionId = true;
+			} else if (Objects.nonNull(crossRef)) {
+				crossRef = crossRefs.get(id);
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		if (isLicenseId) {
+			LicenseJson license = fetchLicenseJson(id);
+			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
+			if (value instanceof TypedValue && (SpdxConstants.CLASS_CROSS_REF.equals(((TypedValue)value).getType()))) {
+				CrossRefJson compareValue = crossRefs.get(((TypedValue)value).getId());
+				if (Objects.isNull(compareValue)) {
+					return false;
+				} else {
+					return valueList.contains(compareValue);
+				}
+			} else {
+				return valueList.contains(value);
+			}			
+		} else if (isExceptionId) {
+			ExceptionJson exc = fetchExceptionJson(id);
+			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).contains(value);
+		} else if (Objects.nonNull(crossRef)) {
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).contains(value);
+		} else {
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+		}
 	}
 
 	@Override
@@ -802,12 +1017,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -818,9 +1036,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return exc.isCollectionMembersAssignableTo(propertyName, clazz);
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.isCollectionMembersAssignableTo(propertyName, clazz);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -835,12 +1055,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -851,9 +1074,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return exc.isPropertyValueAssignableTo(propertyName, clazz);
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.isPropertyValueAssignableTo(propertyName, clazz);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
 		}
 	}
 	
@@ -868,12 +1093,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
+		CrossRefJson crossRef = null;
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
+			} else if (crossRefs.containsKey(id)) {
+				crossRef = crossRefs.get(id);
 			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
@@ -884,16 +1112,21 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
 			return exc.isCollectionProperty(propertyName);
+		} else if (Objects.nonNull(crossRef)) {
+			return crossRef.isCollectionProperty(propertyName);
 		} else {
-			logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 		}
 	}
 	
 	@Override
 	public IdType getIdType(String id) {
+		Objects.requireNonNull(id, "ID must not be null");
 		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
 			return IdType.ListedLicense;
+		} else if (id.startsWith(ANONOMOUS_ID_PREFIX)) {
+			return IdType.Anonymous;
 		} else {
 			return IdType.Unkown;
 		}
@@ -962,9 +1195,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				this.listedExceptionCache.remove(id);
 				this.exceptionIds.remove(id.toLowerCase());
+			} else if (crossRefs.containsKey(id)) {
+				this.crossRefs.remove(id);
 			} else {
-				logger.error("ID "+id+" is not a listed license ID nor a listed exception ID");
-				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID nor a listed exception ID");
+				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			}
 		} finally {
 			listedLicenseModificationLock.writeLock().unlock();

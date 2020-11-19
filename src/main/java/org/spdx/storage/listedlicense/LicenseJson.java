@@ -43,7 +43,7 @@ public class LicenseJson {
 			"licenseText", "licenseTextHtml", "name", "standardLicenseHeader",
 			"standardLicenseHeaderTemplate", "standardLicenseHeaderHtml", "standardLicenseTemplate",
 			"isOsiApproved", "isFsfLibre", "example", "isDeprecatedLicenseId", "deprecatedVersion", 
-			"comment", "licenseId", "seeAlso"));	//NOTE: This list must be updated if any new properties are added
+			"comment", "licenseId", "seeAlso", "crossRef"));	//NOTE: This list must be updated if any new properties are added
 
 	String licenseText;
 	String licenseTextHtml;
@@ -61,6 +61,7 @@ public class LicenseJson {
 	String licenseComments;	//TODO:  This is for legacy JSON files - this should be removed in 3.0.  See https://github.com/spdx/spdx-spec/issues/158
 	String comment;
 	String licenseId;
+	List<CrossRefJson> crossRef = new ArrayList<>();
 	
 	public LicenseJson(String id) {
 		this.licenseId = id;
@@ -98,7 +99,8 @@ public class LicenseJson {
 				}
 				name = (String)value;
 				break;
-			case "seeAlso":throw new InvalidSpdxPropertyException("Expected list type for "+propertyName);
+			case "seeAlso":
+			case "crossRef": throw new InvalidSpdxPropertyException("Expected list type for "+propertyName);
 			case "standardLicenseHeader":
 				if (!(value instanceof String)) {
 					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
@@ -171,34 +173,72 @@ public class LicenseJson {
 	}
 
 	public void clearPropertyValueList(String propertyName) throws InvalidSpdxPropertyException {
-		if (!"seeAlso".equals(propertyName)) {
+		if ("seeAlso".equals(propertyName)) {
+			seeAlso.clear();
+		} else if ("crossRef".equals(propertyName)) {
+			crossRef.clear();
+		} else {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		seeAlso.clear();
+		
 	}
 
-	public boolean addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
-		if (!"seeAlso".equals(propertyName)) {
+	/**
+	 * Add a cross reference to a value list
+	 * @param propertyName
+	 * @param value
+	 * @return true as specified by <code>Collections.add</code>
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public boolean addCrossRefValueToList(String propertyName, CrossRefJson value) throws InvalidSPDXAnalysisException {
+		if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			return crossRef.add(value);
+		} else {
+			throw new InvalidSpdxPropertyException(propertyName + "is not a crossRef list type");
+		}
+	}
+	
+	/**
+	 * Add a primitive value to a value list
+	 * @param propertyName
+	 * @param value
+	 * @return true as specified by <code>Collections.add</code>
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public boolean addPrimitiveValueToList(String propertyName, Object value) throws InvalidSPDXAnalysisException {
+		if ("seeAlso".equals(propertyName)) {
+			if (!(value instanceof String)) {
+				throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
+			}
+			return seeAlso.add((String)value);
+		} else if (SpdxConstants.LICENSEXML_ELEMENT_CROSS_REF.equals(propertyName)) {
+			if (!(value instanceof CrossRefJson)) {
+				throw new InvalidSpdxPropertyException("Expected CrossRefJson type for "+propertyName);
+			}
+			return crossRef.add((CrossRefJson)value);
+		} else {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		if (!(value instanceof String)) {
-			throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
-		}
-		return seeAlso.add((String)value);
 	}
 	
 	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
-		if (!"seeAlso".equals(propertyName)) {
+		if ("seeAlso".equals(propertyName)) {
+			return seeAlso.remove(value);
+		} else if ("crossRef".equals(propertyName)) {
+			return crossRef.remove(value);
+		} else {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		return seeAlso.remove(value);
 	}
 
-	public List<String> getValueList(String propertyName) throws InvalidSpdxPropertyException {
-		if (!"seeAlso".equals(propertyName)) {
+	public List<?> getValueList(String propertyName) throws InvalidSpdxPropertyException {
+		if ("seeAlso".equals(propertyName)) {
+			return seeAlso;
+		} else if ("crossRef".equals(propertyName)) {
+			return crossRef;
+		} else {
 			throw new InvalidSpdxPropertyException(propertyName + "is not a list type");
 		}
-		return seeAlso;
 	}
 
 	public Object getValue(String propertyName) throws InvalidSpdxPropertyException {
@@ -207,6 +247,7 @@ public class LicenseJson {
 			case "licenseTextHtml": return licenseTextHtml;
 			case "name": return name;
 			case "seeAlso": return seeAlso;
+			case "crossRef": return crossRef;
 			case "standardLicenseHeader": return standardLicenseHeader;
 			case "standardLicenseHeaderTemplate": return standardLicenseHeaderTemplate;
 			case "standardLicenseHeaderHtml": return standardLicenseHeaderHtml;
@@ -230,6 +271,7 @@ public class LicenseJson {
 		case "licenseTextHtml": licenseTextHtml = null; break;
 		case "name": name = null; break;
 		case "seeAlso":seeAlso.clear(); break;
+		case "crossRef":crossRef.clear(); break;
 		case "standardLicenseHeader": standardLicenseHeader = null; break;
 		case "standardLicenseHeaderTemplate": standardLicenseHeaderTemplate = null; break;
 		case "standardLicenseHeaderHtml": standardLicenseHeaderHtml = null; break;
@@ -263,6 +305,10 @@ public class LicenseJson {
 		this.standardLicenseHeaderHtml = fromLicense.getLicenseHeaderHtml();
 		this.standardLicenseHeaderTemplate = fromLicense.getStandardLicenseHeaderTemplate();
 		this.standardLicenseTemplate = fromLicense.getStandardLicenseTemplate();
+		this.crossRef.clear();
+		for (CrossRef crossRef:fromLicense.getCrossRef()) {
+			this.crossRef.add(new CrossRefJson(crossRef));
+		}
 	}
 
 	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) throws InvalidSpdxPropertyException {
@@ -278,7 +324,8 @@ public class LicenseJson {
 		case "deprecatedVersion":
 		case "comment":
 		case "licenseId": return String.class.isAssignableFrom(clazz);
-		case "seeAlso": return false;
+		case "seeAlso":
+		case "crossRef": return false;
 		case "isOsiApproved":
 		case "isFsfLibre":
 		case "isDeprecatedLicenseId": return Boolean.class.isAssignableFrom(clazz);

@@ -127,6 +127,7 @@ public class ExceptionJson {
 					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
 				}
 				exceptionTextHtml = (String)value;
+				break;
 			default: throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyName);
 		}
 	}

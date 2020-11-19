@@ -132,7 +132,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		try {
 			Object storedObject = null;
 			try {
-				storedObject = ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, null);
+				storedObject = ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, copyManager);
 			} catch (SpdxObjectNotInStoreException e1) {
 				return false;	// The exception is due to the model object not being in the store
 			}
