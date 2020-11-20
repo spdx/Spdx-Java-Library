@@ -15,8 +15,13 @@
  */
 package org.spdx.storage.listedlicense;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.license.SpdxListedLicense;
 
 
 /**
@@ -28,14 +33,14 @@ import java.util.Map;
  */
 public class LicenseJsonTOC {
 	
-	class LicenseJson {
+	static class LicenseJson {
 		private String reference;
 		private boolean isDeprecatedLicenseId;
 		private String detailsUrl;
 		private int referenceNumber;
 		private String name;
 		private String licenseId;
-		private String[] seeAlso;
+		private List<String> seeAlso;
 		private boolean isOsiApproved;
 		/**
 		 * @return the reference
@@ -76,7 +81,7 @@ public class LicenseJsonTOC {
 		/**
 		 * @return the seeAlso
 		 */
-		public String[] getSeeAlso() {
+		public List<String> getSeeAlso() {
 			return seeAlso;
 		}
 		/**
@@ -85,12 +90,72 @@ public class LicenseJsonTOC {
 		public boolean isOsiApproved() {
 			return isOsiApproved;
 		}
+		/**
+		 * @param reference the reference to set
+		 */
+		public void setReference(String reference) {
+			this.reference = reference;
+		}
+		/**
+		 * @param isDeprecatedLicenseId the isDeprecatedLicenseId to set
+		 */
+		public void setDeprecatedLicenseId(boolean isDeprecatedLicenseId) {
+			this.isDeprecatedLicenseId = isDeprecatedLicenseId;
+		}
+		/**
+		 * @param detailsUrl the detailsUrl to set
+		 */
+		public void setDetailsUrl(String detailsUrl) {
+			this.detailsUrl = detailsUrl;
+		}
+		/**
+		 * @param referenceNumber the referenceNumber to set
+		 */
+		public void setReferenceNumber(int referenceNumber) {
+			this.referenceNumber = referenceNumber;
+		}
+		/**
+		 * @param name the name to set
+		 */
+		public void setName(String name) {
+			this.name = name;
+		}
+		/**
+		 * @param licenseId the licenseId to set
+		 */
+		public void setLicenseId(String licenseId) {
+			this.licenseId = licenseId;
+		}
+		/**
+		 * @param seeAlso the seeAlso to set
+		 */
+		public void setSeeAlso(List<String> seeAlso) {
+			this.seeAlso = seeAlso;
+		}
+		/**
+		 * @param isOsiApproved the isOsiApproved to set
+		 */
+		public void setOsiApproved(boolean isOsiApproved) {
+			this.isOsiApproved = isOsiApproved;
+		}
 	}
 	
 
 	private String licenseListVersion;
-	private LicenseJson[] licenses;
+	private List<LicenseJson> licenses;
 	private String releaseDate;
+
+	public LicenseJsonTOC(String version, String releaseDate) {
+		this.licenseListVersion = version;
+		this.releaseDate = releaseDate;
+		this.licenses = new ArrayList<>();
+	}
+	
+	public LicenseJsonTOC() {
+		this.licenseListVersion = null;
+		this.releaseDate = null;
+		this.licenses = new ArrayList<>();
+	}
 
 	/**
 	 * @return the licenseListVersion
@@ -102,7 +167,7 @@ public class LicenseJsonTOC {
 	/**
 	 * @return the licenses
 	 */
-	public LicenseJson[] getLicenses() {
+	public List<LicenseJson> getLicenses() {
 		return licenses;
 	}
 	
@@ -126,6 +191,51 @@ public class LicenseJsonTOC {
 	public String getReleaseDate() {
 		return releaseDate;
 	}
-	
 
+	/**
+	 * Add summary information about a specific license to the licenses list
+	 * @param license
+	 * @param licHTMLReference
+	 * @param licJSONReference
+	 * @param deprecated
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void addLicense(SpdxListedLicense license, String licHTMLReference, String licJSONReference,
+			boolean deprecated) throws InvalidSPDXAnalysisException {
+		LicenseJson lj = new LicenseJson();
+		lj.setDeprecatedLicenseId(deprecated);
+		lj.setDetailsUrl(licHTMLReference);
+		lj.setLicenseId(license.getId());
+		lj.setName(license.getName());
+		lj.setOsiApproved(license.isOsiApproved());
+		lj.setReference(licJSONReference);
+		int referenceNumber = -1;
+		for (LicenseJson existing:this.licenses) {
+			if (existing.getReferenceNumber() > referenceNumber) {
+				referenceNumber = existing.getReferenceNumber();
+			}
+		}
+		referenceNumber++;
+		lj.setReferenceNumber(referenceNumber);
+		List<String> seeAlso = new ArrayList<>();
+		for (String sa:license.getSeeAlso()) {
+			seeAlso.add(sa);
+		}
+		lj.setSeeAlso(seeAlso);
+		this.licenses.add(lj);
+	}
+
+	/**
+	 * @param licenseListVersion the licenseListVersion to set
+	 */
+	public void setLicenseListVersion(String licenseListVersion) {
+		this.licenseListVersion = licenseListVersion;
+	}
+
+	/**
+	 * @param releaseDate the releaseDate to set
+	 */
+	public void setReleaseDate(String releaseDate) {
+		this.releaseDate = releaseDate;
+	}
 }

@@ -246,4 +246,22 @@ public class ExceptionJson {
 		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName);
 	}
 
+	@SuppressWarnings("deprecation")
+	public void setException(ListedLicenseException exception, boolean deprecated) throws InvalidSPDXAnalysisException {
+		this.isDeprecatedLicenseId = deprecated;
+		this.comment = exception.getComment();
+		this.deprecatedVersion = exception.getDeprecatedVersion();
+		this.example = exception.getExample();
+		this.exceptionTextHtml = exception.getExceptionTextHtml();
+		this.licenseComments = exception.getComment();
+		this.licenseExceptionId = exception.getId();
+		this.licenseExceptionTemplate = exception.getLicenseExceptionTemplate();
+		this.licenseExceptionText = exception.getLicenseExceptionText();
+		this.name = exception.getName();
+		this.seeAlso = new ArrayList<>();
+		for (String seeAlso:exception.getSeeAlso()) {
+			this.seeAlso.add(seeAlso);
+		}
+	}
+
 }

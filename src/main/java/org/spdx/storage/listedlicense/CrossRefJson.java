@@ -44,7 +44,7 @@ class CrossRefJson {
 	public String timestamp;
 	public Boolean isWayBackLink;
 	public Integer order;
-	private String id;
+	private transient String id;	// The ID is always transient and of anonomous type
 	
 	public CrossRefJson() {
 		// empty constructor so GSON will work

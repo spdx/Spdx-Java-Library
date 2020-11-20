@@ -79,7 +79,7 @@ public class UnitTestHelper {
 		return sb.toString();
 	}
 
-	public static boolean isListsEqual(List<Object> expected, List<Object> result) {
+	public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
 		if (Objects.isNull(expected)) {
 			return Objects.isNull(result);
 		}

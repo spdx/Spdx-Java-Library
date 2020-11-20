@@ -26,6 +26,9 @@ import java.util.Map;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
+import org.spdx.library.model.license.ListedLicenseException;
+import org.spdx.storage.simple.InMemSpdxStore;
+import org.spdx.utility.compare.UnitTestHelper;
 
 import com.google.gson.Gson;
 
@@ -269,5 +272,47 @@ public class ExceptionJsonTest extends TestCase {
 
 		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
 		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void testSetException() throws Exception {
+		InMemSpdxStore store = new InMemSpdxStore();
+		String docUri = "http://temp.uri";
+		String exceptionId = "exceptionId";
+		String comment = "comment";
+		Boolean deprecated = true;
+		String deprecatedVersion = "v1";
+		String example = "example";
+		String exceptionTextHtml = "<h1>html</h1>";
+		String text = "text";
+		String name = "name";
+		String[] seeAlsoArray = new String[]{"http://seealso1", "http://see/also/2"};
+		List<String> seeAlso = Arrays.asList(seeAlsoArray);
+		String template = "template";
+		
+		ListedLicenseException exception = new ListedLicenseException(store, docUri, exceptionId, null, true);
+		exception.setComment(comment);
+		exception.setDeprecated(deprecated);
+		exception.setDeprecatedVersion(deprecatedVersion);
+		exception.setExample(example);
+		exception.setExceptionTextHtml(exceptionTextHtml);
+		exception.setLicenseExceptionTemplate(template);
+		exception.setLicenseExceptionText(text);
+		exception.setName(name);
+		exception.setSeeAlso(seeAlso);
+		ExceptionJson ej = new ExceptionJson();
+		ej.setException(exception, deprecated);
+		
+		assertEquals(exceptionId, ej.licenseExceptionId);
+		assertEquals(comment, ej.comment);
+		assertEquals(deprecated, ej.isDeprecatedLicenseId);
+		assertEquals(deprecatedVersion, ej.deprecatedVersion);
+		assertEquals(example, ej.example);
+		assertEquals(exceptionTextHtml, ej.exceptionTextHtml);
+		assertEquals(template, ej.licenseExceptionTemplate);
+		assertEquals(text, ej.licenseExceptionText);
+		assertEquals(name, ej.name);
+		UnitTestHelper.isListsEqual(seeAlso, ej.seeAlso);
+		
 	}
 }

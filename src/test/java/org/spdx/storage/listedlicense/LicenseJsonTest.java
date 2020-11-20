@@ -27,6 +27,9 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
 import org.spdx.library.model.license.CrossRef;
+import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.storage.simple.InMemSpdxStore;
+import org.spdx.utility.compare.UnitTestHelper;
 
 import com.google.gson.Gson;
 
@@ -162,7 +165,6 @@ public class LicenseJsonTest extends TestCase {
 	
 	@SuppressWarnings("unchecked")
 	public void testAddClearGetPropertyValueListCrossRef() throws InvalidSPDXAnalysisException {
-		//TODO: Need to serialize the CrossRef information in JSON format
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		List<CrossRef> result = (List<CrossRef>) lj.getValueList("crossRef");
@@ -290,12 +292,6 @@ public class LicenseJsonTest extends TestCase {
 		assertEquals(crossRef2.isValid, crossRefResult.get(1).isValid);
 		assertEquals(crossRef2.isWayBackLink, crossRefResult.get(1).isWayBackLink);
 		assertEquals(crossRef2.order, crossRefResult.get(1).order);
-		
-		
-		
-		
-		
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -377,5 +373,68 @@ public class LicenseJsonTest extends TestCase {
 
 		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
 		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+	}
+	
+	public void testSetLicense() throws Exception {
+		LicenseJson lj = new LicenseJson();
+		InMemSpdxStore store = new InMemSpdxStore();
+		String docUri = "http://doc.uri";
+		String id = "licenseId";
+		boolean deprecated = true;
+		String comment = "comment";
+		String deprecatedVersion = "deprecatedVersion";
+		String licenseText = "licenseText";
+		String licenseTextHtml = "licenseTextHtml";
+		String name = "name";
+		String standardLicenseHeader = "standardLicenseHeader";
+		String standardLicenseHeaderHtml = "standardLicenseHeaderHtml";
+		String standardLicenseHeaderTemplate = "standardLicenseHeaderTemplate";
+		String standardLicenseTemplate = "standardLicenseTemplate";
+		Boolean fsfLibre = true;
+		Boolean osiApproved = true;
+		List<String> seeAlsoUrl = Arrays.asList(new String[]{"http://url1", "http://url2"});
+		
+		SpdxListedLicense license = new SpdxListedLicense(store, docUri, id, null, true);
+		List<CrossRef> crossRefs = new ArrayList<>();
+		List<String> crossRefUrls = Arrays.asList(new String[]{"http://crossref1", "http://crossref2"});
+		for (String crossRefUrl:crossRefUrls) {
+			crossRefs.add(license.createCrossRef(crossRefUrl).build());
+		}
+		license.setComment(comment);
+		license.setDeprecated(deprecated);
+		license.setDeprecatedVersion(deprecatedVersion);
+		license.setFsfLibre(fsfLibre);
+		license.setLicenseHeaderHtml(standardLicenseHeaderHtml);
+		license.setLicenseText(licenseText);
+		license.setLicenseTextHtml(licenseTextHtml);
+		license.setName(name);
+		license.setOsiApproved(osiApproved);
+		license.setSeeAlso(seeAlsoUrl);
+		license.setStandardLicenseHeader(standardLicenseHeader);
+		license.setStandardLicenseHeaderTemplate(standardLicenseHeaderTemplate);
+		license.setStandardLicenseTemplate(standardLicenseTemplate);
+		license.getCrossRef().addAll(crossRefs);
+		
+		lj.setLicense(license, deprecated);
+		assertEquals(fsfLibre, lj.isFsfLibre);
+		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
+		assertEquals(osiApproved, lj.isOsiApproved);
+		assertEquals(comment, lj.comment);
+		assertEquals(deprecatedVersion, lj.deprecatedVersion);
+		assertEquals(comment, lj.licenseComments);
+		assertEquals(id, lj.licenseId);
+		assertEquals(licenseText, lj.licenseText);
+		assertEquals(licenseTextHtml, lj.licenseTextHtml);
+		assertEquals(name, lj.name);
+		assertEquals(standardLicenseHeader, lj.standardLicenseHeader);
+		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
+		assertEquals(standardLicenseHeaderTemplate, lj.standardLicenseHeaderTemplate);
+		assertEquals(standardLicenseTemplate, lj.standardLicenseTemplate);
+		assertTrue(UnitTestHelper.isListsEqual(seeAlsoUrl, lj.seeAlso));
+		List<String> resultCrossRefUrls = new ArrayList<>();
+		for (CrossRefJson resultCr:lj.crossRef) {
+			resultCrossRefUrls.add(resultCr.url);
+		}
+		assertTrue(UnitTestHelper.isListsEqual(crossRefUrls, resultCrossRefUrls));
 	}
 }

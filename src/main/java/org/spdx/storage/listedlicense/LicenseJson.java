@@ -347,4 +347,32 @@ public class LicenseJson {
 	public boolean isCollectionProperty(String propertyName) {
 		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName) || SpdxConstants.PROP_CROSS_REF.equals(propertyName);
 	}
+
+	/**
+	 * Set the parameters of this licenseJson based on the license parameter
+	 * @param license
+	 * @param deprecated
+	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidLicenseTemplateException
+	 */
+	public void setLicense(SpdxListedLicense license, boolean deprecated) throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
+		this.isDeprecatedLicenseId = deprecated;
+		this.comment = license.getComment();
+		for (CrossRef crossRef:license.getCrossRef()) {
+			this.crossRef.add(new CrossRefJson(crossRef));
+		}
+		this.deprecatedVersion = license.getDeprecatedVersion();
+		this.isFsfLibre = license.getFsfLibre();
+		this.isOsiApproved = license.isOsiApproved();
+		this.licenseComments = license.getComment();
+		this.licenseId = license.getId();
+		this.licenseText = license.getLicenseText();
+		this.licenseTextHtml = license.getLicenseTextHtml();
+		this.name = license.getName();
+		this.seeAlso.addAll(license.getSeeAlso());
+		this.standardLicenseHeader = license.getStandardLicenseHeader();
+		this.standardLicenseTemplate = license.getStandardLicenseTemplate();
+		this.standardLicenseHeaderHtml = license.getLicenseHeaderHtml();
+		this.standardLicenseHeaderTemplate = license.getStandardLicenseHeaderTemplate();
+	}
 }
