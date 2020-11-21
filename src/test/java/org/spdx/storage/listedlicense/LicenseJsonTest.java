@@ -375,7 +375,7 @@ public class LicenseJsonTest extends TestCase {
 		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
 	}
 	
-	public void testSetLicense() throws Exception {
+	public void testCopyFromLicense() throws Exception {
 		LicenseJson lj = new LicenseJson();
 		InMemSpdxStore store = new InMemSpdxStore();
 		String docUri = "http://doc.uri";
@@ -415,13 +415,14 @@ public class LicenseJsonTest extends TestCase {
 		license.setStandardLicenseTemplate(standardLicenseTemplate);
 		license.getCrossRef().addAll(crossRefs);
 		
-		lj.setLicense(license, deprecated);
+		lj.copyFrom(license);
 		assertEquals(fsfLibre, lj.isFsfLibre);
 		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
 		assertEquals(osiApproved, lj.isOsiApproved);
-		assertEquals(comment, lj.comment);
-		assertEquals(deprecatedVersion, lj.deprecatedVersion);
+		//TODO: Uncomment out the following line in SPDX 3.0
+		//assertEquals(comment, lj.comment);
 		assertEquals(comment, lj.licenseComments);
+		assertEquals(deprecatedVersion, lj.deprecatedVersion);
 		assertEquals(id, lj.licenseId);
 		assertEquals(licenseText, lj.licenseText);
 		assertEquals(licenseTextHtml, lj.licenseTextHtml);

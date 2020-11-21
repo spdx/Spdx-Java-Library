@@ -275,7 +275,7 @@ public class ExceptionJsonTest extends TestCase {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void testSetException() throws Exception {
+	public void testCopyFrom() throws Exception {
 		InMemSpdxStore store = new InMemSpdxStore();
 		String docUri = "http://temp.uri";
 		String exceptionId = "exceptionId";
@@ -300,11 +300,14 @@ public class ExceptionJsonTest extends TestCase {
 		exception.setLicenseExceptionText(text);
 		exception.setName(name);
 		exception.setSeeAlso(seeAlso);
+		exception.setDeprecated(deprecated);
 		ExceptionJson ej = new ExceptionJson();
-		ej.setException(exception, deprecated);
+		ej.copyFrom(exception);
 		
 		assertEquals(exceptionId, ej.licenseExceptionId);
-		assertEquals(comment, ej.comment);
+		//TODO: Remove the comment in the following line for SPDX 3.0
+		//assertEquals(comment, ej.comment);
+		assertEquals(comment, ej.licenseComments);
 		assertEquals(deprecated, ej.isDeprecatedLicenseId);
 		assertEquals(deprecatedVersion, ej.deprecatedVersion);
 		assertEquals(example, ej.example);

@@ -138,6 +138,7 @@ public class ExceptionJsonTOC {
 	public ExceptionJsonTOC(String version, String releaseDate) {
 		this.licenseListVersion = version;
 		this.releaseDate = releaseDate;
+		exceptions = new ArrayList<>();
 	}
 
 	public ExceptionJsonTOC() {

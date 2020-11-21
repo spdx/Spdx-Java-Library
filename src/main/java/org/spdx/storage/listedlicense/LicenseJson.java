@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -45,23 +46,23 @@ public class LicenseJson {
 			"isOsiApproved", "isFsfLibre", "example", "isDeprecatedLicenseId", "deprecatedVersion", 
 			"comment", "licenseId", "seeAlso", "crossRef"));	//NOTE: This list must be updated if any new properties are added
 
-	String licenseText;
-	String licenseTextHtml;
-	String name;
-	List<String> seeAlso = new ArrayList<>();
-	String standardLicenseHeader;
-	String standardLicenseHeaderTemplate;
-	String standardLicenseHeaderHtml;
-	String standardLicenseTemplate;
-	Boolean isOsiApproved;
-	Boolean isFsfLibre;
-	String example;
 	Boolean isDeprecatedLicenseId;
-	String deprecatedVersion;
+	Boolean isFsfLibre;
+	String licenseText;
+	String standardLicenseHeaderTemplate;
+	String standardLicenseTemplate;
+	String name;
 	String licenseComments;	//TODO:  This is for legacy JSON files - this should be removed in 3.0.  See https://github.com/spdx/spdx-spec/issues/158
 	String comment;
 	String licenseId;
+	String standardLicenseHeader;
 	List<CrossRefJson> crossRef = new ArrayList<>();
+	List<String> seeAlso = new ArrayList<>();
+	Boolean isOsiApproved;
+	String licenseTextHtml;
+	String standardLicenseHeaderHtml;
+	String example;
+	String deprecatedVersion;
 	
 	public LicenseJson(String id) {
 		this.licenseId = id;
@@ -290,21 +291,56 @@ public class LicenseJson {
 	}
 
 	public void copyFrom(SpdxListedLicense fromLicense) throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
+		/* TODO: Uncomment this in 3.0 and remove the following comment setting code in 3.0
+		this.licenseComments = null;
 		this.comment = fromLicense.getComment();
+		if (Objects.nonNull(this.comment) && this.comment.isEmpty()) {
+			this.comment = null;
+		}
+		*/
+		this.comment = null;
+		this.licenseComments = fromLicense.getComment();
+		if (Objects.nonNull(this.licenseComments) && this.licenseComments.isEmpty()) {
+			this.licenseComments = null;
+		}
 		this.deprecatedVersion = fromLicense.getDeprecatedVersion();
+		if (Objects.nonNull(this.deprecatedVersion) && this.deprecatedVersion.isEmpty()) {
+			this.deprecatedVersion = null;
+		}
 		this.example = null;
 		this.isDeprecatedLicenseId = fromLicense.isDeprecated();
 		this.isFsfLibre = fromLicense.getFsfLibre();
-		this.licenseComments = null;
 		this.licenseId = fromLicense.getId();
 		this.licenseText = fromLicense.getLicenseText();
+		if (Objects.nonNull(this.licenseText) && this.licenseText.isEmpty()) {
+			this.licenseText = null;
+		}
 		this.licenseTextHtml = fromLicense.getLicenseTextHtml();
+		if (Objects.nonNull(this.licenseTextHtml) && this.licenseTextHtml.isEmpty()) {
+			this.licenseTextHtml = null;
+		}
 		this.name = fromLicense.getName();
+		if (Objects.nonNull(this.name) && this.name.isEmpty()) {
+			this.name = null;
+		}
+		this.isOsiApproved = fromLicense.isOsiApproved();
 		this.seeAlso = new ArrayList<String>(fromLicense.getSeeAlso());
 		this.standardLicenseHeader = fromLicense.getStandardLicenseHeader();
+		if (Objects.nonNull(this.standardLicenseHeader) && this.standardLicenseHeader.isEmpty()) {
+			this.standardLicenseHeader = null;
+		}
 		this.standardLicenseHeaderHtml = fromLicense.getLicenseHeaderHtml();
+		if (Objects.nonNull(this.standardLicenseHeaderHtml) && this.standardLicenseHeaderHtml.isEmpty()) {
+			this.standardLicenseHeaderHtml = null;
+		}
 		this.standardLicenseHeaderTemplate = fromLicense.getStandardLicenseHeaderTemplate();
+		if (Objects.nonNull(this.standardLicenseHeaderTemplate) && this.standardLicenseHeaderTemplate.isEmpty()) {
+			this.standardLicenseHeaderTemplate = null;
+		}
 		this.standardLicenseTemplate = fromLicense.getStandardLicenseTemplate();
+		if (Objects.nonNull(this.standardLicenseTemplate) && this.standardLicenseTemplate.isEmpty()) {
+			this.standardLicenseTemplate = null;
+		}
 		this.crossRef.clear();
 		for (CrossRef crossRef:fromLicense.getCrossRef()) {
 			this.crossRef.add(new CrossRefJson(crossRef));
@@ -346,33 +382,5 @@ public class LicenseJson {
 
 	public boolean isCollectionProperty(String propertyName) {
 		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName) || SpdxConstants.PROP_CROSS_REF.equals(propertyName);
-	}
-
-	/**
-	 * Set the parameters of this licenseJson based on the license parameter
-	 * @param license
-	 * @param deprecated
-	 * @throws InvalidSPDXAnalysisException
-	 * @throws InvalidLicenseTemplateException
-	 */
-	public void setLicense(SpdxListedLicense license, boolean deprecated) throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
-		this.isDeprecatedLicenseId = deprecated;
-		this.comment = license.getComment();
-		for (CrossRef crossRef:license.getCrossRef()) {
-			this.crossRef.add(new CrossRefJson(crossRef));
-		}
-		this.deprecatedVersion = license.getDeprecatedVersion();
-		this.isFsfLibre = license.getFsfLibre();
-		this.isOsiApproved = license.isOsiApproved();
-		this.licenseComments = license.getComment();
-		this.licenseId = license.getId();
-		this.licenseText = license.getLicenseText();
-		this.licenseTextHtml = license.getLicenseTextHtml();
-		this.name = license.getName();
-		this.seeAlso.addAll(license.getSeeAlso());
-		this.standardLicenseHeader = license.getStandardLicenseHeader();
-		this.standardLicenseTemplate = license.getStandardLicenseTemplate();
-		this.standardLicenseHeaderHtml = license.getLicenseHeaderHtml();
-		this.standardLicenseHeaderTemplate = license.getStandardLicenseHeaderTemplate();
 	}
 }

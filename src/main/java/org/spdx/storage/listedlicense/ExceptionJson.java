@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -42,16 +43,16 @@ public class ExceptionJson {
 			"example", "isDeprecatedLicenseId", "deprecatedVersion", 
 			"comment", "licenseExceptionId", "seeAlso", "exceptionTextHtml"));	//NOTE: This list must be updated if any new properties are added
 
+	Boolean isDeprecatedLicenseId;
 	String licenseExceptionText;
 	String name;
-	List<String> seeAlso = new ArrayList<>();
-	String licenseExceptionTemplate;
-	String example;
-	Boolean isDeprecatedLicenseId;
-	String deprecatedVersion;
 	String licenseComments;	//TODO:  This is for legacy JSON files - this should be removed in 3.0.  See https://github.com/spdx/spdx-spec/issues/158
 	String comment;
+	List<String> seeAlso = new ArrayList<>();
 	String licenseExceptionId;
+	String licenseExceptionTemplate;
+	String example;
+	String deprecatedVersion;
 	String exceptionTextHtml;
 	
 	public ExceptionJson(String id) {
@@ -199,17 +200,45 @@ public class ExceptionJson {
 
 	@SuppressWarnings("deprecation")
 	public void copyFrom(ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
-		this.comment = fromException.getComment();
-		this.deprecatedVersion = fromException.getDeprecatedVersion();
-		this.example = fromException.getExample();
-		this.isDeprecatedLicenseId = fromException.isDeprecated();
+		/* TODO: Uncomment this in in SPDX 3.0 and remove the next couple set for licenseComment and comment
 		this.licenseComments = null;
+		this.comment = fromException.getComment();
+		if (Objects.nonNull(this.comment) && this.comment.isEmpty()) {
+			this.comment = null;
+		}
+		*/
+		this.comment = null;
+		this.licenseComments = fromException.getComment();
+		if (Objects.nonNull(this.licenseComments) && this.licenseComments.isEmpty()) {
+			this.licenseComments = null;
+		}
+		this.deprecatedVersion = fromException.getDeprecatedVersion();
+		if (Objects.nonNull(this.deprecatedVersion) && this.deprecatedVersion.isEmpty()) {
+			this.deprecatedVersion = null;
+		}
+		this.example = fromException.getExample();
+		if (Objects.nonNull(this.example) && this.example.isEmpty()) {
+			this.example = null;
+		}
+		this.isDeprecatedLicenseId = fromException.isDeprecated();
 		this.licenseExceptionId = fromException.getId();
 		this.licenseExceptionTemplate = fromException.getLicenseExceptionTemplate();
+		if (Objects.nonNull(this.licenseExceptionTemplate) && this.licenseExceptionTemplate.isEmpty()) {
+			this.licenseExceptionTemplate = null;
+		}
 		this.licenseExceptionText = fromException.getLicenseExceptionText();
+		if (Objects.nonNull(this.licenseExceptionText) && this.licenseExceptionText.isEmpty()) {
+			this.licenseExceptionText = null;
+		}
 		this.name = fromException.getName();
+		if (Objects.nonNull(this.name) && this.name.isEmpty()) {
+			this.name = null;
+		}
 		this.seeAlso = new ArrayList<String>(fromException.getSeeAlso());
 		this.exceptionTextHtml = fromException.getExceptionTextHtml();
+		if (Objects.nonNull(this.exceptionTextHtml) && this.exceptionTextHtml.isEmpty()) {
+			this.exceptionTextHtml = null;
+		}
 	}
 
 	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
@@ -244,24 +273,6 @@ public class ExceptionJson {
 
 	public boolean isCollectionProperty(String propertyName) {
 		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName);
-	}
-
-	@SuppressWarnings("deprecation")
-	public void setException(ListedLicenseException exception, boolean deprecated) throws InvalidSPDXAnalysisException {
-		this.isDeprecatedLicenseId = deprecated;
-		this.comment = exception.getComment();
-		this.deprecatedVersion = exception.getDeprecatedVersion();
-		this.example = exception.getExample();
-		this.exceptionTextHtml = exception.getExceptionTextHtml();
-		this.licenseComments = exception.getComment();
-		this.licenseExceptionId = exception.getId();
-		this.licenseExceptionTemplate = exception.getLicenseExceptionTemplate();
-		this.licenseExceptionText = exception.getLicenseExceptionText();
-		this.name = exception.getName();
-		this.seeAlso = new ArrayList<>();
-		for (String seeAlso:exception.getSeeAlso()) {
-			this.seeAlso.add(seeAlso);
-		}
 	}
 
 }
