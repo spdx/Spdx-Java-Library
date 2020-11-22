@@ -94,6 +94,7 @@ public class SpdxConstants {
 	public static final String CLASS_SPDX_LICENSE = "License";
 	public static final String CLASS_SPDX_LISTED_LICENSE = "ListedLicense";
 	public static final String CLASS_SPDX_LICENSE_EXCEPTION = "LicenseException";
+	public static final String CLASS_SPDX_LISTED_LICENSE_EXCEPTION = "ListedLicenseException";
 	public static final String CLASS_OR_LATER_OPERATOR = "OrLaterOperator";
 	public static final String CLASS_WITH_EXCEPTION_OPERATOR = "WithExceptionOperator";
 	public static final String CLASS_SPDX_FILE = "File";
@@ -113,19 +114,20 @@ public class SpdxConstants {
 	public static final String CLASS_NOASSERTION_LICENSE = "SpdxNoAssertionLicense";
 	public static final String CLASS_EXTERNAL_SPDX_ELEMENT = "ExternalSpdxElement";
 	public static final String CLASS_EXTERNAL_EXTRACTED_LICENSE = "ExternalExtractedLicenseInfo";
+	public static final String CLASS_CROSS_REF = "CrossRef";
 	
 	// all classes used including classes in non-SPDX namespaces
 	public static final String[] ALL_SPDX_CLASSES = {CLASS_SPDX_DOCUMENT, CLASS_SPDX_PACKAGE, 
 			CLASS_SPDX_CREATION_INFO, CLASS_SPDX_CHECKSUM, CLASS_SPDX_ANY_LICENSE_INFO, 
 			CLASS_SPDX_SIMPLE_LICENSE_INFO, CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, CLASS_SPDX_DISJUNCTIVE_LICENSE_SET, 
 			CLASS_SPDX_EXTRACTED_LICENSING_INFO, CLASS_SPDX_LICENSE, CLASS_SPDX_LISTED_LICENSE, 
-			CLASS_SPDX_LICENSE_EXCEPTION, CLASS_OR_LATER_OPERATOR, CLASS_WITH_EXCEPTION_OPERATOR,
+			CLASS_SPDX_LICENSE_EXCEPTION, CLASS_SPDX_LISTED_LICENSE_EXCEPTION, CLASS_OR_LATER_OPERATOR, CLASS_WITH_EXCEPTION_OPERATOR,
 			CLASS_SPDX_FILE, CLASS_SPDX_REVIEW, CLASS_SPDX_VERIFICATIONCODE, CLASS_ANNOTATION,
 			CLASS_RELATIONSHIP, CLASS_SPDX_ITEM, CLASS_SPDX_ELEMENT, 
 			CLASS_SPDX_NONE_ELEMENT, CLASS_SPDX_NOASSERTION_ELEMENT, CLASS_EXTERNAL_DOC_REF,
 			CLASS_SPDX_EXTERNAL_REFERENCE, CLASS_SPDX_REFERENCE_TYPE, CLASS_SPDX_SNIPPET,
 			CLASS_NONE_LICENSE, CLASS_NOASSERTION_LICENSE, CLASS_EXTERNAL_SPDX_ELEMENT,
-			CLASS_EXTERNAL_EXTRACTED_LICENSE,
+			CLASS_EXTERNAL_EXTRACTED_LICENSE, CLASS_CROSS_REF,
 			// DOAP Namespace
 			CLASS_DOAP_PROJECT,
 			// RDF Pointer Namespace
@@ -249,14 +251,25 @@ public class SpdxConstants {
 	public static final String PROP_LICENSE_EXCEPTION_ID = "licenseExceptionId";
 	public static final String PROP_EXAMPLE = "example";
 	public static final String PROP_EXCEPTION_TEXT = "licenseExceptionText";
+	public static final String PROP_EXCEPTION_TEXT_HTML = "exceptionTextHtml";
 	public static final String PROP_EXCEPTION_TEMPLATE = "licenseExceptionTemplate";
 	public static final String PROP_LICENSE_EXCEPTION = "licenseException";
 	public static final String PROP_LIC_ID_DEPRECATED = "isDeprecatedLicenseId";
 	public static final String PROP_LIC_DEPRECATED_VERSION = "deprecatedVersion";
+	public static final String PROP_CROSS_REF = "crossRef";
 	
 	// SPDX Listed License constants
 	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";
 	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/"; //NOTE: http: rather than https:
+	
+	// crossrefs details (crossRef) properties
+	public static final String PROP_CROSS_REF_IS_VALID = "isValid";
+	public static final String PROP_CROSS_REF_WAYBACK_LINK = "isWayBackLink";
+	public static final String PROP_CROSS_REF_MATCH = "match";
+	public static final String PROP_CROSS_REF_URL = "url";
+	public static final String PROP_CROSS_REF_IS_LIVE = "isLive";
+	public static final String PROP_CROSS_REF_TIMESTAMP = "timestamp";
+	public static final String PROP_CROSS_REF_ORDER = "order";
 	
 	// SpdxElement Properties
 	public static final String PROP_NAME = "name";

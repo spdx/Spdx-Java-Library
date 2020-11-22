@@ -26,6 +26,10 @@ import java.util.Map;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.InvalidSpdxPropertyException;
+import org.spdx.library.model.license.CrossRef;
+import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.storage.simple.InMemSpdxStore;
+import org.spdx.utility.compare.UnitTestHelper;
 
 import com.google.gson.Gson;
 
@@ -48,7 +52,7 @@ public class LicenseJsonTest extends TestCase {
 			);
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO);
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO, SpdxConstants.PROP_CROSS_REF);
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
@@ -135,9 +139,10 @@ public class LicenseJsonTest extends TestCase {
 
 	/**
 	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJson#clearPropertyValueList(java.lang.String)}.
-	 * @throws InvalidSpdxPropertyException 
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void testAddClearGetPropertyValueList() throws InvalidSpdxPropertyException {
+	@SuppressWarnings("unchecked")
+	public void testAddClearGetPropertyValueListSeeAlso() throws InvalidSPDXAnalysisException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		List<String> result = (List<String>) lj.getValueList("seeAlso");
@@ -158,6 +163,31 @@ public class LicenseJsonTest extends TestCase {
 		assertEquals(0, result.size());
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void testAddClearGetPropertyValueListCrossRef() throws InvalidSPDXAnalysisException {
+		String licenseId = "SpdxLicenseId1";
+		LicenseJson lj = new LicenseJson(licenseId);
+		List<CrossRef> result = (List<CrossRef>) lj.getValueList("crossRef");
+		assertEquals(0, result.size());
+		CrossRefJson firstItem = new CrossRefJson();
+		firstItem.url = "http://first";
+		CrossRefJson secondItem = new CrossRefJson();
+		secondItem.url = "http://second";
+		lj.addPrimitiveValueToList("crossRef", firstItem);
+		result = (List<CrossRef>) lj.getValueList("crossRef");
+		assertEquals(1, result.size());
+		assertEquals(firstItem, result.get(0));
+		lj.addPrimitiveValueToList("crossRef", secondItem);
+		result = (List<CrossRef>) lj.getValueList("crossRef");
+		assertEquals(2, result.size());
+		assertEquals(firstItem, result.get(0));
+		assertEquals(secondItem, result.get(1));
+		lj.clearPropertyValueList("crossRef");
+		result = (List<CrossRef>) lj.getValueList("crossRef");
+		assertEquals(0, result.size());
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void testJson() throws Exception {
 		StringBuilder json = new StringBuilder("{\n");
 		Map<String, String> stringValues = new HashMap<>();
@@ -185,7 +215,52 @@ public class LicenseJsonTest extends TestCase {
 			json.append("\",\n\t\t\"");
 			json.append(seeAlsoValues.get(i));
 		}
-		json.append("\"\n\t]\n}");
+		json.append("\"\n\t],\n");
+		CrossRefJson crossRef1 = new CrossRefJson();
+		crossRef1.isLive = true;
+		crossRef1.isValid = false;
+		crossRef1.isWayBackLink = true;
+		crossRef1.match = "match1";
+		crossRef1.order = 1;
+		crossRef1.timestamp = "timestamp1";
+		crossRef1.url = "http://url1";
+		CrossRefJson crossRef2 = new CrossRefJson();
+		crossRef2.isLive = false;
+		crossRef2.isValid = true;
+		crossRef2.isWayBackLink = false;
+		crossRef2.match = "match2";
+		crossRef2.order = 2;
+		crossRef2.timestamp = "timestamp2";
+		crossRef2.url = "http://url2";
+		json.append("\t\"crossRef\": [\n\t\t{\n\t\t\t\"isLive\":");
+		json.append(crossRef1.isLive);
+		json.append(",\n\t\t\t\"isValid\": ");
+		json.append(crossRef1.isValid);
+		json.append(",\n\t\t\t\"isWayBackLink\": ");
+		json.append(crossRef1.isWayBackLink);
+		json.append(",\n\t\t\t\"match\": \"");
+		json.append(crossRef1.match);
+		json.append("\",\n\t\t\t\"url\": \"");
+		json.append(crossRef1.url);
+		json.append("\",\n\t\t\t\"order\": ");
+		json.append(crossRef1.order);
+		json.append(",\n\t\t\t\"timestamp\": \"");
+		json.append(crossRef1.timestamp);
+		json.append("\"\n\t\t},\n\t\t{\n\t\t\t\"isLive\":");
+		json.append(crossRef2.isLive);
+		json.append(",\n\t\t\t\"isValid\": ");
+		json.append(crossRef2.isValid);
+		json.append(",\n\t\t\t\"isWayBackLink\": ");
+		json.append(crossRef2.isWayBackLink);
+		json.append(",\n\t\t\t\"match\": \"");
+		json.append(crossRef2.match);
+		json.append("\",\n\t\t\t\"url\": \"");
+		json.append(crossRef2.url);
+		json.append("\",\n\t\t\t\"order\": ");
+		json.append(crossRef2.order);
+		json.append(",\n\t\t\t\"timestamp\": \"");
+		json.append(crossRef2.timestamp);
+		json.append("\"\n\t\t}\n\t]\n}");
 		Gson gson = new Gson();
 		LicenseJson lj = gson.fromJson(json.toString(), LicenseJson.class);
 		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
@@ -201,8 +276,25 @@ public class LicenseJsonTest extends TestCase {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
+		List<CrossRefJson> crossRefResult = (List<CrossRefJson>)lj.getValueList("crossRef");
+		assertEquals(2, crossRefResult.size());
+		assertEquals(crossRef1.match, crossRefResult.get(0).match);
+		assertEquals(crossRef1.timestamp, crossRefResult.get(0).timestamp);
+		assertEquals(crossRef1.url, crossRefResult.get(0).url);
+		assertEquals(crossRef1.isLive, crossRefResult.get(0).isLive);
+		assertEquals(crossRef1.isValid, crossRefResult.get(0).isValid);
+		assertEquals(crossRef1.isWayBackLink, crossRefResult.get(0).isWayBackLink);
+		assertEquals(crossRef1.order, crossRefResult.get(0).order);
+		assertEquals(crossRef2.match, crossRefResult.get(1).match);
+		assertEquals(crossRef2.timestamp, crossRefResult.get(1).timestamp);
+		assertEquals(crossRef2.url, crossRefResult.get(1).url);
+		assertEquals(crossRef2.isLive, crossRefResult.get(1).isLive);
+		assertEquals(crossRef2.isValid, crossRefResult.get(1).isValid);
+		assertEquals(crossRef2.isWayBackLink, crossRefResult.get(1).isWayBackLink);
+		assertEquals(crossRef2.order, crossRefResult.get(1).order);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void testLegacyJson() throws Exception {
 		//TODO: In SPDX 3.0 this test should be removed once Spec issue #158 is resolved (https://github.com/spdx/spdx-spec/issues/158)
 		StringBuilder json = new StringBuilder("{\n");
@@ -269,6 +361,7 @@ public class LicenseJsonTest extends TestCase {
 		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_CROSS_REF, CrossRef.class));
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {
@@ -281,5 +374,68 @@ public class LicenseJsonTest extends TestCase {
 		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
 		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
 	}
-
+	
+	public void testCopyFromLicense() throws Exception {
+		LicenseJson lj = new LicenseJson();
+		InMemSpdxStore store = new InMemSpdxStore();
+		String docUri = "http://doc.uri";
+		String id = "licenseId";
+		boolean deprecated = true;
+		String comment = "comment";
+		String deprecatedVersion = "deprecatedVersion";
+		String licenseText = "licenseText";
+		String licenseTextHtml = "licenseTextHtml";
+		String name = "name";
+		String standardLicenseHeader = "standardLicenseHeader";
+		String standardLicenseHeaderHtml = "standardLicenseHeaderHtml";
+		String standardLicenseHeaderTemplate = "standardLicenseHeaderTemplate";
+		String standardLicenseTemplate = "standardLicenseTemplate";
+		Boolean fsfLibre = true;
+		Boolean osiApproved = true;
+		List<String> seeAlsoUrl = Arrays.asList(new String[]{"http://url1", "http://url2"});
+		
+		SpdxListedLicense license = new SpdxListedLicense(store, docUri, id, null, true);
+		List<CrossRef> crossRefs = new ArrayList<>();
+		List<String> crossRefUrls = Arrays.asList(new String[]{"http://crossref1", "http://crossref2"});
+		for (String crossRefUrl:crossRefUrls) {
+			crossRefs.add(license.createCrossRef(crossRefUrl).build());
+		}
+		license.setComment(comment);
+		license.setDeprecated(deprecated);
+		license.setDeprecatedVersion(deprecatedVersion);
+		license.setFsfLibre(fsfLibre);
+		license.setLicenseHeaderHtml(standardLicenseHeaderHtml);
+		license.setLicenseText(licenseText);
+		license.setLicenseTextHtml(licenseTextHtml);
+		license.setName(name);
+		license.setOsiApproved(osiApproved);
+		license.setSeeAlso(seeAlsoUrl);
+		license.setStandardLicenseHeader(standardLicenseHeader);
+		license.setStandardLicenseHeaderTemplate(standardLicenseHeaderTemplate);
+		license.setStandardLicenseTemplate(standardLicenseTemplate);
+		license.getCrossRef().addAll(crossRefs);
+		
+		lj.copyFrom(license);
+		assertEquals(fsfLibre, lj.isFsfLibre);
+		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
+		assertEquals(osiApproved, lj.isOsiApproved);
+		//TODO: Uncomment out the following line in SPDX 3.0
+		//assertEquals(comment, lj.comment);
+		assertEquals(comment, lj.licenseComments);
+		assertEquals(deprecatedVersion, lj.deprecatedVersion);
+		assertEquals(id, lj.licenseId);
+		assertEquals(licenseText, lj.licenseText);
+		assertEquals(licenseTextHtml, lj.licenseTextHtml);
+		assertEquals(name, lj.name);
+		assertEquals(standardLicenseHeader, lj.standardLicenseHeader);
+		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
+		assertEquals(standardLicenseHeaderTemplate, lj.standardLicenseHeaderTemplate);
+		assertEquals(standardLicenseTemplate, lj.standardLicenseTemplate);
+		assertTrue(UnitTestHelper.isListsEqual(seeAlsoUrl, lj.seeAlso));
+		List<String> resultCrossRefUrls = new ArrayList<>();
+		for (CrossRefJson resultCr:lj.crossRef) {
+			resultCrossRefUrls.add(resultCr.url);
+		}
+		assertTrue(UnitTestHelper.isListsEqual(crossRefUrls, resultCrossRefUrls));
+	}
 }

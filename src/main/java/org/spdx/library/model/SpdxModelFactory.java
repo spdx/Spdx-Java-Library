@@ -45,10 +45,12 @@ import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.CrossRef;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseException;
+import org.spdx.library.model.license.ListedLicenseException;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SimpleLicensingInfo;
@@ -195,6 +197,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
 		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE: return new SpdxListedLicense(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION: return new LicenseException(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION: return new ListedLicenseException(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_OR_LATER_OPERATOR: return new OrLaterOperator(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR: return new WithExceptionOperator(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_SPDX_FILE: return new SpdxFile(modelStore, documentUri, id, copyManager, create);
@@ -220,6 +223,7 @@ public class SpdxModelFactory {
 		case SpdxConstants.CLASS_POINTER_START_END_POINTER: return new StartEndPointer(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_POINTER_BYTE_OFFSET_POINTER: return new ByteOffsetPointer(modelStore, documentUri, id, copyManager, create);
 		case SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER: return new LineCharPointer(modelStore, documentUri, id, copyManager, create);
+		case SpdxConstants.CLASS_CROSS_REF: return new CrossRef(modelStore, documentUri, id, copyManager, create);
 		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
 		}
 	}

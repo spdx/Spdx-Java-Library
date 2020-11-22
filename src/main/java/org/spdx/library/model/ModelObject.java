@@ -39,6 +39,7 @@ import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.CrossRef.CrossRefBuilder;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
@@ -1269,6 +1270,18 @@ public abstract class ModelObject {
 				modelStore.getNextId(IdType.Anonymous, documentUri), copyManager, true);
 		retval.setMembers(members);
 		return retval;
+	}
+	
+	/**
+	 * Create a CrossRef Builder with an Anonymous ID type using the same model store and document URI
+	 * @param url URL for the cross reference
+	 * @return a CrossRefBuilder which you can call <code>build()</code> on to build the CrossRef
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public CrossRefBuilder createCrossRef(String url) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(url, "URL can not be null");
+		return new CrossRefBuilder(this.modelStore, this.documentUri, 
+				this.modelStore.getNextId(IdType.Anonymous,  this.documentUri), this.copyManager, url);
 	}
 	
 	@Override

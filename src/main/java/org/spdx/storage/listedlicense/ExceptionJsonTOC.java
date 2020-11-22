@@ -17,8 +17,15 @@
  */
 package org.spdx.storage.listedlicense;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.model.license.ListedLicenseException;
 
 
 /**
@@ -29,14 +36,14 @@ import java.util.Map;
  *
  */
 public class ExceptionJsonTOC {
-	class ExceptionJson {
+	static class ExceptionJson {
 		private String reference;
 		private boolean isDeprecatedLicenseId;
 		private String detailsUrl;
 		private int referenceNumber;
 		private String name;
 		private String licenseExceptionId;
-		private String[] seeAlso;
+		private List<String> seeAlso;
 		/**
 		 * @return the licenseExceptionId
 		 */
@@ -76,27 +83,81 @@ public class ExceptionJsonTOC {
 		/**
 		 * @return the seeAlso
 		 */
-		public String[] getSeeAlso() {
+		public List<String> getSeeAlso() {
 			return seeAlso;
+		}
+		/**
+		 * @param reference the reference to set
+		 */
+		public void setReference(String reference) {
+			this.reference = reference;
+		}
+		/**
+		 * @param isDeprecatedLicenseId the isDeprecatedLicenseId to set
+		 */
+		public void setDeprecatedLicenseId(boolean isDeprecatedLicenseId) {
+			this.isDeprecatedLicenseId = isDeprecatedLicenseId;
+		}
+		/**
+		 * @param detailsUrl the detailsUrl to set
+		 */
+		public void setDetailsUrl(String detailsUrl) {
+			this.detailsUrl = detailsUrl;
+		}
+		/**
+		 * @param referenceNumber the referenceNumber to set
+		 */
+		public void setReferenceNumber(int referenceNumber) {
+			this.referenceNumber = referenceNumber;
+		}
+		/**
+		 * @param name the name to set
+		 */
+		public void setName(String name) {
+			this.name = name;
+		}
+		/**
+		 * @param licenseExceptionId the licenseExceptionId to set
+		 */
+		public void setLicenseExceptionId(String licenseExceptionId) {
+			this.licenseExceptionId = licenseExceptionId;
+		}
+		/**
+		 * @param seeAlso the seeAlso to set
+		 */
+		public void setSeeAlso(List<String> seeAlso) {
+			this.seeAlso = seeAlso;
 		}
 	}
 	
 
 	private String licenseListVersion;
-	private ExceptionJson[] exceptions;
+	private List<ExceptionJson> exceptions;
 	private String releaseDate;
+
+	public ExceptionJsonTOC(String version, String releaseDate) {
+		this.licenseListVersion = version;
+		this.releaseDate = releaseDate;
+		exceptions = new ArrayList<>();
+	}
+
+	public ExceptionJsonTOC() {
+		licenseListVersion = null;
+		exceptions = new ArrayList<>();
+		releaseDate = null;
+	}
 
 	/**
 	 * @return the licenseListVersion
 	 */
-	public String getLicenseListVersion() {
+	public @Nullable String getLicenseListVersion() {
 		return licenseListVersion;
 	}
 
 	/**
 	 * @return the exceptions
 	 */
-	public ExceptionJson[] getExceptions() {
+	public List<ExceptionJson> getExceptions() {
 		return exceptions;
 	}
 	
@@ -117,7 +178,55 @@ public class ExceptionJsonTOC {
 	/**
 	 * @return the releaseDate
 	 */
-	public String getReleaseDate() {
+	public @Nullable String getReleaseDate() {
 		return releaseDate;
 	}
+
+	/**
+	 * Add a new exception to the list of exceptions
+	 * @param exception
+	 * @param exceptionHTMLReference
+	 * @param exceptionJSONReference
+	 * @param deprecated
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public void addException(ListedLicenseException exception, String exceptionHTMLReference,
+			String exceptionJSONReference, boolean deprecated) throws InvalidSPDXAnalysisException {
+		ExceptionJson ej = new ExceptionJson();
+		ej.setLicenseExceptionId(exception.getId());
+		ej.setDeprecatedLicenseId(deprecated);
+		ej.setDetailsUrl(exceptionHTMLReference);
+		ej.setName(exception.getName());
+		ej.setReference(exceptionJSONReference);
+		int referenceNumber = 0;
+		for (ExceptionJson existing:this.exceptions) {
+			if (existing.getReferenceNumber() > referenceNumber) {
+				referenceNumber = existing.getReferenceNumber();
+			}
+		}
+		referenceNumber++;
+		ej.setReferenceNumber(referenceNumber);
+		List<String> seeAlso = new ArrayList<>();
+		for (String sa:exception.getSeeAlso()) {
+			seeAlso.add(sa);
+		}
+		ej.setSeeAlso(seeAlso);
+		this.exceptions.add(ej);
+	}
+
+	/**
+	 * @param licenseListVersion the licenseListVersion to set
+	 */
+	public void setLicenseListVersion(String licenseListVersion) {
+		this.licenseListVersion = licenseListVersion;
+	}
+
+	/**
+	 * @param releaseDate the releaseDate to set
+	 */
+	public void setReleaseDate(String releaseDate) {
+		this.releaseDate = releaseDate;
+	}
+	
+	
 }

@@ -355,4 +355,63 @@ public class SpdxListedLicenseTest extends TestCase {
 		assertEquals(newTextHtml, stdl.getLicenseTextHtml());
 		assertEquals(newStandardLicenseHeaderHtml, stdl.getLicenseHeaderHtml());
 	}
+	
+	public void testCrossRef() throws InvalidSPDXAnalysisException {
+		String name = "name";
+		String id = "AFL-3.0";
+		String text = "text";
+		String url1 = "http://url1";
+		String url2 = "http://url2";
+		Boolean isLive1 = true;
+		Boolean isLive2 = false;
+		Boolean isWayback1 = true;
+		Boolean isWayback2 = false;
+		Boolean isValid1 = true;
+		Boolean isValid2 = false;
+		String match1 = "true";
+		String match2 = "false";
+		String date1 = "today";
+		String date2 = "tomorrow";
+		Integer order1 = 1;
+		Integer order2 = 2;
+		Collection<String> sourceUrls = new ArrayList<String>(Arrays.asList(new String[] {url1, url2}));
+		String notes = "notes";
+		String standardLicenseHeader = "Standard license header";
+		String template = "template";
+		String licenseHtml = "<html>html</html>";
+		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
+				sourceUrls, notes, standardLicenseHeader, template, true, true, licenseHtml, false, null);
+		assertEquals(0, stdl.getCrossRef().size());
+		CrossRef testCrossRef1 = stdl.createCrossRef(url1)
+				.setLive(isLive1)
+				.setMatch(match1)
+				.setOrder(order1)
+				.setTimestamp(date1)
+				.setValid(isValid1)
+				.setWayBackLink(isWayback1)
+				.build();
+		CrossRef testCrossRef2 = stdl.createCrossRef(url2)
+				.setLive(isLive2)
+				.setMatch(match2)
+				.setOrder(order2)
+				.setTimestamp(date2)
+				.setValid(isValid2)
+				.setWayBackLink(isWayback2)
+				.build();
+		stdl.getCrossRef().add(testCrossRef1);
+		assertEquals(1, stdl.getCrossRef().size());
+		for (CrossRef ref:stdl.getCrossRef()) {
+			assertTrue(testCrossRef1.equivalent(ref));
+			assertEquals(url1, testCrossRef1.getUrl().get());
+		}
+		stdl.getCrossRef().add(testCrossRef2);
+		assertEquals(2, stdl.getCrossRef().size());
+		for (CrossRef ref:stdl.getCrossRef()) {
+			if (ref.getUrl().get().equals(url1)) {
+				assertTrue(testCrossRef1.equivalent(ref));
+			} else {
+				assertTrue(testCrossRef2.equivalent(ref));
+			}
+		}
+	}
 }
