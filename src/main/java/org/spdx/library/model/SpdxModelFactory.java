@@ -117,12 +117,13 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.CLASS_POINTER_LINE_CHAR_POINTER, LineCharPointer.class);
 		typeToClass.put(SpdxConstants.CLASS_POINTER_COMPOUNT_POINTER, CompoundPointer.class);
 		typeToClass.put(SpdxConstants.CLASS_SINGLE_POINTER, SinglePointer.class);
+		typeToClass.put(SpdxConstants.CLASS_CROSS_REF, CrossRef.class);
 		typeToClass.put(SpdxConstants.ENUM_FILE_TYPE, FileType.class);
 		typeToClass.put(SpdxConstants.ENUM_ANNOTATION_TYPE, AnnotationType.class);
 		typeToClass.put(SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE, ChecksumAlgorithm.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE, ReferenceCategory.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE, RelationshipType.class);
-		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE, ExternalExtractedLicenseInfo.class);
+		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE, ExternalExtractedLicenseInfo.class);		
 		SPDX_TYPE_TO_CLASS = Collections.unmodifiableMap(typeToClass);
 		
 		Map<Class<?>, String> classToType = new HashMap<>();
