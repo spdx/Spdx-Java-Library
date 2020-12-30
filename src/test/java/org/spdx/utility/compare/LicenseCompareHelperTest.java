@@ -17,8 +17,10 @@
 */
 package org.spdx.utility.compare;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -642,5 +644,39 @@ public class LicenseCompareHelperTest extends TestCase {
 		String compareText = UnitTestHelper.fileToText(GPL_3_TEXT);
 		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(gpl3, compareText);
 		assertFalse(result.isDifferenceFound());
+	}
+	
+	public void testIsTextStandardLicenseComments() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		SpdxListedLicense bsd = ListedLicenses.getListedLicenses().getListedLicenseById("0BSD");
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new StringReader(bsd.getLicenseText()));
+			String line = reader.readLine();
+			sb.append("/* \n");
+			while (line != null) {
+				sb.append("  * ");
+				sb.append(line);
+				sb.append("\n");
+				line = reader.readLine();
+			}
+			sb.append("*/\n");
+			DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(bsd, sb.toString());
+			assertFalse(result.isDifferenceFound());
+			reader.close();
+			reader = new BufferedReader(new StringReader(bsd.getLicenseText()));
+			sb.setLength(0);
+			line = reader.readLine();
+			while (line != null) {
+				sb.append("  REM ");
+				sb.append(line);
+				sb.append("\n");
+				line = reader.readLine();
+			}
+			result = LicenseCompareHelper.isTextStandardLicense(bsd, sb.toString());
+			assertFalse(result.isDifferenceFound());
+		} finally {
+			reader.close();
+		}
 	}
 }
