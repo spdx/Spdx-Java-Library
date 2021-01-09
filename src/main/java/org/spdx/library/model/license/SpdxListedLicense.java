@@ -228,4 +228,108 @@ public class SpdxListedLicense extends License {
 		}
 	}
 
+	public static class Builder {
+		private String id;
+		private IModelStore modelStore;
+		private String documentUri;
+		private ModelCopyManager copyManager;
+		private boolean create;
+		private String name;
+		private String text;
+		private Collection<String> sourceUrl;
+		private String comments;
+		private String standardLicenseHeader;
+		private String template;
+		private boolean osiApproved;
+		private Boolean fsfLibre;
+		private String licenseTextHtml;
+		private boolean isDeprecated;
+		private String deprecatedVersion;
+
+		public Builder setId(String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder setModelStore(IModelStore modelStore) {
+			this.modelStore = modelStore;
+			return this;
+		}
+
+		public Builder setDocumentUri(String documentUri) {
+			this.documentUri = documentUri;
+			return this;
+		}
+
+		public Builder setCopyManager(ModelCopyManager copyManager) {
+			this.copyManager = copyManager;
+			return this;
+		}
+
+		public Builder setCreate(boolean create) {
+			this.create = create;
+			return this;
+		}
+
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder setText(String text) {
+			this.text = text;
+			return this;
+		}
+
+		public Builder setSourceUrl(Collection<String> sourceUrl) {
+			this.sourceUrl = sourceUrl;
+			return this;
+		}
+
+		public Builder setComments(String comments) {
+			this.comments = comments;
+			return this;
+		}
+
+		public Builder setStandardLicenseHeader(String standardLicenseHeader) {
+			this.standardLicenseHeader = standardLicenseHeader;
+			return this;
+		}
+
+		public Builder setTemplate(String template) {
+			this.template = template;
+			return this;
+		}
+
+		public Builder setOsiApproved(boolean osiApproved) {
+			this.osiApproved = osiApproved;
+			return this;
+		}
+
+		public Builder setFsfLibre(Boolean fsfLibre) {
+			this.fsfLibre = fsfLibre;
+			return this;
+		}
+
+		public Builder setLicenseTextHtml(String licenseTextHtml) {
+			this.licenseTextHtml = licenseTextHtml;
+			return this;
+		}
+
+		public Builder setIsDeprecated(boolean isDeprecated) {
+			this.isDeprecated = isDeprecated;
+			return this;
+		}
+
+		public Builder setDeprecatedVersion(String deprecatedVersion) {
+			this.deprecatedVersion = deprecatedVersion;
+			return this;
+		}
+
+		public SpdxListedLicense createSpdxListedLicense() throws InvalidSPDXAnalysisException {
+			return new SpdxListedLicense(name, id, text, sourceUrl, comments, standardLicenseHeader,
+					template, osiApproved, fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
+		}
+	}
+
 }
