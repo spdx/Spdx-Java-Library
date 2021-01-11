@@ -96,6 +96,16 @@ public class SpdxListedLicense extends License {
 		setDeprecatedVersion(deprecatedVersion);
 	}
 
+	/**
+	 * @param builder Builder configured with desired parameters
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxListedLicense(SpdxListedLicense.Builder builder) throws InvalidSPDXAnalysisException {
+		this(builder.name, builder.id, builder.text, builder.sourceUrl, builder.comments, builder.standardLicenseHeader,
+				builder.template, builder.osiApproved, builder.fsfLibre, builder.licenseTextHtml, builder.isDeprecated,
+				builder.deprecatedVersion);
+	}
+
 	@Override 
 	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = super._verify(verifiedIds);
@@ -230,10 +240,6 @@ public class SpdxListedLicense extends License {
 
 	public static class Builder {
 		private String id;
-		private IModelStore modelStore;
-		private String documentUri;
-		private ModelCopyManager copyManager;
-		private boolean create;
 		private String name;
 		private String text;
 		private Collection<String> sourceUrl;
@@ -246,89 +252,113 @@ public class SpdxListedLicense extends License {
 		private boolean isDeprecated;
 		private String deprecatedVersion;
 
+		/**
+		 * @param id License ID
+		 * @return this to continue the build
+		 */
 		public Builder setId(String id) {
 			this.id = id;
 			return this;
 		}
 
-		public Builder setModelStore(IModelStore modelStore) {
-			this.modelStore = modelStore;
-			return this;
-		}
-
-		public Builder setDocumentUri(String documentUri) {
-			this.documentUri = documentUri;
-			return this;
-		}
-
-		public Builder setCopyManager(ModelCopyManager copyManager) {
-			this.copyManager = copyManager;
-			return this;
-		}
-
-		public Builder setCreate(boolean create) {
-			this.create = create;
-			return this;
-		}
-
+		/**
+		 * @param name License name
+		 * @return this to continue the build
+		 */
 		public Builder setName(String name) {
 			this.name = name;
 			return this;
 		}
 
+		/**
+		 * @param text License text
+		 * @return this to continue the build
+		 */
 		public Builder setText(String text) {
 			this.text = text;
 			return this;
 		}
 
+		/**
+		 * @param sourceUrl Optional URLs that reference this license
+		 * @return this to continue the build
+		 */
 		public Builder setSourceUrl(Collection<String> sourceUrl) {
 			this.sourceUrl = sourceUrl;
 			return this;
 		}
 
+		/**
+		 * @param comments Optional comments
+		 * @return this to continue the build
+		 */
 		public Builder setComments(String comments) {
 			this.comments = comments;
 			return this;
 		}
 
+		/**
+		 * @param standardLicenseHeader Optional license header
+		 * @return this to continue the build
+		 */
 		public Builder setStandardLicenseHeader(String standardLicenseHeader) {
 			this.standardLicenseHeader = standardLicenseHeader;
 			return this;
 		}
 
+		/**
+		 * @param template Optional template
+		 * @return this to continue the build
+		 */
 		public Builder setTemplate(String template) {
 			this.template = template;
 			return this;
 		}
 
+		/**
+		 * @param osiApproved True if this is an OSI Approved license
+		 * @return this to continue the build
+		 */
 		public Builder setOsiApproved(boolean osiApproved) {
 			this.osiApproved = osiApproved;
 			return this;
 		}
 
+		/**
+		 * @param fsfLibre true if FSF describes the license as free / libre, false if FSF describes the license
+		 *                       as not free / libre, null if FSF does not reference the license
+		 * @return this to continue the build
+		 */
 		public Builder setFsfLibre(Boolean fsfLibre) {
 			this.fsfLibre = fsfLibre;
 			return this;
 		}
 
+		/**
+		 * @param licenseTextHtml HTML version for the license text
+		 * @return this to continue the build
+		 */
 		public Builder setLicenseTextHtml(String licenseTextHtml) {
 			this.licenseTextHtml = licenseTextHtml;
 			return this;
 		}
 
+		/**
+		 * @param isDeprecated True if this license has been designated as deprecated by the SPDX legal team
+		 * @return this to continue the build
+		 */
 		public Builder setIsDeprecated(boolean isDeprecated) {
 			this.isDeprecated = isDeprecated;
 			return this;
 		}
 
+		/**
+		 * @param deprecatedVersion License list version when this license was first deprecated (null if not deprecated)
+		 * @return this to continue the build
+		 */
 		public Builder setDeprecatedVersion(String deprecatedVersion) {
 			this.deprecatedVersion = deprecatedVersion;
 			return this;
-		}
-
-		public SpdxListedLicense createSpdxListedLicense() throws InvalidSPDXAnalysisException {
-			return new SpdxListedLicense(name, id, text, sourceUrl, comments, standardLicenseHeader,
-					template, osiApproved, fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
 		}
 	}
 
