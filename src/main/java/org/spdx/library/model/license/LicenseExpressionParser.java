@@ -88,8 +88,11 @@ public class LicenseExpressionParser {
 		} else {
 			try {
 				return parseLicenseExpression(tokens, store, documentUri, copyManager);
+			} catch (LicenseParserException ex) {
+				// Add the expression to the error message to provide additional information to the user
+				throw(new LicenseParserException(ex.getMessage()+" License expression: '"+expression+"'", ex));
 			} catch (EmptyStackException ex) {
-				throw(new LicenseParserException("Invalid license expression - check that every operator (e.g. AND and OR) has operators and that parenthesis are matched"));
+				throw(new LicenseParserException("Invalid license expression: '"+expression+"' - check that every operator (e.g. AND and OR) has operators and that parenthesis are matched"));
 			}
 		}
 	}
