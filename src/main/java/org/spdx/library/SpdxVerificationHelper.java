@@ -254,4 +254,12 @@ public class SpdxVerificationHelper {
 					SpdxConstants.DOWNLOAD_LOCATION_PATTERN.pattern();
 		}
 	}
+	
+	/**
+	 * @param id
+	 * @return true if the ID is a valid SPDX ID reference
+	 */
+	public static boolean verifySpdxId(String id) {
+		return SpdxConstants.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches();
+	}
 }

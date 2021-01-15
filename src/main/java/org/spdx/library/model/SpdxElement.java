@@ -29,6 +29,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -86,6 +87,15 @@ public abstract class SpdxElement extends ModelObject {
 			return retval;
 		}
 		verifiedElementIds.add(this.getId());
+		// verify ID format
+		IdType idType = this.getModelStore().getIdType(this.getId());
+		if (IdType.SpdxId.equals(idType)) {
+			if (!SpdxVerificationHelper.verifySpdxId(this.getId())) {
+				retval.add("Invalid SPDX ID: "+this.getId()+".  Must match the pattern "+SpdxConstants.SPDX_ELEMENT_REF_PATTERN);
+			}
+		} else if (!IdType.SpdxId.equals(idType)) {
+			retval.add("Invalid ID for SPDX Element: "+this.getId()+".  Must be either a valid SPDX ID or Anonomous.");
+		}
 		try {
 			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: ", verifiedElementIds));
 		} catch (InvalidSPDXAnalysisException e1) {

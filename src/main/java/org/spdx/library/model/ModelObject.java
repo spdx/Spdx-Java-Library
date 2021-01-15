@@ -159,21 +159,21 @@ public abstract class ModelObject {
 	
 	/**
 	 * Implementation of the specific verifications for this model object
-	 * @param verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
+	 * @param verifiedElementIds list of all Element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	protected abstract List<String> _verify(List<String> verifiedIds);
+	protected abstract List<String> _verify(List<String> verifiedElementIds);
 	
 	/**
-	 * @param verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
+	 * @param verifiedIElementds list of all element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	public List<String> verify(List<String> verifiedIds) {
-		if (verifiedIds.contains(this.id)) {
+	public List<String> verify(List<String> verifiedIElementds) {
+		if (verifiedIElementds.contains(this.id)) {
 			return new ArrayList<>();
 		} else {
-			verifiedIds.add(id);
-			return _verify(verifiedIds);
+			// The verifiedElementId is added in the SpdxElement._verify method
+			return _verify(verifiedIElementds);
 		}
 	}
 	
@@ -964,7 +964,7 @@ public abstract class ModelObject {
 	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds) {
 		List<String> retval = new ArrayList<>();
 		for (ModelObject mo:collection) {
-			for (String warning:mo.verify()) {
+			for (String warning:mo.verify(verifiedIds)) {
 				if (Objects.nonNull(warningPrefix)) {
 					retval.add(warningPrefix + warning);
 				} else {
