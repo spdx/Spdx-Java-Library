@@ -93,7 +93,7 @@ public abstract class SpdxElement extends ModelObject {
 			if (!SpdxVerificationHelper.verifySpdxId(this.getId())) {
 				retval.add("Invalid SPDX ID: "+this.getId()+".  Must match the pattern "+SpdxConstants.SPDX_ELEMENT_REF_PATTERN);
 			}
-		} else if (!IdType.SpdxId.equals(idType)) {
+		} else if (!IdType.Anonymous.equals(idType)) {
 			retval.add("Invalid ID for SPDX Element: "+this.getId()+".  Must be either a valid SPDX ID or Anonomous.");
 		}
 		try {
