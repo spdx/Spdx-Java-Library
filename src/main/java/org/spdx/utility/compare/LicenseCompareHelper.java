@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
@@ -54,6 +56,8 @@ import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescripti
  *
  */
 public class LicenseCompareHelper {
+	
+	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
 	
 	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/]+)((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|$)+)";
 	protected static final Pattern TOKEN_SPLIT_PATTERN = Pattern.compile(TOKEN_SPLIT_REGEX);
@@ -131,7 +135,6 @@ public class LicenseCompareHelper {
 	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*owner", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
 	
-	//TODO: Add equiv for quotes
 	/**
 	 * Returns true if two sets of license text is considered a match per
 	 * the SPDX License matching guidelines documented at spdx.org (currently http://spdx.org/wiki/spdx-license-list-match-guidelines)
@@ -208,13 +211,37 @@ public class LicenseCompareHelper {
 	public static String normalizeText(String s) {
 		// First normalize single quotes, then normalize two single quotes to a double quote, normalize double quotes 
 		// then normalize non-breaking spaces to spaces
-		return s.replaceAll("‘|’|‛|‚|`", "'")	// Take care of single quotes first
+		String replaced = s.replaceAll("‘|’|‛|‚|`", "'")	// Take care of single quotes first
 				.replaceAll("http://", "https://") // Normalize the http protocol scheme
  				.replaceAll("''","\"")			// This way, we can change doulbe single quotes to a single double cquote
 				.replaceAll("“|”|‟|„", "\"")	// Now we can normalize the double quotes
 				.replaceAll("\\u00A0", " ")		// replace non-breaking spaces with spaces since Java does not handle the former well
 				.replaceAll("—|–","-")			// replace em dash, en dash with simple dash
 				.replaceAll("\\u2028", "\n");	// replace line separator with newline since Java does not handle the former well
+		// To remove license comments, we need to process line by line
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new StringReader(replaced));
+			String line = reader.readLine();
+			while (line != null) {
+				line = line.replaceAll("^\\s*(//|/\\*|\\*|#|'|REM |<!--|--|;|\\(\\*|\\{-)", "");  // remove start of line comments
+				line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
+				sb.append(line);
+				sb.append("\n");
+				line = reader.readLine();
+			}
+			return sb.toString();
+		} catch (IOException e) {
+			logger.warn("IO error reading strings?!?");
+			return replaced;
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				logger.warn("IO error closing a string reader?!?");
+			}
+		}
 	}
 	
 	/**
