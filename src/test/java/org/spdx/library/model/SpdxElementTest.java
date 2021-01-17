@@ -83,7 +83,7 @@ public class SpdxElementTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testVerify() throws InvalidSPDXAnalysisException {
-		String id = "SpdxRef-elementId";
+		String id = SpdxConstants.SPDX_ELEMENT_REF_PRENUM + "elementId";
 		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
 		assertEquals(0, element1.verify().size());
 		element1.setName(ELEMENT_NAME1);
