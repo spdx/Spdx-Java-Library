@@ -312,6 +312,10 @@ public class SpdxDocument extends SpdxElement {
 				retval.add("Document must have at least one relationship of type DOCUMENT_DESCRIBES");
 				// Note - relationships are verified in the superclass.  This should also recursively
 				// verify any other important objects.
+			} else {
+				for (SpdxElement element:getDocumentDescribes()) {
+					retval.addAll(element.verify(verifiedIds));
+				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting document describes: "+e.getMessage());
