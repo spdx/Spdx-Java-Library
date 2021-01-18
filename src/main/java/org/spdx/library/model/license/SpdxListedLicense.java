@@ -96,6 +96,16 @@ public class SpdxListedLicense extends License {
 		setDeprecatedVersion(deprecatedVersion);
 	}
 
+	/**
+	 * @param builder Builder configured with desired parameters
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public SpdxListedLicense(SpdxListedLicense.Builder builder) throws InvalidSPDXAnalysisException {
+		this(builder.name, builder.id, builder.text, builder.sourceUrl, builder.comments, builder.standardLicenseHeader,
+				builder.template, builder.osiApproved, builder.fsfLibre, builder.licenseTextHtml, builder.isDeprecated,
+				builder.deprecatedVersion);
+	}
+
 	@Override 
 	protected List<String> _verify(List<String> verifiedIds) {
 		List<String> retval = super._verify(verifiedIds);
@@ -225,6 +235,114 @@ public class SpdxListedLicense extends License {
 			return 91;
 		} else {
 			return 91 ^ licId.hashCode();
+		}
+	}
+
+	public static class Builder {
+		private String id;
+		private String name;
+		private String text;
+		private Collection<String> sourceUrl;
+		private String comments;
+		private String standardLicenseHeader;
+		private String template;
+		private boolean osiApproved;
+		private Boolean fsfLibre;
+		private String licenseTextHtml;
+		private boolean isDeprecated;
+		private String deprecatedVersion;
+
+		/**
+		 * @param name License name
+		 * @param id License ID
+		 * @param text License text
+		 */
+		public Builder(String id, String name, String text) {
+			this.id = id;
+			this.name = name;
+			this.text = text;
+		}
+
+		/**
+		 * @param sourceUrl Optional URLs that reference this license
+		 * @return this to continue the build
+		 */
+		public Builder setSourceUrl(Collection<String> sourceUrl) {
+			this.sourceUrl = sourceUrl;
+			return this;
+		}
+
+		/**
+		 * @param comments Optional comments
+		 * @return this to continue the build
+		 */
+		public Builder setComments(String comments) {
+			this.comments = comments;
+			return this;
+		}
+
+		/**
+		 * @param standardLicenseHeader Optional license header
+		 * @return this to continue the build
+		 */
+		public Builder setStandardLicenseHeader(String standardLicenseHeader) {
+			this.standardLicenseHeader = standardLicenseHeader;
+			return this;
+		}
+
+		/**
+		 * @param template Optional template
+		 * @return this to continue the build
+		 */
+		public Builder setTemplate(String template) {
+			this.template = template;
+			return this;
+		}
+
+		/**
+		 * @param osiApproved True if this is an OSI Approved license
+		 * @return this to continue the build
+		 */
+		public Builder setOsiApproved(boolean osiApproved) {
+			this.osiApproved = osiApproved;
+			return this;
+		}
+
+		/**
+		 * @param fsfLibre true if FSF describes the license as free / libre, false if FSF describes the license
+		 *                       as not free / libre, null if FSF does not reference the license
+		 * @return this to continue the build
+		 */
+		public Builder setFsfLibre(Boolean fsfLibre) {
+			this.fsfLibre = fsfLibre;
+			return this;
+		}
+
+		/**
+		 * @param licenseTextHtml HTML version for the license text
+		 * @return this to continue the build
+		 */
+		public Builder setLicenseTextHtml(String licenseTextHtml) {
+			this.licenseTextHtml = licenseTextHtml;
+			return this;
+		}
+
+		/**
+		 * @param isDeprecated True if this license has been designated as deprecated by the SPDX legal team
+		 * @return this to continue the build
+		 */
+		public Builder setIsDeprecated(boolean isDeprecated) {
+			this.isDeprecated = isDeprecated;
+			return this;
+		}
+
+		/**
+		 * @param deprecatedVersion License list version when this license was first deprecated (null if not deprecated)
+		 * @return this to continue the build
+		 */
+		public Builder setDeprecatedVersion(String deprecatedVersion) {
+			this.deprecatedVersion = deprecatedVersion;
+			return this;
 		}
 	}
 
