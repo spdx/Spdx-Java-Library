@@ -253,30 +253,14 @@ public class SpdxListedLicense extends License {
 		private String deprecatedVersion;
 
 		/**
-		 * @param id License ID
-		 * @return this to continue the build
-		 */
-		public Builder setId(String id) {
-			this.id = id;
-			return this;
-		}
-
-		/**
 		 * @param name License name
-		 * @return this to continue the build
-		 */
-		public Builder setName(String name) {
-			this.name = name;
-			return this;
-		}
-
-		/**
+		 * @param id License ID
 		 * @param text License text
-		 * @return this to continue the build
 		 */
-		public Builder setText(String text) {
+		public Builder(String id, String name, String text) {
+			this.id = id;
+			this.name = name;
 			this.text = text;
-			return this;
 		}
 
 		/**
