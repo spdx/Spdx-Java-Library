@@ -632,10 +632,11 @@ public class LicenseCompareHelperTest extends TestCase {
 		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseById("ZPL-2.1"), compareText);
 		assertFalse(result.isDifferenceFound());
 	}
+
 	
 	public void testSpaceNormalization() {
-		String t1 = "This is a test of space";
-		String t2 = "This is\u2060a\u2007test\u202Fof space";
+		String t1 = "This is a test of space extra";
+		String t2 = "This is\u2060a\u2007test\u202Fof space\u2009extra";
 		assertTrue(LicenseCompareHelper.isLicenseTextEquivalent(t1, t2));
 	}
 	
