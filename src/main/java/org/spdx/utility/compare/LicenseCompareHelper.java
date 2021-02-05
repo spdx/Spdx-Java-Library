@@ -122,7 +122,7 @@ public class LicenseCompareHelper {
 	
 	
 	static final String DASHES_REGEX = "[\\u2012\\u2013\\u2014\\u2015]";
-	static final Pattern SPACE_PATTERN = Pattern.compile("[\\u202F\\u2007\\u2060]");
+	static final Pattern SPACE_PATTERN = Pattern.compile("[\\u202F\\u2007\\u2060\\u2009]");
 	static final Pattern PER_CENT_PATTERN = Pattern.compile("per cent", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_HOLDER_PATTERN = Pattern.compile("copyright holder", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_HOLDERS_PATTERN = Pattern.compile("copyright holders", Pattern.CASE_INSENSITIVE);
