@@ -3,7 +3,7 @@
 
     <groupId>org.spdx</groupId>
     <artifactId>java-spdx-library</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>java-spdx-library</name>
@@ -32,7 +32,7 @@
 		<url>https://github.com/spdx/Spdx-Java-Library</url>
 		<connection>scm:git:git://github.com/spdx/Spdx-Java-Library.git</connection>
 		<developerConnection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</developerConnection>
-	  <tag>v1.0.0</tag>
+	  <tag>HEAD</tag>
   </scm>
     <distributionManagement>
       <repository>
@@ -251,6 +251,24 @@
 				<originator>Organization: Linux Foundation</originator>
 			</configuration>
           </plugin>
+        <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-release-plugin</artifactId>
+			<version>2.5.3</version>
+			<configuration>
+				<localCheckout>true</localCheckout>
+				<pushChanges>false</pushChanges>
+				<mavenExecutorId>forked-path</mavenExecutorId>
+				<arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+			</configuration>
+				<dependencies>
+					<dependency>
+					<groupId>org.apache.maven.scm</groupId>
+					<artifactId>maven-scm-provider-gitexe</artifactId>
+					<version>1.9.5</version>
+				</dependency>
+			</dependencies>
+		</plugin>
 		<plugin>
 			<groupId>org.sonatype.plugins</groupId>
 			<artifactId>nexus-staging-maven-plugin</artifactId>
