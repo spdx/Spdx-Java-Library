@@ -12,6 +12,17 @@ Most common use of the library would  de-serialize an existing SPDX document usi
 The methods enterCriticalSection and leaveCritialSection are available to support multi-threaded applications.  These methods serialize access to the model store for the specific SPDX document used for the SPDX model object.
 
 ## Getting Started
+The library is available in [Maven Central org.spdx:java-spdx-library](https://search.maven.org/artifact/org.spdx/java-spdx-library).
+
+If you are using Maven, you can add the following dependency in your POM file:
+```
+<dependency>
+  <groupId>org.spdx</groupId>
+  <artifactId>java-spdx-library</artifactId>
+  <version>(,1.0]</version>
+</dependency>
+```
+
 There are a couple of static classes that help common usage scenarios:
 
 - org.spdx.library.SPDXModelFactory supports the creation of specific model objects
@@ -26,4 +37,4 @@ To update Spdx-Java-Library, the following is a very brief checklist:
   4. Update unit tests
 
 ## Development Status
-Note: This library is in development and likely contains defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.
+Note: This library is mostly stable, but and contains some defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.

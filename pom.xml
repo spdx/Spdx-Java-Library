@@ -31,14 +31,14 @@
 	</organization>
 	<scm>
 		<url>https://github.com/spdx/Spdx-Java-Library</url>
-		<connection>https://github.com/spdx/Spdx-Java-Library.git</connection>
-		<developerConnection>https://github.com/spdx/Spdx-Java-Library.git</developerConnection>
+		<connection>scm:git:git://github.com/spdx/Spdx-Java-Library.git</connection>
+		<developerConnection>scm:git:git@github.com:/spdx/Spdx-Java-Library.git</developerConnection>
 	</scm>
     <distributionManagement>
       <repository>
-        <id>bintray-spdx-spdx-tools</id>
+        <id>ossrh</id>
         <name>spdx-spdx-tools</name>
-        <url>https://api.bintray.com/maven/spdx/spdx-tools/java-spdx-library/;publish=1</url>
+        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       </repository>
 	</distributionManagement>
     <properties>
