@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.ConjunctiveLicenseSet;
@@ -50,6 +51,10 @@ public class LicenseCompareHelperTest extends TestCase {
 	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
 	static final String ZPL_2_1_TEXT = "TestFiles" + File.separator + "ZPL-2.1.txt";
 	static final String GPL_3_TEXT = "TestFiles" + File.separator + "GPL-3.0-test.txt";
+    static final String BSD_PROTECTION_TEXT = "TestFiles" + File.separator + "BSD-Protection.txt";
+    static final String BSD_PROTECTION_TEMPLATE = "TestFiles" + File.separator + "BSD-Protection.template.txt";
+    static final String EUPL_1_2_TEXT = "TestFiles" + File.separator + "EUPL-1.2.txt";
+    static final String EUPL_1_2_TEMPLATE = "TestFiles" + File.separator + "EUPL-1.2.template.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -61,6 +66,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+	    DefaultModelStore.reset();
 	}
 
 	/**
@@ -680,4 +686,24 @@ public class LicenseCompareHelperTest extends TestCase {
 			reader.close();
 		}
 	}
+	
+	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(BSD_PROTECTION_TEXT);
+        String templateText = UnitTestHelper.fileToText(BSD_PROTECTION_TEMPLATE);
+        SpdxListedLicense bsdp = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("BSD-Protection", "BSD Protection", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(bsdp, licText);
+        assertFalse(diff.isDifferenceFound());
+	}
+	
+    public void testRegressionEUPL12() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(EUPL_1_2_TEXT);
+        String templateText = UnitTestHelper.fileToText(EUPL_1_2_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("EUPL1.2", "EUPL 1.2", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        assertFalse(diff.isDifferenceFound());
+    }
 }

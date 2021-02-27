@@ -134,6 +134,7 @@ public class LicenseCompareHelper {
 	static final Pattern COPYRIGHT_OWNERS_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*owners", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*owner", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
+	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)";
 	
 	/**
 	 * Returns true if two sets of license text is considered a match per
@@ -204,44 +205,51 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * Normalize quotes and no-break spaces
+	 * Remove common comment characters from either a template or license text strings
 	 * @param s
 	 * @return
+	 */
+	public static String removeCommentChars(String s) {
+	       StringBuilder sb = new StringBuilder();
+	        BufferedReader reader = null;
+	        try {
+	            reader = new BufferedReader(new StringReader(s));
+	            String line = reader.readLine();
+	            while (line != null) {
+                    line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
+                    line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
+                    line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
+	                sb.append(line);
+	                sb.append("\n");
+	                line = reader.readLine();
+	            }
+	            return sb.toString();
+	        } catch (IOException e) {
+	            logger.warn("IO error reading strings?!?");
+	            return s;
+	        } finally {
+	            try {
+	                reader.close();
+	            } catch (IOException e) {
+	                logger.warn("IO error closing a string reader?!?");
+	            }
+	        }
+	}
+	/**
+	 * Normalize quotes and no-break spaces
+	 * @param s String to normalize
+	 * @return String normalized for comparison
 	 */
 	public static String normalizeText(String s) {
 		// First normalize single quotes, then normalize two single quotes to a double quote, normalize double quotes 
 		// then normalize non-breaking spaces to spaces
-		String replaced = s.replaceAll("‘|’|‛|‚|`", "'")	// Take care of single quotes first
+		return s.replaceAll("‘|’|‛|‚|`", "'")	// Take care of single quotes first
 				.replaceAll("http://", "https://") // Normalize the http protocol scheme
  				.replaceAll("''","\"")			// This way, we can change doulbe single quotes to a single double cquote
 				.replaceAll("“|”|‟|„", "\"")	// Now we can normalize the double quotes
 				.replaceAll("\\u00A0", " ")		// replace non-breaking spaces with spaces since Java does not handle the former well
 				.replaceAll("—|–","-")			// replace em dash, en dash with simple dash
 				.replaceAll("\\u2028", "\n");	// replace line separator with newline since Java does not handle the former well
-		// To remove license comments, we need to process line by line
-		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new StringReader(replaced));
-			String line = reader.readLine();
-			while (line != null) {
-				line = line.replaceAll("^\\s*(//|/\\*|\\*|#|'|REM |<!--|--|;|\\(\\*|\\{-)", "");  // remove start of line comments
-				line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
-				sb.append(line);
-				sb.append("\n");
-				line = reader.readLine();
-			}
-			return sb.toString();
-		} catch (IOException e) {
-			logger.warn("IO error reading strings?!?");
-			return replaced;
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				logger.warn("IO error closing a string reader?!?");
-			}
-		}
 	}
 	
 	/**
@@ -327,7 +335,7 @@ public class LicenseCompareHelper {
 	 * Tokenizes the license text, normalizes quotes, lowercases and converts multi-words for better equiv. comparisons
 	 * @param tokenLocations location for all of the tokens
 	 * @param licenseText
-	 * @return
+	 * @return tokens
 	 * @throws IOException 
 	 */
 	public static String[] tokenizeLicenseText(String licenseText, Map<Integer, LineColumn> tokenToLocation) {
@@ -389,7 +397,7 @@ public class LicenseCompareHelper {
 	 * @return the first token in the license text
 	 */
 	public static String getFirstLicenseToken(String text) {
-		String textToTokenize = normalizeText(replaceMultWord(replaceSpace(text))).toLowerCase();
+		String textToTokenize = normalizeText(replaceMultWord(replaceSpace(removeCommentChars(text)))).toLowerCase();
 		Matcher m = TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
@@ -705,12 +713,13 @@ public class LicenseCompareHelper {
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(compareText);
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
 		} catch (IOException e1) {
 			throw(new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1));
 		}
 		try {
-			SpdxLicenseTemplateHelper.parseTemplate(licenseTemplate, compareTemplateOutputHandler);
+		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
+			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(licenseTemplate), compareTemplateOutputHandler);
 		} catch (LicenseTemplateRuleException e) {
 			throw(new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e));
 		} catch (LicenseParserException e) {
@@ -734,12 +743,13 @@ public class LicenseCompareHelper {
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(compareText);
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
 		} catch (IOException e1) {
 			throw(new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1));
 		}
 		try {
-			SpdxLicenseTemplateHelper.parseTemplate(exceptionTemplate, compareTemplateOutputHandler);
+		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
+			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(exceptionTemplate), compareTemplateOutputHandler);
 		} catch (LicenseTemplateRuleException e) {
 			throw(new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e));
 		} catch (LicenseParserException e) {
