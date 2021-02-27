@@ -209,7 +209,7 @@ public class CompareTemplateOutputHandler implements
 			if (this.rule == null) {
 				if (this.text != null) {
 					Map<Integer, LineColumn> textLocations = new HashMap<Integer, LineColumn>();
-					String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(LicenseCompareHelper.normalizeText(text), textLocations);
+					String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(text, textLocations);
 					if (this.skipFirstTextToken) {
 						textTokens = Arrays.copyOfRange(textTokens, 1, textTokens.length);
 					}
@@ -341,7 +341,7 @@ public class CompareTemplateOutputHandler implements
 				LicenseTemplateRule subInstructionRule = subInstructions.get(i).getRule();
 				if (subInstructionRule != null && subInstructionRule.getType() == RuleType.BEGIN_OPTIONAL) {
 					leadingOptionalSubInstructions.add(i);
-				} else if (subInstructions.get(i).getText() != null) {
+				} else if (subInstructions.get(i).getText() != null && !subInstructions.get(i).getText().trim().isEmpty()) {
 					firstNormalTextIndex = i;
 				}
 				i++;
@@ -375,7 +375,7 @@ public class CompareTemplateOutputHandler implements
 			}
 			
 			Map<Integer, LineColumn> normalTextLocations = new HashMap<Integer, LineColumn>();
-			String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(LicenseCompareHelper.normalizeText(subInstructions.get(firstNormalTextIndex).getText()), normalTextLocations);
+			String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(subInstructions.get(firstNormalTextIndex).getText(), normalTextLocations);
 			if (textTokens.length > MAX_NEXT_NORMAL_TEXT_SEARCH_LENGTH) {
 				textTokens = Arrays.copyOf(textTokens, MAX_NEXT_NORMAL_TEXT_SEARCH_LENGTH);
 			}
@@ -912,7 +912,7 @@ public class CompareTemplateOutputHandler implements
 	 */
 	public int textEquivalent(String text, int startToken) {
 		Map<Integer, LineColumn> textLocations = new HashMap<Integer, LineColumn>();
-		String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(LicenseCompareHelper.normalizeText(text), textLocations);
+		String[] textTokens = LicenseCompareHelper.tokenizeLicenseText(text, textLocations);
 		return this.compareText(textTokens, this.compareTokens, startToken, this.compareTokens.length-1, null);	
 	}
 }
