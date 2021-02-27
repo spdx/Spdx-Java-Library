@@ -55,14 +55,6 @@ import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescripti
  * @author Gary O'Neall
  *
  */
-/**
- * @author gary
- *
- */
-/**
- * @author gary
- *
- */
 public class LicenseCompareHelper {
 	
 	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
