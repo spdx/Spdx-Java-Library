@@ -33,7 +33,8 @@ public class SpdxLicenseTemplateHelper {
 	
 	static final String START_RULE = "<<";
 	static final String END_RULE = ">>";
-	public static final Pattern RULE_PATTERN = Pattern.compile(START_RULE+"\\s*((beginOptional|endOptional|var)(.|\\s)*?)\\s*"+END_RULE);
+	public static final Pattern RULE_PATTERN = Pattern.compile(START_RULE+"\\s*(beginOptional|endOptional|var)");
+	public static final Pattern END_RULE_PATTERN = Pattern.compile(END_RULE);
 	private static final int SPACES_PER_TAB = 5;
 	private static final int MAX_TABS = 4;
 	private static final int[] PIXELS_PER_TAB = new int[] {20, 40, 60, 70};
@@ -47,16 +48,23 @@ public class SpdxLicenseTemplateHelper {
 	public static void parseTemplate(String licenseTemplate,
 			ILicenseTemplateOutputHandler templateOutputHandler) throws LicenseTemplateRuleException, LicenseParserException {
 		Matcher ruleMatcher = RULE_PATTERN.matcher(licenseTemplate);
+		Matcher endRuleMatcher = END_RULE_PATTERN.matcher(licenseTemplate);
 		int end = 0;
 		int optionalNestLevel = 0;
-		while (ruleMatcher.find()) {
+		int start = 0;
+		while (ruleMatcher.find(start)) {
 			// copy everything up to the start of the find
 			String upToTheFind = licenseTemplate.substring(end, ruleMatcher.start());
 			if (!upToTheFind.trim().isEmpty()) {
 				templateOutputHandler.text(upToTheFind);
 			}
-			end = ruleMatcher.end();
-			String ruleString = ruleMatcher.group(1);
+			if (!endRuleMatcher.find(ruleMatcher.end())) {
+			    throw(new LicenseTemplateRuleException("Missing end of rule '>>' after text '"+upToTheFind+"'"));
+			}
+			end = endRuleMatcher.end();
+			String ruleString = licenseTemplate.substring(ruleMatcher.start()+START_RULE.length(), end-END_RULE.length());
+			start = end;
+			
 			LicenseTemplateRule rule = new LicenseTemplateRule(ruleString);
 			if (rule.getType() == LicenseTemplateRule.RuleType.VARIABLE) {
 				templateOutputHandler.variableRule(rule);

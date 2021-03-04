@@ -72,9 +72,14 @@ public class UnitTestHelper {
 	 */
 	public static String fileToText(String filePath) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		for (String s:Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8)) {
-			sb.append(s);
-			sb.append("\n");
+		List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+		if (lines.size() == 0) {
+		    return "";
+		}
+		sb.append(lines.get(0));
+		for (int i = 1; i < lines.size(); i++) {
+		    sb.append("\n");
+		    sb.append(lines.get(i));
 		}
 		return sb.toString();
 	}
