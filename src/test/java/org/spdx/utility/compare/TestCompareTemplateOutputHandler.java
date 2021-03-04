@@ -92,6 +92,8 @@ public class TestCompareTemplateOutputHandler {
 	static final String BSD_2_CLAUSE_VIEW_TEMPLATE = "TestFiles" + File.separator + "BSD-2-Clause-Views.template.txt";
 	static final String EUPL_1_2_TEXT = "TestFiles" + File.separator + "EUPL-1.2.txt";
 	static final String EUPL_1_2_TEMPLATE = "TestFiles" + File.separator + "EUPL-1.2.template.txt";
+	static final String GD_TEXT = "TestFiles" + File.separator + "GD.txt";
+	static final String GD_TEMPLATE = "TestFiles" + File.separator + "GD.template.txt";
 	
 	/**
 	 * @throws java.lang.Exception
@@ -593,6 +595,17 @@ public class TestCompareTemplateOutputHandler {
    public void testRegressionEUPL12() throws IOException, LicenseTemplateRuleException, LicenseParserException {
        String compareText = UnitTestHelper.fileToText(EUPL_1_2_TEXT);
        String templateText = UnitTestHelper.fileToText(EUPL_1_2_TEMPLATE);
+       CompareTemplateOutputHandler templateOutputHandler = new CompareTemplateOutputHandler(compareText);
+       SpdxLicenseTemplateHelper.parseTemplate(templateText, templateOutputHandler);
+       if (!templateOutputHandler.matches()) {
+           fail(templateOutputHandler.getDifferences().getDifferenceMessage());
+       }
+   }
+   
+   @Test
+   public void testRegressionGD() throws IOException, LicenseTemplateRuleException, LicenseParserException {
+       String compareText = UnitTestHelper.fileToText(GD_TEXT);
+       String templateText = UnitTestHelper.fileToText(GD_TEMPLATE);
        CompareTemplateOutputHandler templateOutputHandler = new CompareTemplateOutputHandler(compareText);
        SpdxLicenseTemplateHelper.parseTemplate(templateText, templateOutputHandler);
        if (!templateOutputHandler.matches()) {

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
@@ -55,6 +56,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String BSD_PROTECTION_TEMPLATE = "TestFiles" + File.separator + "BSD-Protection.template.txt";
     static final String EUPL_1_2_TEXT = "TestFiles" + File.separator + "EUPL-1.2.txt";
     static final String EUPL_1_2_TEMPLATE = "TestFiles" + File.separator + "EUPL-1.2.template.txt";
+    static final String GD_TEMPLATE = "TestFiles" + File.separator + "GD.template.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -705,5 +707,10 @@ public class LicenseCompareHelperTest extends TestCase {
                 .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
+    }
+    
+    public void testRegressionGD() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String templateText = UnitTestHelper.fileToText(GD_TEMPLATE);
+        List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, true);
     }
 }
