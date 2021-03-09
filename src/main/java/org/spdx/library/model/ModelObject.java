@@ -42,6 +42,7 @@ import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.CrossRef.CrossRefBuilder;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ListedLicenses;
+import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.pointer.ByteOffsetPointer;
@@ -701,6 +702,9 @@ public abstract class ModelObject {
 	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 		if (!this.getClass().equals(compare.getClass())) {
 			return false;
+		}
+		if (this.getClass().equals(SpdxListedLicense.class)) {
+		    return this.getId().equals(compare.getId());  // Listed licenses always equal if their ID's equal
 		}
 		List<String> propertyValueNames = getPropertyValueNames();
 		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
