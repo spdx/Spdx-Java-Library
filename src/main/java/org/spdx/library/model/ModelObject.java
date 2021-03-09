@@ -42,7 +42,6 @@ import org.spdx.library.model.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.license.CrossRef.CrossRefBuilder;
 import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.pointer.ByteOffsetPointer;
