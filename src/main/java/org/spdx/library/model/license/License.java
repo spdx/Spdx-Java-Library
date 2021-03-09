@@ -318,11 +318,11 @@ public abstract class License extends SimpleLicensingInfo {
 	}
 	
 	@Override
-	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+	public boolean equivalent(ModelObject compare, boolean ignoreExternalReferences) throws InvalidSPDXAnalysisException {
 		if (compare instanceof License) {
 			return LicenseCompareHelper.isLicenseTextEquivalent(this.getLicenseText(), ((License)compare).getLicenseText());
 		} else {
-			return super.equivalent(compare);
+			return super.equivalent(compare, ignoreExternalReferences);
 		}
 	}
 }

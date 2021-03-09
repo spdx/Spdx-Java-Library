@@ -212,11 +212,11 @@ public class SpdxListedLicense extends License {
 	}
 	
 	@Override
-	public boolean equivalent(ModelObject compare) throws InvalidSPDXAnalysisException {
+	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 		if (compare instanceof SpdxListedLicense) {
 			return this.getLicenseId().equals(((SpdxListedLicense)compare).getLicenseId());	// for listed license, the license ID is the only thing that matters
 		} else {
-			return super.equivalent(compare);
+			return super.equivalent(compare, ignoreRelatedElements);
 		}
 	}
 	

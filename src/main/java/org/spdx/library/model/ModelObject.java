@@ -703,9 +703,6 @@ public abstract class ModelObject {
 		if (!this.getClass().equals(compare.getClass())) {
 			return false;
 		}
-		if (this.getClass().equals(SpdxListedLicense.class)) {
-		    return this.getId().equals(compare.getId());  // Listed licenses always equal if their ID's equal
-		}
 		List<String> propertyValueNames = getPropertyValueNames();
 		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
 		for (String propertyName:propertyValueNames) {
