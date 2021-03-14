@@ -332,7 +332,7 @@ public class SpdxConstants {
 	@Deprecated
 	public static final String PROP_REVIEW_DATE = "reviewDate";
 	
-	// Date format
+	// Date format - NOTE: This format does not handle milliseconds.  Use Instant.parse for full ISO 8601 parsing
 	public static final String SPDX_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	
 	// license ID format

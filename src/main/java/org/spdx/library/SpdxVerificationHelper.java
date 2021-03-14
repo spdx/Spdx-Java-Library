@@ -17,8 +17,8 @@
 package org.spdx.library;
 
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -118,10 +118,9 @@ public class SpdxVerificationHelper {
 	 * @return
 	 */
 	public static String verifyDate(String creationDate) {
-		SimpleDateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
 		try {
-			format.parse(creationDate);
-		} catch (ParseException e) {
+			Instant.parse(creationDate);
+		} catch (DateTimeParseException e) {
 			return("Invalid date format: "+e.getMessage());
 		}
 		return null;
