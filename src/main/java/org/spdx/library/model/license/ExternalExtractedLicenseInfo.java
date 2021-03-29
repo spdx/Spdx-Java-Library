@@ -157,11 +157,14 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	}
 	
 	/**
-	 * @param uri URI of the form externaldocumentnamespace#LicenseRef-XXXXX
+	 * @param externalLicenseUri URI of the form
+	 *                           externaldocumentnamespace#LicenseRef-XXXXX
 	 * @param stModelStore
 	 * @param stDocumentUri
-	 * @return ExternalSpdxRef an ExternalLicenseRef based on a URI of the form externaldocumentnamespace#LicenseRef-XXXXX
-	 * @param copyManager if non-null, create the external doc ref if it is not already in the ModelStore
+	 * @return ExternalSpdxRef an ExternalLicenseRef based on a URI of the form
+	 *         externaldocumentnamespace#LicenseRef-XXXXX
+	 * @param copyManager if non-null, create the external doc ref if it is not
+	 *                    already in the ModelStore
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static ExternalExtractedLicenseInfo uriToExternalExtractedLicense(String externalLicenseUri, IModelStore stModelStore,

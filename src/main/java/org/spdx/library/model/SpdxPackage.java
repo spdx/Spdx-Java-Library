@@ -721,15 +721,19 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		boolean filesAnalyzed = true;
 				
 		/**
-		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false - note isFilesAnalyzed must be explicitly set to false
-		 * @param modelStore Storage for the model objects
-		 * @param documentUri SPDX Document URI for a document associated with this model
-		 * @param id ID for this object - must be unique within the SPDX document
-		 * @param name - File name
-		 * @param concludedLicense license concluded
-		 * @param licenseInfosFromFile collection of seen licenses
-		 * @param copyrightText Copyright text
-		 * @param licenseDeclared - Declared license for the package
+		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false
+		 * - note isFilesAnalyzed must be explicitly set to false
+		 * 
+		 * @param modelStore       Storage for the model objects
+		 * @param documentUri      SPDX Document URI for a document associated with this
+		 *                         model
+		 * @param id               ID for this object - must be unique within the SPDX
+		 *                         document
+		 * @param name             File name
+		 * @param copyManager
+		 * @param concludedLicense
+		 * @param copyrightText    Copyright text
+		 * @param licenseDeclared  Declared license for the package
 		 */
 		public SpdxPackageBuilder(IModelStore modelStore, String documentUri, String id, 
 				@Nullable ModelCopyManager copyManager, String name,AnyLicenseInfo concludedLicense, 

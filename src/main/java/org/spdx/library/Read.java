@@ -94,11 +94,15 @@ public class Read {
 	}
 	
 	/**
-	 * Serializes an SPDX document stored in the modelStore.  The specific format of the serialization will
-	 * depend on the modelStore.
-	 * @param modelStore Storage for the model objects
-	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param stream Output stream for serialization
+	 * Serializes an SPDX document stored in the modelStore. The specific format of
+	 * the serialization will depend on the modelStore.
+	 * 
+	 * @param modelStore  Storage for the model objects
+	 * @param documentUri SPDX Document URI for a document associated with this
+	 *                    model
+	 * @param stream      Output stream for serialization
+	 * @throws InvalidSPDXAnalysisException
+	 * @throws IOException
 	 */
 	public static void serialize(ISerializableModelStore modelStore, String documentUri, OutputStream stream) throws InvalidSPDXAnalysisException, IOException {
 		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, true);
@@ -128,10 +132,13 @@ public class Read {
 	}
 	
 	/**
-	 * @param modelStore Storage for the model objects
-	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param typeFilter Optional parameter to specify the type of objects to be retrieved
+	 * @param modelStore  Storage for the model objects
+	 * @param documentUri SPDX Document URI for a document associated with this
+	 *                    model
+	 * @param typeFilter  Optional parameter to specify the type of objects to be
+	 *                    retrieved
 	 * @return Stream of all items store within the document
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Stream<? extends ModelObject> getAllItems(IModelStore modelStore, String documentUri, 
 			String typeFilter) throws InvalidSPDXAnalysisException { 

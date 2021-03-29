@@ -1142,7 +1142,7 @@ public class SpdxComparer {
 	 * @param collectionA
 	 * @param collectionB
 	 * @throws InvalidSPDXAnalysisException 
-	 * @returnt true if the collections all contain equivalent items
+	 * @return true if the collections all contain equivalent items
 	 */
 	public static boolean collectionsEquivalent(Collection<? extends ModelObject> collectionA, Collection<? extends ModelObject> collectionB) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(collectionA)) {

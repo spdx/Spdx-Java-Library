@@ -98,7 +98,6 @@ public class SpdxLicenseTemplateHelper {
 	 * @param licenseTemplate
 	 * @return
 	 * @throws LicenseTemplateRuleException 
-	 * @throws LicenseParserException 
 	 */
 	public static String templateTextToHtml(String licenseTemplate) throws LicenseTemplateRuleException {
 		HtmlTemplateOutputHandler htmlOutput = new HtmlTemplateOutputHandler();
@@ -114,8 +113,7 @@ public class SpdxLicenseTemplateHelper {
 	 * Converts template text to standard default text using any default parameters in the rules
 	 * @param template
 	 * @return
-	 * @throws LicenseTemplateRuleException 
-	 * @throws LicenseParserException 
+	 * @throws LicenseTemplateRuleException
 	 */
 	public static String templateToText(String template) throws LicenseTemplateRuleException {
 		TextTemplateOutputHandler textOutput = new TextTemplateOutputHandler();

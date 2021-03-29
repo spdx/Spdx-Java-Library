@@ -332,11 +332,12 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * Tokenizes the license text, normalizes quotes, lowercases and converts multi-words for better equiv. comparisons
-	 * @param tokenLocations location for all of the tokens
+	 * Tokenizes the license text, normalizes quotes, lowercases and converts
+	 * multi-words for better equiv. comparisons
+	 * 
+	 * @param tokenToLocation location for all of the tokens
 	 * @param licenseText
 	 * @return tokens
-	 * @throws IOException 
 	 */
 	public static String[] tokenizeLicenseText(String licenseText, Map<Integer, LineColumn> tokenToLocation) {
 		String textToTokenize = normalizeText(replaceMultWord(replaceSpace(licenseText))).toLowerCase();
@@ -633,7 +634,7 @@ public class LicenseCompareHelper {
 	
 	/**
 	 * Creates a regular expression pattern to match the start of a license text
-	 * @param nonOptionalText List of strings of non-optional text from the license template (see <code>List<String> getNonOptionalLicenseText</code>)
+	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
 	 * @param numberOfWords Number of words to use in the match
 	 * @return Pattern which will match the start of the license text
 	 */

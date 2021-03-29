@@ -83,7 +83,7 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  *   - String - Java Strings
  *   - Booolean - Java Boolean or primitive boolean types
  *   - ModelObject - A concrete subclass of this type
- *   - Collection<T> - A Collection of type T where T is one of the supported non-collection types
+ *   - {@literal Collection<T>} - A Collection of type T where T is one of the supported non-collection types
  *     
  * This class also handles the conversion of a ModelObject to and from a TypeValue for storage in the ModelStore.
  *
@@ -554,15 +554,17 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * Add a value to a collection of values associated with a property.  If a value is a ModelObject and does not
-	 * belong to the document, it will be copied into the object store
-	 * @param stModelStore Model store for the properties
+	 * Add a value to a collection of values associated with a property. If a value
+	 * is a ModelObject and does not belong to the document, it will be copied into
+	 * the object store
+	 * 
+	 * @param stModelStore  Model store for the properties
 	 * @param stDocumentUri Unique document URI
-	 * @param stId ID of the item to associate the property with
+	 * @param stId          ID of the item to associate the property with
 	 * @param propertyName  Name of the property
-	 * @param value to add
-	 * @param copyOnReference if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param value         to add
+	 * @param copyManager
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
@@ -958,7 +960,7 @@ public abstract class ModelObject {
 	/**
 	 * Verifies all elements in a collection
 	 * @param collection collection to be verifies
-	 * @verifiedIds verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
+	 * @param verifiedIds verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
 	 * @param warningPrefix String to prefix any warning messages
 	 */
 	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds) {
@@ -1001,9 +1003,10 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param relatedSpdxElement The SPDX Element that is related
-	 * @param relationshipType Type of relationship - See the specification for a description of the types
-	 * @param comment optional comment for the relationship
+	 * @param relatedElement   The SPDX Element that is related
+	 * @param relationshipType Type of relationship - See the specification for a
+	 *                         description of the types
+	 * @param comment          optional comment for the relationship
 	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -1159,9 +1162,7 @@ public abstract class ModelObject {
 	 * @param id - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
-	 * @param seenLicense collection of seen licenses
 	 * @param copyrightText Copyright text
-	 * @param sha1 Sha1 checksum
 	 * @param licenseDeclared Declared license for the package
 	 * @return SpdxPackageBuilder with all required fields for a filesAnalyzed=false
 	 */
