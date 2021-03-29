@@ -19,34 +19,37 @@ package org.spdx.licenseTemplate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 /**
  * Implements common conversion methods for processing SPDX license templates
+ * 
  * @author Gary O'Neall
  *
  */
 public class SpdxLicenseTemplateHelper {
-	
+
 	static final String START_RULE = "<<";
 	static final String END_RULE = ">>";
-	public static final Pattern RULE_PATTERN = Pattern.compile(START_RULE+"\\s*(beginOptional|endOptional|var)");
+	public static final Pattern RULE_PATTERN = Pattern.compile(START_RULE + "\\s*(beginOptional|endOptional|var)");
 	public static final Pattern END_RULE_PATTERN = Pattern.compile(END_RULE);
 	private static final int SPACES_PER_TAB = 5;
 	private static final int MAX_TABS = 4;
-	private static final int[] PIXELS_PER_TAB = new int[] {20, 40, 60, 70};
+	private static final int[] PIXELS_PER_TAB = new int[] { 20, 40, 60, 70 };
 
 	/**
-	 * Parses the license template calling the templateOutputHandler for any text and rules found
-	 * @param licenseTemplate License template to be parsed
-	 * @param templateOutputHandler Handles the text, optional text, and variable rules text found
-	 * @throws LicenseParserException 
+	 * Parses the license template calling the templateOutputHandler for any text
+	 * and rules found
+	 * 
+	 * @param licenseTemplate       License template to be parsed
+	 * @param templateOutputHandler Handles the text, optional text, and variable
+	 *                              rules text found
+	 * @throws LicenseParserException
 	 */
-	public static void parseTemplate(String licenseTemplate,
-			ILicenseTemplateOutputHandler templateOutputHandler) throws LicenseTemplateRuleException, LicenseParserException {
+	public static void parseTemplate(String licenseTemplate, ILicenseTemplateOutputHandler templateOutputHandler)
+			throws LicenseTemplateRuleException, LicenseParserException {
 		Matcher ruleMatcher = RULE_PATTERN.matcher(licenseTemplate);
 		Matcher endRuleMatcher = END_RULE_PATTERN.matcher(licenseTemplate);
 		int end = 0;
@@ -59,12 +62,12 @@ public class SpdxLicenseTemplateHelper {
 				templateOutputHandler.text(upToTheFind);
 			}
 			if (!endRuleMatcher.find(ruleMatcher.end())) {
-			    throw(new LicenseTemplateRuleException("Missing end of rule '>>' after text '"+upToTheFind+"'"));
+				throw (new LicenseTemplateRuleException("Missing end of rule '>>' after text '" + upToTheFind + "'"));
 			}
 			end = endRuleMatcher.end();
-			String ruleString = licenseTemplate.substring(ruleMatcher.start()+START_RULE.length(), end-END_RULE.length());
+			String ruleString = licenseTemplate.substring(ruleMatcher.start() + START_RULE.length(), end - END_RULE.length());
 			start = end;
-			
+
 			LicenseTemplateRule rule = new LicenseTemplateRule(ruleString);
 			if (rule.getType() == LicenseTemplateRule.RuleType.VARIABLE) {
 				templateOutputHandler.variableRule(rule);
@@ -74,15 +77,17 @@ public class SpdxLicenseTemplateHelper {
 			} else if (rule.getType() == LicenseTemplateRule.RuleType.END_OPTIONAL) {
 				optionalNestLevel--;
 				if (optionalNestLevel < 0) {
-					throw(new LicenseTemplateRuleException("End optional rule found without a matching begin optional rule after text '"+upToTheFind+"'"));
+					throw (new LicenseTemplateRuleException(
+							"End optional rule found without a matching begin optional rule after text '" + upToTheFind + "'"));
 				}
 				templateOutputHandler.endOptional(rule);
 			} else {
-				throw(new LicenseTemplateRuleException("Unrecognized rule: "+rule.getType().toString()+" after text '"+upToTheFind+"'"));
+				throw (new LicenseTemplateRuleException(
+						"Unrecognized rule: " + rule.getType().toString() + " after text '" + upToTheFind + "'"));
 			}
 		}
 		if (optionalNestLevel > 0) {
-			throw(new LicenseTemplateRuleException("Missing EndOptional rule and end of text"));
+			throw (new LicenseTemplateRuleException("Missing EndOptional rule and end of text"));
 		}
 		// copy the rest of the template to the end
 		String restOfTemplate = licenseTemplate.substring(end);
@@ -91,52 +96,59 @@ public class SpdxLicenseTemplateHelper {
 		}
 		templateOutputHandler.completeParsing();
 	}
-	
+
 	/**
-	 * Converts a license template string to formatted HTML which highlights any 
+	 * Converts a license template string to formatted HTML which highlights any
 	 * rules or tags
+	 * 
 	 * @param licenseTemplate
 	 * @return
-	 * @throws LicenseTemplateRuleException 
+	 * @throws LicenseTemplateRuleException
+	 * @throws LicenseParserException
 	 */
 	public static String templateTextToHtml(String licenseTemplate) throws LicenseTemplateRuleException {
 		HtmlTemplateOutputHandler htmlOutput = new HtmlTemplateOutputHandler();
 		try {
 			parseTemplate(licenseTemplate, htmlOutput);
 		} catch (LicenseParserException e) {
-			throw new LicenseTemplateRuleException("Parsing error parsing license template",e);
+			throw new LicenseTemplateRuleException("Parsing error parsing license template", e);
 		}
 		return htmlOutput.getHtml();
 	}
 
 	/**
-	 * Converts template text to standard default text using any default parameters in the rules
+	 * Converts template text to standard default text using any default parameters
+	 * in the rules
+	 * 
 	 * @param template
 	 * @return
 	 * @throws LicenseTemplateRuleException
+	 * @throws LicenseParserException
 	 */
 	public static String templateToText(String template) throws LicenseTemplateRuleException {
 		TextTemplateOutputHandler textOutput = new TextTemplateOutputHandler();
 		try {
 			parseTemplate(template, textOutput);
 		} catch (LicenseParserException e) {
-			throw new LicenseTemplateRuleException("Parsing error parsing license template",e);
+			throw new LicenseTemplateRuleException("Parsing error parsing license template", e);
 		}
 		return textOutput.getText();
 	}
-	
+
 	/**
 	 * Escapes and formats text
+	 * 
 	 * @param text unformatted text
 	 * @return
 	 */
 	public static String formatEscapeHTML(String text) {
 		return formatEscapeHTML(text, false);
 	}
-	
+
 	/**
 	 * Escapes and formats text
-	 * @param text unformatted text
+	 * 
+	 * @param text        unformatted text
 	 * @param inParagraph true if inside a paragraph tag
 	 * @return
 	 */
@@ -144,19 +156,27 @@ public class SpdxLicenseTemplateHelper {
 		String retval = StringEscapeUtils.escapeXml11(text);
 		return addHtmlFormatting(retval, inParagraph);
 	}
-	
+
 	/**
-	 * Adds HTML formatting <br> and <p>
+	 * Adds HTML formatting {@code <br>
+	 * } and {@code 
+	 * <p>
+	 * }
+	 * 
 	 * @param text unformatted text
 	 * @return
 	 */
 	public static String addHtmlFormatting(String text) {
 		return addHtmlFormatting(text, false);
 	}
-	
+
 	/**
-	 * Adds HTML formatting <br> and <p>
-	 * @param text unformatted text
+	 * Adds HTML formatting {@code <br>
+	 * } and {@code 
+	 * <p>
+	 * }
+	 * 
+	 * @param text        unformatted text
 	 * @param inParagraph true if inside a paragraph tag
 	 * @return
 	 */
@@ -167,7 +187,7 @@ public class SpdxLicenseTemplateHelper {
 		int i = 1;
 		while (i < lines.length) {
 			if (lines[i].trim().isEmpty()) {
-				// paragraph boundary 
+				// paragraph boundary
 				if (inParagraph) {
 					result.append("</p>");
 				}
@@ -197,7 +217,9 @@ public class SpdxLicenseTemplateHelper {
 	}
 
 	/**
-	 * Creating a paragraph tag and add the correct margin considering the number of spaces or tabs
+	 * Creating a paragraph tag and add the correct margin considering the number of
+	 * spaces or tabs
+	 * 
 	 * @param string
 	 * @return
 	 */
@@ -209,8 +231,8 @@ public class SpdxLicenseTemplateHelper {
 			if (numTabs > MAX_TABS) {
 				numTabs = MAX_TABS;
 			}
-			
-			int pixels = PIXELS_PER_TAB[numTabs-1];
+
+			int pixels = PIXELS_PER_TAB[numTabs - 1];
 			result.append("<p style=\"margin-left: ");
 			result.append(String.valueOf(pixels));
 			result.append("px;\">");
@@ -222,6 +244,7 @@ public class SpdxLicenseTemplateHelper {
 
 	/**
 	 * Counts the number of leading spaces in a given line
+	 * 
 	 * @param string
 	 * @return
 	 */
@@ -235,7 +258,9 @@ public class SpdxLicenseTemplateHelper {
 	}
 
 	/**
-	 * Converts an HTML string to text preserving line breaks for <br/> tags
+	 * Converts an HTML string to text preserving line breaks for {@code <br/>
+	 * } tags
+	 * 
 	 * @param html
 	 * @return
 	 */
@@ -244,7 +269,7 @@ public class SpdxLicenseTemplateHelper {
 		String replaceBrs = html.replaceAll("(?i)<br[^>]*>", newlineString);
 		String replaceBrsAndPs = replaceBrs.replaceAll("(?i)<p[^>]*>", newlineString);
 		Document doc = Jsoup.parse(replaceBrsAndPs);
-		String retval  = doc.text();
+		String retval = doc.text();
 		retval = retval.replace(newlineString, "\n");
 		return retval;
 	}
