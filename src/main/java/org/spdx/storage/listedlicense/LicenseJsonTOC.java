@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.SpdxListedLicense;
 
 
@@ -204,11 +205,11 @@ public class LicenseJsonTOC {
 			boolean deprecated) throws InvalidSPDXAnalysisException {
 		LicenseJson lj = new LicenseJson();
 		lj.setDeprecatedLicenseId(deprecated);
-		lj.setDetailsUrl(licHTMLReference);
+		lj.setDetailsUrl(toAbsoluteURL(licJSONReference));
 		lj.setLicenseId(license.getId());
 		lj.setName(license.getName());
 		lj.setOsiApproved(license.isOsiApproved());
-		lj.setReference(licJSONReference);
+		lj.setReference(licHTMLReference);
 		int referenceNumber = -1;
 		for (LicenseJson existing:this.licenses) {
 			if (existing.getReferenceNumber() > referenceNumber) {
@@ -237,5 +238,10 @@ public class LicenseJsonTOC {
 	 */
 	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
+	}
+
+	private static String toAbsoluteURL(String relURL) {
+		String retval = relURL.startsWith("./") ? relURL.substring(2) : relURL;
+		return SpdxConstants.LISTED_LICENSE_NAMESPACE_PREFIX + retval;
 	}
 }
