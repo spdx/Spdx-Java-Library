@@ -46,6 +46,7 @@ public class SpdxLicenseTemplateHelper {
 	 * @param licenseTemplate       License template to be parsed
 	 * @param templateOutputHandler Handles the text, optional text, and variable
 	 *                              rules text found
+	 * @throws LicenseTemplateRuleException
 	 * @throws LicenseParserException
 	 */
 	public static void parseTemplate(String licenseTemplate, ILicenseTemplateOutputHandler templateOutputHandler)
@@ -104,7 +105,6 @@ public class SpdxLicenseTemplateHelper {
 	 * @param licenseTemplate
 	 * @return
 	 * @throws LicenseTemplateRuleException
-	 * @throws LicenseParserException
 	 */
 	public static String templateTextToHtml(String licenseTemplate) throws LicenseTemplateRuleException {
 		HtmlTemplateOutputHandler htmlOutput = new HtmlTemplateOutputHandler();
@@ -123,7 +123,6 @@ public class SpdxLicenseTemplateHelper {
 	 * @param template
 	 * @return
 	 * @throws LicenseTemplateRuleException
-	 * @throws LicenseParserException
 	 */
 	public static String templateToText(String template) throws LicenseTemplateRuleException {
 		TextTemplateOutputHandler textOutput = new TextTemplateOutputHandler();
