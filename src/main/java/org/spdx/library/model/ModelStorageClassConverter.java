@@ -50,12 +50,16 @@ public class ModelStorageClassConverter {
 	static ModelCopyManager tempMgr = new ModelCopyManager();//TODO: This is temporary - move to a parameter to ModelObject - this is not currently threadsafe
 
 	/**
-	 * Converts any typed value or individual value objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
-	 * @param value Value which may be a TypedValue
-	 * @param documenentUri Document URI to use when converting a typedValue
-	 * @param modelStore ModelStore to use in fetching or creating
-	 * @param copyManager if not null, copy any referenced ID's outside of this document/model store
-	 * @return the object itself unless it is a TypedValue, in which case a ModelObject is returned
+	 * Converts any typed value or individual value objects to a ModelObject,
+	 * returning an existing ModelObject if it exists or creates a new ModelObject
+	 * 
+	 * @param value       Value which may be a TypedValue
+	 * @param documentUri Document URI to use when converting a typedValue
+	 * @param modelStore  ModelStore to use in fetching or creating
+	 * @param copyManager if not null, copy any referenced ID's outside of this
+	 *                    document/model store
+	 * @return the object itself unless it is a TypedValue, in which case a
+	 *         ModelObject is returned
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Object storedObjectToModelObject(Object value, String documentUri, IModelStore modelStore,
@@ -72,12 +76,16 @@ public class ModelStorageClassConverter {
 	};
 	
 	/**
-	 * Converts any typed value or IndividualValue objects to a ModelObject, returning an existing ModelObject if it exists or creates a new ModelObject
-	 * @param value Value which may be a TypedValue
-	 * @param documenentUri Document URI to use when converting a typedValue
-	 * @param stModelStore ModelStore to use in fetching or creating
-	 * @param copyManager if not null, copy any referenced ID's outside of this document/model store
-	 * @return the object itself unless it is a TypedValue, in which case a ModelObject is returned
+	 * Converts any typed value or IndividualValue objects to a ModelObject,
+	 * returning an existing ModelObject if it exists or creates a new ModelObject
+	 * 
+	 * @param value         Value which may be a TypedValue
+	 * @param stDocumentUri Document URI to use when converting a typedValue
+	 * @param stModelStore  ModelStore to use in fetching or creating
+	 * @param copyManager   if not null, copy any referenced ID's outside of this
+	 *                      document/model store
+	 * @return the object itself unless it is a TypedValue, in which case a
+	 *         ModelObject is returned
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Optional<Object> optionalStoredObjectToModelObject(Optional<Object> value, 

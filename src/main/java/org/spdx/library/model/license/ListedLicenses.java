@@ -159,7 +159,6 @@ public class ListedLicenses {
 	/**
 	 * @param licenseId case insensitive
 	 * @return true if the licenseId belongs to an SPDX listed license
-	 * @throws InvalidSPDXAnalysisException 
 	 */
     public boolean isSpdxListedLicenseId(String licenseId) {
 		return this.licenseModelStore.isSpdxListedLicenseId(SpdxConstants.LISTED_LICENSE_URL, licenseId);
@@ -200,7 +199,7 @@ public class ListedLicenses {
     
 	/**
 	 * @return The version of the loaded license list in the form M.N, where M is the major release and N is the minor release.
-	 * If no license list is loaded, returns {@Link DEFAULT_LICENSE_LIST_VERSION}.
+	 * If no license list is loaded, returns {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#DEFAULT_LICENSE_LIST_VERSION}.
 	 */
 	public String getLicenseListVersion() {
 		return this.licenseModelStore.getLicenseListVersion();

@@ -140,7 +140,6 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	 * Add a package to the comparer and performs the comparison to any existing documents
 	 * @param spdxDocument document containing the package
 	 * @param spdxPackage packaged to be added
-	 * @param licenseXlationMap A mapping between the license IDs from licenses in fileA to fileB
 	 * @throws SpdxCompareException 
 	 * @throws InvalidSPDXAnalysisException 
 	 */
