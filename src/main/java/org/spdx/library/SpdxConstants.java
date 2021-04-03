@@ -260,7 +260,9 @@ public class SpdxConstants {
 	
 	// SPDX Listed License constants
 	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";
-	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/"; //NOTE: http: rather than https:
+	// http rather than https since RDF depends on the exact string, 
+	// we were not able to update the namespace variable to match the URL's.
+	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/";
 	
 	// crossrefs details (crossRef) properties
 	public static final String PROP_CROSS_REF_IS_VALID = "isValid";
