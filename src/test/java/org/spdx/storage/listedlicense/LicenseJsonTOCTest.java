@@ -112,20 +112,22 @@ public class LicenseJsonTOCTest extends TestCase {
 		assertEquals(2, ljt.getLicenses().size());
 
 		LicenseJsonTOC.LicenseJson l1 = ljt.getLicenses().get(0);
-		assertTrue(l1.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_NAMESPACE_PREFIX));
+		assertTrue(l1.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_URL));
 		assertEquals(licJSONReference1.substring(2), l1.getDetailsUrl().substring(l1.getDetailsUrl().lastIndexOf('/') + 1));
 		assertEquals(licenseId1, l1.getLicenseId());
 		assertEquals(name1, l1.getName());
-		assertEquals(licHTMLReference1, l1.getReference());
+		assertEquals(licHTMLReference1.substring(2), l1.getReference().substring(l1.getDetailsUrl().lastIndexOf('/') + 1));
+		assertTrue(l1.getReference().startsWith(SpdxConstants.LISTED_LICENSE_URL));
 		assertEquals(0, l1.getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso1, l1.getSeeAlso()));
 		
 		LicenseJsonTOC.LicenseJson l2 = ljt.getLicenses().get(1);
 		assertEquals(licJSONReference2.substring(2), l2.getDetailsUrl().substring(l2.getDetailsUrl().lastIndexOf('/') + 1));
-		assertTrue(l2.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_NAMESPACE_PREFIX));
+		assertTrue(l2.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_URL));
 		assertEquals(licenseId2, l2.getLicenseId());
 		assertEquals(name2, l2.getName());
-		assertEquals(licHTMLReference2, l2.getReference());
+		assertEquals(licHTMLReference2.substring(2), l2.getReference().substring(l2.getDetailsUrl().lastIndexOf('/') + 1));
+		assertTrue(l2.getReference().startsWith(SpdxConstants.LISTED_LICENSE_URL));
 		assertEquals(1, l2.getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso2, l2.getSeeAlso()));
 	}

@@ -209,7 +209,7 @@ public class LicenseJsonTOC {
 		lj.setLicenseId(license.getId());
 		lj.setName(license.getName());
 		lj.setOsiApproved(license.isOsiApproved());
-		lj.setReference(licHTMLReference);
+		lj.setReference(toAbsoluteURL(licHTMLReference));
 		int referenceNumber = -1;
 		for (LicenseJson existing:this.licenses) {
 			if (existing.getReferenceNumber() > referenceNumber) {
@@ -242,6 +242,6 @@ public class LicenseJsonTOC {
 
 	private static String toAbsoluteURL(String relURL) {
 		String retval = relURL.startsWith("./") ? relURL.substring(2) : relURL;
-		return SpdxConstants.LISTED_LICENSE_NAMESPACE_PREFIX + retval;
+		return SpdxConstants.LISTED_LICENSE_URL + retval;
 	}
 }
