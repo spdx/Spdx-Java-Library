@@ -242,13 +242,9 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 	}
 	
 	/**
-	 * @param lineRange the lineRange to set
+	 * @param startLine the start position of lineRange to set, inclusive
+	 * @param endLine   the end position of lineRange to set, exclusive
 	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	/**
-	 * @param lineRange
-	 * @return
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxSnippet setLineRange(int startLine, int endLine) throws InvalidSPDXAnalysisException {

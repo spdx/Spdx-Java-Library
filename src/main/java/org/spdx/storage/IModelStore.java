@@ -132,7 +132,6 @@ public interface IModelStore extends AutoCloseable {
 	public List<String> getDocumentUris();
 
 	/**
-	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
 	 * @param typeFilter Optional parameter to specify the type of objects to be retrieved
 	 * @return Stream of all items store within the document

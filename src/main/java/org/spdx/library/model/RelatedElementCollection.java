@@ -53,11 +53,10 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	private SpdxElement owningElement;
 
 	/**
-	 * @param modelStore model store storing the information
-	 * @param documentUri document URI for the elements
-	 * @param id ID of the SpdxElement containing the relationship
-	 * @param relationshipTypeFilter relationship type to filter the results collection on - if null, do not filter
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param owningElement
+	 * @param relationshipTypeFilter relationship type to filter the results
+	 *                               collection on - if null, do not filter
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	public RelatedElementCollection(SpdxElement owningElement,
 			@Nullable RelationshipType relationshipTypeFilter) throws InvalidSPDXAnalysisException {

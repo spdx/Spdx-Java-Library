@@ -44,7 +44,7 @@ public class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
-	 * @returnProperty names for all properties having a value
+	 * @return Property names for all properties having a value
 	 */
 	public List<String> getPropertyValueNames() {
 		Iterator<Entry<String, Object>> iter = this.properties.entrySet().iterator();

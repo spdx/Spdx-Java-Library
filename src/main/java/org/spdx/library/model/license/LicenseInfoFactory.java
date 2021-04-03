@@ -116,7 +116,6 @@ public class LicenseInfoFactory {
 	/**
 	 * @param licenseID case insensitive
 	 * @return true if the licenseID belongs to an SPDX listed license
-	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static boolean isSpdxListedLicenseId(String licenseID)  {
 		return ListedLicenses.getListedLicenses().isSpdxListedLicenseId(licenseID);

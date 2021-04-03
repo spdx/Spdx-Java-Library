@@ -226,7 +226,6 @@ public class VerificationCodeGenerator {
 	}
 	/**
 	 * @param sourceDirectory
-	 * @param skippedFiles
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
 	 * @return

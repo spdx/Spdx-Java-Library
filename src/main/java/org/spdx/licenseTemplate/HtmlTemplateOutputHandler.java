@@ -167,7 +167,6 @@ public class HtmlTemplateOutputHandler implements ILicenseTemplateOutputHandler 
 	
 	/**
 	 * Format HTML for an optional string
-	 * @param text text for the optional license string
 	 * @param id ID used for the div 
 	 * @return
 	 */

@@ -63,10 +63,6 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	 * Add a snippet to the comparer and performs the comparison to any existing documents
 	 * @param spdxDocument document containing the package
 	 * @param snippet snippet to be added
-	 * @param licenseXlationMap A mapping between the license IDs from licenses in fileA to fileB
-	 * @throws SpdxCompareException 
-	 * @param spdxDocument
-	 * @param snippet
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void addDocumentSnippet(SpdxDocument spdxDocument,
