@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.license.SpdxListedLicense;
@@ -43,6 +45,7 @@ public class LicenseJsonTOC {
 		private String licenseId;
 		private List<String> seeAlso;
 		private boolean isOsiApproved;
+		private Boolean isFsfLibre;
 		/**
 		 * @return the reference
 		 */
@@ -90,6 +93,18 @@ public class LicenseJsonTOC {
 		 */
 		public boolean isOsiApproved() {
 			return isOsiApproved;
+		}
+		/**
+		 * @return fsfLibre
+		 */
+		public @Nullable Boolean getFsfLibre() {
+		    return this.isFsfLibre;
+		}
+		/**
+		 * @param fsfLibre the fsfLibre flag to set
+		 */
+		public void setFsfLibre(@Nullable Boolean fsfLibre) {
+		    this.isFsfLibre = fsfLibre;
 		}
 		/**
 		 * @param reference the reference to set
@@ -209,6 +224,7 @@ public class LicenseJsonTOC {
 		lj.setLicenseId(license.getId());
 		lj.setName(license.getName());
 		lj.setOsiApproved(license.isOsiApproved());
+		lj.setFsfLibre(license.getFsfLibre());
 		lj.setReference(toAbsoluteURL(licHTMLReference));
 		int referenceNumber = -1;
 		for (LicenseJson existing:this.licenses) {
