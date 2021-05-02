@@ -57,6 +57,8 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String EUPL_1_2_TEXT = "TestFiles" + File.separator + "EUPL-1.2.txt";
     static final String EUPL_1_2_TEMPLATE = "TestFiles" + File.separator + "EUPL-1.2.template.txt";
     static final String GD_TEMPLATE = "TestFiles" + File.separator + "GD.template.txt";
+    static final String MULAN_PSL_2_TEMPLATE = "TestFiles" + File.separator + "MulanPSL-2.0.template.txt";
+    static final String MULAN_PSL_2_COMMA_TEXT = "TestFiles" + File.separator + "MulanPSL-2.0-comma.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -648,6 +650,12 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertTrue(LicenseCompareHelper.isLicenseTextEquivalent(t1, t2));
 	}
 	
+	   public void testCommaNormalization() {
+	        String t1 = "This, is, a,test , of commas";
+	        String t2 = "This\uFE10 is\uFF0C a\uFE50test , of commas";
+	        assertTrue(LicenseCompareHelper.isLicenseTextEquivalent(t1, t2));
+	    }
+	
 	public void testIsTextStandardLicenseGpl3() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		SpdxListedLicense gpl3 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
 		String compareText = UnitTestHelper.fileToText(GPL_3_TEXT);
@@ -712,5 +720,16 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionGD() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String templateText = UnitTestHelper.fileToText(GD_TEMPLATE);
         List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, true);
+        assertEquals(1, result.size());
+    }
+    
+    public void testReplaceComma() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(MULAN_PSL_2_COMMA_TEXT);
+        String templateText = UnitTestHelper.fileToText(MULAN_PSL_2_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("MSPL-2.0", "MSPL-2.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        assertFalse(diff.isDifferenceFound());
     }
 }
