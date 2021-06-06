@@ -17,6 +17,7 @@
  */
 package org.spdx.utility.compare;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +51,8 @@ public class SpdxFileDifference extends SpdxItemDifference {
 	private String spdxIdA;
 	private String spdxIdB;
 
-	public SpdxFileDifference(SpdxFile fileA, SpdxFile fileB, 
+	@SuppressWarnings("deprecation")
+    public SpdxFileDifference(SpdxFile fileA, SpdxFile fileB, 
 			boolean concludedLicensesEqual, boolean seenLicensesEqual,
 			List<AnyLicenseInfo> uniqueSeenLicensesA,
 			List<AnyLicenseInfo> uniqueSeenLicensesB,
@@ -72,6 +74,18 @@ public class SpdxFileDifference extends SpdxItemDifference {
 		this.fileTypeB = Arrays.asList(fileB.getFileTypes().toArray(new FileType[fileB.getFileTypes().size()]));	
 		this.contributorsA = Arrays.asList(fileA.getFileContributors().toArray(new String[fileA.getFileContributors().size()]));
 		this.contributorsB = Arrays.asList(fileB.getFileContributors().toArray(new String[fileB.getFileContributors().size()]));
+		this.dependantFileNamesA = new ArrayList<>();
+		for (SpdxFile dependantFile:fileA.getFileDependency()) {
+		    if (dependantFile.getName().isPresent()) {
+		        dependantFileNamesA.add(dependantFile.getName().get());
+		    }
+		}
+        this.dependantFileNamesB = new ArrayList<>();
+        for (SpdxFile dependantFile:fileB.getFileDependency()) {
+            if (dependantFile.getName().isPresent()) {
+                dependantFileNamesB.add(dependantFile.getName().get());
+            }
+        }
 		if (fileA.getNoticeText().isPresent()) {
 			this.noticeA = fileA.getNoticeText().get();
 		} else {

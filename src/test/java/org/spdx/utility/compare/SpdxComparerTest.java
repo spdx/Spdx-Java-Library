@@ -227,9 +227,7 @@ public class SpdxComparerTest extends TestCase {
 	ExternalDocumentRef ref2;
 	ExternalDocumentRef ref3;
 	
-	Collection<ExternalDocumentRef> EXTERNAL_DOC_REFS = new HashSet<>(Arrays.asList(new ExternalDocumentRef[] {
-			ref1, ref2, ref3
-	}));
+	Collection<ExternalDocumentRef> EXTERNAL_DOC_REFS;
 
 
 	/**
@@ -1766,7 +1764,7 @@ public class SpdxComparerTest extends TestCase {
 		assertEquals(2, differences.size());
 		if (differences.get(0).getFileName().equals(file0Name)) {
 			assertFalse(differences.get(0).isCommentsEquals());
-			assertEquals(differences.get(0).getCommentB(),files[0].getComment());
+			assertEquals(differences.get(0).getCommentB(),files[0].getComment().get());
 		} else if (differences.get(0).getFileName().equals(file1Name)) {
 			assertFalse(differences.get(0).isConcludedLicenseEquals());
 			assertEquals(((License)(files[1].getLicenseConcluded())).getLicenseId(), 

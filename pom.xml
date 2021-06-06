@@ -4,7 +4,7 @@
 
     <groupId>org.spdx</groupId>
     <artifactId>java-spdx-library</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
 
     <name>java-spdx-library</name>
@@ -43,6 +43,9 @@
 	</distributionManagement>
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+	  <sonar.organization>spdx</sonar.organization>
+	  <sonar.projectKey>java-spdx-library</sonar.projectKey>
     </properties>
 	<profiles>
 		<profile>

@@ -711,56 +711,17 @@ public abstract class ModelObject {
 				continue;
 			}
 			if (comparePropertyValueNames.contains(propertyName)) {
-				Optional<Object> myValue = this.getObjectPropertyValue(propertyName);
-				Optional<Object> compareValue = compare.getObjectPropertyValue(propertyName);
-				if (!myValue.isPresent()) {
-					if (compareValue.isPresent()) {
-						if (compareValue.get() instanceof ModelCollection) {
-							if (((ModelCollection<?>)compareValue.get()).size() > 0) {
-								return false;
-							}
-						} else {
-							return false;
-						}
-					}
-				} else if (!compareValue.isPresent()) {
-					if (myValue.get() instanceof ModelCollection) {
-						if (((ModelCollection<?>)myValue.get()).size() > 0) {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				} else if (myValue.get() instanceof ModelCollection && compareValue.get() instanceof ModelCollection) {
-					List<?> myList = ((ModelCollection<?>)myValue.get()).toImmutableList();
-					List<?> compareList = ((ModelCollection<?>)compareValue.get()).toImmutableList();
-					if (!listsEquivalent(myList, compareList, ignoreRelatedElements)) {
-						return false;
-					}
-				} else if (myValue.get() instanceof List && compareValue.get() instanceof List) {
-					if (!listsEquivalent((List<?>)myValue.get(), (List<?>)compareValue.get(), ignoreRelatedElements)) {
-						return false;
-					}
-				} else if (myValue.get() instanceof IndividualUriValue && compareValue.get() instanceof IndividualUriValue) {
-					if (!Objects.equals(((IndividualUriValue)myValue.get()).getIndividualURI(), ((IndividualUriValue)compareValue.get()).getIndividualURI())) {
-						return false;
-					}
-					// Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
-				} else if (myValue.get() instanceof ModelObject && compareValue.get() instanceof ModelObject) {
-					if (!((ModelObject)myValue.get()).equivalent(((ModelObject)compareValue.get()), 
-							SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName) ? true : ignoreRelatedElements)) {
-						return false;
-					}
-					
-				} else if (!OptionalObjectsEquivalent(myValue, compareValue)) {	// Present, not a list, and not a TypedValue
-					return false;
+				if (!propertyValuesEquivalent(propertyName, this.getObjectPropertyValue(propertyName), 
+				        compare.getObjectPropertyValue(propertyName), ignoreRelatedElements)) {
+				    return false;
 				}
 				comparePropertyValueNames.remove(propertyName);
 			} else {
 				// No property value
-				if (this.getObjectPropertyValue(propertyName).isPresent()) {
-					if (this.getObjectPropertyValue(propertyName).get() instanceof ModelCollection) {
-						if (((ModelCollection<?>)(this.getObjectPropertyValue(propertyName).get())).size() > 0) {
+			    Optional<Object> propertyValue = this.getObjectPropertyValue(propertyName);
+				if (propertyValue.isPresent()) {
+					if (propertyValue.get() instanceof ModelCollection) {
+						if (((ModelCollection<?>)(propertyValue.get())).size() > 0) {
 							return false;
 						}
 					} else {
@@ -778,6 +739,61 @@ public abstract class ModelObject {
 	}
 
 	/**
+	 * @param propertyName Name of the property
+	 * @param valueA value to compare
+	 * @param valueB value to compare
+	 * @param ignoreRelatedElements if true, do not compare properties relatedSpdxElement - used to prevent infinite recursion
+	 * @return true if the property values are equivalent
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	private boolean propertyValuesEquivalent(String propertyName, Optional<Object> valueA,
+            Optional<Object> valueB, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+	    if (!valueA.isPresent()) {
+            if (valueB.isPresent()) {
+                if (valueB.get() instanceof ModelCollection) {
+                    if (((ModelCollection<?>)valueB.get()).size() > 0) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } else if (!valueB.isPresent()) {
+            if (valueA.get() instanceof ModelCollection) {
+                if (((ModelCollection<?>)valueA.get()).size() > 0) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else if (valueA.get() instanceof ModelCollection && valueB.get() instanceof ModelCollection) {
+            List<?> myList = ((ModelCollection<?>)valueA.get()).toImmutableList();
+            List<?> compareList = ((ModelCollection<?>)valueB.get()).toImmutableList();
+            if (!listsEquivalent(myList, compareList, ignoreRelatedElements)) {
+                return false;
+            }
+        } else if (valueA.get() instanceof List && valueB.get() instanceof List) {
+            if (!listsEquivalent((List<?>)valueA.get(), (List<?>)valueB.get(), ignoreRelatedElements)) {
+                return false;
+            }
+        } else if (valueA.get() instanceof IndividualUriValue && valueB.get() instanceof IndividualUriValue) {
+            if (!Objects.equals(((IndividualUriValue)valueA.get()).getIndividualURI(), ((IndividualUriValue)valueB.get()).getIndividualURI())) {
+                return false;
+            }
+            // Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
+        } else if (valueA.get() instanceof ModelObject && valueB.get() instanceof ModelObject) {
+            if (!((ModelObject)valueA.get()).equivalent(((ModelObject)valueB.get()), 
+                    SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName) ? true : ignoreRelatedElements)) {
+                return false;
+            }
+            
+        } else if (!OptionalObjectsEquivalent(valueA, valueB)) { // Present, not a list, and not a TypedValue
+            return false;
+        }
+	    return true;
+    }
+
+    /**
 	 * Compares 2 simple optional objects considering NONE and NOASSERTION values which are equivalent to their strings
 	 * @param valueA
 	 * @param valueB

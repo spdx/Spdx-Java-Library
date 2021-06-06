@@ -229,11 +229,13 @@ public class LicenseCompareHelper {
 	            logger.warn("IO error reading strings?!?");
 	            return s;
 	        } finally {
-	            try {
-	                reader.close();
-	            } catch (IOException e) {
-	                logger.warn("IO error closing a string reader?!?");
-	            }
+                if (Objects.nonNull(reader)) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        logger.warn("IO error closing a string reader?!?");
+                    }
+                }
 	        }
 	}
 	/**

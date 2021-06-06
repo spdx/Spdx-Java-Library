@@ -460,7 +460,7 @@ public class InMemSpdxStoreTest extends TestCase {
 						waiter.fail("State never changed");
 					}
 					logger.info("Thread2 awoke from thread 1");
-					assertEquals("step3", getTestState());
+					waiter.assertEquals("step3", getTestState());
 					IModelStoreLock transactionLock2 = store.enterCriticalSection(TEST_DOCUMENT_URI1, false);	// this should block waiting for thread1 transaction to complete
 					waiter.assertEquals(value1, store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 					store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], value2);

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -693,7 +694,9 @@ public class LicenseCompareHelperTest extends TestCase {
 			result = LicenseCompareHelper.isTextStandardLicense(bsd, sb.toString());
 			assertFalse(result.isDifferenceFound());
 		} finally {
-			reader.close();
+		    if (Objects.nonNull(reader)) {
+		        reader.close();
+		    }
 		}
 	}
 	

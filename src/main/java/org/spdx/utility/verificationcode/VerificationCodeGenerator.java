@@ -79,12 +79,12 @@ public class VerificationCodeGenerator {
 		}
 		List<String> fileChecksums = new ArrayList<>();
 		for (int i = 0; i < spdxFiles.length; i++) {
-			if (spdxFiles[i] != null && spdxFiles[i].getName() != null &&
-					!skippedFilePathSet.contains(spdxFiles[i].getName())) {
+			if (spdxFiles[i] != null && spdxFiles[i].getName().isPresent() &&
+					!skippedFilePathSet.contains(spdxFiles[i].getName().get())) {
 				fileChecksums.add(spdxFiles[i].getSha1());
 			}
 		}
-		return generatePackageVerificationCode(fileChecksums, skippedFilePaths, modelStore, documentUri);
+		return generatePackageVerificationCode(fileChecksums, skippedFilePathSet.toArray(new String[skippedFilePathSet.size()]), modelStore, documentUri);
 	}
 
 

@@ -148,7 +148,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 		checkInProgress();
 		if (this.name == null && spdxPackage.getName().isPresent()) {
 			this.name = spdxPackage.getName().get();
-		} else if (!this.name.equals(spdxPackage.getName().get())) {
+		} else if (!Objects.equals(this.name,spdxPackage.getName().get())) {
 			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxPackage.getName()+", expecting "+this.name));
 		}

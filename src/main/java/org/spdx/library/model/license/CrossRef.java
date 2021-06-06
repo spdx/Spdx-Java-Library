@@ -315,7 +315,7 @@ public class CrossRef extends ModelObject {
 		} catch (InvalidSPDXAnalysisException e) {
 			timestamp = "N/A";
 		}
-		String crossRefDetails = String.format("{%s: %s,%s: %b,%s: %b,%s: %b,%s: %s,%s: %s}",
+		String crossRefDetails = String.format("{%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s}",
 				SpdxConstants.PROP_CROSS_REF_URL, url,
 				SpdxConstants.PROP_CROSS_REF_IS_VALID, isValid,
 				SpdxConstants.PROP_CROSS_REF_IS_LIVE, isLive,
@@ -361,6 +361,7 @@ public class CrossRef extends ModelObject {
 			this.documentUri = documentUri;
 			this.id = id;
 			this.url = url;
+			this.copyManager = copyManager;
 		}
 		
 		public CrossRefBuilder setMatch(@Nullable String match) {
