@@ -365,6 +365,9 @@ public class SpdxConstants {
 	private static final String BAZAAR_PATTERN = "(bzr\\+lp:[a-zA-Z0-9\\.]+)";
 	public static final Pattern DOWNLOAD_LOCATION_PATTERN = Pattern.compile("^(NONE|NOASSERTION|(("+SUPPORTED_DOWNLOAD_REPOS+"\\+)?"+URL_PATTERN+")|"+GIT_PATTERN+"|"+BAZAAR_PATTERN+")$", Pattern.CASE_INSENSITIVE);
 
+	// License list version Format
+
+    public static final Pattern LICENSE_LIST_VERSION_PATTERN = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+");
 	// Standard value strings
 	public static String NONE_VALUE = "NONE";
 	public static String NOASSERTION_VALUE = "NOASSERTION";

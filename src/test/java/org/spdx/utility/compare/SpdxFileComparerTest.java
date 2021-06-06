@@ -83,8 +83,11 @@ public class SpdxFileComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testSpdxFileComparer() throws InvalidLicenseStringException, SpdxCompareException {
-		@SuppressWarnings("unused")
-		SpdxFileComparer fc = new SpdxFileComparer(LICENSE_XLATION);
+		try {
+            new SpdxFileComparer(LICENSE_XLATION);
+		} catch(Exception ex) {
+		    fail("Exception creating new file comparer "+ex.getMessage());
+		}
 	}
 
 	/**

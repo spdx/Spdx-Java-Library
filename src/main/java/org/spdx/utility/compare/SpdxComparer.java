@@ -145,7 +145,7 @@ public class SpdxComparer {
 	private Map<String, SpdxSnippetComparer>  snippetComparers = new HashMap<>();
 	
 	public SpdxComparer() {
-		
+		// Default empty constructor
 	}
 	
 	/**
@@ -521,8 +521,10 @@ public class SpdxComparer {
 		int bIndex = 0;
 		while (aIndex < filesA.length && bIndex < filesB.length) {
 			int compare = 0;
-			if (filesA[aIndex].getName().isPresent() && filesB[bIndex].getName().isPresent()) {
-				compare = filesA[aIndex].getName().get().compareTo(filesB[bIndex].getName().get());
+			Optional<String> nameA = filesA[aIndex].getName();
+			Optional<String> nameB = filesB[bIndex].getName();
+			if (nameA.isPresent() && nameB.isPresent()) {
+				compare = nameA.get().compareTo(nameB.get());
 			}
 			if (compare == 0) {
 				SpdxFileComparer fileComparer = new SpdxFileComparer(licenseIdXlationMap);
@@ -768,17 +770,21 @@ public class SpdxComparer {
 					logger.warn("Missing package name for package comparer.  Skipping unnamed package");
 					continue;
 				}
-				if (addedPackageNames.contains(pkg.getName().get())) {
-					logger.warn("Duplicate package names: "+pkg.getName().get()+".  Only comparing the first instance");
-					continue;
+				Optional<String> pkgName = pkg.getName();
+				if (pkgName.isPresent()) {
+				    if (addedPackageNames.contains(pkgName.get())) {
+	                    logger.warn("Duplicate package names: "+pkgName.get()+".  Only comparing the first instance");
+	                    continue;
+	                }
+	                SpdxPackageComparer mpc = this.packageComparers.get(pkgName.get());
+	                if (mpc == null) {
+	                    mpc = new SpdxPackageComparer(extractedLicenseIdMap);
+	                    this.packageComparers.put(pkgName.get(), mpc);
+	                }
+	                mpc.addDocumentPackage(spdxDocument, pkg);
+	                addedPackageNames.add(pkgName.get()); 
 				}
-				SpdxPackageComparer mpc = this.packageComparers.get(pkg.getName().get());
-				if (mpc == null) {
-					mpc = new SpdxPackageComparer(extractedLicenseIdMap);
-					this.packageComparers.put(pkg.getName().get(), mpc);
-				}
-				mpc.addDocumentPackage(spdxDocument, pkg);
-				addedPackageNames.add(pkg.getName().get());
+				
 			}
 		} catch (InvalidSPDXAnalysisException ex) {
 			throw new SpdxCompareException("Error getting package name", ex);

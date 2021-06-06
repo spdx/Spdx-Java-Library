@@ -205,12 +205,6 @@ public class SpdxFileComparer extends SpdxItemComparer {
 			throw(new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed"));
 		}
 	}
-	
-	private void checkCompareMade() throws SpdxCompareException {
-		if (this.documentItem.size() < 1) {
-			throw(new SpdxCompareException("Trying to obgain results of a file compare before a file compare has been performed"));
-		}	
-	}
 
 	/**
 	 * @return the contributorsEquals

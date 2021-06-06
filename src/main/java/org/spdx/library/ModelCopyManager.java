@@ -58,7 +58,7 @@ public class ModelCopyManager {
 	 * Create a ModelCopyManager with default options
 	 */
 	public ModelCopyManager() {
-		
+		// Required empty constructor
 	}
 	
 	/**

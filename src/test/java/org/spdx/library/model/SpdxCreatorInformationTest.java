@@ -38,12 +38,17 @@ public class SpdxCreatorInformationTest extends TestCase {
 		assertEquals(1, ci.verify().size());
 		ci.getCreators().add("Person: me");
 		assertEquals(0, ci.verify().size());
+		ci.setLicenseListVersion("3.3");
+		assertEquals(0, ci.verify().size());
 		// bad creator
 		ci.getCreators().add("bad");
 		assertEquals(1, ci.verify().size());
 		// bad date
 		ci.setCreated("bad date");
 		assertEquals(2, ci.verify().size());
+		// Bad version
+		ci.setLicenseListVersion("bad");
+		assertEquals(3, ci.verify().size());
 	}
 
 	public void testGetSetCreators() throws InvalidSPDXAnalysisException {

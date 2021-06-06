@@ -620,14 +620,14 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(result.isDifferenceFound());
 	}
 	
-	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
-		// This test is too slow!
+//	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
+// This test is too slow!
 //		String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
 //		String[] result = LicenseCompareHelper.matchingStandardLicenseIds(compareText);
 //		assertEquals(2,result.length);
 //		assertTrue(result[0].startsWith("GPL-2"));
 //		assertTrue(result[1].startsWith("GPL-2"));
-	}
+//	}
 	
 	public void testFirstLicenseToken() {
 		assertEquals("first", LicenseCompareHelper.getFirstLicenseToken("   first,token that is needed\nnext"));

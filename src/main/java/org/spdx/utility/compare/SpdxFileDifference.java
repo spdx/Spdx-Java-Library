@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
@@ -76,23 +77,27 @@ public class SpdxFileDifference extends SpdxItemDifference {
 		this.contributorsB = Arrays.asList(fileB.getFileContributors().toArray(new String[fileB.getFileContributors().size()]));
 		this.dependantFileNamesA = new ArrayList<>();
 		for (SpdxFile dependantFile:fileA.getFileDependency()) {
-		    if (dependantFile.getName().isPresent()) {
-		        dependantFileNamesA.add(dependantFile.getName().get());
+		    Optional<String> dependantFileName = dependantFile.getName();
+		    if (dependantFileName.isPresent()) {
+		        dependantFileNamesA.add(dependantFileName.get());
 		    }
 		}
         this.dependantFileNamesB = new ArrayList<>();
         for (SpdxFile dependantFile:fileB.getFileDependency()) {
-            if (dependantFile.getName().isPresent()) {
-                dependantFileNamesB.add(dependantFile.getName().get());
+            Optional<String> dependantFileName = dependantFile.getName();
+            if (dependantFileName.isPresent()) {
+                dependantFileNamesB.add(dependantFileName.get());
             }
         }
-		if (fileA.getNoticeText().isPresent()) {
-			this.noticeA = fileA.getNoticeText().get();
+        Optional<String> noticeTextA =fileA.getNoticeText();
+		if (noticeTextA.isPresent()) {
+			this.noticeA = noticeTextA.get();
 		} else {
 			this.noticeA = "";
 		}
-		if (fileB.getNoticeText().isPresent()) {
-			this.noticeB = fileB.getNoticeText().get();
+		Optional<String> noticeTextB =fileB.getNoticeText();
+		if (noticeTextB.isPresent()) {
+			this.noticeB = noticeTextB.get();
 		} else {
 			this.noticeB = "";
 		}

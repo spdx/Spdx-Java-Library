@@ -22,12 +22,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.SpdxDocument;
 import org.spdx.library.model.SpdxFile;
 import org.spdx.library.model.SpdxItem;
 import org.spdx.library.model.SpdxSnippet;
+import org.spdx.library.model.pointer.StartEndPointer;
 
 /**
  * Compares two SPDX snippets.  The <code>compare(snippetA, snippetB)</code> method will perform the comparison and
@@ -92,9 +94,11 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 				throw(new SpdxCompareException("SPDX error getting byte range: "+e.getMessage()));
 			}
 			try {
-				if (snippet2.getLineRange().isPresent()) {
-					if (snippet.getLineRange().isPresent()) {
-						if (!snippet2.getLineRange().get().equivalent(snippet.getLineRange().get())) {
+			    Optional<StartEndPointer> lineRange = snippet.getLineRange();
+			    Optional<StartEndPointer> lineRange2 = snippet2.getLineRange();
+				if (lineRange2.isPresent()) {
+					if (lineRange.isPresent()) {
+						if (!lineRange2.get().equivalent(lineRange.get())) {
 							this.lineRangeEquals = false;
 							this.differenceFound = true;
 						}
@@ -102,7 +106,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 						this.lineRangeEquals = false;
 						this.differenceFound = true;
 					}
-				} else if (snippet.getLineRange().isPresent()) {
+				} else if (lineRange.isPresent()) {
 					this.lineRangeEquals = false;
 					this.differenceFound = true;
 				}
