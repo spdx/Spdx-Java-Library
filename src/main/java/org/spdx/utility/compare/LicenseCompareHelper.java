@@ -130,10 +130,10 @@ public class LicenseCompareHelper {
 	static final Pattern COPYRIGHT_OWNERS_PATTERN = Pattern.compile("copyright owners", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_OWNER_PATTERN = Pattern.compile("copyright owner", Pattern.CASE_INSENSITIVE);
 	static final Pattern PER_CENT_PATTERN_LF = Pattern.compile("per\\s*\\n+\\s*cent", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDERS_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*holders", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDER_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*holder", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNERS_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*owners", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s*\\n+\\s*owner", Pattern.CASE_INSENSITIVE);
+	static final Pattern COPYRIGHT_HOLDERS_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}holders", Pattern.CASE_INSENSITIVE);
+	static final Pattern COPYRIGHT_HOLDER_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}holder", Pattern.CASE_INSENSITIVE);
+	static final Pattern COPYRIGHT_OWNERS_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owners", Pattern.CASE_INSENSITIVE);
+	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owner", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)";
 	
