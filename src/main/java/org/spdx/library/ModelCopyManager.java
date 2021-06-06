@@ -153,48 +153,86 @@ public class ModelCopyManager {
 		List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
 		for (String propName:propertyNames) {
 			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-				Iterator<Object> fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
-				while (fromListIter.hasNext()) {
-					Object listItem = fromListIter.next();
-					Object toStoreItem;
-					if (listItem instanceof IndividualUriValue) {
-						toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
-					} else if (listItem instanceof TypedValue) {
-						TypedValue listItemTv = (TypedValue)listItem;
-						if (toStore.equals(fromStore) && toDocumentUri.equals(fromDocumentUri)) {
-							toStoreItem = listItemTv;
-						} else {
-							toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-											listItemTv.getId(), listItemTv.getType());
-						}
-					} else {
-						toStoreItem = listItem;
-					}
-					toStore.addValueToCollection(toDocumentUri, toId, propName, toStoreItem);
-				}
+			    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName);
 			} else {
-				Optional<Object> result =  fromStore.getValue(fromDocumentUri, fromId, propName);
-				if (result.isPresent()) {
-					if (result.get() instanceof IndividualUriValue) {
-						toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
-					} else if (result.get() instanceof TypedValue) {
-						TypedValue tv = (TypedValue)result.get();
-						if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri)) {
-							toStore.setValue(toDocumentUri, toId, propName, tv);
-						} else {
-							toStore.setValue(toDocumentUri, toId, propName, 
-									copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-											tv.getId(), tv.getType()));
-						}
-					} else {
-						toStore.setValue(toDocumentUri, toId, propName, result.get());
-					}
-				}
+			    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName);
 			}
 		}
 	}
 	
 	/**
+	 * Copies an individual property value (non-collection property value)
+     * @param toStore Model Store to copy to
+     * @param toId Id to use in the copy
+     * @param toDocumentUri Target document URI
+     * @param fromStore Model Store containing the source item
+     * @param fromDocumentUri Document URI for the source item
+     * @param fromId ID source ID
+     * @param propName Name of the property
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	private void copyIndividualProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
+            String fromDocumentUri, String fromId, String propName) throws InvalidSPDXAnalysisException {
+       if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
+            throw new InvalidSPDXAnalysisException("Property "+propName+" is a collection type");
+        }
+       Optional<Object> result =  fromStore.getValue(fromDocumentUri, fromId, propName);
+        if (result.isPresent()) {
+            if (result.get() instanceof IndividualUriValue) {
+                toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
+            } else if (result.get() instanceof TypedValue) {
+                TypedValue tv = (TypedValue)result.get();
+                if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri)) {
+                    toStore.setValue(toDocumentUri, toId, propName, tv);
+                } else {
+                    toStore.setValue(toDocumentUri, toId, propName, 
+                            copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
+                                    tv.getId(), tv.getType()));
+                }
+            } else {
+                toStore.setValue(toDocumentUri, toId, propName, result.get());
+            }
+        }
+    }
+
+    /**
+	 * Copies a property which is is a collection
+     * @param toStore Model Store to copy to
+     * @param toId Id to use in the copy
+     * @param toDocumentUri Target document URI
+     * @param fromStore Model Store containing the source item
+     * @param fromDocumentUri Document URI for the source item
+     * @param fromId ID source ID
+	 * @param propName Name of the property
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	private void copyCollectionProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
+            String fromDocumentUri, String fromId, String propName) throws InvalidSPDXAnalysisException {
+	    if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
+	        throw new InvalidSPDXAnalysisException("Property "+propName+" is not a collection type");
+	    }
+	    Iterator<Object> fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
+        while (fromListIter.hasNext()) {
+            Object listItem = fromListIter.next();
+            Object toStoreItem;
+            if (listItem instanceof IndividualUriValue) {
+                toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
+            } else if (listItem instanceof TypedValue) {
+                TypedValue listItemTv = (TypedValue)listItem;
+                if (toStore.equals(fromStore) && toDocumentUri.equals(fromDocumentUri)) {
+                    toStoreItem = listItemTv;
+                } else {
+                    toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
+                                    listItemTv.getId(), listItemTv.getType());
+                }
+            } else {
+                toStoreItem = listItem;
+            }
+            toStore.addValueToCollection(toDocumentUri, toId, propName, toStoreItem);
+        }
+    }
+
+    /**
 	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
 	 * @param toStore Model Store to copy to
 	 * @param toDocumentUri Target document URI
