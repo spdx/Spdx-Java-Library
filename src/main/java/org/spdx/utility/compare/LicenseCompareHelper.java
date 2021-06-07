@@ -59,7 +59,7 @@ public class LicenseCompareHelper {
 	
 	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
 	
-	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/]+)((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|$)+)";
+	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/]{1,100})((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|$){1,100})";
 	protected static final Pattern TOKEN_SPLIT_PATTERN = Pattern.compile(TOKEN_SPLIT_REGEX);
 
 	protected static final Set<String> PUNCTUATION = Collections.unmodifiableSet(new HashSet<String>(
