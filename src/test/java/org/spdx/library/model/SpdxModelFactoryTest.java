@@ -3,6 +3,7 @@ package org.spdx.library.model;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -73,23 +74,24 @@ public class SpdxModelFactoryTest extends TestCase {
 				SpdxConstants.CLASS_SPDX_FILE, copyManager);
 		ModelObject file2 = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID2, 
 				SpdxConstants.CLASS_SPDX_FILE, copyManager);
-		for (SpdxElement element:(List<SpdxElement>)(SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class).collect(Collectors.toList()))) {
-			
-			assertTrue(element instanceof SpdxFile);
-			SpdxFile result = (SpdxFile)element;
-			if (result.getId().equals(ID1)) {
-				try {
-					assertTrue(file1.equivalent(result));
-				} catch (InvalidSPDXAnalysisException e) {
-					fail("Error: "+e.getMessage());
-				}
-			} else {
-				try {
-					assertTrue(file2.equivalent(result));
-				} catch (InvalidSPDXAnalysisException e) {
-					fail("Error: "+e.getMessage());
-				}
-			}
+		try (Stream<SpdxElement> elementStream = (Stream<SpdxElement>)SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class)) {
+		    elementStream.forEach(element -> {
+		        assertTrue(element instanceof SpdxFile);
+	            SpdxFile result = (SpdxFile)element;
+	            if (result.getId().equals(ID1)) {
+	                try {
+	                    assertTrue(file1.equivalent(result));
+	                } catch (InvalidSPDXAnalysisException e) {
+	                    fail("Error: "+e.getMessage());
+	                }
+	            } else {
+	                try {
+	                    assertTrue(file2.equivalent(result));
+	                } catch (InvalidSPDXAnalysisException e) {
+	                    fail("Error: "+e.getMessage());
+	                }
+	            }
+		    });
 		}
 	}
 

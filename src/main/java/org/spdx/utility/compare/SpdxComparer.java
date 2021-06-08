@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,15 +209,21 @@ public class SpdxComparer {
 		// N x N comparison of all snippets
 		for (int i = 0; i < spdxDocs.size(); i++) {
 			List<SpdxSnippet> snippetsA;
+			Stream<SpdxSnippet> snippetStreamA = null;
 			try {
-				snippetsA = (List<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
-						SpdxSnippet.class).collect(Collectors.toList());
+			    snippetStreamA = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
+                        SpdxSnippet.class);
+				snippetsA = snippetStreamA.collect(Collectors.toList());
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
 					throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(i).getName(), e));
 				} catch (InvalidSPDXAnalysisException e1) {
 					throw(new SpdxCompareException("Error collecting snippets from SPDX document ", e));
 				}
+			} finally {
+			    if (Objects.nonNull(snippetStreamA)) {
+			        snippetStreamA.close();
+			    }
 			}
 			// note - the snippet arrays MUST be sorted for the comparator methods to work
 			Collections.sort(snippetsA);
@@ -230,15 +237,21 @@ public class SpdxComparer {
 					continue;
 				}
 				List<SpdxSnippet> snippetsB;
+				Stream<SpdxSnippet> snippetStreamB = null;
 				try {
-					snippetsB = (List<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
-							SpdxSnippet.class).collect(Collectors.toList());
+				    snippetStreamB = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
+                            SpdxSnippet.class);
+					snippetsB = snippetStreamB.collect(Collectors.toList());
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
 						throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(j).getName(), e));
 					} catch (InvalidSPDXAnalysisException e1) {
 						throw(new SpdxCompareException("Error collecting snippets from SPDX document ", e));
 					}
+				} finally {
+				    if (Objects.nonNull(snippetStreamB)) {
+				        snippetStreamB.close();
+				    }
 				}
 				//Note that the files arrays must be sorted for the find methods to work
 				Collections.sort(snippetsB);
@@ -430,8 +443,10 @@ public class SpdxComparer {
 		// N x N comparison of all files
 		for (int i = 0; i < spdxDocs.size(); i++) {
 			List<SpdxFile> filesListA;
-			filesListA = (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
-					null, SpdxFile.class).collect(Collectors.toList());
+			Stream<SpdxFile> fileStreamA = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
+                    null, SpdxFile.class);
+			filesListA = fileStreamA.collect(Collectors.toList());
+			fileStreamA.close();
 			// note - the file arrays MUST be sorted for the comparator methods to work
 			Collections.sort(filesListA);
 			SpdxFile[] filesA = filesListA.toArray(new SpdxFile[filesListA.size()]);
@@ -448,10 +463,11 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;
 				}
-				List<SpdxFile> filesListB;
-				filesListB = (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
-						null, SpdxFile.class).collect(Collectors.toList());
-				//Note that the files arrays must be sorted for the find methods to work
+				 Stream<SpdxFile> fileStreamB = (Stream<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
+	                        null, SpdxFile.class);
+				 List<SpdxFile> filesListB = (List<SpdxFile>)fileStreamB.collect(Collectors.toList());
+				 fileStreamB.close();
+				 //Note that the files arrays must be sorted for the find methods to work
 				Collections.sort(filesListB);
 				SpdxFile[] filesB = filesListB.toArray(new SpdxFile[filesListB.size()]);
 				List<SpdxFile> uniqueAB = findUniqueFiles(filesA, filesB);
@@ -485,9 +501,12 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<SpdxPackage> collectAllPackages(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		return (List<SpdxPackage>)SpdxModelFactory.getElements(
-				spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-				null, SpdxPackage.class).collect(Collectors.toList());
+		Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>) SpdxModelFactory.getElements(
+                spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
+                null, SpdxPackage.class);	
+	    List<SpdxPackage> retval = packageStream.collect(Collectors.toList());
+	    packageStream.close();
+	    return retval;
 	}
 
 	/**
@@ -499,8 +518,11 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		return (List<SpdxFile>)SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-				null, SpdxFile.class).collect(Collectors.toList());
+		Stream<SpdxFile> fileElementStream = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
+                null, SpdxFile.class);
+		List<SpdxFile> retval = fileElementStream.collect(Collectors.toList());
+		fileElementStream.close();
+		return retval;
 	}
 
 	/**

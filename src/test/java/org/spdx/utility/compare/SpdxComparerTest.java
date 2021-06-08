@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -792,17 +793,27 @@ public class SpdxComparerTest extends TestCase {
 		doc.setExtractedLicenseInfos(newExtractedLicenseInfos);
 		// fix up all references to the old licenses
 		// files
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class).collect(Collectors.toList())) {
-			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		};
+		try(@SuppressWarnings("unchecked")
+        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class)) {
+		    fileStream.forEach(file -> {
+		        fixExtractedLicenseId(file, oldToNewLicIds);
+		    });
+		}
 		// packages
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class).collect(Collectors.toList())) {
-			fixExtractedLicenseIdPackage((SpdxPackage)element, oldToNewLicIds);
-		}
+	      try(@SuppressWarnings("unchecked")
+	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class)) {
+	          packageStream.forEach(pkg -> {
+	               fixExtractedLicenseIdPackage(pkg, oldToNewLicIds);
+	            });
+	        }
+
 		// snippets
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class).collect(Collectors.toList())) {
-			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		}
+        try(@SuppressWarnings("unchecked")
+          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class)) {
+            snippetStream.forEach(snippet -> {
+                fixExtractedLicenseId(snippet, oldToNewLicIds);
+            });
+        }
 		// NOTE - we're ignoring document data license
 	}
 
