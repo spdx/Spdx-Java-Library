@@ -1454,5 +1454,26 @@ public class SpdxPackageTest extends TestCase {
 		assertEquals(PKG_NAME2, pkg2.getName().get());
 		assertEquals(PKG_NAME2, pkg.getName().get());
 	}
+	
+	public void testDownloadPattern() {
+	    assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+	            "git://git.myproject.org/MyProject.git@master").matches());
+       assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+               "git://git.myproject.org/MyOrg/MyProject.git@master").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyProject").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyOrg/MyProject").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyProject.git").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyOrg/MyProject.git").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyProject@main").matches());
+        assertTrue(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "git+git@git.myproject.org:MyProject@6338c7a2525e055a05bae1580e4dd189c2feff7b").matches());
+        assertFalse(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
+                "something@git.myproject.org:MyProject@6338c7a2525e055a05bae1580e4dd189c2feff7b").matches());
+	}
 
 }
