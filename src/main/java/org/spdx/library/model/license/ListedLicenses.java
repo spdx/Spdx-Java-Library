@@ -20,6 +20,7 @@ package org.spdx.library.model.license;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -49,7 +50,7 @@ public class ListedLicenses {
 	Properties licenseProperties;
     boolean onlyUseLocalLicenses;
 	private IListedLicenseStore licenseModelStore;
-	private static volatile ListedLicenses listedLicenses = null;
+	private static ListedLicenses listedLicenses = null;
 	/**
 	 * Lock for any modifications to the underlying licenseModelStore
 	 */
@@ -126,17 +127,26 @@ public class ListedLicenses {
 
 
 	public static ListedLicenses getListedLicenses() {
-        if (listedLicenses == null) {
-            listedLicenseModificationLock.writeLock().lock();
-            try {
-                if (listedLicenses == null) {
-                    listedLicenses = new ListedLicenses();
-                }
-            } finally {
-                listedLicenseModificationLock.writeLock().unlock();
-            }
-        }
-        return listedLicenses;
+	    
+	    ListedLicenses retval = null;
+	    listedLicenseModificationLock.readLock().lock();
+	    try {
+	        retval = listedLicenses;
+	    } finally {
+	        listedLicenseModificationLock.readLock().unlock();
+	    }
+	    if (Objects.isNull(retval)) {
+	        listedLicenseModificationLock.writeLock().lock();
+	        try {
+	            if (listedLicenses == null) {
+	                listedLicenses = new ListedLicenses();
+	            }
+	            retval = listedLicenses;
+	        } finally {
+	            listedLicenseModificationLock.writeLock().unlock();
+	        }
+	    }
+        return retval;
     }
 	
 	/**

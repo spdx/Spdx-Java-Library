@@ -177,8 +177,9 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 				if (rel instanceof Relationship) {
 					Relationship relationship = (Relationship)rel;
 					try {
-						if (relationship.getRelatedSpdxElement().isPresent() && 
-								relationship.getRelatedSpdxElement().get().equals(o) &&
+					    Optional<SpdxElement> relatedElement = relationship.getRelatedSpdxElement();
+						if (relatedElement.isPresent() && 
+						        relatedElement.get().equals(o) &&
 								relationship.getRelationshipType().equals(relationshipTypeFilter)) {
 							return relationshipCollection.remove(relationship);
 						}

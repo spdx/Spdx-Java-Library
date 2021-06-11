@@ -18,6 +18,7 @@
 package org.spdx.utility.compare;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
@@ -63,18 +64,21 @@ public class SpdxItemDifference {
 			List<Annotation> uniqueAnnotationsA,
 			List<Annotation> uniqueAnnotationsB
 			) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		if (itemA.getName().isPresent()) {
-			this.name = itemA.getName().get();
+	    Optional<String> oNameA = itemA.getName();
+		if (oNameA.isPresent()) {
+			this.name = oNameA.get();
 		} else {
 			this.name = "";
 		}
-		if (itemA.getComment().isPresent()) {
-			this.commentA = itemA.getComment().get();
+		Optional<String> oCommentA = itemA.getComment();
+		if (oCommentA.isPresent()) {
+			this.commentA = oCommentA.get();
 		} else {
 			this.commentA = "";
 		}
-		if (itemB.getComment().isPresent()) {
-			this.commentB = itemB.getComment().get();
+		Optional<String> oCommentB = itemB.getComment();
+		if (oCommentB.isPresent()) {
+			this.commentB = oCommentB.get();
 		} else {
 			this.commentB = "";
 		}
@@ -88,14 +92,16 @@ public class SpdxItemDifference {
 		this.copyrightB = itemB.getCopyrightText();
 		if (this.copyrightB == null) {
 			this.copyrightB = "";
-		}		
-		if ( itemA.getLicenseComments().isPresent()) {
-			this.licenseCommentsA = itemA.getLicenseComments().get();
+		}
+		Optional<String> oLicenseCommentsA = itemA.getLicenseComments();
+		if ( oLicenseCommentsA.isPresent()) {
+			this.licenseCommentsA = oLicenseCommentsA.get();
 		} else {
 			this.licenseCommentsA = "";
 		}
-		if ( itemB.getLicenseComments().isPresent()) {
-			this.licenseCommentsB = itemB.getLicenseComments().get();
+		Optional<String> oLicenseCommentsB = itemB.getLicenseComments();
+		if (oLicenseCommentsB.isPresent()) {
+			this.licenseCommentsB = oLicenseCommentsB.get();
 		} else {
 			this.licenseCommentsB = "";
 		}

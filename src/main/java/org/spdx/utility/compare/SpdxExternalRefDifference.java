@@ -18,6 +18,7 @@
 package org.spdx.utility.compare;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.ExternalRef;
@@ -40,13 +41,15 @@ public class SpdxExternalRefDifference {
 	private ReferenceType referenceType;
 	
 	SpdxExternalRefDifference(ExternalRef externalRefA, ExternalRef externalRefB) throws InvalidSPDXAnalysisException {
-		if (externalRefA.getComment().isPresent()) {
-			this.commentA = externalRefA.getComment().get();
+		Optional<String> oCommentA = externalRefA.getComment();
+	    if (oCommentA.isPresent()) {
+			this.commentA = oCommentA.get();
 		} else {
 			this.commentA = "";
 		}
-		if (externalRefB.getComment().isPresent()) {
-			this.commentB = externalRefB.getComment().get();
+	    Optional<String> oCommentB = externalRefB.getComment();
+		if (oCommentB.isPresent()) {
+			this.commentB = oCommentB.get();
 		} else {
 			this.commentB = "";
 		}

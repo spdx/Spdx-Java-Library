@@ -182,12 +182,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					} catch (IOException e) {
 						logger.warn("Unable to close JSON TOC reader");
 					}
-            	} else if (tocStream != null) {
-            		try {
-						tocStream.close();
-					} catch (IOException e) {
-						logger.warn("Unable to close JSON TOC input stream");
-					}
             	}
             }
         } finally {
@@ -643,7 +637,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
-			} else if (Objects.nonNull(crossRef)) {
+			} else {
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
@@ -937,7 +931,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
-			} else if (Objects.nonNull(crossRef)) {
+			} else {
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
@@ -976,7 +970,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				isLicenseId = true;
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
 				isExceptionId = true;
-			} else if (Objects.nonNull(crossRef)) {
+			} else {
 				crossRef = crossRefs.get(id);
 			}
 		} finally {

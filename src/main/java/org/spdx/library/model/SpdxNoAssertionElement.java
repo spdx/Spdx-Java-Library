@@ -74,7 +74,7 @@ public class SpdxNoAssertionElement extends SpdxConstantElement {
 	
 	@Override
 	public Optional<String> getName() throws InvalidSPDXAnalysisException {
-		return Optional.of("NOASSERTION");
+		return Optional.of(NOASSERTION_ELEMENT_ID);
 	}
 	
 	@Override

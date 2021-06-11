@@ -177,8 +177,11 @@ public class LicenseExpressionParser {
 					}
 					token = tokens[tokenIndex++];
 					LicenseException licenseException = null;
+					Optional<String> exceptionId = Optional.empty();
 					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
-						Optional<String> exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
+						exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
+					}
+					if (exceptionId.isPresent()) {
 						licenseException = LicenseInfoFactory.getListedExceptionById(exceptionId.get());
 					} else {
 						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, 
@@ -260,9 +263,13 @@ public class LicenseExpressionParser {
 		if (token.contains(":")) {
 			// External License Ref
 			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager, true);
-		} else if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	
+		} 
+		Optional<String> licenseId = Optional.empty();
+		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	
 			// listed license
-			Optional<String> licenseId = LicenseInfoFactory.listedLicenseIdCaseSensitive(token);
+			licenseId = LicenseInfoFactory.listedLicenseIdCaseSensitive(token);
+		}
+		if (licenseId.isPresent()) {
 			if (!store.exists(documentUri, licenseId.get())) {
 				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId.get());
 				if (Objects.nonNull(copyManager)) {

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -619,14 +620,14 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(result.isDifferenceFound());
 	}
 	
-	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
-		// This test is too slow!
+//	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
+// This test is too slow!
 //		String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
 //		String[] result = LicenseCompareHelper.matchingStandardLicenseIds(compareText);
 //		assertEquals(2,result.length);
 //		assertTrue(result[0].startsWith("GPL-2"));
 //		assertTrue(result[1].startsWith("GPL-2"));
-	}
+//	}
 	
 	public void testFirstLicenseToken() {
 		assertEquals("first", LicenseCompareHelper.getFirstLicenseToken("   first,token that is needed\nnext"));
@@ -693,7 +694,9 @@ public class LicenseCompareHelperTest extends TestCase {
 			result = LicenseCompareHelper.isTextStandardLicense(bsd, sb.toString());
 			assertFalse(result.isDifferenceFound());
 		} finally {
-			reader.close();
+		    if (Objects.nonNull(reader)) {
+		        reader.close();
+		    }
 		}
 	}
 	

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Checksum;
@@ -146,11 +147,12 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	public void addDocumentPackage(SpdxDocument spdxDocument,
 			SpdxPackage spdxPackage) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		checkInProgress();
-		if (this.name == null && spdxPackage.getName().isPresent()) {
-			this.name = spdxPackage.getName().get();
-		} else if (!this.name.equals(spdxPackage.getName().get())) {
+		Optional<String> packageName = spdxPackage.getName();
+		if (this.name == null && packageName.isPresent()) {
+			this.name = packageName.get();
+		} else if (!Objects.equals(this.name,packageName.get())) {
 			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
-					spdxPackage.getName()+", expecting "+this.name));
+			        packageName+", expecting "+this.name));
 		}
 		inProgress = true;
 		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.Annotation;
@@ -94,11 +95,12 @@ public class SpdxItemComparer {
 		if (this.itemInProgress) {
 			throw(new SpdxCompareException("Trying to add a document item while another document item is being added."));
 		}
+		Optional<String> oName = spdxItem.getName();
 		if (this.name == null) {
-			if (spdxItem.getName().isPresent()) {
-				this.name = spdxItem.getName().get();
+			if (oName.isPresent()) {
+				this.name = oName.get();
 			}
-		} else if (spdxItem.getName().isPresent() && !this.name.equals(spdxItem.getName().get()) && !(this instanceof SpdxSnippetComparer)) {
+		} else if (oName.isPresent() && !this.name.equals(oName.get()) && !(this instanceof SpdxSnippetComparer)) {
 			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxItem.getName()+", expecting "+this.name));
 		}
@@ -386,7 +388,10 @@ public class SpdxItemComparer {
 		}
 	}
 	
-	private void checkCompareMade() throws SpdxCompareException {
+	/**
+	 * @throws SpdxCompareException if no comparisons have been made
+	 */
+	protected void checkCompareMade() throws SpdxCompareException {
 		if (this.documentItem.entrySet().size() < 1) {
 			throw(new SpdxCompareException("Trying to obtain results of a file compare before a file compare has been performed"));
 		}	

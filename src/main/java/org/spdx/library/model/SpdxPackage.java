@@ -520,29 +520,11 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			retval.add("Invalid package declared license: "+e.getMessage());
 		}
 		try {
-			if (getLicenseInfoFromFiles().size() == 0 && filesAnalyzed) {
-				retval.add("Missing required license information from files for "+pkgName);
-			} else {
-				boolean foundNonSimpleLic = false;
-				for (AnyLicenseInfo lic:getLicenseInfoFromFiles()) {
-					List<String> verify = lic.verify(verifiedIds);
-					addNameToWarnings(verify);
-					retval.addAll(verify);
-					if (!(lic instanceof SimpleLicensingInfo ||
-							lic instanceof SpdxNoAssertionLicense ||
-							lic instanceof SpdxNoneLicense ||
-							lic instanceof OrLaterOperator ||
-							lic instanceof WithExceptionOperator)) {
-						foundNonSimpleLic = true;
-					}
-				}
-				if (foundNonSimpleLic) {
-					retval.add("license info from files contains complex licenses for "+pkgName);
-				}
-			}
+		    verifyLicenseInfosInFiles(getLicenseInfoFromFiles(), filesAnalyzed, pkgName, verifiedIds, retval);
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Invalid license infos from file: "+e.getMessage());
-		}
+            retval.add("Invalid license infos from file: "+e.getMessage());
+        }
+		
 		// files depends on if the filesAnalyzed flag
 		try {
 			if (getFiles().size() == 0) {
@@ -614,7 +596,31 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		return retval;
 	}
 
-	@Override
+	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
+	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval) {
+        if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
+            retval.add("Missing required license information from files for "+pkgName);
+        } else {
+            boolean foundNonSimpleLic = false;
+            for (AnyLicenseInfo lic:licenseInfoFromFiles) {
+                List<String> verify = lic.verify(verifiedIds);
+                addNameToWarnings(verify);
+                retval.addAll(verify);
+                if (!(lic instanceof SimpleLicensingInfo ||
+                        lic instanceof SpdxNoAssertionLicense ||
+                        lic instanceof SpdxNoneLicense ||
+                        lic instanceof OrLaterOperator ||
+                        lic instanceof WithExceptionOperator)) {
+                    foundNonSimpleLic = true;
+                }
+            }
+            if (foundNonSimpleLic) {
+                retval.add("license info from files contains complex licenses for "+pkgName);
+            }
+        }
+    }
+
+    @Override
 	public int compareTo(SpdxPackage pkg) {
 		// sort order is determined by the name and the version		
 		

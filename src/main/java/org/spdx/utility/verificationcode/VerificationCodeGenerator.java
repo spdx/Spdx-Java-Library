@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -79,12 +80,14 @@ public class VerificationCodeGenerator {
 		}
 		List<String> fileChecksums = new ArrayList<>();
 		for (int i = 0; i < spdxFiles.length; i++) {
-			if (spdxFiles[i] != null && spdxFiles[i].getName() != null &&
-					!skippedFilePathSet.contains(spdxFiles[i].getName())) {
-				fileChecksums.add(spdxFiles[i].getSha1());
-			}
+		    if (spdxFiles[i] != null) {
+		        Optional<String> name = spdxFiles[i].getName();
+	            if (name.isPresent() && !skippedFilePathSet.contains(name.get())) {
+	                fileChecksums.add(spdxFiles[i].getSha1());
+	            }
+		    }
 		}
-		return generatePackageVerificationCode(fileChecksums, skippedFilePaths, modelStore, documentUri);
+		return generatePackageVerificationCode(fileChecksums, skippedFilePathSet.toArray(new String[skippedFilePathSet.size()]), modelStore, documentUri);
 	}
 
 

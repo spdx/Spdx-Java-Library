@@ -135,8 +135,12 @@ public class ExternalLicenseRefTest extends TestCase {
 	 */
 	public void testGetComment() throws InvalidSPDXAnalysisException {
 		ExternalExtractedLicenseInfo elr = new ExternalExtractedLicenseInfo(ID1);
+		try {
 		elr.getComment();	// Just testing to make sure it doesn't exception
-	}
+		} catch(Exception ex) {
+		    fail("Exception getting comment"+ex.getMessage());
+		}
+    }
 
 	/**
 	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#setComment(java.lang.String)}.

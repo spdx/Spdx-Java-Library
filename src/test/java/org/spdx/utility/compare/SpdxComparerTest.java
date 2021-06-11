@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -227,9 +228,7 @@ public class SpdxComparerTest extends TestCase {
 	ExternalDocumentRef ref2;
 	ExternalDocumentRef ref3;
 	
-	Collection<ExternalDocumentRef> EXTERNAL_DOC_REFS = new HashSet<>(Arrays.asList(new ExternalDocumentRef[] {
-			ref1, ref2, ref3
-	}));
+	Collection<ExternalDocumentRef> EXTERNAL_DOC_REFS;
 
 
 	/**
@@ -794,17 +793,27 @@ public class SpdxComparerTest extends TestCase {
 		doc.setExtractedLicenseInfos(newExtractedLicenseInfos);
 		// fix up all references to the old licenses
 		// files
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class).collect(Collectors.toList())) {
-			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		};
+		try(@SuppressWarnings("unchecked")
+        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class)) {
+		    fileStream.forEach(file -> {
+		        fixExtractedLicenseId(file, oldToNewLicIds);
+		    });
+		}
 		// packages
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class).collect(Collectors.toList())) {
-			fixExtractedLicenseIdPackage((SpdxPackage)element, oldToNewLicIds);
-		}
+	      try(@SuppressWarnings("unchecked")
+	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class)) {
+	          packageStream.forEach(pkg -> {
+	               fixExtractedLicenseIdPackage(pkg, oldToNewLicIds);
+	            });
+	        }
+
 		// snippets
-		for (Object element:SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class).collect(Collectors.toList())) {
-			fixExtractedLicenseId((SpdxItem)element, oldToNewLicIds);
-		}
+        try(@SuppressWarnings("unchecked")
+          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class)) {
+            snippetStream.forEach(snippet -> {
+                fixExtractedLicenseId(snippet, oldToNewLicIds);
+            });
+        }
 		// NOTE - we're ignoring document data license
 	}
 
@@ -1766,7 +1775,7 @@ public class SpdxComparerTest extends TestCase {
 		assertEquals(2, differences.size());
 		if (differences.get(0).getFileName().equals(file0Name)) {
 			assertFalse(differences.get(0).isCommentsEquals());
-			assertEquals(differences.get(0).getCommentB(),files[0].getComment());
+			assertEquals(differences.get(0).getCommentB(),files[0].getComment().get());
 		} else if (differences.get(0).getFileName().equals(file1Name)) {
 			assertFalse(differences.get(0).isConcludedLicenseEquals());
 			assertEquals(((License)(files[1].getLicenseConcluded())).getLicenseId(), 

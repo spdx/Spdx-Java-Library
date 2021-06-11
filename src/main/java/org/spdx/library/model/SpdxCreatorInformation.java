@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
@@ -249,9 +251,17 @@ public class SpdxCreatorInformation extends ModelObject {
 	 * @param version
 	 * @return
 	 */
-	private String verifyLicenseListVersion(String version) {
+	private @Nullable String verifyLicenseListVersion(String version) {
 		// Currently, there is no rules for the format of a version
-		return null;
+		if (Objects.isNull(version)) {
+		    return null;
+		} else {
+		    if (SpdxConstants.LICENSE_LIST_VERSION_PATTERN.matcher(version).matches()) {
+		        return null;
+		    } else {
+		        return "License list version does not match the pattern M.N";
+		    }
+		}
 	}
 
 }

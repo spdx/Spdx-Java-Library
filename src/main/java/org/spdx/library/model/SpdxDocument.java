@@ -243,7 +243,8 @@ public class SpdxDocument extends SpdxElement {
 		List<String> retval = super._verify(verifiedIds);
 		// name
 		try {
-			if (!getName().isPresent() || getName().get().isEmpty()) {
+		    Optional<String> name = getName();
+			if (!name.isPresent() || name.get().isEmpty()) {
 				retval.add("Missing required document name");
 			}
 		} catch (InvalidSPDXAnalysisException e1) {
