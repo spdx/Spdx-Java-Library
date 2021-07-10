@@ -267,8 +267,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		if (!getId().startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			retval.add("Invalid external ref ID: "+getId()+".  Must start with "+SpdxConstants.EXTERNAL_DOC_REF_PRENUM+".");
 		}
-		String uri = "UNKNOWN";
-		String spdxDocumentNamespace;
+		String spdxDocumentNamespace = "UNKNOWN";
 		try {
 			spdxDocumentNamespace = getSpdxDocumentNamespace();
 			if (spdxDocumentNamespace.isEmpty()) {
@@ -287,16 +286,16 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		try {
 			checksum = getChecksum();
 			if (!checksum.isPresent()) {
-				retval.add("Missing checksum for external document "+uri);
+				retval.add("Missing checksum for external document "+getId());
 			} else {
 				retval.addAll(checksum.get().verify(verifiedIds));
 				if (checksum.get().getAlgorithm() != ChecksumAlgorithm.SHA1) {
-					retval.add("Checksum algorithm is not SHA1 for external reference "+uri);
+					retval.add("Checksum algorithm is not SHA1 for external reference "+getId());
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.error("error getting checksum",e);
-			retval.add("Error getting checksum for "+uri);
+			retval.add("Error getting checksum for "+getId());
 		}
 		return retval;
 	}
