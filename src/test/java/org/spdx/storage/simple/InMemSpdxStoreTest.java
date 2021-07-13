@@ -90,6 +90,7 @@ public class InMemSpdxStoreTest extends TestCase {
 			new ArrayList<>(Arrays.asList(true, false, true)),
 			new ArrayList<>(Arrays.asList(new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)))};
 			TEST_VALUE_PROPERTY_VALUES[3] = new TypedValue("typeId3", TEST_TYPE1);
+
 	}
 
 	/* (non-Javadoc)
@@ -164,10 +165,18 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
 		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID2).size());
 		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
+		    if (TEST_VALUE_PROPERTY_VALUES[i] instanceof TypedValue) {
+		        TypedValue tv = (TypedValue)TEST_VALUE_PROPERTY_VALUES[i];
+		        store.create(TEST_DOCUMENT_URI1, tv.getId(), tv.getType());
+		    }
 			store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
 			for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
+			    if (value instanceof TypedValue) {
+			        TypedValue tv = (TypedValue)value;
+			        store.create(TEST_DOCUMENT_URI1, tv.getId(), tv.getType());
+			    }
 				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[i], value);
 			}
 		}
@@ -550,7 +559,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
 		String tvProperty = "tvprop";
-		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
+		TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
+		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, String.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
@@ -578,7 +589,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
 		String tvProperty  = "tvprop";
-		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
+	    TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
+	    store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, String.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
@@ -718,4 +731,44 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.delete(TEST_DOCUMENT_URI1, id3);
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id3));
 	}
+	
+	public void testReferenceCounts() throws Exception {
+	    InMemSpdxStore store = new InMemSpdxStore();
+        store.create(TEST_DOCUMENT_URI1, TEST_ID1, TEST_TYPE1);
+        store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
+        StoredTypedItem item = store.getItem(TEST_DOCUMENT_URI1, TEST_ID1);
+        assertEquals(0, item.getReferenceCount());
+        TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
+        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1", tv);
+        assertEquals(1, item.getReferenceCount());
+        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+        assertEquals(2, item.getReferenceCount());
+        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop3", tv);
+        assertEquals(3, item.getReferenceCount());
+        store.removeProperty(TEST_DOCUMENT_URI1, TEST_ID2, "prop2");
+        assertEquals(2, item.getReferenceCount());
+        store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+        assertEquals(1, item.getReferenceCount());
+        store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1");
+        assertEquals(0, item.getReferenceCount());
+        store.delete(TEST_DOCUMENT_URI1, TEST_ID1);
+	}
+	
+	   public void testReferenceCountsDelete() throws Exception {
+	        InMemSpdxStore store = new InMemSpdxStore();
+	        store.create(TEST_DOCUMENT_URI1, TEST_ID1, TEST_TYPE1);
+	        store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
+	        StoredTypedItem item = store.getItem(TEST_DOCUMENT_URI1, TEST_ID1);
+	        assertEquals(0, item.getReferenceCount());
+	        TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
+	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1", tv);
+	        assertEquals(1, item.getReferenceCount());
+	        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+	        assertEquals(2, item.getReferenceCount());
+	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop3", tv);
+	        assertEquals(3, item.getReferenceCount());
+	        store.delete(TEST_DOCUMENT_URI1, TEST_ID2);
+	        assertEquals(0, item.getReferenceCount());
+	        store.delete(TEST_DOCUMENT_URI1, TEST_ID1);
+	    }
 }

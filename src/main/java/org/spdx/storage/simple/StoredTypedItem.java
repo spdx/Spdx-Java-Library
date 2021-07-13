@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,10 @@ public class StoredTypedItem extends TypedValue {
 
 	private ConcurrentHashMap<String, Object> properties = new ConcurrentHashMap<>();
 	
+	private int referenceCount = 0;
+	
+	private final ReadWriteLock countLock = new ReentrantReadWriteLock();
+	
 	public StoredTypedItem(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
 		super(id, type);
 	}
@@ -55,6 +61,51 @@ public class StoredTypedItem extends TypedValue {
 		}
 		return Collections.unmodifiableList(retval);
 	}
+	
+	/**
+	 * Increment the reference count for this stored type item - the number of times this item is referenced
+	 * @return new number of times this item is referenced
+	 */
+	public int incReferenceCount() {
+	    countLock.writeLock().lock();
+	    try {
+	        this.referenceCount++;
+	        return this.referenceCount;
+	    } finally {
+	        countLock.writeLock().unlock();
+	    }
+	}
+	
+	/**
+	 * Decrement the reference count for this stored type item
+	 * @return new number of times this item is referenced
+	 * @throws SpdxInvalidTypeException
+	 */
+	public int decReferenceCount() throws SpdxInvalidTypeException {
+	       countLock.writeLock().lock();
+           try {
+               if (this.referenceCount < 1) {
+                   throw new SpdxInvalidTypeException("Usage count underflow - usage count decremented more than incremented");
+               }
+               this.referenceCount--;
+               return this.referenceCount;
+           } finally {
+               countLock.writeLock().unlock();
+           }
+	}
+	
+	 /**
+     * @return new number of times this item is referenced
+     * @throws SpdxInvalidTypeException
+     */
+    public int getReferenceCount() throws SpdxInvalidTypeException {
+           countLock.readLock().lock();
+           try {
+               return this.referenceCount;
+           } finally {
+               countLock.readLock().unlock();
+           }
+    }
 	
 	/**
 	 * @param propertyName Name of the property
