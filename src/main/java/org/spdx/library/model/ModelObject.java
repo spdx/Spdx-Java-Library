@@ -108,7 +108,7 @@ public abstract class ModelObject {
 	protected boolean strict = true;
 
 	/**
-	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
+	 * Create a new Model Object using an Anonymous ID with the defualt store and default document URI
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ModelObject() throws InvalidSPDXAnalysisException {

@@ -39,7 +39,7 @@ public abstract class AnyLicenseInfo extends ModelObject {
 	static final Logger logger = LoggerFactory.getLogger(AnyLicenseInfo.class.getName());
 	
 	/**
-	 * Create a new Model Object using an Anonomous ID with the defualt store and default document URI
+	 * Create a new Model Object using an Anonymous ID with the defualt store and default document URI
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public AnyLicenseInfo() throws InvalidSPDXAnalysisException {

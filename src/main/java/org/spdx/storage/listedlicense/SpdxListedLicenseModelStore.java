@@ -69,7 +69,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
 	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstants.LISTED_LICENSE_URL}));
-	private static final String ANONOMOUS_ID_PREFIX = "SpdxLicenseGeneratedId-";
+	private static final String ANONYMOUS_ID_PREFIX = "SpdxLicenseGeneratedId-";
 	
 	/**
 	 * Map of lower case to correct case license IDs
@@ -758,7 +758,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		this.listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (IdType.Anonymous.equals(idType)) {
-				return ANONOMOUS_ID_PREFIX + String.valueOf(this.nextId++);
+				return ANONYMOUS_ID_PREFIX + String.valueOf(this.nextId++);
 			} else {
 				return "listedLicenseId_" + String.valueOf(this.nextId++);
 			}
@@ -1119,7 +1119,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		Objects.requireNonNull(id, "ID must not be null");
 		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
 			return IdType.ListedLicense;
-		} else if (id.startsWith(ANONOMOUS_ID_PREFIX)) {
+		} else if (id.startsWith(ANONYMOUS_ID_PREFIX)) {
 			return IdType.Anonymous;
 		} else {
 			return IdType.Unkown;
