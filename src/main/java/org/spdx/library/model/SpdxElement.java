@@ -94,7 +94,7 @@ public abstract class SpdxElement extends ModelObject {
 				retval.add("Invalid SPDX ID: "+this.getId()+".  Must match the pattern "+SpdxConstants.SPDX_ELEMENT_REF_PATTERN);
 			}
 		} else if (!IdType.Anonymous.equals(idType)) {
-			retval.add("Invalid ID for SPDX Element: "+this.getId()+".  Must be either a valid SPDX ID or Anonomous.");
+			retval.add("Invalid ID for SPDX Element: "+this.getId()+".  Must be either a valid SPDX ID or Anonymous.");
 		}
 		try {
 			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: ", verifiedElementIds));

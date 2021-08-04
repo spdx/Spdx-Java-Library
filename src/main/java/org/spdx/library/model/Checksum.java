@@ -72,7 +72,7 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	}
 	
 	/**
-	 * Create a checksum with an anonomous ID
+	 * Create a checksum with an anonymous ID
 	 * @param modelStore
 	 * @param documentUri
 	 * @param algorithm

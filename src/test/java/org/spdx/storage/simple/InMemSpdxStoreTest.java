@@ -116,7 +116,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
 		assertEquals("SPDXRef-34", nextId);
 		
-		// Anonomous ID's
+		// Anonymous ID's
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
 		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "33", SpdxConstants.CLASS_SPDX_CHECKSUM);
@@ -248,7 +248,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
 		assertEquals("SPDXRef-1", nextId);
 		
-		// Anonomous ID's
+		// Anonymous ID's
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
