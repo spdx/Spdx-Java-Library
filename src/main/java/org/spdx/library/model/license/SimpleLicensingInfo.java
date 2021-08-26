@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.IndividualUriValue;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
@@ -49,6 +50,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	SimpleLicensingInfo(String id) throws InvalidSPDXAnalysisException {
 		super(id);
 		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
+        if (!(this instanceof IndividualUriValue)) {
+            setPropertyValue(SpdxConstants.PROP_LICENSE_ID, id);  // Needs to be set as a property per spec
+        }
 	}
 
 	/**
@@ -66,6 +70,9 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
+		if (!(this instanceof IndividualUriValue)) {
+		    setPropertyValue(SpdxConstants.PROP_LICENSE_ID, id);  // Needs to be set as a property per spec
+		}
 	}
 	
 	/**
