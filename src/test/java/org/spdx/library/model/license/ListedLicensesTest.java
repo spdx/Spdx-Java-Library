@@ -5,9 +5,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.license.LicenseException;
-import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxListedLicense;
 
 import junit.framework.TestCase;
 
