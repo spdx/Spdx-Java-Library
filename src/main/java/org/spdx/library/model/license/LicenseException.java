@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.IndividualUriValue;
 import org.spdx.library.model.ModelObject;
 import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
@@ -54,6 +55,9 @@ public class LicenseException extends ModelObject {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
+		if (!(this instanceof IndividualUriValue)) {
+		    setPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION_ID, id);    // Set a property with the exception ID per the spec
+		}
 	}
 
 	public LicenseException(String id, String name, String text,
@@ -73,6 +77,9 @@ public class LicenseException extends ModelObject {
 		super(id);
 		setName(name);
 		setLicenseExceptionText(text);
+        if (!(this instanceof IndividualUriValue)) {
+           setPropertyValue(SpdxConstants.PROP_LICENSE_EXCEPTION_ID, id);    // Set a property with the exception ID per the spec
+        }
 	}
 
 	/**
