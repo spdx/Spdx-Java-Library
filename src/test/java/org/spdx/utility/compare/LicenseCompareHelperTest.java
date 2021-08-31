@@ -60,6 +60,8 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String GD_TEMPLATE = "TestFiles" + File.separator + "GD.template.txt";
     static final String MULAN_PSL_2_TEMPLATE = "TestFiles" + File.separator + "MulanPSL-2.0.template.txt";
     static final String MULAN_PSL_2_COMMA_TEXT = "TestFiles" + File.separator + "MulanPSL-2.0-comma.txt";
+    private static final String GROFF_COMMENTED_VERBATIM_TEXT = "TestFiles" + File.separator + "verbatim-man-page.txt";
+    private static final String VERBATIM_MAN_PAGES_TEMPLATE = "TestFiles" + File.separator + "Verbatim-man-pages.template.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -731,6 +733,16 @@ public class LicenseCompareHelperTest extends TestCase {
         String templateText = UnitTestHelper.fileToText(MULAN_PSL_2_TEMPLATE);
         SpdxListedLicense lic = new SpdxListedLicense(
                 new SpdxListedLicense.Builder("MSPL-2.0", "MSPL-2.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        assertFalse(diff.isDifferenceFound());
+    }
+    
+    public void testGroffComments() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(GROFF_COMMENTED_VERBATIM_TEXT);
+        String templateText = UnitTestHelper.fileToText(VERBATIM_MAN_PAGES_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("Verbatim-man-pages", "Verbatim-man-pages", licText)
                 .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
