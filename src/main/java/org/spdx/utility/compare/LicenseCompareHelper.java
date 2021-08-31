@@ -135,7 +135,7 @@ public class LicenseCompareHelper {
 	static final Pattern COPYRIGHT_OWNERS_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owners", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owner", Pattern.CASE_INSENSITIVE);
 	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
-	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)";
+	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
 	
 	/**
 	 * Returns true if two sets of license text is considered a match per
