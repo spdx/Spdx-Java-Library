@@ -133,6 +133,9 @@ public abstract class SpdxElement extends ModelObject {
 		if (warnings == null) {
 			return new ArrayList<>();
 		}
+		if (warnings.isEmpty()) {
+		    return warnings;
+		}
 		String localName = "[UNKNOWN]";
 		try {
 			Optional<String> name = getName();
