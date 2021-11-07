@@ -4,7 +4,7 @@
 
     <groupId>org.spdx</groupId>
     <artifactId>java-spdx-library</artifactId>
-    <version>1.0.9-SNAPSHOT</version>
+    <version>1.0.9</version>
     <packaging>jar</packaging>
 
     <name>java-spdx-library</name>
