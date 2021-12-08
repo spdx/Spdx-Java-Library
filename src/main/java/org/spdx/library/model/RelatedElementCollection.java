@@ -170,7 +170,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 			return false;
 		}
 		try {
-			Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, "");
+			Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
 			return owningElement.addRelationship(relationship);
 		} catch (InvalidSPDXAnalysisException e1) {
 			logger.error("Error adding relationship",e1);
