@@ -1300,7 +1300,6 @@ public class SpdxPackageTest extends TestCase {
 		List<Relationship> relationships1 = Arrays.asList(new Relationship[] {RELATIONSHIP1});
 		List<Relationship> relationships2 = Arrays.asList(new Relationship[] {RELATIONSHIP1, RELATIONSHIP2});
 		List<Checksum> checksums = Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3, CHECKSUM1});
-		List<SpdxFile> files = Arrays.asList(new SpdxFile[] {FILE1, FILE2});
 		List<AnyLicenseInfo> licenseFromFiles = Arrays.asList(new AnyLicenseInfo[] {LICENSE2});
 		String id = gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri());
 		List<ExternalRef> externalRefs = Arrays.asList(new ExternalRef[] {EXTERNAL_REF1});
@@ -1314,7 +1313,6 @@ public class SpdxPackageTest extends TestCase {
 				.setLicenseComments(LICENSE_COMMENT1)
 				.setDescription(DESCRIPTION1)
 				.setDownloadLocation(DOWNLOAD_LOCATION1)
-				.setFiles(files)
 				.setHomepage(HOMEPAGE1)
 				.setOriginator(ORIGINATOR1)
 				.setPackageFileName(PACKAGEFILENAME1)

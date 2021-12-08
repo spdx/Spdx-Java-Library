@@ -32,6 +32,7 @@ import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.Purpose;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SimpleLicensingInfo;
@@ -48,12 +49,14 @@ import org.spdx.storage.IModelStore.IModelStoreLock;
  *
  */
 public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
+	Collection<SpdxElement> files;
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage() throws InvalidSPDXAnalysisException {
 		super();
+		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
 		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
 			this.setFilesAnalyzed(true);	// Set default value
 		}
@@ -71,6 +74,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
+		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
 		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
 			this.setFilesAnalyzed(true);	// Set default value
 		}
@@ -82,6 +86,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	public SpdxPackage(String id) throws InvalidSPDXAnalysisException {
 		super(id);
+		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
 		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
 			this.setFilesAnalyzed(true);	// Set default value
 		}
@@ -490,7 +495,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<SpdxFile> getFiles() throws InvalidSPDXAnalysisException {
-		return (Collection<SpdxFile>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_PACKAGE_FILE, SpdxFile.class);
+		return (Collection<SpdxFile>)(Collection<?>)files;
 	}
 	
 	/**

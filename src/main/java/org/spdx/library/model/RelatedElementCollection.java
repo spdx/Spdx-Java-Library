@@ -49,9 +49,10 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	
 	ModelCollection<Relationship> relationshipCollection;
 	private RelationshipType relationshipTypeFilter;
+	private String relatedElementTypeFilter;
 
 	private SpdxElement owningElement;
-
+	
 	/**
 	 * @param owningElement
 	 * @param relationshipTypeFilter relationship type to filter the results
@@ -60,12 +61,26 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	public RelatedElementCollection(SpdxElement owningElement,
 			@Nullable RelationshipType relationshipTypeFilter) throws InvalidSPDXAnalysisException {
+		this(owningElement, relationshipTypeFilter, null);
+	}
+
+	/**
+	 * @param owningElement
+	 * @param relationshipTypeFilter relationship type to filter the results
+	 *                               collection on - if null, do not filter
+	 * @param relatedElementTypeFilter filter for only related element types - if null, do not filter
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public RelatedElementCollection(SpdxElement owningElement,
+			@Nullable RelationshipType relationshipTypeFilter,
+			@Nullable String relatedElementTypeFilter) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(owningElement, "Owning element can not be null");
 		this.owningElement = owningElement;
 		this.relationshipCollection = new ModelCollection<Relationship>(owningElement.getModelStore(),
 				owningElement.getDocumentUri(), owningElement.getId(), SpdxConstants.PROP_RELATIONSHIP, 
 				owningElement.getCopyManager(), Relationship.class);
 		this.relationshipTypeFilter = relationshipTypeFilter;
+		this.relatedElementTypeFilter = relatedElementTypeFilter;
 	}
 	
 	public List<SpdxElement> toImmutableList() {
@@ -79,7 +94,10 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 							(this.relationshipTypeFilter.equals(relationshipType))) {
 						Optional<SpdxElement> relatedElement = relationship.getRelatedSpdxElement();
 						if (relatedElement.isPresent()) {
-							retval.add(relatedElement.get());
+							if (Objects.isNull(this.relatedElementTypeFilter) ||
+									this.relatedElementTypeFilter.equals(relatedElement.get().getType())) {
+								retval.add(relatedElement.get());
+							}
 						}
 					}
 				} catch (InvalidSPDXAnalysisException e) {
@@ -250,7 +268,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	@Override
 	public void clear() {
-		if (Objects.isNull(relationshipTypeFilter)) {
+		if (Objects.isNull(relationshipTypeFilter) && Objects.isNull(relatedElementTypeFilter)) {
 			relationshipCollection.clear();
 		} else {
 			List<SpdxElement> existingElements = toImmutableList();
@@ -270,7 +288,8 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 		}
 		RelatedElementCollection compare = (RelatedElementCollection)o;
 		return Objects.equals(this.owningElement, compare.getOwningElement()) && 
-				Objects.equals(relationshipTypeFilter, compare.getRelationshipTypeFilter());
+				Objects.equals(relationshipTypeFilter, compare.getRelationshipTypeFilter()) &&
+				Objects.equals(relatedElementTypeFilter, compare.getRelatedElementTypeFilter());
 	}
 
 	/* (non-Javadoc)
@@ -278,11 +297,14 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	@Override
 	public int hashCode() {
-		if (Objects.isNull(relationshipTypeFilter)) {
-			return 33 ^ this.owningElement.hashCode();
-		} else {
-			return 33 ^ this.owningElement.hashCode() ^ this.relationshipTypeFilter.hashCode();
+		int retval = 33 ^ this.owningElement.hashCode();
+		if (Objects.nonNull(relationshipTypeFilter)) {
+			retval = retval ^ this.relationshipTypeFilter.hashCode();
 		}
+		if (Objects.nonNull(relatedElementTypeFilter)) {
+			retval = retval ^ this.relatedElementTypeFilter.hashCode();
+		}
+		return retval;
 	}
 
 	/**
@@ -297,6 +319,13 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	public RelationshipType getRelationshipTypeFilter() {
 		return relationshipTypeFilter;
+	}
+
+	/**
+	 * @return the relatedElementTypeFilter
+	 */
+	public String getRelatedElementTypeFilter() {
+		return relatedElementTypeFilter;
 	}
 
 	/**

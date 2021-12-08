@@ -1076,8 +1076,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isPackageSuppliersEquals());
 		assertTrue(pc.isPackageVerificationCodesEquals());
 		assertTrue(pc.isPackageVersionsEquals());
-		assertTrue(pc.isRelationshipsEquals());
-		assertTrue(pc.isSeenLicenseEquals());	
+		assertTrue(pc.isSeenLicenseEquals());
 		assertEquals(0, pc.getUniqueChecksums(DOCA, DOCB).size());
 		assertEquals(0, pc.getUniqueChecksums(DOCB, DOCA).size());
 		assertEquals(1, pc.getUniqueFiles(DOCA, DOCB).size());
