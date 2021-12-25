@@ -30,7 +30,7 @@ public enum ReferenceCategory implements IndividualUriValue {
 	PACKAGE_MANAGER("referenceCategory_packageManager"),
 	SECURITY("referenceCategory_security"),
 	OTHER("referenceCategory_other"),
-	PERSISTENT_ID("referenceCategory_persistenId"),
+	PERSISTENT_ID("referenceCategory_persistentId"),
 	MISSING("invalid_missing")
 	;
 
