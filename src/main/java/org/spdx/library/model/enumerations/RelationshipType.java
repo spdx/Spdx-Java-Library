@@ -52,7 +52,7 @@ public enum RelationshipType implements IndividualUriValue {
 	PACKAGE_OF("relationshipType_packageOf"),
 	PATCH_APPLIED("relationshipType_patchApplied"),
 	PATCH_FOR("relationshipType_patchFor"),
-	AMENDS("relationshipType_amends"),
+	AMENDS("relationshipType_amendment"),
 	STATIC_LINK("relationshipType_staticLink"),
 	TEST_CASE_OF("relationshipType_testcaseOf"),
 	PREREQUISITE_FOR("relationshipType_prerequisiteFor"),
