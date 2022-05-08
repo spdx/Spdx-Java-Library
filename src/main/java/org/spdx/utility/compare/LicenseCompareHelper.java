@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -784,6 +783,18 @@ public class LicenseCompareHelper {
 		return matchingIds.toArray(new String[matchingIds.size()]);
 	}
 
+	private static <T> boolean contains(
+			T[] array,
+			T value
+	) {
+		for (T t : array) {
+			if (Objects.equals(t, value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Detect if a license pass black lists
 	 * @param license license
@@ -816,7 +827,7 @@ public class LicenseCompareHelper {
 			}
 			return false;
 		} else {
-			return !ArrayUtils.contains(blackList, license.toString());
+			return !contains(blackList, license.toString());
 		}
 	}
 
@@ -852,7 +863,7 @@ public class LicenseCompareHelper {
 			}
 			return false;
 		} else {
-			return ArrayUtils.contains(whiteList, license.toString());
+			return contains(whiteList, license.toString());
 		}
 	}
 
