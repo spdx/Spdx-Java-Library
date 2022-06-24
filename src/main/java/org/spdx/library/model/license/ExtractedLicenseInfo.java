@@ -122,7 +122,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	 * @return
 	 */
 	@Override
-    protected List<String> _verify(List<String> verifiedIds) {
+    protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		String id = this.getLicenseId();
 		if (id == null || id.isEmpty()) {

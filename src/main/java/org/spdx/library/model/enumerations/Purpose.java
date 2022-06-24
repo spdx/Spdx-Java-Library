@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2022 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -21,35 +21,29 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.IndividualUriValue;
 
 /**
- * Enum constants for Checksum Algorithms
+ * Package Purpose is intrinsic to how the package is being used rather than the content of the package.
  * 
  * @author Gary O'Neall
  *
  */
-public enum ChecksumAlgorithm implements IndividualUriValue {
-	SHA1("checksumAlgorithm_sha1"),
-	MD5("checksumAlgorithm_md5"),
-	SHA256("checksumAlgorithm_sha256"), 
-	MISSING("InvalidMissingChecksum"),
-	SHA224("checksumAlgorithm_sha224"),
-	SHA384("checksumAlgorithm_sha384"),
-	SHA512("checksumAlgorithm_sha512"),
-	MD2("checksumAlgorithm_md2"),
-	MD4("checksumAlgorithm_md4"),
-	MD6("checksumAlgorithm_md6"),
-	SHA3_256("checksumAlgorithm_sha3_256"),
-	SHA3_384("checksumAlgorithm_sha3_384"),
-	SHA3_512("checksumAlgorithm_sha3_512"),
-	BLAKE2b_256("checksumAlgorithm_blake2b256"),
-	BLAKE2b_384("checksumAlgorithm_blake2b384"),
-	BLAKE2b_512("checksumAlgorithm_blake2b512"),
-	BLAKE3("checksumAlgorithm_blake3"),
-	ADLER32("checksumAlgorithm_adler32"),
-	;
-
-	private String longName;
+public enum Purpose implements IndividualUriValue {
 	
-	private ChecksumAlgorithm(String longName) {
+	APPLICATION("purpose_application"),
+	FRAMEWORK("purpose_framework"), 
+	LIBRARY("purpose_library"), 
+	OPERATING_SYSTEM("purpose_operatingSystem"),
+	DEVICE("purpose_device"),
+	FIRMWARE("purpose_firmware"),
+	SOURCE("purpose_source"),
+	FILE("purpose_file"),
+	INSTALL("purpose_install"),
+	ARCHIVE("purpose_archive"),
+	CONTAINER("purpose_container"),
+	OTHER("purpose_other");
+	
+private String longName;
+	
+	private Purpose(String longName) {
 		this.longName = longName;
 	}
 	@Override

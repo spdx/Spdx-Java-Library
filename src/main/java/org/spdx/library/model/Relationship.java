@@ -24,6 +24,7 @@ import java.util.Optional;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 
@@ -75,7 +76,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		Optional<SpdxElement> relatedSpdxElement;
 		try {
@@ -85,14 +86,22 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			} else if (relatedSpdxElement.get() instanceof ExternalSpdxElement){
 			    // Don't check normal elements - this causes a performance problem for large documents
 			    // where the elements are already checked when that element is parsed
-				retval.addAll(relatedSpdxElement.get().verify(verifiedIds));
+				retval.addAll(relatedSpdxElement.get().verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting related SPDX element for relationship: "+e.getMessage());
 		}
 		try {
-			if (RelationshipType.MISSING.equals(getRelationshipType())) {
+			RelationshipType relationshipType = getRelationshipType();
+			if (RelationshipType.MISSING.equals(relationshipType)) {
 				retval.add("Missing relationship type");
+			}
+			if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION) &&
+					(RelationshipType.REQUIREMENT_DESCRIPTION_FOR.equals(relationshipType) ||
+					RelationshipType.SPECIFICATION_FOR.equals(relationshipType))) {
+				retval.add(relationshipType.toString()+
+					" is not supported in SPDX spec versions less than "+
+					Version.TWO_POINT_THREE_VERSION);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting relationship type: "+e.getMessage());

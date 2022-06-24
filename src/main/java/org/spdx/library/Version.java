@@ -17,10 +17,10 @@
  */
 package org.spdx.library;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -39,14 +39,15 @@ public class Version {
 	public static final String TWO_POINT_ZERO_VERSION = "SPDX-2.0";
 	public static final String TWO_POINT_ONE_VERSION = "SPDX-2.1";
 	public static final String TWO_POINT_TWO_VERSION = "SPDX-2.2";
-	public static final String CURRENT_SPDX_VERSION = TWO_POINT_TWO_VERSION;
+	public static final String TWO_POINT_THREE_VERSION = "SPDX-2.3";
+	public static final String CURRENT_SPDX_VERSION = TWO_POINT_THREE_VERSION;
 	
-	public static final Set<String> SUPPORTED_SPDX_VERSIONS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[]{
+	public static final List<String> SUPPORTED_SPDX_VERSIONS = Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(new String[]{
 			ONE_DOT_ZERO_SPDX_VERSION, ONE_DOT_ONE_SPDX_VERSION, ONE_DOT_TWO_SPDX_VERSION, TWO_POINT_ZERO_VERSION,
-			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION
+			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION, TWO_POINT_THREE_VERSION
 	})));
 	
-	public static final String CURRENT_IMPLEMENTATION_VERSION = "1.0.8";
+	public static final String CURRENT_IMPLEMENTATION_VERSION = "1.1.0";
 	
 	public static String verifySpdxVersion(String spdxVersion) {
 		if (!spdxVersion.startsWith("SPDX-")) {
@@ -64,6 +65,26 @@ public class Version {
 	
 	private Version() {
 		// static class
+	}
+
+	
+	/**
+	 * Compares versions of the SPDX spec
+	 * @param specVersion
+	 * @param compareSpecVersion
+	 * @return true if specVersion is less than compareSpecVersion
+	 */
+	public static boolean versionLessThan(String specVersion,
+			String compareSpecVersion) {
+		int i = SUPPORTED_SPDX_VERSIONS.indexOf(specVersion);
+		if (i < 0) {
+			return false;
+		}
+		int j = SUPPORTED_SPDX_VERSIONS.indexOf(compareSpecVersion);
+		if (j < 0) {
+			return false;
+		}
+		return i < j;
 	}
 
 }

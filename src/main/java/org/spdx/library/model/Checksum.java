@@ -28,6 +28,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -105,7 +106,7 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	 * @see org.spdx.library.model.ModelObject#verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		ChecksumAlgorithm algorithm;
 		try {
@@ -118,7 +119,8 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 					if (checksumValue.isEmpty()) {
 						retval.add("Missing required checksum value");
 					} else {
-						String verify = SpdxVerificationHelper.verifyChecksumString(checksumValue, algorithm);
+						String verify = SpdxVerificationHelper.verifyChecksumString(checksumValue, 
+								algorithm, specVersion);
 						if (verify != null) {
 							retval.add(verify);
 						}
@@ -196,7 +198,7 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 			}
 			ChecksumAlgorithm algorithm = getAlgorithm();
 			if (!ChecksumAlgorithm.MISSING.equals(algorithm)) {
-				String verify = SpdxVerificationHelper.verifyChecksumString(value, algorithm);
+				String verify = SpdxVerificationHelper.verifyChecksumString(value, algorithm, Version.CURRENT_SPDX_VERSION);
 				if (verify != null && !verify.isEmpty()) {
 					throw new InvalidSPDXAnalysisException(verify);
 				}

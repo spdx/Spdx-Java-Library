@@ -138,11 +138,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	
 	@Override
 	public SpdxFile setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(copyrightText) || copyrightText.isEmpty()) {
-				throw new InvalidSPDXAnalysisException("Can not set required copyright text to null or empty");
-			}
-		}
 		super.setCopyrightText(copyrightText);
 		return this;
 	}
@@ -160,11 +155,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	
 	@Override 
 	public SpdxFile setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(license)) {
-				throw new InvalidSPDXAnalysisException("Can not set required concluded license to null");
-			}
-		}
 		super.setLicenseConcluded(license);
 		return this;
 	}
@@ -270,8 +260,8 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 * @see org.spdx.library.model.ModelObject#verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		String fileName = "UNKNOWN";
 		try {
 			Optional<String> myName = this.getName();
@@ -284,7 +274,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			retval.add("Error getting file name");
 		}
 		for (Checksum checksum:checksums) {
-			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds)));
+			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds, specVersion)));
 		}
 		String sha1;
 		try {
@@ -292,7 +282,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			if (sha1 == null || sha1.isEmpty()) {
 				retval.add("Missing required SHA1 hashcode value for "+fileName);
 			} else {
-				String warning = SpdxVerificationHelper.verifyChecksumString(sha1, ChecksumAlgorithm.SHA1);
+				String warning = SpdxVerificationHelper.verifyChecksumString(sha1, ChecksumAlgorithm.SHA1, specVersion);
 				if (warning != null) {
 					retval.add(warning + " for file "+fileName);
 				}
@@ -379,9 +369,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(concludedLicense, "Concluded can not be null");
 			Objects.requireNonNull(licenseInfosFromFile, "License info from files can not be null");
-			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;

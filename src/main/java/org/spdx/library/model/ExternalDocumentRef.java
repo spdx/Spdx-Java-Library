@@ -29,6 +29,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
@@ -167,7 +168,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (Objects.isNull(checksum)) {
 				throw new InvalidSPDXAnalysisException("Null value for a required checksum");
 			}
-			List<String> verify = checksum.verify(new ArrayList<String>());
+			List<String> verify = checksum.verify(new ArrayList<String>(), Version.CURRENT_SPDX_VERSION);
 			if (verify.size() > 0) {
 				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
 			}
@@ -262,7 +263,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		if (!getId().startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			retval.add("Invalid external ref ID: "+getId()+".  Must start with "+SpdxConstants.EXTERNAL_DOC_REF_PRENUM+".");
@@ -288,7 +289,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (!checksum.isPresent()) {
 				retval.add("Missing checksum for external document "+getId());
 			} else {
-				retval.addAll(checksum.get().verify(verifiedIds));
+				retval.addAll(checksum.get().verify(verifiedIds, Version.CURRENT_SPDX_VERSION));
 				if (checksum.get().getAlgorithm() != ChecksumAlgorithm.SHA1) {
 					retval.add("Checksum algorithm is not SHA1 for external reference "+getId());
 				}

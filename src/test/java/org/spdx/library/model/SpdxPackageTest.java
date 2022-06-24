@@ -19,16 +19,20 @@ package org.spdx.library.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.Purpose;
 import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
@@ -68,6 +72,7 @@ public class SpdxPackageTest extends TestCase {
 	static final String VERSION2 = "V2";
 	
 	static final String DATE_NOW = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT).format(new Date());
+	static final String DATE_THEN = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT).format(new GregorianCalendar(2021, Calendar.JANUARY, 11).getTime());
 	
 	SpdxElement RELATED_ELEMENT1;
 	SpdxElement RELATED_ELEMENT2;
@@ -1475,5 +1480,138 @@ public class SpdxPackageTest extends TestCase {
         assertFalse(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
                 "something@git.myproject.org:MyProject@6338c7a2525e055a05bae1580e4dd189c2feff7b").matches());
 	}
+	
+	// Test to verify spec versions prior to 2.3 fail verify for missing license or copyright fields
+	public void testVerify23Fields() throws InvalidSPDXAnalysisException {
+		// previously required fields
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.build();
 
+
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// BuiltDate
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setBuiltDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Release Date
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setReleaseDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Valid Until Date
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setValidUntilDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Primary Purpose
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setPrimaryPurpose(Purpose.APPLICATION)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Relationship Type REQUIREMENT_DESCRIPTION_FOR
+		Relationship rel = gmo.createRelationship(FILE1, RelationshipType.REQUIREMENT_DESCRIPTION_FOR, "");
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.addRelationship(rel)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Relationship Type SPECIFICATION_FOR
+		rel = gmo.createRelationship(FILE1, RelationshipType.SPECIFICATION_FOR, "");
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.addRelationship(rel)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+				
+	}
+
+	public void testSetPrimaryPurpose() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setPrimaryPurpose(Purpose.APPLICATION)
+				.build();
+		
+		assertEquals(pkg.getPrimaryPurpose().get(), Purpose.APPLICATION);
+		pkg.setPrimaryPurpose(Purpose.FRAMEWORK);
+		assertEquals(pkg.getPrimaryPurpose().get(), Purpose.FRAMEWORK);
+		pkg.setPrimaryPurpose(null);
+		assertFalse(pkg.getPrimaryPurpose().isPresent());
+	}
+	
+	public void testSetBuiltDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setBuiltDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getBuiltDate().get(), DATE_NOW);
+		pkg.setBuiltDate(DATE_THEN);
+		assertEquals(pkg.getBuiltDate().get(), DATE_THEN);
+		pkg.setBuiltDate(null);
+		assertFalse(pkg.getBuiltDate().isPresent());
+	}
+	
+	public void testSetValidUntilDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setValidUntilDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getValidUntilDate().get(), DATE_NOW);
+		pkg.setValidUntilDate(DATE_THEN);
+		assertEquals(pkg.getValidUntilDate().get(), DATE_THEN);
+		pkg.setValidUntilDate(null);
+		assertFalse(pkg.getValidUntilDate().isPresent());
+	}
+	
+	public void testSetReleaseDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setReleaseDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getReleaseDate().get(), DATE_NOW);
+		pkg.setReleaseDate(DATE_THEN);
+		assertEquals(pkg.getReleaseDate().get(), DATE_THEN);
+		pkg.setReleaseDate(null);
+		assertFalse(pkg.getReleaseDate().isPresent());
+	}
 }

@@ -126,12 +126,28 @@ public class SpdxVerificationHelperTest extends TestCase {
 	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyChecksumString(java.lang.String, org.spdx.library.model.enumerations.ChecksumAlgorithm)}.
 	 */
 	public void testVerifyChecksumString() {
-		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.MD5)));
-		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("da39a3ee5e6b4b0d3255bfef95601890afd80709", ChecksumAlgorithm.MD5)));
-		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("da39a3ee5e6b4b0d3255bfef95601890afd80709", ChecksumAlgorithm.SHA1)));
-		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA1)));
-		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("c01b39c7a35ccc3b081a3e83d2c71fa9a767ebfeb45c69f08e17dfe3ef375a7b", ChecksumAlgorithm.SHA256)));
-		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA256)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.MD5, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("da39a3ee5e6b4b0d3255bfef95601890afd80709", ChecksumAlgorithm.MD5, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("da39a3ee5e6b4b0d3255bfef95601890afd80709", ChecksumAlgorithm.SHA1, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA1, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("c01b39c7a35ccc3b081a3e83d2c71fa9a767ebfeb45c69f08e17dfe3ef375a7b", ChecksumAlgorithm.SHA256, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA256, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("c01b39c7a35ccc3b081a3e83d2c71fa9a767ebfeb45c69f08e17dfe3ef375a7b", ChecksumAlgorithm.BLAKE2b_256, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.BLAKE2b_256, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("c01b39c7a35ccc3b081a3e83d2c71fa9a767ebfeb45c69f08e17dfe3ef375a7b", ChecksumAlgorithm.SHA3_256, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA3_256, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("ccfe5458990438984358069f0b647f5cbc248ee41679bca93b4f18c0bb69ec8e6e41f19481eb3dc83dd22a2ad28f2102", ChecksumAlgorithm.SHA384, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA384, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("ccfe5458990438984358069f0b647f5cbc248ee41679bca93b4f18c0bb69ec8e6e41f19481eb3dc83dd22a2ad28f2102", ChecksumAlgorithm.BLAKE2b_384, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.BLAKE2b_384, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("b410ad04ad92b70b1f77b62165a67c2ac368030ca79d47f95d48f37e9be155423242d4ef0c2af510c99f1c99deb95b990a131189adfe0dc841082833dd5dfc64", ChecksumAlgorithm.BLAKE2b_512, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.BLAKE2b_512, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("b410ad04ad92b70b1f77b62165a67c2ac368030ca79d47f95d48f37e9be155423242d4ef0c2af510c99f1c99deb95b990a131189adfe0dc841082833dd5dfc64", ChecksumAlgorithm.SHA3_512, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.SHA3_512, Version.CURRENT_SPDX_VERSION)));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("0eaa033d", ChecksumAlgorithm.ADLER32, Version.CURRENT_SPDX_VERSION)));
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.ADLER32, Version.CURRENT_SPDX_VERSION)));
+		// test version verification
+		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("9d48cdf8fdcd4af64318de560973d16140ea4de3e1f9212770b01211d9eb59fc", ChecksumAlgorithm.BLAKE3, Version.TWO_POINT_ONE_VERSION)));
 	}
 
 	/**

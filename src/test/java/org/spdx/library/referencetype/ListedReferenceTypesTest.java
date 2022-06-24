@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 public class ListedReferenceTypesTest extends TestCase {
 	
 	static final String[] LISTED_REFERENCE_TYPE_NAMES = new String[] {
-			"cpe22Type","cpe23Type","maven-central","npm","nuget","bower","debian"
+			"cpe22Type","cpe23Type","maven-central","npm","nuget","bower","debian","advisory","fix","url","gitoid"
 		};
 
 	/* (non-Javadoc)

@@ -48,7 +48,7 @@ public class ListedReferenceTypes {
 	private static final ReadWriteLock listedReferenceTypesModificationLock = new ReentrantReadWriteLock();
 	private static final String LISTED_REFERENCE_TYPE__RDF_LOCAL_DIR = "resources" + "/" + "listedexternaltypes";
 	private static final String LISTED_REFERENCE_TYPE_PROPERTIES_FILENAME = LISTED_REFERENCE_TYPE__RDF_LOCAL_DIR + "/" + "listedreferencetypes.properties";
-	private static final String LISTED_REFERENCE_TYPE_PROPERTIES_CLASS_PATH = "org/spdx/rdfparser/referencetype/listedreferencetypes.properties";
+	private static final String LISTED_REFERENCE_TYPE_PROPERTIES_CLASS_PATH = "org/spdx/library/referencetype/listedreferencetypes.properties";
 	private static final String PROPERTY_LISTED_REFERENCE_TYPES = "listedReferenceTypes";
 	private static ListedReferenceTypes listedReferenceTypes;
 	private Properties listedReferenceTypeProperties;

@@ -29,7 +29,9 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.Purpose;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SimpleLicensingInfo;
@@ -106,7 +108,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		
 		// optional parameters - SpdxPackage
 		getChecksums().addAll(spdxPackageBuilder.checksums);
-
 		setDescription(spdxPackageBuilder.description);
 		setDownloadLocation(spdxPackageBuilder.downloadLocation);
 		getExternalRefs().addAll(spdxPackageBuilder.externalRefs);
@@ -119,6 +120,10 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setSummary(spdxPackageBuilder.summary);
 		setSupplier(spdxPackageBuilder.supplier);
 		setVersionInfo(spdxPackageBuilder.versionInfo);
+		setPrimaryPurpose(spdxPackageBuilder.primaryPurpose);
+		setBuiltDate(spdxPackageBuilder.builtDate);
+		setValidUntilDate(spdxPackageBuilder.validUntilDate);
+		setReleaseDate(spdxPackageBuilder.releaseDate);
 	}
 
 	@Override
@@ -155,15 +160,73 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 	
 	/**
+	 * @return This field provides a place for recording the actual date the package was built.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getBuiltDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_BUILT_DATE);
+	}
+	
+	/**
+	 * @param builtDate This field provides a place for recording the actual date the package was built.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setBuiltDate(String builtDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(builtDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(builtDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid built date");
+		}
+		setPropertyValue(SpdxConstants.PROP_BUILT_DATE, builtDate);
+	}
+	
+	/**
+	 * @return This field provides a place for recording the date the package was released.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getReleaseDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_RELEASE_DATE);
+	}
+	
+	/**
+	 * @param releaseDate This field provides a place for recording the date the package was released.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setReleaseDate(String releaseDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(releaseDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(releaseDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid release date");
+		}
+		setPropertyValue(SpdxConstants.PROP_RELEASE_DATE, releaseDate);
+	}
+	
+	/**
+	 * @return This field provides a place for recording the end of the support period for a package from the supplier.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getValidUntilDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_VALID_UNTIL_DATE);
+	}
+	
+	/**
+	 * @param validUntilDate This field provides a place for recording the end of the support period for a package from the supplier.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setValidUntilDate(String validUntilDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(validUntilDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(validUntilDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid valid until date");
+		}
+		setPropertyValue(SpdxConstants.PROP_VALID_UNTIL_DATE, validUntilDate);
+	}
+	
+	
+	/**
 	 * @return the licenseDeclared or NOASSERTION if no license declared is found
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public AnyLicenseInfo getLicenseDeclared() throws InvalidSPDXAnalysisException {
+	public @Nullable AnyLicenseInfo getLicenseDeclared() throws InvalidSPDXAnalysisException {
 		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 		if (retval.isPresent()) {
 			return retval.get();
 		} else {
-			return new SpdxNoAssertionLicense(getModelStore(), getDocumentUri());
+			return null;
 		}
 	}
 	
@@ -174,11 +237,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setLicenseDeclared(@Nullable AnyLicenseInfo licenseDeclared) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(licenseDeclared)) {
-				throw new InvalidSPDXAnalysisException("Can not set required license declared to null");
-			}
-		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE, licenseDeclared);
 		return this;
 	}
@@ -449,12 +507,33 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		return this;
 	}
 	
+	/**
+	 * @return provides information about the primary purpose of the package. Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public Optional<Purpose> getPrimaryPurpose() throws InvalidSPDXAnalysisException {
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.PROP_PRIMARY_PACKAGE_PURPOSE);
+		if (retval.isPresent() && !(retval.get() instanceof Purpose)) {
+			throw new SpdxInvalidTypeException("Invalid enum type for "+retval.get().toString());
+		}
+		return (Optional<Purpose>)(Optional<?>)retval;
+	}
+	
+	/**
+	 * @param purpose provides information about the primary purpose of the package. Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setPrimaryPurpose(Purpose purpose) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.PROP_PRIMARY_PACKAGE_PURPOSE, purpose);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		String pkgName = "UNKNOWN PACKAGE";
 		try {
 			Optional<String> name = getName();
@@ -496,7 +575,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// checksum
 		try {
 			for (Checksum checksum:getChecksums()) {
-				List<String> checksumVerify = checksum.verify(verifiedIds);
+				List<String> checksumVerify = checksum.verify(verifiedIds, specVersion);
 				addNameToWarnings(checksumVerify);
 				retval.addAll(checksumVerify);
 			}
@@ -506,13 +585,15 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 
 		// sourceinfo - nothing really to check
 
-		// license declared - mandatory - 1 (need to change return values)
+		// license declared
 		try {
 			Optional<AnyLicenseInfo> declaredLicense = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 			if (!declaredLicense.isPresent()) {
-				retval.add("Missing required declared license for package "+pkgName);
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Missing required declared license for package "+pkgName);
+				}
 			} else {
-				List<String> verify = declaredLicense.get().verify(verifiedIds);
+				List<String> verify = declaredLicense.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -520,7 +601,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			retval.add("Invalid package declared license: "+e.getMessage());
 		}
 		try {
-		    verifyLicenseInfosInFiles(getLicenseInfoFromFiles(), filesAnalyzed, pkgName, verifiedIds, retval);
+		    verifyLicenseInfosInFiles(getLicenseInfoFromFiles(), filesAnalyzed, pkgName, verifiedIds, retval, specVersion);
 		} catch (InvalidSPDXAnalysisException e) {
             retval.add("Invalid license infos from file: "+e.getMessage());
         }
@@ -536,7 +617,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 					retval.add("Warning: Found analyzed files for package "+pkgName+" when analyzedFiles is set to false.");
 				}
 				for (SpdxFile file:getFiles()) {
-					List<String> verify = file.verify(verifiedIds);
+					List<String> verify = file.verify(verifiedIds, specVersion);
 					addNameToWarnings(verify);
 					retval.addAll(verify);
 				}
@@ -553,7 +634,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			} else if (verificationCode.isPresent() && !verificationCode.get().getValue().isEmpty() && !filesAnalyzed) {
 				retval.add("Verification code must not be included when files not analyzed.");
 			} else if (filesAnalyzed) {
-				List<String> verify = verificationCode.get().verify(verifiedIds);
+				List<String> verify = verificationCode.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -588,22 +669,78 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// External refs
 		try {
 			for (ExternalRef externalRef:getExternalRefs()) {
-				retval.addAll(externalRef.verify(verifiedIds));
+				retval.addAll(externalRef.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid external refs: " + e.getMessage());
+		}
+		// built date
+		try {
+			Optional<String> date = getBuiltDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid built date: "+err);
+				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Built date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting built date");
+		}
+		// release date
+		try {
+			Optional<String> date = getReleaseDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid releaes date: "+err);
+				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Release date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting release date");
+		}
+		// valid until date
+		try {
+			Optional<String> date = getValidUntilDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid valid until date: "+err);
+				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Valid until date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting valid until date");
+		}
+		// Primary purpose
+		try {
+			Optional<Purpose> purpose = getPrimaryPurpose();
+			if (purpose.isPresent() && Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+				retval.add("Primary purpose is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting primary purpose");
 		}
 		return retval;
 	}
 
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
-	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval) {
+	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval, String specVersion) {
         if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
-            retval.add("Missing required license information from files for "+pkgName);
+        	if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+        		retval.add("Missing required license information from files for "+pkgName);
+        	}
         } else {
             boolean foundNonSimpleLic = false;
             for (AnyLicenseInfo lic:licenseInfoFromFiles) {
-                List<String> verify = lic.verify(verifiedIds);
+                List<String> verify = lic.verify(verifiedIds, specVersion);
                 addNameToWarnings(verify);
                 retval.addAll(verify);
                 if (!(lic instanceof SimpleLicensingInfo ||
@@ -693,7 +830,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// required fields - SpdxElement
 		String name;
 		
-		// required fields - SpdxItem
 		AnyLicenseInfo concludedLicense;
 		String copyrightText;
 		
@@ -725,6 +861,10 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		String supplier = null;
 		String versionInfo = null;
 		boolean filesAnalyzed = true;
+		Purpose primaryPurpose = null;
+		String builtDate = null;
+		String releaseDate = null;
+		String validUntilDate = null;
 				
 		/**
 		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false
@@ -748,9 +888,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
-			Objects.requireNonNull(licenseDeclared, "License declared can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;
@@ -1023,6 +1160,46 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		public SpdxPackageBuilder addAttributionText(String attribution) {
 			Objects.requireNonNull(attributionText, "Attribution text can not be null");
 			this.attributionText.add(attribution);
+			return this;
+		}
+		
+		/**
+		 * @param purpose Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setPrimaryPurpose(Purpose purpose) {
+			Objects.requireNonNull(purpose, "Purpose can not be null");
+			this.primaryPurpose = purpose;
+			return this;
+		}
+		
+		/**
+		 * @param builtDate This field provides a place for recording the actual date the package was built.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setBuiltDate(String builtDate) {
+			Objects.requireNonNull(builtDate, "Built date can not be null");
+			this.builtDate = builtDate;
+			return this;
+		}
+		
+		/**
+		 * @param validUntilDate This field provides a place for recording the end of the support period for a package from the supplier.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setValidUntilDate(String validUntilDate) {
+			Objects.requireNonNull(validUntilDate, "Valid until date can not be null");
+			this.validUntilDate = validUntilDate;
+			return this;
+		}
+		
+		/**
+		 * @param releaseDate This field provides a place for recording the date the package was released.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setReleaseDate(String releaseDate) {
+			Objects.requireNonNull(releaseDate, "Release date can not be null");
+			this.releaseDate = releaseDate;
 			return this;
 		}
 		

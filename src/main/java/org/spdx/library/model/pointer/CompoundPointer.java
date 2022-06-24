@@ -101,14 +101,14 @@ public abstract class CompoundPointer extends ModelObject {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		ArrayList<String> retval = new ArrayList<String>();
 		try {
 			SinglePointer startPointer = getStartPointer();
 			if (startPointer == null) {
 				retval.add("Missing required start pointer");
 			} else {
-				retval.addAll(startPointer.verify(verifiedIds));
+				retval.addAll(startPointer.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException ex) {
 			retval.add("Error getting start pointer: "+ex.getMessage());

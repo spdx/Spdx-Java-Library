@@ -22,6 +22,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
@@ -34,14 +35,36 @@ public class ChecksumTest extends TestCase {
 	
 	static final ChecksumAlgorithm[] ALGORITHMS = new ChecksumAlgorithm[] {
 			ChecksumAlgorithm.MD5, ChecksumAlgorithm.SHA1,
-			ChecksumAlgorithm.SHA256};
+			ChecksumAlgorithm.SHA256, ChecksumAlgorithm.SHA3_256, ChecksumAlgorithm.SHA3_384, ChecksumAlgorithm.SHA3_512,
+			ChecksumAlgorithm.BLAKE2b_256, ChecksumAlgorithm.BLAKE2b_384, ChecksumAlgorithm.BLAKE2b_512,
+			ChecksumAlgorithm.BLAKE3, ChecksumAlgorithm.ADLER32};
 	static final String SHA1_VALUE1 = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12";
 	static final String SHA1_VALUE2 = "2222e1c67a2d28fced849ee1bb76e7391b93eb12";
 	static final String SHA256_VALUE1 = "CA978112CA1BBDCAFAC231B39A23DC4DA786EFF8147C4E72B9807785AFEE48BB";
 	static final String SHA256_VALUE2 = "F7846F55CF23E14EEBEAB5B4E1550CAD5B509E3348FBC4EFA3A1413D393CB650";
 	static final String MD5_VALUE1 = "9e107d9d372bb6826bd81d3542a419d6";
 	static final String MD5_VALUE2 = "d41d8cd98f00b204e9800998ecf8427e";
-	String[] VALUES = new String[] {MD5_VALUE1, SHA1_VALUE1, SHA256_VALUE1};
+	static final String SHA3_256_VALUE1 = "3518a1626d45e0136ab145f4406e7991b983609ef47fda2c0e12b8c07c35bcde";
+	static final String SHA3_256_VALUE2 = "ef6b5a41a0e7c3e0699f17aa1a2b03d0d3739163015928dead0136ffcd2d0733";
+	static final String SHA3_384_VALUE1 = "8ba59b02f048a31a7ee4cbbd22a6cd02961e9650008037b7f7309dd882f3aaa9bb2a93653c1d524420f25ac62d037667";
+	static final String SHA3_384_VALUE2 = "ccfe5458990438984358069f0b647f5cbc248ee41679bca93b4f18c0bb69ec8e6e41f19481eb3dc83dd22a2ad28f2102";
+	static final String SHA3_512_VALUE1 = "b410ad04ad92b70b1f77b62165a67c2ac368030ca79d47f95d48f37e9be155423242d4ef0c2af510c99f1c99deb95b990a131189adfe0dc841082833dd5dfc64";
+	static final String SHA3_512_VALUE2 = "e32069186e8946b22c0eec91a2978727b16bd6020e2b191f95ddd1e3ffcfa533ac1444dd0c09caf73b003b30001e974859ef1a48996e9b4cf783d764438725d6";
+	static final String BLAKE2B_256_VALUE1 = "716f6e863f744b9ac22c97ec7b76ea5f5908bc5b2f67c61510bfc4751384ea7a";
+	static final String BLAKE2B_256_VALUE2 = "aaaf6e863f744b9ac22c97ec7b76ea5f5908bc5b2f67c61510bfc4751384ea7a";
+	static final String BLAKE2B_384_VALUE1 = "c6cbd89c926ab525c242e6621f2f5fa73aa4afe3d9e24aed727faaadd6af38b620bdb623dd2b4788b1c8086984af8706";
+	static final String BLAKE2B_384_VALUE2 = "aaabd89c926ab525c242e6621f2f5fa73aa4afe3d9e24aed727faaadd6af38b620bdb623dd2b4788b1c8086984af8706";
+	static final String BLAKE2B_512_VALUE1 = "a8cfbbd73726062df0c6864dda65defe58ef0cc52a5625090fa17601e1eecd1b628e94f396ae402a00acc9eab77b4d4c2e852aaaa25a636d80af3fc7913ef5b8";
+	static final String BLAKE2B_512_VALUE2 = "dddfbbd73726062df0c6864dda65defe58ef0cc52a5625090fa17601e1eecd1b628e94f396ae402a00acc9eab77b4d4c2e852aaaa25a636d80af3fc7913ef5b8";
+	static final String BLAKE3_VALUE1 = "9d48cdf8fdcd4af64318de560973d16140ea4de3e1f9212770b01211d9eb59fc";
+	static final String BLAKE3_VALUE2 = "aaa8cdf8fdcd4af64318de560973d16140ea4de3e1f9212770b01211d9eb59fc";
+	static final String ADLER32_VALUE1 = "0eaa033d";
+	static final String ADLER32_VALUE2 = "ddaa033d";
+
+	String[] VALUES = new String[] {MD5_VALUE1, SHA1_VALUE1, SHA256_VALUE1, SHA3_256_VALUE1, SHA3_384_VALUE1,
+			SHA3_512_VALUE1, BLAKE2B_256_VALUE1, BLAKE2B_384_VALUE1, BLAKE2B_512_VALUE1, BLAKE3_VALUE1, ADLER32_VALUE1};
+	String[] VALUES2 = new String[] {MD5_VALUE2, SHA1_VALUE2, SHA256_VALUE2, SHA3_256_VALUE2, SHA3_384_VALUE2,
+			SHA3_512_VALUE2, BLAKE2B_256_VALUE2, BLAKE2B_384_VALUE2, BLAKE2B_512_VALUE2, BLAKE3_VALUE2, ADLER32_VALUE2};
 	Checksum[] TEST_CHECKSUMS;
 	GenericModelObject gmo;
 
@@ -92,6 +115,9 @@ public class ChecksumTest extends TestCase {
 		assertEquals(0, verify.size());
 		checksum.setPropertyValue(SpdxConstants.PROP_CHECKSUM_ALGORITHM, null);
 		assertEquals(1, checksum.verify().size());
+		for (Checksum cksum : TEST_CHECKSUMS) {
+			assertEquals(0, cksum.verify().size());
+		}
 	}
 
 	/**
@@ -106,7 +132,7 @@ public class ChecksumTest extends TestCase {
 		ChecksumAlgorithm[] newAlgorithms = new ChecksumAlgorithm[] {
 				ALGORITHMS[2], ALGORITHMS[0], ALGORITHMS[1]
 		};
-		for (int i = 0;i < checksumReferences.length; i++) {
+		for (int i = 0;i < newAlgorithms.length; i++) {
 			assertEquals(ALGORITHMS[i], TEST_CHECKSUMS[i].getAlgorithm());
 			assertEquals(ALGORITHMS[i], checksumReferences[i].getAlgorithm());
 			checksumReferences[i].setAlgorithm(newAlgorithms[i]);
@@ -130,7 +156,7 @@ public class ChecksumTest extends TestCase {
 		String[] newValues = new String[] {
 				MD5_VALUE2, SHA1_VALUE2, SHA256_VALUE2
 		};
-		for (int i = 0;i < checksumReferences.length; i++) {
+		for (int i = 0;i < newValues.length; i++) {
 			assertEquals(VALUES[i], TEST_CHECKSUMS[i].getValue());
 			assertEquals(VALUES[i], checksumReferences[i].getValue());
 			checksumReferences[i].setValue(newValues[i]);
@@ -174,6 +200,25 @@ public class ChecksumTest extends TestCase {
 		checksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		assertTrue(checksum.compareTo(checksum2) > 0);
 		assertTrue(checksum2.compareTo(checksum) < 0);
+	}
+	
+	public void testPre23FailsVerification() throws InvalidSPDXAnalysisException {
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.ADLER32, ADLER32_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.BLAKE2b_256, BLAKE2B_256_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.BLAKE2b_384, BLAKE2B_384_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.BLAKE2b_512, BLAKE2B_512_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.BLAKE3, BLAKE3_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.SHA3_256, SHA3_256_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.SHA3_384, SHA3_384_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
+		assertEquals(1, gmo.createChecksum(ChecksumAlgorithm.SHA3_512, SHA3_512_VALUE1)
+				.verify(Version.TWO_POINT_TWO_VERSION).size());
 	}
 
 }
