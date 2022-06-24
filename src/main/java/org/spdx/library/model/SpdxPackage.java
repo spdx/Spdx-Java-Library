@@ -1184,7 +1184,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param builtDate This field provides a place for recording the end of the support period for a package from the supplier.
+		 * @param validUntilDate This field provides a place for recording the end of the support period for a package from the supplier.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setValidUntilDate(String validUntilDate) {
