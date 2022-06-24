@@ -17,6 +17,7 @@
  */
 package org.spdx.library.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -239,8 +240,27 @@ public class SpdxDocument extends SpdxElement {
 	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String verifySpecVersion) {
+		List<String> retval = new ArrayList<>();
+		String specVersion;
+		try {
+			specVersion = getSpecVersion();
+			if (specVersion.isEmpty()) {
+				retval.add("Missing required SPDX version");
+				specVersion = verifySpecVersion;
+			} else {
+				String verify = Version.verifySpdxVersion(specVersion);
+				if (verify != null) {
+					retval.add(verify);
+					specVersion = verifySpecVersion;
+				}			
+			}
+		} catch (InvalidSPDXAnalysisException e2) {
+			retval.add("Error getting spec version");
+			specVersion = verifySpecVersion;
+		}
+		retval.addAll(super._verify(verifiedIds, specVersion));
+
 		// name
 		try {
 		    Optional<String> name = getName();
@@ -250,28 +270,14 @@ public class SpdxDocument extends SpdxElement {
 		} catch (InvalidSPDXAnalysisException e1) {
 			retval.add("Error getting document name");
 		}
-		// specVersion
-		try {
-			String specVersion = getSpecVersion();
-			if (specVersion.isEmpty()) {
-				retval.add("Missing required SPDX version");
-			} else {
-				String verify = Version.verifySpdxVersion(specVersion);
-				if (verify != null) {
-					retval.add(verify);
-				}			
-			}
-		} catch(InvalidSPDXAnalysisException e) {
-			retval.add("Error getting spec version: "+e.getMessage());
-		}
-		
+	
 		// creationInfo
 		try {
 			SpdxCreatorInformation creator = this.getCreationInfo();
 			if (Objects.isNull(creator)) {
 				retval.add("Missing required Creator");
 			} else {
-				retval.addAll(creator.verify(verifiedIds));
+				retval.addAll(creator.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting creator information: "+e.getMessage());
@@ -279,7 +285,7 @@ public class SpdxDocument extends SpdxElement {
 		// Extracted licensine infos
 		try {
 			for (ExtractedLicenseInfo licInfo:getExtractedLicenseInfos()) {
-				retval.addAll(licInfo.verify(verifiedIds));
+				retval.addAll(licInfo.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting extracted licensing info: "+e.getMessage());
@@ -302,7 +308,7 @@ public class SpdxDocument extends SpdxElement {
 		// External document references
 		try {
 			for (ExternalDocumentRef externalRef:getExternalDocumentRefs()) {
-				retval.addAll(externalRef.verify(verifiedIds));
+				retval.addAll(externalRef.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting external document references: "+e.getMessage());
@@ -315,7 +321,7 @@ public class SpdxDocument extends SpdxElement {
 				// verify any other important objects.
 			} else {
 				for (SpdxElement element:getDocumentDescribes()) {
-					retval.addAll(element.verify(verifiedIds));
+					retval.addAll(element.verify(verifiedIds, specVersion));
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {

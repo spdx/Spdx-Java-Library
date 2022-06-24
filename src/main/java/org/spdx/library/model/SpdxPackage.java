@@ -453,8 +453,8 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		String pkgName = "UNKNOWN PACKAGE";
 		try {
 			Optional<String> name = getName();
@@ -496,7 +496,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// checksum
 		try {
 			for (Checksum checksum:getChecksums()) {
-				List<String> checksumVerify = checksum.verify(verifiedIds);
+				List<String> checksumVerify = checksum.verify(verifiedIds, specVersion);
 				addNameToWarnings(checksumVerify);
 				retval.addAll(checksumVerify);
 			}
@@ -512,7 +512,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			if (!declaredLicense.isPresent()) {
 				retval.add("Missing required declared license for package "+pkgName);
 			} else {
-				List<String> verify = declaredLicense.get().verify(verifiedIds);
+				List<String> verify = declaredLicense.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -520,7 +520,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			retval.add("Invalid package declared license: "+e.getMessage());
 		}
 		try {
-		    verifyLicenseInfosInFiles(getLicenseInfoFromFiles(), filesAnalyzed, pkgName, verifiedIds, retval);
+		    verifyLicenseInfosInFiles(getLicenseInfoFromFiles(), filesAnalyzed, pkgName, verifiedIds, retval, specVersion);
 		} catch (InvalidSPDXAnalysisException e) {
             retval.add("Invalid license infos from file: "+e.getMessage());
         }
@@ -536,7 +536,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 					retval.add("Warning: Found analyzed files for package "+pkgName+" when analyzedFiles is set to false.");
 				}
 				for (SpdxFile file:getFiles()) {
-					List<String> verify = file.verify(verifiedIds);
+					List<String> verify = file.verify(verifiedIds, specVersion);
 					addNameToWarnings(verify);
 					retval.addAll(verify);
 				}
@@ -553,7 +553,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			} else if (verificationCode.isPresent() && !verificationCode.get().getValue().isEmpty() && !filesAnalyzed) {
 				retval.add("Verification code must not be included when files not analyzed.");
 			} else if (filesAnalyzed) {
-				List<String> verify = verificationCode.get().verify(verifiedIds);
+				List<String> verify = verificationCode.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
 			}
@@ -588,7 +588,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// External refs
 		try {
 			for (ExternalRef externalRef:getExternalRefs()) {
-				retval.addAll(externalRef.verify(verifiedIds));
+				retval.addAll(externalRef.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid external refs: " + e.getMessage());
@@ -597,13 +597,13 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
-	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval) {
+	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval, String specVersion) {
         if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
             retval.add("Missing required license information from files for "+pkgName);
         } else {
             boolean foundNonSimpleLic = false;
             for (AnyLicenseInfo lic:licenseInfoFromFiles) {
-                List<String> verify = lic.verify(verifiedIds);
+                List<String> verify = lic.verify(verifiedIds, specVersion);
                 addNameToWarnings(verify);
                 retval.addAll(verify);
                 if (!(lic instanceof SimpleLicensingInfo ||

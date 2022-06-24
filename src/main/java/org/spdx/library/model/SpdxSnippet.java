@@ -301,8 +301,8 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		
 		String snippetName = "[Unnamed Snippet]";
 		Optional<String> name;
@@ -320,7 +320,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			if (snippetFromFile == null) {
 				retval.add("Missing snippet from file in Snippet "+snippetName);
 			} else {
-				retval.addAll(snippetFromFile.verify(verifiedIds));
+				retval.addAll(snippetFromFile.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting snippetFromFile: "+e.getMessage());
@@ -331,7 +331,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			if (byteRange == null) {
 				retval.add("Missing snippet byte range from Snippet "+snippetName);
 			} else {
-				retval.addAll(byteRange.verify(verifiedIds));
+				retval.addAll(byteRange.verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting byteRange: "+e.getMessage());
@@ -340,7 +340,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		try {
 			lineRange = getLineRange();
 			if (lineRange.isPresent()) {
-				retval.addAll(lineRange.get().verify(verifiedIds));
+				retval.addAll(lineRange.get().verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting lineRange: "+e.getMessage());

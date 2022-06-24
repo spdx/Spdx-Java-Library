@@ -107,7 +107,7 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		// we don't want to call super.verify since we really don't require those fields
 		List<String> retval = new ArrayList<>();
 		String id = this.getId();

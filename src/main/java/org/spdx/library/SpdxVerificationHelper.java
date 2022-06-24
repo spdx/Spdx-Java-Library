@@ -19,7 +19,12 @@ package org.spdx.library;
 import java.net.URI;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 
@@ -29,6 +34,42 @@ import org.spdx.library.model.enumerations.ChecksumAlgorithm;
  *
  */
 public class SpdxVerificationHelper {
+	
+	static final Map<ChecksumAlgorithm, Integer> CHECKSUM_VALUE_LENGTH;
+	static {
+		Map<ChecksumAlgorithm, Integer> map = new HashMap<>();
+		map.put(ChecksumAlgorithm.ADLER32, 8);
+		map.put(ChecksumAlgorithm.BLAKE2b_256, 256 / 4);
+		map.put(ChecksumAlgorithm.BLAKE2b_384, 384 / 4);
+		map.put(ChecksumAlgorithm.BLAKE2b_512, 512 / 4);
+		map.put(ChecksumAlgorithm.BLAKE3, 256 / 4); // Assuming this is the default output size
+		map.put(ChecksumAlgorithm.MD2, 128 / 4);
+		map.put(ChecksumAlgorithm.MD4, 128 / 4);
+		map.put(ChecksumAlgorithm.MD5, 128 / 4);
+		map.put(ChecksumAlgorithm.MD6, null); // variable 0 to 128 bits
+		map.put(ChecksumAlgorithm.SHA1, 40);
+		map.put(ChecksumAlgorithm.SHA224, 224 / 4);
+		map.put(ChecksumAlgorithm.SHA256, 64);
+		map.put(ChecksumAlgorithm.SHA384, 384 / 4);
+		map.put(ChecksumAlgorithm.SHA3_256, 256 / 4);
+		map.put(ChecksumAlgorithm.SHA3_384, 384 / 4);
+		map.put(ChecksumAlgorithm.SHA3_512, 512 / 4);
+		map.put(ChecksumAlgorithm.SHA512, 512 / 4);
+		CHECKSUM_VALUE_LENGTH = Collections.unmodifiableMap(map);
+	}
+	static final Set<ChecksumAlgorithm> CHECKSUM_ALGORITHMS_ADDED_23;
+	static {
+		Set<ChecksumAlgorithm> set = new HashSet<>();
+		set.add(ChecksumAlgorithm.SHA3_256);
+		set.add(ChecksumAlgorithm.SHA3_384);
+		set.add(ChecksumAlgorithm.SHA3_512);
+		set.add(ChecksumAlgorithm.BLAKE2b_256);
+		set.add(ChecksumAlgorithm.BLAKE2b_384);
+		set.add(ChecksumAlgorithm.BLAKE2b_512);
+		set.add(ChecksumAlgorithm.BLAKE3);
+		set.add(ChecksumAlgorithm.ADLER32);
+		CHECKSUM_ALGORITHMS_ADDED_23 = Collections.unmodifiableSet(set);
+	}
 	
 	static final String[] VALID_CREATOR_PREFIXES = new String[] {SpdxConstants.CREATOR_PREFIX_PERSON,
 		SpdxConstants.CREATOR_PREFIX_ORGANIZATION, SpdxConstants.CREATOR_PREFIX_TOOL};
@@ -217,7 +258,7 @@ public class SpdxVerificationHelper {
 		return true;
 	}
 
-	public static String verifyChecksumString(String checksum, ChecksumAlgorithm algorithm) {		
+	public static String verifyChecksumString(String checksum, ChecksumAlgorithm algorithm, String specVersion) {		
 		for (int i = 0; i < checksum.length(); i++) {
 			char c = checksum.charAt(i);
 			if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))) {
@@ -225,15 +266,14 @@ public class SpdxVerificationHelper {
 			}
 		}
 		
-		if (ChecksumAlgorithm.SHA1.equals(algorithm) && checksum.length() != 40) {
+		Integer valueSize = CHECKSUM_VALUE_LENGTH.get(algorithm);
+		if (Objects.nonNull(valueSize) && checksum.length() != valueSize) {
 			return "Invalid number of characters for checksum";
 		}
-	
-		if (ChecksumAlgorithm.SHA256.equals(algorithm) && checksum.length() != 64) {
-			return "Invalid number of characters for checksum";
-		}
-		if (ChecksumAlgorithm.MD5.equals(algorithm) && checksum.length() != 32) {
-			return "Invalid number of characters for checksum";
+		if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+			if (CHECKSUM_ALGORITHMS_ADDED_23.contains(algorithm)) {
+				return "This algorithm is not supported in SPDX specification versions less than 2.3";
+			}
 		}
 		return null;	// if we got here, all OK
 	}

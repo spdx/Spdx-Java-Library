@@ -81,7 +81,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedElementIds) {
+	protected List<String> _verify(List<String> verifiedElementIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		if (verifiedElementIds.contains(this.getId())) {
 			return retval;
@@ -97,12 +97,12 @@ public abstract class SpdxElement extends ModelObject {
 			retval.add("Invalid ID for SPDX Element: "+this.getId()+".  Must be either a valid SPDX ID or Anonymous.");
 		}
 		try {
-			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: ", verifiedElementIds));
+			retval.addAll(verifyCollection(getAnnotations(), "Annotation Error: ", verifiedElementIds, specVersion));
 		} catch (InvalidSPDXAnalysisException e1) {
 			retval.add("Error getting annotation: "+e1.getMessage());
 		}
 		try {
-			retval.addAll(verifyCollection(getRelationships(), "Relationship error: ", verifiedElementIds));
+			retval.addAll(verifyCollection(getRelationships(), "Relationship error: ", verifiedElementIds, specVersion));
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting relationships: "+e.getMessage());
 		}

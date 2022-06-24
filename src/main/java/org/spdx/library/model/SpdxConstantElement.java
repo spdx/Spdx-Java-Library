@@ -53,7 +53,7 @@ public abstract class SpdxConstantElement extends SpdxElement implements Individ
 	}
 
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		return new ArrayList<>();
 	}
 

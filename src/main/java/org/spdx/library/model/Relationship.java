@@ -75,7 +75,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		Optional<SpdxElement> relatedSpdxElement;
 		try {
@@ -85,7 +85,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 			} else if (relatedSpdxElement.get() instanceof ExternalSpdxElement){
 			    // Don't check normal elements - this causes a performance problem for large documents
 			    // where the elements are already checked when that element is parsed
-				retval.addAll(relatedSpdxElement.get().verify(verifiedIds));
+				retval.addAll(relatedSpdxElement.get().verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting related SPDX element for relationship: "+e.getMessage());

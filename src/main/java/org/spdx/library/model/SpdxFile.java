@@ -270,8 +270,8 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 * @see org.spdx.library.model.ModelObject#verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		String fileName = "UNKNOWN";
 		try {
 			Optional<String> myName = this.getName();
@@ -284,7 +284,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			retval.add("Error getting file name");
 		}
 		for (Checksum checksum:checksums) {
-			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds)));
+			retval.addAll(addNameToWarnings(checksum.verify(verifiedIds, specVersion)));
 		}
 		String sha1;
 		try {
@@ -292,7 +292,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			if (sha1 == null || sha1.isEmpty()) {
 				retval.add("Missing required SHA1 hashcode value for "+fileName);
 			} else {
-				String warning = SpdxVerificationHelper.verifyChecksumString(sha1, ChecksumAlgorithm.SHA1);
+				String warning = SpdxVerificationHelper.verifyChecksumString(sha1, ChecksumAlgorithm.SHA1, specVersion);
 				if (warning != null) {
 					retval.add(warning + " for file "+fileName);
 				}

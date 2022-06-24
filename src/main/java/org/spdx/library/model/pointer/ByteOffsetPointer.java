@@ -96,8 +96,8 @@ public class ByteOffsetPointer extends SinglePointer {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
-		List<String> retval = super._verify(verifiedIds);
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+		List<String> retval = super._verify(verifiedIds, specVersion);
 		int offset;
 		try {
 			offset = getOffset();

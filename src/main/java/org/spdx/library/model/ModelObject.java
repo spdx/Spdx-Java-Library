@@ -32,6 +32,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.ReferenceCategory;
@@ -159,29 +160,39 @@ public abstract class ModelObject {
 	
 	/**
 	 * Implementation of the specific verifications for this model object
+	 * @param specVersion Version of the SPDX spec to verify against
 	 * @param verifiedElementIds list of all Element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	protected abstract List<String> _verify(List<String> verifiedElementIds);
+	protected abstract List<String> _verify(List<String> verifiedElementIds, String specVersion);
 	
 	/**
+	 * @param specVersion Version of the SPDX spec to verify against
 	 * @param verifiedIElementds list of all element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	public List<String> verify(List<String> verifiedIElementds) {
+	public List<String> verify(List<String> verifiedIElementds, String specVersion) {
 		if (verifiedIElementds.contains(this.id)) {
 			return new ArrayList<>();
 		} else {
 			// The verifiedElementId is added in the SpdxElement._verify method
-			return _verify(verifiedIElementds);
+			return _verify(verifiedIElementds, specVersion);
 		}
 	}
 	
 	/**
+	 * Verifies against the more recent supported specification version
 	 * @return Any verification errors or warnings associated with this object
 	 */
 	public List<String> verify() {
-		return verify(new ArrayList<String>());
+		return verify(Version.CURRENT_SPDX_VERSION);
+	}
+	/**
+	 * @param specVersion Version of the SPDX spec to verify against
+	 * @return Any verification errors or warnings associated with this object
+	 */
+	public List<String> verify(String specVersion) {
+		return verify(new ArrayList<String>(), specVersion);
 	}
 	
 	//TODO add verify()
@@ -975,14 +986,15 @@ public abstract class ModelObject {
 	
 	/**
 	 * Verifies all elements in a collection
+	 * @param specVersion version of the SPDX specification to verify against
 	 * @param collection collection to be verifies
 	 * @param verifiedIds verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
 	 * @param warningPrefix String to prefix any warning messages
 	 */
-	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds) {
+	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		for (ModelObject mo:collection) {
-			for (String warning:mo.verify(verifiedIds)) {
+			for (String warning:mo.verify(verifiedIds, specVersion)) {
 				if (Objects.nonNull(warningPrefix)) {
 					retval.add(warningPrefix + warning);
 				} else {

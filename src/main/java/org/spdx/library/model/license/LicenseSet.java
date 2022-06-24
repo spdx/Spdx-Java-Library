@@ -110,13 +110,13 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	}
 
 	@Override
-	protected List<String> _verify(List<String> verifiedIds) {
+	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		Iterator<AnyLicenseInfo> iter;
 		try {
 			iter = getMembers().iterator();
 			while (iter.hasNext()) {
-				retval.addAll(iter.next().verify(verifiedIds));
+				retval.addAll(iter.next().verify(verifiedIds, specVersion));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Exception getting license set members: "+e.getMessage());
