@@ -107,7 +107,7 @@ public class ListedLicenses {
         		try {
         			licenseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.warn("Unable to open SPDX listed license model store - using locally cached licenses",ex);
+        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage());
         			licenseModelStore = null;
         		}
         	}

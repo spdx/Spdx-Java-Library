@@ -170,10 +170,8 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
                 ExceptionJsonTOC exceptionToc = gson.fromJson(tocJsonStr.toString(), ExceptionJsonTOC.class);
                 exceptionIds = exceptionToc.getExceptionIds();
             } catch (MalformedURLException e) {
-				logger.error("Json TOC URL invalid, using local TOC file");
 				throw(new SpdxListedLicenseException("License TOC URL invalid"));
 			} catch (IOException e) {
-				logger.error("I/O error opening Json TOC URL");
 				throw(new SpdxListedLicenseException("I/O error reading license TOC"));
 			} finally {
             	if (reader != null) {
