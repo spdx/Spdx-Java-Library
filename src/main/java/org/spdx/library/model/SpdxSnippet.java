@@ -497,9 +497,6 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-			Objects.requireNonNull(licenseInfosFromFile, "License info from file can not be null");
-			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 			Objects.requireNonNull(snippetFromFile, "Snippet from file can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;

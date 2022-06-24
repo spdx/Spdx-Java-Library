@@ -26,6 +26,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.license.AnyLicenseInfo;
@@ -345,4 +346,15 @@ public class SpdxSnippetTest extends TestCase {
 		assertTrue(snippet.compareTo(snippet5) > 0);
 	}
 
+	// Test to verify spec versions prior to 2.3 fail verify for missing license or copyright fields
+	public void testVerify23Fields() throws InvalidSPDXAnalysisException {
+		SpdxSnippet snippet = gmo.createSpdxSnippet(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 
+				"snippetName", null, Arrays.asList(new AnyLicenseInfo[] {}), null,
+				FROM_FILE1, OFFSET1_1, OFFSET1_2)
+				.setLineRange(LINE1_1, LINE1_2)
+				.build();
+
+		assertEquals(0, snippet.verify().size());
+		assertTrue(snippet.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+	}
 }

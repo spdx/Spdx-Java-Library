@@ -138,11 +138,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	
 	@Override
 	public SpdxFile setCopyrightText(@Nullable String copyrightText) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(copyrightText) || copyrightText.isEmpty()) {
-				throw new InvalidSPDXAnalysisException("Can not set required copyright text to null or empty");
-			}
-		}
 		super.setCopyrightText(copyrightText);
 		return this;
 	}
@@ -160,11 +155,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	
 	@Override 
 	public SpdxFile setLicenseConcluded(@Nullable AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(license)) {
-				throw new InvalidSPDXAnalysisException("Can not set required concluded license to null");
-			}
-		}
 		super.setLicenseConcluded(license);
 		return this;
 	}
@@ -379,9 +369,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(concludedLicense, "Concluded can not be null");
 			Objects.requireNonNull(licenseInfosFromFile, "License info from files can not be null");
-			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;

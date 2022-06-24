@@ -29,6 +29,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.OrLaterOperator;
@@ -158,12 +159,12 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @return the licenseDeclared or NOASSERTION if no license declared is found
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public AnyLicenseInfo getLicenseDeclared() throws InvalidSPDXAnalysisException {
+	public @Nullable AnyLicenseInfo getLicenseDeclared() throws InvalidSPDXAnalysisException {
 		Optional<AnyLicenseInfo> retval = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 		if (retval.isPresent()) {
 			return retval.get();
 		} else {
-			return new SpdxNoAssertionLicense(getModelStore(), getDocumentUri());
+			return null;
 		}
 	}
 	
@@ -174,11 +175,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setLicenseDeclared(@Nullable AnyLicenseInfo licenseDeclared) throws InvalidSPDXAnalysisException {
-		if (strict) {
-			if (Objects.isNull(licenseDeclared)) {
-				throw new InvalidSPDXAnalysisException("Can not set required license declared to null");
-			}
-		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE, licenseDeclared);
 		return this;
 	}
@@ -506,11 +502,13 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 
 		// sourceinfo - nothing really to check
 
-		// license declared - mandatory - 1 (need to change return values)
+		// license declared
 		try {
 			Optional<AnyLicenseInfo> declaredLicense = getAnyLicenseInfoPropertyValue(SpdxConstants.PROP_PACKAGE_DECLARED_LICENSE);
 			if (!declaredLicense.isPresent()) {
-				retval.add("Missing required declared license for package "+pkgName);
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Missing required declared license for package "+pkgName);
+				}
 			} else {
 				List<String> verify = declaredLicense.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
@@ -599,7 +597,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
 	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval, String specVersion) {
         if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
-            retval.add("Missing required license information from files for "+pkgName);
+        	if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+        		retval.add("Missing required license information from files for "+pkgName);
+        	}
         } else {
             boolean foundNonSimpleLic = false;
             for (AnyLicenseInfo lic:licenseInfoFromFiles) {
@@ -693,7 +693,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// required fields - SpdxElement
 		String name;
 		
-		// required fields - SpdxItem
 		AnyLicenseInfo concludedLicense;
 		String copyrightText;
 		
@@ -748,9 +747,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-			Objects.requireNonNull(copyrightText, "Copyright text can not be null");
-			Objects.requireNonNull(licenseDeclared, "License declared can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
 			this.id = id;

@@ -1178,9 +1178,6 @@ public abstract class ModelObject {
 		Objects.requireNonNull(id, "ID can not be null");
 		Objects.requireNonNull(name, "Name can not be null");
 		Objects.requireNonNull(sha1, "Sha1 can not be null");
-		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-		Objects.requireNonNull(seenLicense, "Seen license can not be null");
-		Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 		return new SpdxFile.SpdxFileBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, seenLicense, copyrightText, sha1);
 	}
@@ -1199,9 +1196,6 @@ public abstract class ModelObject {
 				String copyrightText, AnyLicenseInfo licenseDeclared) {
 		Objects.requireNonNull(id, "ID can not be null");
 		Objects.requireNonNull(name, "Name can not be null");
-		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-		Objects.requireNonNull(licenseDeclared, "License declared can not be null");
-		Objects.requireNonNull(copyrightText, "copyright text can not be null");
 		return new SpdxPackage.SpdxPackageBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, copyrightText, licenseDeclared);
 	}
@@ -1270,9 +1264,6 @@ public abstract class ModelObject {
 			SpdxFile snippetFromFile, int startByte, int endByte) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(id, "ID can not be null");
 		Objects.requireNonNull(name, "Name can not be null");
-		Objects.requireNonNull(concludedLicense, "Concluded license can not be null");
-		Objects.requireNonNull(seenLicense, "Seen license can not be null");
-		Objects.requireNonNull(copyrightText, "Copyright text can not be null");
 		return new SpdxSnippet.SpdxSnippetBuilder(modelStore, documentUri, id, copyManager,
 				name, concludedLicense, seenLicense, copyrightText, snippetFromFile, startByte, endByte);
 	}

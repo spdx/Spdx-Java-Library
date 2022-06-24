@@ -10,6 +10,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
@@ -147,6 +148,17 @@ public class SpdxFileTest extends TestCase {
 		file.addRelationship(file.createRelationship(fileDep1, RelationshipType.CONTAINS, "Relationship 1 comment"));
 		file.addRelationship(file.createRelationship(fileDep2, RelationshipType.DOCUMENTATION_OF, "Relationship 2 comment"));
 		assertEquals(0, file.verify().size());
+	}
+	
+	// Test to verify spec versions prior to 2.3 fail verify for missing license or copyright fields
+	public void testVerify23Fields() throws InvalidSPDXAnalysisException {
+		
+		
+		SpdxFile file = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"name", null, Arrays.asList(new AnyLicenseInfo[] {}), null, SHA1)
+				.build();
+		assertEquals(0, file.verify().size());
+		assertTrue(file.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 	}
 
 	public void testGetSha1() throws InvalidSPDXAnalysisException {

@@ -26,6 +26,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
@@ -1474,6 +1475,19 @@ public class SpdxPackageTest extends TestCase {
                 "git+git@git.myproject.org:MyProject@6338c7a2525e055a05bae1580e4dd189c2feff7b").matches());
         assertFalse(SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(
                 "something@git.myproject.org:MyProject@6338c7a2525e055a05bae1580e4dd189c2feff7b").matches());
+	}
+	
+	// Test to verify spec versions prior to 2.3 fail verify for missing license or copyright fields
+	public void testVerify23Fields() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.build();
+
+
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 	}
 
 }
