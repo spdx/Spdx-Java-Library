@@ -206,7 +206,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 	
 	/**
-	 * @param releaseDate This field provides a place for recording the end of the support period for a package from the supplier.
+	 * @param validUntilDate This field provides a place for recording the end of the support period for a package from the supplier.
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void setValidUntilDate(String validUntilDate) throws InvalidSPDXAnalysisException {
@@ -1164,7 +1164,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+		 * @param purpose Package Purpose is intrinsic to how the package is being used rather than the content of the package.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setPrimaryPurpose(Purpose purpose) {
@@ -1174,7 +1174,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param This field provides a place for recording the actual date the package was built.
+		 * @param builtDate This field provides a place for recording the actual date the package was built.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setBuiltDate(String builtDate) {
@@ -1184,7 +1184,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param This field provides a place for recording the end of the support period for a package from the supplier.
+		 * @param builtDate This field provides a place for recording the end of the support period for a package from the supplier.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setValidUntilDate(String validUntilDate) {
@@ -1194,7 +1194,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param This field provides a place for recording the date the package was released.
+		 * @param releaseDate This field provides a place for recording the date the package was released.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setReleaseDate(String releaseDate) {
