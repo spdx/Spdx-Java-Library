@@ -45,7 +45,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 
 	private static final String APACHE_ID = "Apache-2.0";
 	private static final String LICENSE_LIST_URI = "https://spdx.org/licenses/";
-	private static final String LICENSE_LIST_VERSION = "3.7";
+	private static final String LICENSE_LIST_VERSION = "3.17";
 	private static final String APACHE_LICENSE_NAME = "Apache License 2.0";
 	private static final int NUM_3_7_LICENSES = 373;
 	
