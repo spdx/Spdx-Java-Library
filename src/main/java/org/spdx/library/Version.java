@@ -72,7 +72,7 @@ public class Version {
 	 * Compares versions of the SPDX spec
 	 * @param specVersion
 	 * @param compareSpecVersion
-	 * @return true if specVersion < compareSpecVersion
+	 * @return true if specVersion is less than compareSpecVersion
 	 */
 	public static boolean versionLessThan(String specVersion,
 			String compareSpecVersion) {
