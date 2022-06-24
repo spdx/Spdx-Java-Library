@@ -60,7 +60,7 @@ public class SpdxDocument extends SpdxElement {
 	@SuppressWarnings("unchecked")
 	public SpdxDocument(IModelStore modelStore, String documentUri, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, SpdxConstants.SPDX_DOCUMENT_ID, copyManager, create);
-		documentDescribes = new RelatedElementCollection(this, RelationshipType.DESCRIBES);
+		documentDescribes = new RelatedElementCollection(this, RelationshipType.DESCRIBES, null);
 		externalDocumentRefs = (Collection<ExternalDocumentRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, ExternalDocumentRef.class);
 		extractedLicenseInfos = (Collection<ExtractedLicenseInfo>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_SPDX_EXTRACTED_LICENSES, ExtractedLicenseInfo.class);
 	}
