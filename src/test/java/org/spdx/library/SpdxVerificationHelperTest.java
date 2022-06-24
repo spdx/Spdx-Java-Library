@@ -172,6 +172,8 @@ public class SpdxVerificationHelperTest extends TestCase {
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("git://git.myproject.org/MyProject.git@da39a3ee5e6b4b0d3255bfef95601890afd80709")));
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("git+https://git.myproject.org/MyProject.git@master#/src/MyClass.cpp")));
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("git+https://git.myproject.org/MyProject@da39a3ee5e6b4b0d3255bfef95601890afd80709#lib/variable.rb")));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("git+git@github.com:myorg/my-repo.git")));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("git+git@github.com:my-org/myrepo.git")));
 		// Mercurial
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("hg+http://hg.myproject.org/MyProject")));
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("hg+https://hg.myproject.org/MyProject")));
