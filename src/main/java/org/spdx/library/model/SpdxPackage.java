@@ -121,6 +121,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setSupplier(spdxPackageBuilder.supplier);
 		setVersionInfo(spdxPackageBuilder.versionInfo);
 		setPrimaryPurpose(spdxPackageBuilder.primaryPurpose);
+		setBuiltDate(spdxPackageBuilder.builtDate);
+		setValidUntilDate(spdxPackageBuilder.validUntilDate);
+		setReleaseDate(spdxPackageBuilder.releaseDate);
 	}
 
 	@Override
@@ -155,6 +158,64 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED, filesAnalyzed);
 		return this;
 	}
+	
+	/**
+	 * @return This field provides a place for recording the actual date the package was built.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getBuiltDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_BUILT_DATE);
+	}
+	
+	/**
+	 * @param builtDate This field provides a place for recording the actual date the package was built.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setBuiltDate(String builtDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(builtDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(builtDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid built date");
+		}
+		setPropertyValue(SpdxConstants.PROP_BUILT_DATE, builtDate);
+	}
+	
+	/**
+	 * @return This field provides a place for recording the date the package was released.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getReleaseDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_RELEASE_DATE);
+	}
+	
+	/**
+	 * @param releaseDate This field provides a place for recording the date the package was released.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setReleaseDate(String releaseDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(releaseDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(releaseDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid release date");
+		}
+		setPropertyValue(SpdxConstants.PROP_RELEASE_DATE, releaseDate);
+	}
+	
+	/**
+	 * @return This field provides a place for recording the end of the support period for a package from the supplier.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public Optional<String> getValidUntilDate() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.PROP_VALID_UNTIL_DATE);
+	}
+	
+	/**
+	 * @param releaseDate This field provides a place for recording the end of the support period for a package from the supplier.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setValidUntilDate(String validUntilDate) throws InvalidSPDXAnalysisException {
+		if (strict && Objects.nonNull(validUntilDate) && Objects.nonNull(SpdxVerificationHelper.verifyDate(validUntilDate))) {
+			throw new InvalidSPDXAnalysisException("Invalid valid until date");
+		}
+		setPropertyValue(SpdxConstants.PROP_VALID_UNTIL_DATE, validUntilDate);
+	}
+	
 	
 	/**
 	 * @return the licenseDeclared or NOASSERTION if no license declared is found
@@ -613,6 +674,42 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid external refs: " + e.getMessage());
 		}
+		// built date
+		try {
+			Optional<String> date = getBuiltDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid built date: "+err);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting built date");
+		}
+		// release date
+		try {
+			Optional<String> date = getReleaseDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid releaes date: "+err);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting release date");
+		}
+		// valid until date
+		try {
+			Optional<String> date = getValidUntilDate();
+			if (date.isPresent()) {
+				String err = SpdxVerificationHelper.verifyDate(date.get());
+				if (Objects.nonNull(err)) {
+					retval.add("Invalid valid until date: "+err);
+				}
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting valid until date");
+		}
 		return retval;
 	}
 
@@ -747,6 +844,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		String versionInfo = null;
 		boolean filesAnalyzed = true;
 		Purpose primaryPurpose = null;
+		String builtDate = null;
+		String releaseDate = null;
+		String validUntilDate = null;
 				
 		/**
 		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false
@@ -1046,12 +1146,42 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		}
 		
 		/**
-		 * @param attribution attribution to add to the attribution text
+		 * @param Package Purpose is intrinsic to how the package is being used rather than the content of the package.
 		 * @return this to continue the build
 		 */
 		public SpdxPackageBuilder setPrimaryPurpose(Purpose purpose) {
 			Objects.requireNonNull(purpose, "Purpose can not be null");
 			this.primaryPurpose = purpose;
+			return this;
+		}
+		
+		/**
+		 * @param This field provides a place for recording the actual date the package was built.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setBuiltDate(String builtDate) {
+			Objects.requireNonNull(builtDate, "Built date can not be null");
+			this.builtDate = builtDate;
+			return this;
+		}
+		
+		/**
+		 * @param This field provides a place for recording the end of the support period for a package from the supplier.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setValidUntilDate(String validUntilDate) {
+			Objects.requireNonNull(validUntilDate, "Valid until date can not be null");
+			this.validUntilDate = validUntilDate;
+			return this;
+		}
+		
+		/**
+		 * @param This field provides a place for recording the date the package was released.
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setReleaseDate(String releaseDate) {
+			Objects.requireNonNull(releaseDate, "Release date can not be null");
+			this.releaseDate = releaseDate;
 			return this;
 		}
 		

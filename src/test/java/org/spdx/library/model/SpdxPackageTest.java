@@ -19,8 +19,10 @@ package org.spdx.library.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
@@ -70,6 +72,7 @@ public class SpdxPackageTest extends TestCase {
 	static final String VERSION2 = "V2";
 	
 	static final String DATE_NOW = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT).format(new Date());
+	static final String DATE_THEN = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT).format(new GregorianCalendar(2021, Calendar.JANUARY, 11).getTime());
 	
 	SpdxElement RELATED_ELEMENT1;
 	SpdxElement RELATED_ELEMENT2;
@@ -1504,5 +1507,47 @@ public class SpdxPackageTest extends TestCase {
 		assertEquals(pkg.getPrimaryPurpose().get(), Purpose.FRAMEWORK);
 		pkg.setPrimaryPurpose(null);
 		assertFalse(pkg.getPrimaryPurpose().isPresent());
+	}
+	
+	public void testSetBuiltDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setBuiltDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getBuiltDate().get(), DATE_NOW);
+		pkg.setBuiltDate(DATE_THEN);
+		assertEquals(pkg.getBuiltDate().get(), DATE_THEN);
+		pkg.setBuiltDate(null);
+		assertFalse(pkg.getBuiltDate().isPresent());
+	}
+	
+	public void testSetValidUntilDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setValidUntilDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getValidUntilDate().get(), DATE_NOW);
+		pkg.setValidUntilDate(DATE_THEN);
+		assertEquals(pkg.getValidUntilDate().get(), DATE_THEN);
+		pkg.setValidUntilDate(null);
+		assertFalse(pkg.getValidUntilDate().isPresent());
+	}
+	
+	public void testSetReleaseDate() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setReleaseDate(DATE_NOW)
+				.build();
+		assertEquals(pkg.getReleaseDate().get(), DATE_NOW);
+		pkg.setReleaseDate(DATE_THEN);
+		assertEquals(pkg.getReleaseDate().get(), DATE_THEN);
+		pkg.setReleaseDate(null);
+		assertFalse(pkg.getReleaseDate().isPresent());
 	}
 }

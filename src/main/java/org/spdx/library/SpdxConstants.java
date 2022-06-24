@@ -225,6 +225,9 @@ public class SpdxConstants {
 	public static final String PROP_PACKAGE_FILES_ANALYZED = "filesAnalyzed";
 	public static final String PROP_EXTERNAL_REF = "externalRef";
 	public static final String PROP_PRIMARY_PACKAGE_PURPOSE = "primaryPackagePurpose";
+	public static final String PROP_BUILT_DATE = "builtDate";
+	public static final String PROP_RELEASE_DATE = "releaseDate";
+	public static final String PROP_VALID_UNTIL_DATE = "validUntilDate";
 	
 	// SPDX License Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace

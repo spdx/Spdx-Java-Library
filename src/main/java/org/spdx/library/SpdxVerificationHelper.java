@@ -156,7 +156,7 @@ public class SpdxVerificationHelper {
 	
 	/**
 	 * @param creationDate
-	 * @return
+	 * @return error message or null if no error
 	 */
 	public static String verifyDate(String creationDate) {
 		try {
