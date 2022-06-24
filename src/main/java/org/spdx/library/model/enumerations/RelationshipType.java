@@ -71,7 +71,9 @@ public enum RelationshipType implements IndividualUriValue {
 	RUNTIME_DEPENDENCY_OF("relationshipType_runtimeDependencyOf"),
 	TEST_DEPENDENCY_OF("relationshipType_testDependencyOf"),
 	TEST_OF("relationshipType_testOf"),
-	TEST_TOOL_OF("relationshipType_testToolOf");
+	TEST_TOOL_OF("relationshipType_testToolOf"),
+	REQUIREMENT_DESCRIPTION_FOR("relationshipType_requirementDescriptionFor"),
+	SPECIFICATION_FOR("relationshipType_specificationFor");
 	
 	private String longName;
 	

@@ -1525,14 +1525,36 @@ public class SpdxPackageTest extends TestCase {
 		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 		
 		// Primary Purpose
-				pkg = gmo.createPackage(gmo.getModelStore()
-						.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
-						.setDownloadLocation(DOWNLOAD_LOCATION1)
-						.setFilesAnalyzed(false)
-						.setPrimaryPurpose(Purpose.APPLICATION)
-						.build();
-				assertEquals(0, pkg.verify().size());
-				assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setPrimaryPurpose(Purpose.APPLICATION)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Relationship Type REQUIREMENT_DESCRIPTION_FOR
+		Relationship rel = gmo.createRelationship(FILE1, RelationshipType.REQUIREMENT_DESCRIPTION_FOR, "");
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.addRelationship(rel)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Relationship Type SPECIFICATION_FOR
+		rel = gmo.createRelationship(FILE1, RelationshipType.SPECIFICATION_FOR, "");
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.addRelationship(rel)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 				
 	}
 
