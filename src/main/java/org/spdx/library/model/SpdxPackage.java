@@ -682,6 +682,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 				if (Objects.nonNull(err)) {
 					retval.add("Invalid built date: "+err);
 				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Built date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting built date");
@@ -693,6 +696,9 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 				String err = SpdxVerificationHelper.verifyDate(date.get());
 				if (Objects.nonNull(err)) {
 					retval.add("Invalid releaes date: "+err);
+				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Release date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -706,9 +712,21 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 				if (Objects.nonNull(err)) {
 					retval.add("Invalid valid until date: "+err);
 				}
+				if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+					retval.add("Valid until date is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting valid until date");
+		}
+		// Primary purpose
+		try {
+			Optional<Purpose> purpose = getPrimaryPurpose();
+			if (purpose.isPresent() && Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
+				retval.add("Primary purpose is not supported prior to release "+Version.TWO_POINT_THREE_VERSION);
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting primary purpose");
 		}
 		return retval;
 	}

@@ -1483,6 +1483,7 @@ public class SpdxPackageTest extends TestCase {
 	
 	// Test to verify spec versions prior to 2.3 fail verify for missing license or copyright fields
 	public void testVerify23Fields() throws InvalidSPDXAnalysisException {
+		// previously required fields
 		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
 				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
 				.setDownloadLocation(DOWNLOAD_LOCATION1)
@@ -1492,6 +1493,47 @@ public class SpdxPackageTest extends TestCase {
 
 		assertEquals(0, pkg.verify().size());
 		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// BuiltDate
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setBuiltDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Release Date
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setReleaseDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Valid Until Date
+		pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setValidUntilDate(DATE_NOW)
+				.build();
+		assertEquals(0, pkg.verify().size());
+		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+		
+		// Primary Purpose
+				pkg = gmo.createPackage(gmo.getModelStore()
+						.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, LICENSE1, "copyright", LICENSE2)
+						.setDownloadLocation(DOWNLOAD_LOCATION1)
+						.setFilesAnalyzed(false)
+						.setPrimaryPurpose(Purpose.APPLICATION)
+						.build();
+				assertEquals(0, pkg.verify().size());
+				assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
+				
 	}
 
 	public void testSetPrimaryPurpose() throws InvalidSPDXAnalysisException {
