@@ -30,6 +30,7 @@ import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.Purpose;
 import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
@@ -1490,4 +1491,18 @@ public class SpdxPackageTest extends TestCase {
 		assertTrue(pkg.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 	}
 
+	public void testSetPrimaryPurpose() throws InvalidSPDXAnalysisException {
+		SpdxPackage pkg = gmo.createPackage(gmo.getModelStore()
+				.getNextId(IdType.SpdxId, gmo.getDocumentUri()), PKG_NAME1, null, null, null)
+				.setDownloadLocation(DOWNLOAD_LOCATION1)
+				.setFilesAnalyzed(false)
+				.setPrimaryPurpose(Purpose.APPLICATION)
+				.build();
+		
+		assertEquals(pkg.getPrimaryPurpose().get(), Purpose.APPLICATION);
+		pkg.setPrimaryPurpose(Purpose.FRAMEWORK);
+		assertEquals(pkg.getPrimaryPurpose().get(), Purpose.FRAMEWORK);
+		pkg.setPrimaryPurpose(null);
+		assertFalse(pkg.getPrimaryPurpose().isPresent());
+	}
 }

@@ -143,6 +143,7 @@ public class SpdxConstants {
 	public static final String ENUM_CHECKSUM_ALGORITHM_TYPE = "ChecksumAlgorithm";
 	public static final String ENUM_REFERENCE_CATEGORY_TYPE = "ReferenceCategory";
 	public static final String ENUM_REFERENCE_RELATIONSHIP_TYPE = "RelationshipType";
+	public static final String ENUM_PURPOSE = "Purpose";
 	// General SPDX Properties
 	public static final String PROP_VALUE_NONE = "none";
 	public static final String URI_VALUE_NONE = SPDX_NAMESPACE  + PROP_VALUE_NONE;
@@ -223,6 +224,7 @@ public class SpdxConstants {
 	public static final String PROP_PACKAGE_SUPPLIER = "supplier";
 	public static final String PROP_PACKAGE_FILES_ANALYZED = "filesAnalyzed";
 	public static final String PROP_EXTERNAL_REF = "externalRef";
+	public static final String PROP_PRIMARY_PACKAGE_PURPOSE = "primaryPackagePurpose";
 	
 	// SPDX License Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace

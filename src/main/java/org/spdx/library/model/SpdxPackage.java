@@ -31,6 +31,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.Purpose;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.library.model.license.OrLaterOperator;
 import org.spdx.library.model.license.SimpleLicensingInfo;
@@ -107,7 +108,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		
 		// optional parameters - SpdxPackage
 		getChecksums().addAll(spdxPackageBuilder.checksums);
-
 		setDescription(spdxPackageBuilder.description);
 		setDownloadLocation(spdxPackageBuilder.downloadLocation);
 		getExternalRefs().addAll(spdxPackageBuilder.externalRefs);
@@ -120,6 +120,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		setSummary(spdxPackageBuilder.summary);
 		setSupplier(spdxPackageBuilder.supplier);
 		setVersionInfo(spdxPackageBuilder.versionInfo);
+		setPrimaryPurpose(spdxPackageBuilder.primaryPurpose);
 	}
 
 	@Override
@@ -445,6 +446,27 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		return this;
 	}
 	
+	/**
+	 * @return provides information about the primary purpose of the package. Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unchecked")
+	public Optional<Purpose> getPrimaryPurpose() throws InvalidSPDXAnalysisException {
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.PROP_PRIMARY_PACKAGE_PURPOSE);
+		if (retval.isPresent() && !(retval.get() instanceof Purpose)) {
+			throw new SpdxInvalidTypeException("Invalid enum type for "+retval.get().toString());
+		}
+		return (Optional<Purpose>)(Optional<?>)retval;
+	}
+	
+	/**
+	 * @param purpose provides information about the primary purpose of the package. Package Purpose is intrinsic to how the package is being used rather than the content of the package.
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void setPrimaryPurpose(Purpose purpose) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.PROP_PRIMARY_PACKAGE_PURPOSE, purpose);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
 	 */
@@ -724,6 +746,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		String supplier = null;
 		String versionInfo = null;
 		boolean filesAnalyzed = true;
+		Purpose primaryPurpose = null;
 				
 		/**
 		 * Build an SpdxPackage with the required parameters if isFilesAnalyzed is false
@@ -1019,6 +1042,16 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		public SpdxPackageBuilder addAttributionText(String attribution) {
 			Objects.requireNonNull(attributionText, "Attribution text can not be null");
 			this.attributionText.add(attribution);
+			return this;
+		}
+		
+		/**
+		 * @param attribution attribution to add to the attribution text
+		 * @return this to continue the build
+		 */
+		public SpdxPackageBuilder setPrimaryPurpose(Purpose purpose) {
+			Objects.requireNonNull(purpose, "Purpose can not be null");
+			this.primaryPurpose = purpose;
 			return this;
 		}
 		
