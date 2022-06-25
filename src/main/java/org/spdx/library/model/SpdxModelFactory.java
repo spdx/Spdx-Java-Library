@@ -41,6 +41,7 @@ import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.Purpose;
 import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
@@ -123,7 +124,8 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.ENUM_CHECKSUM_ALGORITHM_TYPE, ChecksumAlgorithm.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_CATEGORY_TYPE, ReferenceCategory.class);
 		typeToClass.put(SpdxConstants.ENUM_REFERENCE_RELATIONSHIP_TYPE, RelationshipType.class);
-		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE, ExternalExtractedLicenseInfo.class);		
+		typeToClass.put(SpdxConstants.CLASS_EXTERNAL_EXTRACTED_LICENSE, ExternalExtractedLicenseInfo.class);	
+		typeToClass.put(SpdxConstants.ENUM_PURPOSE, Purpose.class);
 		SPDX_TYPE_TO_CLASS = Collections.unmodifiableMap(typeToClass);
 		
 		Map<Class<?>, String> classToType = new HashMap<>();
