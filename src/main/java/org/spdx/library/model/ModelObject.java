@@ -107,6 +107,55 @@ public abstract class ModelObject {
 	 * if true, checks input values for setters to verify valid SPDX inputs
 	 */
 	protected boolean strict = true;
+	
+	// the following fields are for debugging when equivalent returns false
+	enum NotEquivalent {
+		DIFFERENT_CLASS, MISSING_PROPERTY, PROPERTY_NOT_EQUIVALENT, COMPARE_PROPERTY_MISSING};
+	class NotEquivalentReason {
+		NotEquivalent reason;
+		String property = null;
+		
+		public NotEquivalentReason(NotEquivalent reason) {
+			this.reason = reason;
+		}
+		
+		public NotEquivalentReason(NotEquivalent reason, String property) {
+			this(reason);
+			this.property = property;
+		}
+
+		/**
+		 * @return the reason
+		 */
+		public NotEquivalent getReason() {
+			return reason;
+		}
+
+		/**
+		 * @param reason the reason to set
+		 */
+		public void setReason(NotEquivalent reason) {
+			this.reason = reason;
+		}
+
+		/**
+		 * @return the property
+		 */
+		public String getProperty() {
+			return property;
+		}
+
+		/**
+		 * @param property the property to set
+		 */
+		public void setProperty(String property) {
+			this.property = property;
+		}
+	}
+	
+	
+	NotEquivalentReason lastNotEquivalentReason = null;
+	
 
 	/**
 	 * Create a new Model Object using an Anonymous ID with the defualt store and default document URI
@@ -194,8 +243,6 @@ public abstract class ModelObject {
 	public List<String> verify(String specVersion) {
 		return verify(new ArrayList<String>(), specVersion);
 	}
-	
-	//TODO add verify()
 	
 	/**
 	 * @return the Document URI for this object
@@ -713,6 +760,7 @@ public abstract class ModelObject {
 	 */
 	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 		if (!this.getClass().equals(compare.getClass())) {
+			lastNotEquivalentReason = new NotEquivalentReason(NotEquivalent.DIFFERENT_CLASS);
 			return false;
 		}
 		List<String> propertyValueNames = getPropertyValueNames();
@@ -724,6 +772,8 @@ public abstract class ModelObject {
 			if (comparePropertyValueNames.contains(propertyName)) {
 				if (!propertyValuesEquivalent(propertyName, this.getObjectPropertyValue(propertyName), 
 				        compare.getObjectPropertyValue(propertyName), ignoreRelatedElements)) {
+					lastNotEquivalentReason = new NotEquivalentReason(
+							NotEquivalent.PROPERTY_NOT_EQUIVALENT, propertyName);
 				    return false;
 				}
 				comparePropertyValueNames.remove(propertyName);
@@ -733,9 +783,13 @@ public abstract class ModelObject {
 				if (propertyValue.isPresent()) {
 					if (propertyValue.get() instanceof ModelCollection) {
 						if (((ModelCollection<?>)(propertyValue.get())).size() > 0) {
+							lastNotEquivalentReason = new NotEquivalentReason(
+									NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
 							return false;
 						}
 					} else {
+						lastNotEquivalentReason = new NotEquivalentReason(
+								NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
 						return false;
 					}
 				}
@@ -743,6 +797,8 @@ public abstract class ModelObject {
 		}
 		for (String propertyName:comparePropertyValueNames) {	// check any remaining property values
 			if (!compare.getObjectPropertyValue(propertyName).isPresent()) {
+				lastNotEquivalentReason = new NotEquivalentReason(
+						NotEquivalent.MISSING_PROPERTY, propertyName);
 				return false;
 			}
 		}
