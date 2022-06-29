@@ -787,7 +787,7 @@ public abstract class ModelObject {
 									NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
 							return false;
 						}
-					} else {
+					} else if (!propertyNoAssertion(propertyValue)) {
 						lastNotEquivalentReason = new NotEquivalentReason(
 								NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
 						return false;
@@ -803,6 +803,12 @@ public abstract class ModelObject {
 			}
 		}
 		return true;
+	}
+	
+	boolean propertyNoAssertion(Optional<Object> propertyValue) {
+		return propertyValue.isPresent() && 
+				(propertyValue.get() instanceof SpdxNoAssertionLicense ||
+						propertyValue.get().equals("NOASSERTION"));
 	}
 
 	/**
