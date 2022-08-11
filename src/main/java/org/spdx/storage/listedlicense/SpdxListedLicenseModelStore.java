@@ -64,7 +64,7 @@ import com.google.gson.Gson;
 public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore {
 	
 	static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class.getName());
-	static final String DEFAULT_LICENSE_LIST_VERSION = "3.7";
+	static final String DEFAULT_LICENSE_LIST_VERSION = "3.17";
 	static final String LICENSE_TOC_FILENAME = "licenses.json";
 	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
