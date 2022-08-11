@@ -36,7 +36,7 @@ import org.spdx.library.model.license.SpdxListedLicense;
  */
 public class LicenseJsonTOC {
 	
-	static class LicenseJson {
+	public static class LicenseJson {
 		private String reference;
 		private boolean isDeprecatedLicenseId;
 		private String detailsUrl;
