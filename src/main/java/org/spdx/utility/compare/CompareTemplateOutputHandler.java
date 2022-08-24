@@ -903,7 +903,12 @@ public class CompareTemplateOutputHandler implements
 	 */
 	@Override
 	public void completeParsing() throws LicenseParserException {
-		this.topLevelInstruction.match(compareTokens, 0, compareTokens.length-1, compareText, differences, tokenToLocation);
+		int nextTokenIndex = this.topLevelInstruction.match(compareTokens, 0, compareTokens.length-1, compareText, differences, tokenToLocation);
+		if (nextTokenIndex > 0 && nextTokenIndex < compareTokens.length) {
+			this.differences.addDifference(tokenToLocation.get(nextTokenIndex), 
+					LicenseCompareHelper.getTokenAt(compareTokens, nextTokenIndex), 
+					"Additional text found after the end of the expected license text", null, null, null);
+		}
 		parsingComplete = true;
 	}
 

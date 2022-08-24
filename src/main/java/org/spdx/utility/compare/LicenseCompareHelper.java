@@ -217,10 +217,10 @@ public class LicenseCompareHelper {
 	            reader = new BufferedReader(new StringReader(s));
 	            String line = reader.readLine();
 	            while (line != null) {
-                    line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
+	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
+	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
                     line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
-                    line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
-	                sb.append(line);
+                    sb.append(line);
 	                sb.append("\n");
 	                line = reader.readLine();
 	            }
