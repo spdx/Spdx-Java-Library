@@ -112,17 +112,15 @@ public class ListedReferenceTypes {
 	 * @return the listed reference types as maintained by the SPDX workgroup
 	 */
 	public static ListedReferenceTypes getListedReferenceTypes() {
-        if (listedReferenceTypes == null) {
-        	listedReferenceTypesModificationLock.writeLock().lock();
-            try {
-                if (listedReferenceTypes == null) {
-                	listedReferenceTypes = new ListedReferenceTypes();
-                }
-            } finally {
-            	listedReferenceTypesModificationLock.writeLock().unlock();
+    	listedReferenceTypesModificationLock.writeLock().lock();
+        try {
+            if (listedReferenceTypes == null) {
+            	listedReferenceTypes = new ListedReferenceTypes();
             }
+            return listedReferenceTypes;
+        } finally {
+        	listedReferenceTypesModificationLock.writeLock().unlock();
         }
-        return listedReferenceTypes;
 	}
 	
 	/**

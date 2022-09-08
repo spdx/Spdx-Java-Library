@@ -47,7 +47,7 @@ public enum ChecksumAlgorithm implements IndividualUriValue {
 	ADLER32("checksumAlgorithm_adler32"),
 	;
 
-	private String longName;
+	private final String longName;
 	
 	private ChecksumAlgorithm(String longName) {
 		this.longName = longName;

@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -33,6 +36,9 @@ import org.spdx.library.SpdxConstants;
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	private static final int READ_TIMEOUT = 5000;
+	
+	static final List<String> WHITE_LIST = Collections.unmodifiableList(Arrays.asList(
+			"spdx.org", "spdx.dev", "spdx.com", "spdx.info")); // Allowed host names for the SPDX listed licenses
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
@@ -49,11 +55,23 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			(status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
 						|| status == HttpURLConnection.HTTP_SEE_OTHER)) {
 				// redirect
-			String redirectUrl = connection.getHeaderField("Location");
-			if (Objects.isNull(redirectUrl) || redirectUrl.isEmpty()) {
-				throw new IOException("Invalid redirect URL response");
+			String redirectUrlStr = connection.getHeaderField("Location");
+			if (Objects.isNull(redirectUrlStr) || redirectUrlStr.isEmpty()) {
+				throw new IOException("Empty redirect URL response");
 			}
-			connection = (HttpURLConnection)new URL(redirectUrl).openConnection();
+			URL redirectUrl;
+			try {
+				redirectUrl = new URL(redirectUrlStr);
+			} catch(Exception ex) {
+				throw new IOException("Invalid redirect URL");
+			}
+			if (!redirectUrl.getProtocol().toLowerCase().startsWith("http")) {
+				throw new IOException("Invalid redirect protocol");
+			}
+			if (!WHITE_LIST.contains(redirectUrl.getHost())) {
+				throw new IOException("Invalid redirect host - not on the allowed 'white list'");
+			}
+			connection = (HttpURLConnection)redirectUrl.openConnection();
 		}
 		return connection.getInputStream();
 	}
