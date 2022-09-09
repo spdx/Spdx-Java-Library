@@ -833,14 +833,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		if (isSpdxListedLicenseId(documentUri, id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
-		} else if (isSpdxListedExceptionId(documentUri, id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
-		} else if (crossRefs.containsKey(id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
-		} else {
-			return Optional.empty();
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.containsKey(id.toLowerCase())) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+			} else if (crossRefs.containsKey(id)) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
+			} else {
+				return Optional.empty();
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
 		}
 	}
 	
