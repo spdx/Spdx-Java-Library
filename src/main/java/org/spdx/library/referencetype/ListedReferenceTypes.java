@@ -99,7 +99,7 @@ public class ListedReferenceTypes {
 		listedReferenceTypesModificationLock.readLock().lock();
 		try {
 			String referenceTypeNamesStr = this.listedReferenceTypeProperties.getProperty(PROPERTY_LISTED_REFERENCE_TYPES);
-			String[] referenceTypeNamesAr = referenceTypeNamesStr.split(",");
+			String[] referenceTypeNamesAr = referenceTypeNamesStr.split(",", -1);
 			for (String name:referenceTypeNamesAr) {
 				this.listedReferenceNames.add(name.trim());
 			}
@@ -165,10 +165,10 @@ public class ListedReferenceTypes {
 			retval = new URI(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + listedReferenceName);
 		} catch (URISyntaxException e) {
 			logger.error("Error forming listed license URI",e);
-			throw(new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type syntax."));
+			throw new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type syntax.");
 		}
     	if (!isListedReferenceType(retval)) {
-    		throw(new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type."));
+    		throw new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type.");
     	}
     	return retval;
     }
@@ -194,7 +194,7 @@ public class ListedReferenceTypes {
      */
     public String getListedReferenceName(URI uri) throws InvalidSPDXAnalysisException {
     	if (!this.isListedReferenceType(uri)) {
-    		throw(new InvalidSPDXAnalysisException(uri.toString() + " is not a valid URI for an SPDX listed reference type."));
+    		throw new InvalidSPDXAnalysisException(uri.toString() + " is not a valid URI for an SPDX listed reference type.");
     	}
     	return uri.toString().substring(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX.length());
     }

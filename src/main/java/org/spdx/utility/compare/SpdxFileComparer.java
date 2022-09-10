@@ -202,7 +202,7 @@ public class SpdxFileComparer extends SpdxItemComparer {
     protected void checkInProgress() throws SpdxCompareException {
 		super.checkInProgress();
 		if (inProgress) {
-			throw(new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed"));
+			throw new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed");
 		}
 	}
 
@@ -249,12 +249,12 @@ public class SpdxFileComparer extends SpdxItemComparer {
 		try {
 			SpdxItem itemA = this.documentItem.get(docA);
 			if (itemA == null || !(itemA instanceof SpdxFile)) {
-				throw(new SpdxCompareException("No SPDX File associated with "+docA.getName()));
+				throw new SpdxCompareException("No SPDX File associated with "+docA.getName());
 			}
 			SpdxFile fileA = (SpdxFile)itemA;
 			SpdxItem itemB = this.documentItem.get(docB);
 			if (itemB == null || !(itemB instanceof SpdxFile)) {
-				throw(new SpdxCompareException("No SPDX File associated with "+docB.getName()));
+				throw new SpdxCompareException("No SPDX File associated with "+docB.getName());
 			}
 			SpdxFile fileB = (SpdxFile)itemB;
 			List<AnyLicenseInfo> uniqueLicenseInfoInFilesA = this.getUniqueSeenLicenses(docA, docB);

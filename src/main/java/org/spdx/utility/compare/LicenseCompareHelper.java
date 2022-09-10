@@ -629,9 +629,9 @@ public class LicenseCompareHelper {
 		try {
 			SpdxLicenseTemplateHelper.parseTemplate(licenseTemplate, filteredOutput);
 		} catch (LicenseTemplateRuleException e) {
-			throw(new SpdxCompareException("Invalid template rule found during filter: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template rule found during filter: "+e.getMessage(),e);
 		} catch (LicenseParserException e) {
-			throw(new SpdxCompareException("Invalid template found during filter: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template found during filter: "+e.getMessage(),e);
 		}
 		return filteredOutput.getFilteredText();
 	}
@@ -720,15 +720,15 @@ public class LicenseCompareHelper {
 		try {
 			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
 		} catch (IOException e1) {
-			throw(new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1));
+			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
 		}
 		try {
 		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
 			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(licenseTemplate), compareTemplateOutputHandler);
 		} catch (LicenseTemplateRuleException e) {
-			throw(new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
 		} catch (LicenseParserException e) {
-			throw(new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}
@@ -750,15 +750,15 @@ public class LicenseCompareHelper {
 		try {
 			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
 		} catch (IOException e1) {
-			throw(new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1));
+			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
 		}
 		try {
 		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
 			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(exceptionTemplate), compareTemplateOutputHandler);
 		} catch (LicenseTemplateRuleException e) {
-			throw(new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
 		} catch (LicenseParserException e) {
-			throw(new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e));
+			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}

@@ -121,7 +121,7 @@ public class ModelStorageClassConverter {
 					return copyManager.copy(stModelStore, stDocumentUri, 
 							mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType());
 				} else {
-					throw(new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store"));
+					throw new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store");
 				}
 			} else {
 				return mValue.toTypedValue();

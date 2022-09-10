@@ -66,7 +66,7 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		if (!SpdxConstants.EXTERNAL_EXTRACTED_LICENSE_PATTERN.matcher(id).matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX");
 		}
 		getExternalExtractedLicenseURI();	//this will check to make sure the external document reference is available
 	}
@@ -78,7 +78,7 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	public String getExternalDocumentId() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstants.EXTERNAL_EXTRACTED_LICENSE_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX");
 		}
 		return matcher.group(1);
 	}
@@ -90,7 +90,7 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	public String getExternalLicenseRef() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstants.EXTERNAL_EXTRACTED_LICENSE_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:LicenseRef-XXX");
 		}
 		return matcher.group(2);
 	}

@@ -216,9 +216,9 @@ public class SpdxComparer {
 				snippetsA = snippetStreamA.collect(Collectors.toList());
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
-					throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(i).getName(), e));
+					throw new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(i).getName(), e);
 				} catch (InvalidSPDXAnalysisException e1) {
-					throw(new SpdxCompareException("Error collecting snippets from SPDX document ", e));
+					throw new SpdxCompareException("Error collecting snippets from SPDX document ", e);
 				}
 			} finally {
 			    if (Objects.nonNull(snippetStreamA)) {
@@ -227,7 +227,7 @@ public class SpdxComparer {
 			}
 			// note - the snippet arrays MUST be sorted for the comparator methods to work
 			Collections.sort(snippetsA);
-			addSnippetComparers(spdxDocs.get(i), snippetsA, this.extractedLicenseIdMap);
+			addSnippetComparers(spdxDocs.get(i), snippetsA);
 			Map<SpdxDocument, List<SpdxSnippet>> uniqueAMap = this.uniqueSnippets.get(spdxDocs.get(i));
 			if (uniqueAMap == null) {
 				uniqueAMap = new HashMap<>();
@@ -244,9 +244,9 @@ public class SpdxComparer {
 					snippetsB = snippetStreamB.collect(Collectors.toList());
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
-						throw(new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(j).getName(), e));
+						throw new SpdxCompareException("Error collecting snippets from SPDX document "+spdxDocs.get(j).getName(), e);
 					} catch (InvalidSPDXAnalysisException e1) {
-						throw(new SpdxCompareException("Error collecting snippets from SPDX document ", e));
+						throw new SpdxCompareException("Error collecting snippets from SPDX document ", e);
 					}
 				} finally {
 				    if (Objects.nonNull(snippetStreamB)) {
@@ -310,8 +310,7 @@ public class SpdxComparer {
 	 */
 	private void addSnippetComparers(
 			SpdxDocument spdxDocument,
-			List<SpdxSnippet> snippets,
-			Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> extractedLicenseIdMap2) throws SpdxCompareException {
+			List<SpdxSnippet> snippets) throws SpdxCompareException {
 		for (SpdxSnippet snippet:snippets) {
 			SpdxSnippetComparer comparer = this.snippetComparers.get(snippet.toString());
 			if (comparer == null) {
@@ -734,9 +733,9 @@ public class SpdxComparer {
 				pkgsA = collectAllPackages(spdxDocs.get(i));
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
-					throw(new SpdxCompareException("Error collecting packages from SPDX document "+spdxDocs.get(i).getName(), e));
+					throw new SpdxCompareException("Error collecting packages from SPDX document "+spdxDocs.get(i).getName(), e);
 				} catch (InvalidSPDXAnalysisException e1) {
-					throw(new SpdxCompareException("Error collecting packages from SPDX document ", e));
+					throw new SpdxCompareException("Error collecting packages from SPDX document ", e);
 				}
 			}
 			// note - the package arrays MUST be sorted for the comparator methods to work
@@ -755,9 +754,9 @@ public class SpdxComparer {
 					pkgsB = collectAllPackages(spdxDocs.get(j));
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
-						throw(new SpdxCompareException("Error collecting packages from SPDX document "+spdxDocs.get(i).getName(), e));
+						throw new SpdxCompareException("Error collecting packages from SPDX document "+spdxDocs.get(i).getName(), e);
 					} catch (InvalidSPDXAnalysisException e1) {
-						throw(new SpdxCompareException("Error collecting packages from SPDX document ", e));
+						throw new SpdxCompareException("Error collecting packages from SPDX document ", e);
 					}
 				}
 				//Note that the files arrays must be sorted for the find methods to work
@@ -831,11 +830,11 @@ public class SpdxComparer {
 		this.checkDocsIndex(doc2);
 		Map<SpdxDocument, Map<String, String>> hm = this.extractedLicenseIdMap.get(this.spdxDocs.get(doc1));
 		if (hm == null) {
-			throw(new SpdxCompareException("Compare License Error - Extracted license id map has not been initialized."));
+			throw new SpdxCompareException("Compare License Error - Extracted license id map has not been initialized.");
 		}
 		Map<String, String> xlationMap = hm.get(this.spdxDocs.get(doc2));
 		if (xlationMap == null) {
-			throw(new SpdxCompareException("Compare License Exception - Extracted license id map has not been initialized."));
+			throw new SpdxCompareException("Compare License Exception - Extracted license id map has not been initialized.");
 		}
 		try {
 			return LicenseCompareHelper.isLicenseEqual(license1, license2, xlationMap);
@@ -898,7 +897,7 @@ public class SpdxComparer {
 				}
 			}
 		} catch(InvalidSPDXAnalysisException ex) {
-			throw(new SpdxCompareException("Error getting SPDX document items: "+ex.getMessage()));
+			throw new SpdxCompareException("Error getting SPDX document items: "+ex.getMessage());
 		}
 	}
 
@@ -957,7 +956,7 @@ public class SpdxComparer {
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			throw(new SpdxCompareException("SPDX analysis error during compare data license: "+e.getMessage(),e));
+			throw new SpdxCompareException("SPDX analysis error during compare data license: "+e.getMessage(),e);
 		}
 	}
 
@@ -1378,7 +1377,7 @@ public class SpdxComparer {
 	 */
 	private void checkInProgress() throws SpdxCompareException {
 		if (compareInProgress) {
-			throw(new SpdxCompareException("Compare in progress - can not obtain compare results until compare has completed"));
+			throw new SpdxCompareException("Compare in progress - can not obtain compare results until compare has completed");
 		}
 	}
 
@@ -1388,22 +1387,22 @@ public class SpdxComparer {
 	 */
 	private void checkDocsField() throws SpdxCompareException {
 		if (this.spdxDocs == null) {
-			throw(new SpdxCompareException("No compare has been performed"));
+			throw new SpdxCompareException("No compare has been performed");
 		}
 		if (this.spdxDocs.size() < 2) {
-			throw(new SpdxCompareException("Insufficient documents compared - must provide at least 2 SPDX documents"));
+			throw new SpdxCompareException("Insufficient documents compared - must provide at least 2 SPDX documents");
 		}
 	}
 	
 	private void checkDocsIndex(int index) throws SpdxCompareException {
 		if (this.spdxDocs == null) {
-			throw(new SpdxCompareException("No compare has been performed"));
+			throw new SpdxCompareException("No compare has been performed");
 		}
 		if (index < 0) {
-			throw(new SpdxCompareException("Invalid index for SPDX document compare - must be greater than or equal to zero"));
+			throw new SpdxCompareException("Invalid index for SPDX document compare - must be greater than or equal to zero");
 		}
 		if (index >= spdxDocs.size()) {
-			throw(new SpdxCompareException("Invalid index for SPDX document compare - SPDX document index "+String.valueOf(index)+" does not exist."));
+			throw new SpdxCompareException("Invalid index for SPDX document compare - SPDX document index "+String.valueOf(index)+" does not exist.");
 		}
 	}
 
