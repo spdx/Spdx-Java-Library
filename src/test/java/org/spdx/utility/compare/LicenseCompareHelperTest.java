@@ -62,7 +62,11 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String MULAN_PSL_2_COMMA_TEXT = "TestFiles" + File.separator + "MulanPSL-2.0-comma.txt";
     private static final String GROFF_COMMENTED_VERBATIM_TEXT = "TestFiles" + File.separator + "verbatim-man-page.txt";
     private static final String VERBATIM_MAN_PAGES_TEMPLATE = "TestFiles" + File.separator + "Verbatim-man-pages.template.txt";
-
+    static final String PYTHON201_TEXT = "TestFiles" + File.separator + "Python-2.0.1.txt";
+    static final String PYTHON201_TEMPLATE = "TestFiles" + File.separator + "Python-2.0.1.template.txt";
+    static final String SGIB_1_0_TEXT = "TestFiles" + File.separator + "SGI-B-1.0.txt";
+    static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
+   
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -746,5 +750,28 @@ public class LicenseCompareHelperTest extends TestCase {
                 .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
+    }
+    
+    public void testRegressionPython201() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(PYTHON201_TEXT);
+        String templateText = UnitTestHelper.fileToText(PYTHON201_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("PYTHON-2.0.1", "Python 2.0.1", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        assertTrue(diff.isDifferenceFound());
+        assertTrue(diff.getDifferenceMessage().contains("dditional text found"));
+    }
+    
+    public void testRegressionSGIB10() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(SGIB_1_0_TEXT);
+        String templateText = UnitTestHelper.fileToText(SGIB_1_0_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("SGI-B-1.0", "SGI-B 1.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
     }
 }
