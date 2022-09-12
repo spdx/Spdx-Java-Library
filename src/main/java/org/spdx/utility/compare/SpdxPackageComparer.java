@@ -166,7 +166,9 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 			}
 		}
 		if (pkg2 != null) {
-			if (!SpdxComparer.stringsEqual(spdxPackage.getVersionInfo(), pkg2.getVersionInfo())) {
+			Optional<String> v1 = spdxPackage.getVersionInfo();
+			Optional<String> v2 = pkg2.getVersionInfo();
+			if (!SpdxComparer.stringsEqual(v1, v2)) {
 				this.packageVersionsEquals = false;
 				this.differenceFound = true;
 			}

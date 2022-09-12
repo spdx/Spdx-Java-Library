@@ -80,6 +80,8 @@ public class SpdxComparer {
 	private boolean dataLicenseEqual = true;
 	private boolean licenseListVersionEquals = true;
 	private boolean documentContentsEquals = true;
+	private boolean creatorCommentsEqual = true;
+	private boolean creationDatesEqual = true;
 		
 	// Extracted Licensing Info results
 	/**
@@ -666,10 +668,12 @@ public class SpdxComparer {
 				}
 				// compare creator comments
 				if (!stringsEqual(creatorInfoA.getComment(), creatorInfoB.getComment())) {
+					this.creatorCommentsEqual = false;
 					this.creatorInformationEquals = false;
 				}
 				// compare creation dates
 				if (!stringsEqual(creatorInfoA.getCreated(), creatorInfoB.getCreated())) {
+					this.creationDatesEqual = false;
 					this.creatorInformationEquals = false;
 				}
 				// compare license list versions
@@ -1556,13 +1560,33 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * @return
+	 * @return true if all creation information fields equals
 	 * @throws SpdxCompareException 
 	 */
 	public boolean isCreatorInformationEqual() throws SpdxCompareException {
 		this.checkDocsField();
 		this.checkInProgress();
 		return this.creatorInformationEquals;
+	}
+	
+	/**
+	 * @return true all creator comments equal
+	 * @throws SpdxCompareException 
+	 */
+	public boolean isCreatorCommentsEqual() throws SpdxCompareException {
+		this.checkDocsField();
+		this.checkInProgress();
+		return this.creatorCommentsEqual;
+	}
+	
+	/**
+	 * @return true if all creation information fields equals
+	 * @throws SpdxCompareException 
+	 */
+	public boolean isCreatorDatesEqual() throws SpdxCompareException {
+		this.checkDocsField();
+		this.checkInProgress();
+		return this.creationDatesEqual;
 	}
 
 	/**
