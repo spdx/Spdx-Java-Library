@@ -59,11 +59,11 @@ public class LicenseCompareHelper {
 	
 	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
 	
-	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/]{1,100})((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|$){1,100})";
+	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/\\[\\]]{1,100})((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|\\[|\\]|$){1,100})";
 	protected static final Pattern TOKEN_SPLIT_PATTERN = Pattern.compile(TOKEN_SPLIT_REGEX);
 
 	protected static final Set<String> PUNCTUATION = Collections.unmodifiableSet(new HashSet<String>(
-			Arrays.asList(".",",","?","\"","'","(",")",";",":","/")));
+			Arrays.asList(".",",","?","\"","'","(",")",";",":","/","[", "]")));
 	
 	// most of these are comments for common programming languages (C style, Java, Ruby, Python)
 	protected static final Set<String> SKIPPABLE_TOKENS = Collections.unmodifiableSet(new HashSet<String>(
@@ -217,10 +217,10 @@ public class LicenseCompareHelper {
 	            reader = new BufferedReader(new StringReader(s));
 	            String line = reader.readLine();
 	            while (line != null) {
-                    line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
+	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
+	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
                     line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
-                    line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
-	                sb.append(line);
+                    sb.append(line);
 	                sb.append("\n");
 	                line = reader.readLine();
 	            }
