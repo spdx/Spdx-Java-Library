@@ -151,8 +151,8 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 		if (this.name == null && packageName.isPresent()) {
 			this.name = packageName.get();
 		} else if (!Objects.equals(this.name,packageName.get())) {
-			throw(new SpdxCompareException("Names do not match for item being added to comparer: "+
-			        packageName+", expecting "+this.name));
+			throw new SpdxCompareException("Names do not match for item being added to comparer: "+
+			        packageName+", expecting "+this.name);
 		}
 		inProgress = true;
 		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
@@ -192,12 +192,12 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting package verification codes: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting package verification codes: "+e.getMessage(),e);
 			}
 			try {
 				compareNewPackageChecksums(spdxDocument, spdxPackage.getChecksums());
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting package checksums: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting package checksums: "+e.getMessage(),e);
 			}
 			if (!SpdxComparer.stringsEqual(spdxPackage.getSourceInfo(), pkg2.getSourceInfo())) {
 				this.packageSourceInfosEquals = false;
@@ -210,7 +210,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting declared license: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting declared license: "+e.getMessage(),e);
 			}
 			if (!SpdxComparer.stringsEqual(spdxPackage.getSummary(), pkg2.getSummary())) {
 				this.packageSummaryEquals = false;
@@ -230,17 +230,17 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting filesAnalyzed: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting filesAnalyzed: "+e.getMessage(),e);
 			}
 			try {
 				compareNewPackageFiles(spdxDocument, spdxPackage.getFiles());
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting package files: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting package files: "+e.getMessage(),e);
 			}
 			try {
 				compareNewPackageExternalRefs(spdxDocument, spdxPackage.getExternalRefs());
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting package external refs: "+e.getMessage(),e));
+				throw new SpdxCompareException("SPDX error getting package external refs: "+e.getMessage(),e);
 			}
 		}
 		inProgress = false;
@@ -477,7 +477,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
-			throw(new SpdxCompareException("SPDX error getting package checksums: "+e.getMessage(),e));
+			throw new SpdxCompareException("SPDX error getting package checksums: "+e.getMessage(),e);
 		}
 	}
 
@@ -507,7 +507,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	@Override
     protected void checkInProgress() throws SpdxCompareException {
 		if (inProgress) {
-			throw(new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed"));
+			throw new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed");
 		}
 		super.checkInProgress();
 	}

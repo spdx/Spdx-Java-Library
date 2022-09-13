@@ -85,16 +85,16 @@ public class LicenseTemplateRule {
 	 */
 	public void validate() throws LicenseTemplateRuleException {
 		if (this.type == null) {
-			throw(new LicenseTemplateRuleException("Rule type can not be null."));
+			throw new LicenseTemplateRuleException("Rule type can not be null.");
 		}
 		if (this.type == RuleType.VARIABLE && this.name == null) {
-			throw(new LicenseTemplateRuleException("Rule name can not be null for a variable or alt rule."));
+			throw new LicenseTemplateRuleException("Rule name can not be null for a variable or alt rule.");
 		}
 		if (this.type == RuleType.VARIABLE && this.original == null) {
-			throw(new LicenseTemplateRuleException("Rule original text can not be null."));
+			throw new LicenseTemplateRuleException("Rule original text can not be null.");
 		}
 		if (this.type == RuleType.VARIABLE && this.match == null) {
-			throw(new LicenseTemplateRuleException("Rule match regular expression can not be null."));
+			throw new LicenseTemplateRuleException("Rule match regular expression can not be null.");
 		}
 	}
 
@@ -172,7 +172,7 @@ public class LicenseTemplateRule {
 		} else if (typeStr.equals(END_OPTIONAL_TYPE_STR)) {
 			return RuleType.END_OPTIONAL;
 		} else {
-			throw(new LicenseTemplateRuleException("Unknown rule type: "+typeStr));
+			throw new LicenseTemplateRuleException("Unknown rule type: "+typeStr);
 		}
 	}
 	
@@ -260,7 +260,7 @@ public class LicenseTemplateRule {
 		} else if (rulePart.startsWith(MATCH_KEYWORD)) {
 			this.match = getValue(rulePart, MATCH_KEYWORD);
 		} else {
-			throw(new LicenseTemplateRuleException("Unknown rule keyword: "+rulePart));
+			throw new LicenseTemplateRuleException("Unknown rule keyword: "+rulePart);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class LicenseTemplateRule {
 		String retval = rulePart.substring(keyword.length());
 		retval = retval.trim();
 		if (!retval.startsWith(VALUE_SEPARATOR)) {
-			throw(new LicenseTemplateRuleException("Missing "+VALUE_SEPARATOR+" for "+keyword));
+			throw new LicenseTemplateRuleException("Missing "+VALUE_SEPARATOR+" for "+keyword);
 		}
 		retval = retval.substring(1).trim();
 		if (retval.startsWith("\"")) {

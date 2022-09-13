@@ -91,7 +91,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting byte range: "+e.getMessage()));
+				throw new SpdxCompareException("SPDX error getting byte range: "+e.getMessage());
 			}
 			try {
 			    Optional<StartEndPointer> lineRange = snippet.getLineRange();
@@ -111,14 +111,14 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting line range: "+e.getMessage()));
+				throw new SpdxCompareException("SPDX error getting line range: "+e.getMessage());
 			}
 			try {
 				SpdxFile fromFile = snippet.getSnippetFromFile();
 				SpdxFile fromFile2 = snippet2.getSnippetFromFile();
 				compareSnippetFromFiles(spdxDocument, fromFile, document2, fromFile2);
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error getting snippet from file: "+e.getMessage()));
+				throw new SpdxCompareException("SPDX error getting snippet from file: "+e.getMessage());
 			}
 			try {
 				if (!SpdxComparer.stringsEqual(snippet2.getName(), snippet.getName())) {
@@ -126,7 +126,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw(new SpdxCompareException("SPDX error comparing snippet names: "+e.getMessage()));
+				throw new SpdxCompareException("SPDX error comparing snippet names: "+e.getMessage());
 			}
 		}
 		inProgress = false;
@@ -215,7 +215,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	@Override
     protected void checkInProgress() throws SpdxCompareException {
 		if (inProgress) {
-			throw(new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed"));
+			throw new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed");
 		}
 		super.checkInProgress();
 	}

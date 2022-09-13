@@ -111,7 +111,7 @@ public abstract class ModelObject {
 	// the following fields are for debugging when equivalent returns false
 	enum NotEquivalent {
 		DIFFERENT_CLASS, MISSING_PROPERTY, PROPERTY_NOT_EQUIVALENT, COMPARE_PROPERTY_MISSING};
-	class NotEquivalentReason {
+	static class NotEquivalentReason {
 		NotEquivalent reason;
 		String property = null;
 		
@@ -782,7 +782,7 @@ public abstract class ModelObject {
 			    Optional<Object> propertyValue = this.getObjectPropertyValue(propertyName);
 				if (propertyValue.isPresent()) {
 					if (propertyValue.get() instanceof ModelCollection) {
-						if (((ModelCollection<?>)(propertyValue.get())).size() > 0) {
+						if (((ModelCollection<?>)propertyValue.get()).size() > 0) {
 							lastNotEquivalentReason = new NotEquivalentReason(
 									NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
 							return false;

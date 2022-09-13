@@ -63,7 +63,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		if (!SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id).matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		getExternalSpdxElementURI();	//this will check to make sure the external document reference is available
 	}
@@ -75,7 +75,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public String getExternalDocumentId() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		return matcher.group(1);
 	}
@@ -87,7 +87,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public String getExternalElementId() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstants.EXTERNAL_ELEMENT_REF_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw(new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID"));
+			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		return matcher.group(2);
 	}
@@ -198,7 +198,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 		Optional<Object> retval = getObjectPropertyValue(stModelStore, stDocumentUri, 
 				externalDocumentId, SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, copyManager);
 		if (!retval.isPresent()) {
-			throw(new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId));
+			throw new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId);
 		}
 		if (!(retval.get() instanceof IndividualUriValue)) {
 			logger.error("Invalid type returned for external document.  Expected IndividualValue, actual "+retval.get().getClass().toString());

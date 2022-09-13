@@ -44,7 +44,12 @@ public class DefaultModelStore {
 	}
 	
 	public static IModelStore getDefaultModelStore() {
-		return defaultModelStore;
+		lock.readLock().lock();
+		try {
+			return defaultModelStore;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 	
 	public static String getDefaultDocumentUri() {

@@ -150,7 +150,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
             try {
             	// read the license IDs
             	tocStream = getTocInputStream();
-                reader = new BufferedReader(new InputStreamReader(tocStream));
+                reader = new BufferedReader(new InputStreamReader(tocStream, "UTF-8"));
                 StringBuilder tocJsonStr = new StringBuilder();
                 String line;
                 while((line = reader.readLine()) != null) {
@@ -162,7 +162,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
                 
                 // read the exception ID's
                 tocStream = getExceptionTocInputStream();
-                reader = new BufferedReader(new InputStreamReader(tocStream));
+                reader = new BufferedReader(new InputStreamReader(tocStream, "UTF-8"));
                 tocJsonStr  = new StringBuilder();
                 while((line = reader.readLine()) != null) {
                 	tocJsonStr.append(line);
@@ -170,9 +170,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
                 ExceptionJsonTOC exceptionToc = gson.fromJson(tocJsonStr.toString(), ExceptionJsonTOC.class);
                 exceptionIds = exceptionToc.getExceptionIds();
             } catch (MalformedURLException e) {
-				throw(new SpdxListedLicenseException("License TOC URL invalid"));
+				throw new SpdxListedLicenseException("License TOC URL invalid") ;
 			} catch (IOException e) {
-				throw(new SpdxListedLicenseException("I/O error reading license TOC"));
+				throw new SpdxListedLicenseException("I/O error reading license TOC");
 			} finally {
             	if (reader != null) {
             		try {
@@ -195,9 +195,14 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			return false;
 		}
+		listedLicenseModificationLock.readLock().lock();
+		try {
 			return this.licenseIds.containsKey(id.toLowerCase()) || 
 					this.exceptionIds.containsKey(id.toLowerCase()) ||
 					this.crossRefs.containsKey(id);
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -260,20 +265,20 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			} else if (crossRefs.containsKey(id)) {
 				crossRef = crossRefs.get(id);
 			}
+			if (isLicenseId) {
+				LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
+				return license.getPropertyValueNames();
+			} else if (isExceptionId) {
+				ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
+				return exc.getPropertyValueNames();
+			} else if (Objects.nonNull(crossRef)) {
+				return crossRef.getPropertyValueNames();
+			} else {
+				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
+				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
+			}
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
-		}
-		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
-			return license.getPropertyValueNames();
-		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
-			return exc.getPropertyValueNames();
-		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.getPropertyValueNames();
-		} else {
-			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
-			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
 		}
 	}
 
@@ -322,10 +327,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	                this.listedLicenseCache.put(id, license);
 	            } catch (MalformedURLException e) {
 					logger.error("Json license invalid for ID "+id);
-					throw(new SpdxListedLicenseException("JSON license URL invalid for ID "+id));
+					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id);
 				} catch (IOException e) {
 					logger.error("I/O error opening Json license URL");
-					throw(new SpdxListedLicenseException("I/O Error reading license data for ID "+id));
+					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id);
 				} finally {
 	            	if (reader != null) {
 	            		try {
@@ -393,10 +398,10 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	                this.listedExceptionCache.put(id, exc);
 	            } catch (MalformedURLException e) {
 					logger.error("Json license invalid for ID "+id);
-					throw(new SpdxListedLicenseException("JSON license URL invalid for ID "+id));
+					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id);
 				} catch (IOException e) {
 					logger.error("I/O error opening Json license URL");
-					throw(new SpdxListedLicenseException("I/O Error reading license data for ID "+id));
+					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id);
 				} finally {
 	            	if (reader != null) {
 	            		try {
@@ -663,8 +668,8 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 							throw new RuntimeException(new InvalidSPDXAnalysisException("Invalid type for "+propertyName+".  Must be of type CrossRefJson"));
 						}
 						CrossRefJson nextCrossRef = (CrossRefJson)nextVal;
-						listedLicenseModificationLock.writeLock().lock();
 						String crossRefId = nextCrossRef.getId();
+						listedLicenseModificationLock.writeLock().lock();
 						try {
 							if (Objects.isNull(crossRefId)) {
 								// Need to create an ID and store it in the cache
@@ -828,14 +833,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		if (isSpdxListedLicenseId(documentUri, id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
-		} else if (isSpdxListedExceptionId(documentUri, id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
-		} else if (crossRefs.containsKey(id)) {
-			return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
-		} else {
-			return Optional.empty();
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (licenseIds.containsKey(id.toLowerCase())) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+			} else if (exceptionIds.containsKey(id.toLowerCase())) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+			} else if (crossRefs.containsKey(id)) {
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
+			} else {
+				return Optional.empty();
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
 		}
 	}
 	
@@ -977,7 +987,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
 			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
-			if (value instanceof TypedValue && (SpdxConstants.CLASS_CROSS_REF.equals(((TypedValue)value).getType()))) {
+			if (value instanceof TypedValue && SpdxConstants.CLASS_CROSS_REF.equals(((TypedValue)value).getType())) {
 				CrossRefJson compareValue = crossRefs.get(((TypedValue)value).getId());
 				if (Objects.isNull(compareValue)) {
 					return false;
@@ -1179,7 +1189,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
-		listedLicenseModificationLock.writeLock().lock();;
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				this.listedLicenseCache.remove(id);
