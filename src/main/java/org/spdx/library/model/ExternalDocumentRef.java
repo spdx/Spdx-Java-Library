@@ -187,7 +187,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			return "";
 		}
 		if (docNamespace.get() instanceof IndividualUriValue) {
-			String docUri = ((IndividualUriValue)(docNamespace.get())).getIndividualURI();
+			String docUri = ((IndividualUriValue)docNamespace.get()).getIndividualURI();
 			if (Objects.isNull(docUri)) {
 				logger.warn("Missing individual URI in doc namespace");
 				return "";
@@ -306,7 +306,6 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 */
 	@Override
 	public int compareTo(ExternalDocumentRef o) {
-		int retval = 0;
 		String myDocumentNamespace;
 		try {
 			myDocumentNamespace = getSpdxDocumentNamespace();
@@ -321,7 +320,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			logger.warn("Error getting compare document namepsace",e);
 			compareDocumentNamespace = "";
 		}
-		retval = myDocumentNamespace.compareTo(compareDocumentNamespace);
+		int retval = myDocumentNamespace.compareTo(compareDocumentNamespace);
 		if (retval != 0) {
 			return retval;
 		}
