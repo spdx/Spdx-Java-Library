@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxModelFactory;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseLocalStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseWebStore;
@@ -236,6 +237,13 @@ public class ListedLicenses {
 	 */
 	public Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
 		return this.licenseModelStore.listedExceptionIdCaseSensitive(exceptionId);
-	}  
+	}
+	
+	/**
+	 * @return model store for listed licenses
+	 */
+	public IModelStore getLicenseModelStore() {
+		return this.licenseModelStore;
+	}
 
 }
