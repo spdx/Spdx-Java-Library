@@ -56,6 +56,7 @@ public class ModelObjectTest extends TestCase {
 	private static final String TEST_ID = "testId";
 	private static final Object TEST_VALUE1 = "value1";
 	private static final String TEST_PROPERTY1 = "property1";
+	private static final String TEST_PROPERTY2 = "property2";
 	static final String TEST_TYPE1 = SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION;
 	static final String TEST_TYPE2 = SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO;
 
@@ -573,6 +574,58 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(gmo3.equivalent(gmo2));
 	}
 	
+	// We test symmetry in case of missing properties on either side explicitly because of issue-105
+	public void testEquivalentIsSymmetric() throws InvalidSPDXAnalysisException {
+		// Given
+		GenericModelObject firstObject = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		GenericModelObject secondObject = new GenericModelObject(store, docUri, "testId2", copyManager, true);
+		String testValue2 = "value2";
+		firstObject.setPropertyValue(TEST_PROPERTY1, TEST_VALUE1);
+		secondObject.setPropertyValue(TEST_PROPERTY1, TEST_VALUE1);
+		
+		// Then
+		assertTrue(firstObject.equivalent(secondObject) && secondObject.equivalent(firstObject));
+
+		// Given
+		firstObject.setPropertyValue(TEST_PROPERTY2, testValue2);
+
+		// Then
+		assertFalse(firstObject.equivalent(secondObject));
+		assertFalse(secondObject.equivalent(firstObject));
+
+		// Given
+		firstObject.removeProperty(TEST_PROPERTY2);
+		secondObject.setPropertyValue(TEST_PROPERTY2, testValue2);
+
+		// Then
+		assertFalse(firstObject.equivalent(secondObject));
+		assertFalse(secondObject.equivalent(firstObject));
+	}
+	
+	public void testEquivalentIgnoresEmptyModelCollections() throws InvalidSPDXAnalysisException {
+		// Given
+		GenericModelObject firstObject = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		GenericModelObject secondObject = new GenericModelObject(store, docUri, "testId2", copyManager, true);
+		ModelCollection<GenericModelObject> emptyModelCollection = new ModelCollection<>(store, 
+				docUri, TEST_ID, TEST_PROPERTY1, copyManager, GenericModelObject.class);
+		firstObject.setPropertyValue(TEST_PROPERTY1, emptyModelCollection);
+		secondObject.setPropertyValue(TEST_PROPERTY2, emptyModelCollection);
+		
+		// Then
+		assertTrue(firstObject.equivalent(secondObject));
+	}
+	
+	public void testEquivalentIgnoresNoAssertion() throws InvalidSPDXAnalysisException {
+		// Given
+		GenericModelObject firstObject = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		GenericModelObject secondObject = new GenericModelObject(store, docUri, "testId2", copyManager, true);
+		firstObject.setPropertyValue(TEST_PROPERTY1, new SpdxNoAssertionLicense());
+		secondObject.setPropertyValue(TEST_PROPERTY2, SpdxConstants.NOASSERTION_VALUE);
+
+		// Then
+		assertTrue(firstObject.equivalent(secondObject));
+	}
+	
 	public void testEquivalentModelObjectProp() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		String id1 = "id1";
@@ -661,8 +714,7 @@ public class ModelObjectTest extends TestCase {
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		ModelObject result = gmo.clone(store2);
 		assertTrue(result instanceof GenericModelObject);
-		assertTrue(result.equals(gmo));
-		assertTrue(result.equivalent(gmo));
+		assertEquals(result, gmo);
 	}
 
 	/**
