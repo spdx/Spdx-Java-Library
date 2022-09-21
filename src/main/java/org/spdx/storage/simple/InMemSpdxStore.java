@@ -60,10 +60,14 @@ public class InMemSpdxStore implements IModelStore {
 	
 	static final Logger logger = LoggerFactory.getLogger(InMemSpdxStore.class.getName());
 	
-	static Pattern DOCUMENT_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"(\\d+)$");
-	static Pattern SPDX_ID_PATTERN_NUMERIC = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"(\\d+)$");
+	static final String GENERATED = "gnrtd";
+	public static Pattern LICENSE_ID_PATTERN_GENERATED = 
+			Pattern.compile(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
+
+	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
+	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
 	static final String ANON_PREFIX = "__anon__";
-	static Pattern ANON_ID_PATTERN_NUMERIC = Pattern.compile(ANON_PREFIX+"(\\d+)$");
+	static Pattern ANON_ID_PATTERN_GENERATED = Pattern.compile(ANON_PREFIX+GENERATED+"(\\d+)$");
 	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstants.LITERAL_VALUES));
 	
 	/**
@@ -126,22 +130,22 @@ public class InMemSpdxStore implements IModelStore {
 		if (id == null) {
 			return;
 		}
-		Matcher licenseRefMatcher = SpdxConstants.LICENSE_ID_PATTERN_NUMERIC.matcher(id);
+		Matcher licenseRefMatcher = LICENSE_ID_PATTERN_GENERATED.matcher(id);
 		if (licenseRefMatcher.matches()) {
 			checkUpdateNextLicenseId(licenseRefMatcher);
 			return;
 		}
-		Matcher documentRefMatcher = DOCUMENT_ID_PATTERN_NUMERIC.matcher(id);
+		Matcher documentRefMatcher = DOCUMENT_ID_PATTERN_GENERATED.matcher(id);
 		if (documentRefMatcher.matches()) {
 			checkUpdateNextDocumentId(documentRefMatcher);
 			return;
 		}
-		Matcher spdxRefMatcher = SPDX_ID_PATTERN_NUMERIC.matcher(id);
+		Matcher spdxRefMatcher = SPDX_ID_PATTERN_GENERATED.matcher(id);
 		if (spdxRefMatcher.matches()) {
 			checkUpdateNextSpdxId(spdxRefMatcher);
 			return;
 		}
-		Matcher anonRefMatcher = ANON_ID_PATTERN_NUMERIC.matcher(id);
+		Matcher anonRefMatcher = ANON_ID_PATTERN_GENERATED.matcher(id);
 		if (anonRefMatcher.matches()) {
 			checkUpdateNextAnonId(anonRefMatcher);
 			return;
@@ -301,10 +305,10 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public synchronized String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
 		switch (idType) {
-		case Anonymous: return ANON_PREFIX+String.valueOf(nextAnonId++);
-		case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+String.valueOf(nextNextLicenseId++);
-		case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+String.valueOf(nextNextDocumentId++);
-		case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+String.valueOf(nextNextSpdxId++);
+		case Anonymous: return ANON_PREFIX+GENERATED+String.valueOf(nextAnonId++);
+		case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
+		case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
+		case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
 		case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
 		case Literal: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Literal");
 		default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
@@ -379,7 +383,7 @@ public class InMemSpdxStore implements IModelStore {
 
 	@Override
 	public IdType getIdType(String id) {
-		if (ANON_ID_PATTERN_NUMERIC.matcher(id).matches()) {
+		if (ANON_ID_PATTERN_GENERATED.matcher(id).matches()) {
 			return IdType.Anonymous;
 		}
 		if (SpdxConstants.LICENSE_ID_PATTERN.matcher(id).matches()) {

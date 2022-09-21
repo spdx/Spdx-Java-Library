@@ -104,31 +104,31 @@ public class InMemSpdxStoreTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		// License ID's
 		String nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
-		assertEquals("LicenseRef-0", nextId);
-		store.create(TEST_DOCUMENT_URI1, "LicenseRef-33", SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		assertEquals("LicenseRef-gnrtd0", nextId);
+		store.create(TEST_DOCUMENT_URI1, "LicenseRef-gnrtd33", SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
-		assertEquals("LicenseRef-34", nextId);
+		assertEquals("LicenseRef-gnrtd34", nextId);
 		
 		// SPDX ID's
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
-		assertEquals("SPDXRef-0", nextId);
-		store.create(TEST_DOCUMENT_URI1, "SPDXRef-33", SpdxConstants.CLASS_SPDX_FILE);
+		assertEquals("SPDXRef-gnrtd0", nextId);
+		store.create(TEST_DOCUMENT_URI1, "SPDXRef-gnrtd33", SpdxConstants.CLASS_SPDX_FILE);
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
-		assertEquals("SPDXRef-34", nextId);
+		assertEquals("SPDXRef-gnrtd34", nextId);
 		
 		// Anonymous ID's
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
-		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
-		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "33", SpdxConstants.CLASS_SPDX_CHECKSUM);
+		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd0", nextId);
+		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "gnrtd33", SpdxConstants.CLASS_SPDX_CHECKSUM);
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
-		assertEquals(InMemSpdxStore.ANON_PREFIX + "34", nextId);
+		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd34", nextId);
 		
 		// Document ID's
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", nextId);
-		store.create(TEST_DOCUMENT_URI1, SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "33", SpdxConstants.CLASS_EXTERNAL_DOC_REF);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
+		store.create(TEST_DOCUMENT_URI1, SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd33", SpdxConstants.CLASS_EXTERNAL_DOC_REF);
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "34", nextId);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd34", nextId);
 	}
 	
 	public void testCreateExists() throws InvalidSPDXAnalysisException {
@@ -238,27 +238,27 @@ public class InMemSpdxStoreTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		// License ID's
 		String nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
-		assertEquals("LicenseRef-0", nextId);
+		assertEquals("LicenseRef-gnrtd0", nextId);
 		nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
-		assertEquals("LicenseRef-1", nextId);
+		assertEquals("LicenseRef-gnrtd1", nextId);
 		
 		// SPDX ID's
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
-		assertEquals("SPDXRef-0", nextId);
+		assertEquals("SPDXRef-gnrtd0", nextId);
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
-		assertEquals("SPDXRef-1", nextId);
+		assertEquals("SPDXRef-gnrtd1", nextId);
 		
 		// Anonymous ID's
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
-		assertEquals(InMemSpdxStore.ANON_PREFIX + "0", nextId);
+		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd0", nextId);
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
-		assertEquals(InMemSpdxStore.ANON_PREFIX + "1", nextId);
+		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd1", nextId);
 		
 		// Document ID's
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", nextId);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "1", nextId);
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", nextId);
 	}
 	
 	public void testRemoveProperty() throws InvalidSPDXAnalysisException {
@@ -624,14 +624,14 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testIdType() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		assertEquals(IdType.Anonymous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"23"));
-		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"23"));
-		assertEquals(IdType.LicenseRef, store.getIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+"23"));
+		assertEquals(IdType.Anonymous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"gnrtd23"));
+		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"gnrtd23"));
+		assertEquals(IdType.LicenseRef, store.getIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+"gnrtd23"));
 		assertEquals(IdType.ListedLicense, store.getIdType("Apache-2.0"));
 		assertEquals(IdType.ListedLicense, store.getIdType("LLVM-exception"));
 		assertEquals(IdType.Literal, store.getIdType("NONE"));
 		assertEquals(IdType.Literal, store.getIdType("NOASSERTION"));
-		assertEquals(IdType.SpdxId, store.getIdType(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"123"));
+		assertEquals(IdType.SpdxId, store.getIdType(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"gnrtd123"));
 	}
 	
 	public void testGetCaseSensisitiveId() throws InvalidSPDXAnalysisException {
