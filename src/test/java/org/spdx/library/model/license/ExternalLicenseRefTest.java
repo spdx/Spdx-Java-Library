@@ -102,7 +102,7 @@ public class ExternalLicenseRefTest extends TestCase {
 				gmo.getDocumentUri(), null);
 		assertEquals(expected, result);
 		uri = DOCURI4 + "#" + LICENSEREF4;
-		String generatedDocId = "DocumentRef-0";
+		String generatedDocId = "DocumentRef-gnrtd0";
 		expected = generatedDocId + ":" + LICENSEREF4;
 		try {
 			result = ExternalExtractedLicenseInfo.uriToExternalExtractedLicenseId(uri, gmo.getModelStore(),

@@ -196,7 +196,7 @@ public class ExternalDocumentRefTest extends TestCase {
 		result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 
 				DOCUMENT_URI1, gmo.getCopyManager());
 		assertTrue(result.isPresent());
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", result.get().getId());
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", result.get().getId());
 		// test non matching
 		result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 
 				DOCUMENT_URI2, null);
@@ -205,16 +205,16 @@ public class ExternalDocumentRefTest extends TestCase {
 		result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 
 				DOCUMENT_URI2, gmo.getCopyManager());
 		assertTrue(result.isPresent());
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "1", result.get().getId());
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", result.get().getId());
 		// test match
 		result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 
 				DOCUMENT_URI1, null);
 		assertTrue(result.isPresent());
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "0", result.get().getId());
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", result.get().getId());
 		result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 
 				DOCUMENT_URI2, gmo.getCopyManager());
 		assertTrue(result.isPresent());
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "1", result.get().getId());
+		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", result.get().getId());
 	}
 
 }
