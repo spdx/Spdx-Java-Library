@@ -853,11 +853,11 @@ public abstract class ModelObject {
         } else if (valueA.get() instanceof ModelCollection && valueB.get() instanceof ModelCollection) {
             List<?> myList = ((ModelCollection<?>)valueA.get()).toImmutableList();
             List<?> compareList = ((ModelCollection<?>)valueB.get()).toImmutableList();
-            if (!listsEquivalent(myList, compareList, ignoreRelatedElements)) {
+            if (!areEquivalent(myList, compareList, ignoreRelatedElements)) {
                 return false;
             }
         } else if (valueA.get() instanceof List && valueB.get() instanceof List) {
-            if (!listsEquivalent((List<?>)valueA.get(), (List<?>)valueB.get(), ignoreRelatedElements)) {
+            if (!areEquivalent((List<?>)valueA.get(), (List<?>)valueB.get(), ignoreRelatedElements)) {
                 return false;
             }
         } else if (valueA.get() instanceof IndividualUriValue && valueB.get() instanceof IndividualUriValue) {
@@ -925,45 +925,50 @@ public abstract class ModelObject {
 	}
 
 	/**
-	 * @param l1
-	 * @param l2
-	 * @param ignoreRelatedElements if true, do not compare properties relatedSpdxElement - used to prevent infinite recursion
-	 * @return true if the two lists are equivalent
-	 * @throws InvalidSPDXAnalysisException
+	 * Checks if for each item on either list, there is an item in the other list that is equivalent.
+	 * @param ignoreRelatedElements Whether related elements should be ignored in the comparison
 	 */
-	private boolean listsEquivalent(List<?> l1, List<?> l2, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
-		if (l1.size() != l2.size()) {
+	private boolean areEquivalent(List<?> firstList, List<?> secondList,
+										 boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		if (firstList.size() != secondList.size()) {
 			return false;
 		}
-		int numRemainingComp = l2.size();
-		for (Object item:l1) {
-			if (l2.contains(item)) {
-				numRemainingComp--;
-			} else if (item instanceof IndividualUriValue && l2.contains(new SimpleUriValue((IndividualUriValue)item))) {
-				numRemainingComp--;
-			} else {
-				if (item instanceof ModelObject) {
-					// Need to check for equiv.
-					boolean found = false;
-					for (Object compareItem:l2) {
-						if (compareItem instanceof ModelObject) {
-							if (((ModelObject)item).equivalent(((ModelObject)compareItem), ignoreRelatedElements)) {
-								found = true;
-								break;
-							}
-						}
-					}
-					if (found) {
-						numRemainingComp--;
-					} else {
-						return false;
-					}
-				} else {
-					return false;
-				}
+		for (Object item : firstList) {
+			if (!containsEqualOrEquivalentItem(secondList, item, ignoreRelatedElements)) {
+				return false;
 			}
 		}
-		return numRemainingComp <= 0;
+		for (Object item : secondList) {
+			if (!containsEqualOrEquivalentItem(firstList, item, ignoreRelatedElements)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean containsEqualOrEquivalentItem(List<?> list, Object itemToFind,
+												  boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		if (list.contains(itemToFind)) {
+			return true;
+		} else if (itemToFind instanceof IndividualUriValue && list.contains(new SimpleUriValue((IndividualUriValue) itemToFind))) {
+			// Two IndividualUriValues are considered equal if their URI coincides
+			return true;
+		}
+
+		if (!(itemToFind instanceof ModelObject)) {
+			return false;
+		}
+
+		ModelObject objectToFind = (ModelObject) itemToFind;
+		for (Object objectToCompare : list) {
+			if (!(objectToCompare instanceof ModelObject)) {
+				continue;
+			}
+			if (objectToFind.equivalent((ModelObject) objectToCompare, ignoreRelatedElements)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

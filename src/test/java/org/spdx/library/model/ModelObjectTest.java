@@ -684,6 +684,27 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(gmo.equivalent(gmo3));
 		assertTrue(gmo3.equivalent(gmo2));
 	}
+	
+	// We test a situation where for each element in list1, there is an equivalent item in list2, but
+	// the converse is false.
+	// See https://github.com/spdx/Spdx-Java-Library/issues/114
+	public void testListEquivalenceIsSymmetric() throws InvalidSPDXAnalysisException {
+		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
+		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
+		String property = "property";
+		ExtractedLicenseInfo equivalentLicense = new ExtractedLicenseInfo("id", "licenseText");
+		ExtractedLicenseInfo equivalentLicense2 = new ExtractedLicenseInfo("id2", "licenseText");
+		ExtractedLicenseInfo equivalentLicense3 = new ExtractedLicenseInfo("id3", "licenseText");
+		ExtractedLicenseInfo differentLicense = new ExtractedLicenseInfo("id4", "differentText");
+		
+		gmo.addPropertyValueToCollection(property, equivalentLicense);
+		gmo.addPropertyValueToCollection(property, equivalentLicense2);
+		gmo2.addPropertyValueToCollection(property, equivalentLicense3);
+		gmo2.addPropertyValueToCollection(property, differentLicense);
+		
+		assertFalse(gmo.equivalent(gmo2));
+		assertFalse(gmo2.equivalent(gmo));
+	}
 
 	/**
 	 * Test method for {@link org.spdx.library.model.ModelObject#equals(java.lang.Object)}.
