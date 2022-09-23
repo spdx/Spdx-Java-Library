@@ -1002,8 +1002,17 @@ public abstract class ModelObject {
 	 * @return
 	 */
 	public ModelObject clone(IModelStore modelStore) {
+		if (Objects.isNull(this.copyManager)) {
+			throw new RuntimeException("A copy manager must be provided to clone");
+		}
+		if (this.modelStore.equals(modelStore)) {
+			throw new RuntimeException("Can not clone to the same model store");
+		}
+		Objects.requireNonNull(modelStore, "Model store for clone must not be null");
 		try {
-			return SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
+			ModelObject retval = SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
+			retval.copyFrom(this);
+			return retval;
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
