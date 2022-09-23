@@ -1009,6 +1009,9 @@ public abstract class ModelObject {
 			throw new RuntimeException("Can not clone to the same model store");
 		}
 		Objects.requireNonNull(modelStore, "Model store for clone must not be null");
+		if (modelStore.exists(this.documentUri, this.id)) {
+			throw new RuntimeException("Can not clone - "+this.id+" already exists.");
+		}
 		try {
 			ModelObject retval = SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
 			retval.copyFrom(this);
