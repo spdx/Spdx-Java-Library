@@ -766,7 +766,7 @@ public abstract class ModelObject {
 		List<String> propertyValueNames = getPropertyValueNames();
 		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
 		for (String propertyName:propertyValueNames) {
-			if (ignoreRelatedElements && SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName)) {
+			if (ignoreRelatedElements && isRelatedElement(propertyName)) {
 				continue;
 			}
 			if (comparePropertyValueNames.contains(propertyName)) {
@@ -779,36 +779,59 @@ public abstract class ModelObject {
 				comparePropertyValueNames.remove(propertyName);
 			} else {
 				// No property value
-			    Optional<Object> propertyValue = this.getObjectPropertyValue(propertyName);
-				if (propertyValue.isPresent()) {
-					if (propertyValue.get() instanceof ModelCollection) {
-						if (((ModelCollection<?>)propertyValue.get()).size() > 0) {
-							lastNotEquivalentReason = new NotEquivalentReason(
-									NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
-							return false;
-						}
-					} else if (!propertyNoAssertion(propertyValue)) {
-						lastNotEquivalentReason = new NotEquivalentReason(
-								NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
-						return false;
+			    Optional<Object> propertyValueOptional = this.getObjectPropertyValue(propertyName);
+				if (propertyValueOptional.isPresent()) {
+					Object propertyValue = propertyValueOptional.get();
+					if (isEquivalentToNull(propertyValue)) {
+						continue;
 					}
+					lastNotEquivalentReason = new NotEquivalentReason(
+							NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
+					return false;
 				}
 			}
 		}
-		for (String propertyName:comparePropertyValueNames) {	// check any remaining property values
-			if (!compare.getObjectPropertyValue(propertyName).isPresent()) {
-				lastNotEquivalentReason = new NotEquivalentReason(
-						NotEquivalent.MISSING_PROPERTY, propertyName);
-				return false;
+		for (String propertyName:comparePropertyValueNames) { // check any remaining property values
+			if (ignoreRelatedElements && isRelatedElement(propertyName)) {
+				continue;
 			}
+			Optional<Object> comparePropertyValueOptional = compare.getObjectPropertyValue(propertyName);
+			if (!comparePropertyValueOptional.isPresent()) {
+				continue;
+			}
+			Object comparePropertyValue = comparePropertyValueOptional.get();
+			if (isEquivalentToNull(comparePropertyValue)) {
+				continue;
+			}
+			lastNotEquivalentReason = new NotEquivalentReason(
+					NotEquivalent.MISSING_PROPERTY, propertyName);
+			return false;
 		}
 		return true;
 	}
 	
-	boolean propertyNoAssertion(Optional<Object> propertyValue) {
-		return propertyValue.isPresent() && 
-				(propertyValue.get() instanceof SpdxNoAssertionLicense ||
-						propertyValue.get().equals("NOASSERTION"));
+	// Some values are treated like null in comparisons - in particular empty model collections and 
+	// "no assertion" values.
+	private boolean isEquivalentToNull(Object propertyValue) {
+		if (propertyValue instanceof ModelCollection) {
+			return ((ModelCollection<?>) propertyValue).size() == 0;
+		} else {
+			return isNoAssertion(propertyValue);
+		}
+	}
+
+	private boolean isRelatedElement(String propertyName) {
+		return SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName);
+	}
+
+	private boolean isEmptyModelCollection(Object value) {
+		return (value instanceof ModelCollection)
+				&& (((ModelCollection<?>) value).size() == 0);
+	}
+	
+	private boolean isNoAssertion(Object propertyValue) {
+		return propertyValue instanceof SpdxNoAssertionLicense ||
+						propertyValue.equals(SpdxConstants.NOASSERTION_VALUE);
 	}
 
 	/**
@@ -823,22 +846,10 @@ public abstract class ModelObject {
             Optional<Object> valueB, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 	    if (!valueA.isPresent()) {
             if (valueB.isPresent()) {
-                if (valueB.get() instanceof ModelCollection) {
-                    if (((ModelCollection<?>)valueB.get()).size() > 0) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
+                return isEmptyModelCollection(valueB.get());
             }
         } else if (!valueB.isPresent()) {
-            if (valueA.get() instanceof ModelCollection) {
-                if (((ModelCollection<?>)valueA.get()).size() > 0) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return isEmptyModelCollection(valueA.get());
         } else if (valueA.get() instanceof ModelCollection && valueB.get() instanceof ModelCollection) {
             List<?> myList = ((ModelCollection<?>)valueA.get()).toImmutableList();
             List<?> compareList = ((ModelCollection<?>)valueB.get()).toImmutableList();
@@ -856,7 +867,7 @@ public abstract class ModelObject {
             // Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
         } else if (valueA.get() instanceof ModelObject && valueB.get() instanceof ModelObject) {
             if (!((ModelObject)valueA.get()).equivalent(((ModelObject)valueB.get()), 
-                    SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName) ? true : ignoreRelatedElements)) {
+                    isRelatedElement(propertyName) ? true : ignoreRelatedElements)) {
                 return false;
             }
             
