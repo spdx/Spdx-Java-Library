@@ -584,7 +584,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		/**
 		 * Add attribution to the attribution text collection
 		 * @param attribution
-		 * @return
+*
 		 */
 		public SpdxSnippetBuilder addAttributionText(String attribution) {
 			Objects.requireNonNull(attribution, "Attribution text can not be null");
