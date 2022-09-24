@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -113,6 +114,19 @@ public abstract class SpdxConstantElement extends SpdxElement implements Individ
 	@Override
 	public SpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		throw new RuntimeException("Can not set name for NONE and NOASSERTION SPDX Elements");
+	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+	}
+
+	@Override
+	public int hashCode() {
+		return 11 ^ this.getIndividualURI().hashCode();
 	}
 
 }

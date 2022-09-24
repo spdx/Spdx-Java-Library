@@ -332,4 +332,17 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public Optional<String> getName() throws InvalidSPDXAnalysisException {
 		return Optional.empty();
 	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+	}
+
+	@Override
+	public int hashCode() {
+		return 11 ^ this.getIndividualURI().hashCode();
+	}
 }

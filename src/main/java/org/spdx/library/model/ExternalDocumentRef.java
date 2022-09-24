@@ -224,6 +224,19 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 						public String getIndividualURI() {
 							return documentNamespace;
 						}
+						
+						@Override
+						public boolean equals(Object compare) {
+							if (!(compare instanceof IndividualUriValue)) {
+								return false;
+							}
+							return ((IndividualUriValue)compare).getIndividualURI().equals(documentNamespace);
+						}
+						
+						@Override
+						public int hashCode() {
+							return documentNamespace.hashCode();
+						}
 			});
 		}
 		return this;

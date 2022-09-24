@@ -93,10 +93,10 @@ public class SimpleUriValue implements IndividualUriValue {
 	
 	@Override
 	public boolean equals(Object comp) {
-		if (!(comp instanceof SimpleUriValue)) {
+		if (!(comp instanceof IndividualUriValue)) {
 			return false;
 		}
-		return Objects.equals(this.uri, ((SimpleUriValue)comp).getIndividualURI());
+		return Objects.equals(this.uri, ((IndividualUriValue)comp).getIndividualURI());
 	}
 
 	@Override

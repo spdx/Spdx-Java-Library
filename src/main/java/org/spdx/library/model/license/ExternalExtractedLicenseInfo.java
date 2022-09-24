@@ -293,4 +293,17 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 		throw new InvalidSPDXAnalysisException("Can not set name for an external LicenseRef.  "
 				+ "Changes to the license need to be made within the document containing the license.");
 	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+	}
+
+	@Override
+	public int hashCode() {
+		return 11 ^ this.getIndividualURI().hashCode();
+	}
 }

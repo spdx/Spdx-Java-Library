@@ -18,6 +18,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -31,7 +32,6 @@ import org.spdx.storage.IModelStore;
  */
 public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualUriValue {
 	
-	static final int NONE_LICENSE_HASHCODE = 147; // prime number - all none licenses should have the same hashcde
 	static final String NONE_LICENSE_ID = "SPDX_NONE_LICENSE";
 	
 	/**
@@ -56,19 +56,16 @@ public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualUriValu
 	}
 	
 	@Override
-	public int hashCode() {
-		return NONE_LICENSE_HASHCODE;
+	public boolean equals(Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#equals(java.lang.Object)
-	 */
 	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		return (o instanceof SpdxNoneLicense);		// All Instances of this type are considered equal
+	public int hashCode() {
+		return 11 ^ this.getIndividualURI().hashCode();
 	}
 
 	/* (non-Javadoc)

@@ -18,6 +18,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -46,8 +47,6 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 		super(modelStore, documentUri, NOASSERTION_LICENSE_ID, null, true);
 	}
 	
-	static final int NO_ASSERTION_HASHCODE = 89;	// prime number - all NoAssertion licenses should have the same hashcode
-
 	/* (non-Javadoc)
 	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#toString()
 	 */
@@ -57,19 +56,16 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 	}
 	
 	@Override
-	public int hashCode() {
-		return NO_ASSERTION_HASHCODE;
+	public boolean equals(Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#equals(java.lang.Object)
-	 */
 	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		return (o instanceof SpdxNoAssertionLicense);		// All instances of this type are considered equal
+	public int hashCode() {
+		return 11 ^ this.getIndividualURI().hashCode();
 	}
 
 	/* (non-Javadoc)
