@@ -357,4 +357,23 @@ public class SpdxSnippetTest extends TestCase {
 		assertEquals(0, snippet.verify().size());
 		assertTrue(snippet.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 	}
+	
+	public void testSetAttributionText() throws InvalidSPDXAnalysisException {
+		String ATT1 = "attribution 1";
+		String ATT2 = "attribution 2";
+		SpdxSnippet snippet = gmo.createSpdxSnippet(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 
+				"snippetName", null, Arrays.asList(new AnyLicenseInfo[] {}), null,
+				FROM_FILE1, OFFSET1_1, OFFSET1_2)
+				.addAttributionText(ATT1)
+				.build();
+		assertEquals(1, snippet.getAttributionText().size());
+		assertTrue(snippet.getAttributionText().contains(ATT1));
+		snippet.getAttributionText().add(ATT2);
+		SpdxSnippet file2 = new SpdxSnippet(snippet.getModelStore(), snippet.getDocumentUri(), snippet.getId(), snippet.getCopyManager(), false);
+		assertEquals(2, file2.getAttributionText().size());
+		assertTrue(file2.getAttributionText().contains(ATT1));
+		assertTrue(file2.getAttributionText().contains(ATT2));
+		file2.getAttributionText().clear();
+		assertEquals(0, file2.getAttributionText().size());
+	}
 }
