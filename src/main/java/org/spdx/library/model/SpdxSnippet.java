@@ -103,6 +103,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxSnippetBuilder.licenseComments);
+		getAttributionText().addAll(spdxSnippetBuilder.attributionText);
 		
 		// optional parameters - SpdxSnippet
 		if (spdxSnippetBuilder.startLine > 0) {
@@ -470,6 +471,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		
 		// optional fields - SpdxItem
 		String licenseComments = null;
+		Collection<String> attributionText = new ArrayList<String>();
 		
 		// optional fields - SpdxSnippet
 		int startLine = -1;
@@ -566,6 +568,27 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 		 */
 		public SpdxSnippetBuilder setLicenseComments(@Nullable String licenseComments) {
 			this.licenseComments = licenseComments;
+			return this;
+		}
+		
+		/**
+		 * @param attributionText Attribution text for the file
+		 * @return this to continue the build
+		 */
+		public SpdxSnippetBuilder setAttributionText(Collection<String> attributionText) {
+			Objects.requireNonNull(attributionText, "Attribution text collection can not be null");
+			this.attributionText = attributionText;
+			return this;
+		}
+		
+		/**
+		 * Add attribution to the attribution text collection
+		 * @param attribution
+		 * @return
+		 */
+		public SpdxSnippetBuilder addAttributionText(String attribution) {
+			Objects.requireNonNull(attribution, "Attribution text can not be null");
+			this.attributionText.add(attribution);
 			return this;
 		}
 		
