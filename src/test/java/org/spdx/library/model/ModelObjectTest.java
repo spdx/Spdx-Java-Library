@@ -715,6 +715,8 @@ public class ModelObjectTest extends TestCase {
 		ModelObject result = gmo.clone(store2);
 		assertTrue(result instanceof GenericModelObject);
 		assertEquals(result, gmo);
+		assertTrue(result.equivalent(gmo));
+		assertTrue(gmo.equivalent(result));
 	}
 
 	/**
