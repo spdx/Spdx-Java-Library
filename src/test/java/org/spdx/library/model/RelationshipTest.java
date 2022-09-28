@@ -19,15 +19,23 @@ package org.spdx.library.model;
 
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -197,5 +205,47 @@ public class RelationshipTest extends TestCase {
 		assertTrue(relationship.compareTo(compare) > 0);
 		assertTrue(compare.compareTo(relationship) < 0);
 	}
-
+	
+	/**
+	 * Test if the DocumentDescribes relationship produces more than one relationship
+	 * see issue #115 for context
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void testDocumentDescribes() throws InvalidSPDXAnalysisException {
+		String documentUri = "https://someuri";
+        ModelCopyManager copyManager = new ModelCopyManager();
+        IModelStore modelStore = new InMemSpdxStore();
+        SpdxDocument document = SpdxModelFactory.createSpdxDocument(modelStore, documentUri, copyManager);
+        document.setSpecVersion(Version.TWO_POINT_THREE_VERSION);
+        document.setName("SPDX-tool-test");
+        Checksum sha1Checksum = Checksum.create(modelStore, documentUri, ChecksumAlgorithm.SHA1, "d6a770ba38583ed4bb4525bd96e50461655d2758");
+        AnyLicenseInfo concludedLicense = LicenseInfoFactory.parseSPDXLicenseString("LGPL-2.0-only OR LicenseRef-2");
+        SpdxFile fileA = document.createSpdxFile("SPDXRef-fileA", "./package/fileA.c", concludedLicense,
+                        Arrays.asList(new AnyLicenseInfo[0]), "Copyright 2008-2010 John Smith", sha1Checksum)
+                .build();
+        SpdxFile fileB = document.createSpdxFile("SPDXRef-fileB", "./package/fileB.c", concludedLicense,
+        		Arrays.asList(new AnyLicenseInfo[0]), "Copyright 2008-2010 John Smith", sha1Checksum)
+                .build();
+        document.getDocumentDescribes().addAll(Arrays.asList(new SpdxElement[] {fileA, fileB}));
+        assertEquals(2, document.getDocumentDescribes().size());
+        assertTrue(document.getDocumentDescribes().contains(fileA));
+        assertTrue(document.getDocumentDescribes().contains(fileB));
+        Collection<Relationship> docrels = document.getRelationships();
+        assertEquals(2, docrels.size());
+        boolean foundFileA = false;
+        boolean foundFileB = false;
+        for (Relationship rel:docrels) {
+        	assertEquals(RelationshipType.DESCRIBES, rel.getRelationshipType());
+        	SpdxElement elem = rel.getRelatedSpdxElement().get();
+        	if (fileA.equals(elem)) {
+        		foundFileA = true;
+        	} else if (fileB.equals(elem)) {
+        		foundFileB = true;
+        	} else {
+        		fail("Unexpected relationship");
+        	}
+        }
+    	assertTrue(foundFileA);
+    	assertTrue(foundFileB);
+	}
 }
