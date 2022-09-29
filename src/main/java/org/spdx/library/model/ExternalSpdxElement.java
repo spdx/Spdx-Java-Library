@@ -335,14 +335,11 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	
 	@Override
 	public boolean equals(Object comp) {
-		if (!(comp instanceof IndividualUriValue)) {
-			return false;
-		}
-		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+		return SimpleUriValue.isIndividualUriValueEquals(this, comp);
 	}
 
 	@Override
 	public int hashCode() {
-		return 11 ^ this.getIndividualURI().hashCode();
+		return SimpleUriValue.getIndividualUriValueHash(this);
 	}
 }

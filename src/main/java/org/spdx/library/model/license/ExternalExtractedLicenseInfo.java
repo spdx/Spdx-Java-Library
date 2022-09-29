@@ -34,6 +34,7 @@ import org.spdx.library.model.ExternalDocumentRef;
 import org.spdx.library.model.ExternalSpdxElement;
 import org.spdx.library.model.IndividualUriValue;
 import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.SimpleUriValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -296,14 +297,11 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	
 	@Override
 	public boolean equals(Object comp) {
-		if (!(comp instanceof IndividualUriValue)) {
-			return false;
-		}
-		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+		return SimpleUriValue.isIndividualUriValueEquals(this, comp);
 	}
 
 	@Override
 	public int hashCode() {
-		return 11 ^ this.getIndividualURI().hashCode();
+		return SimpleUriValue.getIndividualUriValueHash(this);
 	}
 }

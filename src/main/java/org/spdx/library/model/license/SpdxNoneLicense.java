@@ -18,11 +18,11 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.IndividualUriValue;
+import org.spdx.library.model.SimpleUriValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -57,15 +57,12 @@ public class SpdxNoneLicense extends AnyLicenseInfo implements IndividualUriValu
 	
 	@Override
 	public boolean equals(Object comp) {
-		if (!(comp instanceof IndividualUriValue)) {
-			return false;
-		}
-		return Objects.equals(this.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+		return SimpleUriValue.isIndividualUriValueEquals(this, comp);
 	}
 
 	@Override
 	public int hashCode() {
-		return 11 ^ this.getIndividualURI().hashCode();
+		return SimpleUriValue.getIndividualUriValueHash(this);
 	}
 
 	/* (non-Javadoc)
