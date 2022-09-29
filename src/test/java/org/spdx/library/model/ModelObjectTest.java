@@ -848,4 +848,21 @@ public class ModelObjectTest extends TestCase {
 			// expected
 		}
 	}
+	
+	/**
+	 * Negative test for creating 2 model objects with incompatible types which should fail
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unused")
+	public void testCreatingIncompatible() throws InvalidSPDXAnalysisException {
+		SpdxFile file = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
+		// the following should succeed since it is of the same type
+		SpdxFile fileb = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
+		try {
+			Annotation annotation = new Annotation(store, docUri, TEST_ID, copyManager, true);
+			fail("Should not be able to create 2 different types using the same ID");
+		} catch (SpdxIdInUseException ex) {
+			// expected
+		}
+	}
 }
