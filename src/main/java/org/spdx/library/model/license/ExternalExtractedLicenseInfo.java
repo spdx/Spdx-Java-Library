@@ -34,6 +34,7 @@ import org.spdx.library.model.ExternalDocumentRef;
 import org.spdx.library.model.ExternalSpdxElement;
 import org.spdx.library.model.IndividualUriValue;
 import org.spdx.library.model.ModelObject;
+import org.spdx.library.model.SimpleUriValue;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -292,5 +293,15 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	public void setName(String name) throws InvalidSPDXAnalysisException {
 		throw new InvalidSPDXAnalysisException("Can not set name for an external LicenseRef.  "
 				+ "Changes to the license need to be made within the document containing the license.");
+	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		return SimpleUriValue.isIndividualUriValueEquals(this, comp);
+	}
+
+	@Override
+	public int hashCode() {
+		return SimpleUriValue.getIndividualUriValueHash(this);
 	}
 }

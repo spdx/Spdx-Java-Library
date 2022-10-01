@@ -44,6 +44,27 @@ public class SimpleUriValue implements IndividualUriValue {
 	
 	private String uri;
 
+	/**
+	 * returns hash based on URI of the IndividualUriValue
+	 * @param individualUri IndividualUriValue to obtain a hash from
+	 * @return hash based on URI of the IndividualUriValue
+	 */
+	public static int getIndividualUriValueHash(IndividualUriValue individualUri) {
+		return 11 ^ individualUri.getIndividualURI().hashCode();
+	}
+	
+	/**
+	 * Compares an object to an individual URI and returns true if the URI values are equal
+	 * @param individualUri IndividualUriValue to compare
+	 * @param comp Object to compare
+	 * @return true if the individualUri has the same URI as comp and comp is of type IndividualUriValue
+	 */
+	public static boolean isIndividualUriValueEquals(IndividualUriValue individualUri, Object comp) {
+		if (!(comp instanceof IndividualUriValue)) {
+			return false;
+		}
+		return Objects.equals(individualUri.getIndividualURI(), ((IndividualUriValue)comp).getIndividualURI());
+	}
 
 	public SimpleUriValue(IndividualUriValue fromIndividualValue) throws InvalidSPDXAnalysisException {
 		this(fromIndividualValue.getIndividualURI());
@@ -93,14 +114,11 @@ public class SimpleUriValue implements IndividualUriValue {
 	
 	@Override
 	public boolean equals(Object comp) {
-		if (!(comp instanceof SimpleUriValue)) {
-			return false;
-		}
-		return Objects.equals(this.uri, ((SimpleUriValue)comp).getIndividualURI());
+		return isIndividualUriValueEquals(this, comp);
 	}
 
 	@Override
 	public int hashCode() {
-		return 11 ^ this.uri.hashCode();
+		return getIndividualUriValueHash(this);
 	}
 }

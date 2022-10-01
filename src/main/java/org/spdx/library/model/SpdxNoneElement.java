@@ -37,7 +37,6 @@ import org.spdx.storage.IModelStore;
 public class SpdxNoneElement extends SpdxConstantElement {
 	
 	public static final String NONE_ELEMENT_ID = "NONE";
-	public static final int NONE_ELEMENT_HASHCODE = 433;
 	
 	/**
 	 * Create a None element with default model store and document URI
@@ -60,16 +59,6 @@ public class SpdxNoneElement extends SpdxConstantElement {
 	@Override
 	public String toString() {
 		return SpdxConstants.NONE_VALUE;
-	}
-	
-	@Override
-	public int hashCode() {
-		return NONE_ELEMENT_HASHCODE;
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		return o instanceof SpdxNoneElement;
 	}
 	
 	@Override

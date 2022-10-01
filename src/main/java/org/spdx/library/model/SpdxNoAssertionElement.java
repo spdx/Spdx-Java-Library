@@ -37,7 +37,6 @@ import org.spdx.storage.IModelStore;
 public class SpdxNoAssertionElement extends SpdxConstantElement {
 
 	public static final String NOASSERTION_ELEMENT_ID = "NOASSERTION";
-	public static final int NOASSERTION_ELEMENT_HASHCODE = 491;
 	
 	/**
 	 * Create a None element with default model store and document URI
@@ -60,16 +59,6 @@ public class SpdxNoAssertionElement extends SpdxConstantElement {
 	@Override
 	public String toString() {
 		return SpdxConstants.NOASSERTION_VALUE;
-	}
-	
-	@Override
-	public int hashCode() {
-		return NOASSERTION_ELEMENT_HASHCODE;
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		return o instanceof SpdxNoAssertionElement;
 	}
 	
 	@Override

@@ -114,5 +114,14 @@ public abstract class SpdxConstantElement extends SpdxElement implements Individ
 	public SpdxElement setName(String name) throws InvalidSPDXAnalysisException {
 		throw new RuntimeException("Can not set name for NONE and NOASSERTION SPDX Elements");
 	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		return SimpleUriValue.isIndividualUriValueEquals(this, comp);
+	}
 
+	@Override
+	public int hashCode() {
+		return SimpleUriValue.getIndividualUriValueHash(this);
+	}
 }
