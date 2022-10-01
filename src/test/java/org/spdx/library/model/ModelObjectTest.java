@@ -17,6 +17,8 @@
  */
 package org.spdx.library.model;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -858,11 +860,8 @@ public class ModelObjectTest extends TestCase {
 		SpdxFile file = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
 		// the following should succeed since it is of the same type
 		SpdxFile fileb = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
-		try {
+		assertThrows(SpdxIdInUseException.class, () -> {
 			Annotation annotation = new Annotation(store, docUri, TEST_ID, copyManager, true);
-			fail("Should not be able to create 2 different types using the same ID");
-		} catch (SpdxIdInUseException ex) {
-			// expected
-		}
+		});
 	}
 }
