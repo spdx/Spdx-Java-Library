@@ -183,6 +183,8 @@ public class LicenseExpressionParser {
 					}
 					if (exceptionId.isPresent()) {
 						licenseException = LicenseInfoFactory.getListedExceptionById(exceptionId.get());
+					} else if (token.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
+						throw new LicenseParserException("WITH must be followed by a license exception. "+token+" is a Listed License type.");
 					} else {
 						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, 
 								documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, copyManager);
