@@ -192,7 +192,12 @@ public abstract class ModelObject {
 		this.documentUri = documentUri;
 		this.id = id;
 		this.copyManager = copyManager;
-		if (!modelStore.exists(documentUri, id)) {
+		Optional<TypedValue> existing = modelStore.getTypedValue(documentUri, id);
+		if (existing.isPresent()) {
+			if (create && !existing.get().getType().equals(getType())) {
+				throw new SpdxIdInUseException("Can not create "+id+".  It is already in use with type "+existing.get().getType()+" which is incompatible with type "+getType());
+			}
+		} else {
 			if (create) {
 				modelStore.create(documentUri, id, getType());
 			} else {

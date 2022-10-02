@@ -17,6 +17,8 @@
  */
 package org.spdx.library.model;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -847,5 +849,19 @@ public class ModelObjectTest extends TestCase {
 		} catch (InvalidSPDXAnalysisException ex) {
 			// expected
 		}
+	}
+	
+	/**
+	 * Negative test for creating 2 model objects with incompatible types which should fail
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	@SuppressWarnings("unused")
+	public void testCreatingIncompatible() throws InvalidSPDXAnalysisException {
+		SpdxFile file = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
+		// the following should succeed since it is of the same type
+		SpdxFile fileb = new SpdxFile(store, docUri, TEST_ID, copyManager, true);
+		assertThrows(SpdxIdInUseException.class, () -> {
+			Annotation annotation = new Annotation(store, docUri, TEST_ID, copyManager, true);
+		});
 	}
 }
