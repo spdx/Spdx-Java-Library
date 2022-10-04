@@ -52,6 +52,7 @@ public class LicenseExpressionParser {
 	static final String LEFT_PAREN = "(";
 	static final String RIGHT_PAREN = ")";
 	static final Map<String, Operator> OPERATOR_MAP = new HashMap<>();
+	public static final String UNINITIALIZED_LICENSE_TEXT = "[Initialized with license Parser.  The actual license text is not available]";
 	
 	static {
 		OPERATOR_MAP.put("+", Operator.OR_LATER);
@@ -293,7 +294,7 @@ public class LicenseExpressionParser {
 			} else {
 				localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
 						store, documentUri, token, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-				localLicense.setExtractedText("[Initialized with license Parser.  The actual license text is not available]");
+				localLicense.setExtractedText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localLicense;
 		}
