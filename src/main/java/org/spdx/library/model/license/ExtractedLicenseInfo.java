@@ -134,9 +134,12 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 			}
 		}
 		try {
-		String licenseText = this.getExtractedText();
+			String licenseText = this.getExtractedText();
 			if (licenseText == null || licenseText.isEmpty()) {
 				retval.add("Missing required license text for " + id);
+			}
+			if (LicenseExpressionParser.UNINITIALIZED_LICENSE_TEXT.equals(licenseText)) {
+				retval.add("License not found for " + id);
 			}
 		} catch (InvalidSPDXAnalysisException ex) {
 			retval.add("Unable to fetch license text: "+ex.getMessage());
