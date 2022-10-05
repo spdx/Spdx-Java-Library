@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 
 /**
  * Collection of SPDX elements related to an SpdxElement
@@ -199,7 +201,24 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 						if (relatedElement.isPresent() && 
 						        relatedElement.get().equals(o) &&
 								relationship.getRelationshipType().equals(relationshipTypeFilter)) {
-							return relationshipCollection.remove(relationship);
+							IModelStore modelStore = relationship.getModelStore();
+							String documentUri = relationship.getDocumentUri();
+							final IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+							try {
+								if (relationshipCollection.remove(relationship)) {
+									try {
+										modelStore.delete(documentUri, relationship.getId());
+									} catch (SpdxIdInUseException ex) {
+										// This is possible if the relationship is in use
+										// outside of the RelatedElementCollection - just ignore
+										// the exception
+									}
+								} else {
+									return false;
+								}
+							} finally {
+								modelStore.leaveCriticalSection(lock);
+							}
 						}
 					} catch (InvalidSPDXAnalysisException e) {
 						logger.error("Error getting relationship properties - skipping removal of element",e);
