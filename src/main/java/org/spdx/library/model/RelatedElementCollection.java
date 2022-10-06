@@ -20,10 +20,12 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -52,6 +54,10 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	ModelCollection<Relationship> relationshipCollection;
 	private RelationshipType relationshipTypeFilter;
 	private String relatedElementTypeFilter;
+	/**
+	 * Keeps track of any created relationships so we can delete them when removed
+	 */
+	private Set<String> createdRelationshipIds = new HashSet<>();
 
 	private SpdxElement owningElement;
 	
@@ -172,8 +178,15 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 			return false;
 		}
 		try {
-			Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
-			return owningElement.addRelationship(relationship);
+			IModelStoreLock lock = owningElement.getModelStore()
+					.enterCriticalSection(owningElement.getDocumentUri(), false);
+			try {
+				Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
+				createdRelationshipIds.add(relationship.getId());
+				return owningElement.addRelationship(relationship);
+			} finally {
+				owningElement.getModelStore().leaveCriticalSection(lock);
+			}
 		} catch (InvalidSPDXAnalysisException e1) {
 			logger.error("Error adding relationship",e1);
 			throw new RuntimeException(e1);
@@ -207,12 +220,16 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 							try {
 								if (relationshipCollection.remove(relationship)) {
 									try {
-										modelStore.delete(documentUri, relationship.getId());
+										if (createdRelationshipIds.contains(relationship.getId())) {
+											createdRelationshipIds.remove(relationship.getId());
+											modelStore.delete(documentUri, relationship.getId());
+										}
 									} catch (SpdxIdInUseException ex) {
 										// This is possible if the relationship is in use
 										// outside of the RelatedElementCollection - just ignore
 										// the exception
 									}
+									return true;
 								} else {
 									return false;
 								}
