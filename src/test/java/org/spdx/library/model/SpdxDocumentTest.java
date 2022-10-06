@@ -670,7 +670,6 @@ public class SpdxDocumentTest extends TestCase {
 		Relationship rel = doc.getRelationships().toArray(new Relationship[1])[0];
 		assertEquals(describedElement, rel.getRelatedSpdxElement().get());
 		doc.getDocumentDescribes().remove(describedElement);
-//		modelStore.delete(docUri, rel.getId());
 		modelStore.delete(docUri, describedElementId);
 	}
 
