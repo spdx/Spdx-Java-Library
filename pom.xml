@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>java-spdx-library</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/spdx/Spdx-Java-Library</url>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -227,7 +227,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<spdxDocumentNamespace>http://spdx.org/documents/java-spdx-library-{$version}</spdxDocumentNamespace>
+					<spdxDocumentNamespace>http://spdx.org/documents/java-spdx-library-${version}</spdxDocumentNamespace>
 					
 				<defaultFileCopyright>Copyright (c) 2020 Source Auditor Inc.</defaultFileCopyright>
 				<defaultFileContributors>
