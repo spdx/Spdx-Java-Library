@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.Version;
 import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
@@ -651,6 +652,25 @@ public class SpdxDocumentTest extends TestCase {
 		String ver = "SPDX-2.1";
 		doc.setSpecVersion(ver);
 		assertEquals(ver, doc.getSpecVersion());
+	}
+	
+	// Test for issue 126 - removing a documentDescribes not properly decrementing use counts
+	public void testRemoveDescribes() throws InvalidSPDXAnalysisException {
+		IModelStore modelStore = new InMemSpdxStore();
+		String docUri = "https://some.doc.uri";
+		ModelCopyManager copyManager = new ModelCopyManager();
+		SpdxDocument doc = new SpdxDocument(modelStore, docUri, copyManager, true);
+		String describedElementId = "describedElement";
+		SpdxElement describedElement = new GenericSpdxElement(modelStore, docUri, describedElementId, copyManager, true);
+		assertEquals(0, doc.getDocumentDescribes().size());
+		assertEquals(0, doc.getRelationships().size());
+		doc.getDocumentDescribes().add(describedElement);
+		assertEquals(1, doc.getDocumentDescribes().size());
+		assertEquals(1, doc.getRelationships().size());
+		Relationship rel = doc.getRelationships().toArray(new Relationship[1])[0];
+		assertEquals(describedElement, rel.getRelatedSpdxElement().get());
+		doc.getDocumentDescribes().remove(describedElement);
+		modelStore.delete(docUri, describedElementId);
 	}
 
 }

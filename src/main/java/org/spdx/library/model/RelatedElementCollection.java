@@ -20,10 +20,12 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -32,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 
 /**
  * Collection of SPDX elements related to an SpdxElement
@@ -50,6 +54,10 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	ModelCollection<Relationship> relationshipCollection;
 	private RelationshipType relationshipTypeFilter;
 	private String relatedElementTypeFilter;
+	/**
+	 * Keeps track of any created relationships so we can delete them when removed
+	 */
+	private Set<String> createdRelationshipIds = new HashSet<>();
 
 	private SpdxElement owningElement;
 	
@@ -170,8 +178,15 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 			return false;
 		}
 		try {
-			Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
-			return owningElement.addRelationship(relationship);
+			IModelStoreLock lock = owningElement.getModelStore()
+					.enterCriticalSection(owningElement.getDocumentUri(), false);
+			try {
+				Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
+				createdRelationshipIds.add(relationship.getId());
+				return owningElement.addRelationship(relationship);
+			} finally {
+				owningElement.getModelStore().leaveCriticalSection(lock);
+			}
 		} catch (InvalidSPDXAnalysisException e1) {
 			logger.error("Error adding relationship",e1);
 			throw new RuntimeException(e1);
@@ -199,7 +214,28 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 						if (relatedElement.isPresent() && 
 						        relatedElement.get().equals(o) &&
 								relationship.getRelationshipType().equals(relationshipTypeFilter)) {
-							return relationshipCollection.remove(relationship);
+							IModelStore modelStore = relationship.getModelStore();
+							String documentUri = relationship.getDocumentUri();
+							final IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+							try {
+								if (relationshipCollection.remove(relationship)) {
+									try {
+										if (createdRelationshipIds.contains(relationship.getId())) {
+											createdRelationshipIds.remove(relationship.getId());
+											modelStore.delete(documentUri, relationship.getId());
+										}
+									} catch (SpdxIdInUseException ex) {
+										// This is possible if the relationship is in use
+										// outside of the RelatedElementCollection - just ignore
+										// the exception
+									}
+									return true;
+								} else {
+									return false;
+								}
+							} finally {
+								modelStore.leaveCriticalSection(lock);
+							}
 						}
 					} catch (InvalidSPDXAnalysisException e) {
 						logger.error("Error getting relationship properties - skipping removal of element",e);
