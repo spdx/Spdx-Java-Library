@@ -216,7 +216,7 @@
 		<plugin>
 			<groupId>org.spdx</groupId>
 				<artifactId>spdx-maven-plugin</artifactId>
-				<version>0.5.5</version>
+				<version>0.6.2</version>
 				<executions>
 					<execution>
 						<id>build-spdx</id>
@@ -227,7 +227,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<spdxDocumentNamespace>http://spdx.org/documents/java-spdx-library-${version}</spdxDocumentNamespace>
+					<spdxDocumentNamespace>http://spdx.org/documents/java-spdx-library-${project.version}</spdxDocumentNamespace>
 					
 				<defaultFileCopyright>Copyright (c) 2020 Source Auditor Inc.</defaultFileCopyright>
 				<defaultFileContributors>
