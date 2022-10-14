@@ -89,7 +89,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		setName(spdxFileBuilder.name);
 		setLicenseConcluded(spdxFileBuilder.concludedLicense);
 		addChecksum(spdxFileBuilder.sha1);
-		getLicenseInfoFromFiles().addAll(spdxFileBuilder.licenseInfosFromFile);
 		
 		// optional parameters - SpdxElement
 		getAnnotations().addAll(spdxFileBuilder.annotations);
@@ -99,7 +98,9 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		// optional parameters - SpdxItem
 		setLicenseComments(spdxFileBuilder.licenseComments);
 		getAttributionText().addAll(spdxFileBuilder.attributionText);
-		
+		if (Objects.nonNull(spdxFileBuilder.licenseInfosFromFile)) {
+			getLicenseInfoFromFiles().addAll(spdxFileBuilder.licenseInfosFromFile);
+		}
 		// optional parameters - SpdxFile
 		Iterator<Checksum> iter = spdxFileBuilder.checksums.iterator();
 		while (iter.hasNext()) {
@@ -328,7 +329,6 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		
 		// required fields - SpdxItem
 		AnyLicenseInfo concludedLicense;
-		Collection<AnyLicenseInfo> licenseInfosFromFile;
 		String copyrightText;
 		
 		// required fields - SpdxFile
@@ -342,6 +342,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		// optional fields - SpdxItem
 		String licenseComments = null;
 		Collection<String> attributionText = new ArrayList<String>();
+		Collection<AnyLicenseInfo> licenseInfosFromFile;
 		
 		// optional fields - SpdxFile
 		Collection<Checksum> checksums = new ArrayList<Checksum>();
@@ -363,13 +364,13 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 		 */
 		public SpdxFileBuilder(IModelStore modelStore, String documentUri, String id, 
 				@Nullable ModelCopyManager copyManager, String name,
-				AnyLicenseInfo concludedLicense, Collection<AnyLicenseInfo> licenseInfosFromFile,
+				AnyLicenseInfo concludedLicense, 
+				@Nullable Collection<AnyLicenseInfo> licenseInfosFromFile,
 				String copyrightText, Checksum sha1) {
 			Objects.requireNonNull(modelStore, "Model store can not be null");
 			Objects.requireNonNull(documentUri, "Document URI can not be null");
 			Objects.requireNonNull(id, "ID can not be null");
 			Objects.requireNonNull(name, "Name can not be null");
-			Objects.requireNonNull(licenseInfosFromFile, "License info from files can not be null");
 			Objects.requireNonNull(sha1, "SHA1 can not be null");
 			this.modelStore = modelStore;
 			this.documentUri = documentUri;
