@@ -24,7 +24,7 @@ package org.spdx.licenseTemplate;
  */
 public class HtmlTemplateOutputHandler implements ILicenseTemplateOutputHandler {
 	
-	public static final String REPLACEABLE_LICENSE_TEXT_CLASS = "replacable-license-text";
+	public static final String REPLACEABLE_LICENSE_TEXT_CLASS = "replaceable-license-text";
 	public static final String OPTIONAL_LICENSE_TEXT_CLASS = "optional-license-text";
 	static final String END_PARAGRAPH_TAG = "</p>";
 	

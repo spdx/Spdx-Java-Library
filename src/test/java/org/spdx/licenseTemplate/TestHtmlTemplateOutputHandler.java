@@ -84,7 +84,7 @@ public class TestHtmlTemplateOutputHandler {
 		LicenseTemplateRule normalRule = new LicenseTemplateRule(ruleName, RuleType.VARIABLE,
 				originalText, matchText, exampleText);
 		String expectedResult = "\n<span id=\"" + ruleName +
-			"\" class=\"replacable-license-text\">" + compareOriginalText +
+			"\" class=\"replaceable-license-text\">" + compareOriginalText +
 			"</span>\n";
 		HtmlTemplateOutputHandler htoh = new HtmlTemplateOutputHandler();
 		htoh.variableRule(normalRule);
@@ -100,7 +100,7 @@ public class TestHtmlTemplateOutputHandler {
 		String compareOriginalText = "Original <br/>\ntext";
 		String ruleName = "testRule";
 		String expectedResult = "\n<span id=\"" + ruleName +
-		"\" class=\"replacable-license-text\">" + compareOriginalText +
+		"\" class=\"replaceable-license-text\">" + compareOriginalText +
 		"</span>\n";
 		String result = HtmlTemplateOutputHandler.formatReplaceabledHTML(originalText, ruleName);
 		assertEquals(expectedResult, result);
@@ -150,7 +150,7 @@ public class TestHtmlTemplateOutputHandler {
 		LicenseTemplateRule normalRule = new LicenseTemplateRule(varRuleName, RuleType.VARIABLE,
 				originalText, matchText, exampleText);
 		String escapedVariableRuleText = "\n<span id=\"" + varRuleName +
-			"\" class=\"replacable-license-text\">" + compareOriginalText +
+			"\" class=\"replaceable-license-text\">" + compareOriginalText +
 			"</span>\n";
 		htoh.variableRule(normalRule);
 		LicenseTemplateRule endRule = new LicenseTemplateRule(optRuleName, RuleType.END_OPTIONAL);
