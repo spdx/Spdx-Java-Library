@@ -42,6 +42,14 @@ import org.spdx.storage.IModelStore;
  * 
  * This class represents an ExtractedLicenseInfo which is stored in an external SPDX document.
  * 
+ * Note that the actual properties for this ExtractedLicenseInfo is in an external document so
+ * it is not accessible through this class.
+ * 
+ * The set methods will cause an exception.
+ * 
+ * The <code>getExtractedText()</code> will return text that indicates the actual license text
+ * is in an external document.
+ * 
  * The ID must be in the form <code>SpdxConstants.EXTERNAL_LICENSE_REF_PATTERN.pattern()</code>
  *
  */
