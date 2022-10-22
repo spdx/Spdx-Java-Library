@@ -19,6 +19,7 @@ package org.spdx.library.model.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.model.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -29,7 +30,8 @@ import org.spdx.storage.IModelStore;
  * @author Gary O'Neall
  *
  */
-public abstract class AbstractExtractedLicenseInfo extends SimpleLicensingInfo {
+public abstract class AbstractExtractedLicenseInfo extends SimpleLicensingInfo
+implements Comparable<AbstractExtractedLicenseInfo> {
 
 	/**
 	 * Create a new ExtractedLicenseInfo using the ID
@@ -64,5 +66,51 @@ public abstract class AbstractExtractedLicenseInfo extends SimpleLicensingInfo {
 		// must be only the ID if we are to use this to create 
 		// parseable license strings
 		return this.getLicenseId();
+	}
+	
+	/**
+	 * @return the text
+	 * @throws SpdxInvalidTypeException 
+	 */
+	public abstract String getExtractedText() throws InvalidSPDXAnalysisException;
+
+	/**
+	 * @param text the text to set
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public abstract void setExtractedText(String text) throws InvalidSPDXAnalysisException;
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(AbstractExtractedLicenseInfo o) {
+		try {
+			if (this.getLicenseId() == null) {
+				if (o.getLicenseId() == null) {
+					if (this.getExtractedText() == null) {
+						if (o.getExtractedText() == null) {
+							return 0;
+						} else {
+							return 1;
+						}
+					}else if (o.getExtractedText() == null) {
+						return -1;
+					} else {
+						return this.getExtractedText().compareToIgnoreCase(o.getExtractedText());
+					}
+				} else {
+					return 1;
+				}
+			} else {
+				if (o.getLicenseId() == null) {
+					return -1;
+				} else {
+					return this.getLicenseId().compareToIgnoreCase(o.getLicenseId());
+				}
+			}
+		} catch (InvalidSPDXAnalysisException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }

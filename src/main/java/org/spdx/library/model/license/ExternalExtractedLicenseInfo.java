@@ -199,12 +199,23 @@ public class ExternalExtractedLicenseInfo extends AbstractExtractedLicenseInfo i
 		return externalDocRef.get().getId() + ":" + matcher.group(2);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject)
+	 */
 	@Override
 	public boolean equivalent(ModelObject compare) {
 		if (!(compare instanceof ExternalExtractedLicenseInfo)) {
 			return false;
 		}
 		return getId().equals(compare.getId());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject, boolean)
+	 */
+	@Override
+	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		return equivalent(compare);
 	}
 
 	
@@ -219,6 +230,27 @@ public class ExternalExtractedLicenseInfo extends AbstractExtractedLicenseInfo i
 			logger.error("Error getting external LicenseRef URI",e);
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.license.AbstractExtractedLicenseInfo#getExtractedText()
+	 */
+	@Override
+	public String getExtractedText() throws InvalidSPDXAnalysisException {
+		return "The text for this license can be found in the external document "
+				+ getExternalDocumentId()
+				+ " license Ref "
+				+ getExternalLicenseRef()
+				+ ".";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.license.AbstractExtractedLicenseInfo#setExtractedText(String)
+	 */
+	@Override
+	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
+		throw new InvalidSPDXAnalysisException("Can not set extracted text for an external LicenseRef.  "
+				+ "Changes to the license need to be made within the document containing the license.");
 	}
 	
 	/* (non-Javadoc)

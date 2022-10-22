@@ -42,7 +42,7 @@ import org.spdx.utility.compare.LicenseCompareHelper;
  * @author Gary O'Neall
  *
  */
-public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo implements Comparable<ExtractedLicenseInfo> {
+public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo {
 	
 	public ExtractedLicenseInfo() throws InvalidSPDXAnalysisException {
 		super(DefaultModelStore.getDefaultModelStore().getNextId(IdType.LicenseRef, DefaultModelStore.getDefaultDocumentUri()));
@@ -135,40 +135,6 @@ public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo implement
 		}
 
 		return retval;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(ExtractedLicenseInfo o) {
-		try {
-			if (this.getLicenseId() == null) {
-				if (o.getLicenseId() == null) {
-					if (this.getExtractedText() == null) {
-						if (o.getExtractedText() == null) {
-							return 0;
-						} else {
-							return 1;
-						}
-					}else if (o.getExtractedText() == null) {
-						return -1;
-					} else {
-						return this.getExtractedText().compareToIgnoreCase(o.getExtractedText());
-					}
-				} else {
-					return 1;
-				}
-			} else {
-				if (o.getLicenseId() == null) {
-					return -1;
-				} else {
-					return this.getLicenseId().compareToIgnoreCase(o.getLicenseId());
-				}
-			}
-		} catch (InvalidSPDXAnalysisException ex) {
-			throw new RuntimeException(ex);
-		}
 	}
 	
 	@Override
