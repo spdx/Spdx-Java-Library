@@ -42,7 +42,7 @@ import org.spdx.utility.compare.LicenseCompareHelper;
  * @author Gary O'Neall
  *
  */
-public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Comparable<ExtractedLicenseInfo> {
+public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo implements Comparable<ExtractedLicenseInfo> {
 	
 	public ExtractedLicenseInfo() throws InvalidSPDXAnalysisException {
 		super(DefaultModelStore.getDefaultModelStore().getNextId(IdType.LicenseRef, DefaultModelStore.getDefaultDocumentUri()));
@@ -53,7 +53,7 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	}
 
 	/**
-	 * Create a new SimpleLicensingInfo object
+	 * Create a new ExtractedLicenseInfo object
 	 * @param modelStore container which includes the license
 	 * @param documentUri URI for the SPDX document containing the license
 	 * @param id identifier for the license
@@ -84,17 +84,6 @@ public class ExtractedLicenseInfo extends SimpleLicensingInfo implements Compara
 	@Override
 	public String getType() {
 		return SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#toString()
-	 */
-	@Override
-	public String toString() {
-		// must be only the ID if we are to use this to create 
-		// parseable license strings
-		return this.getLicenseId();
 	}
 	
 	/**

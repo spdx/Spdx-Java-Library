@@ -45,7 +45,7 @@ import org.spdx.storage.IModelStore;
  * The ID must be in the form <code>SpdxConstants.EXTERNAL_LICENSE_REF_PATTERN.pattern()</code>
  *
  */
-public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implements IndividualUriValue {
+public class ExternalExtractedLicenseInfo extends AbstractExtractedLicenseInfo implements IndividualUriValue {
 	
 	// Note: the default empty constructor is not allowed since the license ID must follow a specific pattern
 
@@ -219,28 +219,6 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 			logger.error("Error getting external LicenseRef URI",e);
 			throw new RuntimeException(e);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.spdx.library.model.license.ExtractedLicenseInfo#getExtractedText()
-	 */
-	@Override
-	public String getExtractedText() throws InvalidSPDXAnalysisException {
-		return "The text for this license can be found in the external document "
-				+ getExternalDocumentId()
-				+ " license Ref "
-				+ getExternalLicenseRef()
-				+ ".";
-	}
-
-	/**
-	 * @param text the text to set
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	@Override
-	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
-		throw new InvalidSPDXAnalysisException("Can not set extracted text for an external LicenseRef.  "
-				+ "Changes to the license need to be made within the document containing the license.");
 	}
 	
 	/* (non-Javadoc)

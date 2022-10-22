@@ -178,27 +178,6 @@ public class ExternalLicenseRefTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#getExtractedText()}.
-	 */
-	public void testGetExtractedText() throws InvalidSPDXAnalysisException {
-		ExternalExtractedLicenseInfo elr = new ExternalExtractedLicenseInfo(ID1);
-		assertTrue(elr.getExtractedText().contains(LICENSEREF1));
-	}
-
-	/**
-	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#setExtractedText(java.lang.String)}.
-	 */
-	public void testSetExtractedText() throws InvalidSPDXAnalysisException {
-		ExternalExtractedLicenseInfo elr = new ExternalExtractedLicenseInfo(ID1);
-		try {
-			elr.setExtractedText("New text");
-			fail("This should have failed!");
-		} catch(InvalidSPDXAnalysisException ex) {
-			// expected
-		}
-	}
-
-	/**
 	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#getExternalDocumentId()}.
 	 */
 	public void testGetExternalDocumentId() throws InvalidSPDXAnalysisException {
@@ -241,17 +220,6 @@ public class ExternalLicenseRefTest extends TestCase {
 		String expected = DOCURI1 + "#" + LICENSEREF1;
 		ExternalExtractedLicenseInfo elr = new ExternalExtractedLicenseInfo(ID1);
 		assertEquals(expected, elr.getIndividualURI());
-	}
-
-	/**
-	 * Test method for {@link org.spdx.library.model.license.ExtractedLicenseInfo#compareTo(org.spdx.library.model.license.ExtractedLicenseInfo)}.
-	 */
-	public void testCompareTo() throws InvalidSPDXAnalysisException {
-		ExternalExtractedLicenseInfo elr1 = new ExternalExtractedLicenseInfo(ID1);
-		ExternalExtractedLicenseInfo elrSame = new ExternalExtractedLicenseInfo(ID1);
-		ExternalExtractedLicenseInfo elr2 = new ExternalExtractedLicenseInfo(ID2);
-		assertEquals(0, elr1.compareTo(elrSame));
-		assertTrue(elr1.compareTo(elr2) != 0);
 	}
 
 	/**
