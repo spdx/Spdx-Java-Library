@@ -73,12 +73,6 @@ implements Comparable<AbstractExtractedLicenseInfo> {
 	 * @throws SpdxInvalidTypeException 
 	 */
 	public abstract String getExtractedText() throws InvalidSPDXAnalysisException;
-
-	/**
-	 * @param text the text to set
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public abstract void setExtractedText(String text) throws InvalidSPDXAnalysisException;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)

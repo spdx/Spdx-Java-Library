@@ -251,15 +251,6 @@ public class ExternalExtractedLicenseInfo extends AbstractExtractedLicenseInfo i
 				+ getExternalLicenseRef()
 				+ ".";
 	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.library.model.license.AbstractExtractedLicenseInfo#setExtractedText(String)
-	 */
-	@Override
-	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
-		throw new InvalidSPDXAnalysisException("Can not set extracted text for an external LicenseRef.  "
-				+ "Changes to the license need to be made within the document containing the license.");
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.spdx.library.model.license.SimpleLicensingInfo#getComment()
