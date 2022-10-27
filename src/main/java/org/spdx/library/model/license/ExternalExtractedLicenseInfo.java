@@ -42,10 +42,18 @@ import org.spdx.storage.IModelStore;
  * 
  * This class represents an ExtractedLicenseInfo which is stored in an external SPDX document.
  * 
+ * Note that the actual properties for this ExtractedLicenseInfo is in an external document so
+ * it is not accessible through this class.
+ * 
+ * The set methods will cause an exception.
+ * 
+ * The <code>getExtractedText()</code> will return text that indicates the actual license text
+ * is in an external document.
+ * 
  * The ID must be in the form <code>SpdxConstants.EXTERNAL_LICENSE_REF_PATTERN.pattern()</code>
  *
  */
-public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implements IndividualUriValue {
+public class ExternalExtractedLicenseInfo extends AbstractExtractedLicenseInfo implements IndividualUriValue {
 	
 	// Note: the default empty constructor is not allowed since the license ID must follow a specific pattern
 
@@ -199,12 +207,23 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 		return externalDocRef.get().getId() + ":" + matcher.group(2);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject)
+	 */
 	@Override
 	public boolean equivalent(ModelObject compare) {
 		if (!(compare instanceof ExternalExtractedLicenseInfo)) {
 			return false;
 		}
 		return getId().equals(compare.getId());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject, boolean)
+	 */
+	@Override
+	public boolean equivalent(ModelObject compare, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
+		return equivalent(compare);
 	}
 
 	
@@ -222,7 +241,7 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.spdx.library.model.license.ExtractedLicenseInfo#getExtractedText()
+	 * @see org.spdx.library.model.license.AbstractExtractedLicenseInfo#getExtractedText()
 	 */
 	@Override
 	public String getExtractedText() throws InvalidSPDXAnalysisException {
@@ -231,16 +250,6 @@ public class ExternalExtractedLicenseInfo extends ExtractedLicenseInfo implement
 				+ " license Ref "
 				+ getExternalLicenseRef()
 				+ ".";
-	}
-
-	/**
-	 * @param text the text to set
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	@Override
-	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {
-		throw new InvalidSPDXAnalysisException("Can not set extracted text for an external LicenseRef.  "
-				+ "Changes to the license need to be made within the document containing the license.");
 	}
 	
 	/* (non-Javadoc)

@@ -186,19 +186,6 @@ public class ExternalLicenseRefTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#setExtractedText(java.lang.String)}.
-	 */
-	public void testSetExtractedText() throws InvalidSPDXAnalysisException {
-		ExternalExtractedLicenseInfo elr = new ExternalExtractedLicenseInfo(ID1);
-		try {
-			elr.setExtractedText("New text");
-			fail("This should have failed!");
-		} catch(InvalidSPDXAnalysisException ex) {
-			// expected
-		}
-	}
-
-	/**
 	 * Test method for {@link org.spdx.library.model.license.ExternalExtractedLicenseInfo#getExternalDocumentId()}.
 	 */
 	public void testGetExternalDocumentId() throws InvalidSPDXAnalysisException {
