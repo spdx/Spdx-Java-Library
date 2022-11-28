@@ -148,7 +148,7 @@ public class LicenseInfoFactory {
 	 * @return the standard SPDX license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static LicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
+	public static ListedLicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionById(id);
 	}
 

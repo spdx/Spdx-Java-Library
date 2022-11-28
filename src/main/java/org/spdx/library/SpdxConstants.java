@@ -135,7 +135,7 @@ public class SpdxConstants {
 			CLASS_POINTER_COMPOUNT_POINTER, CLASS_POINTER_LINE_CHAR_POINTER, CLASS_SINGLE_POINTER};
 	
 	// classes that use the listed license URI for their namespace
-	public static final String[] LISTED_LICENSE_URI_CLASSES = {CLASS_SPDX_LISTED_LICENSE, CLASS_SPDX_LICENSE_EXCEPTION};
+	public static final String[] LISTED_LICENSE_URI_CLASSES = {CLASS_SPDX_LISTED_LICENSE, CLASS_SPDX_LISTED_LICENSE_EXCEPTION};
 	
 	// Enumeration class names
 	public static final String ENUM_FILE_TYPE = "FileType";

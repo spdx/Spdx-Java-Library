@@ -86,6 +86,11 @@ public class ListedLicenseException extends LicenseException {
 		super(id, name, text);
 	}
 	
+	@Override 
+	public String getType() {
+		return SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION;
+	}
+	
 	/**
 	 * @param exceptionTextHtml
 	 * @throws InvalidSPDXAnalysisException
