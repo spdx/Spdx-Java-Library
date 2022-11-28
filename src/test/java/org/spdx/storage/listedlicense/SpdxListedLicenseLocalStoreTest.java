@@ -29,6 +29,7 @@ import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.CrossRef;
 import org.spdx.library.model.license.LicenseException;
+import org.spdx.library.model.license.ListedLicenseException;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.storage.IModelStore;
@@ -91,7 +92,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertEquals(nextId, result);
 		
 		nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
 		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
 		assertEquals(nextId, result);
 		slll.close();
@@ -192,7 +193,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	
 	public void testCreateException() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		LicenseException result = (LicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
+		LicenseException result = (LicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		assertEquals(ECOS_EXCEPTION_ID, result.getLicenseExceptionId());
 		assertEquals(ECOS_EXCEPTION_ID, result.getId());
 		assertTrue(result.getComment().length() > 5);
@@ -202,7 +203,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
-		assertEquals(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, (result.getType()));
+		assertEquals(SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, (result.getType()));
 		assertFalse(result.isDeprecated());
 	}
 	
@@ -210,7 +211,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testList() throws InvalidSPDXAnalysisException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		// Exception
-		LicenseException exception = (LicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, null);
+		ListedLicenseException exception = (ListedLicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		String seeAlso1 = "seeAlso1";
 		String seeAlso2 = "seeAlso2";
 		List<String> seeAlsos = Arrays.asList(new String[]{seeAlso1, seeAlso2});
@@ -371,7 +372,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertFalse(slll.exists(LICENSE_LIST_URI, nextId));
 		
 		nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION);
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
 		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
 		assertEquals(nextId, result);
 		assertTrue(slll.exists(LICENSE_LIST_URI, nextId));
