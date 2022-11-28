@@ -40,16 +40,13 @@ import org.spdx.storage.IModelStore;
  */
 public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	
-	Collection<CrossRef> crossRef;
 	/**
 	 * Open or create a model object with the default store and default document URI
 	 * @param id ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	SimpleLicensingInfo(String id) throws InvalidSPDXAnalysisException {
 		super(id);
-		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
         if (!(this instanceof IndividualUriValue)) {
             setPropertyValue(SpdxConstants.PROP_LICENSE_ID, id);  // Needs to be set as a property per spec
         }
@@ -64,12 +61,10 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	 * @param create if true, create the license if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	SimpleLicensingInfo(IModelStore modelStore, String documentUri, String id, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 		if (!(this instanceof IndividualUriValue)) {
 		    setPropertyValue(SpdxConstants.PROP_LICENSE_ID, id);  // Needs to be set as a property per spec
 		}
@@ -141,9 +136,5 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 		} else {
 			setPropertyValue(SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlsoUrl);
 		}
-	}
-	
-	public Collection<CrossRef> getCrossRef() throws InvalidSPDXAnalysisException {
-		return this.crossRef;
 	}
 }
