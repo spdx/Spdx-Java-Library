@@ -93,6 +93,7 @@ public class SpdxModelFactory {
 		typeToClass.put(SpdxConstants.CLASS_SPDX_LICENSE, License.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_LISTED_LICENSE, SpdxListedLicense.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, LicenseException.class);
+		typeToClass.put(SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, ListedLicenseException.class);
 		typeToClass.put(SpdxConstants.CLASS_OR_LATER_OPERATOR, OrLaterOperator.class);
 		typeToClass.put(SpdxConstants.CLASS_WITH_EXCEPTION_OPERATOR, WithExceptionOperator.class);
 		typeToClass.put(SpdxConstants.CLASS_SPDX_FILE, SpdxFile.class);

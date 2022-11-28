@@ -229,7 +229,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				}
 				this.licenseIds.put(id.toLowerCase(), id);
 				this.listedLicenseCache.put(id, new LicenseJson(id));
-			} else if (SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(type)) {
+			} else if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)) {
 				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 					logger.error("Duplicate SPDX ID on create: "+id);;
 					throw new DuplicateSpdxIdException("ID "+id+" already exists.");
@@ -838,7 +838,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
 			} else if (crossRefs.containsKey(id)) {
 				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
 			} else {
@@ -903,9 +903,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					allItems.add(new TypedValue(licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
 				}
 			}
-			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typeFilter)) {
 				for (String exceptionId:this.exceptionIds.values()) {
-					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION));
+					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
 				}
 			}
 			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_CROSS_REF.equals(typeFilter)) {

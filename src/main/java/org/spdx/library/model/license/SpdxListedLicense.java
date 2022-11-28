@@ -16,6 +16,7 @@
  */
 package org.spdx.library.model.license;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -40,13 +41,17 @@ import org.spdx.storage.IModelStore;
  */
 public class SpdxListedLicense extends License {
 	
+	Collection<CrossRef> crossRef;
+	
 	/**
 	 * Open or create a model object with the default store and default document URI
 	 * @param id ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	public SpdxListedLicense(String id) throws InvalidSPDXAnalysisException {
 		super(id);
+		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 	}
 
 	/**
@@ -58,10 +63,12 @@ public class SpdxListedLicense extends License {
 	 * @param create if true, create the license if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
 	 */
+	@SuppressWarnings("unchecked")
 	public SpdxListedLicense(IModelStore modelStore, String documentUri, String id, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
+		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 	}
 	
 	/**
@@ -79,6 +86,7 @@ public class SpdxListedLicense extends License {
 	 * @param deprecatedVersion License list version when this license was first deprecated (null if not deprecated)
 	 * @throws InvalidSPDXAnalysisException
 	 */
+	@SuppressWarnings("unchecked")
 	public SpdxListedLicense(String name, String id, String text, Collection<String> sourceUrl, String comments,
 			String standardLicenseHeader, String template, boolean osiApproved, Boolean fsfLibre, 
 			String licenseTextHtml, boolean isDeprecated, String deprecatedVersion) throws InvalidSPDXAnalysisException {
@@ -94,6 +102,7 @@ public class SpdxListedLicense extends License {
 		setLicenseTextHtml(licenseTextHtml);
 		setDeprecated(isDeprecated);
 		setDeprecatedVersion(deprecatedVersion);
+		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstants.PROP_CROSS_REF, CrossRef.class);
 	}
 
 	/**
@@ -104,6 +113,7 @@ public class SpdxListedLicense extends License {
 		this(builder.name, builder.id, builder.text, builder.sourceUrl, builder.comments, builder.standardLicenseHeader,
 				builder.template, builder.osiApproved, builder.fsfLibre, builder.licenseTextHtml, builder.isDeprecated,
 				builder.deprecatedVersion);
+		this.crossRef.addAll(builder.crossRefs);
 	}
 
 	@Override 
@@ -206,6 +216,10 @@ public class SpdxListedLicense extends License {
 		setPropertyValue(SpdxConstants.PROP_LIC_DEPRECATED_VERSION, deprecatedVersion);
 	}
 
+	public Collection<CrossRef> getCrossRef() throws InvalidSPDXAnalysisException {
+		return this.crossRef;
+	}
+	
 	@Override
 	public String getType() {
 		return SpdxConstants.CLASS_SPDX_LISTED_LICENSE;
@@ -251,6 +265,7 @@ public class SpdxListedLicense extends License {
 		private String licenseTextHtml;
 		private boolean isDeprecated;
 		private String deprecatedVersion;
+		private List<CrossRef> crossRefs = new ArrayList<CrossRef>();
 
 		/**
 		 * @param name License name
@@ -344,6 +359,10 @@ public class SpdxListedLicense extends License {
 			this.deprecatedVersion = deprecatedVersion;
 			return this;
 		}
+		
+		public Builder addCrossRefs(CrossRef crossRef) {
+;			this.crossRefs.add(crossRef);
+			return this;
+		}
 	}
-
 }

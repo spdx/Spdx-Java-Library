@@ -64,7 +64,7 @@ public class LicenseExpressionParser {
 		OPERATOR_MAP.put("with", Operator.WITH);
 	}
 	/**
-	 * Parses a license expression into an license for use in the RDF Parser
+	 * Parses a license expression into an license for use in the Model
 	 * @param expression Expression to be parsed
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
@@ -187,8 +187,8 @@ public class LicenseExpressionParser {
 					} else if (token.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
 						throw new LicenseParserException("WITH must be followed by a license exception. "+token+" is a Listed License type.");
 					} else {
-						licenseException = (LicenseException) SpdxModelFactory.createModelObject(store, 
-								documentUri, token, SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION, copyManager);
+						licenseException = (ListedLicenseException) SpdxModelFactory.createModelObject(store, 
+								documentUri, token, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, copyManager);
 					}
 					AnyLicenseInfo operand = operandStack.pop();
 					if (operand == null) {

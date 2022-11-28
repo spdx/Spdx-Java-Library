@@ -123,7 +123,7 @@ public class ModelCopyManager {
 		}
 		return idMap.put(fromId, toId);
 	}
-
+	
 	/**
 	 * Copy an item from one Model Object Store to another
 	 * @param toStore Model Store to copy to
@@ -136,6 +136,24 @@ public class ModelCopyManager {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void copy(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore, String fromDocumentUri, String fromId, String type) throws InvalidSPDXAnalysisException {
+		copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, type, false);
+	}
+
+	/**
+	 * Copy an item from one Model Object Store to another
+	 * @param toStore Model Store to copy to
+	 * @param toId Id to use in the copy
+	 * @param toDocumentUri Target document URI
+	 * @param fromStore Model Store containing the source item
+	 * @param fromDocumentUri Document URI for the source item
+	 * @param fromId ID source ID
+	 * @param type Type to copy
+	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public void copy(IModelStore toStore, String toDocumentUri, String toId, 
+			IModelStore fromStore, String fromDocumentUri, String fromId, 
+			String type, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "ToStore can not be null");
 		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
 		Objects.requireNonNull(fromStore, "FromStore can not be null");
@@ -150,12 +168,16 @@ public class ModelCopyManager {
 			toStore.create(toDocumentUri, toId, type);
 		}
 		putCopiedId(fromStore, fromDocumentUri, fromId, toStore, toDocumentUri, toId);
-		List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
-		for (String propName:propertyNames) {
-			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-			    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName);
-			} else {
-			    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName);
+		if (!(excludeLicenseDetails && 
+				(SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
+						SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
+			List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
+			for (String propName:propertyNames) {
+				if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
+				    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName, excludeLicenseDetails);
+				} else {
+				    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName, excludeLicenseDetails);
+				}
 			}
 		}
 	}
@@ -169,10 +191,11 @@ public class ModelCopyManager {
      * @param fromDocumentUri Document URI for the source item
      * @param fromId ID source ID
      * @param propName Name of the property
+     * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	private void copyIndividualProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, String propName) throws InvalidSPDXAnalysisException {
+            String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
        if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
             throw new InvalidSPDXAnalysisException("Property "+propName+" is a collection type");
         }
@@ -187,7 +210,7 @@ public class ModelCopyManager {
                 } else {
                     toStore.setValue(toDocumentUri, toId, propName, 
                             copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-                                    tv.getId(), tv.getType()));
+                                    tv.getId(), tv.getType(), excludeLicenseDetails));
                 }
             } else {
                 toStore.setValue(toDocumentUri, toId, propName, result.get());
@@ -204,10 +227,11 @@ public class ModelCopyManager {
      * @param fromDocumentUri Document URI for the source item
      * @param fromId ID source ID
 	 * @param propName Name of the property
+	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	private void copyCollectionProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, String propName) throws InvalidSPDXAnalysisException {
+            String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
 	    if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
 	        throw new InvalidSPDXAnalysisException("Property "+propName+" is not a collection type");
 	    }
@@ -223,7 +247,7 @@ public class ModelCopyManager {
                     toStoreItem = listItemTv;
                 } else {
                     toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-                                    listItemTv.getId(), listItemTv.getType());
+                                    listItemTv.getId(), listItemTv.getType(), excludeLicenseDetails);
                 }
             } else {
                 toStoreItem = listItem;
@@ -231,8 +255,8 @@ public class ModelCopyManager {
             toStore.addValueToCollection(toDocumentUri, toId, propName, toStoreItem);
         }
     }
-
-    /**
+	
+	/**
 	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
 	 * @param toStore Model Store to copy to
 	 * @param toDocumentUri Target document URI
@@ -245,6 +269,23 @@ public class ModelCopyManager {
 	 */
 	public TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, 
 			String fromDocumentUri, String sourceId, String type) throws InvalidSPDXAnalysisException {
+		return copy(toStore, toDocumentUri, fromStore, fromDocumentUri, sourceId, type, false);
+	}
+
+    /**
+	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
+	 * @param toStore Model Store to copy to
+	 * @param toDocumentUri Target document URI
+	 * @param fromStore Model Store containing the source item
+	 * @param fromDocumentUri Document URI for the source item
+	 * @param sourceId ID source ID
+	 * @param type Type to copy
+	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
+	 * @return ID for the copied object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, 
+			String fromDocumentUri, String sourceId, String type, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "To Store can not be null");
 		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
 		Objects.requireNonNull(fromStore, "From Store can not be null");
@@ -271,7 +312,7 @@ public class ModelCopyManager {
 			} else {
 				toId = sourceId;
 			}
-			copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, type);
+			copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, type, excludeLicenseDetails);
 		}
 		return new TypedValue(toId, type);
 	}

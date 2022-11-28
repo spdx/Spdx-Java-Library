@@ -69,9 +69,9 @@ public class LicenseExpressionParserTest extends TestCase {
 					STD_IDS[i], STD_TEXTS[i], new ArrayList<String>(Arrays.asList(new String[] {"URL "+String.valueOf(i)})), "Notes "+String.valueOf(i),
 					"LicHeader "+String.valueOf(i), "Template "+String.valueOf(i), true, false, "", false, "");
 		}
-		LICENSE_EXCEPTIONS = new LicenseException[EXCEPTION_IDS.length];
+		LICENSE_EXCEPTIONS = new ListedLicenseException[EXCEPTION_IDS.length];
 		for (int i = 0; i < EXCEPTION_IDS.length; i++) {
-			LICENSE_EXCEPTIONS[i] = new LicenseException(EXCEPTION_IDS[i], EXCEPTION_NAMES[i], EXCEPTION_TEXTS[i]);
+			LICENSE_EXCEPTIONS[i] = new ListedLicenseException(EXCEPTION_IDS[i], EXCEPTION_NAMES[i], EXCEPTION_TEXTS[i]);
 		}
 		
 		SpdxDocument doc = new SpdxDocument(modelStore, TEST_DOCUMENT_URI, null, true);
