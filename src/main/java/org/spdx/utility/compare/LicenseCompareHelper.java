@@ -70,6 +70,8 @@ public class LicenseCompareHelper {
 		Arrays.asList("//","/*","*/","/**","#","##","*","**","\"\"\"","/","=begin","=end")));
 	
 	protected static final Map<String, String> NORMALIZE_TOKENS = new HashMap<>();
+
+	protected static final Integer CROSS_REF_NUM_WORDS_MATCH = 80;
 	
 	static {
 		//TODO: These should be moved to a property file
@@ -762,6 +764,48 @@ public class LicenseCompareHelper {
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}
+
+	/**
+	 * Detect if a text contains the provided standard license (perhaps along with other text)
+	 * @param text    The text to search within
+	 * @param license The standard SPDX license to search for
+	 * @return True if the license is found within the text, false otherwise
+	 */
+	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
+		// Get match status
+		boolean result = false;
+		int startIndex = -1;
+		int endIndex = -1;
+		List<String> nonOptionalText = null;
+		try {
+			nonOptionalText = getNonOptionalLicenseText(license.getStandardLicenseTemplate(), true);
+		} catch (SpdxCompareException e) {
+			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			return false;
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			return false;
+		}
+		Pattern licenseMatchPattern = nonOptionalTextToStartPattern(nonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
+		String compareLicenseText = normalizeText(text);
+		Matcher matcher = licenseMatchPattern.matcher(compareLicenseText);
+		if(matcher.find()) {
+			startIndex = matcher.start();
+			endIndex = matcher.end();
+			String completeText = compareLicenseText.substring(startIndex, endIndex);
+			try {
+				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
+			} catch (SpdxCompareException e) {
+				logger.warn("Compare exception for license ID "+license.getLicenseId(), e);
+				result = false;
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.warn("Compare exception for license ID "+license.getLicenseId(), e);
+				result = false;
+			}
+		}
+		return result;
+	}
+
 	
 	/**
 	 * Returns a list of SPDX Standard License ID's that match the text provided using
@@ -782,6 +826,7 @@ public class LicenseCompareHelper {
 		}
 		return matchingIds.toArray(new String[matchingIds.size()]);
 	}
+
 
 	private static <T> boolean contains(
 			T[] array,

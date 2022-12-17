@@ -17,10 +17,8 @@
 */
 package org.spdx.utility.compare;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,17 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import java.net.URL;
+
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxListedLicense;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.license.SpdxNoneLicense;
+import org.spdx.library.model.license.*;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 
 import junit.framework.TestCase;
@@ -705,7 +697,46 @@ public class LicenseCompareHelperTest extends TestCase {
 		    }
 		}
 	}
-	
+
+	private String readTextFromURL(String url) throws IOException {
+		URLConnection conn = (new URL(url)).openConnection();
+		StringBuilder sb = null;
+		String[] contentType = conn.getContentType().split(";");
+		String mimeType = contentType[0].trim();
+		String encoding = contentType[1].trim().split("=")[1].trim().replaceAll("\"", "");
+
+		if (!mimeType.equals("text/plain")) {
+			throw new RuntimeException("Unexpected MIME type: " + mimeType);
+		}
+
+		sb = new StringBuilder(conn.getContentLength());
+
+		try {
+			Reader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream(), encoding));
+			int c = 0;
+			while ((c = rdr.read()) != -1) {
+				sb.append(c);
+			}
+		}
+		finally {
+			conn.getInputStream().close();
+		}
+
+		return sb.toString();
+	}
+
+	public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
+		SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
+		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
+		String javaMailLicense = readTextFromURL("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
+
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
+        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
+	}
+
+
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(BSD_PROTECTION_TEXT);
         String templateText = UnitTestHelper.fileToText(BSD_PROTECTION_TEMPLATE);
