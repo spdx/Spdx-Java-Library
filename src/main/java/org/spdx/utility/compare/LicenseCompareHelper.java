@@ -827,7 +827,6 @@ public class LicenseCompareHelper {
 		return matchingIds.toArray(new String[matchingIds.size()]);
 	}
 
-
 	private static <T> boolean contains(
 			T[] array,
 			T value

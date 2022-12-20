@@ -715,7 +715,7 @@ public class LicenseCompareHelperTest extends TestCase {
 			Reader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream(), encoding));
 			int c = 0;
 			while ((c = rdr.read()) != -1) {
-				sb.append(c);
+				sb.append((char)c);
 			}
 		}
 		finally {
@@ -733,7 +733,7 @@ public class LicenseCompareHelperTest extends TestCase {
 
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
-        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
 	}
 
 
