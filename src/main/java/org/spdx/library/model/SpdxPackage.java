@@ -57,9 +57,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	public SpdxPackage() throws InvalidSPDXAnalysisException {
 		super();
 		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
-		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
-			this.setFilesAnalyzed(true);	// Set default value
-		}
 	}
 
 	/**
@@ -75,9 +72,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
-		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
-			this.setFilesAnalyzed(true);	// Set default value
-		}
 	}
 
 	/**
@@ -87,9 +81,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	public SpdxPackage(String id) throws InvalidSPDXAnalysisException {
 		super(id);
 		files = new RelatedElementCollection(this, RelationshipType.CONTAINS, SpdxConstants.CLASS_SPDX_FILE);
-		if (!getBooleanPropertyValue(SpdxConstants.PROP_PACKAGE_FILES_ANALYZED).isPresent()) {
-			this.setFilesAnalyzed(true);	// Set default value
-		}
 	}
 
 	protected SpdxPackage(SpdxPackageBuilder spdxPackageBuilder) throws InvalidSPDXAnalysisException {
