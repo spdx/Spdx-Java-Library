@@ -13,16 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  *
- */
+*/
 package org.spdx.utility.compare;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,7 +40,7 @@ public class UnitTestHelper {
      * @param a2
      */
     public static boolean isArraysEqual(Object[] a1,
-                                        Object[] a2) {
+            Object[] a2) {
         if (a1 == null) {
             return(a2 == null);
         }
@@ -74,7 +68,7 @@ public class UnitTestHelper {
     /**
      * @param filePath Path for file
      * @return Text from the file
-     * @throws IOException
+     * @throws IOException 
      */
     public static String fileToText(String filePath) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -89,7 +83,6 @@ public class UnitTestHelper {
         }
         return sb.toString();
     }
-
 
     /**
      * @param url The URL to read from
@@ -136,10 +129,10 @@ public class UnitTestHelper {
      * @param uri The URI to read from
      * @return Text from the URI
      * @throws IOException
-     */public static String uriToText(URI uri) throws IOException {
+     */
+    public static String uriToText(URI uri) throws IOException {
         return urlToText(uri.toString());
     }
-
 
     public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
         if (Objects.isNull(expected)) {
@@ -153,7 +146,7 @@ public class UnitTestHelper {
         }
         return expected.containsAll(result);
     }
-
+    
     public static boolean isListsEquivalent(List<? extends ModelObject> expected, List<? extends ModelObject> result) throws InvalidSPDXAnalysisException {
         if (Objects.isNull(expected)) {
             return Objects.isNull(result);
@@ -181,7 +174,7 @@ public class UnitTestHelper {
 
     public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObject> modelObjects) throws InvalidSPDXAnalysisException {
         for (ModelObject mo:modelObjects) {
-            doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(),
+            doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(), 
                     mo.getDocumentUri(), mo.getId(), mo.getType());
         }
     }
