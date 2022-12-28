@@ -16,7 +16,13 @@
 */
 package org.spdx.utility.compare;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -83,6 +89,57 @@ public class UnitTestHelper {
 		}
 		return sb.toString();
 	}
+
+
+	/**
+	 * @param url The URL to read from
+	 * @return Text from the URL
+	 * @throws IOException
+	 */
+    public static String urlToText(URL url) throws IOException {
+		URLConnection conn = url.openConnection();
+		StringBuilder sb = null;
+		String[] contentType = conn.getContentType().split(";");
+		String mimeType = contentType[0].trim();
+		String encoding = contentType[1].trim().split("=")[1].trim().replaceAll("\"", "");
+
+		if (!mimeType.equals("text/plain")) {
+			throw new RuntimeException("Unexpected MIME type: " + mimeType);
+		}
+
+		sb = new StringBuilder(conn.getContentLength());
+
+		try {
+			Reader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream(), encoding));
+			int c = 0;
+			while ((c = rdr.read()) != -1) {
+				sb.append((char)c);
+			}
+		}
+		finally {
+			conn.getInputStream().close();
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * @param s The URL (as a String) to read from
+	 * @return Text from the URL
+	 * @throws IOException
+	 */
+	public static String urlToText(String s) throws IOException {
+		return urlToText(new URL(s));
+	}
+
+	/**
+	 * @param uri The URI to read from
+	 * @return Text from the URI
+	 * @throws IOException
+	 */public static String uriToText(URI uri) throws IOException {
+		return urlToText(uri.toString());
+	}
+
 
 	public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
 		if (Objects.isNull(expected)) {
