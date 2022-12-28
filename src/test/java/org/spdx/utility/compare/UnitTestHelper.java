@@ -17,12 +17,18 @@
 package org.spdx.utility.compare;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.net.URL;
+import java.net.URI;
+import java.net.URLConnection;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.ModelObject;
@@ -131,7 +137,7 @@ public class UnitTestHelper {
      * @throws IOException
      */
     public static String uriToText(URI uri) throws IOException {
-        return urlToText(uri.toString());
+        return urlToText(uri.toURL());
     }
 
 	public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
