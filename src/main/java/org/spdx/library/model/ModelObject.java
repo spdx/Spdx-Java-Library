@@ -787,7 +787,7 @@ public abstract class ModelObject {
 			    Optional<Object> propertyValueOptional = this.getObjectPropertyValue(propertyName);
 				if (propertyValueOptional.isPresent()) {
 					Object propertyValue = propertyValueOptional.get();
-					if (isEquivalentToNull(propertyValue)) {
+					if (isEquivalentToNull(propertyValue, propertyName)) {
 						continue;
 					}
 					lastNotEquivalentReason = new NotEquivalentReason(
@@ -805,7 +805,7 @@ public abstract class ModelObject {
 				continue;
 			}
 			Object comparePropertyValue = comparePropertyValueOptional.get();
-			if (isEquivalentToNull(comparePropertyValue)) {
+			if (isEquivalentToNull(comparePropertyValue, propertyName)) {
 				continue;
 			}
 			lastNotEquivalentReason = new NotEquivalentReason(
@@ -816,12 +816,16 @@ public abstract class ModelObject {
 	}
 	
 	// Some values are treated like null in comparisons - in particular empty model collections and 
-	// "no assertion" values.
-	private boolean isEquivalentToNull(Object propertyValue) {
+	// "no assertion" values and a filesAnalyzed filed with a value of true
+	private boolean isEquivalentToNull(Object propertyValue, String propertyName) {
 		if (propertyValue instanceof ModelCollection) {
 			return ((ModelCollection<?>) propertyValue).size() == 0;
+		} else if (isNoAssertion(propertyValue)) {
+			return true;
+		} else if (SpdxConstants.PROP_PACKAGE_FILES_ANALYZED.equals(propertyName)) {
+			return propertyValue instanceof Boolean && (Boolean)(propertyValue);
 		} else {
-			return isNoAssertion(propertyValue);
+			return false;
 		}
 	}
 
