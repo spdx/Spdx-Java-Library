@@ -11,7 +11,13 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
+# macOS droppings
+.DS_Store
+
 # Eclipse IDE files
 .classpath
 .project
 .settings/
+
+# IntelliJ IDE files
+.idea/
