@@ -35,54 +35,54 @@ import org.spdx.library.model.SpdxDocument;
  */
 public class UnitTestHelper {
 
-    /**
-     * @param a1
-     * @param a2
-     */
-    public static boolean isArraysEqual(Object[] a1,
-            Object[] a2) {
-        if (a1 == null) {
-            return(a2 == null);
-        }
-        if (a2 == null) {
-            return false;
-        }
-        if (a1.length != a2.length) {
-            return false;
-        }
-        for (int i = 0; i < a1.length; i++) {
-            boolean found = false;
-            for (int j = 0; j < a2.length; j++) {
-                if (a1[i].equals(a2[j])) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        return true;
-    }
+	/**
+	 * @param a1
+	 * @param a2
+	 */
+	public static boolean isArraysEqual(Object[] a1,
+			Object[] a2) {
+		if (a1 == null) {
+			return(a2 == null);
+		}
+		if (a2 == null) {
+			return false;
+		}
+		if (a1.length != a2.length) {
+			return false;
+		}
+		for (int i = 0; i < a1.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < a2.length; j++) {
+				if (a1[i].equals(a2[j])) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    /**
-     * @param filePath Path for file
-     * @return Text from the file
-     * @throws IOException 
-     */
-    public static String fileToText(String filePath) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
-        if (lines.size() == 0) {
-            return "";
-        }
-        sb.append(lines.get(0));
-        for (int i = 1; i < lines.size(); i++) {
-            sb.append("\n");
-            sb.append(lines.get(i));
-        }
-        return sb.toString();
-    }
+	/**
+	 * @param filePath Path for file
+	 * @return Text from the file
+	 * @throws IOException 
+	 */
+	public static String fileToText(String filePath) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+		if (lines.size() == 0) {
+		    return "";
+		}
+		sb.append(lines.get(0));
+		for (int i = 1; i < lines.size(); i++) {
+		    sb.append("\n");
+		    sb.append(lines.get(i));
+		}
+		return sb.toString();
+	}
 
     /**
      * @param url The URL to read from
@@ -134,49 +134,49 @@ public class UnitTestHelper {
         return urlToText(uri.toString());
     }
 
-    public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
-        if (Objects.isNull(expected)) {
-            return Objects.isNull(result);
-        }
-        if (Objects.isNull(result)) {
-            return false;
-        }
-        if (expected.size() != result.size()) {
-            return false;
-        }
-        return expected.containsAll(result);
-    }
-    
-    public static boolean isListsEquivalent(List<? extends ModelObject> expected, List<? extends ModelObject> result) throws InvalidSPDXAnalysisException {
-        if (Objects.isNull(expected)) {
-            return Objects.isNull(result);
-        }
-        if (Objects.isNull(result)) {
-            return false;
-        }
-        if (expected.size() != result.size()) {
-            return false;
-        }
-        for (ModelObject o1:expected) {
-            boolean found = false;
-            for (ModelObject o2:result) {
-                if (o1.equivalent(o2)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public static boolean isListsEqual(List<? extends Object> expected, List<? extends Object> result) {
+		if (Objects.isNull(expected)) {
+			return Objects.isNull(result);
+		}
+		if (Objects.isNull(result)) {
+			return false;
+		}
+		if (expected.size() != result.size()) {
+			return false;
+		}
+		return expected.containsAll(result);
+	}
+	
+	public static boolean isListsEquivalent(List<? extends ModelObject> expected, List<? extends ModelObject> result) throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(expected)) {
+			return Objects.isNull(result);
+		}
+		if (Objects.isNull(result)) {
+			return false;
+		}
+		if (expected.size() != result.size()) {
+			return false;
+		}
+		for (ModelObject o1:expected) {
+			boolean found = false;
+			for (ModelObject o2:result) {
+				if (o1.equivalent(o2)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObject> modelObjects) throws InvalidSPDXAnalysisException {
-        for (ModelObject mo:modelObjects) {
-            doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(), 
-                    mo.getDocumentUri(), mo.getId(), mo.getType());
-        }
-    }
+	public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObject> modelObjects) throws InvalidSPDXAnalysisException {
+		for (ModelObject mo:modelObjects) {
+			doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(), 
+					mo.getDocumentUri(), mo.getId(), mo.getType());
+		}
+	}
 
 }
