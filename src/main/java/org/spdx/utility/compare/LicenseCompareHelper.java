@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -659,6 +661,9 @@ public class LicenseCompareHelper {
 			while (tokenIndex < tokens.length && startWordCount < numberOfWords) {
 				String token = tokens[tokenIndex++].trim();
 				if (token.length() > 0) {
+					if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
+						token = NORMALIZE_TOKENS.get(token.toLowerCase());
+					}
 					patternBuilder.append(Pattern.quote(token));
 					patternBuilder.append("\\s*");
 					startWordCount++;
@@ -764,6 +769,77 @@ public class LicenseCompareHelper {
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}
+	
+	/**
+	 * Replace any <code>NORMALIZE_TOKENS</code> with their normalized form for searching via the <code>nonOptionalTextToStartPattern</code>
+	 * @param charPositions List that matches the starting char position of the normalized text to the 
+	 * start positions of the original list
+	 * @param licenseText text to be normalized
+	 * @return tokens
+	 * @throws IOException 
+	 */
+	private static String normalizeTokensForRegex(String licenseText, List<Pair<Integer, Integer>> charPositions) throws IOException {
+		StringBuilder result = new StringBuilder();
+		BufferedReader reader = null;
+		Pattern spaceSplitter = Pattern.compile("(.+?)\\s+");
+		try {
+			reader = new BufferedReader(new StringReader(licenseText));
+			int originalCurrentLinePosition = 0;
+			String line = reader.readLine();
+			while (line != null) {
+				int lineCharPosition = 0;
+				Matcher lineMatcher = spaceSplitter.matcher(line);
+				while (lineMatcher.find()) {
+					String token = lineMatcher.group(1).trim();
+					if (!token.isEmpty() && NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
+						// we need to replace with the normalized token
+						result.append(line.substring(lineCharPosition, lineMatcher.start(1)));
+						int normalizedPosition = result.length();
+						token = NORMALIZE_TOKENS.get(token.toLowerCase());
+						result.append(token);
+//						result.append(' ');
+						charPositions.add(new ImmutablePair<>(normalizedPosition, originalCurrentLinePosition + lineMatcher.start(1)));
+						charPositions.add(new ImmutablePair<>(result.length(), originalCurrentLinePosition + lineMatcher.end(1)));
+						lineCharPosition = lineMatcher.end(1);
+					}
+				}
+				result.append(line.substring(lineCharPosition));
+				originalCurrentLinePosition = originalCurrentLinePosition + line.length() + "\n".length();
+				line = reader.readLine();
+				if (line != null) {
+					result.append("\n");
+				}
+			}
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return result.toString();
+	}
+	
+	/**
+	 * @param position position in the normalized text
+	 * @param charPositions List that matches the starting char position of the normalized text to the 
+	 * start positions of the original list
+	 * @return char position of the original text
+	 */
+	private static int findOriginalStart(int position, List<Pair<Integer, Integer>> charPositions) {
+		if (charPositions == null || charPositions.isEmpty()) {
+			return position;
+		}
+		Pair<Integer, Integer> lastPair = charPositions.get(0);
+		int i = 1;
+		while (i < charPositions.size() && lastPair.getKey() < position) {
+			lastPair = charPositions.get(i);
+			i++;
+		}
+		return lastPair.getValue() + (position - lastPair.getKey());
+	}
 
 	/**
 	 * Detect if a text contains the provided standard license (perhaps along with other text)
@@ -787,12 +863,22 @@ public class LicenseCompareHelper {
 			return false;
 		}
 		Pattern licenseMatchPattern = nonOptionalTextToStartPattern(nonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
-		String compareLicenseText = normalizeText(text);
+		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
+		String normalizedText = normalizeText(text);
+		String compareLicenseText;
+		try {
+			compareLicenseText = normalizeTokensForRegex(normalizedText, charPositions);
+		} catch (IOException e1) {
+			// Just use the straight normalized license text
+			compareLicenseText = normalizeText(text);
+			charPositions.add(new ImmutablePair<>(0, 0));
+		}
+		
 		Matcher matcher = licenseMatchPattern.matcher(compareLicenseText);
 		if(matcher.find()) {
-			startIndex = matcher.start();
-			endIndex = matcher.end();
-			String completeText = compareLicenseText.substring(startIndex, endIndex);
+			startIndex = findOriginalStart(matcher.start(), charPositions);
+			endIndex = findOriginalStart(matcher.end(), charPositions);
+			String completeText = normalizedText.substring(startIndex, endIndex);
 			try {
 				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
 			} catch (SpdxCompareException e) {
