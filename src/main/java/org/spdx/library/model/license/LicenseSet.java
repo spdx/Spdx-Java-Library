@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -110,7 +111,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	}
 
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		Iterator<AnyLicenseInfo> iter;
 		try {
