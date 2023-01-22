@@ -137,9 +137,9 @@ public class StoredTypedItem extends TypedValue {
 	 */
 	public void clearPropertyValueList(String propertyName) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
-		Object value = properties.getOrDefault(propertyName, new ArrayList<Object>());
+		Object value = properties.get(propertyName);
 		if (value == null) {
-			throw new SpdxInvalidTypeException("No list for list property value for property "+propertyName);
+			return;
 		}
 		if (value instanceof List) {
 			((List<?>)value).clear();
@@ -199,8 +199,14 @@ public class StoredTypedItem extends TypedValue {
 	 * @return
 	 * @throws SpdxInvalidTypeException 
 	 */
+	@SuppressWarnings("rawtypes")
 	private boolean addtypeValueToList(String propertyName, TypedValue value) throws SpdxInvalidTypeException {
 		Object map = properties.get(propertyName);
+		if (map instanceof List && ((List)map).isEmpty()) {
+			properties.remove(propertyName);
+			// Switch to the correct type
+			map = null;
+		}
 		if (map == null) {
 			properties.putIfAbsent(propertyName,  new ConcurrentHashMap<String, List<TypedValue>>());
 			map = properties.get(propertyName);	
@@ -351,7 +357,12 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			return 0;
+			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
+			list = properties.get(propertyName);	
+			//Note: there is a small timing window where the property could be removed
+			if (list == null) {
+				return 0;
+			}
 		}
 		if (list instanceof List) {
 			return ((List)list).size();
@@ -376,7 +387,12 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(value, "Value can not be null");
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			return false;
+			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
+			list = properties.get(propertyName);	
+			//Note: there is a small timing window where the property could be removed
+			if (list == null) {
+				return false;
+			}
 		}
 		if (list instanceof List) {
 			return ((List)list).contains(value);
