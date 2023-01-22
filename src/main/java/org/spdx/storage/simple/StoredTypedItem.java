@@ -118,7 +118,7 @@ public class StoredTypedItem extends TypedValue {
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (value instanceof List || value instanceof Collection) {
-			throw new SpdxInvalidTypeException("Can not store list valudes directly.  Use addValueToCollection.");
+			throw new SpdxInvalidTypeException("Can not store list values directly.  Use addValueToCollection.");
 		} else if (!value.getClass().isPrimitive() && 
 				!value.getClass().isAssignableFrom(String.class) &&
 				!value.getClass().isAssignableFrom(Boolean.class) &&
@@ -141,10 +141,14 @@ public class StoredTypedItem extends TypedValue {
 		if (value == null) {
 			throw new SpdxInvalidTypeException("No list for list property value for property "+propertyName);
 		}
-		if (!(value instanceof List)) {
+		if (value instanceof List) {
+			((List<?>)value).clear();
+		} else if (value instanceof ConcurrentHashMap<?, ?>) {
+			((ConcurrentHashMap<?, ?>)value).clear();
+		} else {
 			throw new SpdxInvalidTypeException("Trying to clear a list for non list type for property "+propertyName);
 		}
-		((List<?>)value).clear();
+		
 	}
 
 	/**
@@ -157,13 +161,15 @@ public class StoredTypedItem extends TypedValue {
 	public boolean addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
+		if (value instanceof TypedValue) {
+			return addtypeValueToList(propertyName, (TypedValue)value);
+		}
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (!value.getClass().isPrimitive() && 
 				!value.getClass().isAssignableFrom(String.class) &&
 				!value.getClass().isAssignableFrom(Boolean.class) &&
 				!value.getClass().isAssignableFrom(Integer.class) &&
-				!value.getClass().isAssignableFrom(TypedValue.class) &&
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
@@ -187,6 +193,63 @@ public class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
+	 * Add a typedValue to a list using a HashMap for performance
+	 * @param propertyName
+	 * @param value
+	 * @return
+	 * @throws SpdxInvalidTypeException 
+	 */
+	private boolean addtypeValueToList(String propertyName, TypedValue value) throws SpdxInvalidTypeException {
+		Object map = properties.get(propertyName);
+		if (map == null) {
+			properties.putIfAbsent(propertyName,  new ConcurrentHashMap<String, List<TypedValue>>());
+			map = properties.get(propertyName);	
+			//Note: there is a small timing window where the property could be removed
+			if (map == null) {
+				return true;
+			}
+		}
+		if (!(map instanceof ConcurrentHashMap<?, ?>)) {
+			throw new SpdxInvalidTypeException("Trying to add typed value for a non typed value list property: "+propertyName);
+		}
+		try {
+			@SuppressWarnings("unchecked")
+			ConcurrentHashMap<String, List<TypedValue>> typedValueMap = (ConcurrentHashMap<String, List<TypedValue>>)map;
+			typedValueMap.putIfAbsent(value.getId(), new ArrayList<TypedValue>());
+			List<TypedValue> list = typedValueMap.get(value.getId());
+			if (list == null) {
+				// handle the very small window where this may have gotten removed
+				list = new ArrayList<>();
+				typedValueMap.putIfAbsent(value.getId(), list);
+			}
+			return list.add(value);
+		} catch (Exception ex) {
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+		}
+	}
+	
+	public boolean removeTypedValueFromList(String propertyName, TypedValue value) throws SpdxInvalidTypeException {
+		Object map = properties.get(propertyName);
+		if (map == null) {
+			return false;
+		}
+		if (!(map instanceof ConcurrentHashMap<?, ?>)) {
+			throw new SpdxInvalidTypeException("Trying to remove from a list for non typed value list type for property "+propertyName);
+		}
+		try {
+			@SuppressWarnings("unchecked")
+			ConcurrentHashMap<String, List<TypedValue>> typedValueMap = (ConcurrentHashMap<String, List<TypedValue>>)map;
+			List<TypedValue> list = typedValueMap.get(value.getId());
+			if (list == null) {
+				return false;
+			}
+			return list.remove(value);
+		} catch (Exception ex) {
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+		}
+	}
+
+	/**
 	 * Removes a property from a list if it exists
 	 * @param propertyName
 	 * @param value
@@ -196,12 +259,15 @@ public class StoredTypedItem extends TypedValue {
 	public boolean removeValueFromList(String propertyName, Object value) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
+		if (value instanceof TypedValue) {
+			return removeTypedValueFromList(propertyName, (TypedValue)value);
+		}
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			return true;
+			return false;
 		}
 		if (!(list instanceof List)) {
-			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to remove from a list for non list type for property "+propertyName);
 		}
 		try {
 			return ((List)list).remove(value);
@@ -222,10 +288,21 @@ public class StoredTypedItem extends TypedValue {
 		if (list == null) {
 			return Collections.emptyIterator();
 		}
-		if (!(list instanceof List)) {
+		if (list instanceof List) {
+			return ((List<Object>)list).iterator();
+		} else if (list instanceof ConcurrentHashMap<?, ?>) {
+			List<Object> typedValueList = new ArrayList<>();
+			for (Object value : ((ConcurrentHashMap<?, ?>) list).values() ) {
+				if (value instanceof Collection) {
+					typedValueList.addAll((Collection<?>)value);
+				} else {
+					typedValueList.add(value);
+				}
+			}
+			return typedValueList.iterator();
+		} else {
 			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyName);
 		}
-		return ((List<Object>)list).iterator();
 	}
 	
 	/**
@@ -274,20 +351,22 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
-			list = properties.get(propertyName);	
-			//Note: there is a small timing window where the property could be removed
-			if (list == null) {
-				return 0;
-			}
+			return 0;
 		}
-		if (!(list instanceof List)) {
-			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
-		}
-		try {
+		if (list instanceof List) {
 			return ((List)list).size();
-		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+		} else if (list instanceof ConcurrentHashMap<?, ?>) {
+			int count = 0;
+			for (Object value:((ConcurrentHashMap<?, ?>)list).values()) {
+				if (value instanceof Collection) {
+					count = count + ((Collection)value).size();
+				} else {
+					count++;
+				}
+			}
+			return count;
+		} else {
+			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
 		}
 	}
 
@@ -297,20 +376,28 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(value, "Value can not be null");
 		Object list = properties.get(propertyName);
 		if (list == null) {
-			properties.putIfAbsent(propertyName,  new ArrayList<Object>());
-			list = properties.get(propertyName);	
-			//Note: there is a small timing window where the property could be removed
-			if (list == null) {
+			return false;
+		}
+		if (list instanceof List) {
+			return ((List)list).contains(value);
+		} else if (list instanceof ConcurrentHashMap<?, ?>) {
+			if (!(value instanceof TypedValue)) {
 				return false;
 			}
-		}
-		if (!(list instanceof List)) {
-			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
-		}
-		try {
-			return ((List)list).contains(value);
-		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			TypedValue tvValue = (TypedValue)value;
+			try {
+				@SuppressWarnings("unchecked")
+				ConcurrentHashMap<String, List<TypedValue>> typedValueMap = (ConcurrentHashMap<String, List<TypedValue>>)list;
+				List<TypedValue> typedValueList = typedValueMap.get(tvValue.getId());
+				if (typedValueList == null) {
+					return false;
+				}
+				return typedValueList.contains(tvValue);
+			} catch(Exception ex) {
+				throw new SpdxInvalidTypeException("Trying to find contains for non typed value list type for property "+propertyName);
+			}
+		} else {
+			throw new SpdxInvalidTypeException("Trying to find contains for non list type for property "+propertyName);
 		}
 	}
 
@@ -321,39 +408,51 @@ public class StoredTypedItem extends TypedValue {
 		if (value == null) {
 			return true; // It is still assignable to since it is unassigned
 		}
-		if (!(value instanceof List)) {
-			return false;
-		}
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<Object> list = (List)value;
-		for (Object o:list) {
-			if (!clazz.isAssignableFrom(o.getClass())) {
-				if (o instanceof TypedValue) {
-					try {
-						if (!clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)o).getType()))) {
+		if (value instanceof List) {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			List<Object> list = (List)value;
+			for (Object o:list) {
+				if (!clazz.isAssignableFrom(o.getClass())) {
+					if (o instanceof IndividualUriValue) {
+						String uri = ((IndividualUriValue)o).getIndividualURI();
+						Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
+						if (Objects.nonNull(spdxEnum)) {
+							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
+								return false;
+							}
+						} else if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(uri) ||
+								SpdxConstants.URI_VALUE_NONE.equals(uri))) {
 							return false;
 						}
-					} catch (InvalidSPDXAnalysisException e) {
-						logger.error("Error converting typed value to class",e);
-						return false;
-					} // else continue looping through other list values
-				} else if (o instanceof IndividualUriValue) {
-					String uri = ((IndividualUriValue)o).getIndividualURI();
-					Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
-					if (Objects.nonNull(spdxEnum)) {
-						if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
-							return false;
-						}
-					} else if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(uri) ||
-							SpdxConstants.URI_VALUE_NONE.equals(uri))) {
+					} else {
 						return false;
 					}
-				} else {
-					return false;
 				}
 			}
+			return true;
+		} else if (value instanceof ConcurrentHashMap<?,?>) {
+			try {
+				@SuppressWarnings("unchecked")
+				ConcurrentHashMap<String, List<TypedValue>> typedValuesMap = (ConcurrentHashMap<String, List<TypedValue>>)value;
+				for (List<TypedValue> typedValue:typedValuesMap.values()) {
+					for (TypedValue tv:typedValue) {
+						if (clazz != TypedValue.class && !clazz.isAssignableFrom(SpdxModelFactory.typeToClass(tv.getType()))) {
+							return false;
+						}
+					}
+				}
+				return true;
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error converting typed value to class",e);
+				return false;
+			} catch(Exception ex) {
+				logger.error("Invalid hash map type",ex);
+				return false;
+			}
+		} else {
+			return false;
 		}
-		return true;
+		
 	}
 
 	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) {
@@ -395,7 +494,7 @@ public class StoredTypedItem extends TypedValue {
 	public boolean isCollectionProperty(String propertyName) {
 		Objects.requireNonNull(propertyName, "Property name can not be null");
 		Object value = properties.get(propertyName);
-		return value instanceof List;
+		return value instanceof List || value instanceof ConcurrentHashMap;
 	}
 
 	/**
