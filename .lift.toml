@@ -1,1 +1,1 @@
-ignoreRules = ["@Var"]
+ignoreRules = ["Var","MissingSummary","EmptyBlockTag"]
