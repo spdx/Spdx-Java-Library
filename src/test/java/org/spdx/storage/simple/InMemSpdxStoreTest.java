@@ -597,7 +597,6 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
 		// Mixed
 		String mixedProperty = "mixedprop";
-		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, Boolean.valueOf(true));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, "mixed value");
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, String.class));

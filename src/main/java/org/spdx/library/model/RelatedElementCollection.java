@@ -137,7 +137,32 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	 */
 	@Override
 	public boolean contains(Object o) {
-		return toImmutableList().contains(o);
+		if (!(o instanceof SpdxElement)) {
+			return false;
+		}
+		String elementId = ((SpdxElement)o).getId();
+		Iterator<Object> iter = relationshipCollection.iterator();
+		while (iter.hasNext()) {
+			Object item = iter.next();
+			if (item instanceof Relationship) {
+				Relationship relationship = (Relationship)item;
+				try {
+					RelationshipType relationshipType = relationship.getRelationshipType();
+					if (Objects.isNull(this.relationshipTypeFilter) || 
+							(this.relationshipTypeFilter.equals(relationshipType))) {
+						Optional<SpdxElement> relatedElement = relationship.getRelatedSpdxElement();
+						if (relatedElement.isPresent()) {
+							if (elementId.equals(relatedElement.get().getId())) {
+								return true;
+							}
+						}
+					}
+				} catch (InvalidSPDXAnalysisException e) {
+					logger.warn("error getting relationship type - skipping relationship",e);
+				}
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

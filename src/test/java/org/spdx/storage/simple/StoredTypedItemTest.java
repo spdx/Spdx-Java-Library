@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.Relationship;
 import org.spdx.library.model.TypedValue;
 
 import junit.framework.TestCase;
@@ -229,10 +230,9 @@ public class StoredTypedItemTest extends TestCase {
 		sti.addValueToList(tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, Boolean.class));
-		assertTrue(sti.isCollectionMembersAssignableTo(tvProperty, TypedValue.class));
+		assertTrue(sti.isCollectionMembersAssignableTo(tvProperty, Relationship.class));
 		// Mixed
 		String mixedProperty = "mixedprop";
-		sti.addValueToList(mixedProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		sti.addValueToList(mixedProperty, Boolean.valueOf(true));
 		sti.addValueToList(mixedProperty, "mixed value");
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, String.class));

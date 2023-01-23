@@ -18,6 +18,7 @@ package org.spdx.library.model.license;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
@@ -69,7 +70,7 @@ public class SpdxNoAssertionLicense extends AnyLicenseInfo implements Individual
 	 * @see org.spdx.rdfparser.license.AnyLicenseInfo#verify()
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		return new ArrayList<>();
 	}
 

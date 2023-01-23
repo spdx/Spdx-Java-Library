@@ -18,9 +18,11 @@
 package org.spdx.library.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -168,7 +170,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			if (Objects.isNull(checksum)) {
 				throw new InvalidSPDXAnalysisException("Null value for a required checksum");
 			}
-			List<String> verify = checksum.verify(new ArrayList<String>(), Version.CURRENT_SPDX_VERSION);
+			List<String> verify = checksum.verify(new HashSet<String>(), Version.CURRENT_SPDX_VERSION);
 			if (verify.size() > 0) {
 				throw new InvalidSPDXAnalysisException("Invalid checksum: "+verify.get(0));
 			}
@@ -273,7 +275,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		if (!getId().startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			retval.add("Invalid external ref ID: "+getId()+".  Must start with "+SpdxConstants.EXTERNAL_DOC_REF_PRENUM+".");
