@@ -844,9 +844,9 @@ public class LicenseCompareHelper {
 
 	/**
 	 * Detect if a text contains the provided standard license (perhaps along with other text)
-	 * @param text    The text to search within
-	 * @param license The standard SPDX license to search for
-	 * @return True if the license is found within the text, false otherwise
+	 * @param text    The text to search within (should not be null)
+	 * @param license The standard SPDX license to search for (should not be null)
+	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
 		// Get match status
@@ -854,6 +854,11 @@ public class LicenseCompareHelper {
 		int startIndex = -1;
 		int endIndex = -1;
 		List<String> nonOptionalText = null;
+
+		if (text == null || license == null) {
+			return false;
+		}
+
 		try {
 			nonOptionalText = getNonOptionalLicenseText(license.getStandardLicenseTemplate(), true);
 		} catch (SpdxCompareException e) {
