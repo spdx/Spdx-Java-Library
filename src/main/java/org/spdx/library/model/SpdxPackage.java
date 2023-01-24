@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -529,7 +530,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @see org.spdx.library.model.SpdxItem#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		List<String> retval = super._verify(verifiedIds, specVersion);
 		String pkgName = "UNKNOWN PACKAGE";
 		try {
@@ -729,7 +730,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
-	        boolean filesAnalyzed, String pkgName, List<String> verifiedIds, List<String> retval, String specVersion) {
+	        boolean filesAnalyzed, String pkgName, Set<String> verifiedIds, List<String> retval, String specVersion) {
         if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
         	if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
         		retval.add("Missing required license information from files for "+pkgName);

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -261,7 +262,7 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	 * @see org.spdx.library.model.ModelObject#verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		List<String> retval = super._verify(verifiedIds, specVersion);
 		String fileName = "UNKNOWN";
 		try {

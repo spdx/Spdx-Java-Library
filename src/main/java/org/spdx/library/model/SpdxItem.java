@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -158,7 +159,7 @@ public abstract class SpdxItem extends SpdxElement {
 	 * @see org.spdx.library.model.SpdxElement#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedIds, String specVersion) {
 		List<String> retval = super._verify(verifiedIds, specVersion);
 		String name = "UNKNOWN";
 		Optional<String> myName;

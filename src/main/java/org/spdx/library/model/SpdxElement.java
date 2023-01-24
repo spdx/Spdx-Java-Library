@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(List<String> verifiedElementIds, String specVersion) {
+	protected List<String> _verify(Set<String> verifiedElementIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		if (verifiedElementIds.contains(this.getId())) {
 			return retval;

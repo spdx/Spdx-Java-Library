@@ -77,6 +77,7 @@ public class LicenseCompareHelper {
 	
 	static {
 		//TODO: These should be moved to a property file
+		NORMALIZE_TOKENS.put("&","and");
 		NORMALIZE_TOKENS.put("acknowledgment","acknowledgement");   
 		NORMALIZE_TOKENS.put("analogue","analog");   
 		NORMALIZE_TOKENS.put("analyse","analyze");   

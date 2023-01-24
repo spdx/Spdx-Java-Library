@@ -19,9 +19,11 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -218,14 +220,14 @@ public abstract class ModelObject {
 	 * @param verifiedElementIds list of all Element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	protected abstract List<String> _verify(List<String> verifiedElementIds, String specVersion);
+	protected abstract List<String> _verify(Set<String> verifiedElementIds, String specVersion);
 	
 	/**
 	 * @param specVersion Version of the SPDX spec to verify against
 	 * @param verifiedIElementds list of all element Id's which have already been verified - prevents infinite recursion
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	public List<String> verify(List<String> verifiedIElementds, String specVersion) {
+	public List<String> verify(Set<String> verifiedIElementds, String specVersion) {
 		if (verifiedIElementds.contains(this.id)) {
 			return new ArrayList<>();
 		} else {
@@ -246,7 +248,7 @@ public abstract class ModelObject {
 	 * @return Any verification errors or warnings associated with this object
 	 */
 	public List<String> verify(String specVersion) {
-		return verify(new ArrayList<String>(), specVersion);
+		return verify(new HashSet<String>(), specVersion);
 	}
 	
 	/**
@@ -1090,7 +1092,7 @@ public abstract class ModelObject {
 	 * @param verifiedIds verifiedIds list of all Id's which have already been verifieds - prevents infinite recursion
 	 * @param warningPrefix String to prefix any warning messages
 	 */
-	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, List<String> verifiedIds, String specVersion) {
+	protected List<String> verifyCollection(Collection<? extends ModelObject> collection, String warningPrefix, Set<String> verifiedIds, String specVersion) {
 		List<String> retval = new ArrayList<>();
 		for (ModelObject mo:collection) {
 			for (String warning:mo.verify(verifiedIds, specVersion)) {

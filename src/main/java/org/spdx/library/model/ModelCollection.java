@@ -128,7 +128,6 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 
 	@Override
 	public boolean contains(Object o) {
-
 		try {
 			Object storedObject = null;
 			try {
