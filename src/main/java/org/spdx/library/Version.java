@@ -47,7 +47,7 @@ public class Version {
 			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION, TWO_POINT_THREE_VERSION
 	})));
 	
-	public static final String CURRENT_IMPLEMENTATION_VERSION = "1.1.2";
+	public static final String CURRENT_IMPLEMENTATION_VERSION = "1.1.4";
 	
 	public static String verifySpdxVersion(String spdxVersion) {
 		if (!spdxVersion.startsWith("SPDX-")) {

@@ -383,16 +383,16 @@ public class InMemSpdxStore implements IModelStore {
 
 	@Override
 	public IdType getIdType(String id) {
-		if (ANON_ID_PATTERN_GENERATED.matcher(id).matches()) {
+		if (id.startsWith(ANON_PREFIX+GENERATED)) {
 			return IdType.Anonymous;
 		}
-		if (SpdxConstants.LICENSE_ID_PATTERN.matcher(id).matches()) {
+		if (id.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
 		}
-		if (SpdxConstants.EXTERNAL_DOC_REF_PATTERN.matcher(id).matches()) {
+		if (id.startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		}
-		if (SpdxConstants.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches()) {
+		if (id.startsWith(SpdxConstants.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
 		}
 		if (LITERAL_VALUE_SET.contains(id)) {
