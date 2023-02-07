@@ -27,6 +27,8 @@ If you are using Maven, you can add the following dependency in your POM file:
 </dependency>
 ```
 
+[API JavaDocs are available here.](https://spdx.github.io/Spdx-Java-Library/)
+
 There are a couple of static classes that help common usage scenarios:
 
 - org.spdx.library.SPDXModelFactory supports the creation of specific model objects
