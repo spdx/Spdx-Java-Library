@@ -123,6 +123,7 @@ public class LicenseCompareHelper {
 		NORMALIZE_TOKENS.put("©", "-c-");
 		NORMALIZE_TOKENS.put("copyright", "-c-");
 		NORMALIZE_TOKENS.put("\"", "'");
+		NORMALIZE_TOKENS.put("merchantability", "merchantability");
 	}
 	
 	
