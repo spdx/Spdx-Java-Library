@@ -744,12 +744,14 @@ public class LicenseCompareHelperTest extends TestCase {
 	// Note: comparing lists directly in JUnit 4.x doesn't work as one might expect, so we use this helper
 	private void assertListsEqual(List expected, List actual) {
 		if (expected == null) {
-			assertNull(actual);
+			if (actual != null) {
+				fail("Expected: <null> but was: " + Arrays.toString(actual.toArray()));
+			}
 		}
 		else if (actual == null) {
 			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: <null>");
 		}
-		else if (!actual.containsAll(expected) && expected.containsAll(actual)) {
+		else if (!(actual.containsAll(expected) && expected.containsAll(actual))) {
 			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: " + Arrays.toString(actual.toArray()));
 		}
 	}
