@@ -846,10 +846,10 @@ public class LicenseCompareHelper {
 
 
 	/**
-	 * Returns just the text that matches the given template within the given text, or null if it isn't found in the text.
+	 * Returns just the section of subtext that matches the given template from within the given text, or null if it isn't found.
 	 * @param text The text to scan for the template.
 	 * @param template The template (including vars, optional text, etc.).
-	 * @return Just the text that matches the template, or null if it isn't found in the text.
+	 * @return Just the section of subtext that matches the template, or null if it isn't found.
 	 * @throws SpdxCompareException If an error occurs in the comparison.
 	 */
 	private static String findTemplateWithinText(String text, String template) throws SpdxCompareException {
@@ -858,7 +858,7 @@ public class LicenseCompareHelper {
 		int startIndex = -1;
 		int endIndex = -1;
 
-		if (text == null || template == null) {
+		if (text == null || text.isEmpty() || template == null) {
 			return null;
 		}
 
@@ -886,7 +886,7 @@ public class LicenseCompareHelper {
 
 	}
 	/**
-	 * Detect if a text contains the provided standard license (perhaps along with other text)
+	 * Detect if a text contains the standard license (perhaps along with other text before and/or after)
 	 * @param text    The text to search within (should not be null)
 	 * @param license The standard SPDX license to search for (should not be null)
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
@@ -894,7 +894,7 @@ public class LicenseCompareHelper {
 	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
 		boolean result = false;
 
-		if (text == null || license == null) {
+		if (text == null || text.isEmpty() || license == null) {
 			return false;
 		}
 
@@ -914,7 +914,7 @@ public class LicenseCompareHelper {
 
 
 	/**
-	 * Detect if a text contains the provided standard license exception (perhaps along with other text)
+	 * Detect if a text contains the standard license exception (perhaps along with other text before and/or after)
 	 * @param text    The text to search within (should not be null)
 	 * @param exception The standard SPDX license exception to search for (should not be null)
 	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
@@ -922,7 +922,7 @@ public class LicenseCompareHelper {
 	public static boolean isStandardLicenseExceptionWithinText(String text, ListedLicenseException exception) {
 		boolean result = false;
 
-		if (text == null || exception == null) {
+		if (text == null || text.isEmpty() || exception == null) {
 			return false;
 		}
 
