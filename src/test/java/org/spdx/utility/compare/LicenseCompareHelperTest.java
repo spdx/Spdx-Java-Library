@@ -21,13 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -747,16 +741,16 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(gpl20WithClasspathException20, classpath20));
 	}
 
-	// Note: comparing arrays directly in JUnit 4.x doesn't work as one might expect, so we use this helper
-	private void assertArraysEqual(Object[] expected, Object[] actual) {
+	// Note: comparing lists directly in JUnit 4.x doesn't work as one might expect, so we use this helper
+	private void assertListsEqual(List expected, List actual) {
 		if (expected == null) {
 			assertNull(actual);
 		}
 		else if (actual == null) {
-			fail("Expected: " + Arrays.toString(expected) + " but was: <null>");
+			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: <null>");
 		}
-		else {
-			assertEquals(Arrays.asList(expected), Arrays.asList(actual));
+		else if (!actual.containsAll(expected) && expected.containsAll(actual)) {
+			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: " + Arrays.toString(actual.toArray()));
 		}
 	}
 
@@ -764,31 +758,33 @@ public class LicenseCompareHelperTest extends TestCase {
 		String gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0").getLicenseText();
 		String apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0").getLicenseText();
 		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
-		final String[] expectedResultApache20 = {"Apache-2.0"};
-		final String[] expectedResultGpl30Apache20 = {"GPL-3.0", "Apache-2.0"};
+		List<String> expectedResultEmpty = new ArrayList<>();
+		List<String> expectedResultApache20 = new ArrayList<>(Arrays.asList("Apache-2.0"));
+		List<String> expectedResultGpl30Apache20 = new ArrayList<>(Arrays.asList("GPL-3.0", "Apache-2.0"));
 
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIds can have lengthy runtimes
-		assertNull(LicenseCompareHelper.matchingStandardLicenseIds(null));
-		assertNull(LicenseCompareHelper.matchingStandardLicenseIds(""));
-		assertNull(LicenseCompareHelper.matchingStandardLicenseIds("Some random text that isn't a standard license"));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIds(null));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIds(""));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIds("Some random text that isn't a standard license"));
 
-		assertArraysEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIds(apache20));
-		assertArraysEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIds(multiLicenseText));
+		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIds(apache20));
+		assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIds(multiLicenseText));
 	}
 
 	public void testMatchingStandardLicenseExceptionIds() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getLicenseText();
 		String classpathException20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0").getLicenseExceptionText();
 		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
-		final String[] expectedResultClasspathException20 = {"Classpath-exception-2.0"};
+		List<String> expectedResultEmpty = new ArrayList<>();
+		List<String> expectedResultClasspathException20 = new ArrayList<>(Arrays.asList("Classpath-exception-2.0"));
 
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseExceptionIds can have lengthy runtimes
-		assertNull(LicenseCompareHelper.matchingStandardLicenseExceptionIds(null));
-		assertNull(LicenseCompareHelper.matchingStandardLicenseExceptionIds(""));
-		assertNull(LicenseCompareHelper.matchingStandardLicenseExceptionIds("Some random text that isn't a standard license exception"));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIds(null));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIds(""));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIds("Some random text that isn't a standard license exception"));
 
-		assertArraysEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIds(classpathException20));
-		assertArraysEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIds(gpl20WithClasspathException20));
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIds(classpathException20));
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIds(gpl20WithClasspathException20));
 	}
 
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {

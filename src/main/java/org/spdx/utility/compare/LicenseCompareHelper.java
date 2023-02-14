@@ -942,28 +942,23 @@ public class LicenseCompareHelper {
 
 
 	/**
-	 * Returns a list of SPDX Standard License ID's that match the text provided using
+	 * Returns a list of SPDX Standard License ID's that were found in the text, using
 	 * the SPDX matching guidelines.
 	 * @param text Text to compare to the standard license texts
-	 * @return Array of SPDX standard license IDs that match, or null if no matches
+	 * @return List of SPDX standard license IDs that match
 	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
 	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
-	public static String[] matchingStandardLicenseIds(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
-		String[] result = null;
+	public static List<String> matchingStandardLicenseIds(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> result = new ArrayList<>();
 
 		if (text != null && !text.isEmpty()) {
 			List<String> stdLicenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
-			List<String> matchingIds = new ArrayList<>();
 			for (String stdLicId : stdLicenseIds) {
 				SpdxListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
-				if (!isTextStandardLicense(license, text).isDifferenceFound()) {
-					matchingIds.add(license.getLicenseId());
+				if (isStandardLicenseWithinText(text, license)) {
+					result.add(license.getLicenseId());
 				}
-			}
-
-			if (matchingIds.size() > 0) {
-				result = matchingIds.toArray(new String[matchingIds.size()]);
 			}
 		}
 
@@ -971,28 +966,23 @@ public class LicenseCompareHelper {
 	}
 
 	/**
-	 * Returns a list of SPDX Standard License Exception ID's that match the text provided using
+	 * Returns a list of SPDX Standard License Exception ID's that were found in the text, using
 	 * the SPDX matching guidelines.
 	 * @param text Text to compare to the standard license exception texts
-	 * @return Array of SPDX standard license exception IDs that match, or null if no matches
+	 * @return Array of SPDX standard license exception IDs that match
 	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
-	public static String[] matchingStandardLicenseExceptionIds(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
-		String[] result = null;
+	public static List<String> matchingStandardLicenseExceptionIds(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> result = new ArrayList<>();
 
 		if (text != null && !text.isEmpty()) {
 			List<String> stdLicenseExceptionIds = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
-			List<String> matchingIds = new ArrayList<>();
 			for (String stdLicExcId : stdLicenseExceptionIds) {
 				ListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
-				if (!isTextStandardException(licenseException, text).isDifferenceFound()) {
-					matchingIds.add(licenseException.getLicenseExceptionId());
+				if (isStandardLicenseExceptionWithinText(text, licenseException)) {
+					result.add(licenseException.getLicenseExceptionId());
 				}
-			}
-
-			if (matchingIds.size() > 0) {
-				result = matchingIds.toArray(new String[matchingIds.size()]);
 			}
 		}
 
