@@ -712,7 +712,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
 		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
 		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
-		String multiLicenseText = UnitTestHelper.fileToText(GPL_3_TEXT) + "\n\n----------\n\n" + apache10.getLicenseText();
+		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache10.getLicenseText();
 
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(null, gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
