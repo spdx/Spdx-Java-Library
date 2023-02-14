@@ -699,32 +699,31 @@ public class LicenseCompareHelperTest extends TestCase {
 		}
 	}
 
-    public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-        SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
-        SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
-        SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
-        String multiLicenseText = UnitTestHelper.fileToText(GPL_3_TEXT) + "\n\n----------\n\n" +
-                                  apache10.getLicenseText();
+	public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
+		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
+		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
+		String multiLicenseText = UnitTestHelper.fileToText(GPL_3_TEXT) + "\n\n----------\n\n" + apache10.getLicenseText();
 
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(null, gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("Some random text that isn't GPL-3.0", gpl30));
 
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
-        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
 
-        // JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
-        SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
-        SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
-        String javaMailLicense = UnitTestHelper.urlToText("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
+		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
+		SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
+		SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
+		String javaMailLicense = UnitTestHelper.urlToText("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
 
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
-        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
  */
-    }
+	}
 	public void testIsStandardLicenseExceptionWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		ListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0");
 		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getLicenseText();
