@@ -762,7 +762,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
 		List<String> expectedResultEmpty = new ArrayList<>();
 		List<String> expectedResultApache20 = new ArrayList<>(Arrays.asList("Apache-2.0"));
-		List<String> expectedResultGpl30Apache20 = new ArrayList<>(Arrays.asList("GPL-3.0", "Apache-2.0"));
+		List<String> expectedResultGpl30Apache20 = new ArrayList<>(Arrays.asList("GPL-3.0-only", "GPL-3.0", "Apache-2.0", "GPL-3.0-or-later", "GPL-3.0+"));
 
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIds can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIds(null));
