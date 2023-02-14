@@ -31,15 +31,7 @@ import java.util.Objects;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxListedLicense;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.license.SpdxNoneLicense;
+import org.spdx.library.model.license.*;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 
 import junit.framework.TestCase;
@@ -67,6 +59,8 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String SGIB_1_0_TEXT = "TestFiles" + File.separator + "SGI-B-1.0.txt";
     static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
     static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
+	static final String CLASSPATH_EXCEPTION_2_0_TEXT = "TestFiles" + File.separator + "classpath-exception-2.0.txt";
+	static final String GPL_2_0_WITH_CLASSPATH_EXCEPTION_2_0_TEXT = "TestFiles" + File.separator + "GPL-2.0-with-classpath-exception-2.0.txt";
    
 	/**
 	 * @throws java.lang.Exception
@@ -728,7 +722,13 @@ public class LicenseCompareHelperTest extends TestCase {
         assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
  */
     }
-	
+	public void testIsStandardLicenseExceptionWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		ListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionById("classpath-exception-2.0");
+
+		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(UnitTestHelper.fileToText(CLASSPATH_EXCEPTION_2_0_TEXT), classpath20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(UnitTestHelper.fileToText(GPL_2_0_WITH_CLASSPATH_EXCEPTION_2_0_TEXT), classpath20));
+	}
+
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(BSD_PROTECTION_TEXT);
         String templateText = UnitTestHelper.fileToText(BSD_PROTECTION_TEMPLATE);
