@@ -31,7 +31,16 @@ import java.util.Objects;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.*;
+import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.library.model.license.ListedLicenses;
+import org.spdx.library.model.license.ListedLicenseException;
+import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 
 import junit.framework.TestCase;
