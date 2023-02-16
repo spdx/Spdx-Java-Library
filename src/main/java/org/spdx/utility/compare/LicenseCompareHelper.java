@@ -883,8 +883,9 @@ public class LicenseCompareHelper {
 		}
 
 		return result;
-
 	}
+
+
 	/**
 	 * Detect if a text contains the standard license (perhaps along with other text before and/or after)
 	 * @param text    The text to search within (should not be null)
