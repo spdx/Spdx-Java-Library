@@ -711,15 +711,15 @@ public class LicenseCompareHelperTest extends TestCase {
 		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
 		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
 		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
-		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache10.getLicenseText();
+		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache20.getLicenseText();
 
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(null, gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("Some random text that isn't GPL-3.0", gpl30));
 
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
-		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
-		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
 
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
 		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
