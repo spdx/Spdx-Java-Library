@@ -991,7 +991,7 @@ public class LicenseCompareHelper {
 	/**
 	 * Returns a list of SPDX Standard License ID's that were found within the text, using
 	 * the SPDX matching guidelines.
-	 * @param text Text to compare to the standard license texts
+	 * @param text Text to compare to all of the standard licenses
 	 * @return List of SPDX standard license IDs that match
 	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
 	 * @throws SpdxCompareException If an error occurs in the comparison
@@ -1029,7 +1029,7 @@ public class LicenseCompareHelper {
 	/**
 	 * Returns a list of SPDX Standard License Exception ID's that were found within the text, using
 	 * the SPDX matching guidelines.
-	 * @param text Text to compare to the standard license exception texts
+	 * @param text Text to compare to all of the standard license exceptions
 	 * @return Array of SPDX standard license exception IDs that match
 	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 * @throws SpdxCompareException If an error occurs in the comparison
