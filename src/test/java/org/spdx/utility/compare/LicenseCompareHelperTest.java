@@ -769,7 +769,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
 		List<String> expectedResultGpl30Apache20 = Arrays.asList("GPL-3.0-only", "GPL-3.0", "Apache-2.0", "GPL-3.0-or-later", "GPL-3.0+");
 
-		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIds can have lengthy runtimes
+		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(null));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(""));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText("Some random text that isn't a standard license"));
@@ -785,7 +785,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		List<String> expectedResultEmpty = Arrays.asList();
 		List<String> expectedResultClasspathException20 = Arrays.asList("Classpath-exception-2.0");
 
-		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseExceptionIds can have lengthy runtimes
+		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(null));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(""));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText("Some random text that isn't a standard license exception"));
