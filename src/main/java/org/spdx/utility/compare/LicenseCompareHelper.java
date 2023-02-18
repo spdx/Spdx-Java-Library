@@ -45,6 +45,7 @@ import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.License;
 import org.spdx.library.model.license.LicenseException;
 import org.spdx.library.model.license.LicenseSet;
+import org.spdx.library.model.license.ListedLicenseException;
 import org.spdx.library.model.license.ListedLicenses;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.LicenseParserException;
@@ -844,62 +845,103 @@ public class LicenseCompareHelper {
 	}
 
 	/**
-	 * Detect if a text contains the provided standard license (perhaps along with other text)
+	 * Returns just the section of subtext that matches the given template (license or license exception) from within
+	 * the given text, or null if it isn't found.
+	 * @param text The text to scan for the template.
+	 * @param template The template (including vars, optional text, etc.).
+	 * @return Just the section of subtext that matches the template, or null if it isn't found.
+	 * @throws SpdxCompareException If an error occurs in the comparison.
+	 */
+	private static String findTemplateWithinText(String text, String template) throws SpdxCompareException {
+		// Get match status
+		String result = null;
+		int startIndex = -1;
+		int endIndex = -1;
+
+		if (text == null || text.isEmpty() || template == null) {
+			return null;
+		}
+
+		List<String> templateNonOptionalText = getNonOptionalLicenseText(template, true);
+		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
+		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
+		String normalizedText = normalizeText(text);
+		String compareText;
+		try {
+			compareText = normalizeTokensForRegex(normalizedText, charPositions);
+		} catch (IOException e1) {
+			// Just use the straight normalized license text
+			compareText = normalizeText(text);
+			charPositions.add(new ImmutablePair<>(0, 0));
+		}
+
+		Matcher matcher = matchPattern.matcher(compareText);
+		if(matcher.find()) {
+			startIndex = findOriginalStart(matcher.start(), charPositions);
+			endIndex = findOriginalStart(matcher.end(), charPositions);
+			result = normalizedText.substring(startIndex, endIndex);
+		}
+
+		return result;
+	}
+
+
+	/**
+	 * Detect if a text contains the standard license (perhaps along with other text before and/or after)
 	 * @param text    The text to search within (should not be null)
 	 * @param license The standard SPDX license to search for (should not be null)
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
-		// Get match status
 		boolean result = false;
-		int startIndex = -1;
-		int endIndex = -1;
-		List<String> nonOptionalText = null;
 
-		if (text == null || license == null) {
+		if (text == null || text.isEmpty() || license == null) {
 			return false;
 		}
 
 		try {
-			nonOptionalText = getNonOptionalLicenseText(license.getStandardLicenseTemplate(), true);
+			String completeText = findTemplateWithinText(text, license.getStandardLicenseTemplate());
+			if (completeText != null) {
+				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
+			}
 		} catch (SpdxCompareException e) {
 			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
-			return false;
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
-			return false;
 		}
-		Pattern licenseMatchPattern = nonOptionalTextToStartPattern(nonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
-		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
-		String normalizedText = normalizeText(text);
-		String compareLicenseText;
-		try {
-			compareLicenseText = normalizeTokensForRegex(normalizedText, charPositions);
-		} catch (IOException e1) {
-			// Just use the straight normalized license text
-			compareLicenseText = normalizeText(text);
-			charPositions.add(new ImmutablePair<>(0, 0));
-		}
-		
-		Matcher matcher = licenseMatchPattern.matcher(compareLicenseText);
-		if(matcher.find()) {
-			startIndex = findOriginalStart(matcher.start(), charPositions);
-			endIndex = findOriginalStart(matcher.end(), charPositions);
-			String completeText = normalizedText.substring(startIndex, endIndex);
-			try {
-				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
-			} catch (SpdxCompareException e) {
-				logger.warn("Compare exception for license ID "+license.getLicenseId(), e);
-				result = false;
-			} catch (InvalidSPDXAnalysisException e) {
-				logger.warn("Compare exception for license ID "+license.getLicenseId(), e);
-				result = false;
-			}
-		}
+
 		return result;
 	}
 
-	
+
+	/**
+	 * Detect if a text contains the standard license exception (perhaps along with other text before and/or after)
+	 * @param text    The text to search within (should not be null)
+	 * @param exception The standard SPDX license exception to search for (should not be null)
+	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
+	 */
+	public static boolean isStandardLicenseExceptionWithinText(String text, ListedLicenseException exception) {
+		boolean result = false;
+
+		if (text == null || text.isEmpty() || exception == null) {
+			return false;
+		}
+
+		try {
+			String completeText = findTemplateWithinText(text, exception.getLicenseExceptionTemplate());
+			if (completeText != null) {
+				result = !isTextStandardException(exception, completeText).isDifferenceFound();
+			}
+		} catch (SpdxCompareException e) {
+			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
+		}
+
+		return result;
+	}
+
+
 	/**
 	 * Returns a list of SPDX Standard License ID's that match the text provided using
 	 * the SPDX matching guidelines.
@@ -919,6 +961,83 @@ public class LicenseCompareHelper {
 		}
 		return matchingIds.toArray(new String[matchingIds.size()]);
 	}
+
+
+	/**
+	 * Returns a list of SPDX Standard License ID's from the provided list that were found within the text, using
+	 * the SPDX matching guidelines.
+	 * @param text Text to compare to
+	 * @param licenseIds License ids to compare against
+	 * @return List of SPDX standard license IDs from licenseIds that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static List<String> matchingStandardLicenseIdsWithinText(String text, List<String> licenseIds) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> result = new ArrayList<>();
+
+		if (text != null && !text.isEmpty() && licenseIds != null && !licenseIds.isEmpty()) {
+			for (String stdLicId : licenseIds) {
+				SpdxListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+				if (isStandardLicenseWithinText(text, license)) {
+					result.add(license.getLicenseId());
+				}
+			}
+		}
+
+		return result;
+	}
+
+
+	/**
+	 * Returns a list of SPDX Standard License ID's that were found within the text, using
+	 * the SPDX matching guidelines.
+	 * @param text Text to compare to all of the standard licenses
+	 * @return List of SPDX standard license IDs that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static List<String> matchingStandardLicenseIdsWithinText(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		return matchingStandardLicenseIdsWithinText(text, ListedLicenses.getListedLicenses().getSpdxListedLicenseIds());
+	}
+
+
+	/**
+	 * Returns a list of SPDX Standard License Exception ID's from the provided list that were found within the text, using
+	 * the SPDX matching guidelines.
+	 * @param text Text to compare to
+	 * @param licenseExceptionIds License Exceptions Ids to compare against
+	 * @return Array of SPDX standard license exception IDs from licenseExceptionIds that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static List<String> matchingStandardLicenseExceptionIdsWithinText(String text, List<String> licenseExceptionIds) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> result = new ArrayList<>();
+
+		if (text != null && !text.isEmpty() && licenseExceptionIds != null && !licenseExceptionIds.isEmpty()) {
+			for (String stdLicExcId : licenseExceptionIds) {
+				ListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
+				if (isStandardLicenseExceptionWithinText(text, licenseException)) {
+					result.add(licenseException.getLicenseExceptionId());
+				}
+			}
+		}
+
+		return result;
+	}
+
+
+	/**
+	 * Returns a list of SPDX Standard License Exception ID's that were found within the text, using
+	 * the SPDX matching guidelines.
+	 * @param text Text to compare to all of the standard license exceptions
+	 * @return Array of SPDX standard license exception IDs that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static List<String> matchingStandardLicenseExceptionIdsWithinText(String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		return matchingStandardLicenseExceptionIdsWithinText(text, ListedLicenses.getListedLicenses().getSpdxListedExceptionIds());
+	}
+
 
 	private static <T> boolean contains(
 			T[] array,

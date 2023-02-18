@@ -37,6 +37,7 @@ import org.spdx.library.model.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.library.model.license.ListedLicenses;
+import org.spdx.library.model.license.ListedLicenseException;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
@@ -67,7 +68,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String SGIB_1_0_TEXT = "TestFiles" + File.separator + "SGI-B-1.0.txt";
     static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
     static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
-   
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -707,28 +708,111 @@ public class LicenseCompareHelperTest extends TestCase {
 		}
 	}
 
-    public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-        SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
-        SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
-        SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
-        String multiLicenseText = UnitTestHelper.fileToText(GPL_3_TEXT) + "\n\n----------\n\n" +
-                                  apache10.getLicenseText();
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
-        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
+	public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
+		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
+		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
+		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache20.getLicenseText();
+		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20.getLicenseText() + "\n\nSome random epilogue text.";
 
-        // JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(null, gpl30));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("Some random text that isn't GPL-3.0", gpl30));
+
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(textWithRandomPrefixAndSuffix, apache20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
+
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
-        SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
-        SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
-        String javaMailLicense = UnitTestHelper.urlToText("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
+		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
+		SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
+		SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
+		String javaMailLicense = UnitTestHelper.urlToText("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
 
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
-        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
-        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, gpl20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
  */
-    }
-	
+	}
+	public void testIsStandardLicenseExceptionWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		ListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0");
+		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getLicenseText();
+		String classpathException20 = classpath20.getLicenseExceptionText();
+		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
+		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + classpathException20 + "\n\nSome random epilogue text.";
+
+		assertFalse(LicenseCompareHelper.isStandardLicenseExceptionWithinText(null, classpath20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseExceptionWithinText("", classpath20));
+		assertFalse(LicenseCompareHelper.isStandardLicenseExceptionWithinText("Some random text that isn't Classpath-exception-2.0", classpath20));
+
+		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(classpathException20, classpath20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(gpl20WithClasspathException20, classpath20));
+		assertTrue(LicenseCompareHelper.isStandardLicenseExceptionWithinText(textWithRandomPrefixAndSuffix, classpath20));
+	}
+
+	// Note: comparing lists directly in JUnit 4.x doesn't work as one might expect, so we use this helper
+	private void assertListsEqual(List expected, List actual) {
+		if (expected == null) {
+			if (actual != null) {
+				fail("Expected: <null> but was: " + Arrays.toString(actual.toArray()));
+			}
+		}
+		else if (actual == null) {
+			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: <null>");
+		}
+		else if (!(actual.containsAll(expected) && expected.containsAll(actual))) {
+			fail("Expected: " + Arrays.toString(expected.toArray()) + " but was: " + Arrays.toString(actual.toArray()));
+		}
+	}
+
+	public void testMatchingStandardLicenseIdsWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		String gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0").getLicenseText();
+		String apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0").getLicenseText();
+		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
+		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20 + "\n\nSome random epilogue text.";
+
+		List<String> expectedResultEmpty = Arrays.asList();
+		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
+		List<String> expectedResultGpl30 = Arrays.asList("GPL-3.0");
+		List<String> expectedResultGpl30Apache20 = Arrays.asList("GPL-3.0-only", "GPL-3.0", "Apache-2.0", "GPL-3.0-or-later", "GPL-3.0+");
+
+		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIdsWithinText can have lengthy runtimes
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(null));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(""));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText("Some random text that isn't a standard license"));
+
+		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(apache20));
+		assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText));
+		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(textWithRandomPrefixAndSuffix));
+
+		// Tests for the 2-arg version of matchingStandardLicenseIdsWithinText (which is faster than the 1-arg version)
+		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("Apache-2.0")));
+		assertListsEqual(expectedResultGpl30, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("GPL-3.0")));
+	}
+
+	public void testMatchingStandardLicenseExceptionIdsWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getLicenseText();
+		String classpathException20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0").getLicenseExceptionText();
+		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
+		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + classpathException20 + "\n\nSome random epilogue text.";
+
+		List<String> expectedResultEmpty = Arrays.asList();
+		List<String> expectedResultClasspathException20 = Arrays.asList("Classpath-exception-2.0");
+
+		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText can have lengthy runtimes
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(null));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(""));
+		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText("Some random text that isn't a standard license exception"));
+
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(classpathException20));
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20));
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(textWithRandomPrefixAndSuffix));
+
+		// Tests for the 2-arg version of matchingStandardLicenseExceptionIdsWithinText (which is faster than the 1-arg version)
+		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20, Arrays.asList("Classpath-exception-2.0")));
+	}
+
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(BSD_PROTECTION_TEXT);
         String templateText = UnitTestHelper.fileToText(BSD_PROTECTION_TEMPLATE);
