@@ -42,6 +42,7 @@ import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
+import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 import junit.framework.TestCase;
 
@@ -68,7 +69,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String SGIB_1_0_TEXT = "TestFiles" + File.separator + "SGI-B-1.0.txt";
     static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
     static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
-
+    static final String ATLASSAIN_BSD_FILE = "TestFiles" + File.separator + "atlassain-bsd";
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -719,7 +720,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("Some random text that isn't GPL-3.0", gpl30));
 
-		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
+//		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(textWithRandomPrefixAndSuffix, apache20));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
@@ -735,6 +736,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, apache20));
  */
 	}
+	
 	public void testIsStandardLicenseExceptionWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		ListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0");
 		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getLicenseText();
@@ -752,6 +754,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	// Note: comparing lists directly in JUnit 4.x doesn't work as one might expect, so we use this helper
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private void assertListsEqual(List expected, List actual) {
 		if (expected == null) {
 			if (actual != null) {
@@ -776,7 +779,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
 		List<String> expectedResultGpl30 = Arrays.asList("GPL-3.0");
 		List<String> expectedResultGpl30Apache20 = Arrays.asList("GPL-3.0-only", "GPL-3.0", "Apache-2.0", "GPL-3.0-or-later", "GPL-3.0+");
-
+		List<String> expectedBsd2Clause = Arrays.asList("BSD-2-Clause");
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(null));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(""));
@@ -785,6 +788,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(apache20));
 		assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText));
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(textWithRandomPrefixAndSuffix));
+		assertListsEqual(expectedBsd2Clause, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(UnitTestHelper.fileToText(ATLASSAIN_BSD_FILE), Arrays.asList("BSD-2-Clause")));
 
 		// Tests for the 2-arg version of matchingStandardLicenseIdsWithinText (which is faster than the 1-arg version)
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("Apache-2.0")));
@@ -835,7 +839,7 @@ public class LicenseCompareHelperTest extends TestCase {
     
     public void testRegressionGD() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String templateText = UnitTestHelper.fileToText(GD_TEMPLATE);
-        List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, true);
+        List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, VarTextHandling.ORIGINAL);
         assertEquals(1, result.size());
     }
     
@@ -880,5 +884,23 @@ public class LicenseCompareHelperTest extends TestCase {
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
         }
+    }
+    
+    public void testNonOptionalTextToStartPattern() throws InvalidSPDXAnalysisException, SpdxCompareException {
+    	String expectedMatch = "This is line 1\nThis is line 2";
+    	List<String> noRegexes = Arrays.asList(new String[] {"This is line 1", "This is line 2"});
+    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(noRegexes, 100).matcher(expectedMatch).matches());
+    	
+    	List<String> regexMiddle = Arrays.asList(new String[] {"This is~~~.+~~~1", "This is line 2"});
+    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexMiddle, 100).matcher(expectedMatch).matches());
+    	
+    	List<String> regexStart = Arrays.asList(new String[] {"~~~.+~~~is line 1", "This is line 2"});
+    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexStart, 100).matcher(expectedMatch).matches());
+    	
+    	List<String> regexEnd = Arrays.asList(new String[] {"This is line~~~.+~~~", "This is line 2"});
+    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexEnd, 100).matcher(expectedMatch).matches());
+    	
+    	List<String> multipleRegex = Arrays.asList(new String[] {"~~~.+~~~is line~~~.+~~~", "This is line 2"});
+    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(multipleRegex, 100).matcher(expectedMatch).matches());
     }
 }

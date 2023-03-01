@@ -28,16 +28,33 @@ import org.spdx.licenseTemplate.LicenseTemplateRule;
  */
 public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandler {
 	
-	private boolean includeVarText;
+	public static final String REGEX_ESCAPE = "~~~";
+	public enum VarTextHandling {
+		OMIT,		// Omit the var text all together
+		ORIGINAL,	// Include the original text for the regex
+		REGEX,		// Include the regex itself included by the REGEX_ESCAPE strings
+	}
+	
+	private VarTextHandling varTextHandling;
 	private List<String> filteredText = new ArrayList<>();
 	StringBuilder currentString = new StringBuilder();
 	private int optionalDepth = 0;	// depth of optional rules
 
 	/**
-	 * @param includVarText if true, include the default variable text; if false remove the variable text
+	 * @param includeVarText if true, include the default variable text
 	 */
-	public FilterTemplateOutputHandler(boolean includVarText) {
-		this.includeVarText = includVarText;
+	@Deprecated
+	public FilterTemplateOutputHandler(boolean includeVarText) {
+		this(includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT);
+	}
+	
+	
+	/**
+	 * @param includeVarText if true, include the default variable text
+	 * @param includeVarRegex if true, include the regex for any variable text - takes precedence over includeVarText
+	 */
+	public FilterTemplateOutputHandler(VarTextHandling varTextHandling) {
+		this.varTextHandling = varTextHandling;
 	}
 
 	/* (non-Javadoc)
@@ -55,7 +72,11 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 	 */
 	@Override
 	public void variableRule(LicenseTemplateRule rule) {
-		if (includeVarText && optionalDepth <= 0) {
+		if (VarTextHandling.REGEX.equals(varTextHandling) && optionalDepth <= 0) {
+			currentString.append(REGEX_ESCAPE);
+			currentString.append(rule.getMatch());
+			currentString.append(REGEX_ESCAPE);
+		} else if (VarTextHandling.ORIGINAL.equals(varTextHandling) && optionalDepth <= 0) {
 			currentString.append(rule.getOriginal());
 		} else {
 			if (currentString.length() > 0) {
@@ -100,7 +121,14 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 	 * @return the includeVarText
 	 */
 	public boolean isIncludeVarText() {
-		return includeVarText;
+		return VarTextHandling.ORIGINAL.equals(varTextHandling);
+	}
+
+	/**
+	 * @return the varTextHandling
+	 */
+	public VarTextHandling getVarTextHandling() {
+		return varTextHandling;
 	}
 
 	/**

@@ -52,6 +52,7 @@ import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
+import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 /**
  * Primarily a static class of helper functions for comparing two SPDX licenses
@@ -631,8 +632,21 @@ public class LicenseCompareHelper {
 	 * @return list of strings for all non-optional license text.  
 	 * @throws SpdxCompareException
 	 */
+	@Deprecated
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, boolean includeVarText) throws SpdxCompareException {
-		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(includeVarText);
+		return getNonOptionalLicenseText(licenseTemplate,
+				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT);
+	}
+	
+	/**
+	 * Get the text of a license minus any optional text - note: this include the default variable text
+	 * @param licenseTemplate license template containing optional and var tags
+	 * @param includeVarText if true, include the default variable text; if false remove the variable text
+	 * @return list of strings for all non-optional license text.  
+	 * @throws SpdxCompareException
+	 */
+	public static List<String> getNonOptionalLicenseText(String licenseTemplate, VarTextHandling varTextHandling) throws SpdxCompareException {
+		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(varTextHandling);
 		try {
 			SpdxLicenseTemplateHelper.parseTemplate(licenseTemplate, filteredOutput);
 		} catch (LicenseTemplateRuleException e) {
@@ -658,19 +672,29 @@ public class LicenseCompareHelper {
 		int wordsInLastLine = 0;	// keep track of the number of words processed in the last start line to make sure we don't overlap words in the end lines
 		StringBuilder patternBuilder = new StringBuilder();
 		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
-			String[] tokens = normalizeText(nonOptionalText.get(startTextIndex++).trim()).split("\\s");
-			int tokenIndex = 0;
-			wordsInLastLine = 0;
-			while (tokenIndex < tokens.length && startWordCount < numberOfWords) {
-				String token = tokens[tokenIndex++].trim();
-				if (token.length() > 0) {
-					if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
-						token = NORMALIZE_TOKENS.get(token.toLowerCase());
+			String[] regexSplits = nonOptionalText.get(startTextIndex++).trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
+			boolean inRegex = false;
+			for (String regexSplit:regexSplits) {
+				if (inRegex) {
+					patternBuilder.append(regexSplit);
+					inRegex = false;
+				} else {
+					String[] tokens = normalizeText(regexSplit.trim()).split("\\s");
+					int tokenIndex = 0;
+					wordsInLastLine = 0;
+					while (tokenIndex < tokens.length && startWordCount < numberOfWords) {
+						String token = tokens[tokenIndex++].trim();
+						if (token.length() > 0) {
+							if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
+								token = NORMALIZE_TOKENS.get(token.toLowerCase());
+							}
+							patternBuilder.append(Pattern.quote(token));
+							patternBuilder.append("\\s*");
+							startWordCount++;
+							wordsInLastLine++;
+						}
 					}
-					patternBuilder.append(Pattern.quote(token));
-					patternBuilder.append("\\s*");
-					startWordCount++;
-					wordsInLastLine++;
+					inRegex = true;
 				}
 			}
 			patternBuilder.append(".*");
@@ -862,7 +886,7 @@ public class LicenseCompareHelper {
 			return null;
 		}
 
-		List<String> templateNonOptionalText = getNonOptionalLicenseText(template, true);
+		List<String> templateNonOptionalText = getNonOptionalLicenseText(template, VarTextHandling.REGEX);
 		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
 		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
 		String normalizedText = normalizeText(text);
