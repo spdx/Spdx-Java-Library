@@ -641,7 +641,7 @@ public class LicenseCompareHelper {
 	/**
 	 * Get the text of a license minus any optional text - note: this include the default variable text
 	 * @param licenseTemplate license template containing optional and var tags
-	 * @param includeVarText if true, include the default variable text; if false remove the variable text
+	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @return list of strings for all non-optional license text.  
 	 * @throws SpdxCompareException
 	 */
@@ -671,12 +671,22 @@ public class LicenseCompareHelper {
 		int startTextIndex = 0;
 		int wordsInLastLine = 0;	// keep track of the number of words processed in the last start line to make sure we don't overlap words in the end lines
 		StringBuilder patternBuilder = new StringBuilder();
+		String regexLimit = "," + Integer.toString(numberOfWords * 10) + "}";
 		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
-			String[] regexSplits = nonOptionalText.get(startTextIndex++).trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
-			boolean inRegex = false;
+			String line = nonOptionalText.get(startTextIndex++);
+			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
+			boolean inRegex = false; // if it starts with a regex, it will start with a blank line
 			for (String regexSplit:regexSplits) {
-				if (inRegex) {
+				if (inRegex && startWordCount < numberOfWords) {
 					patternBuilder.append(regexSplit);
+					if (regexSplit.endsWith(".+")) {
+						patternBuilder.append("{1");
+						patternBuilder.append(regexLimit);
+					} else if (regexSplit.endsWith(".*")) {
+						patternBuilder.append("{0");
+						patternBuilder.append(regexLimit);
+					}
+					startWordCount++;
 					inRegex = false;
 				} else {
 					String[] tokens = normalizeText(regexSplit.trim()).split("\\s");
@@ -697,7 +707,7 @@ public class LicenseCompareHelper {
 					inRegex = true;
 				}
 			}
-			patternBuilder.append(".*");
+			patternBuilder.append(".{0,36000}");
 		}
 		
 		// End words
@@ -708,12 +718,26 @@ public class LicenseCompareHelper {
 		while (endWordCount < numberOfWords && 
 				(endTextIndex > lastProcessedStartLine || 
 						(endTextIndex == lastProcessedStartLine && (numberOfWords - endWordCount) < (nonOptionalText.get(endTextIndex).length() - wordsInLastLine)))) {	// Check to make sure we're not overlapping the start words
-			String[] tokens = normalizeText(nonOptionalText.get(endTextIndex).trim()).split("\\s");
 			List<String> nonEmptyTokens = new ArrayList<>();
-			for (String token:tokens) {
-				String trimmedToken = token.trim();
-				if (!trimmedToken.isEmpty()) {
-					nonEmptyTokens.add(trimmedToken);
+			String line = nonOptionalText.get(endTextIndex);
+			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
+			boolean inRegex = false;
+			for (String regexSplit:regexSplits) {
+				if (inRegex) {
+					if (!regexSplit.isEmpty()) {
+						nonEmptyTokens.add(FilterTemplateOutputHandler.REGEX_ESCAPE + regexSplit);
+					}
+					inRegex = false;
+				} else {
+					String[] tokens = normalizeText(regexSplit.trim()).split("\\s");
+					
+					for (String token:tokens) {
+						String trimmedToken = token.trim();
+						if (!trimmedToken.isEmpty()) {
+							nonEmptyTokens.add(trimmedToken);
+						}
+					}
+					inRegex = true;
 				}
 			}
 			int remainingTokens = (endTextIndex == lastProcessedStartLine && nonEmptyTokens.size() - wordsInLastLine > numberOfWords - endWordCount) ? 
@@ -722,12 +746,15 @@ public class LicenseCompareHelper {
 			int tokenIndex = nonEmptyTokens.size() - 1;
 			while (tokenIndex >= 0 && remainingTokens > 0) {
 				String token = nonEmptyTokens.get(tokenIndex--);
-				endTextReversePattern.add("\\s*");
-				endTextReversePattern.add(Pattern.quote(token));
+				if (token.startsWith(FilterTemplateOutputHandler.REGEX_ESCAPE)) {
+					endTextReversePattern.add(token.substring(FilterTemplateOutputHandler.REGEX_ESCAPE.length()));
+				} else {
+					endTextReversePattern.add("\\s*");
+					endTextReversePattern.add(Pattern.quote(token));
+				}
 				remainingTokens--;
 				endWordCount++;
 			}
-			endTextReversePattern.add(".*");
 		}
 		
 		int revPatternIndex = endTextReversePattern.size()-1;

@@ -720,7 +720,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("Some random text that isn't GPL-3.0", gpl30));
 
-//		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, gpl30));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(textWithRandomPrefixAndSuffix, apache20));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));

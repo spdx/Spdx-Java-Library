@@ -50,8 +50,7 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 	
 	
 	/**
-	 * @param includeVarText if true, include the default variable text
-	 * @param includeVarRegex if true, include the regex for any variable text - takes precedence over includeVarText
+	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 */
 	public FilterTemplateOutputHandler(VarTextHandling varTextHandling) {
 		this.varTextHandling = varTextHandling;
