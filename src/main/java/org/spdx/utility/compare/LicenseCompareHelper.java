@@ -77,6 +77,8 @@ public class LicenseCompareHelper {
 
 	protected static final Integer CROSS_REF_NUM_WORDS_MATCH = 80;
 	
+	protected static final Pattern REGEX_QUANTIFIER_PATTERN = Pattern.compile(".*\\.\\{(\\d+),(\\d+)\\}$");
+	
 	static {
 		//TODO: These should be moved to a property file
 		NORMALIZE_TOKENS.put("&","and");
@@ -672,20 +674,42 @@ public class LicenseCompareHelper {
 		int wordsInLastLine = 0;	// keep track of the number of words processed in the last start line to make sure we don't overlap words in the end lines
 		StringBuilder patternBuilder = new StringBuilder();
 		String regexLimit = "," + Integer.toString(numberOfWords * 10) + "}";
+		String lastRegex = "";
 		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
 			String line = nonOptionalText.get(startTextIndex++);
+			if (patternBuilder.length() > 0 && line.trim().length() > 0 && !patternBuilder.toString().endsWith("}")) {
+				patternBuilder.append(".{0,5}");
+			}
 			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
 			boolean inRegex = false; // if it starts with a regex, it will start with a blank line
 			for (String regexSplit:regexSplits) {
 				if (inRegex && startWordCount < numberOfWords) {
-					patternBuilder.append(regexSplit);
+					String regexToAppend;
 					if (regexSplit.endsWith(".+")) {
-						patternBuilder.append("{1");
-						patternBuilder.append(regexLimit);
+						regexToAppend = regexSplit.substring(0, regexSplit.length()-1) +"{1" + regexLimit;
 					} else if (regexSplit.endsWith(".*")) {
-						patternBuilder.append("{0");
-						patternBuilder.append(regexLimit);
+						regexToAppend = regexSplit.substring(0, regexSplit.length()-1) +"{0" + regexLimit;
+					} else {
+						regexToAppend = regexSplit;
 					}
+					if (patternBuilder.toString().endsWith("}") && regexToAppend.endsWith("}")) {
+						// collapse consecutive match anything
+						Matcher lastRegexMatch = REGEX_QUANTIFIER_PATTERN.matcher(lastRegex);
+						Matcher regexToAppendMatch = REGEX_QUANTIFIER_PATTERN.matcher(regexToAppend);
+						if (lastRegexMatch.matches() && regexToAppendMatch.matches()) {
+							int lastRegexMax = Integer.parseInt(lastRegexMatch.group(2));
+							int thisRegexMax = Integer.parseInt(regexToAppendMatch.group(2));
+							if (lastRegexMax >= thisRegexMax) {
+								regexToAppend = ""; // already covered by previous regex
+							} else {
+								// remove the last max
+								patternBuilder.setLength(patternBuilder.length()-(lastRegexMatch.group(2).length()+1));
+								regexToAppend = regexToAppend.substring(regexToAppend.indexOf(',')+1);
+							}
+						}
+					}
+					patternBuilder.append(regexToAppend);
+					lastRegex = regexToAppend;
 					startWordCount++;
 					inRegex = false;
 				} else {
@@ -707,9 +731,8 @@ public class LicenseCompareHelper {
 					inRegex = true;
 				}
 			}
-			patternBuilder.append(".{0,36000}");
 		}
-		
+		patternBuilder.append(".{0,36000}");
 		// End words
 		List<String> endTextReversePattern = new ArrayList<>();
 		int endTextIndex = nonOptionalText.size()-1;

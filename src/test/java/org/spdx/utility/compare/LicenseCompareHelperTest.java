@@ -774,17 +774,23 @@ public class LicenseCompareHelperTest extends TestCase {
 		String apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0").getLicenseText();
 		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20 + "\n\nSome random epilogue text.";
-
+		String aladdin = ListedLicenses.getListedLicenses().getListedLicenseById("Aladdin").getLicenseText();
+		String smlnj = ListedLicenses.getListedLicenses().getListedLicenseById("SMLNJ").getLicenseText();
 		List<String> expectedResultEmpty = Arrays.asList();
 		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
 		List<String> expectedResultGpl30 = Arrays.asList("GPL-3.0");
 		List<String> expectedResultGpl30Apache20 = Arrays.asList("GPL-3.0-only", "GPL-3.0", "Apache-2.0", "GPL-3.0-or-later", "GPL-3.0+");
 		List<String> expectedBsd2Clause = Arrays.asList("BSD-2-Clause");
+		List<String> expectedAladdin = Arrays.asList("Aladdin");
+		List<String> expectedSmlnj = Arrays.asList("SMLNJ");
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(null));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(""));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText("Some random text that isn't a standard license"));
 
+		assertEquals(expectedAladdin, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(aladdin, expectedAladdin));
+		assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedAladdin));
+		assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedSmlnj));
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(apache20));
 		assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText));
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(textWithRandomPrefixAndSuffix));
