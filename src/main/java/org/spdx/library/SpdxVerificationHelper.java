@@ -289,7 +289,7 @@ public class SpdxVerificationHelper {
 		} else if (SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(downloadLocation).matches()) {
 			return null;
 		} else {
-			return "Invalid download location pattern "+downloadLocation+".  Must match the pattern "+
+			return "Invalid download location "+downloadLocation+".  Must match the pattern "+
 					SpdxConstants.DOWNLOAD_LOCATION_PATTERN.pattern();
 		}
 	}
