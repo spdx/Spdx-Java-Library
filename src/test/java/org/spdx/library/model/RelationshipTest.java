@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -32,7 +33,9 @@ import org.spdx.library.model.enumerations.AnnotationType;
 import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -247,5 +250,26 @@ public class RelationshipTest extends TestCase {
         }
     	assertTrue(foundFileA);
     	assertTrue(foundFileB);
+	}
+	
+	/**
+	 * Regression test for issue #158
+	 */
+	public void testVerifyRelatedElement() throws InvalidSPDXAnalysisException {
+		RelationshipType relationshipType1  = RelationshipType.CONTAINED_BY;
+		String comment1 = "Comment1";
+		AnyLicenseInfo badConcludedLicense = LicenseInfoFactory.parseSPDXLicenseString("bad-license-id");
+		assertTrue(badConcludedLicense instanceof ExtractedLicenseInfo);
+		((ExtractedLicenseInfo)badConcludedLicense).setExtractedText("text");
+		assertEquals(1, badConcludedLicense.verify().size());
+		SpdxPackage pkg = gmo.createPackage("SPDXRef-package1", "packageName", badConcludedLicense, 
+				"Copyright", new SpdxNoAssertionLicense())
+				.setFilesAnalyzed(false)
+				.setDownloadLocation("NOASSERTION")
+				.build();
+		List<String> verifyResult = pkg.verify();
+		assertEquals(1, verifyResult.size());
+		Relationship relationship = gmo.createRelationship(pkg, relationshipType1, comment1);
+		assertEquals(1, relationship.verify().size());
 	}
 }
