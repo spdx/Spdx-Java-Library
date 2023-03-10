@@ -134,7 +134,6 @@ public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo {
 		} catch (InvalidSPDXAnalysisException ex) {
 			retval.add("Unable to fetch license text: "+ex.getMessage());
 		}
-
 		return retval;
 	}
 	
