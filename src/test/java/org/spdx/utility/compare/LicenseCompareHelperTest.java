@@ -631,14 +631,17 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(result.isDifferenceFound());
 	}
 	
-//	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
-// This test is too slow!
-//		String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
-//		String[] result = LicenseCompareHelper.matchingStandardLicenseIds(compareText);
-//		assertEquals(2,result.length);
-//		assertTrue(result[0].startsWith("GPL-2"));
-//		assertTrue(result[1].startsWith("GPL-2"));
-//	}
+	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
+		if (UnitTestHelper.runSlowTests()) {
+			String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
+			String[] result = LicenseCompareHelper.matchingStandardLicenseIds(compareText);
+			assertEquals(4,result.length);
+			assertTrue(result[0].startsWith("GPL-2"));
+			assertTrue(result[1].startsWith("GPL-2"));
+			assertTrue(result[2].startsWith("GPL-2"));
+			assertTrue(result[3].startsWith("GPL-2"));
+		}
+	}
 	
 	public void testFirstLicenseToken() {
 		assertEquals("first", LicenseCompareHelper.getFirstLicenseToken("   first,token that is needed\nnext"));
@@ -790,19 +793,25 @@ public class LicenseCompareHelperTest extends TestCase {
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(null));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(""));
-		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText("Some random text that isn't a standard license"));
-
-		assertEquals(expectedAladdin, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(aladdin, expectedAladdin));
-		assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedAladdin));
-		assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedSmlnj));
-		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(apache20));
-		assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText));
-		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(textWithRandomPrefixAndSuffix));
-		assertListsEqual(expectedBsd2Clause, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(UnitTestHelper.fileToText(ATLASSAIN_BSD_FILE), Arrays.asList("BSD-2-Clause")));
+		if (UnitTestHelper.runSlowTests()) {
+			assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText("Some random text that isn't a standard license"));
+		}
 
 		// Tests for the 2-arg version of matchingStandardLicenseIdsWithinText (which is faster than the 1-arg version)
 		assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("Apache-2.0")));
-		assertListsEqual(expectedResultGpl30, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("GPL-3.0")));
+		if (UnitTestHelper.runSlowTests()) {
+			assertListsEqual(expectedResultGpl30, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, Arrays.asList("GPL-3.0")));
+		}
+		// Test for all license IDs
+		if (UnitTestHelper.runSlowTests()) {
+			assertEquals(expectedAladdin, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(aladdin, expectedAladdin));
+			assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedAladdin));
+			assertEquals(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText, expectedSmlnj));
+			assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(apache20));
+			assertListsEqual(expectedResultGpl30Apache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(multiLicenseText));
+			assertListsEqual(expectedResultApache20, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(textWithRandomPrefixAndSuffix));
+			assertListsEqual(expectedBsd2Clause, LicenseCompareHelper.matchingStandardLicenseIdsWithinText(UnitTestHelper.fileToText(ATLASSAIN_BSD_FILE), Arrays.asList("BSD-2-Clause")));
+		}
 	}
 
 	public void testMatchingStandardLicenseExceptionIdsWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
@@ -819,12 +828,14 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(""));
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText("Some random text that isn't a standard license exception"));
 
-		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(classpathException20));
-		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20));
-		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(textWithRandomPrefixAndSuffix));
-
 		// Tests for the 2-arg version of matchingStandardLicenseExceptionIdsWithinText (which is faster than the 1-arg version)
 		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20, Arrays.asList("Classpath-exception-2.0")));
+
+		if (UnitTestHelper.runSlowTests()) {
+			assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(classpathException20));
+			assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20));
+			assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(textWithRandomPrefixAndSuffix));
+		}
 	}
 
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
