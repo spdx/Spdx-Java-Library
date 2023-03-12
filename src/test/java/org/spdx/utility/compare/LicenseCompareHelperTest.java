@@ -70,6 +70,8 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
     static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
     static final String ATLASSAIN_BSD_FILE = "TestFiles" + File.separator + "atlassain-bsd";
+    static final String MPL_2_FROM_MOZILLA_FILE = "TestFiles" + File.separator + "mpl_2_from_mozilla.txt";
+    
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -724,6 +726,9 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache20));
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(textWithRandomPrefixAndSuffix, apache20));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
+		String mplText = UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE);
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(mplText, ListedLicenses.getListedLicenses().getListedLicenseById("MPL-2.0")));
+
 
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
 		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
@@ -775,7 +780,6 @@ public class LicenseCompareHelperTest extends TestCase {
 		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20 + "\n\nSome random epilogue text.";
 		String aladdin = ListedLicenses.getListedLicenses().getListedLicenseById("Aladdin").getLicenseText();
-		String smlnj = ListedLicenses.getListedLicenses().getListedLicenseById("SMLNJ").getLicenseText();
 		List<String> expectedResultEmpty = Arrays.asList();
 		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
 		List<String> expectedResultGpl30 = Arrays.asList("GPL-3.0");

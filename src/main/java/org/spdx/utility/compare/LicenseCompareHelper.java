@@ -230,6 +230,7 @@ public class LicenseCompareHelper {
 	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
 	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
                     line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
+                    line = line.replaceAll("(-|=|\\*){3,}", "");  // Remove ----, ***,  and ====
                     sb.append(line);
 	                sb.append("\n");
 	                line = reader.readLine();
@@ -874,7 +875,6 @@ public class LicenseCompareHelper {
 						int normalizedPosition = result.length();
 						token = NORMALIZE_TOKENS.get(token.toLowerCase());
 						result.append(token);
-//						result.append(' ');
 						charPositions.add(new ImmutablePair<>(normalizedPosition, originalCurrentLinePosition + lineMatcher.start(1)));
 						charPositions.add(new ImmutablePair<>(result.length(), originalCurrentLinePosition + lineMatcher.end(1)));
 						lineCharPosition = lineMatcher.end(1);
@@ -936,10 +936,10 @@ public class LicenseCompareHelper {
 			return null;
 		}
 
-		List<String> templateNonOptionalText = getNonOptionalLicenseText(template, VarTextHandling.REGEX);
+		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), VarTextHandling.REGEX);
 		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
 		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
-		String normalizedText = normalizeText(text);
+		String normalizedText = removeCommentChars(normalizeText(text));
 		String compareText;
 		try {
 			compareText = normalizeTokensForRegex(normalizedText, charPositions);
