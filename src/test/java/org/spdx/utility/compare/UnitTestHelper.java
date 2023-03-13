@@ -40,6 +40,15 @@ import org.spdx.library.model.SpdxDocument;
  *
  */
 public class UnitTestHelper {
+	
+	/**
+	 * @return true if the system environment variable 'SPDX_JAVA_LIB_RUN_SLOW_TESTS' is set to true
+	 * indicating that some very long tests will run
+	 */
+	public static boolean runSlowTests() {
+		String runSlowTests = System.getenv("SPDX_JAVA_LIB_RUN_SLOW_TESTS");
+		return runSlowTests == null ? false : "true".equals(runSlowTests.toLowerCase().trim());
+	}
 
 	/**
 	 * @param a1
