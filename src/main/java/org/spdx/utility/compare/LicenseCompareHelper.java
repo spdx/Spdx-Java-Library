@@ -230,7 +230,6 @@ public class LicenseCompareHelper {
 	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
 	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
                     line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
-                    line = line.replaceAll("(-|=|\\*){3,}", "");  // Remove ----, ***,  and ====
                     sb.append(line);
 	                sb.append("\n");
 	                line = reader.readLine();
@@ -940,6 +939,7 @@ public class LicenseCompareHelper {
 		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
 		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
 		String normalizedText = removeCommentChars(normalizeText(text));
+		normalizedText = normalizedText.replaceAll("(-|=|\\*){3,}", "");  // Remove ----, ***,  and ====
 		String compareText;
 		try {
 			compareText = normalizeTokensForRegex(normalizedText, charPositions);

@@ -718,6 +718,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
 		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
 		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
+		SpdxListedLicense mplLicense = ListedLicenses.getListedLicenses().getListedLicenseById("MPL-2.0");
 		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache20.getLicenseText();
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20.getLicenseText() + "\n\nSome random epilogue text.";
 
@@ -730,8 +731,9 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(textWithRandomPrefixAndSuffix, apache20));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(multiLicenseText, apache10));
 		String mplText = UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE);
-		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(mplText, ListedLicenses.getListedLicenses().getListedLicenseById("MPL-2.0")));
-
+		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(mplText, mplLicense));
+		DifferenceDescription mplDiff = LicenseCompareHelper.isTextStandardLicense(mplLicense, mplText);
+		assertFalse(mplDiff.isDifferenceFound());
 
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
 		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
