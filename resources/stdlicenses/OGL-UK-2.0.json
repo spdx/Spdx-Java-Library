@@ -6,11 +6,11 @@
   "licenseId": "OGL-UK-2.0",
   "crossRef": [
     {
-      "match": "true",
+      "match": "false",
       "url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
       "isValid": true,
       "isLive": true,
-      "timestamp": "2022-05-08T23:56:05Z",
+      "timestamp": "2023-02-17T21:03:10Z",
       "isWayBackLink": false,
       "order": 0
     }
