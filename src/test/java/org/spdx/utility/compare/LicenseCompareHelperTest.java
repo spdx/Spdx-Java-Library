@@ -71,7 +71,17 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
     static final String ATLASSAIN_BSD_FILE = "TestFiles" + File.separator + "atlassain-bsd";
     static final String MPL_2_FROM_MOZILLA_FILE = "TestFiles" + File.separator + "mpl_2_from_mozilla.txt";
-    
+    static final String XDEBUG_1_03_TEXT = "TestFiles" + File.separator + "Xdebug-1.03.txt";
+    static final String XDEBUG_1_03_TEMPLATE = "TestFiles" + File.separator + "Xdebug-1.03.template.txt";
+    static final String FTL_TEXT = "TestFiles" + File.separator + "FTL.txt";
+    static final String FTL_TEMPLATE = "TestFiles" + File.separator + "FTL.template.txt";
+    static final String PARITY7_TEXT = "TestFiles" + File.separator + "Parity-7.0.0.txt";
+    static final String PARITY7_TEMPLATE = "TestFiles" + File.separator + "Parity-7.0.0.template.txt";
+    static final String POLYFORM_NC_TEXT = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.txt";
+    static final String POLYFORM_NC_TEMPLATE = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.template.txt";
+    static final String APL_1_TEXT = "TestFiles" + File.separator + "APL-1.0.txt";
+    static final String APL_1_TEMPLATE = "TestFiles" + File.separator + "APL-1.0.template.txt";
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -909,6 +919,66 @@ public class LicenseCompareHelperTest extends TestCase {
         }
     }
     
+    public void testRegressionXDebug() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(XDEBUG_1_03_TEXT);
+        String templateText = UnitTestHelper.fileToText(XDEBUG_1_03_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("XDEBUG-1.03", "XDEBUG-1.03", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+    
+    public void testRegressionFTL() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(FTL_TEXT);
+        String templateText = UnitTestHelper.fileToText(FTL_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("FTL", "FTL", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+    
+    public void testRegressionPloyformNC() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(POLYFORM_NC_TEXT);
+        String templateText = UnitTestHelper.fileToText(POLYFORM_NC_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("pfnc", "pfnc", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+    
+    public void testRegressionParity7() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(PARITY7_TEXT);
+        String templateText = UnitTestHelper.fileToText(PARITY7_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("FTL", "FTL", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+    
+    public void testRegressionAPL10() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(APL_1_TEXT);
+        String templateText = UnitTestHelper.fileToText(APL_1_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("APL-1.0", "APL 1.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+   
     public void testNonOptionalTextToStartPattern() throws InvalidSPDXAnalysisException, SpdxCompareException {
     	String expectedMatch = "This is line 1\nThis is line 2";
     	List<String> noRegexes = Arrays.asList(new String[] {"This is line 1", "This is line 2"});
