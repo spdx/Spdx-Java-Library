@@ -216,6 +216,14 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
+	 * @param s Input string
+	 * @return s without any line separators (---, ***, ===)
+	 */
+	public static String removeLineSeparators(String s) {
+		return s.replaceAll("(-|=|\\*){3,}\\s*$", "");  // Remove ----, ***,  and ====
+	}
+	
+	/**
 	 * Remove common comment characters from either a template or license text strings
 	 * @param s
 	 * @return
@@ -227,7 +235,7 @@ public class LicenseCompareHelper {
 	            reader = new BufferedReader(new StringReader(s));
 	            String line = reader.readLine();
 	            while (line != null) {
-	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\))\\s*$", "");  // remove end of line comments
+	            	line = line.replaceAll("(\\*/|-->|-\\}|\\*\\)|\\s\\*)\\s*$", "");  // remove end of line comments
 	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
                     line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
                     sb.append(line);
@@ -362,6 +370,7 @@ public class LicenseCompareHelper {
 			int currentToken = 0;
 			String line = reader.readLine();
 			while (line != null) {
+				line = removeLineSeparators(line);
 				Matcher lineMatcher = TOKEN_SPLIT_PATTERN.matcher(line);
 				while (lineMatcher.find()) {
 					String token = lineMatcher.group(1).trim();
@@ -411,7 +420,7 @@ public class LicenseCompareHelper {
 	 * @return the first token in the license text
 	 */
 	public static String getFirstLicenseToken(String text) {
-		String textToTokenize = normalizeText(replaceMultWord(replaceSpaceComma(removeCommentChars(text)))).toLowerCase();
+		String textToTokenize = normalizeText(replaceMultWord(replaceSpaceComma(removeLineSeparators(removeCommentChars(text))))).toLowerCase();
 		Matcher m = TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
@@ -448,7 +457,7 @@ public class LicenseCompareHelper {
 	 * @param s
 	 * @return
 	 */
-	private static String replaceSpaceComma(String s) {
+	static String replaceSpaceComma(String s) {
 		Matcher spaceMatcher = SPACE_PATTERN.matcher(s);
 		Matcher commaMatcher = COMMA_PATTERN.matcher(spaceMatcher.replaceAll(" "));
 		return commaMatcher.replaceAll(",");
@@ -459,7 +468,7 @@ public class LicenseCompareHelper {
 	 * @param s
 	 * @return
 	 */
-	private static String replaceMultWord(String s) {
+	static String replaceMultWord(String s) {
 		//TODO: There is certainly some room for optimization - perhaps a single regex in a find loop
 		Matcher m = COPYRIGHT_HOLDERS_PATTERN.matcher(s);
 		String retval = m.replaceAll("copyright-holders");
@@ -802,7 +811,7 @@ public class LicenseCompareHelper {
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
 		} catch (IOException e1) {
 			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
 		}
@@ -832,7 +841,7 @@ public class LicenseCompareHelper {
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeCommentChars(compareText));
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
 		} catch (IOException e1) {
 			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
 		}

@@ -746,7 +746,8 @@ public class CompareTemplateOutputHandler implements
 	 * @throws IOException This is not to be expected since we are using StringReaders
 	 */
 	public CompareTemplateOutputHandler(String compareText) throws IOException {
-		this.compareText = LicenseCompareHelper.normalizeText(compareText);
+		this.compareText = LicenseCompareHelper.normalizeText(
+				LicenseCompareHelper.replaceMultWord(LicenseCompareHelper.replaceSpaceComma(compareText)));
 		this.compareTokens = LicenseCompareHelper.tokenizeLicenseText(this.compareText, tokenToLocation);
 	}
 	
@@ -760,6 +761,9 @@ public class CompareTemplateOutputHandler implements
 	 */
 	private int compareText(String[] textTokens, String[] matchTokens, int startToken, int endToken,
 			ParseInstruction instruction) {
+		if (textTokens.length == 0) {
+			return startToken;
+		}
 		int textTokenCounter = 0;
 		String nextTextToken = LicenseCompareHelper.getTokenAt(textTokens, textTokenCounter++);
 		int matchTokenCounter = startToken;
