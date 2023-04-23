@@ -201,7 +201,15 @@ public abstract class ModelObject {
 			}
 		} else {
 			if (create) {
-				modelStore.create(documentUri, id, getType());
+				IModelStoreLock lock = enterCriticalSection(false);
+				// re-check since previous check was done outside of the lock
+				try {
+					if (!modelStore.exists(documentUri, id)) {
+						modelStore.create(documentUri, id, getType());
+					}
+				} finally {
+					lock.unlock();
+				}
 			} else {
 				throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
 			}
@@ -337,13 +345,19 @@ public abstract class ModelObject {
 	 */
 	protected static Optional<Object> getObjectPropertyValue(IModelStore stModelStore, String stDocumentUri,
 			String stId, String propertyName, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		if (!stModelStore.exists(stDocumentUri, stId)) {
-			return Optional.empty();
-		} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
-			return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, copyManager, null));
-		} else {
-			return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), 
-					stDocumentUri, stModelStore, copyManager);
+		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
+		// NOTE: we use a write lock since the ModelStorageClassConverter may end up creating objects in the store
+		try {
+			if (!stModelStore.exists(stDocumentUri, stId)) {
+				return Optional.empty();
+			} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
+				return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, copyManager, null));
+			} else {
+				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), 
+						stDocumentUri, stModelStore, copyManager);
+			}
+		} finally {
+			lock.unlock();
 		}
 	}
 
