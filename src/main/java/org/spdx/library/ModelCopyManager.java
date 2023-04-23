@@ -29,6 +29,7 @@ import org.spdx.library.model.IndividualUriValue;
 import org.spdx.library.model.SimpleUriValue;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
 
 /**
@@ -196,10 +197,17 @@ public class ModelCopyManager {
 	 */
 	private void copyIndividualProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
             String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
-       if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-            throw new InvalidSPDXAnalysisException("Property "+propName+" is a collection type");
-        }
-       Optional<Object> result =  fromStore.getValue(fromDocumentUri, fromId, propName);
+		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
+		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
+		Optional<Object> result = Optional.empty();
+		try {
+			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
+	            throw new InvalidSPDXAnalysisException("Property "+propName+" is a collection type");
+	        }
+			result =  fromStore.getValue(fromDocumentUri, fromId, propName);
+		} finally {
+			fromStoreLock.unlock();
+		}
         if (result.isPresent()) {
             if (result.get() instanceof IndividualUriValue) {
                 toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
@@ -232,10 +240,17 @@ public class ModelCopyManager {
 	 */
 	private void copyCollectionProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
             String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
-	    if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-	        throw new InvalidSPDXAnalysisException("Property "+propName+" is not a collection type");
-	    }
-	    Iterator<Object> fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
+		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
+		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
+		Iterator<Object> fromListIter = null;
+		try {
+			if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
+		        throw new InvalidSPDXAnalysisException("Property "+propName+" is not a collection type");
+		    }
+		    fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
+		} finally {
+			fromStoreLock.unlock();
+		}
         while (fromListIter.hasNext()) {
             Object listItem = fromListIter.next();
             Object toStoreItem;
