@@ -228,6 +228,7 @@ public class SpdxConstants {
 	public static final String PROP_BUILT_DATE = "builtDate";
 	public static final String PROP_RELEASE_DATE = "releaseDate";
 	public static final String PROP_VALID_UNTIL_DATE = "validUntilDate";
+	public static final Pattern REFERENCE_TYPE_URI_PATTERN = Pattern.compile("https?://spdx.org/rdf/references/.+");
 	
 	// SPDX License Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
