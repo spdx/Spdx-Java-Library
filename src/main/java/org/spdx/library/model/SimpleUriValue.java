@@ -100,6 +100,8 @@ public class SimpleUriValue implements IndividualUriValue {
 			return ExternalSpdxElement.uriToExternalSpdxElement(uri, store, documentUri, copyManager);
 		} else if (SpdxConstants.EXTERNAL_EXTRACTED_LICENSE_URI_PATTERN.matcher(uri).matches()) {
 			return ExternalExtractedLicenseInfo.uriToExternalExtractedLicense(uri, store, documentUri, copyManager);
+		} else if (SpdxConstants.REFERENCE_TYPE_URI_PATTERN.matcher(uri).matches()) {
+			return new ReferenceType(this);
 		} else if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
 			// Default value is a license, although it can also be a string or an SpdxElement
 			// the caller should override the type based on the type expected
