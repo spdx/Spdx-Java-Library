@@ -945,6 +945,15 @@ public class LicenseCompareHelper {
 		}
 
 		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), VarTextHandling.REGEX);
+		if (templateNonOptionalText.size() > 0 && templateNonOptionalText.get(0).startsWith("~~~.")) {
+			// Change to a non-greedy match
+			String firstLine = templateNonOptionalText.get(0);
+			if (!firstLine.startsWith("~~~.?")) {
+				// yes - it's currently greedy
+				firstLine = "~~~.?" + firstLine.substring(4);
+				templateNonOptionalText.set(0, firstLine);
+			}
+		}
 		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
 		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
 		String normalizedText = removeCommentChars(normalizeText(text));
