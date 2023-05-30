@@ -38,6 +38,7 @@ import org.spdx.library.model.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * Snippets can optionally be used when a file is known to have some content that has been included from another original source.  
@@ -121,7 +122,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 	}
 	
 	@Override
-	public String getLicenseInfoFromFilesPropertyName() {
+	public PropertyDescriptor getLicenseInfoFromFilesPropertyName() {
 		return SpdxConstants.PROP_LICENSE_INFO_FROM_SNIPPETS;
 	}
 	

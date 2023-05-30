@@ -45,6 +45,7 @@ import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelUpdate;
+import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -57,29 +58,52 @@ public class ModelObjectTest extends TestCase {
 
 	private static final String TEST_ID = "testId";
 	private static final Object TEST_VALUE1 = "value1";
-	private static final String TEST_PROPERTY1 = "property1";
-	private static final String TEST_PROPERTY2 = "property2";
+	private static final PropertyDescriptor TEST_PROPERTY1 = new PropertyDescriptor("property1", SpdxConstants.SPDX_NAMESPACE);
+	private static final PropertyDescriptor TEST_PROPERTY2 = new PropertyDescriptor("property2", SpdxConstants.SPDX_NAMESPACE);
 	static final String TEST_TYPE1 = SpdxConstants.CLASS_SPDX_LICENSE_EXCEPTION;
 	static final String TEST_TYPE2 = SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO;
 
-	static final String[] TEST_STRING_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3"};
+	static final PropertyDescriptor[] TEST_STRING_VALUE_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("valueProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp3", SpdxConstants.SPDX_NAMESPACE)};
 	static final Object[] TEST_STRING_VALUE_PROPERTY_VALUES = new Object[] {"value1", "value2", "value3"};
-	static final String[] TEST_INTEGER_VALUE_PROPERTIES = new String[] {"intProp1", "intProp2", "Intprop3"};
+	static final PropertyDescriptor[] TEST_INTEGER_VALUE_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("intProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("intProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("Intprop3", SpdxConstants.SPDX_NAMESPACE)};
 	static final Object[] TEST_INTEGER_VALUE_PROPERTY_VALUES = new Object[] {Integer.valueOf(3), Integer.valueOf(0), Integer.valueOf(-1)};
-	static final String[] TEST_BOOLEAN_VALUE_PROPERTIES = new String[] {"boolProp1", "boolProp2"};
+	static final PropertyDescriptor[] TEST_BOOLEAN_VALUE_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("boolProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("boolProp2", SpdxConstants.SPDX_NAMESPACE)};
 	static final Object[] TEST_BOOLEAN_VALUE_PROPERTY_VALUES = new Object[] {true, false};
-	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3", "listProp4", "listProp5"};
-	static final String[] TEST_MODEL_OJBECT_PROPERTIES = new String[] {"typeProp1", "typeProp2"};
-	static final String[] TEST_ENUM_PROPERTIES = new String[] {"enumProp1", "enumProp2"};
+	static final PropertyDescriptor[] TEST_LIST_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("listProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp3", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp4", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp5", SpdxConstants.SPDX_NAMESPACE)};
+	static final PropertyDescriptor[] TEST_MODEL_OJBECT_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("typeProp1", SpdxConstants.SPDX_NAMESPACE),
+			new PropertyDescriptor("typeProp2", SpdxConstants.SPDX_NAMESPACE)};
+	static final PropertyDescriptor[] TEST_ENUM_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("enumProp1", SpdxConstants.SPDX_NAMESPACE),
+			new PropertyDescriptor("enumProp2", SpdxConstants.SPDX_NAMESPACE)};
 	static final ChecksumAlgorithm[] TEST_ENUM_VALUES = new ChecksumAlgorithm[] {ChecksumAlgorithm.MD5, ChecksumAlgorithm.SHA1};
-	static final String[] TEST_ANYLICENSEINFO_PROPERTIES = new String[] {"anylicenseProp1", "anylicenseProp2", "anylicenseProp3"};
-	static final String[] TEST_ANYLICENSEINFO_LIST_PROPERTIES = new String[] {"anylicenseListProp1", "anylicensListProp2", "anylicenseListProp3"};
+	static final PropertyDescriptor[] TEST_ANYLICENSEINFO_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("anylicenseProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("anylicenseProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("anylicenseProp3", SpdxConstants.SPDX_NAMESPACE)};
+	static final PropertyDescriptor[] TEST_ANYLICENSEINFO_LIST_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("anylicenseListProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("anylicensListProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("anylicenseListProp3", SpdxConstants.SPDX_NAMESPACE)};
 	
 	ModelObject[] TEST_MODEL_OBJECT_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	AnyLicenseInfo[] TEST_ANYLICENSEINFO_PROP_VALUES;
 	List<?>[] TEST_ANYLICENSEINFO_LIST_PROP_VALUES;
-	Map<String, Object> ALL_PROPERTY_VALUES;
+	Map<PropertyDescriptor, Object> ALL_PROPERTY_VALUES;
 	
 	IModelStore store;
 	String docUri;
@@ -115,28 +139,36 @@ public class ModelObjectTest extends TestCase {
 		
 		ALL_PROPERTY_VALUES = new HashMap<>();
 		for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_STRING_VALUE_PROPERTIES[i], TEST_STRING_VALUE_PROPERTY_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_STRING_VALUE_PROPERTIES[i], 
+					TEST_STRING_VALUE_PROPERTY_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_BOOLEAN_VALUE_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_BOOLEAN_VALUE_PROPERTIES[i], TEST_BOOLEAN_VALUE_PROPERTY_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_BOOLEAN_VALUE_PROPERTIES[i], 
+					TEST_BOOLEAN_VALUE_PROPERTY_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_LIST_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_LIST_PROPERTIES[i], TEST_LIST_PROPERTY_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_LIST_PROPERTIES[i], 
+					 TEST_LIST_PROPERTY_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_MODEL_OJBECT_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_MODEL_OJBECT_PROPERTIES[i], TEST_MODEL_OBJECT_PROP_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_MODEL_OJBECT_PROPERTIES[i], 
+					TEST_MODEL_OBJECT_PROP_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_ENUM_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_ENUM_PROPERTIES[i], TEST_ENUM_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_ENUM_PROPERTIES[i], 
+					TEST_ENUM_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_ANYLICENSEINFO_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_ANYLICENSEINFO_PROPERTIES[i], TEST_ANYLICENSEINFO_PROP_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_ANYLICENSEINFO_PROPERTIES[i], 
+					TEST_ANYLICENSEINFO_PROP_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_ANYLICENSEINFO_LIST_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], TEST_ANYLICENSEINFO_LIST_PROP_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], 
+					TEST_ANYLICENSEINFO_LIST_PROP_VALUES[i]);
 		}
 		for (int i = 0; i < TEST_INTEGER_VALUE_PROPERTIES.length; i++) {
-			ALL_PROPERTY_VALUES.put(TEST_INTEGER_VALUE_PROPERTIES[i], TEST_INTEGER_VALUE_PROPERTY_VALUES[i]);
+			ALL_PROPERTY_VALUES.put(TEST_INTEGER_VALUE_PROPERTIES[i], 
+					TEST_INTEGER_VALUE_PROPERTY_VALUES[i]);
 		}
 	}
 	/* (non-Javadoc)
@@ -147,7 +179,7 @@ public class ModelObjectTest extends TestCase {
 	}
 	
 	protected void addTestValues(ModelObject mo) throws InvalidSPDXAnalysisException {
-		for (Entry<String, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
+		for (Entry<PropertyDescriptor, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
 			mo.setPropertyValue(entry.getKey(), entry.getValue());
 		}
 	}
@@ -254,16 +286,16 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getPropertyValueNames()}.
+	 * Test method for {@link org.spdx.library.model.ModelObject#getPropertyValueDescriptors()}.
 	 */
 	public void testGetPropertyValueNames() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		List<String> result = gmo.getPropertyValueNames();
+		List<PropertyDescriptor> result = gmo.getPropertyValueDescriptors();
 		assertEquals(0, result.size());
 		addTestValues(gmo);
-		result = gmo.getPropertyValueNames();
+		result = gmo.getPropertyValueDescriptors();
 		assertEquals(ALL_PROPERTY_VALUES.size(), result.size());
-		for (String property:ALL_PROPERTY_VALUES.keySet()) {
+		for (PropertyDescriptor property:ALL_PROPERTY_VALUES.keySet()) {
 			assertTrue(result.contains(property));
 		}
 	}
@@ -273,9 +305,9 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testGetObjectPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		assertEquals(0, gmo.getPropertyValueNames().size());
+		assertEquals(0, gmo.getPropertyValueDescriptors().size());
 		addTestValues(gmo);
-		for (Entry<String, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
+		for (Entry<PropertyDescriptor, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
 			Optional<Object> result = gmo.getObjectPropertyValue(entry.getKey());
 			assertTrue(result.isPresent());
 			if (result.get() instanceof List) {
@@ -296,7 +328,7 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testSetPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		String prop = "property";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
 		gmo.setPropertyValue(prop, val);
@@ -309,7 +341,7 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testUpdatePropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		String prop = "property";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
 		ModelUpdate mu = gmo.updatePropertyValue(prop, val);
@@ -372,7 +404,7 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testRemovePropertyIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		String prop = "property";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
 		gmo.setPropertyValue(prop, val);
@@ -387,7 +419,7 @@ public class ModelObjectTest extends TestCase {
 	 */
 	public void testUpdateRemoveProperty() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
-		String prop = "property";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		String val = "value";
 		assertFalse(gmo.getObjectPropertyValue(prop).isPresent());
 		gmo.setPropertyValue(prop, val);
@@ -633,7 +665,7 @@ public class ModelObjectTest extends TestCase {
 		String id1 = "id1";
 		String id2 = "id2";
 		String text = "licenseText";
-		String prop = "prop";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(id1, text);
 		ExtractedLicenseInfo eli2 = new ExtractedLicenseInfo(id2, text);
 		assertTrue(eli.equivalent(eli2));
@@ -657,7 +689,7 @@ public class ModelObjectTest extends TestCase {
 		String id1 = "id1";
 		String id2 = "id2";
 		String text = "licenseText";
-		String prop = "prop";
+		PropertyDescriptor prop = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(id1, text);
 		ExtractedLicenseInfo eli2 = new ExtractedLicenseInfo(id2, text);
 		String id3 = "id3";
@@ -693,7 +725,7 @@ public class ModelObjectTest extends TestCase {
 	public void testListEquivalenceIsSymmetric() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
-		String property = "property";
+		PropertyDescriptor property = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 		ExtractedLicenseInfo equivalentLicense = new ExtractedLicenseInfo("id", "licenseText");
 		ExtractedLicenseInfo equivalentLicense2 = new ExtractedLicenseInfo("id2", "licenseText");
 		ExtractedLicenseInfo equivalentLicense3 = new ExtractedLicenseInfo("id3", "licenseText");

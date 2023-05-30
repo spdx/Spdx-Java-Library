@@ -55,6 +55,7 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelUpdate;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * @author Gary O'Neall
@@ -70,7 +71,7 @@ import org.spdx.storage.IModelStore.ModelUpdate;
  * The Document URI uniquely identifies the document containing the model object.
  * 
  * The concrete classes are expected to implements getters for the model class properties which translate
- * into calls to the getTYPEPropertyValue where TYPE is the type of value to be returned and the property name
+ * into calls to the getTYPEPropertyValue where TYPE is the type of value to be returned and the property descriptor
  * is passed as a parameter.
  * 
  * There are 2 methods of setting values:
@@ -115,13 +116,13 @@ public abstract class ModelObject {
 		DIFFERENT_CLASS, MISSING_PROPERTY, PROPERTY_NOT_EQUIVALENT, COMPARE_PROPERTY_MISSING};
 	static class NotEquivalentReason {
 		NotEquivalent reason;
-		String property = null;
+		PropertyDescriptor property = null;
 		
 		public NotEquivalentReason(NotEquivalent reason) {
 			this.reason = reason;
 		}
 		
-		public NotEquivalentReason(NotEquivalent reason, String property) {
+		public NotEquivalentReason(NotEquivalent reason, PropertyDescriptor property) {
 			this(reason);
 			this.property = property;
 		}
@@ -143,14 +144,14 @@ public abstract class ModelObject {
 		/**
 		 * @return the property
 		 */
-		public String getProperty() {
+		public PropertyDescriptor getProperty() {
 			return property;
 		}
 
 		/**
 		 * @param property the property to set
 		 */
-		public void setProperty(String property) {
+		public void setProperty(PropertyDescriptor property) {
 			this.property = property;
 		}
 	}
@@ -313,20 +314,20 @@ public abstract class ModelObject {
 	
 	//The following methods are to manage the properties associated with the model object
 	/**
-	 * @return all names of property values currently associated with this object
+	 * @return all names of property descriptors currently associated with this object
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public List<String> getPropertyValueNames() throws InvalidSPDXAnalysisException {
-		return modelStore.getPropertyValueNames(documentUri, id);
+	public List<PropertyDescriptor> getPropertyValueDescriptors() throws InvalidSPDXAnalysisException {
+		return modelStore.getPropertyValueDescriptors(documentUri, id);
 	}
 	
 	/**
 	 * Get an object value for a property
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return value associated with a property
 	 */
-	protected Optional<Object> getObjectPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(modelStore, documentUri, id, propertyName, copyManager);
+	protected Optional<Object> getObjectPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(modelStore, documentUri, id, propertyDescriptor, copyManager);
 		if (retval.isPresent() && retval.get() instanceof ModelObject && !strict) {
 			((ModelObject)retval.get()).setStrict(strict);
 		}
@@ -338,22 +339,22 @@ public abstract class ModelObject {
 	 * @param stModelStore
 	 * @param stDocumentUri
 	 * @param stId
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @param copyManager if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @return value associated with a property
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static Optional<Object> getObjectPropertyValue(IModelStore stModelStore, String stDocumentUri,
-			String stId, String propertyName, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			String stId, PropertyDescriptor propertyDescriptor, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
 		// NOTE: we use a write lock since the ModelStorageClassConverter may end up creating objects in the store
 		try {
 			if (!stModelStore.exists(stDocumentUri, stId)) {
 				return Optional.empty();
-			} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyName)) {
-				return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyName, copyManager, null));
+			} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyDescriptor)) {
+				return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyDescriptor, copyManager, null));
 			} else {
-				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyName), 
+				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyDescriptor), 
 						stDocumentUri, stModelStore, copyManager);
 			}
 		} finally {
@@ -362,64 +363,64 @@ public abstract class ModelObject {
 	}
 
 	/**
-	 * Set a property value for a property name, creating the property if necessary
+	 * Set a property value for a property descriptor, creating the property if necessary
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
-	 * @param propertyName Name of the property associated with this object
+	 * @param propertyDescriptor Descriptor for the property associated with this object
 	 * @param value Value to associate with the property
 	 * @param copyManager if non null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static void setPropertyValue(IModelStore stModelStore, String stDocumentUri, 
-			String stId, String propertyName, @Nullable Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			String stId, PropertyDescriptor propertyDescriptor, @Nullable Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(stModelStore, "Model Store can not be null");
 		Objects.requireNonNull(stDocumentUri, "Document Uri can not be null");
 		Objects.requireNonNull(stId, "ID can not be null");
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		if (value == null) {
 			// we just remove the value
-			removeProperty(stModelStore, stDocumentUri, stId, propertyName);
+			removeProperty(stModelStore, stDocumentUri, stId, propertyDescriptor);
 		} else if (value instanceof Collection) {
-			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyName, (Collection<?>)value, copyManager);
+			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyDescriptor, (Collection<?>)value, copyManager);
 		} else {
-			stModelStore.setValue(stDocumentUri, stId, propertyName, ModelStorageClassConverter.modelObjectToStoredObject(
+			stModelStore.setValue(stDocumentUri, stId, propertyDescriptor, ModelStorageClassConverter.modelObjectToStoredObject(
 					value, stDocumentUri, stModelStore, copyManager));
 		}
 	}
 	
 	/**
-	 * Set a property value for a property name, creating the property if necessary
-	 * @param propertyName Name of the property associated with this object
+	 * Set a property value for a property descriptor, creating the property if necessary
+	 * @param propertyDescriptor Descriptor for the property associated with this object
 	 * @param value Value to associate with the property
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	protected void setPropertyValue(String propertyName, @Nullable Object value) throws InvalidSPDXAnalysisException {
+	protected void setPropertyValue(PropertyDescriptor propertyDescriptor, @Nullable Object value) throws InvalidSPDXAnalysisException {
 		if (this instanceof IndividualUriValue) {
 			throw new InvalidSPDXAnalysisException("Can not set a property for the literal value "+((IndividualUriValue)this).getIndividualURI());
 		}
-		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyManager);
+		setPropertyValue(this.modelStore, this.documentUri, this.id, propertyDescriptor, value, copyManager);
 	}
 	
 	/**
-	 * Create an update when, when applied by the ModelStore, sets a property value for a property name, creating the property if necessary
-	 * @param propertyName Name of the property associated with this object
+	 * Create an update when, when applied by the ModelStore, sets a property value for a property descriptor, creating the property if necessary
+	 * @param propertyDescriptor Descriptor for the property associated with this object
 	 * @param value Value to associate with the property
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	protected ModelUpdate updatePropertyValue(String propertyName, Object value) {
+	protected ModelUpdate updatePropertyValue(PropertyDescriptor propertyDescriptor, Object value) {
 		return () ->{
-			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyName, value, copyManager);
+			setPropertyValue(this.modelStore, this.documentUri, this.id, propertyDescriptor, value, copyManager);
 		};
 	}
 	
 	/**
-	 * @param propertyName Name of a property
+	 * @param propertyDescriptor Descriptor for a property
 	 * @return the Optional String value associated with a property, null if no value is present
 	 * @throws SpdxInvalidTypeException
 	 */
-	protected Optional<String> getStringPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<String> getStringPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		if (result.isPresent()) {
 			if (result.get() instanceof String) {
 				return Optional.of((String)result.get());
@@ -434,8 +435,8 @@ public abstract class ModelObject {
 					throw new SpdxInvalidTypeException("Can not convert a URI value to String: "+uri);
 				}
 			} else {
-				logger.error("Property "+propertyName+" is not of type String");
-				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type String");
+				logger.error("Property "+propertyDescriptor+" is not of type String");
+				throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type String");
 			}
 		} else {
 			return Optional.empty();
@@ -443,16 +444,16 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param propertyName Name of a property
+	 * @param propertyDescriptor Descriptor for a property
 	 * @return the Optional Integer value associated with a property, null if no value is present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected Optional<Integer> getIntegerPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<Integer> getIntegerPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		Optional<Integer> retval;
 		if (result.isPresent()) {
 			if (!(result.get() instanceof Integer)) {
-				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Integer");
+				throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Integer");
 			}
 			retval = Optional.of((Integer)result.get());
 		} else {
@@ -461,9 +462,14 @@ public abstract class ModelObject {
 		return retval;
 	}
 	
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @return an enumeration value for the property
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	@SuppressWarnings("unchecked")
-	protected Optional<Enum<?>> getEnumPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<Enum<?>> getEnumPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		if (!result.isPresent()) {
 			return Optional.empty();
 		}
@@ -471,7 +477,7 @@ public abstract class ModelObject {
 			return (Optional<Enum<?>>)(Optional<?>)result;
 		}
 		if (!(result.get() instanceof IndividualUriValue)) {
-			throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Individual Value or enum");
+			throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Individual Value or enum");
 		}
 		Enum<?> retval = SpdxEnumFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
@@ -483,12 +489,12 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return the Optional Boolean value for a property
 	 * @throws SpdxInvalidTypeException
 	 */
-	protected Optional<Boolean> getBooleanPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<Boolean> getBooleanPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		if (result.isPresent()) {
 			if (result.get() instanceof Boolean) {
 				return Optional.of((Boolean)result.get());
@@ -500,10 +506,10 @@ public abstract class ModelObject {
 				} else if ("false".equals(sResult)) {
 					return Optional.of(Boolean.valueOf(false));
 				} else {
-					throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
+					throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Boolean");
 				}
 			} else {
-				throw new SpdxInvalidTypeException("Property "+propertyName+" is not of type Boolean");
+				throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Boolean");
 			}
 		} else {
 			return Optional.empty();
@@ -512,13 +518,13 @@ public abstract class ModelObject {
 	
 	/**
 	 * Converts property values to an AnyLicenseInfo if possible - if NONE or NOASSERTION URI value, convert to the appropriate license
-	 * @param propertyName
-	 * @return AnyLicenseInfo
+	 * @param propertyDescriptor descriptor for the property
+	 * @return AnyLicenseInfo license info for the property
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	@SuppressWarnings("unchecked")
-	protected Optional<AnyLicenseInfo> getAnyLicenseInfoPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<AnyLicenseInfo> getAnyLicenseInfoPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		if (!result.isPresent()) {
 			return Optional.empty();
 		} else if (result.get() instanceof AnyLicenseInfo) {
@@ -541,13 +547,13 @@ public abstract class ModelObject {
 	
 	/**
 	 * Converts property values to an SpdxElement if possible - if NONE or NOASSERTION URI value, convert to the appropriate SpdxElement
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return SpdxElement stored
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	@SuppressWarnings("unchecked")
-	protected Optional<SpdxElement> getElementPropertyValue(String propertyName) throws InvalidSPDXAnalysisException {
-		Optional<Object> result = getObjectPropertyValue(propertyName);
+	protected Optional<SpdxElement> getElementPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		Optional<Object> result = getObjectPropertyValue(propertyDescriptor);
 		if (!result.isPresent()) {
 			return Optional.empty();
 		} else if (result.get() instanceof SpdxElement) {
@@ -573,30 +579,31 @@ public abstract class ModelObject {
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
-	 * @param propertyName Name of the property associated with this object to be removed
+	 * @param propertyDescriptor Descriptor for the property associated with this object to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected static void removeProperty(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
-		stModelStore.removeProperty(stDocumentUri, stId, propertyName);
+	protected static void removeProperty(IModelStore stModelStore, String stDocumentUri, 
+			String stId, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		stModelStore.removeProperty(stDocumentUri, stId, propertyDescriptor);
 	}
 	
 	/**
 	 * Removes a property and its value from the model store if it exists
-	 * @param propertyName Name of the property associated with this object to be removed
+	 * @param propertyDescriptor Descriptor for the property associated with this object to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected void removeProperty(String propertyName) throws InvalidSPDXAnalysisException {
-		removeProperty(modelStore, documentUri, id, propertyName);
+	protected void removeProperty(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		removeProperty(modelStore, documentUri, id, propertyDescriptor);
 	}
 	
 	/**
 	 * Create an update when, when applied by the ModelStore, removes a property and its value from the model store if it exists
-	 * @param propertyName Name of the property associated with this object to be removed
+	 * @param propertyDescriptor Descriptor for the property associated with this object to be removed
 	 * @return  an update which can be applied by invoking the apply method
 	 */
-	protected ModelUpdate updateRemoveProperty(String propertyName) {
+	protected ModelUpdate updateRemoveProperty(PropertyDescriptor propertyDescriptor) {
 		return () -> {
-			removeProperty(modelStore, documentUri, id, propertyName);
+			removeProperty(modelStore, documentUri, id, propertyDescriptor);
 		};
 	}
 	
@@ -606,29 +613,30 @@ public abstract class ModelObject {
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected static void clearValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, String propertyName) throws InvalidSPDXAnalysisException {
-		stModelStore.clearValueCollection(stDocumentUri, stId, propertyName);
+	protected static void clearValueCollection(IModelStore stModelStore, String stDocumentUri,
+			String stId, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		stModelStore.clearValueCollection(stDocumentUri, stId, propertyDescriptor);
 	}
 	
 	/**
 	 * Clears a collection of values associated with a property
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 */
-	protected void clearValueCollection(String propertyName) throws InvalidSPDXAnalysisException {
-		clearValueCollection(modelStore, documentUri, id, propertyName);
+	protected void clearValueCollection(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		clearValueCollection(modelStore, documentUri, id, propertyDescriptor);
 	}
 	
 	/**
 	 * Create an update when, when applied by the ModelStore, clears a collection of values associated with a property
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	protected ModelUpdate updateClearValueCollection(String propertyName) {
+	protected ModelUpdate updateClearValueCollection(PropertyDescriptor propertyDescriptor) {
 		return () ->{
-			clearValueCollection(modelStore, documentUri, id, propertyName);
+			clearValueCollection(modelStore, documentUri, id, propertyDescriptor);
 		};
 	}
 	
@@ -640,39 +648,39 @@ public abstract class ModelObject {
 	 * @param stModelStore  Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId          ID of the item to associate the property with
-	 * @param propertyName  Name of the property
+	 * @param propertyDescriptor  Descriptor for the property
 	 * @param value         to add
 	 * @param copyManager
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			PropertyDescriptor propertyDescriptor, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value, "Value can not be null");
-		stModelStore.addValueToCollection(stDocumentUri, stId, propertyName, 
+		stModelStore.addValueToCollection(stDocumentUri, stId, propertyDescriptor, 
 				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyManager));
 	}
 	
 	/**
 	 * Add a value to a collection of values associated with a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
-	 * @param propertyName  Name of the property
+	 * @param propertyDescriptor  Descriptor for the property
 	 * @param value to add
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	protected void addPropertyValueToCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		addValueToCollection(modelStore, documentUri, id, propertyName, value, copyManager);
+	protected void addPropertyValueToCollection(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException {
+		addValueToCollection(modelStore, documentUri, id, propertyDescriptor, value, copyManager);
 	}
 	
 	/**
 	 * Create an update when, when applied, adds a value to a collection of values associated with a property.  If a value is a ModelObject and does not
 	 * belong to the document, it will be copied into the object store
-	 * @param propertyName  Name of the property
+	 * @param propertyDescriptor  Descriptor for the property
 	 * @param value to add
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	protected ModelUpdate updateAddPropertyValueToCollection(String propertyName, Object value) {
+	protected ModelUpdate updateAddPropertyValueToCollection(PropertyDescriptor propertyDescriptor, Object value) {
 		return () ->{
-			addValueToCollection(modelStore, documentUri, id, propertyName, value, copyManager);
+			addValueToCollection(modelStore, documentUri, id, propertyDescriptor, value, copyManager);
 		};
 	}
 	
@@ -682,16 +690,16 @@ public abstract class ModelObject {
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @param values collection of new properties
 	 * @param copyManager if non-null, any ModelObject property value not stored in the stModelStore under the stDocumentUri will be copied to make it available
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	protected static void replacePropertyValueCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Collection<?> values, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		clearValueCollection(stModelStore, stDocumentUri, stId, propertyName);
+			PropertyDescriptor propertyDescriptor, Collection<?> values, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		clearValueCollection(stModelStore, stDocumentUri, stId, propertyDescriptor);
 		for (Object value:values) {
-			addValueToCollection(stModelStore, stDocumentUri, stId, propertyName, value, copyManager);
+			addValueToCollection(stModelStore, stDocumentUri, stId, propertyDescriptor, value, copyManager);
 		}
 	}
 
@@ -700,69 +708,69 @@ public abstract class ModelObject {
 	 * @param stModelStore Model store for the properties
 	 * @param stDocumentUri Unique document URI
 	 * @param stId ID of the item to associate the property with
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value Value to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
-			String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyName, 
+			PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException {
+		stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyDescriptor, 
 				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, null));
 	}
 	
 	/**
 	 * Remove a property value from a collection
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @param value Value to be removed
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected void removePropertyValueFromCollection(String propertyName, Object value) throws InvalidSPDXAnalysisException {
-		removePropertyValueFromCollection(modelStore, documentUri, id, propertyName, value);
+	protected void removePropertyValueFromCollection(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException {
+		removePropertyValueFromCollection(modelStore, documentUri, id, propertyDescriptor, value);
 	}
 	
 	/**
 	 * Create an update when, when applied, removes a property value from a collection
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value Value to be removed
 	 * @return an update which can be applied by invoking the apply method
 	 */
-	protected ModelUpdate updateRemovePropertyValueFromCollection(String propertyName, Object value) {
+	protected ModelUpdate updateRemovePropertyValueFromCollection(PropertyDescriptor propertyDescriptor, Object value) {
 		return () -> {
-			removePropertyValueFromCollection(modelStore, documentUri, id, propertyName, value);
+			removePropertyValueFromCollection(modelStore, documentUri, id, propertyDescriptor, value);
 		};
 	}
 	
 	/**
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return Set of values associated with a property
 	 */
-	protected ModelSet<?> getObjectPropertyValueSet(String propertyName, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelSet<Object>(this.modelStore, this.documentUri, this.id, propertyName, this.copyManager, type);
+	protected ModelSet<?> getObjectPropertyValueSet(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
+		return new ModelSet<Object>(this.modelStore, this.documentUri, this.id, propertyDescriptor, this.copyManager, type);
 	}
 	
 	/**
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @return Collection of values associated with a property
 	 */
-	protected ModelCollection<?> getObjectPropertyValueCollection(String propertyName, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyName, this.copyManager, type);
+	protected ModelCollection<?> getObjectPropertyValueCollection(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
+		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyDescriptor, this.copyManager, type);
 	}
 	
 	/**
-	 * @param propertyName Name of property
+	 * @param propertyDescriptor Descriptor for property
 	 * @return Collection of Strings associated with the property
 	 * @throws SpdxInvalidTypeException
 	 */
 	@SuppressWarnings("unchecked")
-	protected Collection<String> getStringCollection(String propertyName) throws InvalidSPDXAnalysisException {
-		if (!isCollectionMembersAssignableTo(propertyName, String.class)) {
-			throw new SpdxInvalidTypeException("Property "+propertyName+" does not contain a collection of Strings");
+	protected Collection<String> getStringCollection(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		if (!isCollectionMembersAssignableTo(propertyDescriptor, String.class)) {
+			throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" does not contain a collection of Strings");
 		}
-		return (Collection<String>)(Collection<?>)getObjectPropertyValueSet(propertyName, String.class);
+		return (Collection<String>)(Collection<?>)getObjectPropertyValueSet(propertyDescriptor, String.class);
 	}
 	
-	protected boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException {
-		return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyName, 
+	protected boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSPDXAnalysisException {
+		return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyDescriptor, 
 				ModelStorageClassConverter.modelClassToStoredClass(clazz));
 	}
 	
@@ -784,48 +792,48 @@ public abstract class ModelObject {
 			lastNotEquivalentReason = new NotEquivalentReason(NotEquivalent.DIFFERENT_CLASS);
 			return false;
 		}
-		List<String> propertyValueNames = getPropertyValueNames();
-		List<String> comparePropertyValueNames = new ArrayList<String>(compare.getPropertyValueNames());	// create a copy since we're going to modify it
-		for (String propertyName:propertyValueNames) {
-			if (ignoreRelatedElements && isRelatedElement(propertyName)) {
+		List<PropertyDescriptor> propertyValueDescriptors = getPropertyValueDescriptors();
+		List<PropertyDescriptor> comparePropertyValueDescriptors = new ArrayList<PropertyDescriptor>(compare.getPropertyValueDescriptors());	// create a copy since we're going to modify it
+		for (PropertyDescriptor propertyDescriptor:propertyValueDescriptors) {
+			if (ignoreRelatedElements && isRelatedElement(propertyDescriptor)) {
 				continue;
 			}
-			if (comparePropertyValueNames.contains(propertyName)) {
-				if (!propertyValuesEquivalent(propertyName, this.getObjectPropertyValue(propertyName), 
-				        compare.getObjectPropertyValue(propertyName), ignoreRelatedElements)) {
+			if (comparePropertyValueDescriptors.contains(propertyDescriptor)) {
+				if (!propertyValuesEquivalent(propertyDescriptor, this.getObjectPropertyValue(propertyDescriptor), 
+				        compare.getObjectPropertyValue(propertyDescriptor), ignoreRelatedElements)) {
 					lastNotEquivalentReason = new NotEquivalentReason(
-							NotEquivalent.PROPERTY_NOT_EQUIVALENT, propertyName);
+							NotEquivalent.PROPERTY_NOT_EQUIVALENT, propertyDescriptor);
 				    return false;
 				}
-				comparePropertyValueNames.remove(propertyName);
+				comparePropertyValueDescriptors.remove(propertyDescriptor);
 			} else {
 				// No property value
-			    Optional<Object> propertyValueOptional = this.getObjectPropertyValue(propertyName);
+			    Optional<Object> propertyValueOptional = this.getObjectPropertyValue(propertyDescriptor);
 				if (propertyValueOptional.isPresent()) {
 					Object propertyValue = propertyValueOptional.get();
-					if (isEquivalentToNull(propertyValue, propertyName)) {
+					if (isEquivalentToNull(propertyValue, propertyDescriptor)) {
 						continue;
 					}
 					lastNotEquivalentReason = new NotEquivalentReason(
-							NotEquivalent.COMPARE_PROPERTY_MISSING, propertyName);
+							NotEquivalent.COMPARE_PROPERTY_MISSING, propertyDescriptor);
 					return false;
 				}
 			}
 		}
-		for (String propertyName:comparePropertyValueNames) { // check any remaining property values
-			if (ignoreRelatedElements && isRelatedElement(propertyName)) {
+		for (PropertyDescriptor propertyDescriptor:comparePropertyValueDescriptors) { // check any remaining property values
+			if (ignoreRelatedElements && isRelatedElement(propertyDescriptor)) {
 				continue;
 			}
-			Optional<Object> comparePropertyValueOptional = compare.getObjectPropertyValue(propertyName);
+			Optional<Object> comparePropertyValueOptional = compare.getObjectPropertyValue(propertyDescriptor);
 			if (!comparePropertyValueOptional.isPresent()) {
 				continue;
 			}
 			Object comparePropertyValue = comparePropertyValueOptional.get();
-			if (isEquivalentToNull(comparePropertyValue, propertyName)) {
+			if (isEquivalentToNull(comparePropertyValue, propertyDescriptor)) {
 				continue;
 			}
 			lastNotEquivalentReason = new NotEquivalentReason(
-					NotEquivalent.MISSING_PROPERTY, propertyName);
+					NotEquivalent.MISSING_PROPERTY, propertyDescriptor);
 			return false;
 		}
 		return true;
@@ -833,20 +841,20 @@ public abstract class ModelObject {
 	
 	// Some values are treated like null in comparisons - in particular empty model collections and 
 	// "no assertion" values and a filesAnalyzed filed with a value of true
-	private boolean isEquivalentToNull(Object propertyValue, String propertyName) {
+	private boolean isEquivalentToNull(Object propertyValue, PropertyDescriptor propertyDescriptor) {
 		if (propertyValue instanceof ModelCollection) {
 			return ((ModelCollection<?>) propertyValue).size() == 0;
 		} else if (isNoAssertion(propertyValue)) {
 			return true;
-		} else if (SpdxConstants.PROP_PACKAGE_FILES_ANALYZED.equals(propertyName)) {
+		} else if (SpdxConstants.PROP_PACKAGE_FILES_ANALYZED.equals(propertyDescriptor.getName())) {
 			return propertyValue instanceof Boolean && (Boolean)(propertyValue);
 		} else {
 			return false;
 		}
 	}
 
-	private boolean isRelatedElement(String propertyName) {
-		return SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyName);
+	private boolean isRelatedElement(PropertyDescriptor propertyDescriptor) {
+		return SpdxConstants.PROP_RELATED_SPDX_ELEMENT.equals(propertyDescriptor.getName());
 	}
 
 	private boolean isEmptyModelCollection(Object value) {
@@ -860,14 +868,14 @@ public abstract class ModelObject {
 	}
 
 	/**
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @param valueA value to compare
 	 * @param valueB value to compare
 	 * @param ignoreRelatedElements if true, do not compare properties relatedSpdxElement - used to prevent infinite recursion
 	 * @return true if the property values are equivalent
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private boolean propertyValuesEquivalent(String propertyName, Optional<Object> valueA,
+	private boolean propertyValuesEquivalent(PropertyDescriptor propertyDescriptor, Optional<Object> valueA,
             Optional<Object> valueB, boolean ignoreRelatedElements) throws InvalidSPDXAnalysisException {
 	    if (!valueA.isPresent()) {
             if (valueB.isPresent()) {
@@ -892,7 +900,7 @@ public abstract class ModelObject {
             // Note: we must check the IndividualValue before the ModelObject types since the IndividualValue takes precedence
         } else if (valueA.get() instanceof ModelObject && valueB.get() instanceof ModelObject) {
             if (!((ModelObject)valueA.get()).equivalent(((ModelObject)valueB.get()), 
-                    isRelatedElement(propertyName) ? true : ignoreRelatedElements)) {
+                    isRelatedElement(propertyDescriptor) ? true : ignoreRelatedElements)) {
                 return false;
             }
             
@@ -1231,7 +1239,8 @@ public abstract class ModelObject {
 				// Need to add this to the list of document URI's
 				ModelObject.addValueToCollection(getModelStore(), getDocumentUri(), 
 						SpdxConstants.SPDX_DOCUMENT_ID, 
-						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF, retval, copyManager);
+						SpdxConstants.PROP_SPDX_EXTERNAL_DOC_REF,
+						retval, copyManager);
 				return retval;
 			}
 		} finally {

@@ -31,6 +31,7 @@ import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * This class helps facilitate copying objects from one model to another.
@@ -172,12 +173,12 @@ public class ModelCopyManager {
 		if (!(excludeLicenseDetails && 
 				(SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
 						SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
-			List<String> propertyNames = fromStore.getPropertyValueNames(fromDocumentUri, fromId);
-			for (String propName:propertyNames) {
-				if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-				    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName, excludeLicenseDetails);
+			List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromDocumentUri, fromId);
+			for (PropertyDescriptor propDesc:propertyDescriptors) {
+				if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propDesc)) {
+				    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propDesc, excludeLicenseDetails);
 				} else {
-				    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propName, excludeLicenseDetails);
+				    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propDesc, excludeLicenseDetails);
 				}
 			}
 		}
@@ -191,37 +192,37 @@ public class ModelCopyManager {
      * @param fromStore Model Store containing the source item
      * @param fromDocumentUri Document URI for the source item
      * @param fromId ID source ID
-     * @param propName Name of the property
+     * @param propDescriptor Descriptor for the property
      * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	private void copyIndividualProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
+            String fromDocumentUri, String fromId, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Optional<Object> result = Optional.empty();
 		try {
-			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-	            throw new InvalidSPDXAnalysisException("Property "+propName+" is a collection type");
+			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propDescriptor)) {
+	            throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is a collection type");
 	        }
-			result =  fromStore.getValue(fromDocumentUri, fromId, propName);
+			result =  fromStore.getValue(fromDocumentUri, fromId, propDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
         if (result.isPresent()) {
             if (result.get() instanceof IndividualUriValue) {
-                toStore.setValue(toDocumentUri, toId, propName, new SimpleUriValue((IndividualUriValue)result.get()));
+                toStore.setValue(toDocumentUri, toId, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
             } else if (result.get() instanceof TypedValue) {
                 TypedValue tv = (TypedValue)result.get();
                 if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri)) {
-                    toStore.setValue(toDocumentUri, toId, propName, tv);
+                    toStore.setValue(toDocumentUri, toId, propDescriptor, tv);
                 } else {
-                    toStore.setValue(toDocumentUri, toId, propName, 
+                    toStore.setValue(toDocumentUri, toId, propDescriptor, 
                             copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
                                     tv.getId(), tv.getType(), excludeLicenseDetails));
                 }
             } else {
-                toStore.setValue(toDocumentUri, toId, propName, result.get());
+                toStore.setValue(toDocumentUri, toId, propDescriptor, result.get());
             }
         }
     }
@@ -234,20 +235,20 @@ public class ModelCopyManager {
      * @param fromStore Model Store containing the source item
      * @param fromDocumentUri Document URI for the source item
      * @param fromId ID source ID
-	 * @param propName Name of the property
+	 * @param propDescriptor Descriptor for the property
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	private void copyCollectionProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, String propName, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
+            String fromDocumentUri, String fromId, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Iterator<Object> fromListIter = null;
 		try {
-			if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propName)) {
-		        throw new InvalidSPDXAnalysisException("Property "+propName+" is not a collection type");
+			if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propDescriptor)) {
+		        throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is not a collection type");
 		    }
-		    fromListIter = fromStore.listValues(fromDocumentUri, fromId, propName);
+		    fromListIter = fromStore.listValues(fromDocumentUri, fromId, propDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
@@ -267,7 +268,7 @@ public class ModelCopyManager {
             } else {
                 toStoreItem = listItem;
             }
-            toStore.addValueToCollection(toDocumentUri, toId, propName, toStoreItem);
+            toStore.addValueToCollection(toDocumentUri, toId, propDescriptor, toStoreItem);
         }
     }
 	

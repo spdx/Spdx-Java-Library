@@ -37,6 +37,7 @@ import org.spdx.library.model.license.ExtractedLicenseInfo;
 import org.spdx.library.model.license.SpdxListedLicense;
 import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * An SpdxDocument is a summary of the contents, provenance, ownership and licensing 
@@ -82,7 +83,7 @@ public class SpdxDocument extends SpdxElement {
 	}
 	
 	@Override
-	protected String getNamePropertyName() {
+	protected PropertyDescriptor getNamePropertyDescriptor() {
 		return SpdxConstants.PROP_NAME;
 	}
 

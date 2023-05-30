@@ -46,6 +46,7 @@ import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.library.model.license.SpdxListedLicenseException;
+import org.spdx.storage.PropertyDescriptor;
 
 import com.google.gson.Gson;
 
@@ -246,7 +247,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#getPropertyValueNames(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException  {
+	public List<PropertyDescriptor> getPropertyValueDescriptors(String documentUri, String id) throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -265,18 +266,23 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			} else if (crossRefs.containsKey(id)) {
 				crossRef = crossRefs.get(id);
 			}
+			List<PropertyDescriptor> retval = new ArrayList<>();
 			if (isLicenseId) {
 				LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
-				return license.getPropertyValueNames();
+				license.getPropertyValueNames().spliterator().forEachRemaining(
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
 			} else if (isExceptionId) {
 				ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
-				return exc.getPropertyValueNames();
+				exc.getPropertyValueNames().spliterator().forEachRemaining(
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
 			} else if (Objects.nonNull(crossRef)) {
-				return crossRef.getPropertyValueNames();
+				crossRef.getPropertyValueNames().spliterator().forEachRemaining(
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
 			} else {
 				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
 			}
+			return retval;
 		} finally {
 			listedLicenseModificationLock.readLock().unlock();
 		}
@@ -429,7 +435,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#setPrimitiveValue(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setValue(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
+	public void setValue(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -453,12 +459,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.setPrimativeValue(propertyName, value);
+			license.setPrimativeValue(propertyDescriptor.getName(), value);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.setPrimativeValue(propertyName, value);
+			exc.setPrimativeValue(propertyDescriptor.getName(), value);
 		} else if (Objects.nonNull(crossRef)) {
-			crossRef.setPrimativeValue(propertyName, value);
+			crossRef.setPrimativeValue(propertyDescriptor.getName(), value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -469,7 +475,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#clearPropertyValueList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void clearValueCollection(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	public void clearValueCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -493,12 +499,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.clearPropertyValueList(propertyName);
+			license.clearPropertyValueList(propertyDescriptor.getName());
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.clearPropertyValueList(propertyName);
+			exc.clearPropertyValueList(propertyDescriptor.getName());
 		}else if (Objects.nonNull(crossRef)) {
-			crossRef.clearPropertyValueList(propertyName);
+			crossRef.clearPropertyValueList(propertyDescriptor.getName());
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -509,7 +515,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#addPrimitiveValueToList(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)  throws InvalidSPDXAnalysisException  {
+	public boolean addValueToCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -533,7 +539,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
@@ -548,15 +554,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					logger.error("CrossRef with ID "+tv.getId()+" does not exist in the store.");
 					throw new InvalidSPDXAnalysisException("CrossRef with ID "+tv.getId()+" does not exist in the store.");	
 				}
-				return license.addCrossRefValueToList(propertyName, crj);
+				return license.addCrossRefValueToList(propertyDescriptor.getName(), crj);
 			} else {
-				return license.addPrimitiveValueToList(propertyName, value);
+				return license.addPrimitiveValueToList(propertyDescriptor.getName(), value);
 			}
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.addPrimitiveValueToList(propertyName, value);
+			return exc.addPrimitiveValueToList(propertyDescriptor.getName(), value);
 		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.addPrimitiveValueToList(propertyName, value);
+			return crossRef.addPrimitiveValueToList(propertyDescriptor.getName(), value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -564,7 +570,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
+	public boolean removeValueFromCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -589,7 +595,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
@@ -604,15 +610,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					logger.error("CrossRef with ID "+tv.getId()+" does not exist in the store.");
 					throw new InvalidSPDXAnalysisException("CrossRef with ID "+tv.getId()+" does not exist in the store.");	
 				}
-				return license.removePrimitiveValueToList(propertyName, crj);
+				return license.removePrimitiveValueToList(propertyDescriptor.getName(), crj);
 			} else {
-				return license.removePrimitiveValueToList(propertyName, value);
+				return license.removePrimitiveValueToList(propertyDescriptor.getName(), value);
 			}
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.removePrimitiveValueToList(propertyName, value);
+			return exc.removePrimitiveValueToList(propertyDescriptor.getName(), value);
 		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.removePrimitiveValueToList(propertyName, value);
+			return crossRef.removePrimitiveValueToList(propertyDescriptor.getName(), value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -624,7 +630,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	public Iterator<Object> listValues(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -648,8 +654,8 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyName)) {
+			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyDescriptor.getName());
+			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				final Iterator<Object> crossRefJsonIter = valueList.iterator();
 				return new Iterator<Object>() {
 
@@ -665,7 +671,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 							return null;
 						}
 						if (!(nextVal instanceof CrossRefJson)) {
-							throw new RuntimeException(new InvalidSPDXAnalysisException("Invalid type for "+propertyName+".  Must be of type CrossRefJson"));
+							throw new RuntimeException(new InvalidSPDXAnalysisException("Invalid type for "+propertyDescriptor+".  Must be of type CrossRefJson"));
 						}
 						CrossRefJson nextCrossRef = (CrossRefJson)nextVal;
 						String crossRefId = nextCrossRef.getId();
@@ -698,9 +704,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			}			
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).iterator();
+			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor.getName())).iterator();
 		} else if (Objects.nonNull(crossRef)) {
-			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).iterator();
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor.getName())).iterator();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -711,7 +717,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @see org.spdx.storage.IModelStore#getValue(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Optional<Object> getValue(String documentUri, String id, String propertyName)  throws InvalidSPDXAnalysisException  {
+	public Optional<Object> getValue(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -735,12 +741,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return Optional.ofNullable(license.getValue(propertyName));
+			return Optional.ofNullable(license.getValue(propertyDescriptor.getName()));
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return Optional.ofNullable(exc.getValue(propertyName));
+			return Optional.ofNullable(exc.getValue(propertyDescriptor.getName()));
 		} else if (Objects.nonNull(crossRef)) {
-			return Optional.ofNullable(crossRef.getValue(propertyName));
+			return Optional.ofNullable(crossRef.getValue(propertyDescriptor.getName()));
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -850,7 +856,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+	public void removeProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -874,12 +880,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.removeProperty(propertyName);
+			license.removeProperty(propertyDescriptor.getName());
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.removeProperty(propertyName);
+			exc.removeProperty(propertyDescriptor.getName());
 		} else if (Objects.nonNull(crossRef)) {
-			crossRef.removeProperty(propertyName);
+			crossRef.removeProperty(propertyDescriptor.getName());
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -923,7 +929,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+	public int collectionSize(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
@@ -947,12 +953,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return ((List<Object>)(List<?>)license.getValueList(propertyName)).size();		
+			return ((List<Object>)(List<?>)license.getValueList(propertyDescriptor.getName())).size();		
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).size();
+			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor.getName())).size();
 		} else if (Objects.nonNull(crossRef)) {
-			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).size();
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor.getName())).size();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -961,7 +967,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+	public boolean collectionContains(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -986,7 +992,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyName);
+			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyDescriptor.getName());
 			if (value instanceof TypedValue && SpdxConstants.CLASS_CROSS_REF.equals(((TypedValue)value).getType())) {
 				CrossRefJson compareValue = crossRefs.get(((TypedValue)value).getId());
 				if (Objects.isNull(compareValue)) {
@@ -999,9 +1005,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			}			
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return ((List<Object>)(List<?>)exc.getValueList(propertyName)).contains(value);
+			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor.getName())).contains(value);
 		} else if (Objects.nonNull(crossRef)) {
-			return ((List<Object>)(List<?>)crossRef.getValueList(propertyName)).contains(value);
+			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor.getName())).contains(value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1009,7 +1015,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -1034,12 +1040,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.isCollectionMembersAssignableTo(propertyName, clazz);
+			return license.isCollectionMembersAssignableTo(propertyDescriptor.getName(), clazz);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.isCollectionMembersAssignableTo(propertyName, clazz);
+			return exc.isCollectionMembersAssignableTo(propertyDescriptor.getName(), clazz);
 		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.isCollectionMembersAssignableTo(propertyName, clazz);
+			return crossRef.isCollectionMembersAssignableTo(propertyDescriptor.getName(), clazz);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1047,7 +1053,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 
 	@Override
-	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -1072,12 +1078,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.isPropertyValueAssignableTo(propertyName, clazz);
+			return license.isPropertyValueAssignableTo(propertyDescriptor.getName(), clazz);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.isPropertyValueAssignableTo(propertyName, clazz);
+			return exc.isPropertyValueAssignableTo(propertyDescriptor.getName(), clazz);
 		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.isPropertyValueAssignableTo(propertyName, clazz);
+			return crossRef.isPropertyValueAssignableTo(propertyDescriptor.getName(), clazz);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
@@ -1085,7 +1091,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
+	public boolean isCollectionProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
 		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
@@ -1110,12 +1116,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			return license.isCollectionProperty(propertyName);
+			return license.isCollectionProperty(propertyDescriptor.getName());
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.isCollectionProperty(propertyName);
+			return exc.isCollectionProperty(propertyDescriptor.getName());
 		} else if (Objects.nonNull(crossRef)) {
-			return crossRef.isCollectionProperty(propertyName);
+			return crossRef.isCollectionProperty(propertyDescriptor.getName());
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");

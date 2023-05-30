@@ -265,14 +265,14 @@ public class ExceptionJson {
 	}
 
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
-		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName)) {
+		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.getName().equals(propertyName)) {
 			return false;
 		}
 		return String.class.isAssignableFrom(clazz);
 	}
 
 	public boolean isCollectionProperty(String propertyName) {
-		return SpdxConstants.RDFS_PROP_SEE_ALSO.equals(propertyName);
+		return SpdxConstants.RDFS_PROP_SEE_ALSO.getName().equals(propertyName);
 	}
 
 }

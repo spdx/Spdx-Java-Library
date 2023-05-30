@@ -33,6 +33,7 @@ import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * An SpdxElement is any thing described in SPDX, either a document or an SpdxItem. 
@@ -263,7 +264,7 @@ public abstract class SpdxElement extends ModelObject {
 	/**
 	 * @return the property name used for the Name property.  Override this function if using a subproperty of SPDX Name
 	 */
-	protected String getNamePropertyName() {
+	protected PropertyDescriptor getNamePropertyDescriptor() {
 		return SpdxConstants.PROP_NAME;
 	}
 	
@@ -271,7 +272,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @return the name
 	 */
 	public Optional<String> getName() throws InvalidSPDXAnalysisException {
-		return this.getStringPropertyValue(getNamePropertyName());
+		return this.getStringPropertyValue(getNamePropertyDescriptor());
 	}
 	
 	/**
@@ -281,7 +282,7 @@ public abstract class SpdxElement extends ModelObject {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxElement setName(String name) throws InvalidSPDXAnalysisException {
-		this.setPropertyValue(getNamePropertyName(), name);
+		this.setPropertyValue(getNamePropertyDescriptor(), name);
 		return this;
 	}
 }

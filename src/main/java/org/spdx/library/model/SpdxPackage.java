@@ -42,6 +42,7 @@ import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.license.WithExceptionOperator;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * A Package represents a collection of software files that are
@@ -129,7 +130,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 	
 	@Override
-	protected String getNamePropertyName() {
+	protected PropertyDescriptor getNamePropertyDescriptor() {
 		return SpdxConstants.PROP_NAME;
 	}
 	

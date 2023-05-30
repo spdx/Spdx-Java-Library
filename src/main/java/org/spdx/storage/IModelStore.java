@@ -84,29 +84,29 @@ public interface IModelStore extends AutoCloseable {
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @return Property names for all properties having a value for a given id within a document
+	 * @return Property descriptors for all properties having a value for a given id within a document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException;
+	public List<PropertyDescriptor> getPropertyValueDescriptors(String documentUri, String id) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * Sets a property value for a String or Boolean type of value creating the propertyName if it does not exist
+	 * Sets a property value for a String or Boolean type of value creating the propertyDescriptor if it does not exist
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value value to set
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void setValue(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	public void setValue(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @return the single value associated with the id, propertyName and document
+	 * @param propertyDescriptor descriptor for the property
+	 * @return the single value associated with the id, propertyDescriptor and document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public Optional<Object> getValue(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * Generate a unique ID for use within the document
@@ -118,13 +118,13 @@ public interface IModelStore extends AutoCloseable {
 	public String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException;
 	
 	/**
-	 * Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyName does not exist
+	 * Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyDescriptor does not exist
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public void removeProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @return a list of all Document URI's stored in the model store
@@ -155,85 +155,85 @@ public interface IModelStore extends AutoCloseable {
 	 * Removes a value from a collection of values associated with a property
 	 * @param documentUri Unique document URI
 	 * @param id ID of the item to associate the property with
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value Value to be removed
 	 * @return 
 	 */
-	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	public boolean removeValueFromCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri Unique document URI
 	 * @param id ID of the item to associate the property with
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @return size of a collection associated with a property.  0 if the property does not exist.
 	 */
-	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public int collectionSize(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri Unique document URI
 	 * @param id ID of the item to associate the property with
-	 * @param propertyName name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value
 	 * @return true if the collection associated with a property contains the value
 	 */
-	public boolean collectionContains(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	public boolean collectionContains(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException;
 	
 	/**
-	 * Sets the value collection for the property to an empty collection creating the propertyName if it does not exist
+	 * Sets the value collection for the property to an empty collection creating the propertyDescriptor if it does not exist
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	void clearValueCollection(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	void clearValueCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
-	 * Adds a value to a property collection creating the propertyName if it does not exist
+	 * Adds a value to a property collection creating the propertyDescriptor if it does not exist
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value value to add
 	 * @return true if the collection was modified
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value) throws InvalidSPDXAnalysisException;
+	public boolean addValueToCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @return Iterator over the list of values associated with the id, propertyName and document
+	 * @param propertyDescriptor descriptor for the property
+	 * @return Iterator over the list of values associated with the id, propertyDescriptor and document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public Iterator<Object> listValues(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz Class to test compatibility with
-	 * @return true if all members of a collection associated with the id and propertyName can be assigned to the clazz
+	 * @return true if all members of a collection associated with the id and propertyDescriptor can be assigned to the clazz
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException;
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSPDXAnalysisException;
 	
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz Class to test compatibility with
-	 * @return true if the value associated with the id and propertyName can be assigned to the clazz
+	 * @return true if the value associated with the id and propertyDescriptor can be assigned to the clazz
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz) throws InvalidSPDXAnalysisException;
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param propertyName Name of the property
-	 * @return true if the propertyName represents multiple values
+	 * @param propertyDescriptor descriptor for the property
+	 * @return true if the propertyDescriptor represents multiple values
 	 */
-	public boolean isCollectionProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException;
+	public boolean isCollectionProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException;
 
 	/**
 	 * @param id

@@ -46,6 +46,7 @@ import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * @author Gary O'Neall
@@ -206,101 +207,99 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getPropertyValueNames();
+	public List<PropertyDescriptor> getPropertyValueDescriptors(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).getPropertyValueDescriptors();
 	}
 
 	@Override
-	public void setValue(String documentUri, String id, String propertyName, Object value)
+	public void setValue(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				getItem(documentUri, id).setValue(propertyName, value);
-				itemToBeStored.incReferenceCount();
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
-		} else {
-			getItem(documentUri, id).setValue(propertyName, value);
-		}
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+            try {
+                StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
+                getItem(documentUri, id).setValue(propertyDescriptor, value);
+                itemToBeStored.incReferenceCount();
+            } finally {
+                referenceCountLock.writeLock().unlock();
+            }
+	    } else {
+	        getItem(documentUri, id).setValue(propertyDescriptor, value);
+	    }
 	}
 
 	@Override
-	public void clearValueCollection(String documentUri, String id, String propertyName)
+	public void clearValueCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		referenceCountLock.writeLock().lock();
-		try {
-			List<StoredTypedItem> removedItems = new ArrayList<>();
-			Iterator<Object> iter = getItem(documentUri, id).getValueList(propertyName);
-			while (iter.hasNext()) {
-				Object nextItem = iter.next();
-				if (nextItem instanceof TypedValue) {
-					removedItems.add(getItem(documentUri, ((TypedValue)nextItem).getId()));
-				}
-			}
-			getItem(documentUri, id).clearPropertyValueList(propertyName);
-			for (StoredTypedItem item:removedItems) {
-				item.decReferenceCount();
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
-
+	    referenceCountLock.writeLock().lock();
+        try {
+            List<StoredTypedItem> removedItems = new ArrayList<>();
+            Iterator<Object> iter = getItem(documentUri, id).getValueList(propertyDescriptor);
+            while (iter.hasNext()) {
+                Object nextItem = iter.next();
+                if (nextItem instanceof TypedValue) {
+                    removedItems.add(getItem(documentUri, ((TypedValue)nextItem).getId()));
+                }
+            }
+            getItem(documentUri, id).clearPropertyValueList(propertyDescriptor);
+            for (StoredTypedItem item:removedItems) {
+                item.decReferenceCount();
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
 	}
 
 	@Override
-	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)
+	public boolean addValueToCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				boolean result = getItem(documentUri, id).addValueToList(propertyName, value);
-				itemToBeStored.incReferenceCount();
-				return result;
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
-		} else {
-			return getItem(documentUri, id).addValueToList(propertyName, value);
-		}
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+	        try {
+	            StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
+	            boolean result = getItem(documentUri, id).addValueToList(propertyDescriptor, value);
+	            itemToBeStored.incReferenceCount();
+	            return result;
+	        } finally {
+	            referenceCountLock.writeLock().unlock();
+	        }
+	    } else {
+	        return getItem(documentUri, id).addValueToList(propertyDescriptor, value);
+	    }
 	}
 
-
 	@Override
-	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
+	public boolean removeValueFromCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				boolean result = getItem(documentUri, id).removeValueFromList(propertyName, value);
-				itemToBeStored.decReferenceCount();
-				return result;
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
-		} else {
-			return getItem(documentUri, id).removeValueFromList(propertyName, value);
-		}
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+            try {
+                StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
+                boolean result = getItem(documentUri, id).removeValueFromList(propertyDescriptor, value);
+                itemToBeStored.decReferenceCount();
+                return result;
+            } finally {
+                referenceCountLock.writeLock().unlock();
+            }
+        } else {
+            return getItem(documentUri, id).removeValueFromList(propertyDescriptor, value);
+        }
 	}
 
 	@Override
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName)
+	public Iterator<Object> listValues(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getValueList(propertyName);
+		return getItem(documentUri, id).getValueList(propertyDescriptor);
 	}
 
 	@Override
-	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
+	public Optional<Object> getValue(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = getItem(documentUri, id);
-		if (item.isCollectionProperty(propertyName)) {
-			logger.warn("Returning a collection for a getValue call for property "+propertyName);
-			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyName, null ,null));
+		if (item.isCollectionProperty(propertyDescriptor)) {
+			logger.warn("Returning a collection for a getValue call for property "+propertyDescriptor);
+			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyDescriptor, null ,null));
 		} else {
-			return Optional.ofNullable(item.getValue(propertyName));
+			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}
 	}
 
@@ -318,17 +317,17 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		referenceCountLock.writeLock().lock();
-		try {
-			Object itemToBeRemoved = getItem(documentUri, id).getValue(propertyName);
-			getItem(documentUri, id).removeProperty(propertyName);
-			if (itemToBeRemoved instanceof TypedValue) {
-				getItem(documentUri, ((TypedValue)itemToBeRemoved).getId()).decReferenceCount();
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
+	public void removeProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+	    referenceCountLock.writeLock().lock();
+        try {
+            Object itemToBeRemoved = getItem(documentUri, id).getValue(propertyDescriptor);
+            getItem(documentUri, id).removeProperty(propertyDescriptor);
+            if (itemToBeRemoved instanceof TypedValue) {
+                getItem(documentUri, ((TypedValue)itemToBeRemoved).getId()).decReferenceCount();
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
 	}
 
 	@Override
@@ -355,32 +354,32 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).collectionSize(propertyName);
+	public int collectionSize(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		return getItem(documentUri, id).collectionSize(propertyDescriptor);
 	}
 
 	@Override
-	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+	public boolean collectionContains(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).collectionContains(propertyName, value);
+		return getItem(documentUri, id).collectionContains(propertyDescriptor, value);
 	}
 
 	@Override
-	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName,
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor,
 			Class<?> clazz) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isCollectionMembersAssignableTo(propertyName, clazz);
+		return getItem(documentUri, id).isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 	}
 
 	@Override
-	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isPropertyValueAssignableTo(propertyName, clazz);
+		return getItem(documentUri, id).isPropertyValueAssignableTo(propertyDescriptor, clazz);
 	}
 
 	@Override
-	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
+	public boolean isCollectionProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isCollectionProperty(propertyName);
+		return getItem(documentUri, id).isCollectionProperty(propertyDescriptor);
 	}
 
 	@Override
@@ -464,38 +463,38 @@ public class InMemSpdxStore implements IModelStore {
 			throw new SpdxIdNotFoundException("Error deleting - documentUri "+documentUri+" does not exits.");
 		}
 		referenceCountLock.writeLock().lock();
-		try {
-			if (getItem(documentUri, id).getReferenceCount() > 0) {
-				// find the element it is used by
-				logger.error("Can not delete ID "+id+".  It is in use");
-				throw new SpdxIdInUseException("Can not delete ID "+id+".  It is in use.");
-			}
-			List<String> propertyNames = this.getPropertyValueNames(documentUri, id);
-			for (String property:propertyNames) {
-				if (this.isCollectionProperty(documentUri, id, property)) {
-					Iterator<Object> iter = this.listValues(documentUri, id, property);
-					while (iter.hasNext()) {
-						Object val = iter.next();
-						if (val instanceof TypedValue) {
-							getItem(documentUri, ((TypedValue)val).getId()).decReferenceCount();
-						}
-					}
-				} else {
-					Optional<Object> val = getValue(documentUri, id, property);
-					if (val.isPresent()) {
-						if (val.get() instanceof TypedValue) {
-							getItem(documentUri, ((TypedValue)val.get()).getId()).decReferenceCount();
-						}
-					}
-				}
-			}
-			if (Objects.isNull(idMap.remove(id.toLowerCase()))) {
-				logger.error("Error deleting - ID "+id+" does not exist.");
-				throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
+        try {
+            if (getItem(documentUri, id).getReferenceCount() > 0) {
+                // find the element it is used by
+                logger.error("Can not delete ID "+id+".  It is in use");
+                throw new SpdxIdInUseException("Can not delete ID "+id+".  It is in use.");
+            }
+            List<PropertyDescriptor> propertyDescriptors = this.getPropertyValueDescriptors(documentUri, id);
+            for (PropertyDescriptor property:propertyDescriptors) {
+                if (this.isCollectionProperty(documentUri, id, property)) {
+                    Iterator<Object> iter = this.listValues(documentUri, id, property);
+                    while (iter.hasNext()) {
+                        Object val = iter.next();
+                        if (val instanceof TypedValue) {
+                            getItem(documentUri, ((TypedValue)val).getId()).decReferenceCount();
+                        }
+                    }
+                } else {
+                    Optional<Object> val = getValue(documentUri, id, property);
+                    if (val.isPresent()) {
+                        if (val.get() instanceof TypedValue) {
+                            getItem(documentUri, ((TypedValue)val.get()).getId()).decReferenceCount();
+                        }
+                    }
+                }
+            }
+            if (Objects.isNull(idMap.remove(id.toLowerCase()))) {
+                logger.error("Error deleting - ID "+id+" does not exist.");
+                throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
 	}
 
 	@Override

@@ -31,6 +31,7 @@ import org.spdx.library.Version;
 import org.spdx.library.model.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * An SpdxItem is a potentially copyrightable work.
@@ -70,7 +71,7 @@ public abstract class SpdxItem extends SpdxElement {
 	/**
 	 * @return Property name for licenseInfoFromFiles.  Override if using a subproperty of "licenseDeclared".
 	 */
-	protected String getLicenseInfoFromFilesPropertyName() {
+	protected PropertyDescriptor getLicenseInfoFromFilesPropertyName() {
 		return SpdxConstants.PROP_PACKAGE_LICENSE_INFO_FROM_FILES;
 	}
 	

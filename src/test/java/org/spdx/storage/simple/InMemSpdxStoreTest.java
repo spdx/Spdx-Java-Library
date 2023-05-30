@@ -37,6 +37,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.SpdxIdInUseException;
 import org.spdx.library.model.TypedValue;
+import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -61,9 +62,16 @@ public class InMemSpdxStoreTest extends TestCase {
 
 	static final String TEST_TYPE1 = SpdxConstants.CLASS_ANNOTATION;
 	static final String TEST_TYPE2 = SpdxConstants.CLASS_RELATIONSHIP;
-	static final String[] TEST_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3", "valueProp4"};
+	static final PropertyDescriptor[] TEST_VALUE_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("valueProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp3", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp4", SpdxConstants.SPDX_NAMESPACE)};
 	static final Object[] TEST_VALUE_PROPERTY_VALUES = new Object[] {"value1", true, "value2", null};
-	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3"};
+	static final PropertyDescriptor[] TEST_LIST_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("listProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp3", SpdxConstants.SPDX_NAMESPACE)};
 
 	protected static final int MAX_RETRIES = 10;
 	TypedValue[] TEST_TYPED_PROP_VALUES;
@@ -161,9 +169,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
-		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID2).size());
+		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID1).size());
+		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI2, TEST_ID1).size());
+		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID2).size());
 		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
 		    if (TEST_VALUE_PROPERTY_VALUES[i] instanceof TypedValue) {
 		        TypedValue tv = (TypedValue)TEST_VALUE_PROPERTY_VALUES[i];
@@ -180,16 +188,16 @@ public class InMemSpdxStoreTest extends TestCase {
 				store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		List<String> result = store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID1);
+		List<PropertyDescriptor> result = store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID1);
 		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, result.size());
-		for (String prop:TEST_VALUE_PROPERTIES) {
+		for (PropertyDescriptor prop:TEST_VALUE_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
-		for (String prop:TEST_LIST_PROPERTIES) {
+		for (PropertyDescriptor prop:TEST_LIST_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
-		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI2, TEST_ID1).size());
-		assertEquals(0, store.getPropertyValueNames(TEST_DOCUMENT_URI1, TEST_ID2).size());		
+		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI2, TEST_ID1).size());
+		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID2).size());		
 	}
 	
 	
@@ -546,19 +554,19 @@ public class InMemSpdxStoreTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
 		// Boolean
-		String bProperty = "boolprop";
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(true));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
-		String tvProperty = "tvprop";
+		PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
 		TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
 		store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
@@ -566,7 +574,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
 		// Empty
-		String emptyProperty = "emptyprop";
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 	}
 	
@@ -574,21 +582,21 @@ public class InMemSpdxStoreTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 2");
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
 		// Boolean
-		String bProperty = "boolprop";
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(true));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(false));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
-		String tvProperty  = "tvprop";
+		PropertyDescriptor tvProperty  = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
 	    TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
 	    store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
@@ -596,14 +604,14 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
 		// Mixed
-		String mixedProperty = "mixedprop";
+		PropertyDescriptor mixedProperty = new PropertyDescriptor("mixedprop", SpdxConstants.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, Boolean.valueOf(true));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, "mixed value");
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, String.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, TypedValue.class));
 		// Empty
-		String emptyProperty = "emptyprop";
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, TypedValue.class));
@@ -613,9 +621,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
-		String listProperty = "listProp";
+		PropertyDescriptor listProperty = new PropertyDescriptor("listProp", SpdxConstants.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, listProperty, "testValue");
 		assertTrue(store.isCollectionProperty(TEST_DOCUMENT_URI1, TEST_ID1, listProperty));
 		assertFalse(store.isCollectionProperty(TEST_DOCUMENT_URI1, TEST_ID1, sProperty));
@@ -690,10 +698,14 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.create(TEST_DOCUMENT_URI1, id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		store.create(TEST_DOCUMENT_URI1, id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		TypedValue tv3 = new TypedValue(id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv3);
+		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, 
+				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv3);
 		TypedValue tv4 = new TypedValue(id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv4);
-		store.setValue(TEST_DOCUMENT_URI1, id3, "property", new TypedValue(id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
+		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, 
+				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv4);
+		store.setValue(TEST_DOCUMENT_URI1, id3, 
+				new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE), 
+				new TypedValue(id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
 		
 		try {
 			store.delete(TEST_DOCUMENT_URI1, id3);
@@ -713,7 +725,8 @@ public class InMemSpdxStoreTest extends TestCase {
 		} catch (SpdxIdInUseException ex) {
 			// expected - id1 is in the property for id3
 		}
-		store.removeValueFromCollection(TEST_DOCUMENT_URI1, id2, "listProperty", tv4);
+		store.removeValueFromCollection(TEST_DOCUMENT_URI1, id2, 
+				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv4);
 		store.delete(TEST_DOCUMENT_URI1, id4);
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id4));
 		try {
@@ -722,7 +735,8 @@ public class InMemSpdxStoreTest extends TestCase {
 		} catch (SpdxIdInUseException ex) {
 			// expected - id3 is in the listProperty for id2
 		}
-		store.removeProperty(TEST_DOCUMENT_URI1, id3, "property");
+		store.removeProperty(TEST_DOCUMENT_URI1, id3, 
+				new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE));
 		store.delete(TEST_DOCUMENT_URI1, id1);
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id1));
 		store.delete(TEST_DOCUMENT_URI1, id2);
@@ -738,17 +752,23 @@ public class InMemSpdxStoreTest extends TestCase {
         StoredTypedItem item = store.getItem(TEST_DOCUMENT_URI1, TEST_ID1);
         assertEquals(0, item.getReferenceCount());
         TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
-        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1", tv);
+        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE), tv);
         assertEquals(1, item.getReferenceCount());
-        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
         assertEquals(2, item.getReferenceCount());
-        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop3", tv);
+        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop3", SpdxConstants.SPDX_NAMESPACE), tv);
         assertEquals(3, item.getReferenceCount());
-        store.removeProperty(TEST_DOCUMENT_URI1, TEST_ID2, "prop2");
+        store.removeProperty(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE));
         assertEquals(2, item.getReferenceCount());
-        store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+        store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
         assertEquals(1, item.getReferenceCount());
-        store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1");
+        store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE));
         assertEquals(0, item.getReferenceCount());
         store.delete(TEST_DOCUMENT_URI1, TEST_ID1);
 	}
@@ -760,11 +780,14 @@ public class InMemSpdxStoreTest extends TestCase {
 	        StoredTypedItem item = store.getItem(TEST_DOCUMENT_URI1, TEST_ID1);
 	        assertEquals(0, item.getReferenceCount());
 	        TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
-	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop1", tv);
+	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+	        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE), tv);
 	        assertEquals(1, item.getReferenceCount());
-	        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, "prop2", tv);
+	        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, 
+	        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
 	        assertEquals(2, item.getReferenceCount());
-	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, "prop3", tv);
+	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
+	        		new PropertyDescriptor("prop3", SpdxConstants.SPDX_NAMESPACE), tv);
 	        assertEquals(3, item.getReferenceCount());
 	        store.delete(TEST_DOCUMENT_URI1, TEST_ID2);
 	        assertEquals(0, item.getReferenceCount());

@@ -19,17 +19,17 @@ import junit.framework.TestCase;
 public class CrossRefJsonTest extends TestCase {
 	
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_CROSS_REF_MATCH,
-			SpdxConstants.PROP_CROSS_REF_TIMESTAMP,
-			SpdxConstants.PROP_CROSS_REF_URL);
+			SpdxConstants.PROP_CROSS_REF_MATCH.getName(),
+			SpdxConstants.PROP_CROSS_REF_TIMESTAMP.getName(),
+			SpdxConstants.PROP_CROSS_REF_URL.getName());
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_CROSS_REF_IS_LIVE,
-			SpdxConstants.PROP_CROSS_REF_IS_VALID,
-			SpdxConstants.PROP_CROSS_REF_WAYBACK_LINK
+			SpdxConstants.PROP_CROSS_REF_IS_LIVE.getName(),
+			SpdxConstants.PROP_CROSS_REF_IS_VALID.getName(),
+			SpdxConstants.PROP_CROSS_REF_WAYBACK_LINK.getName()
 			);
 	
-	static final List<String> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstants.PROP_CROSS_REF_ORDER);
+	static final List<String> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstants.PROP_CROSS_REF_ORDER.getName());
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	

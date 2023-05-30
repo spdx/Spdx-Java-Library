@@ -18,6 +18,8 @@ package org.spdx.library;
 
 import java.util.regex.Pattern;
 
+import org.spdx.storage.PropertyDescriptor;
+
 
 /**
  * Constants which map to the SPDX specifications found at http://spdx.org/rdf/terms
@@ -36,28 +38,29 @@ public class SpdxConstants {
 	public static final String XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 	
 	// RDF Properties - within the RDF_NAMESPACE
-	public static final String RDF_PROP_TYPE = "type";
-	public static final String RDF_PROP_RESOURCE = "resource";
-	public static final String[] RDF_PROPERTIES = new String[] {RDF_PROP_TYPE, RDF_PROP_RESOURCE};
+	public static final PropertyDescriptor RDF_PROP_TYPE = new PropertyDescriptor("type", RDF_NAMESPACE);
+	public static final PropertyDescriptor RDF_PROP_RESOURCE = new PropertyDescriptor("resource", RDF_NAMESPACE);
+	public static final String[] RDF_PROPERTIES = new String[] {RDF_PROP_TYPE.getName(), RDF_PROP_RESOURCE.getName()};
 	
 	
 	// OWL Properties - within the OWL_NAMESPACE
-	public static final String PROP_OWL_SAME_AS = "sameAs";
-	public static final String[] OWL_PROPERTIES = new String[] {PROP_OWL_SAME_AS};
+	public static final PropertyDescriptor PROP_OWL_SAME_AS = new PropertyDescriptor("sameAs", OWL_NAMESPACE);
+	public static final String[] OWL_PROPERTIES = new String[] {PROP_OWL_SAME_AS.getName()};
 	
 	// RDFS Properties - within the RDFS_NAMESPACE
-	public static final String RDFS_PROP_COMMENT = "comment";
-	public static final String RDFS_PROP_LABEL = "label";
-	public static final String RDFS_PROP_SEE_ALSO = "seeAlso";
-	public static final String[] RDFS_PROPERTIES = new String[] {RDFS_PROP_COMMENT, RDFS_PROP_LABEL, RDFS_PROP_SEE_ALSO};
+	public static final PropertyDescriptor RDFS_PROP_COMMENT = new PropertyDescriptor("comment", RDFS_NAMESPACE);
+	public static final PropertyDescriptor RDFS_PROP_LABEL = new PropertyDescriptor("label", RDFS_NAMESPACE);
+	public static final PropertyDescriptor RDFS_PROP_SEE_ALSO = new PropertyDescriptor("seeAlso", RDFS_NAMESPACE);
+	public static final String[] RDFS_PROPERTIES = new String[] {RDFS_PROP_COMMENT.getName(), 
+			RDFS_PROP_LABEL.getName(), RDFS_PROP_SEE_ALSO.getName()};
 	
 	// DOAP Class Names - within the DOAP_NAMESPACE
 	public static final String CLASS_DOAP_PROJECT = "Project";
 	public static final String[] DOAP_CLASSES = {CLASS_DOAP_PROJECT};
 	
 	// DOAP Project Property Names - within the DOAP_NAMESPACE
-	public static final String PROP_PROJECT_HOMEPAGE = "homepage";
-	public static final String[] DOAP_PROPERTIES = new String[] {PROP_PROJECT_HOMEPAGE};
+	public static final PropertyDescriptor PROP_PROJECT_HOMEPAGE = new PropertyDescriptor("homepage", DOAP_NAMESPACE);
+	public static final String[] DOAP_PROPERTIES = new String[] {PROP_PROJECT_HOMEPAGE.getName()};
 	
 	// Pointer Class Names - with in the RDF_POINTER_NAMESPACE
 	public static final String CLASS_POINTER_START_END_POINTER = "StartEndPointer";
@@ -71,14 +74,15 @@ public class SpdxConstants {
 			};
 	
 	// Pointer Properties - with in the RDF_POINTER_NAMESPACE
-	public static final String PROP_POINTER_START_POINTER = "startPointer";
-	public static final String PROP_POINTER_END_POINTER = "endPointer";
-	public static final String PROP_POINTER_REFERENCE = "reference";
-	public static final String PROP_POINTER_OFFSET = "offset";
-	public static final String PROP_POINTER_LINE_NUMBER = "lineNumber";
+	public static final PropertyDescriptor PROP_POINTER_START_POINTER = new PropertyDescriptor("startPointer", RDF_POINTER_NAMESPACE);
+	public static final PropertyDescriptor PROP_POINTER_END_POINTER = new PropertyDescriptor("endPointer", RDF_POINTER_NAMESPACE);
+	public static final PropertyDescriptor PROP_POINTER_REFERENCE = new PropertyDescriptor("reference", RDF_POINTER_NAMESPACE);
+	public static final PropertyDescriptor PROP_POINTER_OFFSET = new PropertyDescriptor("offset", RDF_POINTER_NAMESPACE);
+	public static final PropertyDescriptor PROP_POINTER_LINE_NUMBER = new PropertyDescriptor("lineNumber", RDF_POINTER_NAMESPACE);
 	public static final String[] POINTER_PROPERTIES = new String[] {
-			PROP_POINTER_START_POINTER, PROP_POINTER_END_POINTER, PROP_POINTER_REFERENCE, PROP_POINTER_OFFSET,
-			PROP_POINTER_LINE_NUMBER
+			PROP_POINTER_START_POINTER.getName(), PROP_POINTER_END_POINTER.getName(),
+			PROP_POINTER_REFERENCE.getName(), PROP_POINTER_OFFSET.getName(),
+			PROP_POINTER_LINE_NUMBER.getName()
 	};
 	
 	// SPDX Class Names
@@ -145,124 +149,122 @@ public class SpdxConstants {
 	public static final String ENUM_REFERENCE_RELATIONSHIP_TYPE = "RelationshipType";
 	public static final String ENUM_PURPOSE = "Purpose";
 	// General SPDX Properties
-	public static final String PROP_VALUE_NONE = "none";
-	public static final String URI_VALUE_NONE = SPDX_NAMESPACE  + PROP_VALUE_NONE;
-	public static final String PROP_VALUE_NOASSERTION = "noassertion";
-	public static final String URI_VALUE_NOASSERTION = SPDX_NAMESPACE + PROP_VALUE_NOASSERTION;
+	public static final PropertyDescriptor PROP_VALUE_NONE = new PropertyDescriptor("none", SPDX_NAMESPACE);
+	public static final String URI_VALUE_NONE = PROP_VALUE_NONE.toString();
+	public static final PropertyDescriptor PROP_VALUE_NOASSERTION = new PropertyDescriptor("noassertion", SPDX_NAMESPACE);
+	public static final String URI_VALUE_NOASSERTION = PROP_VALUE_NOASSERTION.toString();
 	public static final String SPDX_IDENTIFIER = "SPDXID";
 	public static final String EXTERNAL_DOCUMENT_REF_IDENTIFIER = "externalDocumentId";
 	
 	// SPDX Document Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
-	public static final String PROP_SPDX_REVIEWED_BY = "reviewed";
-	public static final String PROP_SPDX_EXTRACTED_LICENSES = "hasExtractedLicensingInfo";
-	public static final String PROP_SPDX_VERSION = "specVersion"; // TODO: Migrate this to PROP_SPDX_SPEC_VERSION in 3.0.  See issue 
-	public static final String PROP_SPDX_SPEC_VERSION = "spdxVersion";
-	public static final String PROP_SPDX_CREATION_INFO = "creationInfo";
-	public static final String PROP_SPDX_PACKAGE = "describesPackage";
-	@Deprecated		// since 2.0  Planned to be removed in next major spec revision
-	public static final String PROP_SPDX_FILE_REFERENCE = "referencesFile";
-	public static final String PROP_SPDX_DATA_LICENSE = "dataLicense";
-	public static final String PROP_SPDX_EXTERNAL_DOC_REF = "externalDocumentRef";
+	public static final PropertyDescriptor PROP_SPDX_REVIEWED_BY = new PropertyDescriptor("reviewed", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_EXTRACTED_LICENSES = new PropertyDescriptor("hasExtractedLicensingInfo", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_VERSION = new PropertyDescriptor("specVersion", SPDX_NAMESPACE); // TODO: Migrate this to PROP_SPDX_SPEC_VERSION in 3.0.  See issue 
+	public static final PropertyDescriptor PROP_SPDX_SPEC_VERSION = new PropertyDescriptor("spdxVersion", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_CREATION_INFO = new PropertyDescriptor("creationInfo", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_PACKAGE = new PropertyDescriptor("describesPackage", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_DATA_LICENSE = new PropertyDescriptor("dataLicense", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_EXTERNAL_DOC_REF = new PropertyDescriptor("externalDocumentRef", SPDX_NAMESPACE);
 	public static final String SPDX_DOCUMENT_ID = "SPDXRef-DOCUMENT";
-	public static final String PROP_DOCUMENT_NAMESPACE = "documentNamespace";
+	public static final PropertyDescriptor PROP_DOCUMENT_NAMESPACE = new PropertyDescriptor("documentNamespace", SPDX_NAMESPACE);
 	
 	// SPDX Document properties for JSON and YAML files
-	public static final String PROP_DOCUMENT_DESCRIBES = "documentDescribes"; //TODO: This is not yet approved in the spec - see issue #
-	public static final String PROP_DOCUMENT_FILES = "files"; //TODO: This is not yet approved in the spec - see issue #
-	public static final String PROP_DOCUMENT_PACKAGES = "packages"; //TODO: This is not yet approved in the spec - see issue #
-	public static final String PROP_DOCUMENT_SNIPPETS = "snippets"; //TODO: This is not yet approved in the spec - see issue #
-	public static final String PROP_DOCUMENT_RELATIONSHIPS = "relationships"; //TODO: This is not yet approved in the spec - see issue #
+	public static final PropertyDescriptor PROP_DOCUMENT_DESCRIBES = new PropertyDescriptor("documentDescribes", SPDX_NAMESPACE); //TODO: This is not yet approved in the spec - see issue #
+	public static final PropertyDescriptor PROP_DOCUMENT_FILES = new PropertyDescriptor("files", SPDX_NAMESPACE); //TODO: This is not yet approved in the spec - see issue #
+	public static final PropertyDescriptor PROP_DOCUMENT_PACKAGES = new PropertyDescriptor("packages", SPDX_NAMESPACE); //TODO: This is not yet approved in the spec - see issue #
+	public static final PropertyDescriptor PROP_DOCUMENT_SNIPPETS = new PropertyDescriptor("snippets", SPDX_NAMESPACE); //TODO: This is not yet approved in the spec - see issue #
+	public static final PropertyDescriptor PROP_DOCUMENT_RELATIONSHIPS = new PropertyDescriptor("relationships", SPDX_NAMESPACE); //TODO: This is not yet approved in the spec - see issue #
 	
 	// SPDX CreationInfo Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
-	public static final String PROP_CREATION_CREATOR = "creator";
-	public static final String PROP_CREATION_CREATED = "created"; // creation timestamp
-	public static final String PROP_LICENSE_LIST_VERSION = "licenseListVersion";
+	public static final PropertyDescriptor PROP_CREATION_CREATOR = new PropertyDescriptor("creator", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CREATION_CREATED = new PropertyDescriptor("created", SPDX_NAMESPACE); // creation timestamp
+	public static final PropertyDescriptor PROP_LICENSE_LIST_VERSION = new PropertyDescriptor("licenseListVersion", SPDX_NAMESPACE);
 	public static final String CREATOR_PREFIX_PERSON = "Person:";
 	public static final String CREATOR_PREFIX_ORGANIZATION = "Organization:";
 	public static final String CREATOR_PREFIX_TOOL = "Tool:";
 	
 	// SPDX Checksum Properties
-	public static final String PROP_CHECKSUM_ALGORITHM = "algorithm";
-	public static final String PROP_CHECKSUM_VALUE = "checksumValue";
+	public static final PropertyDescriptor PROP_CHECKSUM_ALGORITHM = new PropertyDescriptor("algorithm", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CHECKSUM_VALUE = new PropertyDescriptor("checksumValue", SPDX_NAMESPACE);
 	public static final String ALGORITHM_SHA1 = "SHA1";
 	public static final String PROP_CHECKSUM_ALGORITHM_SHA1 = "checksumAlgorithm_sha1";
 	
 	// SPDX PackageVerificationCode Properties
-	public static final String PROP_VERIFICATIONCODE_IGNORED_FILES = "packageVerificationCodeExcludedFile";
-	public static final String PROP_VERIFICATIONCODE_VALUE = "packageVerificationCodeValue";
+	public static final PropertyDescriptor PROP_VERIFICATIONCODE_IGNORED_FILES = new PropertyDescriptor("packageVerificationCodeExcludedFile", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_VERIFICATIONCODE_VALUE = new PropertyDescriptor("packageVerificationCodeValue", SPDX_NAMESPACE);
 
 	// SPDX Element Properties 
-	public static final String PROP_ANNOTATION = "annotation";
-	public static final String PROP_RELATIONSHIP = "relationship";
+	public static final PropertyDescriptor PROP_ANNOTATION = new PropertyDescriptor("annotation", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_RELATIONSHIP = new PropertyDescriptor("relationship", SPDX_NAMESPACE);
 	
 	// SPDX Item Properties 
-	public static final String PROP_LICENSE_CONCLUDED = "licenseConcluded";
-	public static final String PROP_COPYRIGHT_TEXT = "copyrightText";	
-	public static final String PROP_LIC_COMMENTS = "licenseComments";
-	public static final String PROP_LICENSE_DECLARED = "licenseDeclared";
-	public static final String PROP_ATTRIBUTION_TEXT = "attributionText";
+	public static final PropertyDescriptor PROP_LICENSE_CONCLUDED = new PropertyDescriptor("licenseConcluded", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_COPYRIGHT_TEXT = new PropertyDescriptor("copyrightText", SPDX_NAMESPACE);	
+	public static final PropertyDescriptor PROP_LIC_COMMENTS = new PropertyDescriptor("licenseComments", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_DECLARED = new PropertyDescriptor("licenseDeclared", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_ATTRIBUTION_TEXT = new PropertyDescriptor("attributionText", SPDX_NAMESPACE);
 	
 	// SPDX Package Properties
-	public static final String PROP_PACKAGE_DECLARED_NAME = "name";
-	public static final String PROP_PACKAGE_FILE_NAME = "packageFileName";
-	public static final String PROP_PACKAGE_CHECKSUM = "checksum";
-	public static final String PROP_PACKAGE_DOWNLOAD_URL = "downloadLocation";
-	public static final String PROP_PACKAGE_SOURCE_INFO = "sourceInfo";
-	public static final String PROP_PACKAGE_DECLARED_LICENSE = "licenseDeclared";
-	public static final String PROP_PACKAGE_CONCLUDED_LICENSE = PROP_LICENSE_CONCLUDED;
-	public static final String PROP_PACKAGE_DECLARED_COPYRIGHT = PROP_COPYRIGHT_TEXT;
-	public static final String PROP_PACKAGE_SHORT_DESC = "summary";
-	public static final String PROP_PACKAGE_DESCRIPTION = "description";
-	public static final String PROP_PACKAGE_FILE = "hasFile";
-	public static final String PROP_PACKAGE_VERIFICATION_CODE = "packageVerificationCode";
-	public static final String PROP_PACKAGE_LICENSE_INFO_FROM_FILES = "licenseInfoFromFiles";
-	public static final String PROP_PACKAGE_LICENSE_COMMENT = "licenseComments";
-	public static final String PROP_PACKAGE_VERSION_INFO = "versionInfo";
-	public static final String PROP_PACKAGE_ORIGINATOR = "originator";
-	public static final String PROP_PACKAGE_SUPPLIER = "supplier";
-	public static final String PROP_PACKAGE_FILES_ANALYZED = "filesAnalyzed";
-	public static final String PROP_EXTERNAL_REF = "externalRef";
-	public static final String PROP_PRIMARY_PACKAGE_PURPOSE = "primaryPackagePurpose";
-	public static final String PROP_BUILT_DATE = "builtDate";
-	public static final String PROP_RELEASE_DATE = "releaseDate";
-	public static final String PROP_VALID_UNTIL_DATE = "validUntilDate";
+	public static final PropertyDescriptor PROP_PACKAGE_DECLARED_NAME = new PropertyDescriptor("name", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_FILE_NAME = new PropertyDescriptor("packageFileName", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_CHECKSUM = new PropertyDescriptor("checksum", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_DOWNLOAD_URL = new PropertyDescriptor("downloadLocation", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_SOURCE_INFO = new PropertyDescriptor("sourceInfo", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_DECLARED_LICENSE = new PropertyDescriptor("licenseDeclared", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_CONCLUDED_LICENSE = PROP_LICENSE_CONCLUDED;
+	public static final PropertyDescriptor PROP_PACKAGE_DECLARED_COPYRIGHT = PROP_COPYRIGHT_TEXT;
+	public static final PropertyDescriptor PROP_PACKAGE_SHORT_DESC = new PropertyDescriptor("summary", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_DESCRIPTION = new PropertyDescriptor("description", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_FILE = new PropertyDescriptor("hasFile", SPDX_NAMESPACE);;
+	public static final PropertyDescriptor PROP_PACKAGE_VERIFICATION_CODE = new PropertyDescriptor("packageVerificationCode", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_LICENSE_INFO_FROM_FILES = new PropertyDescriptor("licenseInfoFromFiles", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_LICENSE_COMMENT = new PropertyDescriptor("licenseComments", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_VERSION_INFO = new PropertyDescriptor("versionInfo", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_ORIGINATOR = new PropertyDescriptor("originator", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_SUPPLIER = new PropertyDescriptor("supplier", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PACKAGE_FILES_ANALYZED = new PropertyDescriptor("filesAnalyzed", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXTERNAL_REF = new PropertyDescriptor("externalRef", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_PRIMARY_PACKAGE_PURPOSE = new PropertyDescriptor("primaryPackagePurpose", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_BUILT_DATE = new PropertyDescriptor("builtDate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_RELEASE_DATE = new PropertyDescriptor("releaseDate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_VALID_UNTIL_DATE = new PropertyDescriptor("validUntilDate", SPDX_NAMESPACE);
 	public static final Pattern REFERENCE_TYPE_URI_PATTERN = Pattern.compile("https?://spdx.org/rdf/references/.+");
 	
 	// SPDX License Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
 	// the seeAlso property is in the RDFS_PROP_SEE_ALSO property in the rdfs namespace
-	public static final String PROP_LICENSE_ID = "licenseId";
-	public static final String PROP_LICENSE_TEXT = "licenseText";
-	public static final String PROP_LICENSE_TEXT_HTML = "licenseTextHtml";
-	public static final String PROP_EXTRACTED_TEXT = "extractedText";
-	public static final String PROP_LICENSE_NAME = "licenseName";
-	public static final String PROP_STD_LICENSE_NAME_VERSION_1 = "licenseName";	// old property name (pre 1.1 spec)
-	public static final String PROP_STD_LICENSE_NAME = "name";
-	public static final String PROP_STD_LICENSE_URL_VERSION_1 = "licenseSourceUrl";	// This has been replaced with the rdfs:seeAlso property
-	public static final String PROP_STD_LICENSE_NOTES_VERSION_1 = "licenseNotes";	// old property name (pre 1.1 spec)
-	public static final String PROP_STD_LICENSE_HEADER_VERSION_1 = "licenseHeader";	// old property name (pre 1.1 spec)
-	public static final String PROP_STD_LICENSE_NOTICE = "standardLicenseHeader";
-	public static final String PROP_STD_LICENSE_HEADER_TEMPLATE = "standardLicenseHeaderTemplate";
-	public static final String PROP_LICENSE_HEADER_HTML = "standardLicenseHeaderHtml";
-	public static final String PROP_STD_LICENSE_TEMPLATE_VERSION_1 = "licenseTemplate";		// old property name (pre 1.2 spec)
-	public static final String PROP_STD_LICENSE_TEMPLATE = "standardLicenseTemplate";
-	public static final String PROP_STD_LICENSE_OSI_APPROVED = "isOsiApproved";
-	public static final String PROP_STD_LICENSE_FSF_LIBRE = "isFsfLibre";
-	public static final String PROP_STD_LICENSE_OSI_APPROVED_VERSION_1 = "licenseOsiApproved";	// old property name (pre 1.1 spec)
-	public static final String PROP_LICENSE_SET_MEMEBER = "member";
-	public static final String TERM_LICENSE_NOASSERTION = PROP_VALUE_NOASSERTION;
-	public static final String TERM_LICENSE_NONE = PROP_VALUE_NONE;
-	public static final String PROP_LICENSE_EXCEPTION_ID = "licenseExceptionId";
-	public static final String PROP_EXAMPLE = "example";
-	public static final String PROP_EXCEPTION_TEXT = "licenseExceptionText";
-	public static final String PROP_EXCEPTION_TEXT_HTML = "exceptionTextHtml";
-	public static final String PROP_EXCEPTION_TEMPLATE = "licenseExceptionTemplate";
-	public static final String PROP_LICENSE_EXCEPTION = "licenseException";
-	public static final String PROP_LIC_ID_DEPRECATED = "isDeprecatedLicenseId";
-	public static final String PROP_LIC_DEPRECATED_VERSION = "deprecatedVersion";
-	public static final String PROP_CROSS_REF = "crossRef";
+	public static final PropertyDescriptor PROP_LICENSE_ID = new PropertyDescriptor("licenseId", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_TEXT = new PropertyDescriptor("licenseText", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_TEXT_HTML = new PropertyDescriptor("licenseTextHtml", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXTRACTED_TEXT = new PropertyDescriptor("extractedText", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_NAME = new PropertyDescriptor("licenseName", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_NAME_VERSION_1 = new PropertyDescriptor("licenseName", SPDX_NAMESPACE);	// old property name (pre 1.1 spec)
+	public static final PropertyDescriptor PROP_STD_LICENSE_NAME = new PropertyDescriptor("name", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_URL_VERSION_1 = new PropertyDescriptor("licenseSourceUrl", SPDX_NAMESPACE);	// This has been replaced with the rdfs:seeAlso property
+	public static final PropertyDescriptor PROP_STD_LICENSE_NOTES_VERSION_1 = new PropertyDescriptor("licenseNotes", SPDX_NAMESPACE);	// old property name (pre 1.1 spec)
+	public static final PropertyDescriptor PROP_STD_LICENSE_HEADER_VERSION_1 = new PropertyDescriptor("licenseHeader", SPDX_NAMESPACE);	// old property name (pre 1.1 spec)
+	public static final PropertyDescriptor PROP_STD_LICENSE_NOTICE = new PropertyDescriptor("standardLicenseHeader", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_HEADER_TEMPLATE = new PropertyDescriptor("standardLicenseHeaderTemplate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_HEADER_HTML = new PropertyDescriptor("standardLicenseHeaderHtml", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_TEMPLATE_VERSION_1 = new PropertyDescriptor("licenseTemplate", SPDX_NAMESPACE);		// old property name (pre 1.2 spec)
+	public static final PropertyDescriptor PROP_STD_LICENSE_TEMPLATE = new PropertyDescriptor("standardLicenseTemplate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_OSI_APPROVED = new PropertyDescriptor("isOsiApproved", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_FSF_LIBRE = new PropertyDescriptor("isFsfLibre", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_STD_LICENSE_OSI_APPROVED_VERSION_1 = new PropertyDescriptor("licenseOsiApproved", SPDX_NAMESPACE);	// old property name (pre 1.1 spec)
+	public static final PropertyDescriptor PROP_LICENSE_SET_MEMEBER = new PropertyDescriptor("member", SPDX_NAMESPACE);
+	public static final String TERM_LICENSE_NOASSERTION = PROP_VALUE_NOASSERTION.getName();
+	public static final String TERM_LICENSE_NONE = PROP_VALUE_NONE.getName();
+	public static final PropertyDescriptor PROP_LICENSE_EXCEPTION_ID = new PropertyDescriptor("licenseExceptionId", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXAMPLE = new PropertyDescriptor("example", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXCEPTION_TEXT = new PropertyDescriptor("licenseExceptionText", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXCEPTION_TEXT_HTML = new PropertyDescriptor("exceptionTextHtml", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXCEPTION_TEMPLATE = new PropertyDescriptor("licenseExceptionTemplate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_EXCEPTION = new PropertyDescriptor("licenseException", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LIC_ID_DEPRECATED = new PropertyDescriptor("isDeprecatedLicenseId", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LIC_DEPRECATED_VERSION = new PropertyDescriptor("deprecatedVersion", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF = new PropertyDescriptor("crossRef", SPDX_NAMESPACE);
 	
 	// SPDX Listed License constants
 	public static final String LISTED_LICENSE_URL = "https://spdx.org/licenses/";
@@ -271,35 +273,35 @@ public class SpdxConstants {
 	public static final String LISTED_LICENSE_NAMESPACE_PREFIX = "http://spdx.org/licenses/";
 	
 	// crossrefs details (crossRef) properties
-	public static final String PROP_CROSS_REF_IS_VALID = "isValid";
-	public static final String PROP_CROSS_REF_WAYBACK_LINK = "isWayBackLink";
-	public static final String PROP_CROSS_REF_MATCH = "match";
-	public static final String PROP_CROSS_REF_URL = "url";
-	public static final String PROP_CROSS_REF_IS_LIVE = "isLive";
-	public static final String PROP_CROSS_REF_TIMESTAMP = "timestamp";
-	public static final String PROP_CROSS_REF_ORDER = "order";
+	public static final PropertyDescriptor PROP_CROSS_REF_IS_VALID = new PropertyDescriptor("isValid", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_WAYBACK_LINK = new PropertyDescriptor("isWayBackLink", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_MATCH = new PropertyDescriptor("match", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_URL = new PropertyDescriptor("url", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_IS_LIVE = new PropertyDescriptor("isLive", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_TIMESTAMP = new PropertyDescriptor("timestamp", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_CROSS_REF_ORDER = new PropertyDescriptor("order", SPDX_NAMESPACE);
 	
 	// SpdxElement Properties
-	public static final String PROP_NAME = "name";
+	public static final PropertyDescriptor PROP_NAME = new PropertyDescriptor("name", SPDX_NAMESPACE);
 	
 	// SPDX File Properties
 	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
-	public static final String PROP_FILE_NAME = "fileName";
-	public static final String PROP_FILE_TYPE = "fileType";
-	public static final String PROP_FILE_LICENSE = PROP_LICENSE_CONCLUDED;
-	public static final String PROP_FILE_COPYRIGHT = PROP_COPYRIGHT_TEXT;
-	public static final String PROP_FILE_CHECKSUM = "checksum";
-	public static final String PROP_FILE_SEEN_LICENSE = "licenseInfoInFile";	
-	public static final String PROP_FILE_LIC_COMMENTS = PROP_LIC_COMMENTS;
-	public static final String PROP_FILE_ARTIFACTOF = "artifactOf";
-	public static final String PROP_FILE_FILE_DEPENDENCY = "fileDependency"; 
-	public static final String PROP_FILE_CONTRIBUTOR = "fileContributor";
-	public static final String PROP_FILE_NOTICE = "noticeText";
+	public static final PropertyDescriptor PROP_FILE_NAME = new PropertyDescriptor("fileName", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_FILE_TYPE = new PropertyDescriptor("fileType", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_FILE_LICENSE = PROP_LICENSE_CONCLUDED;
+	public static final PropertyDescriptor PROP_FILE_COPYRIGHT = PROP_COPYRIGHT_TEXT;
+	public static final PropertyDescriptor PROP_FILE_CHECKSUM = new PropertyDescriptor("checksum", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_FILE_SEEN_LICENSE = new PropertyDescriptor("licenseInfoInFile", SPDX_NAMESPACE);	
+	public static final PropertyDescriptor PROP_FILE_LIC_COMMENTS = PROP_LIC_COMMENTS;
+	public static final PropertyDescriptor PROP_FILE_ARTIFACTOF = new PropertyDescriptor("artifactOf", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_FILE_FILE_DEPENDENCY = new PropertyDescriptor("fileDependency", SPDX_NAMESPACE); 
+	public static final PropertyDescriptor PROP_FILE_CONTRIBUTOR = new PropertyDescriptor("fileContributor", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_FILE_NOTICE = new PropertyDescriptor("noticeText", SPDX_NAMESPACE);
 	
 	// SPDX Snippet Properties
-	public static final String PROP_SNIPPET_FROM_FILE = "snippetFromFile";
-	public static final String PROP_SNIPPET_RANGE = "range";
-	public static final String PROP_LICENSE_INFO_FROM_SNIPPETS = "licenseInfoInSnippet";
+	public static final PropertyDescriptor PROP_SNIPPET_FROM_FILE = new PropertyDescriptor("snippetFromFile", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SNIPPET_RANGE = new PropertyDescriptor("range", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_LICENSE_INFO_FROM_SNIPPETS = new PropertyDescriptor("licenseInfoInSnippet", SPDX_NAMESPACE);
 	
 	// SPDX File Type Properties
 	public static final String PROP_FILE_TYPE_SOURCE = "fileType_source";
@@ -313,32 +315,24 @@ public class SpdxConstants {
 	public static final String FILE_TYPE_OTHER = "OTHER";
 	
 	// SPDX Annotation Properties
-	public static final String PROP_ANNOTATOR = "annotator";
-	public static final String PROP_ANNOTATION_DATE = "annotationDate";
-	public static final String PROP_ANNOTATION_TYPE = "annotationType";
+	public static final PropertyDescriptor PROP_ANNOTATOR = new PropertyDescriptor("annotator", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_ANNOTATION_DATE = new PropertyDescriptor("annotationDate", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_ANNOTATION_TYPE = new PropertyDescriptor("annotationType", SPDX_NAMESPACE);
 	
 	// SPDX Relationship Properties
-	public static final String PROP_RELATED_SPDX_ELEMENT = "relatedSpdxElement";
-	public static final String PROP_RELATIONSHIP_TYPE = "relationshipType";
-	public static final String PROP_SPDX_ELEMENTID = "spdxElementId";
+	public static final PropertyDescriptor PROP_RELATED_SPDX_ELEMENT = new PropertyDescriptor("relatedSpdxElement", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_RELATIONSHIP_TYPE = new PropertyDescriptor("relationshipType", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_SPDX_ELEMENTID = new PropertyDescriptor("spdxElementId", SPDX_NAMESPACE);
 	
 	// ExternalDocumentRef properties
-	public static final String PROP_EXTERNAL_DOC_CHECKSUM = "checksum";
-	public static final String PROP_EXTERNAL_SPDX_DOCUMENT = "spdxDocument";
-	public static final String PROP_EXTERNAL_DOCUMENT_ID = "externalDocumentId";
+	public static final PropertyDescriptor PROP_EXTERNAL_DOC_CHECKSUM = new PropertyDescriptor("checksum", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXTERNAL_SPDX_DOCUMENT = new PropertyDescriptor("spdxDocument", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_EXTERNAL_DOCUMENT_ID = new PropertyDescriptor("externalDocumentId", SPDX_NAMESPACE);
 	
 	// External Reference properties
-	public static final String PROP_REFERENCE_CATEGORY = "referenceCategory";
-	public static final String PROP_REFERENCE_TYPE = "referenceType";
-	public static final String PROP_REFERENCE_LOCATOR = "referenceLocator";
-	
-	// SPDX Review Properties
-	// NOTE: These have all been deprecated as of SPDX 2.0
-	// The comment property is the RDFS_PROP_COMMENT property in the rdfs namespace
-	@Deprecated
-	public static final String PROP_REVIEW_REVIEWER = "reviewer";
-	@Deprecated
-	public static final String PROP_REVIEW_DATE = "reviewDate";
+	public static final PropertyDescriptor PROP_REFERENCE_CATEGORY = new PropertyDescriptor("referenceCategory", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_REFERENCE_TYPE = new PropertyDescriptor("referenceType", SPDX_NAMESPACE);
+	public static final PropertyDescriptor PROP_REFERENCE_LOCATOR = new PropertyDescriptor("referenceLocator", SPDX_NAMESPACE);
 	
 	// Date format - NOTE: This format does not handle milliseconds.  Use Instant.parse for full ISO 8601 parsing
 	public static final String SPDX_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";

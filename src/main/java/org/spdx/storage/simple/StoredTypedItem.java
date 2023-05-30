@@ -26,6 +26,7 @@ import org.spdx.library.model.TypedValue;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.IndividualUriValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * Individual item to be stored in memory
@@ -41,7 +42,7 @@ public class StoredTypedItem extends TypedValue {
 	
 	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstants.ALL_SPDX_CLASSES));
 
-	private ConcurrentHashMap<String, Object> properties = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<PropertyDescriptor, Object> properties = new ConcurrentHashMap<>();
 	
 	private int referenceCount = 0;
 	
@@ -52,13 +53,13 @@ public class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
-	 * @return Property names for all properties having a value
+	 * @return property descriptors for all properties having a value
 	 */
-	public List<String> getPropertyValueNames() {
-		Iterator<Entry<String, Object>> iter = this.properties.entrySet().iterator();
-		List<String> retval = new ArrayList<>();
+	public List<PropertyDescriptor> getPropertyValueDescriptors() {
+		Iterator<Entry<PropertyDescriptor, Object>> iter = this.properties.entrySet().iterator();
+		List<PropertyDescriptor> retval = new ArrayList<>();
 		while (iter.hasNext()) {
-			Entry<String, Object> entry = iter.next();
+			Entry<PropertyDescriptor, Object> entry = iter.next();
 			retval.add(entry.getKey());
 		}
 		return Collections.unmodifiableList(retval);
@@ -110,12 +111,12 @@ public class StoredTypedItem extends TypedValue {
     }
 	
 	/**
-	 * @param propertyName Name of the property
+	 * @param propertyDescriptor Descriptor for the property
 	 * @param value Value to be set
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public void setValue(String propertyName, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	public void setValue(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
@@ -129,36 +130,36 @@ public class StoredTypedItem extends TypedValue {
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
-		properties.put(propertyName, value);
+		properties.put(propertyDescriptor, value);
 	}
 	
 	/**
-	 * Sets the value list for the property to an empty list creating the propertyName if it does not exist
-	 * @param propertyName Name of the property
+	 * Sets the value list for the property to an empty list creating the propertyDescriptor if it does not exist
+	 * @param propertyDescriptor descriptor for the property
 	 * @throws SpdxInvalidTypeException
 	 */
-	public void clearPropertyValueList(String propertyName) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		Object value = properties.get(propertyName);
+	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Object value = properties.get(propertyDescriptor);
 		if (value == null) {
 			return;
 		}
 		if (value instanceof ConcurrentHashMap<?, ?>) {
 			((ConcurrentHashMap<?, ?>)value).clear();
 		} else {
-			throw new SpdxInvalidTypeException("Trying to clear a list for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to clear a list for non list type for property "+propertyDescriptor);
 		}
 		
 	}
 
 	/**
-	 * Adds a value to a property list for a String or Boolean type of value creating the propertyName if it does not exist
-	 * @param propertyName Name of the property
+	 * Adds a value to a property list for a String or Boolean type of value creating the propertyDescriptor if it does not exist
+	 * @param propertyDescriptor Descriptor for the property
 	 * @param value Value to be set
 	 * @throws SpdxInvalidTypeException
 	 */
-	public boolean addValueToList(String propertyName, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	public boolean addValueToList(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof ModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
@@ -170,17 +171,17 @@ public class StoredTypedItem extends TypedValue {
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
-		Object map = properties.get(propertyName);
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
-			properties.putIfAbsent(propertyName,  new ConcurrentHashMap<String, List<Object>>());
-			map = properties.get(propertyName);	
+			properties.putIfAbsent(propertyDescriptor,  new ConcurrentHashMap<String, List<Object>>());
+			map = properties.get(propertyDescriptor);	
 			//Note: there is a small timing window where the property could be removed
 			if (map == null) {
 				return true;
 			}
 		}
 		if (!(map instanceof ConcurrentHashMap<?, ?>)) {
-			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to add a list for non list type for property "+propertyDescriptor);
 		}
 		try {
 			@SuppressWarnings("unchecked")
@@ -200,18 +201,24 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.add(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyDescriptor);
 		}
 	}
 	
 
-	public boolean removeTypedValueFromList(String propertyName, TypedValue value) throws SpdxInvalidTypeException {
-		Object map = properties.get(propertyName);
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param value to be removed
+	 * @return true if the value was removed, false if the value did not exist
+	 * @throws SpdxInvalidTypeException for an invalid type
+	 */
+	public boolean removeTypedValueFromList(PropertyDescriptor propertyDescriptor, TypedValue value) throws SpdxInvalidTypeException {
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
 			return false;
 		}
 		if (!(map instanceof ConcurrentHashMap<?, ?>)) {
-			throw new SpdxInvalidTypeException("Trying to remove from a list for non typed value list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to remove from a list for non typed value list type for property "+propertyDescriptor);
 		}
 		try {
 			@SuppressWarnings("unchecked")
@@ -222,25 +229,25 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.remove(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyDescriptor);
 		}
 	}
 
 	/**
 	 * Removes a property from a list if it exists
-	 * @param propertyName
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value
 	 * @throws SpdxInvalidTypeException 
 	 */
-	public boolean removeValueFromList(String propertyName, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	public boolean removeValueFromList(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
-		Object map = properties.get(propertyName);
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
 			return false;
 		}
 		if (!(map instanceof ConcurrentHashMap<?, ?>)) {
-			throw new SpdxInvalidTypeException("Trying to remove from a list for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to remove from a list for non list type for property "+propertyDescriptor);
 		}
 		try {
 			@SuppressWarnings("unchecked")
@@ -257,18 +264,18 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.remove(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyDescriptor);
 		}
 	}
 	
 	/**
-	 * @param propertyName Name of the property
-	 * @return List of values associated with the id, propertyName and document
+	 * @param propertyDescriptor Descriptor for the property
+	 * @return List of values associated with the id, propertyDescriptor and document
 	 * @throws SpdxInvalidTypeException
 	 */
-	public Iterator<Object> getValueList(String propertyName) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		Object list = properties.get(propertyName);
+	public Iterator<Object> getValueList(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Object list = properties.get(propertyDescriptor);
 		if (list == null) {
 			return Collections.emptyIterator();
 		}
@@ -283,26 +290,26 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return valueList.iterator();
 		} else {
-			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyDescriptor);
 		}
 	}
 	
 	/**
-	 * @param propertyName Name of the property
-	 * @return the single value associated with the id, propertyName and document
+	 * @param propertyDescriptor Descriptor for the property
+	 * @return the single value associated with the id, propertyDescriptor and document
 	 */
-	public Object getValue(String propertyName) {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		return properties.get(propertyName);
+	public Object getValue(PropertyDescriptor propertyDescriptor) {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		return properties.get(propertyDescriptor);
 	}
 	
 	/**
-	 * Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyName does not exist
-	 * @param propertyName Name of the property
+	 * Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyDescriptor does not exist
+	 * @param propertyDescriptor Descriptor for the property
 	 */
-	public void removeProperty(String propertyName) {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		properties.remove(propertyName);
+	public void removeProperty(PropertyDescriptor propertyDescriptor) {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		properties.remove(propertyDescriptor);
 	}
 
 	/**
@@ -314,27 +321,27 @@ public class StoredTypedItem extends TypedValue {
 	public void copyValuesFrom(String fromDocumentUri, IModelStore store) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(fromDocumentUri, "From document URI can not be null");
 		Objects.requireNonNull(store, "Store can not be null");
-		List<String> propertyNames = store.getPropertyValueNames(fromDocumentUri, this.getId());
-		for (String propertyName:propertyNames) {
-			Optional<Object> value = store.getValue(fromDocumentUri, getId(), propertyName);
+		List<PropertyDescriptor> propertyDiscriptors = store.getPropertyValueDescriptors(fromDocumentUri, this.getId());
+		for (PropertyDescriptor propertydescriptor:propertyDiscriptors) {
+			Optional<Object> value = store.getValue(fromDocumentUri, getId(), propertydescriptor);
 			if (value.isPresent()) {
-				this.setValue(propertyName, value.get());
+				this.setValue(propertydescriptor, value.get());
 			}
 		}
 	}
 
 	/**
-	 * @param propertyName
+	 * @param propertyDescriptor descriptor for the property
 	 * @return Size of the collection
 	 * @throws SpdxInvalidTypeException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public int collectionSize(String propertyName) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		Object map = properties.get(propertyName);
+	public int collectionSize(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
-			properties.putIfAbsent(propertyName,  new ConcurrentHashMap<String, List<Object>>());
-			map = properties.get(propertyName);	
+			properties.putIfAbsent(propertyDescriptor,  new ConcurrentHashMap<String, List<Object>>());
+			map = properties.get(propertyDescriptor);	
 			//Note: there is a small timing window where the property could be removed
 			if (map == null) {
 				return 0;
@@ -351,23 +358,23 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return count;
 		} else {
-			throw new SpdxInvalidTypeException("Trying to get size for a non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to get size for a non list type for property "+propertyDescriptor);
 		}
 	}
 
 	/**
-	 * @param propertyName property name
+	 * @param propertyDescriptor descriptor for the property
 	 * @param value value to be checked
-	 * @return true if value is in the list associated with the property name
+	 * @return true if value is in the list associated with the property descriptor
 	 * @throws SpdxInvalidTypeException
 	 */
-	public boolean collectionContains(String propertyName, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	public boolean collectionContains(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
-		Object map = properties.get(propertyName);
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
-			properties.putIfAbsent(propertyName,  new ConcurrentHashMap<String, List<Object>>());
-			map = properties.get(propertyName);	
+			properties.putIfAbsent(propertyDescriptor,  new ConcurrentHashMap<String, List<Object>>());
+			map = properties.get(propertyDescriptor);	
 			//Note: there is a small timing window where the property could be removed
 			if (map == null) {
 				return false;
@@ -388,14 +395,19 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return valueList.contains(value);
 		} else {
-			throw new SpdxInvalidTypeException("Trying to find contains for non list type for property "+propertyName);
+			throw new SpdxInvalidTypeException("Trying to find contains for non list type for property "+propertyDescriptor);
 		}
 	}
 
-	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test against
+	 * @return true if the property with the propertyDescriptor can be assigned to clazz
+	 */
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
-		Object map = properties.get(propertyName);
+		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
 			return true; // It is still assignable to since it is unassigned
 		}
@@ -436,10 +448,15 @@ public class StoredTypedItem extends TypedValue {
 		return true;
 	}
 
-	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test against
+	 * @return true if the property can be assigned to type clazz
+	 */
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
-		Object value = properties.get(propertyName);
+		Object value = properties.get(propertyDescriptor);
 		if (value == null) {
 			return false;
 		}
@@ -473,12 +490,12 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param propertyName property name
-	 * @return true if there is a list associated with the property name
+	 * @param propertyDescriptor property descriptor
+	 * @return true if there is a list associated with the property descriptor
 	 */
-	public boolean isCollectionProperty(String propertyName) {
-		Objects.requireNonNull(propertyName, "Property name can not be null");
-		Object value = properties.get(propertyName);
+	public boolean isCollectionProperty(PropertyDescriptor propertyDescriptor) {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
+		Object value = properties.get(propertyDescriptor);
 		return value instanceof ConcurrentHashMap;
 	}
 

@@ -38,6 +38,7 @@ import org.spdx.library.model.license.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * A File represents a named sequence of information 
@@ -168,12 +169,12 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 	}
 	
 	@Override
-	protected String getLicenseInfoFromFilesPropertyName() {
+	protected PropertyDescriptor getLicenseInfoFromFilesPropertyName() {
 		return SpdxConstants.PROP_FILE_SEEN_LICENSE;
 	}
 	
 	@Override
-	protected String getNamePropertyName() {
+	protected PropertyDescriptor getNamePropertyDescriptor() {
 		return SpdxConstants.PROP_FILE_NAME;
 	}
 	

@@ -6,12 +6,14 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants;
+import org.spdx.storage.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
 public class ModelCollectionTest extends TestCase {
 	
-	static final String PROPERTY_NAME = "property";
+	static final PropertyDescriptor PROPERTY_NAME = new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE);
 	static final String[] ELEMENTS = new String[] {"e1", "e2", "e3", "e4"};
 	GenericModelObject gmo;
 

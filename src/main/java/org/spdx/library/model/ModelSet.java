@@ -28,6 +28,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * A ModelCollection implemented as a set where all items in the collection are unique based
@@ -44,14 +45,14 @@ public class ModelSet<T extends Object> extends ModelCollection<T> {
 	 * @param modelStore
 	 * @param documentUri
 	 * @param id
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @param copyManager
 	 * @param type
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelSet(IModelStore modelStore, String documentUri, String id, String propertyName, 
+	public ModelSet(IModelStore modelStore, String documentUri, String id, PropertyDescriptor propertyDescriptor, 
 			@Nullable ModelCopyManager copyManager, @Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, propertyName, copyManager, type);
+		super(modelStore, documentUri, id, propertyDescriptor, copyManager, type);
 	}
 	
 	@Override

@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.TypedValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * A simple abstract SPDX store that stores everything in an underlying model store which is initialized in the
@@ -68,26 +69,26 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#getPropertyValueNames(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		return baseStore.getPropertyValueNames(documentUri, id);
+	public List<PropertyDescriptor> getPropertyValueDescriptors(String documentUri, String id) throws InvalidSPDXAnalysisException {
+		return baseStore.getPropertyValueDescriptors(documentUri, id);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#setValue(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setValue(String documentUri, String id, String propertyName, Object value)
+	public void setValue(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		baseStore.setValue(documentUri, id, propertyName, value);
+		baseStore.setValue(documentUri, id, propertyDescriptor, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#getValue(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Optional<Object> getValue(String documentUri, String id, String propertyName)
+	public Optional<Object> getValue(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.getValue(documentUri, id, propertyName);
+		return baseStore.getValue(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +103,8 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#removeProperty(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		baseStore.removeProperty(documentUri, id, propertyName);
+	public void removeProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		baseStore.removeProperty(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
@@ -143,80 +144,80 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#removeValueFromCollection(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
+	public boolean removeValueFromCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.removeValueFromCollection(documentUri, id, propertyName, value);
+		return baseStore.removeValueFromCollection(documentUri, id, propertyDescriptor, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#collectionSize(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return baseStore.collectionSize(documentUri, id, propertyName);
+	public int collectionSize(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		return baseStore.collectionSize(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#collectionContains(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+	public boolean collectionContains(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.collectionContains(documentUri, id, propertyName, value);
+		return baseStore.collectionContains(documentUri, id, propertyDescriptor, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#clearValueCollection(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void clearValueCollection(String documentUri, String id, String propertyName)
+	public void clearValueCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		baseStore.clearValueCollection(documentUri, id, propertyName);
+		baseStore.clearValueCollection(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#addValueToCollection(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)
+	public boolean addValueToCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.addValueToCollection(documentUri, id, propertyName, value);
+		return baseStore.addValueToCollection(documentUri, id, propertyDescriptor, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#listValues(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName)
+	public Iterator<Object> listValues(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.listValues(documentUri, id, propertyName);
+		return baseStore.listValues(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#isCollectionMembersAssignableTo(java.lang.String, java.lang.String, java.lang.String, java.lang.Class)
 	 */
 	@Override
-	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isCollectionMembersAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.isCollectionMembersAssignableTo(documentUri, id, propertyName, clazz);
+		return baseStore.isCollectionMembersAssignableTo(documentUri, id, propertyDescriptor, clazz);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#isPropertyValueAssignableTo(java.lang.String, java.lang.String, java.lang.String, java.lang.Class)
 	 */
 	@Override
-	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isPropertyValueAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.isPropertyValueAssignableTo(documentUri, id, propertyName, clazz);
+		return baseStore.isPropertyValueAssignableTo(documentUri, id, propertyDescriptor, clazz);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#isCollectionProperty(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
+	public boolean isCollectionProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return baseStore.isCollectionProperty(documentUri, id, propertyName);
+		return baseStore.isCollectionProperty(documentUri, id, propertyDescriptor);
 	}
 
 	/* (non-Javadoc)
@@ -252,8 +253,8 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 		IModelStoreLock lock = this.enterCriticalSection(documentUri, false);
 		try {
 			for (TypedValue item:this.getAllItems(documentUri, null).collect(Collectors.toList())) {
-				for (String propertyName:this.getPropertyValueNames(documentUri, item.getId())) {
-					this.removeProperty(documentUri, item.getId(), propertyName);
+				for (PropertyDescriptor propertyDescriptor:this.getPropertyValueDescriptors(documentUri, item.getId())) {
+					this.removeProperty(documentUri, item.getId(), propertyDescriptor);
 				}
 			}
 		} finally {

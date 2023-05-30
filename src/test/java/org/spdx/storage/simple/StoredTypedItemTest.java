@@ -24,6 +24,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.Relationship;
 import org.spdx.library.model.TypedValue;
+import org.spdx.storage.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
@@ -39,9 +40,16 @@ public class StoredTypedItemTest extends TestCase {
 	static final String TEST_TYPE2 = SpdxConstants.CLASS_RELATIONSHIP;
 	static final String TEST_DOCUMENTURI1 = "https://test.doc.uri1";
 	static final String TEST_DOCUMENTURI2 = "https://test.doc.uri2";
-	static final String[] TEST_VALUE_PROPERTIES = new String[] {"valueProp1", "valueProp2", "valueProp3", "valueProp4"};
+	static final PropertyDescriptor[] TEST_VALUE_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("valueProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp3", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp4", SpdxConstants.SPDX_NAMESPACE)};
 	static final Object[] TEST_VALUE_PROPERTY_VALUES = new Object[] {"value1", true, "value2", null};
-	static final String[] TEST_LIST_PROPERTIES = new String[] {"listProp1", "listProp2", "listProp3"};
+	static final PropertyDescriptor[] TEST_LIST_PROPERTIES = new PropertyDescriptor[] {
+			new PropertyDescriptor("listProp1", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp2", SpdxConstants.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp3", SpdxConstants.SPDX_NAMESPACE)};
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	
 	/* (non-Javadoc)
@@ -82,7 +90,7 @@ public class StoredTypedItemTest extends TestCase {
 	 */
 	public void testGetSetPropertyValueNames() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
-		assertEquals(0, sti.getPropertyValueNames().size());
+		assertEquals(0, sti.getPropertyValueDescriptors().size());
 		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
 			sti.setValue(TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
 		}
@@ -91,12 +99,12 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		List<String> result = sti.getPropertyValueNames();
+		List<PropertyDescriptor> result = sti.getPropertyValueDescriptors();
 		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, result.size());
-		for (String prop:TEST_VALUE_PROPERTIES) {
+		for (PropertyDescriptor prop:TEST_VALUE_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
-		for (String prop:TEST_LIST_PROPERTIES) {
+		for (PropertyDescriptor prop:TEST_LIST_PROPERTIES) {
 			assertTrue(result.contains(prop));
 		}
 	}
@@ -165,7 +173,7 @@ public class StoredTypedItemTest extends TestCase {
 	
 	public void testRemove() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
-		assertEquals(0, sti.getPropertyValueNames().size());
+		assertEquals(0, sti.getPropertyValueDescriptors().size());
 		for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
 			sti.setValue(TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
 		}
@@ -174,10 +182,10 @@ public class StoredTypedItemTest extends TestCase {
 				sti.addValueToList(TEST_LIST_PROPERTIES[i], value);
 			}
 		}
-		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, sti.getPropertyValueNames().size());
+		assertEquals(TEST_VALUE_PROPERTIES.length + TEST_LIST_PROPERTIES.length, sti.getPropertyValueDescriptors().size());
 		sti.removeProperty(TEST_VALUE_PROPERTIES[0]);
 		sti.removeProperty(TEST_LIST_PROPERTIES[0]);
-		assertEquals(TEST_VALUE_PROPERTIES.length-1+TEST_LIST_PROPERTIES.length-1, sti.getPropertyValueNames().size());
+		assertEquals(TEST_VALUE_PROPERTIES.length-1+TEST_LIST_PROPERTIES.length-1, sti.getPropertyValueDescriptors().size());
 		assertTrue(sti.getValue(TEST_VALUE_PROPERTIES[0]) == null);
 		assertTrue(sti.getValue(TEST_LIST_PROPERTIES[0]) == null);
 	}
@@ -212,34 +220,34 @@ public class StoredTypedItemTest extends TestCase {
 	public void testIsPropertyValueAssignableTo() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.addValueToList(sProperty, "String 1");
 		sti.addValueToList(sProperty, "String 2");
 		assertTrue(sti.isCollectionMembersAssignableTo(sProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(sProperty, Boolean.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(sProperty, TypedValue.class));
 		// Boolean
-		String bProperty = "boolprop";
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.addValueToList(bProperty, Boolean.valueOf(true));
 		sti.addValueToList(bProperty, Boolean.valueOf(false));
 		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, String.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(bProperty, Boolean.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(bProperty, TypedValue.class));
 		// TypedValue
-		String tvProperty = "tvprop";
+		PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.addValueToList(tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(tvProperty, Boolean.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(tvProperty, Relationship.class));
 		// Mixed
-		String mixedProperty = "mixedprop";
+		PropertyDescriptor mixedProperty = new PropertyDescriptor("mixedprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.addValueToList(mixedProperty, Boolean.valueOf(true));
 		sti.addValueToList(mixedProperty, "mixed value");
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, String.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, Boolean.class));
 		assertFalse(sti.isCollectionMembersAssignableTo(mixedProperty, TypedValue.class));
 		// Empty
-		String emptyProperty = "emptyprop";
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
 		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, String.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, Boolean.class));
 		assertTrue(sti.isCollectionMembersAssignableTo(emptyProperty, TypedValue.class));
@@ -248,34 +256,34 @@ public class StoredTypedItemTest extends TestCase {
 	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.setValue(sProperty, "String 1");
 		assertTrue(sti.isPropertyValueAssignableTo(sProperty, String.class));
 		assertFalse(sti.isPropertyValueAssignableTo(sProperty, Boolean.class));
 		assertFalse(sti.isPropertyValueAssignableTo(sProperty, TypedValue.class));
 		// Boolean
-		String bProperty = "boolprop";
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.setValue(bProperty, Boolean.valueOf(true));
 		assertFalse(sti.isPropertyValueAssignableTo(bProperty, String.class));
 		assertTrue(sti.isPropertyValueAssignableTo(bProperty, Boolean.class));
 		assertFalse(sti.isPropertyValueAssignableTo(bProperty, TypedValue.class));
 		// TypedValue
-		String tvProperty = "tvprop";
+		PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.setValue(tvProperty, new TypedValue(TEST_ID2, TEST_TYPE2));
 		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, String.class));
 		assertFalse(sti.isPropertyValueAssignableTo(tvProperty, Boolean.class));
 		assertTrue(sti.isPropertyValueAssignableTo(tvProperty, TypedValue.class));
 		// Empty
-		String emptyProperty = "emptyprop";
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
 		assertFalse(sti.isPropertyValueAssignableTo(emptyProperty, String.class));
 	}
 	
 	public void testIsCollectionProperty() throws InvalidSPDXAnalysisException {
 		StoredTypedItem sti = new StoredTypedItem(TEST_DOCUMENTURI1, TEST_ID1, TEST_TYPE1);
 		// String
-		String sProperty = "stringprop";
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
 		sti.setValue(sProperty, "String 1");
-		String listProperty = "listProp";
+		PropertyDescriptor listProperty = new PropertyDescriptor("listProp", SpdxConstants.SPDX_NAMESPACE);
 		sti.addValueToList(listProperty, "testValue");
 		assertTrue(sti.isCollectionProperty(listProperty));
 		assertFalse(sti.isCollectionProperty(sProperty));
