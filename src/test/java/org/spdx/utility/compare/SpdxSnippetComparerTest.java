@@ -24,20 +24,20 @@ import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.GenericModelObject;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxSnippet;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.pointer.ByteOffsetPointer;
-import org.spdx.library.model.pointer.LineCharPointer;
-import org.spdx.library.model.pointer.StartEndPointer;
+import org.spdx.library.model.compat.v2.Checksum;
+import org.spdx.library.model.compat.v2.GenericModelObject;
+import org.spdx.library.model.compat.v2.Relationship;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxSnippet;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.FileType;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
+import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
+import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
+import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
 
 import junit.framework.TestCase;
 

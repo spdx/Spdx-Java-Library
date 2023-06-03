@@ -20,7 +20,7 @@ package org.spdx.utility.compare;
 import java.util.Collection;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
 
 /**
  * Contains the results of a comparison between two SPDX non-standard licenses

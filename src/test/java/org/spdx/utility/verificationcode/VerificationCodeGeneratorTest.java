@@ -7,11 +7,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxPackageVerificationCode;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.FileType;
+import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;

@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.SpdxIdInUseException;
-import org.spdx.library.model.TypedValue;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.SpdxIdInUseException;
+import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -60,18 +60,18 @@ public class InMemSpdxStoreTest extends TestCase {
 	static final String TEST_ID1 = "id1";
 	static final String TEST_ID2 = "id2";
 
-	static final String TEST_TYPE1 = SpdxConstants.CLASS_ANNOTATION;
-	static final String TEST_TYPE2 = SpdxConstants.CLASS_RELATIONSHIP;
+	static final String TEST_TYPE1 = SpdxConstantsCompatV2.CLASS_ANNOTATION;
+	static final String TEST_TYPE2 = SpdxConstantsCompatV2.CLASS_RELATIONSHIP;
 	static final PropertyDescriptor[] TEST_VALUE_PROPERTIES = new PropertyDescriptor[] {
-			new PropertyDescriptor("valueProp1", SpdxConstants.SPDX_NAMESPACE), 
-			new PropertyDescriptor("valueProp2", SpdxConstants.SPDX_NAMESPACE), 
-			new PropertyDescriptor("valueProp3", SpdxConstants.SPDX_NAMESPACE), 
-			new PropertyDescriptor("valueProp4", SpdxConstants.SPDX_NAMESPACE)};
+			new PropertyDescriptor("valueProp1", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp2", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp3", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+			new PropertyDescriptor("valueProp4", SpdxConstantsCompatV2.SPDX_NAMESPACE)};
 	static final Object[] TEST_VALUE_PROPERTY_VALUES = new Object[] {"value1", true, "value2", null};
 	static final PropertyDescriptor[] TEST_LIST_PROPERTIES = new PropertyDescriptor[] {
-			new PropertyDescriptor("listProp1", SpdxConstants.SPDX_NAMESPACE), 
-			new PropertyDescriptor("listProp2", SpdxConstants.SPDX_NAMESPACE), 
-			new PropertyDescriptor("listProp3", SpdxConstants.SPDX_NAMESPACE)};
+			new PropertyDescriptor("listProp1", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp2", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+			new PropertyDescriptor("listProp3", SpdxConstantsCompatV2.SPDX_NAMESPACE)};
 
 	protected static final int MAX_RETRIES = 10;
 	TypedValue[] TEST_TYPED_PROP_VALUES;
@@ -113,30 +113,30 @@ public class InMemSpdxStoreTest extends TestCase {
 		// License ID's
 		String nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
 		assertEquals("LicenseRef-gnrtd0", nextId);
-		store.create(TEST_DOCUMENT_URI1, "LicenseRef-gnrtd33", SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, "LicenseRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		nextId = store.getNextId(IdType.LicenseRef, TEST_DOCUMENT_URI1);
 		assertEquals("LicenseRef-gnrtd34", nextId);
 		
 		// SPDX ID's
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
 		assertEquals("SPDXRef-gnrtd0", nextId);
-		store.create(TEST_DOCUMENT_URI1, "SPDXRef-gnrtd33", SpdxConstants.CLASS_SPDX_FILE);
+		store.create(TEST_DOCUMENT_URI1, "SPDXRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_FILE);
 		nextId = store.getNextId(IdType.SpdxId, TEST_DOCUMENT_URI1);
 		assertEquals("SPDXRef-gnrtd34", nextId);
 		
 		// Anonymous ID's
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd0", nextId);
-		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "gnrtd33", SpdxConstants.CLASS_SPDX_CHECKSUM);
+		store.create(TEST_DOCUMENT_URI1, InMemSpdxStore.ANON_PREFIX + "gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM);
 		nextId = store.getNextId(IdType.Anonymous, TEST_DOCUMENT_URI1);
 		assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd34", nextId);
 		
 		// Document ID's
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
-		store.create(TEST_DOCUMENT_URI1, SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd33", SpdxConstants.CLASS_EXTERNAL_DOC_REF);
+		assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
+		store.create(TEST_DOCUMENT_URI1, SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd33", SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF);
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd34", nextId);
+		assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd34", nextId);
 	}
 	
 	public void testCreateExists() throws InvalidSPDXAnalysisException {
@@ -147,17 +147,17 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id2));
-		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertTrue(store.exists(TEST_DOCUMENT_URI1, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id2));
-		store.create(TEST_DOCUMENT_URI2, id2, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertTrue(store.exists(TEST_DOCUMENT_URI1, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id1));
 		assertTrue(store.exists(TEST_DOCUMENT_URI2, id2));
-		store.create(TEST_DOCUMENT_URI2, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertTrue(store.exists(TEST_DOCUMENT_URI1, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertTrue(store.exists(TEST_DOCUMENT_URI2, id1));
@@ -166,9 +166,9 @@ public class InMemSpdxStoreTest extends TestCase {
 
 	public void testGetPropertyValueNames() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID1).size());
 		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI2, TEST_ID1).size());
 		assertEquals(0, store.getPropertyValueDescriptors(TEST_DOCUMENT_URI1, TEST_ID2).size());
@@ -203,9 +203,9 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testGetSetValue() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_VALUE_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_VALUE_PROPERTIES[0]).isPresent());
@@ -219,9 +219,9 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testGetAddValueList() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
@@ -264,16 +264,16 @@ public class InMemSpdxStoreTest extends TestCase {
 		
 		// Document ID's
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
+		assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
 		nextId = store.getNextId(IdType.DocumentRef, TEST_DOCUMENT_URI1);
-		assertEquals(SpdxConstants.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", nextId);
+		assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", nextId);
 	}
 	
 	public void testRemoveProperty() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
@@ -337,9 +337,9 @@ public class InMemSpdxStoreTest extends TestCase {
 
 	public void testClearList() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
@@ -358,7 +358,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void copyFrom() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
@@ -366,7 +366,7 @@ public class InMemSpdxStoreTest extends TestCase {
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
 		InMemSpdxStore store2 = new InMemSpdxStore();
 		ModelCopyManager copyManager = new ModelCopyManager();
-		copyManager.copy(store2, TEST_DOCUMENT_URI2, store, TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		copyManager.copy(store2, TEST_DOCUMENT_URI2, store, TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_VALUE_PROPERTIES[0]));
 		assertEquals(2, toImmutableList(store2.listValues(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
 		assertTrue(toImmutableList(store2.listValues(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
@@ -375,7 +375,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testRemoveListItem() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0], value1);
@@ -393,7 +393,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	//TODO: Fix the following test - it is flakey.  Times out about 1 out of 5 times.  Test problem, not a problem with the code under test
 	public void testLock() throws InvalidSPDXAnalysisException, IOException, InterruptedException, TimeoutException {
 		final InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		String value1 = "value1";
 		String value2 = "value2";
 		IModelStoreLock lock = store.enterCriticalSection(TEST_DOCUMENT_URI1, false);
@@ -517,9 +517,9 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testCollectionSize() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
@@ -533,9 +533,9 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testCollectionContains() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI2, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI2, TEST_ID1, TEST_LIST_PROPERTIES[0]).isPresent());
 		assertFalse(store.getValue(TEST_DOCUMENT_URI1, TEST_ID2, TEST_LIST_PROPERTIES[0]).isPresent());
@@ -552,21 +552,21 @@ public class InMemSpdxStoreTest extends TestCase {
 	public void testIsPropertyValueAssignableTo() throws InvalidSPDXAnalysisException {
 
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		// String
-		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
 		// Boolean
-		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(true));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
-		PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
 		store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
@@ -574,29 +574,29 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
 		// Empty
-		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		assertFalse(store.isPropertyValueAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 	}
 	
 	public void testCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		// String
-		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 2");
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, String.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, TypedValue.class));
 		// Boolean
-		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(true));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.valueOf(false));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, String.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, bProperty, TypedValue.class));
 		// TypedValue
-		PropertyDescriptor tvProperty  = new PropertyDescriptor("tvprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor tvProperty  = new PropertyDescriptor("tvprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 	    TypedValue tv = new TypedValue(TEST_ID2, TEST_TYPE2);
 	    store.create(TEST_DOCUMENT_URI1, TEST_ID2, TEST_TYPE2);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, tv);
@@ -604,14 +604,14 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, tvProperty, TypedValue.class));
 		// Mixed
-		PropertyDescriptor mixedProperty = new PropertyDescriptor("mixedprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor mixedProperty = new PropertyDescriptor("mixedprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, Boolean.valueOf(true));
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, "mixed value");
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, String.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, Boolean.class));
 		assertFalse(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, mixedProperty, TypedValue.class));
 		// Empty
-		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, String.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, Boolean.class));
 		assertTrue(store.isCollectionMembersAssignableTo(TEST_DOCUMENT_URI1, TEST_ID1, emptyProperty, TypedValue.class));
@@ -619,11 +619,11 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testIsCollectionProperty() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		// String
-		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, sProperty, "String 1");
-		PropertyDescriptor listProperty = new PropertyDescriptor("listProp", SpdxConstants.SPDX_NAMESPACE);
+		PropertyDescriptor listProperty = new PropertyDescriptor("listProp", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID1, listProperty, "testValue");
 		assertTrue(store.isCollectionProperty(TEST_DOCUMENT_URI1, TEST_ID1, listProperty));
 		assertFalse(store.isCollectionProperty(TEST_DOCUMENT_URI1, TEST_ID1, sProperty));
@@ -632,24 +632,24 @@ public class InMemSpdxStoreTest extends TestCase {
 	public void testIdType() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		assertEquals(IdType.Anonymous, store.getIdType(InMemSpdxStore.ANON_PREFIX+"gnrtd23"));
-		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+"gnrtd23"));
-		assertEquals(IdType.LicenseRef, store.getIdType(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+"gnrtd23"));
+		assertEquals(IdType.DocumentRef, store.getIdType(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+"gnrtd23"));
+		assertEquals(IdType.LicenseRef, store.getIdType(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"gnrtd23"));
 		assertEquals(IdType.ListedLicense, store.getIdType("Apache-2.0"));
 		assertEquals(IdType.ListedLicense, store.getIdType("LLVM-exception"));
 		assertEquals(IdType.Literal, store.getIdType("NONE"));
 		assertEquals(IdType.Literal, store.getIdType("NOASSERTION"));
-		assertEquals(IdType.SpdxId, store.getIdType(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+"gnrtd123"));
+		assertEquals(IdType.SpdxId, store.getIdType(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"gnrtd123"));
 	}
 	
 	public void testGetCaseSensisitiveId() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
 		String expected = "TestIdOne";
 		String lower = expected.toLowerCase();
-		store.create(TEST_DOCUMENT_URI1, expected, SpdxConstants.CLASS_ANNOTATION);
+		store.create(TEST_DOCUMENT_URI1, expected, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		assertEquals(expected, store.getCaseSensisitiveId(TEST_DOCUMENT_URI1, lower).get());
 		assertFalse(store.getCaseSensisitiveId(TEST_DOCUMENT_URI1, "somethingNotThere").isPresent());
 		try {
-			store.create(TEST_DOCUMENT_URI1, lower, SpdxConstants.CLASS_ANNOTATION);
+			store.create(TEST_DOCUMENT_URI1, lower, SpdxConstantsCompatV2.CLASS_ANNOTATION);
 			fail("This should be a duplicate ID failure");
 		} catch (InvalidSPDXAnalysisException e) {
 			// expected
@@ -658,8 +658,8 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testGetTypedValue() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore();
-		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstants.CLASS_ANNOTATION);
-		assertEquals(SpdxConstants.CLASS_ANNOTATION, store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID1).get().getType());
+		store.create(TEST_DOCUMENT_URI1, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		assertEquals(SpdxConstantsCompatV2.CLASS_ANNOTATION, store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID1).get().getType());
 		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI1, TEST_ID2).isPresent());
 		assertFalse(store.getTypedValue(TEST_DOCUMENT_URI2, TEST_ID1).isPresent());
 	}
@@ -672,9 +672,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI2, id2));
-		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.create(TEST_DOCUMENT_URI2, id2, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.create(TEST_DOCUMENT_URI2, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI2, id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		assertTrue(store.exists(TEST_DOCUMENT_URI1, id1));
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id2));
 		assertTrue(store.exists(TEST_DOCUMENT_URI2, id1));
@@ -693,19 +693,19 @@ public class InMemSpdxStoreTest extends TestCase {
 		String id2 = "testId2";
 		String id3 = "testId3";
 		String id4 = "testId4";
-		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.create(TEST_DOCUMENT_URI1, id2, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.create(TEST_DOCUMENT_URI1, id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		store.create(TEST_DOCUMENT_URI1, id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-		TypedValue tv3 = new TypedValue(id3, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		store.create(TEST_DOCUMENT_URI1, id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		TypedValue tv3 = new TypedValue(id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, 
-				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv3);
-		TypedValue tv4 = new TypedValue(id4, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+				new PropertyDescriptor("listProperty", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv3);
+		TypedValue tv4 = new TypedValue(id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
 		store.addValueToCollection(TEST_DOCUMENT_URI1, id2, 
-				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv4);
+				new PropertyDescriptor("listProperty", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv4);
 		store.setValue(TEST_DOCUMENT_URI1, id3, 
-				new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE), 
-				new TypedValue(id1, SpdxConstants.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
+				new PropertyDescriptor("property", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
+				new TypedValue(id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
 		
 		try {
 			store.delete(TEST_DOCUMENT_URI1, id3);
@@ -726,7 +726,7 @@ public class InMemSpdxStoreTest extends TestCase {
 			// expected - id1 is in the property for id3
 		}
 		store.removeValueFromCollection(TEST_DOCUMENT_URI1, id2, 
-				new PropertyDescriptor("listProperty", SpdxConstants.SPDX_NAMESPACE), tv4);
+				new PropertyDescriptor("listProperty", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv4);
 		store.delete(TEST_DOCUMENT_URI1, id4);
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id4));
 		try {
@@ -736,7 +736,7 @@ public class InMemSpdxStoreTest extends TestCase {
 			// expected - id3 is in the listProperty for id2
 		}
 		store.removeProperty(TEST_DOCUMENT_URI1, id3, 
-				new PropertyDescriptor("property", SpdxConstants.SPDX_NAMESPACE));
+				new PropertyDescriptor("property", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		store.delete(TEST_DOCUMENT_URI1, id1);
 		assertFalse(store.exists(TEST_DOCUMENT_URI1, id1));
 		store.delete(TEST_DOCUMENT_URI1, id2);
@@ -753,22 +753,22 @@ public class InMemSpdxStoreTest extends TestCase {
         assertEquals(0, item.getReferenceCount());
         TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
         store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE), tv);
+        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
         assertEquals(1, item.getReferenceCount());
         store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
+        		new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
         assertEquals(2, item.getReferenceCount());
         store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop3", SpdxConstants.SPDX_NAMESPACE), tv);
+        		new PropertyDescriptor("prop3", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
         assertEquals(3, item.getReferenceCount());
         store.removeProperty(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE));
+        		new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE));
         assertEquals(2, item.getReferenceCount());
         store.removeValueFromCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
+        		new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
         assertEquals(1, item.getReferenceCount());
         store.clearValueCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE));
+        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE));
         assertEquals(0, item.getReferenceCount());
         store.delete(TEST_DOCUMENT_URI1, TEST_ID1);
 	}
@@ -781,13 +781,13 @@ public class InMemSpdxStoreTest extends TestCase {
 	        assertEquals(0, item.getReferenceCount());
 	        TypedValue tv = new TypedValue(TEST_ID1, TEST_TYPE1);
 	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-	        		new PropertyDescriptor("prop1", SpdxConstants.SPDX_NAMESPACE), tv);
+	        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
 	        assertEquals(1, item.getReferenceCount());
 	        store.setValue(TEST_DOCUMENT_URI1, TEST_ID2, 
-	        		new PropertyDescriptor("prop2", SpdxConstants.SPDX_NAMESPACE), tv);
+	        		new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
 	        assertEquals(2, item.getReferenceCount());
 	        store.addValueToCollection(TEST_DOCUMENT_URI1, TEST_ID2, 
-	        		new PropertyDescriptor("prop3", SpdxConstants.SPDX_NAMESPACE), tv);
+	        		new PropertyDescriptor("prop3", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
 	        assertEquals(3, item.getReferenceCount());
 	        store.delete(TEST_DOCUMENT_URI1, TEST_ID2);
 	        assertEquals(0, item.getReferenceCount());

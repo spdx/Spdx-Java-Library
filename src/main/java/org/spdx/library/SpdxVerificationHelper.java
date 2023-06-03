@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
 /**
  * Holds static methods used for verify various property values
@@ -71,12 +71,12 @@ public class SpdxVerificationHelper {
 		CHECKSUM_ALGORITHMS_ADDED_23 = Collections.unmodifiableSet(set);
 	}
 	
-	static final String[] VALID_CREATOR_PREFIXES = new String[] {SpdxConstants.CREATOR_PREFIX_PERSON,
-		SpdxConstants.CREATOR_PREFIX_ORGANIZATION, SpdxConstants.CREATOR_PREFIX_TOOL};
-	static final String[] VALID_ORIGINATOR_SUPPLIER_PREFIXES = new String[] {SpdxConstants.NOASSERTION_VALUE, "Person:", "Organization:"};
+	static final String[] VALID_CREATOR_PREFIXES = new String[] {SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON,
+		SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION, SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL};
+	static final String[] VALID_ORIGINATOR_SUPPLIER_PREFIXES = new String[] {SpdxConstantsCompatV2.NOASSERTION_VALUE, "Person:", "Organization:"};
 	
 	public static String verifyNonStdLicenseid(String licenseId) {
-		if (SpdxConstants.LICENSE_ID_PATTERN.matcher(licenseId).matches()) {
+		if (SpdxConstantsCompatV2.LICENSE_ID_PATTERN.matcher(licenseId).matches()) {
 			return null;
 		} else {
 			return "Invalid license id '"+licenseId+"'.  Must start with 'LicenseRef-' " +
@@ -246,7 +246,7 @@ public class SpdxVerificationHelper {
 	 * @return
 	 */
 	public static boolean isValidExternalDocRef(String externalDocumentId) {
-		return SpdxConstants.EXTERNAL_DOC_REF_PATTERN.matcher(externalDocumentId).matches();
+		return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PATTERN.matcher(externalDocumentId).matches();
 	}
 
 	public static boolean isValidUri(String uri) {
@@ -286,11 +286,11 @@ public class SpdxVerificationHelper {
 	public static String verifyDownloadLocation(String downloadLocation) {
 		if (Objects.isNull(downloadLocation)) {
 			return "Download location is null";
-		} else if (SpdxConstants.DOWNLOAD_LOCATION_PATTERN.matcher(downloadLocation).matches()) {
+		} else if (SpdxConstantsCompatV2.DOWNLOAD_LOCATION_PATTERN.matcher(downloadLocation).matches()) {
 			return null;
 		} else {
 			return "Invalid download location "+downloadLocation+".  Must match the pattern "+
-					SpdxConstants.DOWNLOAD_LOCATION_PATTERN.pattern();
+					SpdxConstantsCompatV2.DOWNLOAD_LOCATION_PATTERN.pattern();
 		}
 	}
 	
@@ -299,6 +299,6 @@ public class SpdxVerificationHelper {
 	 * @return true if the ID is a valid SPDX ID reference
 	 */
 	public static boolean verifySpdxId(String id) {
-		return SpdxConstants.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches();
+		return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches();
 	}
 }

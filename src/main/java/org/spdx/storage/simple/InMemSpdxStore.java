@@ -38,13 +38,13 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.DuplicateSpdxIdException;
-import org.spdx.library.model.ModelCollection;
-import org.spdx.library.model.SpdxIdInUseException;
-import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.DuplicateSpdxIdException;
+import org.spdx.library.model.compat.v2.ModelCollection;
+import org.spdx.library.model.compat.v2.SpdxIdInUseException;
+import org.spdx.library.model.compat.v2.SpdxIdNotFoundException;
+import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -65,13 +65,13 @@ public class InMemSpdxStore implements IModelStore {
 
 	static final String GENERATED = "gnrtd";
 	public static Pattern LICENSE_ID_PATTERN_GENERATED =
-			Pattern.compile(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
+			Pattern.compile(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
 
-	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
-	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
+	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
+	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
 	static final String ANON_PREFIX = "__anon__";
 	static Pattern ANON_ID_PATTERN_GENERATED = Pattern.compile(ANON_PREFIX+GENERATED+"(\\d+)$");
-	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstants.LITERAL_VALUES));
+	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstantsCompatV2.LITERAL_VALUES));
 
 	/**
 	 * Map of Document URI to items stored in the document.  The key for the items map is the lowercase of the item ID.
@@ -307,9 +307,9 @@ public class InMemSpdxStore implements IModelStore {
 	public synchronized String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
 		switch (idType) {
 			case Anonymous: return ANON_PREFIX+GENERATED+String.valueOf(nextAnonId++);
-			case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
-			case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
-			case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
+			case LicenseRef: return SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
+			case DocumentRef: return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
+			case SpdxId: return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
 			case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
 			case Literal: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Literal");
 			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
@@ -387,13 +387,13 @@ public class InMemSpdxStore implements IModelStore {
 		if (id.startsWith(ANON_PREFIX+GENERATED)) {
 			return IdType.Anonymous;
 		}
-		if (id.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
+		if (id.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
 		}
-		if (id.startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
+		if (id.startsWith(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		}
-		if (id.startsWith(SpdxConstants.SPDX_ELEMENT_REF_PRENUM)) {
+		if (id.startsWith(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
 		}
 		if (LITERAL_VALUE_SET.contains(id)) {

@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.TypedValue;
+import org.spdx.library.model.compat.v2.TypedValue;
 
 /**
  * Service Provider Interface for storing and retrieving SPDX properties for SPDX documents.
@@ -76,7 +76,7 @@ public interface IModelStore extends AutoCloseable {
 	 * Create a new object with ID
 	 * @param documentUri the SPDX Document URI
 	 * @param id unique ID within the SPDX document
-	 * @param type SPDX model type as defined in the CLASS constants in SpdxConstants
+	 * @param type SPDX model type as defined in the CLASS constants in SpdxConstantsCompatV2
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void create(String documentUri, String id, String type) throws InvalidSPDXAnalysisException;

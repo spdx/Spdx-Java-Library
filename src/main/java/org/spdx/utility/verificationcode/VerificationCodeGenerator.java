@@ -30,8 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxPackageVerificationCode;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 

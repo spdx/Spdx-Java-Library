@@ -32,40 +32,40 @@ import java.util.stream.Stream;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.ExternalDocumentRef;
-import org.spdx.library.model.GenericModelObject;
-import org.spdx.library.model.GenericSpdxElement;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxCreatorInformation;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxElement;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxItem;
-import org.spdx.library.model.SpdxModelFactory;
-import org.spdx.library.model.SpdxPackage;
-import org.spdx.library.model.SpdxPackageVerificationCode;
-import org.spdx.library.model.SpdxSnippet;
-import org.spdx.library.model.enumerations.AnnotationType;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
-import org.spdx.library.model.license.InvalidLicenseStringException;
-import org.spdx.library.model.license.License;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.license.LicenseSet;
-import org.spdx.library.model.license.SpdxListedLicense;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.license.SpdxNoneLicense;
-import org.spdx.library.model.pointer.ByteOffsetPointer;
-import org.spdx.library.model.pointer.LineCharPointer;
-import org.spdx.library.model.pointer.StartEndPointer;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.Annotation;
+import org.spdx.library.model.compat.v2.Checksum;
+import org.spdx.library.model.compat.v2.ExternalDocumentRef;
+import org.spdx.library.model.compat.v2.GenericModelObject;
+import org.spdx.library.model.compat.v2.GenericSpdxElement;
+import org.spdx.library.model.compat.v2.Relationship;
+import org.spdx.library.model.compat.v2.SpdxCreatorInformation;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxItem;
+import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.model.compat.v2.SpdxPackage;
+import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.compat.v2.SpdxSnippet;
+import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.FileType;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.compat.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.compat.v2.license.License;
+import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
+import org.spdx.library.model.compat.v2.license.LicenseSet;
+import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
+import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
+import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
+import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
+import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;
@@ -238,7 +238,7 @@ public class SpdxComparerTest extends TestCase {
 		DefaultModelStore.reset();
 		GenericModelObject gmo = new GenericModelObject();
 
-		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseString(SpdxConstants.SPDX_DATA_LICENSE_ID);
+		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseString(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
 		LICENSEA1 = new ExtractedLicenseInfo("LicenseRef-1", "License1");
 		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
 		LICENSEA3 = new ExtractedLicenseInfo("LicenseRef-3", "License3");
@@ -937,7 +937,7 @@ public class SpdxComparerTest extends TestCase {
 		assertFalse(comparer.isDifferenceFound());
 		assertTrue(comparer.isDataLicenseEqual());
 		doc2.setSpecVersion("SPDX-1.0");
-		doc2.setDataLicense(LicenseInfoFactory.getListedLicenseById(SpdxConstants.SPDX_DATA_LICENSE_ID_VERSION_1_0));
+		doc2.setDataLicense(LicenseInfoFactory.getListedLicenseById(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID_VERSION_1_0));
 		comparer.compare(doc1, doc2);
 		assertTrue(comparer.isDifferenceFound());
 		assertFalse(comparer.isDataLicenseEqual());
@@ -980,7 +980,7 @@ public class SpdxComparerTest extends TestCase {
 
 		int doc1id = 100;
 		int doc2id = 200;
-		String id1_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id1_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text1 = "License text 1";
 		String name1 = "licname1";
 		Collection<String> crossReff1 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one"}));
@@ -990,14 +990,14 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setName(name1);
 		lic1_1.setSeeAlso(crossReff1);
 		lic1_1.setComment(comment1);
-		String id1_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id1_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic1_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id1_2, doc2.getCopyManager(), true);
 		lic1_2.setExtractedText(text1);
 		lic1_2.setName(name1);
 		lic1_2.setSeeAlso(crossReff1);
 		lic1_2.setComment(comment1);
 		
-		String id2_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id2_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text2 = "License text 2";
 		String name2 = "licname2";
 		Collection<String> crossReff2 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one", "http://cross.ref.two"}));
@@ -1007,14 +1007,14 @@ public class SpdxComparerTest extends TestCase {
 		lic2_1.setName(name2);
 		lic2_1.setSeeAlso(crossReff2);
 		lic2_1.setComment(comment2);
-		String id2_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id2_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic2_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id2_2, doc2.getCopyManager(), true);
 		lic2_2.setExtractedText(text2);
 		lic2_2.setName(name2);
 		lic2_2.setSeeAlso(crossReff2);
 		lic2_2.setComment(comment2);
 		
-		String id3_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id3_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text3 = "License text 3";
 		String name3 = "";
 		Collection<String> crossReff3 = new HashSet<>();
@@ -1025,14 +1025,14 @@ public class SpdxComparerTest extends TestCase {
 		lic3_1.setSeeAlso(crossReff3);
 		lic3_1.setComment(comment3);
 		
-		String id3_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id3_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic3_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id3_2, doc2.getCopyManager(), true);
 		lic3_2.setExtractedText(text3);
 		lic3_2.setName(name3);
 		lic3_2.setSeeAlso(crossReff3);
 		lic3_2.setComment(comment3);
 		
-		String id4_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id4_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text4 = "License text 4";
 		String name4 = "";
 		Collection<String> crossReff4 = new HashSet<>();
@@ -1043,7 +1043,7 @@ public class SpdxComparerTest extends TestCase {
 		lic4_1.setSeeAlso(crossReff4);
 		lic4_1.setComment(comment4);
 		
-		String id4_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id4_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic4_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id4_2, doc2.getCopyManager(), true);
 		lic4_2.setExtractedText(text4);
 		lic4_2.setName(name4);
@@ -1199,7 +1199,7 @@ public class SpdxComparerTest extends TestCase {
 
 		int doc1id = 100;
 		int doc2id = 200;
-		String id1_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id1_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text1 = "License text 1";
 		String name1 = "licname1";
 		Collection<String> crossReff1 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one"}));
@@ -1208,13 +1208,13 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setName(name1);
 		lic1_1.setSeeAlso(crossReff1);
 		lic1_1.setComment(comment1);
-		String id1_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id1_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic1_2 = new ExtractedLicenseInfo(id1_2, text1);
 		lic1_1.setName(name1);
 		lic1_1.setSeeAlso(crossReff1);
 		lic1_1.setComment(comment1);
 		
-		String id2_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id2_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text2 = "License text 2";
 		String name2 = "licname2";
 		Collection<String> crossReff2 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one", "http://cross.ref.two"}));
@@ -1223,13 +1223,13 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setName(name2);
 		lic1_1.setSeeAlso(crossReff2);
 		lic1_1.setComment(comment2);
-		String id2_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id2_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic2_2 = new ExtractedLicenseInfo(id2_2, text2);
 		lic1_1.setName(name2);
 		lic1_1.setSeeAlso(crossReff2);
 		lic1_1.setComment(comment2);
 		
-		String id3_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id3_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text3 = "License text 3";
 		String name3 = "";
 		Collection<String> crossReff3 = new HashSet<>();
@@ -1239,13 +1239,13 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setSeeAlso(crossReff3);
 		lic1_1.setComment(comment3);
 		
-		String id3_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id3_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic3_2 = new ExtractedLicenseInfo(id3_2, text3);
 		lic1_1.setName(name3);
 		lic1_1.setSeeAlso(crossReff3);
 		lic1_1.setComment(comment3);
 		
-		String id4_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id4_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text4 = "License text 4";
 		String name4 = "";
 		Collection<String> crossReff4 = new HashSet<>();
@@ -1255,7 +1255,7 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setSeeAlso(crossReff4);
 		lic1_1.setComment(comment4);
 		
-		String id4_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id4_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic4_2 = new ExtractedLicenseInfo(id4_2, text4);
 		lic1_1.setName(name4);
 		lic1_1.setSeeAlso(crossReff4);
@@ -1347,7 +1347,7 @@ public class SpdxComparerTest extends TestCase {
 
 		int doc1id = 100;
 		int doc2id = 200;
-		String id1_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id1_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text1 = "License text 1";
 		String name1 = "licname1";
 		Collection<String> crossReff1 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one"}));
@@ -1357,14 +1357,14 @@ public class SpdxComparerTest extends TestCase {
 		lic1_1.setName(name1);
 		lic1_1.setSeeAlso(crossReff1);
 		lic1_1.setComment(comment1);
-		String id1_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id1_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic1_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id1_2, doc2.getCopyManager(), true);
 		lic1_2.setExtractedText(text1);
 		lic1_2.setName(name1);
 		lic1_2.setSeeAlso(crossReff1);
 		lic1_2.setComment(comment1);
 		
-		String id2_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id2_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text2 = "License text 2";
 		String name2 = "licname2";
 		Collection<String> crossReff2 = new HashSet<>(Arrays.asList(new String[] {"http://cross.ref.one", "http://cross.ref.two"}));
@@ -1374,14 +1374,14 @@ public class SpdxComparerTest extends TestCase {
 		lic2_1.setName(name2);
 		lic2_1.setSeeAlso(crossReff2);
 		lic2_1.setComment(comment2);
-		String id2_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id2_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic2_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id2_2, doc2.getCopyManager(), true);
 		lic2_2.setExtractedText(text2);
 		lic2_2.setName(name2);
 		lic2_2.setSeeAlso(crossReff2);
 		lic2_2.setComment(comment2);
 		
-		String id3_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id3_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text3 = "License text 3";
 		String name3 = "";
 		Collection<String> crossReff3 = new HashSet<>();
@@ -1392,14 +1392,14 @@ public class SpdxComparerTest extends TestCase {
 		lic3_1.setSeeAlso(crossReff3);
 		lic3_1.setComment(comment3);
 		
-		String id3_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id3_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic3_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id3_2, doc2.getCopyManager(), true);
 		lic3_2.setExtractedText(text3);
 		lic3_2.setName(name3);
 		lic3_2.setSeeAlso(crossReff3);
 		lic3_2.setComment(comment3);
 		
-		String id4_1 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
+		String id4_1 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc1id++);
 		String text4 = "License text 4";
 		String name4 = "";
 		Collection<String> crossReff4 = new HashSet<>();
@@ -1410,7 +1410,7 @@ public class SpdxComparerTest extends TestCase {
 		lic4_1.setSeeAlso(crossReff4);
 		lic4_1.setComment(comment4);
 		
-		String id4_2 = SpdxConstants.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
+		String id4_2 = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + Integer.toString(doc2id++);
 		ExtractedLicenseInfo lic4_2 = new ExtractedLicenseInfo(doc2.getModelStore(), doc2.getDocumentUri(), id4_2, doc2.getCopyManager(), true);
 		lic4_2.setExtractedText(text4);
 		lic4_2.setName(name4);

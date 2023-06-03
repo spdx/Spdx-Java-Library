@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.ListedLicenseException;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.model.compat.v2.license.ListedLicenseException;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -45,18 +45,18 @@ public class ExceptionJsonTest extends TestCase {
 	 */
 
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_LICENSE_EXCEPTION_ID.getName(), SpdxConstants.PROP_EXCEPTION_TEXT.getName(), 
-			SpdxConstants.PROP_STD_LICENSE_NAME.getName(), SpdxConstants.RDFS_PROP_COMMENT.getName(), 
-			SpdxConstants.PROP_EXCEPTION_TEMPLATE.getName(), 
-			SpdxConstants.PROP_EXAMPLE.getName(), SpdxConstants.PROP_LIC_DEPRECATED_VERSION.getName(),
-			SpdxConstants.PROP_EXCEPTION_TEXT_HTML.getName()
+			SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID.getName(), SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT.getName(), 
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_NAME.getName(), SpdxConstantsCompatV2.RDFS_PROP_COMMENT.getName(), 
+			SpdxConstantsCompatV2.PROP_EXCEPTION_TEMPLATE.getName(), 
+			SpdxConstantsCompatV2.PROP_EXAMPLE.getName(), SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION.getName(),
+			SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT_HTML.getName()
 			);
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_LIC_ID_DEPRECATED.getName()
+			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName()
 			);
 
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO.getName());
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName());
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
@@ -100,7 +100,7 @@ public class ExceptionJsonTest extends TestCase {
 		String exceptionId = "SpdxexceptionId1";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
 		try {
-			ej.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstants.CLASS_SPDX_ELEMENT);
+			ej.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstantsCompatV2.CLASS_SPDX_ELEMENT);
 			fail("This shouldn't work");
 		} catch (InvalidSPDXAnalysisException e) {
 			// Expected
@@ -213,7 +213,7 @@ public class ExceptionJsonTest extends TestCase {
 		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			json.append("\t\"");
-			if (SpdxConstants.RDFS_PROP_COMMENT.equals(valueName)) {
+			if (SpdxConstantsCompatV2.RDFS_PROP_COMMENT.equals(valueName)) {
 				json.append("licenseComments");	// Legacy value
 			} else {
 				json.append(valueName);
@@ -260,20 +260,20 @@ public class ExceptionJsonTest extends TestCase {
 	public void testIsCollectionMembersAssignableTo() throws Exception {
 		String exceptionId = "excId";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
-		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), String.class));
-		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), Boolean.class));
-		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT.getName(), String.class));
+		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), String.class));
+		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), Boolean.class));
+		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT.getName(), String.class));
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {
 		String exceptionId = "excId";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
-		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), String.class));
-		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT.getName(), String.class));
-		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_EXCEPTION_TEXT.getName(), Boolean.class));
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), String.class));
+		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT.getName(), String.class));
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT.getName(), Boolean.class));
 
-		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED.getName(), String.class));
-		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED.getName(), Boolean.class));
+		assertFalse(ej.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName(), String.class));
+		assertTrue(ej.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName(), Boolean.class));
 	}
 	
 	@SuppressWarnings("deprecation")

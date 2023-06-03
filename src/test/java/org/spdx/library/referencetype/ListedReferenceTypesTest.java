@@ -22,7 +22,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.referencetype.compat.v2.ListedReferenceTypes;
 
 import junit.framework.TestCase;
 
@@ -52,33 +53,33 @@ public class ListedReferenceTypesTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.referencetype.ListedReferenceTypes#isListedReferenceType(java.net.URI)}.
+	 * Test method for {@link org.spdx.library.referencetype.compat.v2.ListedReferenceTypes#isListedReferenceType(java.net.URI)}.
 	 */
 	public void testIsListedReferenceType() throws URISyntaxException {
 		for (String refName:LISTED_REFERENCE_TYPE_NAMES) {
-			URI uri = new URI(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + refName);
+			URI uri = new URI(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + refName);
 			assertTrue(ListedReferenceTypes.getListedReferenceTypes().isListedReferenceType(uri));
 		}
 		URI wrongNamespace = new URI("http://wrong/"+LISTED_REFERENCE_TYPE_NAMES[0]);
 		assertFalse(ListedReferenceTypes.getListedReferenceTypes().isListedReferenceType(wrongNamespace));
-		URI notValidName = new URI(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX+"wrong");
+		URI notValidName = new URI(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX+"wrong");
 		assertFalse(ListedReferenceTypes.getListedReferenceTypes().isListedReferenceType(notValidName));
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.referencetype.ListedReferenceTypes#getListedReferenceUri(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.referencetype.compat.v2.ListedReferenceTypes#getListedReferenceUri(java.lang.String)}.
 	 */
 	public void testGetListedReferenceUri() throws InvalidSPDXAnalysisException {
 		URI result = ListedReferenceTypes.getListedReferenceTypes().getListedReferenceUri(LISTED_REFERENCE_TYPE_NAMES[0]);
-		assertEquals(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + LISTED_REFERENCE_TYPE_NAMES[0], result.toString());
+		assertEquals(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + LISTED_REFERENCE_TYPE_NAMES[0], result.toString());
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.referencetype.ListedReferenceTypes#getListedReferenceName(java.net.URI)}.
+	 * Test method for {@link org.spdx.library.referencetype.compat.v2.ListedReferenceTypes#getListedReferenceName(java.net.URI)}.
 	 */
 	public void testGetListedReferenceName() throws URISyntaxException, InvalidSPDXAnalysisException {
 		for (String refName:LISTED_REFERENCE_TYPE_NAMES) {
-			URI uri = new URI(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + refName);
+			URI uri = new URI(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + refName);
 			assertEquals(refName, ListedReferenceTypes.getListedReferenceTypes().getListedReferenceName(uri));
 		}
 	}

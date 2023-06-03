@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.CrossRef;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.model.compat.v2.license.CrossRef;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -19,17 +19,17 @@ import junit.framework.TestCase;
 public class CrossRefJsonTest extends TestCase {
 	
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_CROSS_REF_MATCH.getName(),
-			SpdxConstants.PROP_CROSS_REF_TIMESTAMP.getName(),
-			SpdxConstants.PROP_CROSS_REF_URL.getName());
+			SpdxConstantsCompatV2.PROP_CROSS_REF_MATCH.getName(),
+			SpdxConstantsCompatV2.PROP_CROSS_REF_TIMESTAMP.getName(),
+			SpdxConstantsCompatV2.PROP_CROSS_REF_URL.getName());
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_CROSS_REF_IS_LIVE.getName(),
-			SpdxConstants.PROP_CROSS_REF_IS_VALID.getName(),
-			SpdxConstants.PROP_CROSS_REF_WAYBACK_LINK.getName()
+			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_LIVE.getName(),
+			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_VALID.getName(),
+			SpdxConstantsCompatV2.PROP_CROSS_REF_WAYBACK_LINK.getName()
 			);
 	
-	static final List<String> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstants.PROP_CROSS_REF_ORDER.getName());
+	static final List<String> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstantsCompatV2.PROP_CROSS_REF_ORDER.getName());
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	

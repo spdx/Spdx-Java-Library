@@ -19,7 +19,7 @@
  * Package containing useful library functions for reading, writing, and manipulating 
  * SPDX documents.
  * 
- * The <code>org.spdx.library.model</code> package represents the SPDX model as Java objects
+ * The <code>org.spdx.library.model.compat.v2.compat.v2</code> package represents the SPDX model as Java objects
  * with getters and setters to support manipulating the SPDX documents.
  * 
  * The <code>org.spdx.storage</code> package implements an interface to a storage framework

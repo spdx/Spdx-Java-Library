@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.model.IndividualUriValue;
-import org.spdx.library.model.SimpleUriValue;
-import org.spdx.library.model.TypedValue;
+import org.spdx.library.model.compat.v2.IndividualUriValue;
+import org.spdx.library.model.compat.v2.SimpleUriValue;
+import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -171,8 +171,8 @@ public class ModelCopyManager {
 		}
 		putCopiedId(fromStore, fromDocumentUri, fromId, toStore, toDocumentUri, toId);
 		if (!(excludeLicenseDetails && 
-				(SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
-						SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
+				(SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
+						SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
 			List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromDocumentUri, fromId);
 			for (PropertyDescriptor propDesc:propertyDescriptors) {
 				if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propDesc)) {
@@ -311,7 +311,7 @@ public class ModelCopyManager {
 		String toId = getCopiedId(fromStore, fromDocumentUri, sourceId, toStore, toDocumentUri);
 		if (Objects.isNull(toId)) {
 			if (fromStore.getIdType(sourceId) == IdType.Anonymous || toStore.exists(toDocumentUri, sourceId)) {
-				if (SpdxConstants.CLASS_EXTERNAL_DOC_REF.equals(type)) {
+				if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
 					toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri);
 				} else {
 					switch (fromStore.getIdType(sourceId)) {

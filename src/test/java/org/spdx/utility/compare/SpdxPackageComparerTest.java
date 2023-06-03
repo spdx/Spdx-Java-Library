@@ -25,26 +25,26 @@ import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.ExternalRef;
-import org.spdx.library.model.GenericModelObject;
-import org.spdx.library.model.GenericSpdxItem;
-import org.spdx.library.model.ReferenceType;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxElement;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxPackage;
-import org.spdx.library.model.SpdxPackageVerificationCode;
-import org.spdx.library.model.enumerations.AnnotationType;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.enumerations.ReferenceCategory;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.Annotation;
+import org.spdx.library.model.compat.v2.Checksum;
+import org.spdx.library.model.compat.v2.ExternalRef;
+import org.spdx.library.model.compat.v2.GenericModelObject;
+import org.spdx.library.model.compat.v2.GenericSpdxItem;
+import org.spdx.library.model.compat.v2.ReferenceType;
+import org.spdx.library.model.compat.v2.Relationship;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxPackage;
+import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.FileType;
+import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
 
 import junit.framework.TestCase;
 
@@ -324,7 +324,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		TEST_REFERENCES = new ExternalRef[REFERENCE_CATEGORIES.length];
 		for (int i = 0; i < REFERENCE_CATEGORIES.length; i++) {
 			TEST_REFERENCES[i] = gmo.createExternalRef(REFERENCE_CATEGORIES[i], 
-					new ReferenceType(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[i]), 
+					new ReferenceType(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[i]), 
 					REFERENCE_LOCATORS[i], COMMENTS[i]);
 		}
 		Arrays.sort(TEST_REFERENCES);

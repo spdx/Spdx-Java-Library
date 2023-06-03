@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.ListedLicenseException;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.model.compat.v2.license.ListedLicenseException;
 
 /**
  * Simple POJO to hold the license exception data loaded from a JSON file
@@ -265,14 +265,14 @@ public class ExceptionJson {
 	}
 
 	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
-		if (!SpdxConstants.RDFS_PROP_SEE_ALSO.getName().equals(propertyName)) {
+		if (!SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName().equals(propertyName)) {
 			return false;
 		}
 		return String.class.isAssignableFrom(clazz);
 	}
 
 	public boolean isCollectionProperty(String propertyName) {
-		return SpdxConstants.RDFS_PROP_SEE_ALSO.getName().equals(propertyName);
+		return SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName().equals(propertyName);
 	}
 
 }

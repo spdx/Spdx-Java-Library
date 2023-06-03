@@ -18,13 +18,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.ModelObject;
-import org.spdx.library.model.SpdxInvalidTypeException;
-import org.spdx.library.model.SpdxModelFactory;
-import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.enumerations.SpdxEnumFactory;
-import org.spdx.library.model.IndividualUriValue;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.IndividualUriValue;
+import org.spdx.library.model.compat.v2.ModelObject;
+import org.spdx.library.model.compat.v2.SpdxInvalidTypeException;
+import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -40,7 +40,7 @@ public class StoredTypedItem extends TypedValue {
 
 	private static final String NO_ID_ID = "__NO_ID__";  // ID to use in list has map for non-typed values
 	
-	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstants.ALL_SPDX_CLASSES));
+	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstantsCompatV2.ALL_SPDX_CLASSES));
 
 	private ConcurrentHashMap<PropertyDescriptor, Object> properties = new ConcurrentHashMap<>();
 	
@@ -426,8 +426,8 @@ public class StoredTypedItem extends TypedValue {
 							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
 								return false;
 							}
-						} else if (!(SpdxConstants.URI_VALUE_NOASSERTION.equals(uri) ||
-								SpdxConstants.URI_VALUE_NONE.equals(uri))) {
+						} else if (!(SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri) ||
+								SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri))) {
 							return false;
 						}
 					} else if (value instanceof TypedValue) {
@@ -473,10 +473,10 @@ public class StoredTypedItem extends TypedValue {
 		}
 		if (value instanceof IndividualUriValue) {
 			String uri = ((IndividualUriValue)value).getIndividualURI();
-			if (SpdxConstants.URI_VALUE_NOASSERTION.equals(uri)) {
+			if (SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri)) {
 				return true;
 			}
-			if (SpdxConstants.URI_VALUE_NONE.equals(uri)) {
+			if (SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri)) {
 				return true;
 			}
 			Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);

@@ -40,12 +40,12 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.DuplicateSpdxIdException;
-import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.license.SpdxListedLicenseException;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.DuplicateSpdxIdException;
+import org.spdx.library.model.compat.v2.SpdxIdNotFoundException;
+import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
+import org.spdx.library.model.compat.v2.license.SpdxListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;
 
 import com.google.gson.Gson;
@@ -69,7 +69,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	static final String LICENSE_TOC_FILENAME = "licenses.json";
 	static final String EXCEPTION_TOC_FILENAME = "exceptions.json";
 	static final String JSON_SUFFIX = ".json";
-	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstants.LISTED_LICENSE_URL}));
+	private static final List<String> DOCUMENT_URIS = Collections.unmodifiableList(Arrays.asList(new String[]{SpdxConstantsCompatV2.LISTED_LICENSE_URL}));
 	private static final String ANONYMOUS_ID_PREFIX = "SpdxLicenseGeneratedId-";
 	
 	/**
@@ -193,7 +193,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public boolean exists(String documentUri, String id) {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			return false;
 		}
 		listedLicenseModificationLock.readLock().lock();
@@ -211,26 +211,26 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public void create(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {
-			if (SpdxConstants.CLASS_CROSS_REF.equals(type)) {
+			if (SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(type)) {
 				CrossRefJson crossRef = new CrossRefJson();
 				crossRef.setId(id);
 				this.crossRefs.put(id, crossRef);
-			} else if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
+			} else if (SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(type)) {
 				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 					logger.error("Duplicate SPDX ID on create: "+id);;
 					throw new DuplicateSpdxIdException("ID "+id+" already exists.");
 				}
 				this.licenseIds.put(id.toLowerCase(), id);
 				this.listedLicenseCache.put(id, new LicenseJson(id));
-			} else if (SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)) {
+			} else if (SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)) {
 				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 					logger.error("Duplicate SPDX ID on create: "+id);;
 					throw new DuplicateSpdxIdException("ID "+id+" already exists.");
@@ -248,11 +248,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public List<PropertyDescriptor> getPropertyValueDescriptors(String documentUri, String id) throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -270,14 +270,14 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			if (isLicenseId) {
 				LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
 				license.getPropertyValueNames().spliterator().forEachRemaining(
-						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstantsCompatV2.SPDX_NAMESPACE)));
 			} else if (isExceptionId) {
 				ExceptionJson exc = fetchExceptionJson(exceptionIds.get(id.toLowerCase()));
 				exc.getPropertyValueNames().spliterator().forEachRemaining(
-						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstantsCompatV2.SPDX_NAMESPACE)));
 			} else if (Objects.nonNull(crossRef)) {
 				crossRef.getPropertyValueNames().spliterator().forEachRemaining(
-						s -> retval.add(new PropertyDescriptor(s, SpdxConstants.SPDX_NAMESPACE)));
+						s -> retval.add(new PropertyDescriptor(s, SpdxConstantsCompatV2.SPDX_NAMESPACE)));
 			} else {
 				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
@@ -436,11 +436,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public void setValue(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -476,11 +476,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public void clearValueCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -516,11 +516,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public boolean addValueToCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -539,15 +539,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
+			if (SpdxConstantsCompatV2.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 				}
 				TypedValue tv = (TypedValue)value;
-				if (!SpdxConstants.CLASS_CROSS_REF.equals(tv.getType())) {
-					logger.error("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
-					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
+				if (!SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(tv.getType())) {
+					logger.error("Invalid type for CrossRef - expected"+SpdxConstantsCompatV2.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstantsCompatV2.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
 				}
 				CrossRefJson crj = crossRefs.get(tv.getId());
 				if (Objects.isNull(crj)) {
@@ -572,11 +572,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean removeValueFromCollection(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -595,15 +595,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
+			if (SpdxConstantsCompatV2.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				if (!(value instanceof TypedValue)) {
 					logger.error("Invalid class for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected TypedValue, was supplied type "+value.getClass().toString());
 				}
 				TypedValue tv = (TypedValue)value;
-				if (!SpdxConstants.CLASS_CROSS_REF.equals(tv.getType())) {
-					logger.error("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
-					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstants.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
+				if (!SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(tv.getType())) {
+					logger.error("Invalid type for CrossRef - expected"+SpdxConstantsCompatV2.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());
+					throw new InvalidSPDXAnalysisException("Invalid type for CrossRef - expected"+SpdxConstantsCompatV2.CLASS_CROSS_REF+", was supplied type "+value.getClass().toString());	
 				}
 				CrossRefJson crj = crossRefs.get(tv.getId());
 				if (Objects.isNull(crj)) {
@@ -631,11 +631,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<Object> listValues(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -655,7 +655,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
 			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyDescriptor.getName());
-			if (SpdxConstants.PROP_CROSS_REF.equals(propertyDescriptor)) {
+			if (SpdxConstantsCompatV2.PROP_CROSS_REF.equals(propertyDescriptor)) {
 				final Iterator<Object> crossRefJsonIter = valueList.iterator();
 				return new Iterator<Object>() {
 
@@ -680,7 +680,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 							if (Objects.isNull(crossRefId)) {
 								// Need to create an ID and store it in the cache
 								try {
-									crossRefId = getNextId(IdType.Anonymous, SpdxConstants.LISTED_LICENSE_URL);
+									crossRefId = getNextId(IdType.Anonymous, SpdxConstantsCompatV2.LISTED_LICENSE_URL);
 								} catch (InvalidSPDXAnalysisException e) {
 									logger.error("Error getting next Anonymous ID",e);
 									throw new RuntimeException(e);
@@ -692,7 +692,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 							listedLicenseModificationLock.writeLock().unlock();
 						}
 						try {
-							return new TypedValue(crossRefId, SpdxConstants.CLASS_CROSS_REF);
+							return new TypedValue(crossRefId, SpdxConstantsCompatV2.CLASS_CROSS_REF);
 						} catch (InvalidSPDXAnalysisException e) {
 							logger.error("Error creating TypedValue for CrossRef",e);
 							throw new RuntimeException(e);
@@ -718,11 +718,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public Optional<Object> getValue(String documentUri, String id, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -758,11 +758,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public String getNextId(IdType idType, String documentUri)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		this.listedLicenseModificationLock.writeLock().lock();
 		try {
@@ -842,11 +842,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+				return Optional.of(new TypedValue(id, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE));
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
+				return Optional.of(new TypedValue(id, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
 			} else if (crossRefs.containsKey(id)) {
-				return Optional.of(new TypedValue(id, SpdxConstants.CLASS_CROSS_REF));
+				return Optional.of(new TypedValue(id, SpdxConstantsCompatV2.CLASS_CROSS_REF));
 			} else {
 				return Optional.empty();
 			}
@@ -857,11 +857,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public void removeProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -904,19 +904,19 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			List<TypedValue> allItems = new ArrayList<TypedValue>();
-			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
 				for (String licenseId:this.licenseIds.values()) {
-					allItems.add(new TypedValue(licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE));
+					allItems.add(new TypedValue(licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE));
 				}
 			}
-			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typeFilter)) {
 				for (String exceptionId:this.exceptionIds.values()) {
-					allItems.add(new TypedValue(exceptionId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
+					allItems.add(new TypedValue(exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION));
 				}
 			}
-			if (Objects.isNull(typeFilter) || SpdxConstants.CLASS_CROSS_REF.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(typeFilter)) {
 				for (String crossRefId:crossRefs.keySet()) {
-					allItems.add(new TypedValue(crossRefId, SpdxConstants.CLASS_CROSS_REF));
+					allItems.add(new TypedValue(crossRefId, SpdxConstantsCompatV2.CLASS_CROSS_REF));
 				}
 			}
 			return Collections.unmodifiableList(allItems).stream();
@@ -930,11 +930,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@SuppressWarnings("unchecked")
 	@Override
 	public int collectionSize(String documentUri, String id, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -969,11 +969,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean collectionContains(String documentUri, String id, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -993,7 +993,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
 			List<Object> valueList = (List<Object>)(List<?>)license.getValueList(propertyDescriptor.getName());
-			if (value instanceof TypedValue && SpdxConstants.CLASS_CROSS_REF.equals(((TypedValue)value).getType())) {
+			if (value instanceof TypedValue && SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(((TypedValue)value).getType())) {
 				CrossRefJson compareValue = crossRefs.get(((TypedValue)value).getId());
 				if (Objects.isNull(compareValue)) {
 					return false;
@@ -1017,11 +1017,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean isCollectionMembersAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1055,11 +1055,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean isPropertyValueAssignableTo(String documentUri, String id, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1093,11 +1093,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean isCollectionProperty(String documentUri, String id, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1189,11 +1189,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		if (!SpdxConstants.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+
-					SpdxConstants.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
+					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 		}
 		listedLicenseModificationLock.writeLock().lock();
 		try {

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
+import org.spdx.library.SpdxConstantsCompatV2;
 
 /**
  * @author gary
@@ -78,17 +78,17 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	@Override
 	InputStream getTocInputStream() throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME));
 	}
 
 	@Override
 	InputStream getLicenseInputStream(String licenseId) throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX));
 	}
 
 	@Override
 	InputStream getExceptionTocInputStream() throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME));
 	}
 
 	@Override

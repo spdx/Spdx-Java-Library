@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.ListedLicenseException;
+import org.spdx.library.model.compat.v2.license.ListedLicenseException;
 
 
 /**

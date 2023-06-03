@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.SpdxModelFactory;
-import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.license.CrossRef;
-import org.spdx.library.model.license.LicenseException;
-import org.spdx.library.model.license.ListedLicenseException;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.model.compat.v2.license.CrossRef;
+import org.spdx.library.model.compat.v2.license.LicenseException;
+import org.spdx.library.model.compat.v2.license.ListedLicenseException;
+import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -87,13 +87,13 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testCreate() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		String nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
-		String result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID).get();
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE);
+		String result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.PROP_LICENSE_ID).get();
 		assertEquals(nextId, result);
 		
 		nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
-		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
+		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID).get();
 		assertEquals(nextId, result);
 		slll.close();
 	}
@@ -142,34 +142,34 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	
 	public void testGetValue() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		String result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
+		String result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(APACHE_LICENSE_NAME, result);
 		
-		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
+		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(ECOS_LICENSE_NAME, result);
 		slll.close();
 	}
 	
 	public void testSetValue() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		String result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
+		String result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(APACHE_LICENSE_NAME, result);
 		String newName = "new name";
-		slll.setValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME, newName);
-		result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_NAME).get();
+		slll.setValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_NAME, newName);
+		result = (String)slll.getValue(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(newName, result);
 		
-		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
+		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(ECOS_LICENSE_NAME, result);
-		slll.setValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME, newName);
-		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.PROP_NAME).get();
+		slll.setValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.PROP_NAME, newName);
+		result = (String)slll.getValue(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.PROP_NAME).get();
 		assertEquals(newName, result);
 		slll.close();
 	}
 
 	public void testCreateLicense() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		SpdxListedLicense result = (SpdxListedLicense)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, APACHE_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null);
+		SpdxListedLicense result = (SpdxListedLicense)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
 		assertEquals(APACHE_ID, result.getLicenseId());
 		assertEquals(APACHE_LICENSE_NAME, result.getName());
 		String licenseText = result.getLicenseText();
@@ -188,12 +188,12 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
 		assertTrue(result.getStandardLicenseHeader().length() > 100);
-		assertEquals(SpdxConstants.CLASS_SPDX_LISTED_LICENSE, (result.getType()));
+		assertEquals(SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, (result.getType()));
 	}
 	
 	public void testCreateException() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		LicenseException result = (LicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		LicenseException result = (LicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		assertEquals(ECOS_EXCEPTION_ID, result.getLicenseExceptionId());
 		assertEquals(ECOS_EXCEPTION_ID, result.getId());
 		assertTrue(result.getComment().length() > 5);
@@ -203,7 +203,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		List<String> lResult = new ArrayList<String>(result.getSeeAlso());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
-		assertEquals(SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, (result.getType()));
+		assertEquals(SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, (result.getType()));
 		assertFalse(result.isDeprecated());
 	}
 	
@@ -211,14 +211,14 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testList() throws InvalidSPDXAnalysisException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		// Exception
-		ListedLicenseException exception = (ListedLicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		ListedLicenseException exception = (ListedLicenseException)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		String seeAlso1 = "seeAlso1";
 		String seeAlso2 = "seeAlso2";
 		List<String> seeAlsos = Arrays.asList(new String[]{seeAlso1, seeAlso2});
 		exception.setSeeAlso(seeAlsos);
 		// getValueList
 		List<Object> result = new ArrayList<>();
-		Iterator<Object> resultIter = slll.listValues(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO);
+		Iterator<Object> resultIter = slll.listValues(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		while (resultIter.hasNext()) {
 			result.add(resultIter.next());
 		}
@@ -226,29 +226,29 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		for (String seeAlso:seeAlsos) {
 			assertTrue(result.contains(seeAlso));
 			// collectionContains
-			assertTrue(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso));
+			assertTrue(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso));
 		}
 		// collectionSize
-		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
 		// addValueToCollection
 		String seeAlso3 = "seeAlso3";
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertTrue(slll.addValueToCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertTrue(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertEquals(seeAlsos.size()+1, slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.addValueToCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size()+1, slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
 		// remove value
-		assertTrue(slll.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
-		assertFalse(slll.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.removeValueFromCollection(LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
 		
 		// License
 		ModelCopyManager copyManager = new ModelCopyManager();
-		SpdxListedLicense license = (SpdxListedLicense)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, APACHE_ID, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, copyManager);
+		SpdxListedLicense license = (SpdxListedLicense)SpdxModelFactory.createModelObject(slll, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager);
 		license.setSeeAlso(seeAlsos);
 		// getValueList
 		result.clear();
-		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO);
+		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		while (resultIter.hasNext()) {
 			result.add(resultIter.next());
 		}
@@ -256,24 +256,24 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		for (String seeAlso:seeAlsos) {
 			assertTrue(result.contains(seeAlso));
 			// collectionContains
-			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso));
+			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso));
 		}
 		// collectionSize
-		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
 		// addValueToCollection
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertTrue(slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertEquals(seeAlsos.size()+1, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size()+1, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
 		// remove value
-		assertTrue(slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
-		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
-		assertFalse(slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertTrue(slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
+		assertEquals(seeAlsos.size(), slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, seeAlso3));
 		
 		// license crossRefs
 		license.getCrossRef().clear();
-		assertEquals(0, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
+		assertEquals(0, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF));
 		IModelStore simpleModelStore = new InMemSpdxStore();
 		String docUri = "http://some.other.doc";
 		CrossRef crossRef1 = new CrossRef(simpleModelStore, docUri, simpleModelStore.getNextId(IdType.Anonymous, docUri), copyManager, true);
@@ -284,7 +284,7 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		license.getCrossRef().add(crossRef1);
 		license.getCrossRef().add(crossRef2);
 		result.clear();
-		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF);
+		resultIter = slll.listValues(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF);
 		List<TypedValue> tvResult = new ArrayList<>();
 		while (resultIter.hasNext()) {
 			TypedValue tv = (TypedValue)resultIter.next();
@@ -294,11 +294,11 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		List<CrossRef> result2 = (List<CrossRef>)(List<?>)Arrays.asList(license.getCrossRef().toArray());
 		assertEquals(2, result.size());
 		assertEquals(2, result2.size());
-		assertEquals(2, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
+		assertEquals(2, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF));
 		assertTrue(UnitTestHelper.isListsEquivalent(crossRefs, (List<CrossRef>)(List<?>)result));
 		assertTrue(UnitTestHelper.isListsEquivalent(crossRefs, result2));
 		for (TypedValue tv:tvResult) {
-			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, tv));
+			assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, tv));
 		}
 		for (CrossRef crossRef:crossRefs) {
 			// collectionContains
@@ -307,12 +307,12 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		CrossRef crossRef3 = new CrossRef(simpleModelStore, docUri, simpleModelStore.getNextId(IdType.Anonymous, docUri), copyManager, true);
 		crossRef3.setUrl("http://url3");
 		String newCrossRefId = slll.getNextId(IdType.Anonymous, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, newCrossRefId, SpdxConstants.CLASS_CROSS_REF);
-		slll.setValue(LICENSE_LIST_URI, newCrossRefId, SpdxConstants.PROP_CROSS_REF_URL, "http://url3");
-		TypedValue newCrossRefTv = new TypedValue(newCrossRefId, SpdxConstants.CLASS_CROSS_REF);
-		slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv);
-		assertEquals(3, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF));
-		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv));
+		slll.create(LICENSE_LIST_URI, newCrossRefId, SpdxConstantsCompatV2.CLASS_CROSS_REF);
+		slll.setValue(LICENSE_LIST_URI, newCrossRefId, SpdxConstantsCompatV2.PROP_CROSS_REF_URL, "http://url3");
+		TypedValue newCrossRefTv = new TypedValue(newCrossRefId, SpdxConstantsCompatV2.CLASS_CROSS_REF);
+		slll.addValueToCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, newCrossRefTv);
+		assertEquals(3, slll.collectionSize(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF));
+		assertTrue(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, newCrossRefTv));
 		boolean found = false;
 		for (CrossRef cr:license.getCrossRef()) {
 			if (cr.equivalent(crossRef3)) {
@@ -321,8 +321,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 			}
 		}
 		assertTrue(found);
-		slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv);
-		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, newCrossRefTv));
+		slll.removeValueFromCollection(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, newCrossRefTv);
+		assertFalse(slll.collectionContains(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, newCrossRefTv));
 		found = false;
 		for (CrossRef cr:license.getCrossRef()) {
 			if (cr.equivalent(crossRef3)) {
@@ -335,45 +335,45 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	
 	public void testIsCollectionMembersAssignableTo() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
-		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
-		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, CrossRef.class));
-		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_CROSS_REF, String.class));
+		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, Boolean.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LICENSE_TEXT, String.class));
+		assertTrue(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, CrossRef.class));
+		assertFalse(slll.isCollectionMembersAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF, String.class));
 		slll.close();
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
-		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LICENSE_TEXT, Boolean.class));
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LICENSE_TEXT, String.class));
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LICENSE_TEXT, Boolean.class));
 
-		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
-		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+		assertFalse(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, String.class));
+		assertTrue(slll.isPropertyValueAssignableTo(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, Boolean.class));
 		slll.close();
 	}
 	
 	public void testIsCollectionProperty() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		assertTrue(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.RDFS_PROP_SEE_ALSO));
-		assertFalse(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstants.PROP_LIC_ID_DEPRECATED));
+		assertTrue(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO));
+		assertFalse(slll.isCollectionProperty(LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED));
 		slll.close();
 	}
 	
 	public void testDelete() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		String nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE);
-		String result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_ID).get();
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE);
+		String result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.PROP_LICENSE_ID).get();
 		assertEquals(nextId, result);
 		assertTrue(slll.exists(LICENSE_LIST_URI, nextId));
 		slll.delete(LICENSE_LIST_URI, nextId);
 		assertFalse(slll.exists(LICENSE_LIST_URI, nextId));
 		
 		nextId = slll.getNextId(IdType.ListedLicense, LICENSE_LIST_URI);
-		slll.create(LICENSE_LIST_URI, nextId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
-		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstants.PROP_LICENSE_EXCEPTION_ID).get();
+		slll.create(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION);
+		result = (String)slll.getValue(LICENSE_LIST_URI, nextId, SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID).get();
 		assertEquals(nextId, result);
 		assertTrue(slll.exists(LICENSE_LIST_URI, nextId));
 		slll.delete(LICENSE_LIST_URI, nextId);

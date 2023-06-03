@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.spdx.library.model.ModelObject;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxModelFactory;
-import org.spdx.library.model.SpdxPackage;
-import org.spdx.library.model.TypedValue;
+import org.spdx.library.model.compat.v2.ModelObject;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.model.compat.v2.SpdxPackage;
+import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.ISerializableModelStore;
@@ -89,7 +89,7 @@ public class Read {
 		 * @return true if the document exists in the model store
 		 */
 		public static boolean documentExists(IModelStore modelStore, String documentUri) {
-			return modelStore.exists(documentUri, SpdxConstants.SPDX_DOCUMENT_ID);
+			return modelStore.exists(documentUri, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID);
 		}
 	}
 	
@@ -159,7 +159,7 @@ public class Read {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Stream<SpdxPackage> getAllPackages(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException {
-		return (Stream<SpdxPackage>)(getAllItems(modelStore, documentUri, SpdxConstants.CLASS_SPDX_PACKAGE));
+		return (Stream<SpdxPackage>)(getAllItems(modelStore, documentUri, SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE));
 	}
 	
 	/** The following can be achieve by fetching the list of relationships from the element

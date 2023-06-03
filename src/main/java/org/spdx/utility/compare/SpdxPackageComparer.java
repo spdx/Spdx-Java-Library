@@ -30,12 +30,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.ExternalRef;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxItem;
-import org.spdx.library.model.SpdxPackage;
+import org.spdx.library.model.compat.v2.Checksum;
+import org.spdx.library.model.compat.v2.ExternalRef;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.model.compat.v2.SpdxItem;
+import org.spdx.library.model.compat.v2.SpdxPackage;
 
 /**
  * Compares two SPDX package.  The <code>compare(pkgA, pkgB)</code> method will perform the comparison and

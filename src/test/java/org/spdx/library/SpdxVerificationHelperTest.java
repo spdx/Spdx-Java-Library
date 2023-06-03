@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
 
@@ -50,7 +50,7 @@ public class SpdxVerificationHelperTest extends TestCase {
 	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyNonStdLicenseid(java.lang.String)}.
 	 */
 	public void testVerifyNonStdLicenseid() {
-		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyNonStdLicenseid(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+"something")));
+		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyNonStdLicenseid(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"something")));
 		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyNonStdLicenseid("InvalidID")));
 	}
 
@@ -88,7 +88,7 @@ public class SpdxVerificationHelperTest extends TestCase {
 	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyDate(java.lang.String)}.
 	 */
 	public void testVerifyDate() {
-		DateFormat format = new SimpleDateFormat(SpdxConstants.SPDX_DATE_FORMAT);
+		DateFormat format = new SimpleDateFormat(SpdxConstantsCompatV2.SPDX_DATE_FORMAT);
 		String fullDate = format.format(new Date());
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDate(fullDate)));
 		assertFalse(Objects.isNull(SpdxVerificationHelper.verifyDate(new Date().toString())));
@@ -123,7 +123,7 @@ public class SpdxVerificationHelperTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyChecksumString(java.lang.String, org.spdx.library.model.enumerations.ChecksumAlgorithm)}.
+	 * Test method for {@link org.spdx.library.SpdxVerificationHelper#verifyChecksumString(java.lang.String, org.spdx.library.model.compat.v2.compat.v2.enumerations.ChecksumAlgorithm)}.
 	 */
 	public void testVerifyChecksumString() {
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyChecksumString("bc527343c7ffc103111f3a694b004e2f", ChecksumAlgorithm.MD5, Version.CURRENT_SPDX_VERSION)));

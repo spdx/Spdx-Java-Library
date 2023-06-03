@@ -53,7 +53,7 @@ public class Version {
 		if (!spdxVersion.startsWith("SPDX-")) {
 			return "Invalid spdx version - must start with 'SPDX-'";
 		}
-		Matcher docSpecVersionMatcher = SpdxConstants.SPDX_VERSION_PATTERN.matcher(spdxVersion);
+		Matcher docSpecVersionMatcher = SpdxConstantsCompatV2.SPDX_VERSION_PATTERN.matcher(spdxVersion);
 		if (!docSpecVersionMatcher.matches()) {
 			return "Invalid spdx version format - must match 'SPDX-M.N'";
 		}

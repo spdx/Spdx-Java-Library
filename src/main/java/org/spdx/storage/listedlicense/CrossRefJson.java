@@ -26,8 +26,8 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.CrossRef;
+import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.model.compat.v2.license.CrossRef;
 
 /**
  * JSON Representation of a CrossRef

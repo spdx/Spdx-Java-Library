@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.CrossRef;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.model.compat.v2.license.CrossRef;
+import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -42,22 +42,22 @@ import junit.framework.TestCase;
 public class LicenseJsonTest extends TestCase {
 	
 	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_LICENSE_ID.getName(), SpdxConstants.PROP_LICENSE_TEXT.getName(),
-			SpdxConstants.PROP_LICENSE_TEXT_HTML.getName(), 
-			SpdxConstants.PROP_STD_LICENSE_NAME.getName(), SpdxConstants.RDFS_PROP_COMMENT.getName(),
-			SpdxConstants.PROP_STD_LICENSE_NOTICE.getName(), SpdxConstants.PROP_STD_LICENSE_HEADER_TEMPLATE.getName(),
-			SpdxConstants.PROP_LICENSE_HEADER_HTML.getName(), SpdxConstants.PROP_STD_LICENSE_TEMPLATE.getName(),
-			SpdxConstants.PROP_EXAMPLE.getName(), SpdxConstants.PROP_LIC_DEPRECATED_VERSION.getName()
+			SpdxConstantsCompatV2.PROP_LICENSE_ID.getName(), SpdxConstantsCompatV2.PROP_LICENSE_TEXT.getName(),
+			SpdxConstantsCompatV2.PROP_LICENSE_TEXT_HTML.getName(), 
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_NAME.getName(), SpdxConstantsCompatV2.RDFS_PROP_COMMENT.getName(),
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_NOTICE.getName(), SpdxConstantsCompatV2.PROP_STD_LICENSE_HEADER_TEMPLATE.getName(),
+			SpdxConstantsCompatV2.PROP_LICENSE_HEADER_HTML.getName(), SpdxConstantsCompatV2.PROP_STD_LICENSE_TEMPLATE.getName(),
+			SpdxConstantsCompatV2.PROP_EXAMPLE.getName(), SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION.getName()
 			);
 	
 	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_STD_LICENSE_OSI_APPROVED.getName(), SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE.getName(),
-			SpdxConstants.PROP_LIC_ID_DEPRECATED.getName()
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_OSI_APPROVED.getName(), SpdxConstantsCompatV2.PROP_STD_LICENSE_FSF_LIBRE.getName(),
+			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName()
 			);
 	
 	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(),
-			SpdxConstants.PROP_CROSS_REF.getName());
+	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(),
+			SpdxConstantsCompatV2.PROP_CROSS_REF.getName());
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
 		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
@@ -110,7 +110,7 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		try {
-			lj.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstants.CLASS_SPDX_ELEMENT);
+			lj.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstantsCompatV2.CLASS_SPDX_ELEMENT);
 			fail("This shouldn't work");
 		} catch (InvalidSPDXAnalysisException e) {
 			// Expected
@@ -307,7 +307,7 @@ public class LicenseJsonTest extends TestCase {
 		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			json.append("\t\"");
-			if (SpdxConstants.RDFS_PROP_COMMENT.equals(valueName)) {
+			if (SpdxConstantsCompatV2.RDFS_PROP_COMMENT.equals(valueName)) {
 				json.append("licenseComments");	// Legacy value
 			} else {
 				json.append(valueName);
@@ -363,21 +363,21 @@ public class LicenseJsonTest extends TestCase {
 	public void testIsCollectionMembersAssignableTo() throws Exception {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), String.class));
-		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), Boolean.class));
-		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_TEXT.getName(), String.class));
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_CROSS_REF.getName(), CrossRef.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), String.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), Boolean.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT.getName(), String.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_CROSS_REF.getName(), CrossRef.class));
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO.getName(), String.class));
-		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT.getName(), String.class));
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT.getName(), Boolean.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.getName(), String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT.getName(), String.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT.getName(), Boolean.class));
 
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED.getName(), String.class));
-		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED.getName(), Boolean.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName(), String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED.getName(), Boolean.class));
 	}
 	
 	public void testCopyFromLicense() throws Exception {

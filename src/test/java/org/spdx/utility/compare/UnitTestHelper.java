@@ -31,8 +31,8 @@ import java.net.URI;
 import java.net.URLConnection;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.ModelObject;
-import org.spdx.library.model.SpdxDocument;
+import org.spdx.library.model.compat.v2.ModelObject;
+import org.spdx.library.model.compat.v2.SpdxDocument;
 
 /**
  * Helper class for unit tests
