@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.TypedValue;
 
 /**
  * Service Provider Interface for storing and retrieving SPDX properties for SPDX documents.

@@ -8,6 +8,11 @@ Java library which implements the Java object model for SPDX and provides useful
 
 |   [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=bugs)](https://sonarcloud.io/dashboard?id=java-spdx-library)    | [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=security_rating)](https://sonarcloud.io/dashboard?id=java-spdx-library) | [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=java-spdx-library) | [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=sqale_index)](https://sonarcloud.io/dashboard?id=java-spdx-library) |
 
+## Library Version Compatibility
+
+Library version 3.0.0 and higher is not compatible with previous versions of the library due to breaking changes introduced in SPDX 3.0.
+
+See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how to upgrade.
 ## Storage Interface
 The Spdx-Java-Library allows for different implementations of SPDX object storage.  The storage facility implements the org.spdx.storage.IModelStore interface.  This is a low level Service Provider Interface (SPI).  The ISerializableModelStore extends the IModelStore and supports serializing and de-serializing the store to an I/O Stream. This interface is currently used to implement JSON, XML, YAML, and RDF/XML formats.  The default storage interface is an in-memory Map which should be sufficient for light weight usage of the library.
 
@@ -44,4 +49,4 @@ To update Spdx-Java-Library, the following is a very brief checklist:
   4. Update unit tests
 
 ## Development Status
-Note: This library is mostly stable, but and contains some defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.
+Note: This library is mostly stable, but may contain some defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.

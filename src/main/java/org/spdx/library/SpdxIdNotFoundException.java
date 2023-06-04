@@ -15,40 +15,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
-
-import org.spdx.library.InvalidSPDXAnalysisException;
+package org.spdx.library;
 
 /**
  * @author Gary O'Neall
  * 
- * Invalid type for an SPDX property
+ * Exception for no SPDX identifier found
  *
  */
-public class SpdxInvalidTypeException extends InvalidSPDXAnalysisException {
+public class SpdxIdNotFoundException extends InvalidSPDXAnalysisException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 
 	/**
 	 * 
 	 */
-	public SpdxInvalidTypeException() {
+	public SpdxIdNotFoundException() {
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public SpdxInvalidTypeException(String arg0) {
+	public SpdxIdNotFoundException(String arg0) {
 		super(arg0);
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public SpdxInvalidTypeException(Throwable arg0) {
+	public SpdxIdNotFoundException(Throwable arg0) {
 		super(arg0);
 	}
 
@@ -56,7 +55,7 @@ public class SpdxInvalidTypeException extends InvalidSPDXAnalysisException {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public SpdxInvalidTypeException(String arg0, Throwable arg1) {
+	public SpdxIdNotFoundException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 
@@ -66,7 +65,7 @@ public class SpdxInvalidTypeException extends InvalidSPDXAnalysisException {
 	 * @param arg2
 	 * @param arg3
 	 */
-	public SpdxInvalidTypeException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
+	public SpdxIdNotFoundException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
 		super(arg0, arg1, arg2, arg3);
 	}
 

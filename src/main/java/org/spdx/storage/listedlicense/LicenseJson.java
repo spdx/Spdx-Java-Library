@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
 import org.spdx.library.model.compat.v2.license.CrossRef;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;

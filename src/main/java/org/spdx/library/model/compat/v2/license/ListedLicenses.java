@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseLocalStore;

@@ -19,7 +19,7 @@ package org.spdx.library.model.compat.v2.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.model.compat.v2.SpdxInvalidTypeException;
+import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.storage.IModelStore;
 
 /**

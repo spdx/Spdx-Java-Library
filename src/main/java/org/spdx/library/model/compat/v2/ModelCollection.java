@@ -33,6 +33,8 @@ import javax.annotation.Nullable;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxIdNotFoundException;
+import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxObjectNotInStoreException;
 import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;

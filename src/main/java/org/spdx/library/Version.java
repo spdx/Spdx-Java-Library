@@ -40,14 +40,15 @@ public class Version {
 	public static final String TWO_POINT_ONE_VERSION = "SPDX-2.1";
 	public static final String TWO_POINT_TWO_VERSION = "SPDX-2.2";
 	public static final String TWO_POINT_THREE_VERSION = "SPDX-2.3";
-	public static final String CURRENT_SPDX_VERSION = TWO_POINT_THREE_VERSION;
+	public static final String THREE_POINT_ZERO_VERSION = "SPDX-3.0";
+	public static final String CURRENT_SPDX_VERSION = THREE_POINT_ZERO_VERSION;
 	
 	public static final List<String> SUPPORTED_SPDX_VERSIONS = Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(new String[]{
 			ONE_DOT_ZERO_SPDX_VERSION, ONE_DOT_ONE_SPDX_VERSION, ONE_DOT_TWO_SPDX_VERSION, TWO_POINT_ZERO_VERSION,
-			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION, TWO_POINT_THREE_VERSION
+			TWO_POINT_ONE_VERSION, TWO_POINT_TWO_VERSION, TWO_POINT_THREE_VERSION, THREE_POINT_ZERO_VERSION
 	})));
 	
-	public static final String CURRENT_IMPLEMENTATION_VERSION = "1.1.6";
+	public static final String CURRENT_IMPLEMENTATION_VERSION = "2.0.0";
 	
 	public static String verifySpdxVersion(String spdxVersion) {
 		if (!spdxVersion.startsWith("SPDX-")) {

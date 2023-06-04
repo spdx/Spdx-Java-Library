@@ -23,11 +23,11 @@ import java.util.Optional;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.ExternalDocumentRef;
 import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;

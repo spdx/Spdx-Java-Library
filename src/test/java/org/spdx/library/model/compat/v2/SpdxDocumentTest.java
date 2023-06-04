@@ -27,20 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalDocumentRef;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxCreatorInformation;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxItem;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
-import org.spdx.library.model.compat.v2.SpdxPackage;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.FileType;
@@ -252,7 +240,7 @@ public class SpdxDocumentTest extends TestCase {
 	 * and the License List Version (because we know what version we have).
 	 */
 	public void testDefaultCreationInfo() throws InvalidSPDXAnalysisException {
-		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		SpdxDocument doc = SpdxModelFactory.createSpdxDocumentV2(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		assertNotNull(doc.getCreationInfo());
 		assertTrue("Mandatory creation date missing from new SPDX Document.", !doc.getCreationInfo().getCreated().isEmpty());
 		Optional<String> licenseListVersion = doc.getCreationInfo().getLicenseListVersion();
@@ -260,7 +248,7 @@ public class SpdxDocumentTest extends TestCase {
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
-		SpdxDocument doc = SpdxModelFactory.createSpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		SpdxDocument doc = SpdxModelFactory.createSpdxDocumentV2(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
 		doc.setStrict(false);
 		List<Annotation> annotations = Arrays.asList(new Annotation[] {
 				ANNOTATION1, ANNOTATION2	
@@ -304,7 +292,7 @@ public class SpdxDocumentTest extends TestCase {
 		
 		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
 		IModelStore model2 = new InMemSpdxStore();
-		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocument(model2, doc2Uri, gmo.getCopyManager());
+		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocumentV2(model2, doc2Uri, gmo.getCopyManager());
 		doc2.setStrict(false);
 		doc2.setAnnotations(annotations);
 		doc2.setComment(DOC_COMMENT1);

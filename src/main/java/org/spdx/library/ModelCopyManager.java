@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.model.compat.v2.IndividualUriValue;
 import org.spdx.library.model.compat.v2.SimpleUriValue;
-import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;

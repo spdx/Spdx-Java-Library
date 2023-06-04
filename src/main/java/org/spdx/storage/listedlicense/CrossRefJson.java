@@ -26,7 +26,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
+import org.spdx.library.InvalidSpdxPropertyException;
 import org.spdx.library.model.compat.v2.license.CrossRef;
 
 /**

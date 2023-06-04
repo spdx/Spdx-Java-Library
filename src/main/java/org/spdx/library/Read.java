@@ -29,9 +29,7 @@ import java.util.stream.Stream;
 
 import org.spdx.library.model.compat.v2.ModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
 import org.spdx.library.model.compat.v2.SpdxPackage;
-import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.ISerializableModelStore;

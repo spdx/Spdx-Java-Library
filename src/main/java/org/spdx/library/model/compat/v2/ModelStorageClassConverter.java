@@ -24,7 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxInvalidTypeException;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxObjectNotInStoreException;
+import org.spdx.library.TypedValue;
 import org.spdx.storage.IModelStore;
 
 /**

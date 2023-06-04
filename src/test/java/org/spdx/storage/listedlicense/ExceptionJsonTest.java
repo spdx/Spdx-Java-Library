@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.InvalidSpdxPropertyException;
 import org.spdx.library.model.compat.v2.license.ListedLicenseException;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;

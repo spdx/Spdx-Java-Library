@@ -30,9 +30,9 @@ import java.util.Stack;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.TypedValue;
 import org.spdx.library.model.compat.v2.ModelStorageClassConverter;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
-import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 

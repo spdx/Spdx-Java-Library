@@ -30,6 +30,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;

@@ -1,11 +1,12 @@
-package org.spdx.library.model.compat.v2;
+package org.spdx.library;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxInvalidIdException;
+import org.spdx.library.model.compat.v2.GenericModelObject;
+import org.spdx.library.model.compat.v2.GenericSpdxElement;
+import org.spdx.library.model.compat.v2.GenericSpdxItem;
 
 
 /**

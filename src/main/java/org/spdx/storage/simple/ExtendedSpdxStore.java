@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.TypedValue;
+import org.spdx.library.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 

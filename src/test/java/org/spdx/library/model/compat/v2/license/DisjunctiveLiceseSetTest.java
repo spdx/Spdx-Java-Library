@@ -23,7 +23,7 @@ import java.util.List;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.SpdxModelFactory;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;

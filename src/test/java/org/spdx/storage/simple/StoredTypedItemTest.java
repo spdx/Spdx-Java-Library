@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.TypedValue;
 import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.TypedValue;
 import org.spdx.storage.PropertyDescriptor;
 
 import junit.framework.TestCase;
