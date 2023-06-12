@@ -58,7 +58,7 @@ public abstract class SpdxElement extends ModelObject {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxElement(String id) throws InvalidSPDXAnalysisException {
@@ -69,7 +69,7 @@ public abstract class SpdxElement extends ModelObject {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */

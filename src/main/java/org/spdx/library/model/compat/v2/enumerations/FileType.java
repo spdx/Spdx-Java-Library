@@ -17,8 +17,8 @@
  */
 package org.spdx.library.model.compat.v2.enumerations;
 
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.IndividualUriValue;
 
 /**
  * File Type is intrinsic to the file, independent of how the file is being used.  

@@ -17,8 +17,8 @@
  */
 package org.spdx.library.model.compat.v2.enumerations;
 
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.IndividualUriValue;
 
 /**
  * Package Purpose is intrinsic to how the package is being used rather than the content of the package.

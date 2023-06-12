@@ -22,9 +22,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 
 import junit.framework.TestCase;
@@ -46,7 +44,7 @@ public class LineCharPointerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		REFERENCED1 = new GenericSpdxElement();
 		REFERENCED1.setName("referenced1");

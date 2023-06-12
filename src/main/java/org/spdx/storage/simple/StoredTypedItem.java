@@ -17,12 +17,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.IndividualUriValue;
 import org.spdx.library.model.compat.v2.ModelObject;
 import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory;
 import org.spdx.storage.IModelStore;
@@ -48,8 +49,8 @@ public class StoredTypedItem extends TypedValue {
 	
 	private final ReadWriteLock countLock = new ReentrantReadWriteLock();
 	
-	public StoredTypedItem(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
-		super(id, type);
+	public StoredTypedItem(String objectUri, String type) throws InvalidSPDXAnalysisException {
+		super(objectUri, type);
 	}
 	
 	/**
@@ -188,7 +189,7 @@ public class StoredTypedItem extends TypedValue {
 			ConcurrentHashMap<String, List<Object>> idValueMap = (ConcurrentHashMap<String, List<Object>>)map;
 			String id;
 			if (value instanceof TypedValue) {
-				id = ((TypedValue)value).getId();
+				id = ((TypedValue)value).getObjectUri();
 			} else {
 				id = NO_ID_ID;
 			}
@@ -223,7 +224,7 @@ public class StoredTypedItem extends TypedValue {
 		try {
 			@SuppressWarnings("unchecked")
 			ConcurrentHashMap<String, List<TypedValue>> typedValueMap = (ConcurrentHashMap<String, List<TypedValue>>)map;
-			List<TypedValue> list = typedValueMap.get(value.getId());
+			List<TypedValue> list = typedValueMap.get(value.getObjectUri());
 			if (list == null) {
 				return false;
 			}
@@ -254,7 +255,7 @@ public class StoredTypedItem extends TypedValue {
 			ConcurrentHashMap<String, List<Object>> idValueMap = (ConcurrentHashMap<String, List<Object>>)map;
 			String id;
 			if (value instanceof TypedValue) {
-				id = ((TypedValue)value).getId();
+				id = ((TypedValue)value).getObjectUri();
 			} else {
 				id = NO_ID_ID;
 			}
@@ -270,7 +271,7 @@ public class StoredTypedItem extends TypedValue {
 	
 	/**
 	 * @param propertyDescriptor Descriptor for the property
-	 * @return List of values associated with the id, propertyDescriptor and document
+	 * @return List of values associated with the objectUri, propertyDescriptor and document
 	 * @throws SpdxInvalidTypeException
 	 */
 	public Iterator<Object> getValueList(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
@@ -296,7 +297,7 @@ public class StoredTypedItem extends TypedValue {
 	
 	/**
 	 * @param propertyDescriptor Descriptor for the property
-	 * @return the single value associated with the id, propertyDescriptor and document
+	 * @return the single value associated with the objectUri, propertyDescriptor and document
 	 */
 	public Object getValue(PropertyDescriptor propertyDescriptor) {
 		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
@@ -318,12 +319,11 @@ public class StoredTypedItem extends TypedValue {
 	 * @param store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void copyValuesFrom(String fromDocumentUri, IModelStore store) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(fromDocumentUri, "From document URI can not be null");
+	public void copyValuesFrom(IModelStore store) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store, "Store can not be null");
-		List<PropertyDescriptor> propertyDiscriptors = store.getPropertyValueDescriptors(fromDocumentUri, this.getId());
+		List<PropertyDescriptor> propertyDiscriptors = store.getPropertyValueDescriptors(this.getObjectUri());
 		for (PropertyDescriptor propertydescriptor:propertyDiscriptors) {
-			Optional<Object> value = store.getValue(fromDocumentUri, getId(), propertydescriptor);
+			Optional<Object> value = store.getValue(getObjectUri(), propertydescriptor);
 			if (value.isPresent()) {
 				this.setValue(propertydescriptor, value.get());
 			}
@@ -383,7 +383,7 @@ public class StoredTypedItem extends TypedValue {
 		if (map instanceof ConcurrentHashMap<?, ?>) {
 			String id;
 			if (value instanceof TypedValue) {
-				id = ((TypedValue)value).getId();
+				id = ((TypedValue)value).getObjectUri();
 			} else {
 				id = NO_ID_ID;
 			}
@@ -398,13 +398,23 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Trying to find contains for non list type for property "+propertyDescriptor);
 		}
 	}
+	
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test against
+	 * @return true if the property with the propertyDescriptor can be assigned to clazz for the latest SPDX version
+	 */
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+		return isCollectionMembersAssignableTo(propertyDescriptor, clazz, SpdxMajorVersion.latestVersion());
+	}
 
 	/**
 	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz class to test against
+	 * @param specVersion Version of the SPDX Spec
 	 * @return true if the property with the propertyDescriptor can be assigned to clazz
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object map = properties.get(propertyDescriptor);
@@ -432,7 +442,7 @@ public class StoredTypedItem extends TypedValue {
 						}
 					} else if (value instanceof TypedValue) {
 						try {
-							if (clazz != TypedValue.class && !clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType()))) {
+							if (clazz != TypedValue.class && !clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType(), specVersion))) {
 								return false;
 							}
 						} catch (InvalidSPDXAnalysisException e) {
@@ -447,13 +457,23 @@ public class StoredTypedItem extends TypedValue {
 		}
 		return true;
 	}
+	
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test against
+	 * @return true if the property can be assigned to type clazz for the latest SPDX spec version
+	 */
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+		return isPropertyValueAssignableTo(propertyDescriptor, clazz, SpdxMajorVersion.latestVersion());
+	}
 
 	/**
 	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz class to test against
+	 * @param specVersion Version of the SPDX Spec
 	 * @return true if the property can be assigned to type clazz
 	 */
-	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object value = properties.get(propertyDescriptor);
@@ -465,7 +485,7 @@ public class StoredTypedItem extends TypedValue {
 		}
 		if (value instanceof TypedValue) {
 			try {
-				return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType()));
+				return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType(), specVersion));
 			} catch (InvalidSPDXAnalysisException e) {
 				logger.error("Error converting typed value to class",e);
 				return false;
@@ -500,8 +520,8 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param elementId id for the element to check
-	 * @return true if an element using the id is used as a value in a collection
+	 * @param elementId objectUri for the element to check
+	 * @return true if an element using the objectUri is used as a value in a collection
 	 */
 	public boolean usesId(String elementId) {
 		if (Objects.isNull(elementId)) {
@@ -512,12 +532,12 @@ public class StoredTypedItem extends TypedValue {
 			Object value = allValues.next();
 			if (value instanceof List && ((List<?>)value).size() > 0 && ((List<?>)value).get(0) instanceof TypedValue) {
 				for (Object listValue:(List<?>)value) {
-					if (listValue instanceof TypedValue && ((TypedValue) listValue).getId().toLowerCase().equals(elementId.toLowerCase())) {
+					if (listValue instanceof TypedValue && ((TypedValue) listValue).getObjectUri().toLowerCase().equals(elementId.toLowerCase())) {
 						return true;
 					}
 				}
 			} else if (value instanceof TypedValue) {
-				if (((TypedValue)value).getId().toLowerCase().equals(elementId.toLowerCase())) {
+				if (((TypedValue)value).getObjectUri().toLowerCase().equals(elementId.toLowerCase())) {
 					return true;
 				}
 			}

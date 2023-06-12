@@ -22,11 +22,13 @@ import org.spdx.storage.PropertyDescriptor;
 
 
 /**
- * Constants which map to the SPDX specifications found at http://spdx.org/rdf/terms
+ * Constants which map to the SPDX specifications for versions prior to SPDX Spec version 3.0
  * @author Gary O'Neall
  *
  */
 public class SpdxConstantsCompatV2 {
+	
+	public static final String SPDX_VERSION_2 = "2";
 
 	// Namespaces
 	public static final String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -407,4 +409,5 @@ public class SpdxConstantsCompatV2 {
 	public static final String LICENSEXML_ATTRIBUTE_ALT_MATCH = "match";
 	public static final String LICENSEXML_ELEMENT_BREAK = "br";
 	public static final String LICENSEXML_ELEMENT_TEXT = "text";
+
 }

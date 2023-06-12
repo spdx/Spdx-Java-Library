@@ -27,8 +27,10 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.spdx.library.DefaultModelStore;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
@@ -60,7 +62,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		Objects.requireNonNull(stModelStore, "Model store can not be null");
 		Objects.requireNonNull(stDocumentUri, "Document URI can not be null");
 		Objects.requireNonNull(externalDocUri, "External document URI can not be null");
-		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
+		IModelStoreLock lock = stModelStore.enterCriticalSection(false);
 		try {
 			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
 					SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, SpdxConstantsCompatV2.PROP_SPDX_EXTERNAL_DOC_REF, copyManager, ExternalDocumentRef.class);
@@ -102,7 +104,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	}
 	
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExternalDocumentRef(String id) throws InvalidSPDXAnalysisException {
@@ -116,7 +118,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	/**
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param objectUri ID for this object - must be unique within the SPDX document
 	 * @param copyManager - if supplied, model objects will be implicitly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException

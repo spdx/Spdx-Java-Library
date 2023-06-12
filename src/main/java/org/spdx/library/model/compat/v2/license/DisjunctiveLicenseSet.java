@@ -48,7 +48,7 @@ public class DisjunctiveLicenseSet extends LicenseSet {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

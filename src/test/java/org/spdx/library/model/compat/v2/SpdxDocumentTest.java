@@ -29,6 +29,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.Version;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.FileType;
@@ -40,6 +41,7 @@ import org.spdx.library.model.compat.v2.license.SimpleLicensingInfo;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -101,7 +103,7 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		CCO_DATALICENSE = LicenseInfoFactory.getListedLicenseById("CC0-1.0");
 		LICENSE1 = new ExtractedLicenseInfo("LicenseRef-1", "License Text 1");
@@ -671,7 +673,7 @@ public class SpdxDocumentTest extends TestCase {
 		Relationship rel = doc.getRelationships().toArray(new Relationship[1])[0];
 		assertEquals(describedElement, rel.getRelatedSpdxElement().get());
 		doc.getDocumentDescribes().remove(describedElement);
-		modelStore.delete(docUri, describedElementId);
+		modelStore.delete(CompatibleModelStoreWrapper.documentUriIdToUri(docUri, describedElementId, false));
 	}
 
 }

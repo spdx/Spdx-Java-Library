@@ -33,6 +33,7 @@ import java.net.URLConnection;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.compat.v2.ModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Helper class for unit tests
@@ -189,8 +190,9 @@ public class UnitTestHelper {
 
 	public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObject> modelObjects) throws InvalidSPDXAnalysisException {
 		for (ModelObject mo:modelObjects) {
-			doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(), 
-					mo.getDocumentUri(), mo.getId(), mo.getType());
+			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
+					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
+					mo.getType(), mo.getDocumentUri(), doc.getDocumentUri());
 		}
 	}
 

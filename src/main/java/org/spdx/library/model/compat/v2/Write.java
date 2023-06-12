@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library;
+package org.spdx.library.model.compat.v2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.ISerializableModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
@@ -59,7 +60,7 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void applyUpdatesInOneTransaction(String documentUri, IModelStore modelStore, Iterable<? extends ModelUpdate> updates) throws InvalidSPDXAnalysisException, IOException {
-		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+		IModelStoreLock lock = modelStore.enterCriticalSection(false);
 		try {
 			for (ModelUpdate update : updates) {
 				update.apply();
@@ -78,7 +79,7 @@ public class Write {
 	 * @throws IOException
 	 */
 	public static void deSerialize(ISerializableModelStore modelStore, String documentUri, InputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+		IModelStoreLock lock = modelStore.enterCriticalSection(false);
 		try {
 			modelStore.deSerialize(stream, false);
 		} finally {

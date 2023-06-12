@@ -46,7 +46,7 @@ public class SpdxListedLicense extends License {
 	
 	/**
 	 * Open or create a model object with the default store and default document URI
-	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param objectUri ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	@SuppressWarnings("unchecked")
@@ -59,7 +59,7 @@ public class SpdxListedLicense extends License {
 	 * Create a new SPDX Listed License object
 	 * @param modelStore container which includes the license
 	 * @param documentUri URI for the SPDX document containing the license
-	 * @param id identifier for the license
+	 * @param objectUri identifier for the license
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param create if true, create the license if it does not exist
 	 * @throws InvalidSPDXAnalysisException 
@@ -74,7 +74,7 @@ public class SpdxListedLicense extends License {
 	
 	/**
 	 * @param name License name
-	 * @param id License ID
+	 * @param objectUri License ID
 	 * @param text License text
 	 * @param sourceUrl Optional URLs that reference this license
 	 * @param comments Optional comments
@@ -270,7 +270,7 @@ public class SpdxListedLicense extends License {
 
 		/**
 		 * @param name License name
-		 * @param id License ID
+		 * @param objectUri License ID
 		 * @param text License text
 		 */
 		public Builder(String id, String name, String text) {

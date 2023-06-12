@@ -22,13 +22,16 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxObjectNotInStoreException;
 import org.spdx.library.TypedValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * This static helper class converts objects used in the model to and from objects used by the SPI / storage class.
@@ -69,10 +72,10 @@ public class ModelStorageClassConverter {
 			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (value instanceof IndividualUriValue) {	// Note: this must be before the check for TypedValue
 			SimpleUriValue suv = new SimpleUriValue((IndividualUriValue)value);
-			return suv.toModelObject(modelStore, documentUri, null);
+			return suv.toModelObject(modelStore, null, documentUri);
 		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
-			return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType(), copyManager);
+			return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getObjectUri(), tv.getType(), copyManager);
 		} else {
 			return value;
 		}
@@ -94,10 +97,10 @@ public class ModelStorageClassConverter {
 	public static Optional<Object> optionalStoredObjectToModelObject(Optional<Object> value, 
 			String stDocumentUri, IModelStore stModelStore, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (value.isPresent() && value.get() instanceof IndividualUriValue) {
-			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, stDocumentUri, copyManager));
+			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, copyManager, stDocumentUri));
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
-			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getId(), tv.getType(), copyManager));
+			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getObjectUri(), tv.getType(), copyManager));
 		} else {
 			return value;
 		}
@@ -121,8 +124,9 @@ public class ModelStorageClassConverter {
 			ModelObject mValue = (ModelObject)value;
 			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(stDocumentUri)) {
 				if (Objects.nonNull(copyManager)) {
-					return copyManager.copy(stModelStore, stDocumentUri, 
-							mValue.getModelStore(), mValue.getDocumentUri(), mValue.getId(), mValue.getType());
+					return copyManager.copy(stModelStore, mValue.getModelStore(), 
+							CompatibleModelStoreWrapper.documentUriIdToUri(mValue.getDocumentUri(), mValue.getId(), mValue.getModelStore()),
+							mValue.getType(), mValue.getDocumentUri(), stDocumentUri);
 				} else {
 					throw new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store");
 				}

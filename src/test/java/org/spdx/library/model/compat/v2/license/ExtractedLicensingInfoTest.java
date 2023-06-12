@@ -26,7 +26,9 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -42,7 +44,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/* (non-Javadoc)
@@ -50,6 +52,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	static final String TEST_RDF_FILE_PATH = "TestFiles"+File.separator+"SPDXRdfExample.rdf";
@@ -79,20 +82,20 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Test method for {@link org.spdx.rdfparser.license.ExtractedLicenseInfo#SPDXNonStandardLicense(org.apache.jena.rdf.model.Model, org.apache.jena.graph.Node)}.
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	
 	public void testSPDXNonStandardLicenseModelNode() throws InvalidSPDXAnalysisException {
 		ExtractedLicenseInfo lic = new ExtractedLicenseInfo(ID1, TEXT1);
 		lic.setComment(COMMENT1);
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
-		TypedValue copy = copyManager.copy(modelStore, DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+		@SuppressWarnings("unused")
+		TypedValue copy = copyManager.copy(modelStore, 
+				DefaultModelStore.getDefaultModelStore(), 
+				CompatibleModelStoreWrapper.documentUriIdToUri(DefaultModelStore.getDefaultDocumentUri(), ID1, false),
+				SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO,
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
 		
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), copy.getId(), SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
-		assertEquals(copy.getId(), lic2.getLicenseId());
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
+		assertEquals(ID1, lic2.getLicenseId());
 		assertEquals(TEXT1, lic2.getExtractedText());
 		assertEquals(COMMENT1, lic2.getComment());
 	}

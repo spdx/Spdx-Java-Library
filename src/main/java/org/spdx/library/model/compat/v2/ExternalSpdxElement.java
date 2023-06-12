@@ -28,8 +28,10 @@ import java.util.regex.Matcher;
 import javax.annotation.Nullable;
 
 import org.spdx.library.DefaultModelStore;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.storage.IModelStore;
 
@@ -44,7 +46,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	// Note: the default empty constructor is not allowed since the element ID must follow a specific pattern
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExternalSpdxElement(String id) throws InvalidSPDXAnalysisException {
@@ -55,7 +57,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -64,7 +66,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 		if (!SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id).matches()) {
-			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
+			throw new InvalidSPDXAnalysisException("Invalid objectUri format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		getExternalSpdxElementURI();	//this will check to make sure the external document reference is available
 	}
@@ -76,7 +78,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public String getExternalDocumentId() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
+			throw new InvalidSPDXAnalysisException("Invalid objectUri format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		return matcher.group(1);
 	}
@@ -88,7 +90,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	public String getExternalElementId() throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.matcher(this.getId());
 		if (!matcher.matches()) {
-			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
+			throw new InvalidSPDXAnalysisException("Invalid objectUri format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		return matcher.group(2);
 	}
@@ -111,7 +113,7 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 		String id = this.getId();
 		Matcher matcher = SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.matcher(id);
 		if (!matcher.matches()) {				
-			retval.add("Invalid id format for an external document reference.  Must be of the form "+SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.pattern());
+			retval.add("Invalid objectUri format for an external document reference.  Must be of the form "+SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.pattern());
 		} else {
 			try {
 				externalDocumentIdToNamespace(matcher.group(1), getModelStore(), getDocumentUri(), getCopyManager());
@@ -142,8 +144,8 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Matcher matcher = SpdxConstantsCompatV2.EXTERNAL_ELEMENT_REF_PATTERN.matcher(externalSpdxElementId);
 		if (!matcher.matches()) {
-			logger.error("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
-			throw new InvalidSPDXAnalysisException("Invalid id format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
+			logger.error("Invalid objectUri format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
+			throw new InvalidSPDXAnalysisException("Invalid objectUri format for an external document reference.  Must be of the form ExternalSPDXRef:SPDXID");
 		}
 		String externalDocumentUri;
 		externalDocumentUri = externalDocumentIdToNamespace(matcher.group(1), stModelStore, stDocumentUri, copyManager);

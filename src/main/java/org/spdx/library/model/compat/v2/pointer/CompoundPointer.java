@@ -48,7 +48,7 @@ public abstract class CompoundPointer extends ModelObject {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public CompoundPointer(String id) throws InvalidSPDXAnalysisException {
@@ -58,7 +58,7 @@ public abstract class CompoundPointer extends ModelObject {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

@@ -20,11 +20,6 @@ package org.spdx.library.model.compat.v2;
 import java.util.ArrayList;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxConstantElement;
-import org.spdx.library.model.compat.v2.SpdxNoAssertionElement;
-import org.spdx.library.model.compat.v2.SpdxNoneElement;
 
 import junit.framework.TestCase;
 

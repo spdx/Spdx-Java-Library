@@ -23,7 +23,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -54,7 +54,7 @@ public class SpdxPackageVerificationCodeTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		IModelStore store = DefaultModelStore.getDefaultModelStore();
 		String docUri = DefaultModelStore.getDefaultDocumentUri();
 		ModelCopyManager copyManager = DefaultModelStore.getDefaultCopyManager();
@@ -74,6 +74,7 @@ public class SpdxPackageVerificationCodeTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	/**

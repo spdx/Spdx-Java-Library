@@ -92,7 +92,7 @@ public class SpdxComparer {
 	 */
 	private Map<SpdxDocument, Map<SpdxDocument, List<ExtractedLicenseInfo>>> uniqueExtractedLicenses = new HashMap<>();
 	/**
-	 * Map of any SPDX documents that have extraced license infos with equivalent text but different comments, id's or other fields
+	 * Map of any SPDX documents that have extraced license infos with equivalent text but different comments, objectUri's or other fields
 	 */
 	private Map<SpdxDocument, Map<SpdxDocument, List<SpdxLicenseDifference>>> licenseDifferences = new HashMap<>();
 	/**
@@ -834,11 +834,11 @@ public class SpdxComparer {
 		this.checkDocsIndex(doc2);
 		Map<SpdxDocument, Map<String, String>> hm = this.extractedLicenseIdMap.get(this.spdxDocs.get(doc1));
 		if (hm == null) {
-			throw new SpdxCompareException("Compare License Error - Extracted license id map has not been initialized.");
+			throw new SpdxCompareException("Compare License Error - Extracted license objectUri map has not been initialized.");
 		}
 		Map<String, String> xlationMap = hm.get(this.spdxDocs.get(doc2));
 		if (xlationMap == null) {
-			throw new SpdxCompareException("Compare License Exception - Extracted license id map has not been initialized.");
+			throw new SpdxCompareException("Compare License Exception - Extracted license objectUri map has not been initialized.");
 		}
 		try {
 			return LicenseCompareHelper.isLicenseEqual(license1, license2, xlationMap);
@@ -1056,7 +1056,7 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * Compares the non-license text and non-id fields and returns true
+	 * Compares the non-license text and non-objectUri fields and returns true
 	 * if all relevant fields are equal
 	 * @param spdxNonStandardLicenseA
 	 * @param spdxNonStandardLicenseB

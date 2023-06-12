@@ -15,39 +15,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2.enumerations;
-
-import org.spdx.library.IndividualUriValue;
-import org.spdx.library.SpdxConstantsCompatV2;
+package org.spdx.library;
 
 /**
- * Annotation types for the Annotation Class
+ * Classes which implement the IndividuallUriValue interface will be stored as a single value.  Theses classes
+ * must NOT implement any properties themselves.  Any such properties will be lost during storage and retrieval.
  * 
  * @author Gary O'Neall
  *
  */
-public enum AnnotationType implements IndividualUriValue {
+public interface IndividualUriValue {
 	
-	OTHER("annotationType_other"),
-	REVIEW("annotationType_review"), 
-	MISSING("not_allowed");
-	
-	private String longName;
-	
-	private AnnotationType(String longName) {
-		this.longName = longName;
-	}
-	@Override
-	public String getIndividualURI() {
-		return getNameSpace() + getLongName();
-	}
-
-	public String getLongName() {
-		return longName;
-	}
-
-	public String getNameSpace() {
-		return SpdxConstantsCompatV2.SPDX_NAMESPACE;
-	}
-
+	/**
+	 * @return a unique identifier for this value.  Typically the namespace + the long name
+	 */
+	public String getIndividualURI();
 }

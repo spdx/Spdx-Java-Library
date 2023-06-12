@@ -29,17 +29,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalRef;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.ReferenceType;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxPackage;
-import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.FileType;
@@ -127,7 +117,7 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
 				"2fd4e1c67a2d28fced849ee1bb76e7391b93eb12");
@@ -194,6 +184,7 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	/**

@@ -11,11 +11,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxFile;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.FileType;
@@ -58,7 +54,7 @@ public class SpdxFileTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		SHA1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, "1123456789abcdef0123456789abcdef01234567");
 		ANNOTATION1 = gmo.createAnnotation("Organization: Annotator1", 
@@ -162,7 +158,8 @@ public class SpdxFileTest extends TestCase {
 		SpdxFile file = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
 				"name", null, Arrays.asList(new AnyLicenseInfo[] {}), null, SHA1)
 				.build();
-		assertEquals(0, file.verify().size());
+		List<String> ver = file.verify();
+		assertEquals(0, ver.size());
 		assertTrue(file.verify(Version.TWO_POINT_ZERO_VERSION).size() > 0);
 	}
 

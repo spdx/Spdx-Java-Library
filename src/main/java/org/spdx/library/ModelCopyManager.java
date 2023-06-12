@@ -23,10 +23,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.model.compat.v2.IndividualUriValue;
-import org.spdx.library.model.compat.v2.SimpleUriValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -48,15 +49,15 @@ public class ModelCopyManager {
 	static final Logger logger = LoggerFactory.getLogger(ModelCopyManager.class);
 	
 	/**
-	 * Map of copied ID's fromModelStore, toModelStore, fromDocUri, toDocUri, fromId, toId
+	 * Map of copied ID's fromModelStore, toModelStore, fromObjectUri, toObjectUri
 	 * Used to keep track of copied ID's to make sure we don't copy them more than once
 	 */
 	private ConcurrentHashMap<IModelStore, ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, 
-	ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>>> COPIED_IDS = 
+	String>>> COPIED_IDS = 
 			new ConcurrentHashMap<>();
 
 	/**
-	 * Create a ModelCopyManager with default options
+	 * Create a CompatV2ModelCopyManager with default options
 	 */
 	public ModelCopyManager() {
 		// Required empty constructor
@@ -64,80 +65,61 @@ public class ModelCopyManager {
 	
 	/**
 	 * @param fromStore Store copied from
-	 * @param fromDocumentUri document copied from
-	 * @param fromId ID copied from
+	 * @param fromObjectUri
 	 * @param toStore store copied to
-	 * @param toDocumentUri document copied to
-	 * @return the ID which has already been copied, or null if it has not been copied
+	 * @return the objectId which has already been copied, or null if it has not been copied
 	 */
-	public String getCopiedId(IModelStore fromStore, String fromDocumentUri, String fromId,
-			IModelStore toStore, String toDocumentUri) {
-		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>> fromStoreMap = COPIED_IDS.get(fromStore);
+	public String getCopiedObjectUri(IModelStore fromStore, String fromObjectUri,
+			IModelStore toStore) {
+		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, String>> fromStoreMap = COPIED_IDS.get(fromStore);
 		if (Objects.isNull(fromStoreMap)) { 
 			return null;
 		}
-		ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>> toStoreMap = fromStoreMap.get(toStore);
+		ConcurrentHashMap<String, String> toStoreMap = fromStoreMap.get(toStore);
 		if (Objects.isNull(toStoreMap)) {
 			return null;
 		}
-		ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fromDocumentMap = toStoreMap.get(fromDocumentUri);
-		if (Objects.isNull(fromDocumentMap)) {
-			return null;
-		}
-		ConcurrentHashMap<String, String> idMap = fromDocumentMap.get(toDocumentUri);
-		if (Objects.isNull(idMap)) {
-			return null;
-		}
-		return idMap.get(fromId);
+		return toStoreMap.get(fromObjectUri);
 	}
 
 	/**
 	 * Record a copied ID between model stores
 	 * @param fromStore Store copied from
-	 * @param fromDocumentUri document copied from
-	 * @param fromId ID copied from
-	 * @param toStore store copied to
-	 * @param toDocumentUri document copied to
+	 * @param fromObjectUri URI for the from Object
+	 * @param toObjectUri URI for the to Object
 	 * @param toId ID copied to
 	 * @return any copied to ID for the same stores, URI's and fromID
 	 */
-	public String putCopiedId(IModelStore fromStore, String fromDocumentUri, String fromId, IModelStore toStore,
-			String toDocumentUri, String toId) {
-		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>> fromStoreMap = COPIED_IDS.get(fromStore);
+	public String putCopiedId(IModelStore fromStore, String fromObjectUri, IModelStore toStore,
+			String toObjectUri) {
+		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, String>> fromStoreMap = COPIED_IDS.get(fromStore);
 		while (Objects.isNull(fromStoreMap)) { 
 			fromStoreMap = COPIED_IDS.putIfAbsent(fromStore, new ConcurrentHashMap<>());
 		}
-		ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>> toStoreMap = fromStoreMap.get(toStore);
+		ConcurrentHashMap<String, String> toStoreMap = fromStoreMap.get(toStore);
 		while (Objects.isNull(toStoreMap)) {
 			toStoreMap = fromStoreMap.putIfAbsent(toStore, new ConcurrentHashMap<>());
 		}
-		ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fromDocumentMap = toStoreMap.get(fromDocumentUri);
-		while (Objects.isNull(fromDocumentMap)) {
-			fromDocumentMap = toStoreMap.putIfAbsent(fromDocumentUri, new ConcurrentHashMap<>());
+		if (toStoreMap.containsKey(fromObjectUri)) {
+			logger.warn("Object URI already exists for the originating "+ fromObjectUri);
 		}
-		ConcurrentHashMap<String, String> idMap = fromDocumentMap.get(toDocumentUri);
-		while (Objects.isNull(idMap)) {
-			idMap = fromDocumentMap.putIfAbsent(toDocumentUri, new ConcurrentHashMap<>());
-		}
-		if (idMap.containsKey(fromId)) {
-			logger.warn("ID already exists for the originating "+fromDocumentUri+"#"+fromId + ":" + toDocumentUri + "#");
-		}
-		return idMap.put(fromId, toId);
+		return toStoreMap.put(fromObjectUri, toObjectUri);
 	}
 	
 	/**
 	 * Copy an item from one Model Object Store to another
 	 * @param toStore Model Store to copy to
-	 * @param toId Id to use in the copy
-	 * @param toDocumentUri Target document URI
+	 * @param toObjectUri URI for the destination object
 	 * @param fromStore Model Store containing the source item
-	 * @param fromDocumentUri Document URI for the source item
-	 * @param fromId ID source ID
+	 * @param fromObjectUri Object URI for the source item
 	 * @param type Type to copy
+	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void copy(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore, String fromDocumentUri, String fromId, String type) throws InvalidSPDXAnalysisException {
-		copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, type, false);
+	public void copy(IModelStore toStore, String toObjectUri, IModelStore fromStore, String fromObjectUri, String type,
+			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+		copy(toStore, toObjectUri, fromStore, fromObjectUri, type, false, fromNamespace, toNamespace);
 	}
 
 	/**
@@ -150,34 +132,37 @@ public class ModelCopyManager {
 	 * @param fromId ID source ID
 	 * @param type Type to copy
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
+	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public void copy(IModelStore toStore, String toDocumentUri, String toId, 
-			IModelStore fromStore, String fromDocumentUri, String fromId, 
-			String type, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
+	public void copy(IModelStore toStore, String toObjectUri, 
+			IModelStore fromStore, String fromObjectUri, 
+			String type, boolean excludeLicenseDetails,
+			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "ToStore can not be null");
-		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
+		Objects.requireNonNull(toObjectUri, "To Object URI can not be null");
 		Objects.requireNonNull(fromStore, "FromStore can not be null");
-		Objects.requireNonNull(fromDocumentUri, "From Document URI can not be null");
-		Objects.requireNonNull(fromId, "From ID can not be null");
-		Objects.requireNonNull(toId, "To ID can not be null");
+		Objects.requireNonNull(fromObjectUri, "From ObjectUri can not be null");
 		Objects.requireNonNull(type, "Type can not be null");
-		if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri) && fromId.equals(toId)) {
+		if (fromStore.equals(toStore) && fromObjectUri.equals(toObjectUri)) {
 			return;	// trying to copy the same thing!
 		}
-		if (!toStore.exists(toDocumentUri, toId)) {
-			toStore.create(toDocumentUri, toId, type);
+		if (!toStore.exists(toObjectUri)) {
+			toStore.create(toObjectUri, type);
 		}
-		putCopiedId(fromStore, fromDocumentUri, fromId, toStore, toDocumentUri, toId);
+		putCopiedId(fromStore, fromObjectUri, toStore, toObjectUri);
 		if (!(excludeLicenseDetails && 
 				(SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
 						SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
-			List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromDocumentUri, fromId);
+			List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromObjectUri);
 			for (PropertyDescriptor propDesc:propertyDescriptors) {
-				if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propDesc)) {
-				    copyCollectionProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propDesc, excludeLicenseDetails);
+				if (fromStore.isCollectionProperty(fromObjectUri, propDesc)) {
+				    copyCollectionProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, excludeLicenseDetails,
+				    		fromNamespace, toNamespace);
 				} else {
-				    copyIndividualProperty(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, fromId, propDesc, excludeLicenseDetails);
+				    copyIndividualProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, excludeLicenseDetails,
+				    		fromNamespace, toNamespace);
 				}
 			}
 		}
@@ -186,42 +171,43 @@ public class ModelCopyManager {
 	/**
 	 * Copies an individual property value (non-collection property value)
      * @param toStore Model Store to copy to
-     * @param toId Id to use in the copy
-     * @param toDocumentUri Target document URI
+     * @param toObjectUri to object URI to copy to
      * @param fromStore Model Store containing the source item
-     * @param fromDocumentUri Document URI for the source item
-     * @param fromId ID source ID
+     * @param fromObjectUri object to copy from
      * @param propDescriptor Descriptor for the property
      * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
+	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private void copyIndividualProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
-		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
+	private void copyIndividualProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
+            String fromObjectUri, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails,
+            @Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Optional<Object> result = Optional.empty();
 		try {
-			if (fromStore.isCollectionProperty(fromDocumentUri, fromId, propDescriptor)) {
+			if (fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
 	            throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is a collection type");
 	        }
-			result =  fromStore.getValue(fromDocumentUri, fromId, propDescriptor);
+			result =  fromStore.getValue(fromObjectUri, propDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
         if (result.isPresent()) {
             if (result.get() instanceof IndividualUriValue) {
-                toStore.setValue(toDocumentUri, toId, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
+                toStore.setValue(toObjectUri, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
             } else if (result.get() instanceof TypedValue) {
                 TypedValue tv = (TypedValue)result.get();
-                if (fromStore.equals(toStore) && fromDocumentUri.equals(toDocumentUri)) {
-                    toStore.setValue(toDocumentUri, toId, propDescriptor, tv);
+                if (fromStore.equals(toStore)) {
+                    toStore.setValue(toObjectUri, propDescriptor, tv);
                 } else {
-                    toStore.setValue(toDocumentUri, toId, propDescriptor, 
-                            copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-                                    tv.getId(), tv.getType(), excludeLicenseDetails));
+                    toStore.setValue(toObjectUri, propDescriptor, 
+                            copy(toStore, fromStore, tv.getObjectUri(), tv.getType(), excludeLicenseDetails,
+                            		fromNamespace, toNamespace));
                 }
             } else {
-                toStore.setValue(toDocumentUri, toId, propDescriptor, result.get());
+                toStore.setValue(toObjectUri, propDescriptor, result.get());
             }
         }
     }
@@ -229,25 +215,26 @@ public class ModelCopyManager {
     /**
 	 * Copies a property which is is a collection
      * @param toStore Model Store to copy to
-     * @param toId Id to use in the copy
-     * @param toDocumentUri Target document URI
+     * @param toObjectUri URI to copy to
      * @param fromStore Model Store containing the source item
-     * @param fromDocumentUri Document URI for the source item
-     * @param fromId ID source ID
+     * @param fromDocumentUri Object URI to copy from
 	 * @param propDescriptor Descriptor for the property
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
+	 * 	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private void copyCollectionProperty(IModelStore toStore, String toDocumentUri, String toId, IModelStore fromStore,
-            String fromDocumentUri, String fromId, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
-		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(fromDocumentUri, false);
+	private void copyCollectionProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
+            String fromObjectUri, PropertyDescriptor propDescriptor, boolean excludeLicenseDetails,
+            @Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Iterator<Object> fromListIter = null;
 		try {
-			if (!fromStore.isCollectionProperty(fromDocumentUri, fromId, propDescriptor)) {
+			if (!fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
 		        throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is not a collection type");
 		    }
-		    fromListIter = fromStore.listValues(fromDocumentUri, fromId, propDescriptor);
+		    fromListIter = fromStore.listValues(fromObjectUri, propDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
@@ -258,77 +245,89 @@ public class ModelCopyManager {
                 toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
             } else if (listItem instanceof TypedValue) {
                 TypedValue listItemTv = (TypedValue)listItem;
-                if (toStore.equals(fromStore) && toDocumentUri.equals(fromDocumentUri)) {
+                if (toStore.equals(fromStore)) {
                     toStoreItem = listItemTv;
                 } else {
-                    toStoreItem = copy(toStore, toDocumentUri, fromStore, fromDocumentUri, 
-                                    listItemTv.getId(), listItemTv.getType(), excludeLicenseDetails);
+                    toStoreItem = copy(toStore, fromStore, listItemTv.getObjectUri(), 
+                    		listItemTv.getType(), excludeLicenseDetails, fromNamespace, toNamespace);
                 }
             } else {
                 toStoreItem = listItem;
             }
-            toStore.addValueToCollection(toDocumentUri, toId, propDescriptor, toStoreItem);
+            toStore.addValueToCollection(toObjectUri, propDescriptor, toStoreItem);
         }
     }
 	
 	/**
 	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
 	 * @param toStore Model Store to copy to
-	 * @param toDocumentUri Target document URI
 	 * @param fromStore Model Store containing the source item
-	 * @param fromDocumentUri Document URI for the source item
-	 * @param sourceId ID source ID
+	 * @param sourceObjectUri source object URI
 	 * @param type Type to copy
-	 * @return ID for the copied object
+	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
+	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, 
-			String fromDocumentUri, String sourceId, String type) throws InvalidSPDXAnalysisException {
-		return copy(toStore, toDocumentUri, fromStore, fromDocumentUri, sourceId, type, false);
+	public TypedValue copy(IModelStore toStore, IModelStore fromStore, 
+			String sourceObjectUri, String type,
+			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+		return copy(toStore, fromStore, sourceObjectUri, type, false, fromNamespace, toNamespace);
 	}
 
     /**
 	 * Copy an item from one Model Object Store to another using the source ID for the target unless it is anonymous
 	 * @param toStore Model Store to copy to
-	 * @param toDocumentUri Target document URI
 	 * @param fromStore Model Store containing the source item
-	 * @param fromDocumentUri Document URI for the source item
-	 * @param sourceId ID source ID
+	 * @param sourceUri URI for the Source object
 	 * @param type Type to copy
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
-	 * @return ID for the copied object
+	 * @param fromNamespace optional namespace of the from property
+	 * @param toNamespace optional namespace of the to property
+	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public TypedValue copy(IModelStore toStore, String toDocumentUri, IModelStore fromStore, 
-			String fromDocumentUri, String sourceId, String type, boolean excludeLicenseDetails) throws InvalidSPDXAnalysisException {
+	public TypedValue copy(IModelStore toStore, IModelStore fromStore, 
+			String sourceUri, String type, boolean excludeLicenseDetails,
+			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "To Store can not be null");
-		Objects.requireNonNull(toDocumentUri, "To Document URI can not be null");
 		Objects.requireNonNull(fromStore, "From Store can not be null");
-		Objects.requireNonNull(fromDocumentUri, "From Document URI can not be null");
-		Objects.requireNonNull(sourceId, "Source ID can not be null");
+		Objects.requireNonNull(sourceUri, "Source URI can not be null");
 		Objects.requireNonNull(type, "Type can not be null");
-		String toId = getCopiedId(fromStore, fromDocumentUri, sourceId, toStore, toDocumentUri);
-		if (Objects.isNull(toId)) {
-			if (fromStore.getIdType(sourceId) == IdType.Anonymous || toStore.exists(toDocumentUri, sourceId)) {
-				if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
-					toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri);
+		if (fromStore.getSpdxVersion().compareTo(SpdxMajorVersion.VERSION_3) >= 0 && 
+				toStore.getSpdxVersion().compareTo(SpdxMajorVersion.VERSION_3) < 0) {
+			throw new InvalidSPDXAnalysisException("Can not copy from SPDX spec version 3.0 to SPDX spec version less than 3.0");
+		}
+		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
+		if (Objects.isNull(toObjectUri)) {
+			if (!(fromStore.getIdType(sourceUri) == IdType.Anonymous)) {
+				if (Objects.nonNull(fromNamespace) && sourceUri.startsWith(fromNamespace) && Objects.nonNull(toNamespace)) {
+					toObjectUri = toNamespace + sourceUri.substring(fromNamespace.length());
 				} else {
-					switch (fromStore.getIdType(sourceId)) {
-						case Anonymous: toId = toStore.getNextId(IdType.Anonymous, toDocumentUri); break;
-						case LicenseRef: toId = toStore.getNextId(IdType.LicenseRef, toDocumentUri); break;
-						case DocumentRef: toId = toStore.getNextId(IdType.DocumentRef, toDocumentUri); break;
-						case SpdxId: toId = toStore.getNextId(IdType.SpdxId, toDocumentUri); break;
+					toObjectUri = sourceUri;
+				}
+			}
+			if (Objects.isNull(toObjectUri) || toStore.exists(toObjectUri)) {
+				if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
+					toObjectUri = toStore.getNextId(IdType.DocumentRef, toNamespace);
+				} else {
+					switch (fromStore.getIdType(sourceUri)) {
+						case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous, toNamespace); break;
+						case LicenseRef: toObjectUri = toStore.getNextId(IdType.LicenseRef, toNamespace); break;
+						case DocumentRef: toObjectUri = toStore.getNextId(IdType.DocumentRef, toNamespace); break;
+						case SpdxId: toObjectUri = toStore.getNextId(IdType.SpdxId, toNamespace); break;
 						case ListedLicense:
 						case Literal:
 						case Unkown:
-						default: toId = sourceId;
+						default: toObjectUri = sourceUri;
 					}
 				}
-			} else {
-				toId = sourceId;
 			}
-			copy(toStore, toDocumentUri, toId, fromStore, fromDocumentUri, sourceId, type, excludeLicenseDetails);
+			if (Objects.isNull(toObjectUri)) {
+				toObjectUri = sourceUri;
+			}
+			copy(toStore, toObjectUri, fromStore, sourceUri, type, excludeLicenseDetails, fromNamespace, toNamespace);
 		}
-		return new TypedValue(toId, type);
+		return new TypedValue(toObjectUri, type);
 	}
 }

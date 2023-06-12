@@ -19,6 +19,7 @@ package org.spdx.library.model.compat.v2.license;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -41,7 +42,7 @@ public class OrLaterOperatorTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		license1 = new ExtractedLicenseInfo(LICENSE_ID1, LICENSE_TEXT1);
 		license2 = new ExtractedLicenseInfo(LICENSE_ID2, LICENSE_TEXT2);
 	}
@@ -51,6 +52,7 @@ public class OrLaterOperatorTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 	/**
 	 * Test method for {@link org.spdx.rdfparser.license.OrLaterOperator#hashCode()}.

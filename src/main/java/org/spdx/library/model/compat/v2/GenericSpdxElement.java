@@ -41,7 +41,7 @@ public class GenericSpdxElement extends SpdxElement {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public GenericSpdxElement(String id) throws InvalidSPDXAnalysisException {
@@ -51,7 +51,7 @@ public class GenericSpdxElement extends SpdxElement {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

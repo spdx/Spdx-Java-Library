@@ -30,17 +30,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalDocumentRef;
-import org.spdx.library.model.compat.v2.ExternalSpdxElement;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxPackage;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
@@ -78,7 +68,7 @@ public class RelationshipTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		Checksum checksum = gmo.createChecksum(ChecksumAlgorithm.SHA1, "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3");
@@ -270,7 +260,7 @@ public class RelationshipTest extends TestCase {
 	public void testVerifyRelatedElement() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.CONTAINED_BY;
 		String comment1 = "Comment1";
-		AnyLicenseInfo badConcludedLicense = LicenseInfoFactory.parseSPDXLicenseString("bad-license-id");
+		AnyLicenseInfo badConcludedLicense = LicenseInfoFactory.parseSPDXLicenseString("bad-license-objectUri");
 		assertTrue(badConcludedLicense instanceof ExtractedLicenseInfo);
 		((ExtractedLicenseInfo)badConcludedLicense).setExtractedText("text");
 		assertEquals(1, badConcludedLicense.verify().size());

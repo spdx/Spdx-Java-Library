@@ -8,23 +8,17 @@ import java.util.Optional;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalSpdxElement;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxItem;
-import org.spdx.library.model.compat.v2.ModelStorageClassConverter;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SimpleUriValue;
-import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -35,7 +29,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 	}
 
@@ -49,7 +43,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		Object result = ModelStorageClassConverter.storedObjectToModelObject(tv, gmo.getDocumentUri(), 
 				gmo.getModelStore(), gmo.getCopyManager());
 		assertTrue(result instanceof Annotation);
-		assertEquals(tv.getId(), ((Annotation)result).getId());
+		assertEquals(tv.getObjectUri(), ((Annotation)result).getId());
 		// Enum
 		SimpleUriValue suv = new SimpleUriValue(ChecksumAlgorithm.MD5);
 		result = ModelStorageClassConverter.storedObjectToModelObject(suv, gmo.getDocumentUri(), 
@@ -97,7 +91,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		Optional<Object> result = ModelStorageClassConverter.optionalStoredObjectToModelObject(Optional.of(tv), gmo.getDocumentUri(), gmo.getModelStore(), gmo.getCopyManager());
 		assertTrue(result.isPresent());
 		assertTrue(result.get() instanceof Annotation);
-		assertEquals(tv.getId(), ((Annotation)result.get()).getId());
+		assertEquals(tv.getObjectUri(), ((Annotation)result.get()).getId());
 		// Enum
 		SimpleUriValue suv = new SimpleUriValue(ChecksumAlgorithm.MD5);
 		result = ModelStorageClassConverter.optionalStoredObjectToModelObject(Optional.of(suv), gmo.getDocumentUri(), 
@@ -136,7 +130,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 		// ModelObject
 		Object result = ModelStorageClassConverter.modelObjectToStoredObject(gmo, gmo.getDocumentUri(), gmo.getModelStore(), gmo.getCopyManager());
 		assertTrue(result instanceof TypedValue);
-		assertEquals(gmo.getId(), ((TypedValue)result).getId());
+		assertEquals(gmo.getId(), ((TypedValue)result).getObjectUri());
 		assertEquals(gmo.getType(), ((TypedValue)result).getType());
 		// Uri value
 		result = ModelStorageClassConverter.modelObjectToStoredObject(RelationshipType.BUILD_TOOL_OF, gmo.getDocumentUri(), gmo.getModelStore(), gmo.getCopyManager());
@@ -175,7 +169,8 @@ public class ModelStorageClassConverterTest extends TestCase {
 		ExternalExtractedLicenseInfo externalLicense = ExternalExtractedLicenseInfo.uriToExternalExtractedLicense(externalLicenseUri, store1, docUri1, copyManager);
 		element1.setLicenseConcluded(externalLicense);
 		element1.setName("ElementName");
-		copyManager.copy(store2, docUri2, id2, store1, docUri1, id1, element1.getType());
+		copyManager.copy(store2, CompatibleModelStoreWrapper.documentUriIdToUri(docUri2, id2, false), store1, 
+				CompatibleModelStoreWrapper.documentUriIdToUri(docUri1, id1, false), element1.getType(), docUri2, docUri1);
 		GenericSpdxItem element2 = new GenericSpdxItem(store2, docUri2, id2, copyManager, false);
 		assertTrue(element1.equivalent(element2));
 		assertTrue(element2.equivalent(element1));

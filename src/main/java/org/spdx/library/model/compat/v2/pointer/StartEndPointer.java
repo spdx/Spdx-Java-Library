@@ -49,7 +49,7 @@ public class StartEndPointer extends CompoundPointer implements Comparable<Start
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public StartEndPointer(String id) throws InvalidSPDXAnalysisException {
@@ -59,7 +59,7 @@ public class StartEndPointer extends CompoundPointer implements Comparable<Start
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

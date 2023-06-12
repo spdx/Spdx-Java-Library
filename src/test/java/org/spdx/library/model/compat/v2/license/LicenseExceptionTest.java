@@ -25,7 +25,9 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -41,7 +43,7 @@ public class LicenseExceptionTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/* (non-Javadoc)
@@ -49,6 +51,7 @@ public class LicenseExceptionTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 	
 	static final String EXCEPTION_ID1 = "id1";
@@ -85,9 +88,12 @@ public class LicenseExceptionTest extends TestCase {
 				EXCEPTION_NAME1, EXCEPTION_TEXT1, EXCEPTION_SEEALSO1,
 				EXCEPTION_COMMENT1);
 		le.setDeprecated(true);
-		InMemSpdxStore store = new InMemSpdxStore();
+		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager  = new ModelCopyManager();
-		copyManager.copy(store, DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION);
+		copyManager.copy(store, DefaultModelStore.getDefaultModelStore(),
+				CompatibleModelStoreWrapper.documentUriIdToUri(DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, false),
+				SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION, 
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
 		LicenseException le2 = new LicenseException(store, DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, copyManager, false);
 		
 		assertEquals(EXCEPTION_ID1, le2.getLicenseExceptionId());

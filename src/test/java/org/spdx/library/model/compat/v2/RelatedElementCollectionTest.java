@@ -24,10 +24,7 @@ import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.RelatedElementCollection;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
@@ -54,7 +51,7 @@ public class RelatedElementCollectionTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		element = new GenericSpdxElement();
 		relatedDescendentOfElements = new ArrayList<>();
 		descendedOfRelationships = new ArrayList<>();

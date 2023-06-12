@@ -23,9 +23,8 @@ import java.util.Date;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 
 import junit.framework.TestCase;
@@ -50,7 +49,7 @@ public class AnnotationTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		DateFormat format = new SimpleDateFormat(SpdxConstantsCompatV2.SPDX_DATE_FORMAT);
 		date = format.format(new Date());
 		oldDate = format.format(new Date(10101));

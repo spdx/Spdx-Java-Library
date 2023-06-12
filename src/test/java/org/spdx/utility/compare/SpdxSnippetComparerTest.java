@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.Relationship;
@@ -114,7 +115,7 @@ public class SpdxSnippetComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo = new GenericModelObject();
 		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
 				"111bf72bf99b7e471f1a27989667a903658652bb");
@@ -162,6 +163,8 @@ public class SpdxSnippetComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 	
 	public void testNoDifference() throws InvalidSPDXAnalysisException, SpdxCompareException {

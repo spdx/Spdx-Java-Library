@@ -1,8 +1,6 @@
 package org.spdx.library.model.compat.v2;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
@@ -10,12 +8,6 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -65,7 +57,7 @@ public class SpdxModelFactoryTest extends TestCase {
 		try {
 			result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
 					SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, false);
-			fail("Expected id not found exception");
+			fail("Expected objectUri not found exception");
 		} catch(SpdxIdNotFoundException ex) {
 			// expected
 		}

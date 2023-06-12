@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.InvalidSpdxPropertyException;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.model.compat.v2.license.CrossRef;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
@@ -382,7 +384,7 @@ public class LicenseJsonTest extends TestCase {
 	
 	public void testCopyFromLicense() throws Exception {
 		LicenseJson lj = new LicenseJson();
-		InMemSpdxStore store = new InMemSpdxStore();
+		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "http://doc.uri";
 		String id = "licenseId";
 		boolean deprecated = true;
@@ -398,8 +400,9 @@ public class LicenseJsonTest extends TestCase {
 		Boolean fsfLibre = true;
 		Boolean osiApproved = true;
 		List<String> seeAlsoUrl = Arrays.asList(new String[]{"http://url1", "http://url2"});
+		ModelCopyManager copyManager = new ModelCopyManager();
 		
-		SpdxListedLicense license = new SpdxListedLicense(store, docUri, id, null, true);
+		SpdxListedLicense license = new SpdxListedLicense(store, docUri, id, copyManager, true);
 		List<CrossRef> crossRefs = new ArrayList<>();
 		List<String> crossRefUrls = Arrays.asList(new String[]{"http://crossref1", "http://crossref2"});
 		for (String crossRefUrl:crossRefUrls) {

@@ -2,12 +2,8 @@ package org.spdx.library.model.compat.v2;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.ExternalDocumentRef;
-import org.spdx.library.model.compat.v2.ExternalSpdxElement;
-import org.spdx.library.model.compat.v2.SimpleUriValue;
-import org.spdx.library.model.compat.v2.SpdxNoAssertionElement;
-import org.spdx.library.model.compat.v2.SpdxNoneElement;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;

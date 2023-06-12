@@ -36,6 +36,7 @@ import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Collection of SPDX elements related to an SpdxElement
@@ -241,13 +242,13 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 								relationship.getRelationshipType().equals(relationshipTypeFilter)) {
 							IModelStore modelStore = relationship.getModelStore();
 							String documentUri = relationship.getDocumentUri();
-							final IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+							final IModelStoreLock lock = modelStore.enterCriticalSection(false);
 							try {
 								if (relationshipCollection.remove(relationship)) {
 									try {
 										if (createdRelationshipIds.contains(relationship.getId())) {
 											createdRelationshipIds.remove(relationship.getId());
-											modelStore.delete(documentUri, relationship.getId());
+											modelStore.delete(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, relationship.getId(), modelStore));
 										}
 									} catch (SpdxIdInUseException ex) {
 										// This is possible if the relationship is in use

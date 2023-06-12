@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.SpdxFile;
 import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
@@ -48,7 +49,7 @@ public class VerificationCodeGeneratorTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		modelStore = new InMemSpdxStore();
+		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
         SPDX_FILES = new SpdxFile[SPDX_FILE_NAMES.length];
         for (int i = 0; i < SPDX_FILES.length; i++) {
         	SPDX_FILES[i] = new SpdxFile(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.Anonymous, DOCUMENT_URI), null, true);

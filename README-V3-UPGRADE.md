@@ -15,9 +15,19 @@ The property constants defined in  `org.spdx.library.SpdxConstants` have all bee
 If you're using the constants, you may not need to change much beyond the method signatures for anything that was passing along the `propertyName`.
 
 ### Make DocumentNamespace Optional
+
 In SPDX 3.0, not all elements are contained within an SPDX document and we can't be guaranteed that a namespace is available for all `TypedValue` typed properties.  Methods that are passed a `DocumentNamespace` and an `id` now are passed a URI.
 
 To translate from SPDX 2.X, the `DocumentNamespace` concatenated with the `id` can be used for the URI.
 
 ### Change TypedValue structure
-`TypedValue` 
+
+`TypedValue` now takes an ObjectURI rather than an ID.
+Note that the method signature has not changed, so you may need to manually search for usage in order to change.
+There is a convenience helper method `CompatibleModelStoreWrapper.typedValueFromDocUri(String documentUri, String id, boolean anonymous, String type)` that will convert from the SPDX V2 TypedValue to the current version.
+
+### CompatibleModelStoreWrapper
+
+To help with the migration, the `CompatibleModelStoreWrapper` class was introduced supporting the `IModelStore` interface taking a base store as a parameter in the constructor.  This class "wraps" the base store and supports the SPDX 2 methods which take the document namespace parameters.
+
+There is also a convenience static method to convert a namespace and ID to an Object URI.

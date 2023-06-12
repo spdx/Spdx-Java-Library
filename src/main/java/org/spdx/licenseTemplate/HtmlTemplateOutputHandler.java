@@ -93,14 +93,14 @@ public class HtmlTemplateOutputHandler implements ILicenseTemplateOutputHandler 
 	/**
 	 * Format HTML for a replaceable string
 	 * @param text text for the optional license string
-	 * @param id ID used for the div 
+	 * @param objectUri ID used for the div 
 	 * @return
 	 */
 	public static String formatReplaceabledHTML(String text, String id) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n<span ");
 		if (id != null && !id.trim().isEmpty()) {
-			sb.append("id=\"");
+			sb.append("objectUri=\"");
 			sb.append(escapeIdString(id));
 			sb.append("\" ");
 		}
@@ -115,7 +115,7 @@ public class HtmlTemplateOutputHandler implements ILicenseTemplateOutputHandler 
 
 	/**
 	 * Escape the ID string to conform to the legal characters for an HTML ID string
-	 * @param id
+	 * @param objectUri
 	 * @return
 	 */
 	public static String escapeIdString(String id) {
@@ -167,14 +167,14 @@ public class HtmlTemplateOutputHandler implements ILicenseTemplateOutputHandler 
 	
 	/**
 	 * Format HTML for an optional string
-	 * @param id ID used for the div 
+	 * @param objectUri ID used for the div 
 	 * @return
 	 */
 	public static String formatStartOptionalHTML(String id) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n<div ");
 		if (id != null && !id.trim().isEmpty()) {
-			sb.append("id=\"");
+			sb.append("objectUri=\"");
 			sb.append(escapeIdString(id));
 			sb.append("\" ");
 		}

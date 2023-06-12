@@ -83,7 +83,7 @@ public class TestHtmlTemplateOutputHandler {
 		String exampleText = "Example \\n text";
 		LicenseTemplateRule normalRule = new LicenseTemplateRule(ruleName, RuleType.VARIABLE,
 				originalText, matchText, exampleText);
-		String expectedResult = "\n<span id=\"" + ruleName +
+		String expectedResult = "\n<span objectUri=\"" + ruleName +
 			"\" class=\"replaceable-license-text\">" + compareOriginalText +
 			"</span>\n";
 		HtmlTemplateOutputHandler htoh = new HtmlTemplateOutputHandler();
@@ -99,7 +99,7 @@ public class TestHtmlTemplateOutputHandler {
 		String originalText = "Original \ntext";
 		String compareOriginalText = "Original <br/>\ntext";
 		String ruleName = "testRule";
-		String expectedResult = "\n<span id=\"" + ruleName +
+		String expectedResult = "\n<span objectUri=\"" + ruleName +
 		"\" class=\"replaceable-license-text\">" + compareOriginalText +
 		"</span>\n";
 		String result = HtmlTemplateOutputHandler.formatReplaceabledHTML(originalText, ruleName);
@@ -139,7 +139,7 @@ public class TestHtmlTemplateOutputHandler {
 		htoh.beginOptional(beginRule);
 		String optionalText = "Optional Text";
 		htoh.text(optionalText);
-		String escapedBeginRuleText = "\n<div id=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
+		String escapedBeginRuleText = "\n<div objectUri=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
 		String escapedOptionalText = optionalText;
 
 		String varRuleName = "testRule";
@@ -149,7 +149,7 @@ public class TestHtmlTemplateOutputHandler {
 		String exampleText = "Example \\n text";
 		LicenseTemplateRule normalRule = new LicenseTemplateRule(varRuleName, RuleType.VARIABLE,
 				originalText, matchText, exampleText);
-		String escapedVariableRuleText = "\n<span id=\"" + varRuleName +
+		String escapedVariableRuleText = "\n<span objectUri=\"" + varRuleName +
 			"\" class=\"replaceable-license-text\">" + compareOriginalText +
 			"</span>\n";
 		htoh.variableRule(normalRule);
@@ -178,7 +178,7 @@ public class TestHtmlTemplateOutputHandler {
 
 		LicenseTemplateRule beginRule = new LicenseTemplateRule(optRuleName, RuleType.BEGIN_OPTIONAL);
 		htoh.beginOptional(beginRule);
-		String escapedBeginRuleText = "\n<div id=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
+		String escapedBeginRuleText = "\n<div objectUri=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
 		assertEquals(escapedBeginRuleText, htoh.getHtml());
 	}
 
@@ -189,7 +189,7 @@ public class TestHtmlTemplateOutputHandler {
 	@Test
 	public void testFormatStartOptionalHTML() throws LicenseTemplateRuleException {
 		String optRuleName = "optionalRule";
-		String escapedBeginRuleText = "\n<div id=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
+		String escapedBeginRuleText = "\n<div objectUri=\"" + optRuleName + "\" class=\"optional-license-text\">\n";
 		assertEquals(escapedBeginRuleText, HtmlTemplateOutputHandler.formatStartOptionalHTML(optRuleName));
 	}
 

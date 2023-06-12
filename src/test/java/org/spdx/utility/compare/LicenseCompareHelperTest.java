@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
@@ -86,13 +87,14 @@ public class LicenseCompareHelperTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
-	    DefaultModelStore.reset();
+	    DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	/**

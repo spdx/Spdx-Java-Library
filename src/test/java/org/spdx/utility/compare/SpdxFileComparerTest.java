@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.SpdxDocument;
 import org.spdx.library.model.compat.v2.SpdxFile;
@@ -58,7 +59,7 @@ public class SpdxFileComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		DefaultModelStore.reset();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		this.testRDFFile = new File(TEST_RDF_FILE_PATH); 
 		String uri1 = "http://doc/uri1";
 		DOCA = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), uri1, DefaultModelStore.getDefaultCopyManager(), true);
@@ -75,6 +76,8 @@ public class SpdxFileComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+		super.tearDown();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	/**

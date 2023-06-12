@@ -21,15 +21,12 @@ package org.spdx.library.model.compat.v2;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore.IdType;
@@ -60,7 +57,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1",
 			AnnotationType.OTHER, DATE_NOW, "Comment1");
@@ -90,9 +87,11 @@ public class SpdxElementTest extends TestCase {
 	public void testVerify() throws InvalidSPDXAnalysisException {
 		String id = SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM + "elementId";
 		SpdxElement element1 = new GenericSpdxElement(gmo.getModelStore(), gmo.getDocumentUri(), id, gmo.getCopyManager(), true);
-		assertEquals(0, element1.verify().size());
+		List<String> result = element1.verify();
+		assertEquals(0, result.size());
 		element1.setName(ELEMENT_NAME1);
-		assertEquals(0, element1.verify().size());
+		result = element1.verify();
+		assertEquals(0, result.size());
 	}
 
 	public void testAddRemoveAnnotations() throws InvalidSPDXAnalysisException {

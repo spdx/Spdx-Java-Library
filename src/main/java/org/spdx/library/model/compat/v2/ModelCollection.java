@@ -30,6 +30,7 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.Nullable;
 
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
@@ -40,6 +41,7 @@ import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Collection of elements stored in a ModelStore
@@ -49,7 +51,7 @@ import org.spdx.storage.PropertyDescriptor;
  */
 public class ModelCollection<T extends Object> implements Collection<Object> {
 
-	private IModelStore modelStore;
+	private CompatibleModelStoreWrapper modelStore;
 	private String documentUri;
 	private String id;
 	private PropertyDescriptor propertyDescriptor;
@@ -80,17 +82,24 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	/**
 	 * @param modelStore Storage for the model collection
 	 * @param documentUri SPDX Document URI for a document associated with this model collection
-	 * @param id ID for this collection - must be unique within the SPDX document
+	 * @param objectUri ID for this collection - must be unique within the SPDX document
 	 * @param propertyDescriptor descriptor for the property use for the model collections
 	 * @param copyManager if non-null, use this to copy properties when referenced outside this model store
 	 * @param type The class of the elements to be stored in the collection if none, null if not known
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelCollection(IModelStore modelStore, String documentUri, String id, PropertyDescriptor propertyDescriptor,
+	public ModelCollection(IModelStore baseStore, String documentUri, String id, PropertyDescriptor propertyDescriptor,
 			@Nullable ModelCopyManager copyManager,
 			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(modelStore, "Model store can not be null");
-		this.modelStore = modelStore;
+		Objects.requireNonNull(baseStore, "Model store can not be null");
+		if (baseStore instanceof CompatibleModelStoreWrapper) {
+			this.modelStore = (CompatibleModelStoreWrapper)baseStore;
+		} else {
+			// we need to wrap the model store for compatibility.  Note - we don't want to 
+			// wrap already wrapped model stores as it will force copies to be made into the same
+			// base model store
+			this.modelStore = new CompatibleModelStoreWrapper(baseStore);
+		}
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		this.documentUri = documentUri;
 		Objects.requireNonNull(id, "ID can not be null");
@@ -277,7 +286,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	/**
 	 * @return the modelStore
 	 */
-	public IModelStore getModelStore() {
+	public CompatibleModelStoreWrapper getModelStore() {
 		return modelStore;
 	}
 
@@ -289,7 +298,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	}
 
 	/**
-	 * @return the id
+	 * @return the objectUri
 	 */
 	public String getId() {
 		return id;

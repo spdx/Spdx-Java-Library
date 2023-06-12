@@ -47,7 +47,7 @@ public class Annotation extends ModelObject implements Comparable<Annotation> {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Annotation(String id) throws InvalidSPDXAnalysisException {
@@ -57,7 +57,7 @@ public class Annotation extends ModelObject implements Comparable<Annotation> {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

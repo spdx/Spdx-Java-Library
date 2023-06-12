@@ -31,19 +31,11 @@ import java.util.Optional;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.ExternalSpdxElement;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.ModelCollection;
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.ModelStorageClassConverter;
-import org.spdx.library.model.compat.v2.SimpleUriValue;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxIdInUseException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
@@ -125,7 +117,7 @@ public class ModelObjectTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		ModelStorageClassConverter.reset();
 		store = DefaultModelStore.getDefaultModelStore();
 		docUri = DefaultModelStore.getDefaultDocumentUri();
@@ -280,7 +272,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getId()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getObjectUri()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetId() throws InvalidSPDXAnalysisException {
@@ -738,7 +730,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		GenericModelObject gmo2 = new GenericModelObject(store, docUri, "TestId2", copyManager, true);
 		PropertyDescriptor property = new PropertyDescriptor("property", SpdxConstantsCompatV2.SPDX_NAMESPACE);
-		ExtractedLicenseInfo equivalentLicense = new ExtractedLicenseInfo("id", "licenseText");
+		ExtractedLicenseInfo equivalentLicense = new ExtractedLicenseInfo("objectUri", "licenseText");
 		ExtractedLicenseInfo equivalentLicense2 = new ExtractedLicenseInfo("id2", "licenseText");
 		ExtractedLicenseInfo equivalentLicense3 = new ExtractedLicenseInfo("id3", "licenseText");
 		ExtractedLicenseInfo differentLicense = new ExtractedLicenseInfo("id4", "differentText");
@@ -824,7 +816,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		TypedValue result = gmo.toTypedValue();
-		assertEquals(TEST_ID, result.getId());
+		assertEquals(TEST_ID, result.getObjectUri());
 		assertEquals(gmo.getType(), result.getType());
 	}
 	

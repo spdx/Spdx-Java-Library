@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -33,8 +34,8 @@ import org.spdx.storage.simple.InMemSpdxStore;
  *
  */
 public class DefaultModelStore {
-	
-	static IModelStore defaultModelStore = new InMemSpdxStore();
+
+	static IModelStore defaultModelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_3);
 	static String defaultDocumentUri = "http://www.spdx.org/documents/default_doc_uri_for_SPDX_tools";
 	static ModelCopyManager defaultCopyManager = new ModelCopyManager();
 	private static final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -64,7 +65,7 @@ public class DefaultModelStore {
 	/**
 	 * Clears the default model store by replacing the default model store with a new one
 	 */
-	public static final void reset() {
+	public static final void reset(SpdxMajorVersion spdxSpecVersion) {
 		lock.writeLock().lock();
 		try {
 			if (Objects.nonNull(defaultModelStore)) {
@@ -74,7 +75,7 @@ public class DefaultModelStore {
 					throw new RuntimeException(e);
 				}
 			}
-			defaultModelStore = new InMemSpdxStore();
+			defaultModelStore = new InMemSpdxStore(spdxSpecVersion);
 			defaultCopyManager = new ModelCopyManager();
 		} finally {
 			lock.writeLock().unlock();

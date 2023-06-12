@@ -46,7 +46,7 @@ public class SpdxCreatorInformation extends ModelObject {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxCreatorInformation(String id) throws InvalidSPDXAnalysisException {
@@ -56,7 +56,7 @@ public class SpdxCreatorInformation extends ModelObject {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */

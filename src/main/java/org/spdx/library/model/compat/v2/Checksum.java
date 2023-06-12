@@ -53,7 +53,7 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Checksum(String id) throws InvalidSPDXAnalysisException {
@@ -63,7 +63,7 @@ public class Checksum extends ModelObject implements Comparable<Checksum>  {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

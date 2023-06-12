@@ -44,7 +44,7 @@ public class ModelSet<T extends Object> extends ModelCollection<T> {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param propertyDescriptor
 	 * @param copyManager
 	 * @param type

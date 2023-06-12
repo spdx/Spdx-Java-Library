@@ -30,8 +30,10 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.DefaultModelStore;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
@@ -60,6 +62,7 @@ import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelUpdate;
 import org.spdx.storage.PropertyDescriptor;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * @author Gary O'Neall
@@ -100,7 +103,7 @@ public abstract class ModelObject {
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelObject.class);
 
-	private IModelStore modelStore;
+	private CompatibleModelStoreWrapper modelStore;
 	private String documentUri;
 	private String id;
 	
@@ -174,7 +177,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Open or create a model object with the default store and default document URI
-	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param objectUri ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ModelObject(String id) throws InvalidSPDXAnalysisException {
@@ -183,19 +186,26 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param modelStore Storage for the model objects
+	 * @param baseModelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param id ID for this object - must be unique within the SPDX document
+	 * @param objectUri ID for this object - must be unique within the SPDX document
 	 * @param copyManager - if supplied, model objects will be implictly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelObject(IModelStore modelStore, String documentUri, String id, @Nullable ModelCopyManager copyManager, 
+	public ModelObject(IModelStore baseModelStore, String documentUri, String id, @Nullable ModelCopyManager copyManager, 
 			boolean create) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(modelStore, "Model Store can not be null");
+		Objects.requireNonNull(baseModelStore, "Model Store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		Objects.requireNonNull(id, "ID can not be null");
-		this.modelStore = modelStore;
+		if (baseModelStore instanceof CompatibleModelStoreWrapper) {
+			this.modelStore = (CompatibleModelStoreWrapper)baseModelStore;
+		} else {
+			// we need to wrap the model store for compatibility.  Note - we don't want to 
+			// wrap already wrapped model stores as it will force copies to be made into the same
+			// base model store
+			this.modelStore = new CompatibleModelStoreWrapper(baseModelStore);
+		}
 		this.documentUri = documentUri;
 		this.id = id;
 		this.copyManager = copyManager;
@@ -281,7 +291,7 @@ public abstract class ModelObject {
 	/**
 	 * @return the model store for this object
 	 */
-	public IModelStore getModelStore() {
+	public CompatibleModelStoreWrapper getModelStore() {
 		return this.modelStore;
 	}
 	
@@ -350,15 +360,16 @@ public abstract class ModelObject {
 	 */
 	protected static Optional<Object> getObjectPropertyValue(IModelStore stModelStore, String stDocumentUri,
 			String stId, PropertyDescriptor propertyDescriptor, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		IModelStoreLock lock = stModelStore.enterCriticalSection(stDocumentUri, false);
+		IModelStoreLock lock = stModelStore.enterCriticalSection(false);
 		// NOTE: we use a write lock since the ModelStorageClassConverter may end up creating objects in the store
 		try {
-			if (!stModelStore.exists(stDocumentUri, stId)) {
+			if (!stModelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore))) {
 				return Optional.empty();
-			} else if (stModelStore.isCollectionProperty(stDocumentUri, stId, propertyDescriptor)) {
+			} else if (stModelStore.isCollectionProperty(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor)) {
 				return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyDescriptor, copyManager, null));
 			} else {
-				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(stDocumentUri, stId, propertyDescriptor), 
+				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore),
+						propertyDescriptor), 
 						stDocumentUri, stModelStore, copyManager);
 			}
 		} finally {
@@ -388,7 +399,7 @@ public abstract class ModelObject {
 		} else if (value instanceof Collection) {
 			replacePropertyValueCollection(stModelStore, stDocumentUri, stId, propertyDescriptor, (Collection<?>)value, copyManager);
 		} else {
-			stModelStore.setValue(stDocumentUri, stId, propertyDescriptor, ModelStorageClassConverter.modelObjectToStoredObject(
+			stModelStore.setValue(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor, ModelStorageClassConverter.modelObjectToStoredObject(
 					value, stDocumentUri, stModelStore, copyManager));
 		}
 	}
@@ -588,7 +599,7 @@ public abstract class ModelObject {
 	 */
 	protected static void removeProperty(IModelStore stModelStore, String stDocumentUri, 
 			String stId, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
-		stModelStore.removeProperty(stDocumentUri, stId, propertyDescriptor);
+		stModelStore.removeProperty(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor);
 	}
 	
 	/**
@@ -622,7 +633,7 @@ public abstract class ModelObject {
 	 */
 	protected static void clearValueCollection(IModelStore stModelStore, String stDocumentUri,
 			String stId, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
-		stModelStore.clearValueCollection(stDocumentUri, stId, propertyDescriptor);
+		stModelStore.clearValueCollection(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor);
 	}
 	
 	/**
@@ -660,7 +671,7 @@ public abstract class ModelObject {
 	protected static void addValueToCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			PropertyDescriptor propertyDescriptor, Object value, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(value, "Value can not be null");
-		stModelStore.addValueToCollection(stDocumentUri, stId, propertyDescriptor, 
+		stModelStore.addValueToCollection(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor, 
 				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, copyManager));
 	}
 	
@@ -718,7 +729,7 @@ public abstract class ModelObject {
 	 */
 	protected static void removePropertyValueFromCollection(IModelStore stModelStore, String stDocumentUri, String stId, 
 			PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException {
-		stModelStore.removeValueFromCollection(stDocumentUri, stId, propertyDescriptor, 
+		stModelStore.removeValueFromCollection(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor, 
 				ModelStorageClassConverter.modelObjectToStoredObject(value, stDocumentUri, stModelStore, null));
 	}
 	
@@ -1051,7 +1062,7 @@ public abstract class ModelObject {
 			throw new IllegalStateException("Can not clone to the same model store");
 		}
 		Objects.requireNonNull(modelStore, "Model store for clone must not be null");
-		if (modelStore.exists(this.documentUri, this.id)) {
+		if (modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore))) {
 			throw new IllegalStateException("Can not clone - "+this.id+" already exists.");
 		}
 		try {
@@ -1072,8 +1083,9 @@ public abstract class ModelObject {
 		if (Objects.isNull(copyManager)) {
 			throw new InvalidSPDXAnalysisException("Copying is not enabled for "+id);
 		}
-		copyManager.copy(this.modelStore, this.documentUri, this.id, 
-				source.getModelStore(), source.getDocumentUri(), source.getId(), this.getType());
+		copyManager.copy(this.modelStore, CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, this.modelStore), 
+				source.getModelStore(), CompatibleModelStoreWrapper.documentUriIdToUri(source.getDocumentUri(), source.getId(), source.getModelStore()),
+				this.getType(), this.documentUri, source.getDocumentUri());
 	}
 	
 	public void setCopyManager(ModelCopyManager copyManager) {
@@ -1088,7 +1100,7 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param id String for the object
+	 * @param objectUri String for the object
 	 * @return type of the ID
 	 */
 	protected IdType idToIdType(String id) {
@@ -1108,7 +1120,7 @@ public abstract class ModelObject {
 	}
 	
 	protected TypedValue toTypedValue() throws InvalidSPDXAnalysisException {
-		return new TypedValue(this.id, this.getType());
+		return CompatibleModelStoreWrapper.typedValueFromDocUri(this.documentUri, this.id, modelStore.getIdType(id).equals(IdType.Anonymous), this.getType());
 	}
 	
 	/**
@@ -1292,7 +1304,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxFileBuilder with all of the required properties - the build() method will build the file
-	 * @param id - ID - must be an SPDX ID type
+	 * @param objectUri - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param seenLicense collection of seen licenses
@@ -1312,7 +1324,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxPackageBuilder with all required fields for a filesAnalyzed=false using this objects model store and document URI
-	 * @param id - ID - must be an SPDX ID type
+	 * @param objectUri - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param copyrightText Copyright text
@@ -1376,7 +1388,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxSnippetBuilder with all of the required properties - the build() method will build the file
-	 * @param id - ID - must be an SPDX ID type
+	 * @param objectUri - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param seenLicense collection of seen licenses

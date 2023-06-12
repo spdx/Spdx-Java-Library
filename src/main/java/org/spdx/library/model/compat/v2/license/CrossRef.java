@@ -48,7 +48,7 @@ public class CrossRef extends ModelObject {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public CrossRef(String id) throws InvalidSPDXAnalysisException {
@@ -58,7 +58,7 @@ public class CrossRef extends ModelObject {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
@@ -348,7 +348,7 @@ public class CrossRef extends ModelObject {
 		 * Create a CrossRef with the required parameters
 		 * @param modelStore Storage for the model objects
 		 * @param documentUri SPDX Document URI for a document associated with this model
-		 * @param id ID for this object - must be unique within the SPDX document
+		 * @param objectUri ID for this object - must be unique within the SPDX document
 		 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 		 * @param url URL for the CrossRef
 		 */
@@ -424,7 +424,7 @@ public class CrossRef extends ModelObject {
 		 * @throws InvalidSPDXAnalysisException
 		 */
 		public CrossRef build() throws InvalidSPDXAnalysisException {
-			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+			IModelStoreLock lock = modelStore.enterCriticalSection(false);
 			try {
 				return new CrossRef(this);
 			} finally {

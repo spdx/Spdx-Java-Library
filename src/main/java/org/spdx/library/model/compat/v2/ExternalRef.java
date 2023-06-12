@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
@@ -49,7 +50,7 @@ public class ExternalRef extends ModelObject implements Comparable<ExternalRef> 
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExternalRef(String id) throws InvalidSPDXAnalysisException {
@@ -59,7 +60,7 @@ public class ExternalRef extends ModelObject implements Comparable<ExternalRef> 
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param create
 	 * @param copyManager
 	 * @throws InvalidSPDXAnalysisException

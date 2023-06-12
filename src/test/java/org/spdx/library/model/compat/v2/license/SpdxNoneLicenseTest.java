@@ -2,6 +2,7 @@ package org.spdx.library.model.compat.v2.license;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.GenericSpdxItem;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -12,12 +13,12 @@ public class SpdxNoneLicenseTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	public void testHashCodeEquals() throws InvalidSPDXAnalysisException {

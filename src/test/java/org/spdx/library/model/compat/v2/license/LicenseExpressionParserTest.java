@@ -24,6 +24,7 @@ import java.util.Arrays;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
@@ -56,7 +57,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
@@ -81,6 +82,7 @@ public class LicenseExpressionParserTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 	
 	public void testSingleStdLicense() throws InvalidSPDXAnalysisException {

@@ -54,7 +54,7 @@ public abstract class SinglePointer extends ModelObject implements Comparable<Si
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SinglePointer(String id) throws InvalidSPDXAnalysisException {
@@ -64,7 +64,7 @@ public abstract class SinglePointer extends ModelObject implements Comparable<Si
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

@@ -54,7 +54,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public LicenseSet(String id) throws InvalidSPDXAnalysisException {
@@ -65,7 +65,7 @@ public abstract class LicenseSet extends AnyLicenseInfo {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param create
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @throws InvalidSPDXAnalysisException

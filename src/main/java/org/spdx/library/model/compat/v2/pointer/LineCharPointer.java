@@ -41,7 +41,7 @@ public class LineCharPointer extends SinglePointer {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public LineCharPointer(String id) throws InvalidSPDXAnalysisException {
@@ -51,7 +51,7 @@ public class LineCharPointer extends SinglePointer {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

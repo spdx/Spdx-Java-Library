@@ -6,7 +6,9 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -31,7 +33,7 @@ public class WithExceptionOperatorTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		license1 = new ExtractedLicenseInfo(LICENSE_ID1, LICENSE_TEXT1);
 		license2 = new ExtractedLicenseInfo(LICENSE_ID2, LICENSE_TEXT2);
 		exception1 = new LicenseException(EXCEPTION_ID1, EXCEPTION_NAME1,
@@ -42,6 +44,7 @@ public class WithExceptionOperatorTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	public void testHashCode() throws InvalidSPDXAnalysisException {
@@ -79,12 +82,14 @@ public class WithExceptionOperatorTest extends TestCase {
 
 	public void testCopy() throws InvalidSPDXAnalysisException {
 		WithExceptionOperator weo1 = new WithExceptionOperator(license1, exception1);
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
-		TypedValue tv = copyManager.copy(store, DefaultModelStore.getDefaultDocumentUri(), 
-				weo1.getModelStore(), weo1.getDocumentUri(), weo1.getId(), weo1.getType());
+		@SuppressWarnings("unused")
+		TypedValue tv = copyManager.copy(store, weo1.getModelStore(),
+				CompatibleModelStoreWrapper.documentUriIdToUri(weo1.getDocumentUri(), weo1.getId(), false),
+				weo1.getType(), weo1.getDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
 		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObject(store, 
-				DefaultModelStore.getDefaultDocumentUri(), tv.getId(), SpdxConstantsCompatV2.CLASS_WITH_EXCEPTION_OPERATOR, copyManager);
+				DefaultModelStore.getDefaultDocumentUri(), weo1.getId(), SpdxConstantsCompatV2.CLASS_WITH_EXCEPTION_OPERATOR, copyManager);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)weo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();
 		assertEquals(lic1.getExtractedText(), lic1FromClone.getExtractedText());

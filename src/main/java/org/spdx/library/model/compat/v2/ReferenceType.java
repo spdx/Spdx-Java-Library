@@ -17,7 +17,9 @@
  */
 package org.spdx.library.model.compat.v2;
 
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SimpleUriValue;
 
 /**
  * Type of external reference

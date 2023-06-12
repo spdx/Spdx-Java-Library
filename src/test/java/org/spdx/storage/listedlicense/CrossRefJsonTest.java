@@ -132,7 +132,7 @@ public class CrossRefJsonTest extends TestCase {
 	public void testGetId() {
 		CrossRefJson crj = new CrossRefJson();
 		assertTrue(Objects.isNull(crj.getId()));
-		String id = "id";
+		String id = "objectUri";
 		crj.setId(id);
 		assertEquals(id, crj.getId());
 	}

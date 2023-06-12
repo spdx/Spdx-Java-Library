@@ -16,11 +16,11 @@ public class TypedValue {
 	
 	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstantsCompatV2.ALL_SPDX_CLASSES));
 	
-	String id;
+	String objectUri;
 	String type;
 	
-	public TypedValue(String id, String type) throws SpdxInvalidIdException, SpdxInvalidTypeException {
-		if (id == null) {
+	public TypedValue(String objectUri, String type) throws SpdxInvalidIdException, SpdxInvalidTypeException {
+		if (objectUri == null) {
 			throw new SpdxInvalidIdException("Null value Id");
 		}
 		// TODO: can add some additional checks for different string formats based on the type
@@ -32,15 +32,15 @@ public class TypedValue {
 				&&!GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE.equals(type)) {
 			throw new SpdxInvalidTypeException(type + " is not a valid SPDX class");
 		}
-		this.id = id;
+		this.objectUri = objectUri;
 		this.type = type;
 	}
 
 	/**
-	 * @return the id
+	 * @return the objectUri
 	 */
-	public String getId() {
-		return id;
+	public String getObjectUri() {
+		return objectUri;
 	}
 
 	/**
@@ -59,11 +59,11 @@ public class TypedValue {
 			return false;
 		}
 		TypedValue tv = (TypedValue)o;
-		return tv.getId().equals(this.id) && tv.getType().equals(this.type);
+		return tv.getObjectUri().equals(this.objectUri) && tv.getType().equals(this.type);
 	}
 	
 	@Override
 	public int hashCode() {
-		return 181 ^ this.id.hashCode() ^ this.type.hashCode();
+		return 181 ^ this.objectUri.hashCode() ^ this.type.hashCode();
 	}
 }

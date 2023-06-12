@@ -45,7 +45,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public WithExceptionOperator(String id) throws InvalidSPDXAnalysisException {
@@ -55,7 +55,7 @@ public class WithExceptionOperator extends AnyLicenseInfo {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library;
+package org.spdx.library.model.compat.v2;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxPackage;
+import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.ISerializableModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Supports reading SPDX documents from an existing ModelStore
@@ -57,11 +59,9 @@ public class Read {
 		 * @throws IOException 
 		 */
 		public static List<SpdxDocument> get(IModelStore modelStore) throws InvalidSPDXAnalysisException, IOException {
-			List<String> documentUris = modelStore.getDocumentUris();
 			List<SpdxDocument> retval = new ArrayList<SpdxDocument>();
-			for (String documentUri:documentUris) {
-				retval.add(new SpdxDocument(modelStore, documentUri, null, false));
-			}
+			SpdxModelFactory.getElements(modelStore, null, null, SpdxDocument.class).forEach(
+					spdxDoc -> retval.add((SpdxDocument)spdxDoc)); 
 			return retval;
 		}
 		
@@ -73,7 +73,7 @@ public class Read {
 		 * @throws IOException 
 		 */
 		public static SpdxDocument get(IModelStore modelStore, String documentUri) throws InvalidSPDXAnalysisException, IOException {
-			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, true);
+			IModelStoreLock lock = modelStore.enterCriticalSection(true);
 			try {
 				return new SpdxDocument(modelStore, documentUri, null, false);				
 			} finally {
@@ -87,7 +87,8 @@ public class Read {
 		 * @return true if the document exists in the model store
 		 */
 		public static boolean documentExists(IModelStore modelStore, String documentUri) {
-			return modelStore.exists(documentUri, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID);
+			return modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, 
+					SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, false));
 		}
 	}
 	
@@ -103,7 +104,7 @@ public class Read {
 	 * @throws IOException
 	 */
 	public static void serialize(ISerializableModelStore modelStore, String documentUri, OutputStream stream) throws InvalidSPDXAnalysisException, IOException {
-		IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, true);
+		IModelStoreLock lock = modelStore.enterCriticalSection(true);
 		try {
 			modelStore.serialize(documentUri, stream);
 		} finally {
@@ -142,7 +143,7 @@ public class Read {
 			String typeFilter) throws InvalidSPDXAnalysisException { 
 		return modelStore.getAllItems(documentUri, typeFilter).map((TypedValue tv) -> {
 			try {
-				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getId(), tv.getType(), null);
+				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getObjectUri(), tv.getType(), null);
 			} catch (InvalidSPDXAnalysisException e) {
 				throw new RuntimeException(e);
 			}

@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
@@ -74,12 +75,13 @@ public class SpdxVerificationHelper {
 	static final String[] VALID_CREATOR_PREFIXES = new String[] {SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON,
 		SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION, SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL};
 	static final String[] VALID_ORIGINATOR_SUPPLIER_PREFIXES = new String[] {SpdxConstantsCompatV2.NOASSERTION_VALUE, "Person:", "Organization:"};
+	private static final Pattern SPDX_ELEMENT_ID_PATTERN = Pattern.compile(".*" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");
 	
 	public static String verifyNonStdLicenseid(String licenseId) {
 		if (SpdxConstantsCompatV2.LICENSE_ID_PATTERN.matcher(licenseId).matches()) {
 			return null;
 		} else {
-			return "Invalid license id '"+licenseId+"'.  Must start with 'LicenseRef-' " +
+			return "Invalid license objectUri '"+licenseId+"'.  Must start with 'LicenseRef-' " +
 					"and made up of the characters from the set 'a'-'z', 'A'-'Z', '0'-'9', '+', '_', '.', and '-'.";
 		}
 	}
@@ -295,10 +297,10 @@ public class SpdxVerificationHelper {
 	}
 	
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @return true if the ID is a valid SPDX ID reference
 	 */
 	public static boolean verifySpdxId(String id) {
-		return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PATTERN.matcher(id).matches();
+		return SPDX_ELEMENT_ID_PATTERN.matcher(id).matches();
 	}
 }

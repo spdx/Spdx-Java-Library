@@ -24,8 +24,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.ExternalRef;
-import org.spdx.library.model.compat.v2.ReferenceType;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
 import org.spdx.library.referencetype.compat.v2.ListedReferenceTypes;
 import org.spdx.storage.IModelStore;
@@ -67,7 +66,7 @@ public class ExternalRefTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		store = DefaultModelStore.getDefaultModelStore();
 		docUri = DefaultModelStore.getDefaultDocumentUri();
 		copyManager = DefaultModelStore.getDefaultCopyManager();

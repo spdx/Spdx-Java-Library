@@ -65,7 +65,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
@@ -78,7 +78,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage(String id) throws InvalidSPDXAnalysisException {
@@ -873,7 +873,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @param modelStore       Storage for the model objects
 		 * @param documentUri      SPDX Document URI for a document associated with this
 		 *                         model
-		 * @param id               ID for this object - must be unique within the SPDX
+		 * @param objectUri               ID for this object - must be unique within the SPDX
 		 *                         document
 		 * @param name             File name
 		 * @param copyManager
@@ -1208,7 +1208,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		 * @throws InvalidSPDXAnalysisException
 		 */
 		public SpdxPackage build() throws InvalidSPDXAnalysisException {
-			IModelStoreLock lock = modelStore.enterCriticalSection(documentUri, false);
+			IModelStoreLock lock = modelStore.enterCriticalSection(false);
 			try {
 				return new SpdxPackage(this);
 			} finally {

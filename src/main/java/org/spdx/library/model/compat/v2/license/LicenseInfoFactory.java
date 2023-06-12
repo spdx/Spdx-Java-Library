@@ -136,7 +136,7 @@ public class LicenseInfoFactory {
 	}
 
 	/**
-	 * @param id exception ID
+	 * @param objectUri exception ID
 	 * @return true if the exception ID is a supported SPDX listed exception
 	 */
 	public static boolean isSpdxListedExceptionId(String id) {
@@ -144,7 +144,7 @@ public class LicenseInfoFactory {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @return the standard SPDX license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */

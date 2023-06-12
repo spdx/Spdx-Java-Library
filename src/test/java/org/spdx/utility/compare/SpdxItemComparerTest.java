@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Annotation;
 import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.GenericSpdxElement;
@@ -113,7 +114,7 @@ public class SpdxItemComparerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo = new GenericModelObject();
 		LICENSEA1 = new ExtractedLicenseInfo("LicenseRef-1", "License1");
 		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
@@ -175,6 +176,7 @@ public class SpdxItemComparerTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	public void testCompare() throws SpdxCompareException, InvalidSPDXAnalysisException {

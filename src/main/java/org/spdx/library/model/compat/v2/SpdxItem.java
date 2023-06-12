@@ -47,7 +47,7 @@ public abstract class SpdxItem extends SpdxElement {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxItem(String id) throws InvalidSPDXAnalysisException {
@@ -57,7 +57,7 @@ public abstract class SpdxItem extends SpdxElement {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

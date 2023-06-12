@@ -39,7 +39,7 @@ public class ListedLicenseException extends LicenseException {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
@@ -50,7 +50,7 @@ public class ListedLicenseException extends LicenseException {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @param name
 	 * @param text
 	 * @param seeAlso
@@ -63,7 +63,7 @@ public class ListedLicenseException extends LicenseException {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @param name
 	 * @param text
 	 * @param template
@@ -77,7 +77,7 @@ public class ListedLicenseException extends LicenseException {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @param name
 	 * @param text
 	 * @throws InvalidSPDXAnalysisException

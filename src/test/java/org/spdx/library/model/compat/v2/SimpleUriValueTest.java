@@ -18,13 +18,11 @@
 package org.spdx.library.model.compat.v2;
 
 import org.spdx.library.DefaultModelStore;
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.ExternalSpdxElement;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.IndividualUriValue;
-import org.spdx.library.model.compat.v2.SimpleUriValue;
-import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
@@ -48,7 +46,7 @@ public class SimpleUriValueTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/* (non-Javadoc)
@@ -59,7 +57,7 @@ public class SimpleUriValueTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.SimpleUriValue#SimpleUriValue(org.spdx.library.model.compat.v2.compat.v2.IndividualUriValue)}.
+	 * Test method for {@link org.spdx.library.compat.v2.SimpleUriValue#SimpleUriValue(org.spdx.library.compat.v2.IndividualUriValue)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testSimpleUriValueIndividualValue() throws InvalidSPDXAnalysisException {
@@ -78,22 +76,22 @@ public class SimpleUriValueTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.SimpleUriValue#toModelObject(org.spdx.storage.IModelStore, java.lang.String)}.
+	 * Test method for {@link org.spdx.library.compat.v2.SimpleUriValue#toModelObject(org.spdx.storage.IModelStore, java.lang.String)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testToModelObject() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject();
 		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
-		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
 		assertTrue(result instanceof ExternalSpdxElement);
 		ExternalSpdxElement externalElement = (ExternalSpdxElement)result;
 		assertEquals(EXTERNAL_SPDX_ELEMENT_ID, externalElement.getExternalElementId());
 		assertEquals(EXTERNAL_SPDX_URI, externalElement.getExternalSpdxElementURI());
 		
-		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
 		assertEquals(TEST_ENUM, result);
 		
-		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager());
+		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
 		assertTrue(result instanceof SimpleUriValue);
 		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result).getIndividualURI());
 	}

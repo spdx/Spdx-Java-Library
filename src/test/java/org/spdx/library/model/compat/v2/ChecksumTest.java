@@ -23,9 +23,8 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 
 import junit.framework.TestCase;
 
@@ -75,7 +74,7 @@ public class ChecksumTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		TEST_CHECKSUMS = new Checksum[ALGORITHMS.length];
 		for (int i = 0; i < ALGORITHMS.length; i++) {

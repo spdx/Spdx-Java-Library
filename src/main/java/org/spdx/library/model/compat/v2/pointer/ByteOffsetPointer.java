@@ -42,7 +42,7 @@ public class ByteOffsetPointer extends SinglePointer {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ByteOffsetPointer(String id) throws InvalidSPDXAnalysisException {
@@ -52,7 +52,7 @@ public class ByteOffsetPointer extends SinglePointer {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

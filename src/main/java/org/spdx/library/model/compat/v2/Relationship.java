@@ -46,7 +46,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public Relationship(String id) throws InvalidSPDXAnalysisException {
@@ -56,7 +56,7 @@ public class Relationship extends ModelObject implements Comparable<Relationship
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException

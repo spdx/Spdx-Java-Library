@@ -23,7 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.storage.IModelStore;
 
@@ -45,7 +47,7 @@ public abstract class SpdxConstantElement extends SpdxElement implements Individ
 	/**
 	 * @param modelStore where the model is stored
 	 * @param documentUri Unique document URI
-	 * @param id ID for the constant element
+	 * @param objectUri ID for the constant element
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxConstantElement(IModelStore modelStore, String documentUri, String id)

@@ -34,6 +34,7 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Annotation;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.ExternalDocumentRef;
@@ -235,7 +236,7 @@ public class SpdxComparerTest extends TestCase {
 	 */
 	public void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo = new GenericModelObject();
 
 		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseString(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
@@ -539,6 +540,8 @@ public class SpdxComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+		super.tearDown();
+		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 	
 	private SpdxDocument createTestSpdxDoc(String docUri) throws InvalidSPDXAnalysisException {

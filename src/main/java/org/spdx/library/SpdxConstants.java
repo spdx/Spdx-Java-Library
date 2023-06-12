@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2023 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -15,19 +15,23 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
+package org.spdx.library;
 
 /**
- * Classes which implement the IndividuallUriValue interface will be stored as a single value.  Theses classes
- * must NOT implement any properties themselves.  Any such properties will be lost during storage and retrieval.
- * 
+ * Constants which map to the SPDX specifications
  * @author Gary O'Neall
  *
  */
-public interface IndividualUriValue {
+public class SpdxConstants {
 	
-	/**
-	 * @return a unique identifier for this value.  Typically the namespace + the long name
-	 */
-	public String getIndividualURI();
+	public enum SpdxMajorVersion {
+		VERSION_1,
+		VERSION_2,
+		VERSION_3;
+
+		public static SpdxMajorVersion latestVersion() {
+			return VERSION_3;
+		}
+	}
+
 }
