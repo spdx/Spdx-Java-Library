@@ -59,7 +59,7 @@ public class ModelSet<T extends Object> extends ModelCollection<T> {
 	public boolean add(Object element) {	
 		IModelStoreLock lock;
 		try {
-			lock = this.getModelStore().enterCriticalSection( getDocumentUri(), false);
+			lock = this.getModelStore().enterCriticalSection(false);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -78,7 +78,7 @@ public class ModelSet<T extends Object> extends ModelCollection<T> {
 	public boolean addAll(Collection<? extends Object> c) {
 		IModelStoreLock lock;
 		try {
-			lock = this.getModelStore().enterCriticalSection( getDocumentUri(), false);
+			lock = this.getModelStore().enterCriticalSection(false);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}

@@ -51,7 +51,7 @@ import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
  */
 public class ModelCollection<T extends Object> implements Collection<Object> {
 
-	private CompatibleModelStoreWrapper modelStore;
+	private IModelStore modelStore;
 	private String documentUri;
 	private String id;
 	private PropertyDescriptor propertyDescriptor;
@@ -88,18 +88,11 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	 * @param type The class of the elements to be stored in the collection if none, null if not known
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelCollection(IModelStore baseStore, String documentUri, String id, PropertyDescriptor propertyDescriptor,
+	public ModelCollection(IModelStore modelStore, String documentUri, String id, PropertyDescriptor propertyDescriptor,
 			@Nullable ModelCopyManager copyManager,
 			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(baseStore, "Model store can not be null");
-		if (baseStore instanceof CompatibleModelStoreWrapper) {
-			this.modelStore = (CompatibleModelStoreWrapper)baseStore;
-		} else {
-			// we need to wrap the model store for compatibility.  Note - we don't want to 
-			// wrap already wrapped model stores as it will force copies to be made into the same
-			// base model store
-			this.modelStore = new CompatibleModelStoreWrapper(baseStore);
-		}
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		this.modelStore = modelStore;
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		this.documentUri = documentUri;
 		Objects.requireNonNull(id, "ID can not be null");
@@ -107,13 +100,14 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		this.propertyDescriptor = propertyDescriptor;
 		this.copyManager = copyManager;
-		if (!modelStore.exists(documentUri, id)) {
+		if (!modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore))) {
 			throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
 		}
 		if (Objects.nonNull(type)) {
 			this.type = type;
 			licensePrimitiveAssignable = type.isAssignableFrom(SpdxNoneLicense.class);
-			if (!modelStore.isCollectionMembersAssignableTo(documentUri, id, propertyDescriptor, type)) {
+			if (!modelStore.isCollectionMembersAssignableTo(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), 
+					propertyDescriptor, type)) {
 				throw new SpdxInvalidTypeException("Incompatible type for property "+propertyDescriptor+": "+type.toString());
 			}
 		} else {
@@ -124,7 +118,9 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public int size() {
 		try {
-			return this.modelStore.collectionSize(this.documentUri, this.id, this.propertyDescriptor);
+			return this.modelStore.collectionSize(
+					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore), 
+					this.propertyDescriptor);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -133,7 +129,9 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean isEmpty() {
 		try {
-			return this.modelStore.collectionSize(this.documentUri, this.id, this.propertyDescriptor) == 0;
+			return this.modelStore.collectionSize(
+					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore),
+					this.propertyDescriptor) == 0;
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -148,7 +146,9 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 			} catch (SpdxObjectNotInStoreException e1) {
 				return false;	// The exception is due to the model object not being in the store
 			}
-			return this.modelStore.collectionContains(this.documentUri, this.id, this.propertyDescriptor, storedObject);
+			return this.modelStore.collectionContains(
+					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore),
+					this.propertyDescriptor, storedObject);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -195,7 +195,9 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public Iterator<Object> iterator() {
 		try {
-			return new ModelCollectionIterator(modelStore.listValues(documentUri, id, propertyDescriptor));
+			return new ModelCollectionIterator(
+					modelStore.listValues(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore),
+							propertyDescriptor));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -214,7 +216,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean add(Object element) {
 		try {
-			return modelStore.addValueToCollection(documentUri, id, propertyDescriptor, 
+			return modelStore.addValueToCollection(
+					CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), propertyDescriptor, 
 					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, copyManager));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
@@ -224,8 +227,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean remove(Object element) {
 		try {
-			return modelStore.removeValueFromCollection(documentUri, id, propertyDescriptor, 
-					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, null));
+			return modelStore.removeValueFromCollection(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore),
+					propertyDescriptor, ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, null));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -277,7 +280,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public void clear() {
 		try {
-			modelStore.clearValueCollection(documentUri, id, propertyDescriptor);
+			modelStore.clearValueCollection(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), propertyDescriptor);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -286,7 +289,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	/**
 	 * @return the modelStore
 	 */
-	public CompatibleModelStoreWrapper getModelStore() {
+	public IModelStore getModelStore() {
 		return modelStore;
 	}
 

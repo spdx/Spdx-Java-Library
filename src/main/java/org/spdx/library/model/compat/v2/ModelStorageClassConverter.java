@@ -26,6 +26,7 @@ import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
+import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxObjectNotInStoreException;
@@ -75,7 +76,14 @@ public class ModelStorageClassConverter {
 			return suv.toModelObject(modelStore, null, documentUri);
 		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
-			return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getObjectUri(), tv.getType(), copyManager);
+			String id = tv.getObjectUri().startsWith(documentUri) ? tv.getObjectUri().substring(documentUri.length() + 1) : 
+				tv.getObjectUri();
+			if (id.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL)) {
+				return SpdxModelFactory.getModelObjectV2(modelStore, SpdxConstantsCompatV2.LISTED_LICENSE_URL, 
+						id.substring(SpdxConstantsCompatV2.LISTED_LICENSE_URL.length()), tv.getType(), copyManager, true);
+			} else {
+				return SpdxModelFactory.getModelObjectV2(modelStore, documentUri, id, tv.getType(), copyManager, true);
+			}
 		} else {
 			return value;
 		}
@@ -122,11 +130,14 @@ public class ModelStorageClassConverter {
 			return new SimpleUriValue((IndividualUriValue)value);
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
-			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(stDocumentUri)) {
+			String toNamespace = SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(mValue.getType()) || 
+					SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(mValue.getType()) ?
+							SpdxConstantsCompatV2.LISTED_LICENSE_URL : stDocumentUri;
+			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(toNamespace)) {
 				if (Objects.nonNull(copyManager)) {
 					return copyManager.copy(stModelStore, mValue.getModelStore(), 
 							CompatibleModelStoreWrapper.documentUriIdToUri(mValue.getDocumentUri(), mValue.getId(), mValue.getModelStore()),
-							mValue.getType(), mValue.getDocumentUri(), stDocumentUri);
+							mValue.getType(), mValue.getDocumentUri(), toNamespace);
 				} else {
 					throw new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store");
 				}

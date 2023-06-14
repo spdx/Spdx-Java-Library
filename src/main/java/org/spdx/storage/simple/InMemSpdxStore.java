@@ -433,7 +433,7 @@ public class InMemSpdxStore implements IModelStore {
 		Objects.requireNonNull(nameSpace, "Namespace can not be null");
 		Objects.requireNonNull(caseInsensisitiveId, "CaseInsensisitiveId can not be null");
 		String objectUri = nameSpace + "#" + caseInsensisitiveId;
-		StoredTypedItem item = typedValueMap.get(objectUri);
+		StoredTypedItem item = typedValueMap.get(objectUri.toLowerCase());
 		if (Objects.isNull(item)) {
 			return Optional.empty();
 		}

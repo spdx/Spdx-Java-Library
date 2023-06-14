@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
@@ -49,7 +50,7 @@ public class DisjunctiveLiceseSetTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		modelStore = new InMemSpdxStore();
+		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		copyManager = new ModelCopyManager();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[IDS.length];
 		for (int i = 0; i < IDS.length; i++) {

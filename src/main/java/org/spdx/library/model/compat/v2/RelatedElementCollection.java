@@ -205,7 +205,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 		}
 		try {
 			IModelStoreLock lock = owningElement.getModelStore()
-					.enterCriticalSection(owningElement.getDocumentUri(), false);
+					.enterCriticalSection(false);
 			try {
 				Relationship relationship = owningElement.createRelationship(e, relationshipTypeFilter, null);
 				createdRelationshipIds.add(relationship.getId());

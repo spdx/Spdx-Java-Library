@@ -49,6 +49,7 @@ import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
 import org.spdx.library.model.compat.v2.license.ListedLicenses;
 import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
@@ -103,7 +104,7 @@ public abstract class ModelObject {
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelObject.class);
 
-	private CompatibleModelStoreWrapper modelStore;
+	private IModelStore modelStore;
 	private String documentUri;
 	private String id;
 	
@@ -177,7 +178,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Open or create a model object with the default store and default document URI
-	 * @param objectUri ID for this object - must be unique within the SPDX document
+	 * @param id ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public ModelObject(String id) throws InvalidSPDXAnalysisException {
@@ -186,30 +187,37 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param baseModelStore Storage for the model objects
+	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param objectUri ID for this object - must be unique within the SPDX document
+	 * @param identifier ID for this object - must be unique within the SPDX document
 	 * @param copyManager - if supplied, model objects will be implictly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelObject(IModelStore baseModelStore, String documentUri, String id, @Nullable ModelCopyManager copyManager, 
+	public ModelObject(IModelStore modelStore, String documentUri, String identifier, @Nullable ModelCopyManager copyManager, 
 			boolean create) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(baseModelStore, "Model Store can not be null");
+		Objects.requireNonNull(modelStore, "Model Store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
-		Objects.requireNonNull(id, "ID can not be null");
-		if (baseModelStore instanceof CompatibleModelStoreWrapper) {
-			this.modelStore = (CompatibleModelStoreWrapper)baseModelStore;
+		Objects.requireNonNull(identifier, "ID can not be null");
+		if (identifier.startsWith(documentUri)) {
+			logger.warn("document URI was passed in as an ID: "+identifier);
+			this.id = identifier.substring(documentUri.length());
+			if (this.id.startsWith("#")) {
+				this.id = this.id.substring(1);
+			}
 		} else {
-			// we need to wrap the model store for compatibility.  Note - we don't want to 
-			// wrap already wrapped model stores as it will force copies to be made into the same
-			// base model store
-			this.modelStore = new CompatibleModelStoreWrapper(baseModelStore);
+			this.id = identifier;
 		}
-		this.documentUri = documentUri;
-		this.id = id;
+		if ((LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) &&
+				!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
+			logger.warn("Listed license document URI changed to listed license URL for documentUri "+documentUri);
+			this.documentUri = SpdxConstantsCompatV2.LISTED_LICENSE_URL;
+		} else {
+			this.documentUri = documentUri;
+		}
+		this.modelStore = modelStore;
 		this.copyManager = copyManager;
-		Optional<TypedValue> existing = modelStore.getTypedValue(documentUri, id);
+		Optional<TypedValue> existing = modelStore.getTypedValue(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore));
 		if (existing.isPresent()) {
 			if (create && !existing.get().getType().equals(getType())) {
 				throw new SpdxIdInUseException("Can not create "+id+".  It is already in use with type "+existing.get().getType()+" which is incompatible with type "+getType());
@@ -219,8 +227,8 @@ public abstract class ModelObject {
 				IModelStoreLock lock = enterCriticalSection(false);
 				// re-check since previous check was done outside of the lock
 				try {
-					if (!modelStore.exists(documentUri, id)) {
-						modelStore.create(documentUri, id, getType());
+					if (!modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore))) {
+						modelStore.create(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), getType());
 					}
 				} finally {
 					lock.unlock();
@@ -288,10 +296,16 @@ public abstract class ModelObject {
 		return id;
 	}
 	
+	public String getObjectUri() {
+		return modelStore.getIdType(id) == IdType.Anonymous ? id : 
+			SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri) ? documentUri + id :
+			documentUri + "#" + id;
+	}
+	
 	/**
 	 * @return the model store for this object
 	 */
-	public CompatibleModelStoreWrapper getModelStore() {
+	public IModelStore getModelStore() {
 		return this.modelStore;
 	}
 	
@@ -315,7 +329,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public IModelStoreLock enterCriticalSection(boolean readLockRequested) throws InvalidSPDXAnalysisException {
-		return this.getModelStore().enterCriticalSection(this.getDocumentUri(), readLockRequested);
+		return modelStore.enterCriticalSection(readLockRequested);
 	}
 	
 	/**
@@ -332,7 +346,7 @@ public abstract class ModelObject {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public List<PropertyDescriptor> getPropertyValueDescriptors() throws InvalidSPDXAnalysisException {
-		return modelStore.getPropertyValueDescriptors(documentUri, id);
+		return modelStore.getPropertyValueDescriptors(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore));
 	}
 	
 	/**
@@ -785,7 +799,7 @@ public abstract class ModelObject {
 	}
 	
 	protected boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSPDXAnalysisException {
-		return modelStore.isCollectionMembersAssignableTo(this.documentUri, this.id, propertyDescriptor, 
+		return modelStore.isCollectionMembersAssignableTo(CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore), propertyDescriptor, 
 				ModelStorageClassConverter.modelClassToStoredClass(clazz));
 	}
 	
@@ -1100,7 +1114,7 @@ public abstract class ModelObject {
 	}
 	
 	/**
-	 * @param objectUri String for the object
+	 * @param id String for the object
 	 * @return type of the ID
 	 */
 	protected IdType idToIdType(String id) {
@@ -1242,9 +1256,9 @@ public abstract class ModelObject {
 		if (!SpdxVerificationHelper.isValidUri(externalDocumentUri)) {
 			throw new InvalidSPDXAnalysisException("Invalid external document URI: "+externalDocumentUri);
 		}
-		IModelStoreLock lock = getModelStore().enterCriticalSection( getDocumentUri(), false);
+		IModelStoreLock lock = modelStore.enterCriticalSection(false);
 		try {
-			if (getModelStore().exists(getDocumentUri(), externalDocumentId)) {
+			if (modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(getDocumentUri(), externalDocumentId, modelStore))) {
 				return new ExternalDocumentRef(getModelStore(), getDocumentUri(), 
 						externalDocumentId, this.copyManager, false);
 			} else {
@@ -1304,7 +1318,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxFileBuilder with all of the required properties - the build() method will build the file
-	 * @param objectUri - ID - must be an SPDX ID type
+	 * @param id - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param seenLicense collection of seen licenses
@@ -1324,7 +1338,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxPackageBuilder with all required fields for a filesAnalyzed=false using this objects model store and document URI
-	 * @param objectUri - ID - must be an SPDX ID type
+	 * @param id - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param copyrightText Copyright text
@@ -1388,7 +1402,7 @@ public abstract class ModelObject {
 	
 	/**
 	 * Create an SpdxSnippetBuilder with all of the required properties - the build() method will build the file
-	 * @param objectUri - ID - must be an SPDX ID type
+	 * @param id - ID - must be an SPDX ID type
 	 * @param name - File name
 	 * @param concludedLicense license concluded
 	 * @param seenLicense collection of seen licenses

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
@@ -49,10 +50,9 @@ public class SpdxListedLicense extends License {
 	 * @param objectUri ID for this object - must be unique within the SPDX document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	@SuppressWarnings("unchecked")
 	public SpdxListedLicense(String id) throws InvalidSPDXAnalysisException {
-		super(id);
-		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstantsCompatV2.PROP_CROSS_REF, CrossRef.class);
+		this(DefaultModelStore.getDefaultModelStore(), SpdxConstantsCompatV2.LISTED_LICENSE_URL, id, 
+				DefaultModelStore.getDefaultCopyManager(), true);
 	}
 
 	/**

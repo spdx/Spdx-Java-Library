@@ -56,7 +56,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		modelStore = new InMemSpdxStore();
+		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];

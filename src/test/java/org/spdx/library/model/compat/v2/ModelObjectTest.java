@@ -272,7 +272,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getObjectUri()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getId()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetId() throws InvalidSPDXAnalysisException {
@@ -605,7 +605,7 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(gmo.equivalent(gmo2));
 		assertTrue(gmo2.equivalent(gmo));
 		// different store
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo3);
 		assertTrue(gmo.equivalent(gmo3));
@@ -770,7 +770,7 @@ public class ModelObjectTest extends TestCase {
 	public void testClone() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelObject result = gmo.clone(store2);
 		assertTrue(result instanceof GenericModelObject);
 		assertEquals(result, gmo);

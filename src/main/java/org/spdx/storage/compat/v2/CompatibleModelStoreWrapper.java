@@ -356,4 +356,11 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 		return SpdxMajorVersion.VERSION_2;
 	}
 
+	/**
+	 * @return the store this store wraps
+	 */
+	public IModelStore getBaseModelStore() {
+		return this.baseStore;
+	}
+
 }

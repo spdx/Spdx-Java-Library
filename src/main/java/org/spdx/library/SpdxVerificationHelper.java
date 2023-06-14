@@ -75,13 +75,15 @@ public class SpdxVerificationHelper {
 	static final String[] VALID_CREATOR_PREFIXES = new String[] {SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON,
 		SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION, SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL};
 	static final String[] VALID_ORIGINATOR_SUPPLIER_PREFIXES = new String[] {SpdxConstantsCompatV2.NOASSERTION_VALUE, "Person:", "Organization:"};
-	private static final Pattern SPDX_ELEMENT_ID_PATTERN = Pattern.compile(".*" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");
+	static final Pattern SPDX_ELEMENT_ID_PATTERN = Pattern.compile(".*" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");
+	static final Pattern LICENSE_ID_PATTERN = Pattern.compile(".*" + SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"([0-9a-zA-Z\\.\\-\\_]+)\\+?$");
+	static final Pattern EXTERNAL_DOC_REF_PATTERN = Pattern.compile(".*" + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+"([0-9a-zA-Z\\.\\-\\+]+)$");; 
 	
-	public static String verifyNonStdLicenseid(String licenseId) {
-		if (SpdxConstantsCompatV2.LICENSE_ID_PATTERN.matcher(licenseId).matches()) {
+	public static String verifyNonStdLicenseid(String licenseUri) {
+		if (LICENSE_ID_PATTERN.matcher(licenseUri).matches()) {
 			return null;
 		} else {
-			return "Invalid license objectUri '"+licenseId+"'.  Must start with 'LicenseRef-' " +
+			return "Invalid license objectUri '"+licenseUri+"'.  Must start with 'LicenseRef-' " +
 					"and made up of the characters from the set 'a'-'z', 'A'-'Z', '0'-'9', '+', '_', '.', and '-'.";
 		}
 	}
@@ -248,7 +250,7 @@ public class SpdxVerificationHelper {
 	 * @return
 	 */
 	public static boolean isValidExternalDocRef(String externalDocumentId) {
-		return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PATTERN.matcher(externalDocumentId).matches();
+		return EXTERNAL_DOC_REF_PATTERN.matcher(externalDocumentId).matches();
 	}
 
 	public static boolean isValidUri(String uri) {
@@ -300,7 +302,7 @@ public class SpdxVerificationHelper {
 	 * @param objectUri
 	 * @return true if the ID is a valid SPDX ID reference
 	 */
-	public static boolean verifySpdxId(String id) {
-		return SPDX_ELEMENT_ID_PATTERN.matcher(id).matches();
+	public static boolean verifySpdxId(String objectUri) {
+		return SPDX_ELEMENT_ID_PATTERN.matcher(objectUri).matches();
 	}
 }

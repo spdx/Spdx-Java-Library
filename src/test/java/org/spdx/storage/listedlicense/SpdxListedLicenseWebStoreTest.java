@@ -27,6 +27,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.license.CrossRef;
 import org.spdx.library.model.compat.v2.license.LicenseException;
 import org.spdx.library.model.compat.v2.license.ListedLicenseException;
@@ -302,7 +303,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		// license crossRefs
 		license.getCrossRef().clear();
 		assertEquals(0, sllw.collectionSize(LICENSE_LIST_URI + APACHE_ID, SpdxConstantsCompatV2.PROP_CROSS_REF));
-		IModelStore simpleModelStore = new InMemSpdxStore();
+		IModelStore simpleModelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "http://some.other.doc";
 		CrossRef crossRef1 = new CrossRef(simpleModelStore, docUri, simpleModelStore.getNextId(IdType.Anonymous, docUri), copyManager, true);
 		crossRef1.setUrl("http://url1");

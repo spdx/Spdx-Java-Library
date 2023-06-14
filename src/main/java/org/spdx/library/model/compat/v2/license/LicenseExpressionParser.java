@@ -35,7 +35,6 @@ import org.spdx.library.TypedValue;
 import org.spdx.library.model.compat.v2.ModelStorageClassConverter;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * A parser for the SPDX License Expressions as documented in the SPDX appendix.
@@ -259,12 +258,11 @@ public class LicenseExpressionParser {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore baseStore, String documentUri,
+	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String documentUri,
 			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
-		Objects.requireNonNull(baseStore, "Model store can not be null");
+		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
-		CompatibleModelStoreWrapper store = new CompatibleModelStoreWrapper(baseStore);
 		if (token.contains(":")) {
 			// External License Ref
 			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager, true);
@@ -275,17 +273,18 @@ public class LicenseExpressionParser {
 			licenseId = LicenseInfoFactory.listedLicenseIdCaseSensitive(token);
 		}
 		if (licenseId.isPresent()) {
-			if (!store.exists(documentUri, licenseId.get())) {
+			if (!store.exists(SpdxConstantsCompatV2.LISTED_LICENSE_URL + licenseId.get())) {
 				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId.get());
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
-					copyManager.copy(store, CompatibleModelStoreWrapper.documentUriIdToUri(listedLicense.getDocumentUri(), token, false), listedLicense.getModelStore(), 
-							CompatibleModelStoreWrapper.documentUriIdToUri(listedLicense.getDocumentUri(), token, false), 
-							SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, listedLicense.getDocumentUri(), listedLicense.getDocumentUri());
+					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
+							listedLicense.getObjectUri(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, 
+							listedLicense.getDocumentUri(), listedLicense.getDocumentUri());
 				}
 			}
 			return (AnyLicenseInfo) ModelStorageClassConverter.storedObjectToModelObject(
-					new TypedValue(licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE), 
+					new TypedValue(SpdxConstantsCompatV2.LISTED_LICENSE_URL + licenseId.get(), 
+							SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE), 
 					documentUri, store, copyManager);
 		} else {
 			// LicenseRef

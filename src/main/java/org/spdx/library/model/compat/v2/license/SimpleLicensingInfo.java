@@ -71,7 +71,7 @@ public abstract class SimpleLicensingInfo extends AnyLicenseInfo {
 	}
 	
 	/**
-	 * @return the objectUri
+	 * @return the license ID without the enclosing namespace
 	 */
 	public String getLicenseId() {
 		return this.getId();

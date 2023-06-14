@@ -40,6 +40,7 @@ import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Information about an external SPDX document reference including the checksum.  
@@ -82,7 +83,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 			// if we got here, we didn't find an existing one, need to create one
 			if (Objects.nonNull(copyManager)) {
 				ExternalDocumentRef retval = new ExternalDocumentRef(stModelStore, stDocumentUri,
-						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri), copyManager, true);
+						stModelStore.getNextId(IdType.DocumentRef, stDocumentUri + "#"), copyManager, true);
 				retval.setSpdxDocumentNamespace(externalDocUri);
 				ModelObject.addValueToCollection(stModelStore, stDocumentUri, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, 
 						SpdxConstantsCompatV2.PROP_SPDX_EXTERNAL_DOC_REF, retval, copyManager);
@@ -118,17 +119,17 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	/**
 	 * @param modelStore Storage for the model objects
 	 * @param documentUri SPDX Document URI for a document associated with this model
-	 * @param objectUri ID for this object - must be unique within the SPDX document
+	 * @param objectUri URI for the object - must be unique within the SPDX store
 	 * @param copyManager - if supplied, model objects will be implicitly copied into this model store and document URI when referenced by setting methods
 	 * @param create - if true, the object will be created in the store if it is not already present
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ExternalDocumentRef(IModelStore modelStore, String documentUri, String id, 
+	public ExternalDocumentRef(IModelStore modelStore, String documentUri, String objectUri, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, copyManager, create);
-		if (!SpdxVerificationHelper.isValidExternalDocRef(id)) {
-			logger.warn("Invalid external document reference ID "+id+
+		super(modelStore, documentUri, objectUri, copyManager, create);
+		if (!SpdxVerificationHelper.isValidExternalDocRef(objectUri)) {
+			logger.warn("Invalid external document reference ID "+objectUri+
 					".  Must be of the format "+SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PATTERN.pattern());
 		}
 	}
@@ -256,7 +257,8 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		if (docNamespace.isEmpty()) {
 			return Optional.empty();
 		}
-		if (this.getModelStore().exists(docNamespace, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID)) {
+		if (this.getModelStore().exists(
+				CompatibleModelStoreWrapper.documentUriIdToUri(docNamespace, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, false))) {
 			return (Optional<SpdxDocument>)(Optional<?>)Optional.of(SpdxModelFactory.createModelObject(
 					getModelStore(), docNamespace, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, 
 					SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT, getCopyManager()));

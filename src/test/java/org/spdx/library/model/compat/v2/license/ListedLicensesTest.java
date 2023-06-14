@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;
 
@@ -140,7 +141,8 @@ public class ListedLicensesTest extends TestCase {
 	public void testGetLicenseIdProperty() throws InvalidSPDXAnalysisException {
 	    String id = "Apache-2.0";
 	    SpdxListedLicense lic = ListedLicenses.getListedLicenses().getListedLicenseById(id);
-	    Optional<Object> idProp = lic.getModelStore().getValue(lic.getDocumentUri(), id, SpdxConstantsCompatV2.PROP_LICENSE_ID);
+	    Optional<Object> idProp = lic.getModelStore().getValue(
+	    		CompatibleModelStoreWrapper.documentUriIdToUri(lic.getDocumentUri(), id, false), SpdxConstantsCompatV2.PROP_LICENSE_ID);
 	    assertTrue(idProp.isPresent());
 	    assertTrue(idProp.get() instanceof String);
 	    assertEquals(id, idProp.get());
@@ -149,7 +151,8 @@ public class ListedLicensesTest extends TestCase {
 	   public void testGetExceptionIdProperty() throws InvalidSPDXAnalysisException {
 	        String id = "Classpath-exception-2.0";
 	        ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionById(id);
-	        Optional<Object> idProp = ex.getModelStore().getValue(ex.getDocumentUri(), id, SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
+	        Optional<Object> idProp = ex.getModelStore().getValue(
+	        		CompatibleModelStoreWrapper.documentUriIdToUri(ex.getDocumentUri(), id, false), SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
 	        assertTrue(idProp.isPresent());
 	        assertTrue(idProp.get() instanceof String);
 	        assertEquals(id, idProp.get());
