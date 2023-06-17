@@ -91,9 +91,9 @@ public class LicenseExceptionTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager  = new ModelCopyManager();
 		copyManager.copy(store, DefaultModelStore.getDefaultModelStore(),
-				CompatibleModelStoreWrapper.documentUriIdToUri(DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, false),
+				CompatibleModelStoreWrapper.documentUriIdToUri(SpdxConstantsCompatV2.LISTED_LICENSE_URL, EXCEPTION_ID1, false),
 				SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION, 
-				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
+				SpdxConstantsCompatV2.LISTED_LICENSE_URL, SpdxConstantsCompatV2.LISTED_LICENSE_URL);
 		LicenseException le2 = new LicenseException(store, DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, copyManager, false);
 		
 		assertEquals(EXCEPTION_ID1, le2.getLicenseExceptionId());

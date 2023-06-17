@@ -788,7 +788,7 @@ public class ModelObjectTest extends TestCase {
 		gmo2.copyFrom(gmo);
 		assertTrue(gmo.equivalent(gmo2));
 		// different store
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.copyFrom(gmo);
 		assertTrue(gmo.equivalent(gmo3));
@@ -816,7 +816,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		TypedValue result = gmo.toTypedValue();
-		assertEquals(TEST_ID, result.getObjectUri());
+		assertEquals(docUri + "#" + TEST_ID, result.getObjectUri());
 		assertEquals(gmo.getType(), result.getType());
 	}
 	

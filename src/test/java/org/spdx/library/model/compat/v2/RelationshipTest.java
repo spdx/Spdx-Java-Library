@@ -219,7 +219,7 @@ public class RelationshipTest extends TestCase {
 	public void testDocumentDescribes() throws InvalidSPDXAnalysisException {
 		String documentUri = "https://someuri";
         ModelCopyManager copyManager = new ModelCopyManager();
-        IModelStore modelStore = new InMemSpdxStore();
+        IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
         SpdxDocument document = SpdxModelFactory.createSpdxDocumentV2(modelStore, documentUri, copyManager);
         document.setSpecVersion(Version.TWO_POINT_THREE_VERSION);
         document.setName("SPDX-tool-test");

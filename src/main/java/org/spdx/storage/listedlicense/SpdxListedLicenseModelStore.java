@@ -739,7 +739,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public String getNextId(IdType idType, String documentUri)  throws InvalidSPDXAnalysisException  {
-		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri)) {
+		if (!SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri) && !IdType.Anonymous.equals(idType)) {
 			logger.error("Document URI for SPDX listed licenses is expected to be "+
 					SpdxConstantsCompatV2.LISTED_LICENSE_URL + ".  Supplied document URI was "+documentUri);
 			throw new SpdxIdNotFoundException("Document URI for SPDX listed licenses is expected to be "+

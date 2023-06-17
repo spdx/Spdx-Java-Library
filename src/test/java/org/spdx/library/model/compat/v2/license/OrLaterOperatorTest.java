@@ -90,7 +90,7 @@ public class OrLaterOperatorTest extends TestCase {
 
 	public void testCopyFrom() throws InvalidSPDXAnalysisException {
 		OrLaterOperator olo1 = new OrLaterOperator(license1);
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		OrLaterOperator clone = new OrLaterOperator(store, "https://different.uri", "orLaterId", olo1.getCopyManager(), true);
 		clone.copyFrom(olo1);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)olo1.getLicense();

@@ -32,6 +32,7 @@ import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxObjectNotInStoreException;
 import org.spdx.library.TypedValue;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
@@ -130,14 +131,17 @@ public class ModelStorageClassConverter {
 			return new SimpleUriValue((IndividualUriValue)value);
 		} else if (value instanceof ModelObject) {
 			ModelObject mValue = (ModelObject)value;
-			String toNamespace = SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(mValue.getType()) || 
+			String toDocumentUri = SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(mValue.getType()) || 
+					SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION.equals(mValue.getType()) || 
 					SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(mValue.getType()) ?
 							SpdxConstantsCompatV2.LISTED_LICENSE_URL : stDocumentUri;
-			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(toNamespace)) {
+			if (!mValue.getModelStore().equals(stModelStore) || !mValue.getDocumentUri().equals(toDocumentUri)) {
 				if (Objects.nonNull(copyManager)) {
+					boolean anon = mValue.getModelStore().getIdType(mValue.getId()) == IdType.Anonymous;
 					return copyManager.copy(stModelStore, mValue.getModelStore(), 
-							CompatibleModelStoreWrapper.documentUriIdToUri(mValue.getDocumentUri(), mValue.getId(), mValue.getModelStore()),
-							mValue.getType(), mValue.getDocumentUri(), toNamespace);
+							CompatibleModelStoreWrapper.documentUriIdToUri(mValue.getDocumentUri(), mValue.getId(), anon),
+							mValue.getType(), CompatibleModelStoreWrapper.documentUriToNamespace(mValue.getDocumentUri(), anon),
+							CompatibleModelStoreWrapper.documentUriToNamespace(toDocumentUri, anon));
 				} else {
 					throw new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store");
 				}

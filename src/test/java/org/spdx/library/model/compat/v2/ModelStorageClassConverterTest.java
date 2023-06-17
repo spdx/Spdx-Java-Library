@@ -147,8 +147,8 @@ public class ModelStorageClassConverterTest extends TestCase {
 	}
 
 	public void testCopyIModelStoreStringIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
-		IModelStore store1 = new InMemSpdxStore();
-		IModelStore store2 = new InMemSpdxStore();
+		IModelStore store1 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		IModelStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
 		String docUri1 = "http://doc1/uri";
 		String docUri2 = "http://doc2/uri";

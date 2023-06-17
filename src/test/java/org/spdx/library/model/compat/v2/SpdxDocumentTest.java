@@ -293,7 +293,7 @@ public class SpdxDocumentTest extends TestCase {
 		assertTrue(doc.equivalent(doc));
 		
 		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
-		IModelStore model2 = new InMemSpdxStore();
+		IModelStore model2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocumentV2(model2, doc2Uri, gmo.getCopyManager());
 		doc2.setStrict(false);
 		doc2.setAnnotations(annotations);
@@ -659,7 +659,7 @@ public class SpdxDocumentTest extends TestCase {
 	
 	// Test for issue 126 - removing a documentDescribes not properly decrementing use counts
 	public void testRemoveDescribes() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "https://some.doc.uri";
 		ModelCopyManager copyManager = new ModelCopyManager();
 		SpdxDocument doc = new SpdxDocument(modelStore, docUri, copyManager, true);

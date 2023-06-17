@@ -68,6 +68,16 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 		return documentUriIdToUri(documentUri, id, store.getIdType(id).equals(IdType.Anonymous));
 	}
 	
+	public static String documentUriToNamespace(String documentUri, boolean anonymous) {
+		if (anonymous) {
+			return "";
+		} else if (documentUri.contains("://spdx.org/licenses/"))  {
+			return documentUri;
+		} else {
+			return documentUri + "#";
+		}
+	}
+	
 	/**
 	 * @param documentUri SPDX v2 Document URI
 	 * @param id ID consistent with SPDX v2 spec
@@ -75,13 +85,7 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 	 * @return a URI based on the document URI and ID - if anonymous is true, the ID is returned
 	 */
 	public static String documentUriIdToUri(String documentUri, String id, boolean anonymous) {
-		if (anonymous) {
-			return id;
-		} else if (documentUri.contains("://spdx.org/licenses/"))  {
-			return documentUri + id;
-		} else {
-			return documentUri + "#" + id;
-		}
+		return documentUriToNamespace(documentUri, anonymous) + id;
 	}
 	
 	/**

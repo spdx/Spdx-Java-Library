@@ -788,7 +788,8 @@ public class SpdxComparerTest extends TestCase {
 			newLic.setExtractedText(lic.getExtractedText());
 			newLic.setName(lic.getName());
 			newLic.setSeeAlso(lic.getSeeAlso());
-			assertEquals(0, newLic.verify().size());
+			List<String>ver = newLic.verify(); 
+			assertEquals(0, ver.size());
 			newExtractedLicenseInfos.add(newLic);
 			oldToNewLicIds.put(oldId, newLic);
 		}

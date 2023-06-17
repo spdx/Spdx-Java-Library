@@ -3,6 +3,7 @@ package org.spdx.library.model.compat.v2;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo;
@@ -27,7 +28,7 @@ public class IndividualUriValueTest extends TestCase {
 	
 	// Test if a simple URI value is equal to the ExternalExtracedLicenseInfo with the same URI value
 	public void testEqualUriValueExternalExtractedLicenseInfo() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
 		String id = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"ID";
 		String namespace = "http://example.namespace";
@@ -44,7 +45,7 @@ public class IndividualUriValueTest extends TestCase {
 
 	// Test if a simple URI value is equal to the ExternalSpdxElement with the same URI value
 	public void testEqualUriValueExternalSpdxElement() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
 		String id = SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"ID";
 		String namespace = "http://example.namespace";

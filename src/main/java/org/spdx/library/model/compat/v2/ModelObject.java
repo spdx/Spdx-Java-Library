@@ -1099,7 +1099,7 @@ public abstract class ModelObject {
 		}
 		copyManager.copy(this.modelStore, CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, this.modelStore), 
 				source.getModelStore(), CompatibleModelStoreWrapper.documentUriIdToUri(source.getDocumentUri(), source.getId(), source.getModelStore()),
-				this.getType(), this.documentUri, source.getDocumentUri());
+				this.getType(), source.getDocumentUri(), this.documentUri);
 	}
 	
 	public void setCopyManager(ModelCopyManager copyManager) {

@@ -68,7 +68,7 @@ public class SpdxListedLicense extends License {
 	public SpdxListedLicense(IModelStore modelStore, String documentUri, String id, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, copyManager, create);
+		super(modelStore, SpdxConstantsCompatV2.LISTED_LICENSE_URL, id, copyManager, create);
 		crossRef = (Collection<CrossRef>)(Collection<?>)this.getObjectPropertyValueSet(SpdxConstantsCompatV2.PROP_CROSS_REF, CrossRef.class);
 	}
 	

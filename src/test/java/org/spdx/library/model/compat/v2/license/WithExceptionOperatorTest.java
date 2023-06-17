@@ -1,5 +1,7 @@
 package org.spdx.library.model.compat.v2.license;
 
+import java.util.List;
+
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -86,7 +88,7 @@ public class WithExceptionOperatorTest extends TestCase {
 		ModelCopyManager copyManager = new ModelCopyManager();
 		@SuppressWarnings("unused")
 		TypedValue tv = copyManager.copy(store, weo1.getModelStore(),
-				CompatibleModelStoreWrapper.documentUriIdToUri(weo1.getDocumentUri(), weo1.getId(), false),
+				CompatibleModelStoreWrapper.documentUriIdToUri(weo1.getDocumentUri(), weo1.getId(), weo1.getModelStore()),
 				weo1.getType(), weo1.getDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
 		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObject(store, 
 				DefaultModelStore.getDefaultDocumentUri(), weo1.getId(), SpdxConstantsCompatV2.CLASS_WITH_EXCEPTION_OPERATOR, copyManager);
@@ -142,6 +144,7 @@ public class WithExceptionOperatorTest extends TestCase {
 	}
 	
 	public void testClassPathException() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
-		assertTrue(LicenseInfoFactory.parseSPDXLicenseString("GPL-2.0-only WITH Classpath-exception-2.0").verify().isEmpty());
+		List<String> result = LicenseInfoFactory.parseSPDXLicenseString("GPL-2.0-only WITH Classpath-exception-2.0").verify();
+		assertTrue(result.isEmpty());
 	}
 }

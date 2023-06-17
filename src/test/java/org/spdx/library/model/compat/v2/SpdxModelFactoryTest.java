@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxModelFactory;
@@ -64,8 +65,10 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	public void testTypeToClass() throws InvalidSPDXAnalysisException {
-		assertEquals(Checksum.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM));
-		assertEquals(SpdxFile.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_FILE));
+		assertEquals(Checksum.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM,
+				SpdxMajorVersion.VERSION_2));
+		assertEquals(SpdxFile.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_FILE,
+				SpdxMajorVersion.VERSION_2));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -97,7 +100,8 @@ public class SpdxModelFactoryTest extends TestCase {
 
 	public void testClassUriToClass() throws InvalidSPDXAnalysisException {
 		assertEquals(Annotation.class, 
-				SpdxModelFactory.classUriToClass(SpdxConstantsCompatV2.SPDX_NAMESPACE + SpdxConstantsCompatV2.CLASS_ANNOTATION));
+				SpdxModelFactory.classUriToClass(SpdxConstantsCompatV2.SPDX_NAMESPACE + SpdxConstantsCompatV2.CLASS_ANNOTATION,
+						SpdxMajorVersion.VERSION_2));
 	}
 
 	public void testGetModelObjectIModelStoreStringStringModelCopyManager() throws InvalidSPDXAnalysisException {
