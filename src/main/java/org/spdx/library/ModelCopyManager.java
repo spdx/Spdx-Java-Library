@@ -53,7 +53,7 @@ public class ModelCopyManager {
 	 * Used to keep track of copied ID's to make sure we don't copy them more than once
 	 */
 	private ConcurrentHashMap<IModelStore, ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, 
-	String>>> COPIED_IDS = 
+	ConcurrentHashMap<String, String>>>> COPIED_IDS = 
 			new ConcurrentHashMap<>();
 
 	/**
@@ -65,21 +65,26 @@ public class ModelCopyManager {
 	
 	/**
 	 * @param fromStore Store copied from
-	 * @param fromObjectUri
+	 * @param fromObjectUri Object URI in the from tsotre
 	 * @param toStore store copied to
+	 * @param toNamespace Optional nameSpace used for the copied URI - can copy the same object to multiple namespaces in the same toStore
 	 * @return the objectId which has already been copied, or null if it has not been copied
 	 */
 	public String getCopiedObjectUri(IModelStore fromStore, String fromObjectUri,
-			IModelStore toStore) {
-		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, String>> fromStoreMap = COPIED_IDS.get(fromStore);
+			IModelStore toStore, @Nullable String toNamespace) {
+		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>> fromStoreMap = COPIED_IDS.get(fromStore);
 		if (Objects.isNull(fromStoreMap)) { 
 			return null;
 		}
-		ConcurrentHashMap<String, String> toStoreMap = fromStoreMap.get(toStore);
+		ConcurrentHashMap<String, ConcurrentHashMap<String, String>> toStoreMap = fromStoreMap.get(toStore);
 		if (Objects.isNull(toStoreMap)) {
 			return null;
 		}
-		return toStoreMap.get(fromObjectUri);
+		ConcurrentHashMap<String, String> toNamespaceMap = toStoreMap.get(fromObjectUri);
+		if (Objects.isNull(toNamespaceMap)) {
+			return null;
+		}
+		return toNamespaceMap.get(toNamespace == null ? "" : toNamespace);
 	}
 
 	/**
@@ -87,23 +92,28 @@ public class ModelCopyManager {
 	 * @param fromStore Store copied from
 	 * @param fromObjectUri URI for the from Object
 	 * @param toObjectUri URI for the to Object
-	 * @param toId ID copied to
-	 * @return any copied to ID for the same stores, URI's and fromID
+	 * @param toNamespace Optional nameSpace used for the copied URI - can copy the same object to multiple namespaces in the same toStore
+	 * @return any copied to ID for the same stores, URI's, nameSpace and fromID
 	 */
 	public String putCopiedId(IModelStore fromStore, String fromObjectUri, IModelStore toStore,
-			String toObjectUri) {
-		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, String>> fromStoreMap = COPIED_IDS.get(fromStore);
+			String toObjectUri, @Nullable String toNamespace) {
+		ConcurrentHashMap<IModelStore, ConcurrentHashMap<String, ConcurrentHashMap<String, String>>> fromStoreMap = COPIED_IDS.get(fromStore);
 		while (Objects.isNull(fromStoreMap)) { 
 			fromStoreMap = COPIED_IDS.putIfAbsent(fromStore, new ConcurrentHashMap<>());
 		}
-		ConcurrentHashMap<String, String> toStoreMap = fromStoreMap.get(toStore);
+		ConcurrentHashMap<String, ConcurrentHashMap<String, String>> toStoreMap = fromStoreMap.get(toStore);
 		while (Objects.isNull(toStoreMap)) {
 			toStoreMap = fromStoreMap.putIfAbsent(toStore, new ConcurrentHashMap<>());
 		}
-		if (toStoreMap.containsKey(fromObjectUri)) {
+		ConcurrentHashMap<String, String> toNamespaceMap = toStoreMap.get(fromObjectUri);
+		while (Objects.isNull(toNamespaceMap)) {
+			toNamespaceMap = toStoreMap.putIfAbsent(fromObjectUri, new ConcurrentHashMap<>());
+		}
+		String ns = toNamespace == null ? "" : toNamespace;
+		if (toNamespaceMap.containsKey(ns)) {
 			logger.warn("Object URI already exists for the originating "+ fromObjectUri);
 		}
-		return toStoreMap.put(fromObjectUri, toObjectUri);
+		return toNamespaceMap.put(ns, toObjectUri);
 	}
 	
 	/**
@@ -115,11 +125,15 @@ public class ModelCopyManager {
 	 * @param type Type to copy
 	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
+	 * @param fromCollectionNamespace Optional namespace for the from collection to use when creating items for collections.  Defaults to toNamespace
+	 * @param toCollectionNamespace Optional namespace for the to collection to use when creating items for collections.  Defaults to toNamespace
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void copy(IModelStore toStore, String toObjectUri, IModelStore fromStore, String fromObjectUri, String type,
-			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
-		copy(toStore, toObjectUri, fromStore, fromObjectUri, type, false, fromNamespace, toNamespace);
+			@Nullable String fromNamespace, @Nullable String toNamespace, 
+			@Nullable String fromCollectionNamespace, @Nullable String toCollectionNamespace) throws InvalidSPDXAnalysisException {
+		copy(toStore, toObjectUri, fromStore, fromObjectUri, type, false, fromNamespace, toNamespace, 
+				fromCollectionNamespace, toCollectionNamespace);
 	}
 
 	/**
@@ -134,12 +148,16 @@ public class ModelCopyManager {
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
+	 * @param fromCollectionNamespace Optional namespace for the from collection to use when creating items for collections.  Defaults to toNamespace
+	 * @param toCollectionNamespace Optional namespace for the to collection to use when creating items for collections.  Defaults to toNamespace
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void copy(IModelStore toStore, String toObjectUri, 
 			IModelStore fromStore, String fromObjectUri, 
 			String type, boolean excludeLicenseDetails,
-			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+			@Nullable String fromNamespace, @Nullable String toNamespace,
+			@Nullable String fromCollectionNamespace,
+			@Nullable String toCollectionNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "ToStore can not be null");
 		Objects.requireNonNull(toObjectUri, "To Object URI can not be null");
 		Objects.requireNonNull(fromStore, "FromStore can not be null");
@@ -151,7 +169,7 @@ public class ModelCopyManager {
 		if (!toStore.exists(toObjectUri)) {
 			toStore.create(toObjectUri, type);
 		}
-		putCopiedId(fromStore, fromObjectUri, toStore, toObjectUri);
+		putCopiedId(fromStore, fromObjectUri, toStore, toObjectUri, toNamespace);
 		if (!(excludeLicenseDetails && 
 				(SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(type) ||
 						SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(type)))) {
@@ -159,7 +177,8 @@ public class ModelCopyManager {
 			for (PropertyDescriptor propDesc:propertyDescriptors) {
 				if (fromStore.isCollectionProperty(fromObjectUri, propDesc)) {
 				    copyCollectionProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, excludeLicenseDetails,
-				    		fromNamespace, toNamespace);
+				    		(fromCollectionNamespace == null ? fromNamespace : fromCollectionNamespace),
+				    		(toCollectionNamespace == null ? toNamespace : toCollectionNamespace));
 				} else {
 				    copyIndividualProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, excludeLicenseDetails,
 				    		fromNamespace, toNamespace);
@@ -199,12 +218,12 @@ public class ModelCopyManager {
                 toStore.setValue(toObjectUri, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
             } else if (result.get() instanceof TypedValue) {
                 TypedValue tv = (TypedValue)result.get();
-                if (fromStore.equals(toStore)) {
+                if (fromStore.equals(toStore) && Objects.equals(fromNamespace, toNamespace)) {
                     toStore.setValue(toObjectUri, propDescriptor, tv);
                 } else {
                     toStore.setValue(toObjectUri, propDescriptor, 
                             copy(toStore, fromStore, tv.getObjectUri(), tv.getType(), excludeLicenseDetails,
-                            		fromNamespace, toNamespace));
+                            		fromNamespace, toNamespace, fromNamespace, toNamespace));
                 }
             } else {
                 toStore.setValue(toObjectUri, propDescriptor, result.get());
@@ -220,7 +239,7 @@ public class ModelCopyManager {
      * @param fromDocumentUri Object URI to copy from
 	 * @param propDescriptor Descriptor for the property
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
-	 * 	 * @param fromNamespace optional namespace of the from property
+	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -245,11 +264,12 @@ public class ModelCopyManager {
                 toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
             } else if (listItem instanceof TypedValue) {
                 TypedValue listItemTv = (TypedValue)listItem;
-                if (toStore.equals(fromStore)) {
+                if (toStore.equals(fromStore) && Objects.equals(fromNamespace, toNamespace)) {
                     toStoreItem = listItemTv;
                 } else {
                     toStoreItem = copy(toStore, fromStore, listItemTv.getObjectUri(), 
-                    		listItemTv.getType(), excludeLicenseDetails, fromNamespace, toNamespace);
+                    		listItemTv.getType(), excludeLicenseDetails, fromNamespace, toNamespace, 
+                    		fromNamespace,  toNamespace);
                 }
             } else {
                 toStoreItem = listItem;
@@ -266,13 +286,16 @@ public class ModelCopyManager {
 	 * @param type Type to copy
 	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
+	 * @param fromCollectionNamespace Optional namespace for the from collection to use when creating items for collections.  Defaults to toNamespace
+	 * @param toCollectionNamespace Optional namespace for the to collection to use when creating items for collections.  Defaults to toNamespace
 	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public TypedValue copy(IModelStore toStore, IModelStore fromStore, 
 			String sourceObjectUri, String type,
-			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
-		return copy(toStore, fromStore, sourceObjectUri, type, false, fromNamespace, toNamespace);
+			@Nullable String fromNamespace, @Nullable String toNamespace,
+			@Nullable String fromCollectionNamespace, @Nullable String toCollectionNamespace) throws InvalidSPDXAnalysisException {
+		return copy(toStore, fromStore, sourceObjectUri, type, false, fromNamespace, toNamespace, fromCollectionNamespace, toCollectionNamespace);
 	}
 
     /**
@@ -284,12 +307,15 @@ public class ModelCopyManager {
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
+	 * @param fromCollectionNamespace Optional namespace for the from collection to use when creating items for collections.  Defaults to toNamespace
+	 * @param toCollectionNamespace Optional namespace for the to collection to use when creating items for collections.  Defaults to toNamespace
 	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public TypedValue copy(IModelStore toStore, IModelStore fromStore, 
 			String sourceUri, String type, boolean excludeLicenseDetails,
-			@Nullable String fromNamespace, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+			@Nullable String fromNamespace, @Nullable String toNamespace, 
+			@Nullable String fromCollectionNamespace, @Nullable String toCollectionNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "To Store can not be null");
 		Objects.requireNonNull(fromStore, "From Store can not be null");
 		Objects.requireNonNull(sourceUri, "Source URI can not be null");
@@ -298,7 +324,7 @@ public class ModelCopyManager {
 				toStore.getSpdxVersion().compareTo(SpdxMajorVersion.VERSION_3) < 0) {
 			throw new InvalidSPDXAnalysisException("Can not copy from SPDX spec version 3.0 to SPDX spec version less than 3.0");
 		}
-		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
+		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore, toNamespace);
 		if (Objects.isNull(toObjectUri)) {
 			if (!(fromStore.getIdType(sourceUri) == IdType.Anonymous)) {
 				if (Objects.nonNull(fromNamespace) && sourceUri.startsWith(fromNamespace) && Objects.nonNull(toNamespace)) {
@@ -326,7 +352,8 @@ public class ModelCopyManager {
 			if (Objects.isNull(toObjectUri)) {
 				toObjectUri = sourceUri;
 			}
-			copy(toStore, toObjectUri, fromStore, sourceUri, type, excludeLicenseDetails, fromNamespace, toNamespace);
+			copy(toStore, toObjectUri, fromStore, sourceUri, type, excludeLicenseDetails, fromNamespace, toNamespace,
+					fromCollectionNamespace, toCollectionNamespace);
 		}
 		return new TypedValue(toObjectUri, type);
 	}

@@ -101,6 +101,38 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 	public static TypedValue typedValueFromDocUri(String documentUri, String id, boolean anonymous, String type) throws SpdxInvalidIdException, SpdxInvalidTypeException {
 		return new TypedValue(documentUriIdToUri(documentUri, id, anonymous), type);
 	}
+	
+	/**
+	 * @param store Store storing the objet URI
+	 * @param objectUri Object URI
+	 * @param documentUri SPDX 2 document URI for the ID
+	 * @return the SPDX 2 compatible ID
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static String objectUriToId(IModelStore store, String objectUri, String documentUri) throws InvalidSPDXAnalysisException {
+		return objectUriToId(store.getIdType(objectUri) == IdType.Anonymous, objectUri, documentUri);
+	}
+	
+	/**
+	 * @param anon true if the ID type is anonymous
+	 * @param objectUri Object URI
+	 * @param documentUri SPDX 2 document URI for the ID
+	 * @return the SPDX 2 compatible ID
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static String objectUriToId(boolean anon, String objectUri, String documentUri) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(objectUri, "Object URI can not be null");
+		if (anon) {
+			return objectUri;
+		}
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		String nameSpace = documentUri + "#";
+		if (!objectUri.startsWith(nameSpace)) {
+			throw new InvalidSPDXAnalysisException("Object URI must start with document URI + #.  DocumentUri: " +
+						documentUri + ", Object URI: "+objectUri);
+		}
+		return objectUri.substring(nameSpace.length());
+	}
 
 	@Override
 	public boolean exists(String uri) {
@@ -365,6 +397,18 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 	 */
 	public IModelStore getBaseModelStore() {
 		return this.baseStore;
+	}
+	
+	@Override
+	public boolean equals(Object comp) {
+		return super.equals(comp);
+		// TODO: Return true the base is equal since this contains no properties
+	}
+	
+	@Override
+	public int hashCode() {
+		//TODO: Update once equals is updated
+		return super.hashCode();
 	}
 
 }

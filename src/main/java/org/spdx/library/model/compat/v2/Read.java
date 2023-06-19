@@ -143,7 +143,7 @@ public class Read {
 			String typeFilter) throws InvalidSPDXAnalysisException { 
 		return modelStore.getAllItems(documentUri, typeFilter).map((TypedValue tv) -> {
 			try {
-				return SpdxModelFactory.createModelObject(modelStore, documentUri, tv.getObjectUri(), tv.getType(), null);
+				return SpdxModelFactory.createModelObjectV2(modelStore, documentUri, tv.getObjectUri(), tv.getType(), null);
 			} catch (InvalidSPDXAnalysisException e) {
 				throw new RuntimeException(e);
 			}

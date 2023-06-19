@@ -259,7 +259,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		}
 		if (this.getModelStore().exists(
 				CompatibleModelStoreWrapper.documentUriIdToUri(docNamespace, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, false))) {
-			return (Optional<SpdxDocument>)(Optional<?>)Optional.of(SpdxModelFactory.createModelObject(
+			return (Optional<SpdxDocument>)(Optional<?>)Optional.of(SpdxModelFactory.createModelObjectV2(
 					getModelStore(), docNamespace, SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, 
 					SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT, getCopyManager()));
 		} else {

@@ -170,7 +170,8 @@ public class ModelStorageClassConverterTest extends TestCase {
 		element1.setLicenseConcluded(externalLicense);
 		element1.setName("ElementName");
 		copyManager.copy(store2, CompatibleModelStoreWrapper.documentUriIdToUri(docUri2, id2, false), store1, 
-				CompatibleModelStoreWrapper.documentUriIdToUri(docUri1, id1, false), element1.getType(), docUri2, docUri1);
+				CompatibleModelStoreWrapper.documentUriIdToUri(docUri1, id1, false), element1.getType(), 
+				docUri2, docUri1, docUri2, docUri1);
 		GenericSpdxItem element2 = new GenericSpdxItem(store2, docUri2, id2, copyManager, false);
 		assertTrue(element1.equivalent(element2));
 		assertTrue(element2.equivalent(element1));

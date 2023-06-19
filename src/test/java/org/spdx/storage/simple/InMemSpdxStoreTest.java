@@ -320,7 +320,8 @@ public class InMemSpdxStoreTest extends TestCase {
 			store.setValue(TEST_OBJECT_URI1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
 			InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 			ModelCopyManager copyManager = new ModelCopyManager();
-			copyManager.copy(store2, store, TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, TEST_NAMESPACE1, TEST_NAMESPACE2);
+			copyManager.copy(store2, store, TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, TEST_NAMESPACE1, 
+					TEST_NAMESPACE2, TEST_NAMESPACE1, TEST_NAMESPACE2);
 			assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
 			assertEquals(2, toImmutableList(store2.listValues(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
 			assertTrue(toImmutableList(store2.listValues(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));

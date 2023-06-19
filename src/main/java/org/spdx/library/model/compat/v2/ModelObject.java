@@ -1080,7 +1080,7 @@ public abstract class ModelObject {
 			throw new IllegalStateException("Can not clone - "+this.id+" already exists.");
 		}
 		try {
-			ModelObject retval = SpdxModelFactory.createModelObject(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
+			ModelObject retval = SpdxModelFactory.createModelObjectV2(modelStore, this.documentUri, this.id, this.getType(), this.copyManager);
 			retval.copyFrom(this);
 			return retval;
 		} catch (InvalidSPDXAnalysisException e) {
@@ -1099,7 +1099,10 @@ public abstract class ModelObject {
 		}
 		copyManager.copy(this.modelStore, CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, this.modelStore), 
 				source.getModelStore(), CompatibleModelStoreWrapper.documentUriIdToUri(source.getDocumentUri(), source.getId(), source.getModelStore()),
-				this.getType(), source.getDocumentUri(), this.documentUri);
+				this.getType(), CompatibleModelStoreWrapper.documentUriToNamespace(source.getDocumentUri(), source.getModelStore().getIdType(source.getId()) == IdType.Anonymous),
+				CompatibleModelStoreWrapper.documentUriToNamespace(this.documentUri, modelStore.getIdType(id) == IdType.Anonymous),
+				CompatibleModelStoreWrapper.documentUriToNamespace(source.getDocumentUri(), false), 
+				CompatibleModelStoreWrapper.documentUriToNamespace(this.documentUri, false));
 	}
 	
 	public void setCopyManager(ModelCopyManager copyManager) {

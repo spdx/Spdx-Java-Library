@@ -33,6 +33,7 @@ import java.net.URLConnection;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.compat.v2.ModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
@@ -192,7 +193,11 @@ public class UnitTestHelper {
 		for (ModelObject mo:modelObjects) {
 			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
 					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
-					mo.getType(), mo.getDocumentUri(), doc.getDocumentUri());
+					mo.getType(), 
+					CompatibleModelStoreWrapper.documentUriToNamespace(mo.getDocumentUri(), mo.getModelStore().getIdType(mo.getObjectUri()) == IdType.Anonymous), 
+					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false),
+					CompatibleModelStoreWrapper.documentUriToNamespace(mo.getDocumentUri(), false),
+					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
 		}
 	}
 

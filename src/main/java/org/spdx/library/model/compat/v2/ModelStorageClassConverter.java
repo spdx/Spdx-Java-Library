@@ -109,7 +109,8 @@ public class ModelStorageClassConverter {
 			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, copyManager, stDocumentUri));
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
-			return Optional.of(SpdxModelFactory.createModelObject(stModelStore, stDocumentUri, tv.getObjectUri(), tv.getType(), copyManager));
+			return Optional.of(SpdxModelFactory.createModelObjectV2(stModelStore, stDocumentUri, 
+					tv.getObjectUri(), tv.getType(), copyManager));
 		} else {
 			return value;
 		}
@@ -141,7 +142,9 @@ public class ModelStorageClassConverter {
 					return copyManager.copy(stModelStore, mValue.getModelStore(), 
 							CompatibleModelStoreWrapper.documentUriIdToUri(mValue.getDocumentUri(), mValue.getId(), anon),
 							mValue.getType(), CompatibleModelStoreWrapper.documentUriToNamespace(mValue.getDocumentUri(), anon),
-							CompatibleModelStoreWrapper.documentUriToNamespace(toDocumentUri, anon));
+							CompatibleModelStoreWrapper.documentUriToNamespace(toDocumentUri, anon), 
+							CompatibleModelStoreWrapper.documentUriToNamespace(mValue.getDocumentUri(), false),
+							CompatibleModelStoreWrapper.documentUriToNamespace(toDocumentUri, false));
 				} else {
 					throw new SpdxObjectNotInStoreException("Can not set a property value to a Model Object stored in a different model store");
 				}

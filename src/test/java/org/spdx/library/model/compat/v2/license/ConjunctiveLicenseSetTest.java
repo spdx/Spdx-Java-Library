@@ -70,7 +70,7 @@ public class ConjunctiveLicenseSetTest extends TestCase {
 		String id = modelStore.getNextId(IdType.Anonymous, DOCUMENT_URI);
 		ConjunctiveLicenseSet cls = new ConjunctiveLicenseSet(modelStore, DOCUMENT_URI, id, copyManager, true);
 		cls.setMembers(Arrays.asList(NON_STD_LICENSES));
-		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
+		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
 		assertTrue(cls.equals(cls2));
 		List<String> verify = cls2.verify();
 		assertEquals(0, verify.size());
@@ -93,7 +93,7 @@ public class ConjunctiveLicenseSetTest extends TestCase {
 		assertEquals(0, verify.size());
 		assertEquals(NON_STD_LICENSES.length+1, cls.getMembers().size());
 		assertTrue(cls.getMembers().contains(eli));
-		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
+		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
 		assertTrue(cls.equals(cls2));
 		assertEquals(NON_STD_LICENSES.length+1, cls2.getMembers().size());
 		assertTrue(cls2.getMembers().contains(eli));
@@ -110,7 +110,7 @@ public class ConjunctiveLicenseSetTest extends TestCase {
 		cls.removeMember(NON_STD_LICENSES[0]);
 		assertEquals(NON_STD_LICENSES.length-1, cls.getMembers().size());
 		assertFalse(cls.getMembers().contains(NON_STD_LICENSES[0]));
-		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
+		ConjunctiveLicenseSet cls2 = (ConjunctiveLicenseSet) SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, id, SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET, copyManager);
 		assertTrue(cls.equals(cls2));
 		assertEquals(NON_STD_LICENSES.length-1, cls.getMembers().size());
 		assertFalse(cls.getMembers().contains(NON_STD_LICENSES[0]));

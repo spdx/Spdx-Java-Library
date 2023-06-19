@@ -91,6 +91,23 @@ static final Logger logger = LoggerFactory.getLogger(InMemSpdxStoreTest.class);
 		super.tearDown();
 	}
 	
+	public void testObjectUriToIdIdToUri() throws InvalidSPDXAnalysisException {
+		CompatibleModelStoreWrapper store = new CompatibleModelStoreWrapper(new InMemSpdxStore());
+		String documentUri = "http://doc.uri";
+		String nameSpace = documentUri + "#";
+		String anonId = store.getNextId(IdType.Anonymous, documentUri);
+		String spdxId = store.getNextId(IdType.SpdxId, documentUri);
+		
+		String objectUriId = CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, spdxId, store);
+		assertEquals(nameSpace + spdxId, objectUriId);
+		assertEquals(spdxId, CompatibleModelStoreWrapper.objectUriToId(store, objectUriId, documentUri));
+		
+		String anonUriId = CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, anonId, store);
+		assertEquals(anonId, anonUriId);
+		assertEquals(anonId, CompatibleModelStoreWrapper.objectUriToId(store, anonUriId, documentUri));
+		
+	}
+	
 	public void testUpdateNextIds() throws InvalidSPDXAnalysisException {
 		CompatibleModelStoreWrapper store = new CompatibleModelStoreWrapper(new InMemSpdxStore());
 		// License ID's
@@ -349,7 +366,7 @@ static final Logger logger = LoggerFactory.getLogger(InMemSpdxStoreTest.class);
 		store.setValue(TEST_DOCUMENT_URI1, TEST_ID1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
 		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		ModelCopyManager copyManager = new ModelCopyManager();
-		copyManager.copy(store2, store, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION, null, null);
+		copyManager.copy(store2, store, TEST_ID1, SpdxConstantsCompatV2.CLASS_ANNOTATION, null, null, null, null);
 		assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_DOCUMENT_URI2 + "#" + TEST_ID1, TEST_VALUE_PROPERTIES[0]));
 		assertEquals(2, toImmutableList(store2.listValues(TEST_DOCUMENT_URI2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
 		assertTrue(toImmutableList(store2.listValues(TEST_DOCUMENT_URI2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));

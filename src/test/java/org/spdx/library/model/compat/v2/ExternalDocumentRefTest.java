@@ -188,7 +188,7 @@ public class ExternalDocumentRefTest extends TestCase {
 	
 	public void testGetExternalDocRefByDocNamespace() throws InvalidSPDXAnalysisException {
 		// need a document to tie the external refs to
-		SpdxModelFactory.createModelObject(gmo.getModelStore(), gmo.getDocumentUri(), 
+		SpdxModelFactory.createModelObjectV2(gmo.getModelStore(), gmo.getDocumentUri(), 
 				SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT, gmo.getCopyManager());
 		// test empty
 		Optional<ExternalDocumentRef> result = ExternalDocumentRef.getExternalDocRefByDocNamespace(gmo.getModelStore(), gmo.getDocumentUri(), 

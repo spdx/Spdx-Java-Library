@@ -141,14 +141,17 @@ public class SpdxModelFactory {
 	 * Create an SPDX version 2 model object in a model store given the document URI, ID and type
 	 * @param modelStore model store where the object is to be created
 	 * @param documentUri document URI for the stored item
-	 * @param objectUri ID for the item
+	 * @param id for the item
 	 * @param type SPDX class or type
 	 *  @param copyManager if non-null, allows for copying of properties from other model stores or document URI's when referenced
 	 * @return a ModelObject of type type
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static org.spdx.library.model.compat.v2.ModelObject createModelObject(IModelStore modelStore, String documentUri, String id,
+	public static org.spdx.library.model.compat.v2.ModelObject createModelObjectV2(IModelStore modelStore, String documentUri, String id,
 			String type, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "A document URI or namespace must be supplied for all SPDX version 2 model objects");
+		Objects.requireNonNull(id, "ID must not be null");
 		return getModelObjectV2(modelStore, documentUri, id, type, copyManager, true);
 	 }
 	
@@ -156,7 +159,7 @@ public class SpdxModelFactory {
 	 * Create an SPDX spec version 2.X model object in a model store given the document URI, ID and type
 	 * @param modelStore model store where the object is to be created
 	 * @param documentUri document URI for the stored item
-	 * @param objectUri ID for the item
+	 * @param id ID for the item
 	 * @param type SPDX class or type
 	 * @param copyManager if non-null, allows for copying of properties from other model stores or document URI's when referenced
 	 * @param create if true, create the model object if it does not already exist
@@ -165,6 +168,9 @@ public class SpdxModelFactory {
 	 */
 	public static org.spdx.library.model.compat.v2.ModelObject getModelObjectV2(IModelStore modelStore, String documentUri, String id,
 			String type, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "A document URI or namespace must be supplied for all SPDX version 2 model objects");
+		Objects.requireNonNull(id, "ID must not be null");
 		switch (type) {
 		case SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT: return new org.spdx.library.model.compat.v2.SpdxDocument(modelStore, documentUri, copyManager, create); //Note: the ID is ignored
 		case SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE: return new org.spdx.library.model.compat.v2.SpdxPackage(modelStore, documentUri, id, copyManager, create);
@@ -255,7 +261,7 @@ public class SpdxModelFactory {
 		}
 		return store.getAllItems(nameSpace, type).map(tv -> {
 			try {
-				return createModelObject(store, nameSpace, tv.getObjectUri(), tv.getType(), copyManager);
+				return createModelObjectV2(store, nameSpace, tv.getObjectUri(), tv.getType(), copyManager);
 			} catch (InvalidSPDXAnalysisException e) {
 				logger.error("Error creating model object",e);
 				throw new RuntimeException(e);
@@ -293,11 +299,14 @@ public class SpdxModelFactory {
 	 * @param documentUri Document URI for for the ID
 	 * @param copyManager Optional copy manager for copying any properties from other model
 	 * @param objectUri ID for the model object
-	 * @return SPDX Version 2 compatibile ModelObject with the ID in the model store
+	 * @return SPDX Version 2 compatible ModelObject with the ID in the model store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static Optional<org.spdx.library.model.compat.v2.ModelObject> getModelObjectV2(IModelStore modelStore, String documentUri,
 			String id, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "A document URI or namespace must be supplied for all SPDX version 2 model objects");
+		Objects.requireNonNull(id, "ID must not be null");
 		if (id.contains(":")) {
 			// External document ref
 			try {

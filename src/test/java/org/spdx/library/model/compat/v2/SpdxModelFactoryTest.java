@@ -40,7 +40,7 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	public void testCreateModelObject() throws InvalidSPDXAnalysisException {
-		ModelObject result = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID1, 
+		ModelObject result = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager);
 		assertTrue(result instanceof Checksum);
 		assertEquals(ID1, result.getId());
@@ -73,9 +73,9 @@ public class SpdxModelFactoryTest extends TestCase {
 
 	@SuppressWarnings("unchecked")
 	public void testGetElements() throws InvalidSPDXAnalysisException {
-		ModelObject file1 = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID1, 
+		ModelObject file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
-		ModelObject file2 = SpdxModelFactory.createModelObject(modelStore, DOCUMENT_URI, ID2, 
+		ModelObject file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
 		try (Stream<SpdxElement> elementStream = (Stream<SpdxElement>)SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class)) {
 		    elementStream.forEach(element -> {

@@ -92,9 +92,10 @@ public class ExtractedLicensingInfoTest extends TestCase {
 				DefaultModelStore.getDefaultModelStore(), 
 				CompatibleModelStoreWrapper.documentUriIdToUri(DefaultModelStore.getDefaultDocumentUri(), ID1, false),
 				SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO,
+				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri(),
 				DefaultModelStore.getDefaultDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
 		
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
 		assertEquals(ID1, lic2.getLicenseId());
 		assertEquals(TEXT1, lic2.getExtractedText());
 		assertEquals(COMMENT1, lic2.getComment());
@@ -119,14 +120,14 @@ public class ExtractedLicensingInfoTest extends TestCase {
 	public void testSetText() throws InvalidSPDXAnalysisException {
 		ExtractedLicenseInfo lic = new ExtractedLicenseInfo(ID1, TEXT1);
 		lic.setComment(COMMENT1);
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), 
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), 
 				ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic2.setExtractedText(TEXT2);
 		assertEquals(ID1, lic2.getLicenseId());
 		assertEquals(TEXT2, lic2.getExtractedText());
 		assertEquals(COMMENT1, lic2.getComment());
 		IModelStore modelStore = new InMemSpdxStore();
-		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, 
+		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, 
 				DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic3.copyFrom(lic);
 		assertEquals(TEXT2, lic3.getExtractedText());
@@ -140,7 +141,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 	public void testSetComment() throws InvalidSPDXAnalysisException {
 		ExtractedLicenseInfo lic = new ExtractedLicenseInfo(ID1, TEXT1);
 		lic.setComment(COMMENT1);
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), 
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri(), 
 				ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic2.setComment(COMMENT2);
 		assertEquals(ID1, lic2.getLicenseId());
@@ -148,7 +149,7 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		assertEquals(COMMENT2, lic2.getComment());
 
 		IModelStore modelStore = new InMemSpdxStore();
-		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), 
+		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, DefaultModelStore.getDefaultDocumentUri(), 
 				ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic3.copyFrom(lic);
 		assertEquals(COMMENT2, lic3.getComment());	
@@ -160,11 +161,11 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		IModelStore modelStore = new InMemSpdxStore();
 
 		
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, 
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, 
 				DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic2.setName(LICENSENAME2);
 		assertEquals(LICENSENAME2, lic2.getName());
-		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, 
+		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, 
 				DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		assertEquals(LICENSENAME2, lic3.getName());
 	}
@@ -176,13 +177,13 @@ public class ExtractedLicensingInfoTest extends TestCase {
 		IModelStore modelStore = new InMemSpdxStore();
 
 		
-		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, DefaultModelStore.getDefaultDocumentUri(), 
+		ExtractedLicenseInfo lic2 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, DefaultModelStore.getDefaultDocumentUri(), 
 				ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		lic2.setSeeAlso(Arrays.asList(SOURCEURLS2));
 		if (!compareArrayContent(SOURCEURLS2, (String[])lic2.getSeeAlso().toArray(new String[lic2.getSeeAlso().size()]))) {
 			fail("Source URLS not the same");
 		}
-		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObject(modelStore, 
+		ExtractedLicenseInfo lic3 = (ExtractedLicenseInfo)SpdxModelFactory.createModelObjectV2(modelStore, 
 				DefaultModelStore.getDefaultDocumentUri(), ID1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, DefaultModelStore.getDefaultCopyManager());
 		if (!compareArrayContent(SOURCEURLS2, (String[])lic3.getSeeAlso().toArray(new String[lic2.getSeeAlso().size()]))) {
 			fail("Source URLS not the same");

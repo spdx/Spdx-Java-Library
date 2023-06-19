@@ -93,6 +93,7 @@ public class LicenseExceptionTest extends TestCase {
 		copyManager.copy(store, DefaultModelStore.getDefaultModelStore(),
 				CompatibleModelStoreWrapper.documentUriIdToUri(SpdxConstantsCompatV2.LISTED_LICENSE_URL, EXCEPTION_ID1, false),
 				SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION, 
+				SpdxConstantsCompatV2.LISTED_LICENSE_URL, SpdxConstantsCompatV2.LISTED_LICENSE_URL, 
 				SpdxConstantsCompatV2.LISTED_LICENSE_URL, SpdxConstantsCompatV2.LISTED_LICENSE_URL);
 		LicenseException le2 = new LicenseException(store, DefaultModelStore.getDefaultDocumentUri(), EXCEPTION_ID1, copyManager, false);
 		

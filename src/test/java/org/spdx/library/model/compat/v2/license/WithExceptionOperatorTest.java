@@ -89,8 +89,9 @@ public class WithExceptionOperatorTest extends TestCase {
 		@SuppressWarnings("unused")
 		TypedValue tv = copyManager.copy(store, weo1.getModelStore(),
 				CompatibleModelStoreWrapper.documentUriIdToUri(weo1.getDocumentUri(), weo1.getId(), weo1.getModelStore()),
-				weo1.getType(), weo1.getDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
-		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObject(store, 
+				weo1.getType(), weo1.getDocumentUri(), DefaultModelStore.getDefaultDocumentUri(),
+				weo1.getDocumentUri(), DefaultModelStore.getDefaultDocumentUri());
+		WithExceptionOperator clone = (WithExceptionOperator) SpdxModelFactory.createModelObjectV2(store, 
 				DefaultModelStore.getDefaultDocumentUri(), weo1.getId(), SpdxConstantsCompatV2.CLASS_WITH_EXCEPTION_OPERATOR, copyManager);
 		ExtractedLicenseInfo lic1 = (ExtractedLicenseInfo)weo1.getLicense();
 		ExtractedLicenseInfo lic1FromClone = (ExtractedLicenseInfo)clone.getLicense();

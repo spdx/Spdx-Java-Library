@@ -187,7 +187,7 @@ public class LicenseExpressionParser {
 					} else if (token.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 						throw new LicenseParserException("WITH must be followed by a license exception. "+token+" is a Listed License type.");
 					} else {
-						licenseException = (ListedLicenseException) SpdxModelFactory.createModelObject(store, 
+						licenseException = (ListedLicenseException) SpdxModelFactory.createModelObjectV2(store, 
 								documentUri, token, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, copyManager);
 					}
 					AnyLicenseInfo operand = operandStack.pop();
@@ -279,6 +279,7 @@ public class LicenseExpressionParser {
 					// copy to the local store
 					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
 							listedLicense.getObjectUri(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, 
+							listedLicense.getDocumentUri(), listedLicense.getDocumentUri(), 
 							listedLicense.getDocumentUri(), listedLicense.getDocumentUri());
 				}
 			}
@@ -294,7 +295,7 @@ public class LicenseExpressionParser {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
 				
 			} else {
-				localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObject(
+				localLicense = (ExtractedLicenseInfo) SpdxModelFactory.createModelObjectV2(
 						store, documentUri, token, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
 				localLicense.setExtractedText(UNINITIALIZED_LICENSE_TEXT);
 			}
