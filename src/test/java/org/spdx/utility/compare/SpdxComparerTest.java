@@ -67,7 +67,9 @@ import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
 import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -545,7 +547,8 @@ public class SpdxComparerTest extends TestCase {
 	}
 	
 	private SpdxDocument createTestSpdxDoc(String docUri) throws InvalidSPDXAnalysisException {
-		SpdxDocument retval = new SpdxDocument(docUri);
+		IModelStore newStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		SpdxDocument retval = new SpdxDocument(newStore, docUri, DefaultModelStore.getDefaultCopyManager(), true);
 		Relationship docDescribesPackage = retval.createRelationship(pkgA1, 
 				RelationshipType.DESCRIBES, "Package1 describes");
 		retval.addRelationship(docDescribesPackage);

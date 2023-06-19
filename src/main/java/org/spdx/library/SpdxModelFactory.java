@@ -245,10 +245,69 @@ public class SpdxModelFactory {
 	
 	/**
 	 * @param store model store
+	 * @param documentUri Document URI for the elements to fetch
+	 * @param copyManager optional copy manager
+	 * @param type SPDX V2 type to filter on
+	 * @return stream of elements of the compatible version 2 types
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static Stream<?> getElementsV2(IModelStore store, String documentUri, @Nullable ModelCopyManager copyManager, 
+			String type) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(store, "Store must not be null");
+		Objects.requireNonNull(type, "type must not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null for SPDX V2 elements");
+		if (!SPDX_TYPE_TO_CLASS_V2.containsKey(type)) {
+			logger.error("Can not get elements for a non-SPDX version 2 type: "+type);
+			throw new InvalidSPDXAnalysisException("Can not get elements for a non-SPDX version 2 type: "+type);
+		}
+		return store.getAllItems(CompatibleModelStoreWrapper.documentUriToNamespace(documentUri, false), type).map(tv -> {
+			//TODO: Change this a null namespace and filtering on anonomous or startswith document URI - this will catch the anon. types
+			try {
+				boolean anon = store.getIdType(tv.getObjectUri()) == IdType.Anonymous;
+				return createModelObjectV2(store, documentUri,
+						CompatibleModelStoreWrapper.objectUriToId(anon, tv.getObjectUri(), documentUri),
+						tv.getType(), copyManager);
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error creating model object",e);
+				throw new RuntimeException(e);
+			}
+		});
+	}
+	
+	/**
+	 * @param store model store
+	 * @param nameSpace optional namespace to filter elements on
+	 * @param copyManager optional copy manager
+	 * @param type SPDX V2 type to filter on
+	 * @return SPDX spec version 3 elements matching the namespace and class
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static Stream<?> getElementsV3(IModelStore store, @Nullable String nameSpace, @Nullable ModelCopyManager copyManager, 
+			String type) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(store, "Store must not be null");
+		Objects.requireNonNull(type, "type must not be null");
+		if (!SPDX_TYPE_TO_CLASS_V3.containsKey(type)) {
+			logger.error("Can not get elements for a non-SPDX version 3 type: "+type);
+			throw new InvalidSPDXAnalysisException("Can not get elements for a non-SPDX version 3 type: "+type);
+		}
+		return store.getAllItems(nameSpace, type).map(tv -> {
+			try {
+				return createModelObjectV2(store, nameSpace,
+						CompatibleModelStoreWrapper.objectUriToId(store.getIdType(tv.getObjectUri()) == IdType.Anonymous, tv.getObjectUri(), nameSpace),
+						tv.getType(), copyManager);
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error creating model object",e);
+				throw new RuntimeException(e);
+			}
+		});
+	}
+	
+	/**
+	 * @param store model store
 	 * @param nameSpace optional namespace to filter elements on
 	 * @param copyManager optional copy manager
 	 * @param spdxClass class to filter elements on
-	 * @return
+	 * @return a stream of elements matching the namespace and class
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Stream<?> getElements(IModelStore store, @Nullable String nameSpace, @Nullable ModelCopyManager copyManager, 
@@ -257,17 +316,21 @@ public class SpdxModelFactory {
 		Objects.requireNonNull(spdxClass, "spdxClass must not be null");
 		String type = SPDX_CLASS_TO_TYPE.get(spdxClass);
 		if (Objects.isNull(type)) {
+			logger.error("Unknow SPDX class: "+spdxClass.toString());
 			throw new InvalidSPDXAnalysisException("Unknow SPDX class: "+spdxClass.toString());
 		}
-		return store.getAllItems(nameSpace, type).map(tv -> {
-			try {
-				return createModelObjectV2(store, nameSpace, tv.getObjectUri(), tv.getType(), copyManager);
-			} catch (InvalidSPDXAnalysisException e) {
-				logger.error("Error creating model object",e);
-				throw new RuntimeException(e);
-			}
-		});
+		if (SPDX_TYPE_TO_CLASS_V3.containsKey(type)) {
+			return getElementsV3(store, nameSpace, copyManager, type);
+		} else if (SPDX_TYPE_TO_CLASS_V2.containsKey(type)) {
+			return getElementsV2(store, nameSpace.endsWith("#") ? nameSpace.substring(0, nameSpace.length()-1) : nameSpace,
+					copyManager, type);
+		} else {
+			logger.error("Unknow SPDX class: "+spdxClass.toString());
+			throw new InvalidSPDXAnalysisException("Unknow SPDX class: "+spdxClass.toString());
+		}
 	}
+	
+	
 
 	/**
 	 * @param classUri URI for the class type

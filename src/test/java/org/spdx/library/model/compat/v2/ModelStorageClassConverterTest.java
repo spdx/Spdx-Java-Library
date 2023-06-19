@@ -87,11 +87,11 @@ public class ModelStorageClassConverterTest extends TestCase {
 
 	public void testOptionalStoredObjectToModelObject() throws InvalidSPDXAnalysisException {
 		// TypedValue
-		TypedValue tv = new TypedValue("SPDXRef-10", SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		TypedValue tv = new TypedValue(gmo.getDocumentUri() + "#" + "SPDXRef-10", SpdxConstantsCompatV2.CLASS_ANNOTATION);
 		Optional<Object> result = ModelStorageClassConverter.optionalStoredObjectToModelObject(Optional.of(tv), gmo.getDocumentUri(), gmo.getModelStore(), gmo.getCopyManager());
 		assertTrue(result.isPresent());
 		assertTrue(result.get() instanceof Annotation);
-		assertEquals(tv.getObjectUri(), ((Annotation)result.get()).getId());
+		assertEquals("SPDXRef-10", ((Annotation)result.get()).getId());
 		// Enum
 		SimpleUriValue suv = new SimpleUriValue(ChecksumAlgorithm.MD5);
 		result = ModelStorageClassConverter.optionalStoredObjectToModelObject(Optional.of(suv), gmo.getDocumentUri(), 

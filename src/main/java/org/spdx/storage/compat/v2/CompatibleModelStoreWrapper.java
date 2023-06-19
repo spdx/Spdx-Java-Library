@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidIdException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.TypedValue;
@@ -32,7 +33,9 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
- * @author gary
+ * Wraps a model store providing a compatible interface to the 1.X version of the SPDX Java Library
+ * 
+ * @author Gary O'Neall
  *
  */
 public class CompatibleModelStoreWrapper implements IModelStore {
@@ -124,6 +127,9 @@ public class CompatibleModelStoreWrapper implements IModelStore {
 		Objects.requireNonNull(objectUri, "Object URI can not be null");
 		if (anon) {
 			return objectUri;
+		}
+		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL)) {
+			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_URL.length());
 		}
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		String nameSpace = documentUri + "#";

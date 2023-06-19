@@ -97,6 +97,33 @@ public class SpdxModelFactoryTest extends TestCase {
 		    });
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void testGetElementsNamespace() throws InvalidSPDXAnalysisException {
+		ModelObject file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
+		ModelObject file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
+				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
+		try (Stream<SpdxElement> elementStream = (Stream<SpdxElement>)SpdxModelFactory.getElements(modelStore, DOCUMENT_URI + "#", copyManager, SpdxFile.class)) {
+		    elementStream.forEach(element -> {
+		        assertTrue(element instanceof SpdxFile);
+	            SpdxFile result = (SpdxFile)element;
+	            if (result.getId().equals(ID1)) {
+	                try {
+	                    assertTrue(file1.equivalent(result));
+	                } catch (InvalidSPDXAnalysisException e) {
+	                    fail("Error: "+e.getMessage());
+	                }
+	            } else {
+	                try {
+	                    assertTrue(file2.equivalent(result));
+	                } catch (InvalidSPDXAnalysisException e) {
+	                    fail("Error: "+e.getMessage());
+	                }
+	            }
+		    });
+		}
+	}
 
 	public void testClassUriToClass() throws InvalidSPDXAnalysisException {
 		assertEquals(Annotation.class, 

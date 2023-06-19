@@ -110,7 +110,8 @@ public class ModelStorageClassConverter {
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
 			return Optional.of(SpdxModelFactory.createModelObjectV2(stModelStore, stDocumentUri, 
-					tv.getObjectUri(), tv.getType(), copyManager));
+					CompatibleModelStoreWrapper.objectUriToId(stModelStore.getIdType(tv.getObjectUri()) == IdType.Anonymous, tv.getObjectUri(), stDocumentUri),
+					tv.getType(), copyManager));
 		} else {
 			return value;
 		}
