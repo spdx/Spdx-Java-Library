@@ -38,12 +38,12 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.library.DuplicateSpdxIdException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.DuplicateSpdxIdException;
 import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;

@@ -23,7 +23,7 @@ public class SpdxNoneLicenseTest extends TestCase {
 
 	public void testHashCodeEquals() throws InvalidSPDXAnalysisException {
 		SpdxNoneLicense l1 = new SpdxNoneLicense();
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxNoneLicense l2 = new SpdxNoneLicense(store, "https://doc.uri");
 		assertEquals(l1.hashCode(), l2.hashCode());
 		assertEquals(l1, l2);

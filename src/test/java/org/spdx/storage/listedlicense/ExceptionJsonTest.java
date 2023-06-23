@@ -26,6 +26,7 @@ import java.util.Map;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.license.ListedLicenseException;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -278,7 +279,7 @@ public class ExceptionJsonTest extends TestCase {
 	
 	@SuppressWarnings("deprecation")
 	public void testCopyFrom() throws Exception {
-		InMemSpdxStore store = new InMemSpdxStore();
+		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "http://temp.uri";
 		String exceptionId = "exceptionId";
 		String comment = "comment";

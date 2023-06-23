@@ -33,7 +33,10 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.NotEquivalentReason;
+import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SimpleUriValue;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
@@ -68,7 +71,7 @@ import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 /**
  * @author Gary O'Neall
  * 
- * Superclass for all SPDX model objects
+ * Superclass for all SPDX spec version 2 model objects
  * 
  * Provides the primary interface to the storage class that access and stores the data for 
  * the model objects.
@@ -119,52 +122,6 @@ public abstract class ModelObject {
 	 */
 	protected boolean strict = true;
 	
-	// the following fields are for debugging when equivalent returns false
-	enum NotEquivalent {
-		DIFFERENT_CLASS, MISSING_PROPERTY, PROPERTY_NOT_EQUIVALENT, COMPARE_PROPERTY_MISSING};
-	static class NotEquivalentReason {
-		NotEquivalent reason;
-		PropertyDescriptor property = null;
-		
-		public NotEquivalentReason(NotEquivalent reason) {
-			this.reason = reason;
-		}
-		
-		public NotEquivalentReason(NotEquivalent reason, PropertyDescriptor property) {
-			this(reason);
-			this.property = property;
-		}
-
-		/**
-		 * @return the reason
-		 */
-		public NotEquivalent getReason() {
-			return reason;
-		}
-
-		/**
-		 * @param reason the reason to set
-		 */
-		public void setReason(NotEquivalent reason) {
-			this.reason = reason;
-		}
-
-		/**
-		 * @return the property
-		 */
-		public PropertyDescriptor getProperty() {
-			return property;
-		}
-
-		/**
-		 * @param property the property to set
-		 */
-		public void setProperty(PropertyDescriptor property) {
-			this.property = property;
-		}
-	}
-	
-	
 	NotEquivalentReason lastNotEquivalentReason = null;
 	
 
@@ -199,6 +156,10 @@ public abstract class ModelObject {
 		Objects.requireNonNull(modelStore, "Model Store can not be null");
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		Objects.requireNonNull(identifier, "ID can not be null");
+		if (!SpdxMajorVersion.VERSION_2.equals(modelStore.getSpdxVersion())) {
+			logger.error("Trying to create an SPDX version 2 model object in an SPDX version 3 model store");
+			throw new InvalidSPDXAnalysisException("Trying to create an SPDX version 2 model object in an SPDX version 3 model store");
+		}
 		if (identifier.startsWith(documentUri)) {
 			logger.warn("document URI was passed in as an ID: "+identifier);
 			this.id = identifier.substring(documentUri.length());

@@ -346,7 +346,7 @@ public class LicenseExceptionTest extends TestCase {
 				EXCEPTION_NAME1, EXCEPTION_TEXT1, EXCEPTION_TEMPLATE1, EXCEPTION_SEEALSO1,
 				EXCEPTION_COMMENT1);
 		assertTrue(le.equivalent(le));
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		LicenseException le2 = new LicenseException(modelStore, "http://newDocUri", EXCEPTION_ID1, DefaultModelStore.getDefaultCopyManager(), true);
 		le2.setName(EXCEPTION_NAME1);
 		le2.setLicenseExceptionText(EXCEPTION_TEXT1);

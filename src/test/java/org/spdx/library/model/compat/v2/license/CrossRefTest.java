@@ -3,6 +3,7 @@ package org.spdx.library.model.compat.v2.license;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -34,7 +35,7 @@ public class CrossRefTest extends TestCase {
 
 	public void setUp() throws Exception {
 		super.setUp();
-		modelStore = new InMemSpdxStore();
+		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		copyManager = new ModelCopyManager();
 		TEST_CROSSREF = new CrossRef.CrossRefBuilder(modelStore, DOCUMENT_URI, 
 				modelStore.getNextId(IdType.Anonymous, DOCUMENT_URI), copyManager, TEST_URL1)

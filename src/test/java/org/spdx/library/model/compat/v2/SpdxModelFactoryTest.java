@@ -26,7 +26,7 @@ public class SpdxModelFactoryTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		modelStore = new InMemSpdxStore();
+		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		copyManager = new ModelCopyManager();
 	}
 

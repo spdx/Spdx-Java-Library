@@ -1,6 +1,7 @@
 package org.spdx.library.model.compat.v2.license;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -18,7 +19,7 @@ public class SpdxNoAssertionLicenseTest extends TestCase {
 
 	public void testHashCodeEquals() throws InvalidSPDXAnalysisException {
 		SpdxNoAssertionLicense l1 = new SpdxNoAssertionLicense();
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxNoAssertionLicense l2 = new SpdxNoAssertionLicense(store, "https://doc.uri");
 		assertEquals(l1.hashCode(), l2.hashCode());
 		assertEquals(l1, l2);

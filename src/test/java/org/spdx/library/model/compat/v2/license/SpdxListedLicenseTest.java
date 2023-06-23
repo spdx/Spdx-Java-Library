@@ -226,7 +226,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		String deprecatedVersion = "3.5";
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true, null, licenseHtml, true, deprecatedVersion);
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxListedLicense lic2 = new SpdxListedLicense(store, SpdxConstantsCompatV2.LISTED_LICENSE_URL, id, stdl.getCopyManager(), true);
 		lic2.copyFrom(stdl);
 
@@ -281,7 +281,7 @@ public class SpdxListedLicenseTest extends TestCase {
 		SpdxListedLicense stdl = new SpdxListedLicense(name, id, text,
 				sourceUrls, notes, standardLicenseHeader, template, true,null, null, false, null);
 		assertTrue(stdl.equivalent(stdl));
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxListedLicense stdl2 = new SpdxListedLicense(store, SpdxConstantsCompatV2.LISTED_LICENSE_URL, id, stdl.getCopyManager(), true);
 		stdl2.setLicenseText(text2);
 		stdl2.setName(name2);

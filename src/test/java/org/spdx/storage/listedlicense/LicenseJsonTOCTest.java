@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -86,7 +87,7 @@ public class LicenseJsonTOCTest extends TestCase {
 	 */
 	public void testAddLicense() throws InvalidSPDXAnalysisException {
 		LicenseJsonTOC ljt = new LicenseJsonTOC();
-		InMemSpdxStore store = new InMemSpdxStore();
+		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "http://docuri.temp1";
 		String licenseId1 = "licenseId1";
 		String licHTMLReference1 = "./licHTMLReference1";

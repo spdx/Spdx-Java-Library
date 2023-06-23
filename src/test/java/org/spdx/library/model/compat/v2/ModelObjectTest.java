@@ -284,7 +284,7 @@ public class ModelObjectTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getModelStore()}.
 	 */
 	public void testGetModelStore() throws InvalidSPDXAnalysisException {
-		InMemSpdxStore store = new InMemSpdxStore();
+		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		assertEquals(store, gmo.getModelStore());
 	}
@@ -682,7 +682,7 @@ public class ModelObjectTest extends TestCase {
 		assertEquals(text, licenseText);
 		assertTrue(gmo.equivalent(gmo));
 		// different store
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.setPropertyValue(prop, eli2);
 		assertTrue(gmo.equivalent(gmo3));
@@ -715,7 +715,7 @@ public class ModelObjectTest extends TestCase {
 		assertTrue(gmo.equivalent(gmo2));
 		assertTrue(gmo2.equivalent(gmo));
 		// different store
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		gmo3.addPropertyValueToCollection(prop, eli2);
 		gmo3.addPropertyValueToCollection(prop, nextEli2);
@@ -757,7 +757,7 @@ public class ModelObjectTest extends TestCase {
 		assertFalse(gmo.equals(gmo2));
 		assertFalse(gmo2.equals(gmo));
 		// same ID's, different store
-		InMemSpdxStore store2 = new InMemSpdxStore();
+		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo3 = new GenericModelObject(store2, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo3);
 		assertTrue(gmo.equals(gmo3));

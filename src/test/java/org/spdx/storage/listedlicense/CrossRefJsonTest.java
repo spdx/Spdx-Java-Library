@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.license.CrossRef;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -48,7 +49,7 @@ public class CrossRefJsonTest extends TestCase {
 	}
 
 	public void testCrossRefJsonCrossRef() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore();
+		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		String docUri = "http://doc/uri";
 		String id = "tempid";
 		String url = "http://url";

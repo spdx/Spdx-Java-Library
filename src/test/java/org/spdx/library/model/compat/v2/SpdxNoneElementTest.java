@@ -50,7 +50,7 @@ public class SpdxNoneElementTest extends TestCase {
 	
 	public void testHashCodeEquals() throws InvalidSPDXAnalysisException {
 		SpdxNoneElement e1 = new SpdxNoneElement();
-		IModelStore store = new InMemSpdxStore();
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
 		SpdxNoneElement e2 = new SpdxNoneElement(store, "https://doc.uri");
 		assertEquals(e1.hashCode(), e2.hashCode());
 		assertEquals(e1, e2);

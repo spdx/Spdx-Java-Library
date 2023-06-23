@@ -49,9 +49,10 @@ public class NoAssertionElementTest extends TestCase {
 	}
 	
 	public void testHashCodeEquals() throws InvalidSPDXAnalysisException {
-		SpdxNoAssertionElement e1 = new SpdxNoAssertionElement();
-		IModelStore store = new InMemSpdxStore();
-		SpdxNoAssertionElement e2 = new SpdxNoAssertionElement(store, "https://doc.uri");
+		IModelStore store1 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		SpdxNoAssertionElement e1 = new SpdxNoAssertionElement(store1, "https://doc.uri1");
+		IModelStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		SpdxNoAssertionElement e2 = new SpdxNoAssertionElement(store2, "https://doc.uri2");
 		assertEquals(e1.hashCode(), e2.hashCode());
 		assertEquals(e1, e2);
 		assertTrue(e1.equals(e2));

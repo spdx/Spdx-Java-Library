@@ -19,7 +19,9 @@ package org.spdx.library.model.compat.v2;
 
 import java.util.ArrayList;
 
+import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 
 import junit.framework.TestCase;
 
@@ -34,12 +36,14 @@ public class SpdxConstantElementTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
+		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 		super.tearDown();
 	}
 
