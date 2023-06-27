@@ -196,8 +196,8 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	
 	public static String externalDocumentIdToNamespace(String externalDocumentId,
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(stModelStore, stDocumentUri, 
-				externalDocumentId, SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT, copyManager);
+
+		Optional<Object> retval = stModelStore.getValue(stDocumentUri, externalDocumentId, SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!retval.isPresent()) {
 			throw new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId);
 		}
