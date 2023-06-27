@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2023 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -16,12 +16,12 @@
  *   limitations under the License.
  */
 /**
- * This package contains all the enumerations used in the SPDX model.
  * 
- * For the enumerations to be stored properly, they must implement the IndividualUriValue interface.
- * 
- * The enumerations also must be added to the static map uriToEnum in the SpdxEnumFactory classes.
+ * The Licensing namespace defines metadata fields applicable to software
+ * licensing. It also defines the classes and properties that comprise the
+ * SPDX License Expression syntax and that relate to the SPDX License List.
  * 
  * @author Gary O'Neall
+ *
  */
-package org.spdx.library.model.compat.v2.enumerations;
+package org.spdx.library.model.licensing;

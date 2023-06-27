@@ -15,15 +15,17 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
+package org.spdx.library.model;
 
-import org.spdx.library.DefaultModelStore;
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -46,7 +48,6 @@ public class SimpleUriValueTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 	}
 
 	/* (non-Javadoc)
@@ -79,12 +80,15 @@ public class SimpleUriValueTest extends TestCase {
 	 * Test method for {@link org.spdx.library.compat.v2.SimpleUriValue#toModelObject(org.spdx.storage.IModelStore, java.lang.String)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void testToModelObject() throws InvalidSPDXAnalysisException {
-		GenericModelObject gmo = new GenericModelObject();
-		new SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
+	public void testToModelObjectV2() throws InvalidSPDXAnalysisException {
+		IModelStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		ModelCopyManager copyManager = new ModelCopyManager();
+		org.spdx.library.model.compat.v2.GenericModelObject gmo = 
+				new org.spdx.library.model.compat.v2.GenericModelObject(store, "http://doc", "id", copyManager, true);
+		new org.spdx.library.model.compat.v2.SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
 		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
-		assertTrue(result instanceof ExternalSpdxElement);
-		ExternalSpdxElement externalElement = (ExternalSpdxElement)result;
+		assertTrue(result instanceof org.spdx.library.model.compat.v2.ExternalSpdxElement);
+		org.spdx.library.model.compat.v2.ExternalSpdxElement externalElement = (org.spdx.library.model.compat.v2.ExternalSpdxElement)result;
 		assertEquals(EXTERNAL_SPDX_ELEMENT_ID, externalElement.getExternalElementId());
 		assertEquals(EXTERNAL_SPDX_URI, externalElement.getExternalSpdxElementURI());
 		
@@ -94,6 +98,10 @@ public class SimpleUriValueTest extends TestCase {
 		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
 		assertTrue(result instanceof SimpleUriValue);
 		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result).getIndividualURI());
+	}
+	
+	public void testToModelObject() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
 	}
 
 }

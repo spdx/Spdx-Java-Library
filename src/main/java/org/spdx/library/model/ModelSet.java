@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
+package org.spdx.library.model;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,22 +37,21 @@ import org.spdx.storage.PropertyDescriptor;
  * @author Gary O'Neall
  *
  */
-public class ModelSet<T extends Object> extends ModelCollectionV2<T> {
+public class ModelSet<T extends Object> extends ModelCollection<T> {
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelSet.class);
 	
 	/**
 	 * @param modelStore
-	 * @param documentUri
 	 * @param objectUri
 	 * @param propertyDescriptor
 	 * @param copyManager
 	 * @param type
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelSet(IModelStore modelStore, String documentUri, String id, PropertyDescriptor propertyDescriptor, 
+	public ModelSet(IModelStore modelStore, String objectUri, PropertyDescriptor propertyDescriptor, 
 			@Nullable ModelCopyManager copyManager, @Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, propertyDescriptor, copyManager, type);
+		super(modelStore, objectUri, propertyDescriptor, copyManager, type);
 	}
 	
 	@Override

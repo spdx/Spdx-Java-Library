@@ -33,7 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.SpdxIdInUseException;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
@@ -52,7 +53,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	
 	static final Logger logger = LoggerFactory.getLogger(RelatedElementCollection.class);
 	
-	ModelCollection<Relationship> relationshipCollection;
+	ModelCollectionV2<Relationship> relationshipCollection;
 	private RelationshipType relationshipTypeFilter;
 	private String relatedElementTypeFilter;
 	/**
@@ -85,7 +86,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 			@Nullable String relatedElementTypeFilter) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(owningElement, "Owning element can not be null");
 		this.owningElement = owningElement;
-		this.relationshipCollection = new ModelCollection<Relationship>(owningElement.getModelStore(),
+		this.relationshipCollection = new ModelCollectionV2<Relationship>(owningElement.getModelStore(),
 				owningElement.getDocumentUri(), owningElement.getId(), SpdxConstantsCompatV2.PROP_RELATIONSHIP, 
 				owningElement.getCopyManager(), Relationship.class);
 		this.relationshipTypeFilter = relationshipTypeFilter;
@@ -372,7 +373,7 @@ public class RelatedElementCollection implements Collection<SpdxElement> {
 	/**
 	 * @return the relationshipCollection
 	 */
-	public ModelCollection<Relationship> getRelationshipCollection() {
+	public ModelCollectionV2<Relationship> getRelationshipCollection() {
 		return relationshipCollection;
 	}
 

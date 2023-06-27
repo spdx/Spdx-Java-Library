@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2023 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
+package org.spdx.library.model;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,15 +33,11 @@ import javax.annotation.Nullable;
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxObjectNotInStoreException;
-import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
-import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 /**
  * Collection of elements stored in a ModelStore
@@ -52,12 +48,11 @@ import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 public class ModelCollection<T extends Object> implements Collection<Object> {
 
 	private IModelStore modelStore;
-	private String documentUri;
-	private String id;
+	private String objectUri;
 	private PropertyDescriptor propertyDescriptor;
 	private ModelCopyManager copyManager;
 	private Class<?> type;
-	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
+//	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
 	
 	class ModelCollectionIterator implements Iterator<Object> {
 		
@@ -81,46 +76,40 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	
 	/**
 	 * @param modelStore Storage for the model collection
-	 * @param documentUri SPDX Document URI for a document associated with this model collection
-	 * @param objectUri ID for this collection - must be unique within the SPDX document
+	 * @param objectUri Object URI or anonymous ID
 	 * @param propertyDescriptor descriptor for the property use for the model collections
 	 * @param copyManager if non-null, use this to copy properties when referenced outside this model store
 	 * @param type The class of the elements to be stored in the collection if none, null if not known
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelCollection(IModelStore modelStore, String documentUri, String id, PropertyDescriptor propertyDescriptor,
+	public ModelCollection(IModelStore modelStore, String objectUri, PropertyDescriptor propertyDescriptor,
 			@Nullable ModelCopyManager copyManager,
 			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore, "Model store can not be null");
 		this.modelStore = modelStore;
-		Objects.requireNonNull(documentUri, "Document URI can not be null");
-		this.documentUri = documentUri;
-		Objects.requireNonNull(id, "ID can not be null");
-		this.id = id;
+		Objects.requireNonNull(objectUri, "Object URI or anonymous ID can not be null");
+		this.objectUri = objectUri;
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		this.propertyDescriptor = propertyDescriptor;
 		this.copyManager = copyManager;
-		if (!modelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore))) {
-			throw new SpdxIdNotFoundException(id+" does not exist in document "+documentUri);
+		if (!modelStore.exists(objectUri)) {
+			throw new SpdxIdNotFoundException(objectUri+" does not exist.");
 		}
 		if (Objects.nonNull(type)) {
 			this.type = type;
-			licensePrimitiveAssignable = type.isAssignableFrom(SpdxNoneLicense.class);
-			if (!modelStore.isCollectionMembersAssignableTo(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), 
-					propertyDescriptor, type)) {
+//			licensePrimitiveAssignable = type.isAssignableFrom(SpdxNoneLicense.class) || type.isAssignableFrom(SpdxNoAssertionLicense.class);
+			if (!modelStore.isCollectionMembersAssignableTo(objectUri, propertyDescriptor, type)) {
 				throw new SpdxInvalidTypeException("Incompatible type for property "+propertyDescriptor+": "+type.toString());
 			}
-		} else {
-			licensePrimitiveAssignable = false;
+//		} else {
+//			licensePrimitiveAssignable = false;
 		}
 	}
 
 	@Override
 	public int size() {
 		try {
-			return this.modelStore.collectionSize(
-					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore), 
-					this.propertyDescriptor);
+			return this.modelStore.collectionSize(objectUri, this.propertyDescriptor);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -129,9 +118,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean isEmpty() {
 		try {
-			return this.modelStore.collectionSize(
-					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore),
-					this.propertyDescriptor) == 0;
+			return this.modelStore.collectionSize(objectUri, this.propertyDescriptor) == 0;
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -142,13 +129,12 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 		try {
 			Object storedObject = null;
 			try {
-				storedObject = ModelStorageClassConverter.modelObjectToStoredObject(o, documentUri, modelStore, copyManager);
+				storedObject = ModelObjectHelper.modelObjectToStoredObject(o, modelStore, copyManager);
 			} catch (SpdxObjectNotInStoreException e1) {
 				return false;	// The exception is due to the model object not being in the store
 			}
 			return this.modelStore.collectionContains(
-					CompatibleModelStoreWrapper.documentUriIdToUri(this.documentUri, this.id, modelStore),
-					this.propertyDescriptor, storedObject);
+					objectUri, this.propertyDescriptor, storedObject);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -156,15 +142,15 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	
 	private Object checkConvertTypedValue(Object value) {
 		try {
-			Object retval = ModelStorageClassConverter.storedObjectToModelObject(value, documentUri, modelStore, copyManager);
-			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
-				String uri = ((IndividualUriValue)retval).getIndividualURI();
-				if (SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri)) {
-					retval = new SpdxNoAssertionLicense();
-				} else if (SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri)) {
-					retval = new SpdxNoneLicense();
-				}
-			}
+			Object retval = ModelObjectHelper.storedObjectToModelObject(value, modelStore, copyManager);
+//			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
+//				String uri = ((IndividualUriValue)retval).getIndividualURI();
+//				if (SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri)) {
+//					retval = new SpdxNoAssertionLicense();
+//				} else if (SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri)) {
+//					retval = new SpdxNoneLicense();
+//				}
+//			}
 			if (Objects.nonNull(this.type) && !this.type.isAssignableFrom(retval.getClass())) {
 				if (retval instanceof IndividualUriValue) {
 					throw new SpdxInvalidTypeException("No enumeration was found for URI "+((IndividualUriValue)retval).getIndividualURI()+
@@ -196,8 +182,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public Iterator<Object> iterator() {
 		try {
 			return new ModelCollectionIterator(
-					modelStore.listValues(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore),
-							propertyDescriptor));
+					modelStore.listValues(objectUri, propertyDescriptor));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -217,8 +202,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	public boolean add(Object element) {
 		try {
 			return modelStore.addValueToCollection(
-					CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), propertyDescriptor, 
-					ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, copyManager));
+					objectUri, propertyDescriptor, 
+					ModelObjectHelper.modelObjectToStoredObject(element, modelStore, copyManager));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -227,8 +212,8 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public boolean remove(Object element) {
 		try {
-			return modelStore.removeValueFromCollection(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore),
-					propertyDescriptor, ModelStorageClassConverter.modelObjectToStoredObject(element, documentUri, modelStore, null));
+			return modelStore.removeValueFromCollection(objectUri, propertyDescriptor,
+					ModelObjectHelper.modelObjectToStoredObject(element, modelStore, null));
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -280,7 +265,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	@Override
 	public void clear() {
 		try {
-			modelStore.clearValueCollection(CompatibleModelStoreWrapper.documentUriIdToUri(documentUri, id, modelStore), propertyDescriptor);
+			modelStore.clearValueCollection(objectUri, propertyDescriptor);
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new RuntimeException(e);
 		}
@@ -294,17 +279,10 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	}
 
 	/**
-	 * @return the documentUri
-	 */
-	public String getDocumentUri() {
-		return documentUri;
-	}
-
-	/**
 	 * @return the objectUri
 	 */
-	public String getId() {
-		return id;
+	public String getObjectUri() {
+		return objectUri;
 	}
 
 	/**

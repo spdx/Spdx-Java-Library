@@ -5,10 +5,10 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 

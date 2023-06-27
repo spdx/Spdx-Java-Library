@@ -28,8 +28,8 @@ import org.spdx.library.model.compat.v2.Annotation;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.Relationship;
 import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.enumerations.FileType;
 
 /**
  * Contains the results of a comparison between two SPDX files with the same name

@@ -18,10 +18,14 @@
 package org.spdx.library;
 
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -92,13 +96,13 @@ public class SpdxModelFactory {
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_POINTER_COMPOUNT_POINTER, org.spdx.library.model.compat.v2.pointer.CompoundPointer.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_SINGLE_POINTER, org.spdx.library.model.compat.v2.pointer.SinglePointer.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_CROSS_REF, org.spdx.library.model.compat.v2.license.CrossRef.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_FILE_TYPE, org.spdx.library.model.compat.v2.enumerations.FileType.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_ANNOTATION_TYPE, org.spdx.library.model.compat.v2.enumerations.AnnotationType.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_CHECKSUM_ALGORITHM_TYPE, org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_CATEGORY_TYPE, org.spdx.library.model.compat.v2.enumerations.ReferenceCategory.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_RELATIONSHIP_TYPE, org.spdx.library.model.compat.v2.enumerations.RelationshipType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_FILE_TYPE, org.spdx.library.model.enumerations.FileType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_ANNOTATION_TYPE, org.spdx.library.model.enumerations.AnnotationType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_CHECKSUM_ALGORITHM_TYPE, org.spdx.library.model.enumerations.ChecksumAlgorithm.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_CATEGORY_TYPE, org.spdx.library.model.enumerations.ReferenceCategory.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_RELATIONSHIP_TYPE, org.spdx.library.model.enumerations.RelationshipType.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_EXTERNAL_EXTRACTED_LICENSE, org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo.class);	
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_PURPOSE, org.spdx.library.model.compat.v2.enumerations.Purpose.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_PURPOSE, org.spdx.library.model.enumerations.Purpose.class);
 		SPDX_TYPE_TO_CLASS_V2 = Collections.unmodifiableMap(typeToClassV2);
 		Map<String, Class<?>> typeToClassV3 = new HashMap<>();
 		//TODO Add V3 class strings
@@ -113,6 +117,51 @@ public class SpdxModelFactory {
 		
 		SPDX_CLASS_TO_TYPE = Collections.unmodifiableMap(classToType);
 	}
+	
+	/**
+	 * Create an SPDX spec version 3 model object in a model store given the document URI, ID and type
+	 * @param modelStore model store where the object is to be created
+	 * @param objectUri Object URI or anonymous ID
+	 * @param type SPDX class or type
+	 * @param copyManager if non-null, allows for copying of properties from other model stores or document URI's when referenced
+	 * @param create if true, create the model object if it does not already exist
+	 * @return a ModelObject of type type
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static ModelObject getModelObject(IModelStore modelStore, String objectUri,
+			String type, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(objectUri, "An object URI or anonymous ID must be supplied for all SPDX version 2 model objects");
+		
+		Class<?> clazz = SPDX_TYPE_TO_CLASS_V3.get(type);
+		if (Objects.isNull(clazz)) {
+			throw new InvalidSPDXAnalysisException("Unknown SPDX version 3 type: "+type);
+		}
+		if (Modifier.isAbstract(clazz.getModifiers())) {
+			throw new InvalidSPDXAnalysisException("Can not instantiate an abstract class for the SPDX version 3 type: "+type);
+		}
+		try {
+			Constructor<?> con = clazz.getDeclaredConstructor(IModelStore.class, String.class, ModelCopyManager.class, boolean.class);
+			return (ModelObject)con.newInstance(modelStore, objectUri, copyManager, create);
+		} catch (NoSuchMethodException e) {
+			throw new InvalidSPDXAnalysisException("Could not create the model object SPDX version 3 type: "+type);
+		} catch (SecurityException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected security exception for SPDX version 3 type: "+type, e);
+		} catch (InstantiationException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected instantiation exception for SPDX version 3 type: "+type, e);
+		} catch (IllegalAccessException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected illegal access exception for SPDX version 3 type: "+type, e);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected illegal argument exception for SPDX version 2 type: "+type, e);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof InvalidSPDXAnalysisException) {
+				throw (InvalidSPDXAnalysisException)e.getTargetException();
+			} else {
+				throw new InvalidSPDXAnalysisException("Unexpected invocation target exception for SPDX version 3 type: "+type, e);
+			}
+		}
+	}
+
 	
 	
 	/**
@@ -170,48 +219,43 @@ public class SpdxModelFactory {
 			String type, ModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore, "Model store can not be null");
 		Objects.requireNonNull(documentUri, "A document URI or namespace must be supplied for all SPDX version 2 model objects");
+		if (SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT.equals(type)) {
+			// Special case since document does not have the same constructor method signature - the ID is ignored
+			return new org.spdx.library.model.compat.v2.SpdxDocument(modelStore, documentUri, copyManager, create);
+		}
+		if (SpdxConstantsCompatV2.CLASS_SPDX_REFERENCE_TYPE.equals(type)) {
+			throw new InvalidSPDXAnalysisException("Reference type can only be created with a type supplied.");
+		}
+		if (SpdxConstantsCompatV2.CLASS_SPDX_REVIEW.equals(type)) {
+			throw new InvalidSPDXAnalysisException("Review class is no longer supported");
+		}
 		Objects.requireNonNull(id, "ID must not be null");
-		switch (type) {
-		case SpdxConstantsCompatV2.CLASS_SPDX_DOCUMENT: return new org.spdx.library.model.compat.v2.SpdxDocument(modelStore, documentUri, copyManager, create); //Note: the ID is ignored
-		case SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE: return new org.spdx.library.model.compat.v2.SpdxPackage(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_CREATION_INFO: return new org.spdx.library.model.compat.v2.SpdxCreatorInformation(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM: return new org.spdx.library.model.compat.v2.Checksum(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_ANY_LICENSE_INFO: throw new InvalidSPDXAnalysisException("Can not create abstract AnyLicensing Info.  Must specify one of the concrete classes");
-		case SpdxConstantsCompatV2.CLASS_SPDX_SIMPLE_LICENSE_INFO:  throw new InvalidSPDXAnalysisException("Can not create abstract SimpleLicensingInfo.  Must specify one of the concrete classes");
-		case SpdxConstantsCompatV2.CLASS_SPDX_CONJUNCTIVE_LICENSE_SET: return new org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_DISJUNCTIVE_LICENSE_SET: return new org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO: return new org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_LICENSE: throw new InvalidSPDXAnalysisException("Can not create abstract License.  Must specify one of the concrete classes");
-		case SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE: return new org.spdx.library.model.compat.v2.license.SpdxListedLicense(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_LICENSE_EXCEPTION: return new org.spdx.library.model.compat.v2.license.LicenseException(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION: return new org.spdx.library.model.compat.v2.license.ListedLicenseException(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_OR_LATER_OPERATOR: return new org.spdx.library.model.compat.v2.license.OrLaterOperator(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_WITH_EXCEPTION_OPERATOR: return new org.spdx.library.model.compat.v2.license.WithExceptionOperator(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_FILE: return new org.spdx.library.model.compat.v2.SpdxFile(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_REVIEW: throw new RuntimeException("SPDX Review class is no longer supported");
-		case SpdxConstantsCompatV2.CLASS_SPDX_VERIFICATIONCODE: return new org.spdx.library.model.compat.v2.SpdxPackageVerificationCode(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_ANNOTATION: return new org.spdx.library.model.compat.v2.Annotation(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_RELATIONSHIP: return new org.spdx.library.model.compat.v2.Relationship(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_ITEM: throw new RuntimeException("SPDX item is an abstract item and can not be created.");
-		case SpdxConstantsCompatV2.CLASS_SPDX_ELEMENT: throw new RuntimeException("SPDX element is an abstract item and can not be created.");
-		case SpdxConstantsCompatV2.CLASS_SPDX_NONE_ELEMENT: return new org.spdx.library.model.compat.v2.SpdxNoneElement(modelStore, documentUri);
-		case SpdxConstantsCompatV2.CLASS_SPDX_NOASSERTION_ELEMENT: return new org.spdx.library.model.compat.v2.SpdxNoAssertionElement(modelStore, documentUri);
-		case SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF: return new org.spdx.library.model.compat.v2.ExternalDocumentRef(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_EXTERNAL_REFERENCE: return new org.spdx.library.model.compat.v2.ExternalRef(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_EXTERNAL_EXTRACTED_LICENSE: return new org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_SPDX_REFERENCE_TYPE:  throw new RuntimeException("Reference type can only be created with a type supplied.");
-		case SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET: return new org.spdx.library.model.compat.v2.SpdxSnippet(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_NOASSERTION_LICENSE: return new org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense(modelStore, documentUri);
-		case SpdxConstantsCompatV2.CLASS_NONE_LICENSE: return new org.spdx.library.model.compat.v2.license.SpdxNoneLicense(modelStore, documentUri);
-		case org.spdx.library.model.compat.v2.GenericModelObject.GENERIC_MODEL_OBJECT_TYPE: return new org.spdx.library.model.compat.v2.GenericModelObject(modelStore, documentUri, id, copyManager, create);
-		case org.spdx.library.model.compat.v2.GenericSpdxElement.GENERIC_SPDX_ELEMENT_TYPE: return new org.spdx.library.model.compat.v2.GenericSpdxElement(modelStore, documentUri, id, copyManager, create);
-		case org.spdx.library.model.compat.v2.GenericSpdxItem.GENERIC_SPDX_ITEM_TYPE: return new org.spdx.library.model.compat.v2.GenericSpdxItem(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_EXTERNAL_SPDX_ELEMENT: return new org.spdx.library.model.compat.v2.ExternalSpdxElement(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_POINTER_START_END_POINTER: return new org.spdx.library.model.compat.v2.pointer.StartEndPointer(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_POINTER_BYTE_OFFSET_POINTER: return new org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_POINTER_LINE_CHAR_POINTER: return new org.spdx.library.model.compat.v2.pointer.LineCharPointer(modelStore, documentUri, id, copyManager, create);
-		case SpdxConstantsCompatV2.CLASS_CROSS_REF: return new org.spdx.library.model.compat.v2.license.CrossRef(modelStore, documentUri, id, copyManager, create);
-		default: throw new InvalidSPDXAnalysisException("Unknown SPDX type: "+type);
+		Class<?> clazz = SPDX_TYPE_TO_CLASS_V2.get(type);
+		if (Objects.isNull(clazz)) {
+			throw new InvalidSPDXAnalysisException("Unknown SPDX version 2 type: "+type);
+		}
+		if (Modifier.isAbstract(clazz.getModifiers())) {
+			throw new InvalidSPDXAnalysisException("Can not instantiate an abstract class for the SPDX version 2 type: "+type);
+		}
+		try {
+			Constructor<?> con = clazz.getDeclaredConstructor(IModelStore.class, String.class, String.class, ModelCopyManager.class, boolean.class);
+			return (org.spdx.library.model.compat.v2.ModelObject)con.newInstance(modelStore, documentUri, id, copyManager, create);
+		} catch (NoSuchMethodException e) {
+			throw new InvalidSPDXAnalysisException("Could not create the model object SPDX version 2 type: "+type);
+		} catch (SecurityException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected security exception for SPDX version 2 type: "+type, e);
+		} catch (InstantiationException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected instantiation exception for SPDX version 2 type: "+type, e);
+		} catch (IllegalAccessException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected illegal access exception for SPDX version 2 type: "+type, e);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidSPDXAnalysisException("Unexpected illegal argument exception for SPDX version 2 type: "+type, e);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof InvalidSPDXAnalysisException) {
+				throw (InvalidSPDXAnalysisException)e.getTargetException();
+			} else {
+				throw new InvalidSPDXAnalysisException("Unexpected invocation target exception for SPDX version 2 type: "+type, e);
+			}
 		}
 	}
 
@@ -397,5 +441,11 @@ public class SpdxModelFactory {
 				return Optional.empty();
 			}
 		}
+	}
+
+	public static ModelObject createModelObject(IModelStore stModelStore,
+			String objectUri, String type, ModelCopyManager copyManager) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

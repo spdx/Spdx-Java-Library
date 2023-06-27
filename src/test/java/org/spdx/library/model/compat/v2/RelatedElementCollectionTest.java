@@ -25,7 +25,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
 

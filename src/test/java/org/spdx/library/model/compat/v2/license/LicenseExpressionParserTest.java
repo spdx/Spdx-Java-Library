@@ -28,7 +28,7 @@ import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Checksum;
 import org.spdx.library.model.compat.v2.GenericModelObject;
 import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 

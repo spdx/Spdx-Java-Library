@@ -82,7 +82,7 @@ public class SpdxSnippet extends SpdxItem implements Comparable<SpdxSnippet> {
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
-		allRanges = new ModelCollection(modelStore, documentUri, id, SpdxConstantsCompatV2.PROP_SNIPPET_RANGE, copyManager, StartEndPointer.class);
+		allRanges = new ModelCollectionV2(modelStore, documentUri, id, SpdxConstantsCompatV2.PROP_SNIPPET_RANGE, copyManager, StartEndPointer.class);
 	}
 	
 	/**

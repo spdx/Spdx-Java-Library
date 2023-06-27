@@ -1,14 +1,15 @@
-package org.spdx.library.model.compat.v2;
+package org.spdx.library;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxIdNotFoundException;
-import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.compat.v2.Annotation;
+import org.spdx.library.model.compat.v2.Checksum;
+import org.spdx.library.model.compat.v2.ModelObject;
+import org.spdx.library.model.compat.v2.SpdxDocument;
+import org.spdx.library.model.compat.v2.SpdxElement;
+import org.spdx.library.model.compat.v2.SpdxFile;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -35,18 +36,46 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	public void testCreateSpdxDocument() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testCreateModelObject2() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testGetModelObjectIModelStoreStringStringStringModelCopyManagerBoolean2() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testTypeToClass() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testGetElements() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testClassUriToClass() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testGetModelObjectIModelStoreStringStringModelCopyManager2() throws InvalidSPDXAnalysisException {
+		fail("Unimplemented");
+	}
+	
+	public void testCreateSpdxDocumentV2() throws InvalidSPDXAnalysisException {
 		SpdxDocument result = SpdxModelFactory.createSpdxDocumentV2(modelStore, DOCUMENT_URI, copyManager);
 		assertEquals(SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, result.getId());
 	}
 
-	public void testCreateModelObject() throws InvalidSPDXAnalysisException {
+	public void testCreateModelObjectV2() throws InvalidSPDXAnalysisException {
 		ModelObject result = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager);
 		assertTrue(result instanceof Checksum);
 		assertEquals(ID1, result.getId());
 	}
 
-	public void testGetModelObjectIModelStoreStringStringStringModelCopyManagerBoolean() throws InvalidSPDXAnalysisException {
+	public void testGetModelObjectIModelStoreStringStringStringModelCopyManagerBooleanV2() throws InvalidSPDXAnalysisException {
 		ModelObject result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, true);
 		assertTrue(result instanceof Checksum);
@@ -64,7 +93,7 @@ public class SpdxModelFactoryTest extends TestCase {
 		}
 	}
 
-	public void testTypeToClass() throws InvalidSPDXAnalysisException {
+	public void testTypeToClassV2() throws InvalidSPDXAnalysisException {
 		assertEquals(Checksum.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM,
 				SpdxMajorVersion.VERSION_2));
 		assertEquals(SpdxFile.class, SpdxModelFactory.typeToClass(SpdxConstantsCompatV2.CLASS_SPDX_FILE,
@@ -72,7 +101,7 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void testGetElements() throws InvalidSPDXAnalysisException {
+	public void testGetElementsV2() throws InvalidSPDXAnalysisException {
 		ModelObject file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
 		ModelObject file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
@@ -125,13 +154,13 @@ public class SpdxModelFactoryTest extends TestCase {
 		}
 	}
 
-	public void testClassUriToClass() throws InvalidSPDXAnalysisException {
+	public void testClassUriToClassV2() throws InvalidSPDXAnalysisException {
 		assertEquals(Annotation.class, 
 				SpdxModelFactory.classUriToClass(SpdxConstantsCompatV2.SPDX_NAMESPACE + SpdxConstantsCompatV2.CLASS_ANNOTATION,
 						SpdxMajorVersion.VERSION_2));
 	}
 
-	public void testGetModelObjectIModelStoreStringStringModelCopyManager() throws InvalidSPDXAnalysisException {
+	public void testGetModelObjectIModelStoreStringStringModelCopyManagerV2() throws InvalidSPDXAnalysisException {
 		ModelObject result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, true);
 		assertTrue(result instanceof Checksum);

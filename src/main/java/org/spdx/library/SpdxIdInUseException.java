@@ -15,9 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
-
-import org.spdx.library.InvalidSPDXAnalysisException;
+package org.spdx.library;
 
 /**
  * Exception when an SPDX element is in use (e.g. exception thrown when attempting to delete)

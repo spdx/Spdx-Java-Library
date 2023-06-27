@@ -17,6 +17,8 @@
  */
 package org.spdx.library;
 
+import org.spdx.storage.PropertyDescriptor;
+
 /**
  * Constants which map to the SPDX specifications
  * @author Gary O'Neall
@@ -33,5 +35,11 @@ public class SpdxConstants {
 			return VERSION_3;
 		}
 	}
+
+	/**
+	 * Core namespace
+	 */
+	public static final String CORE_NAMESPACE = "https://rdf.spdx.org/v3/Core";
+	public static final PropertyDescriptor CORE_PROP_RELATED_SPDX_ELEMENT = new PropertyDescriptor("to", CORE_NAMESPACE);
 
 }

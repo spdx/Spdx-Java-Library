@@ -98,8 +98,9 @@ public class SimpleUriValue implements IndividualUriValue {
 			throw new InvalidSPDXAnalysisException("Not implemented");
 		}
 	}
+	
 	private Object toModelObjectV2Compat(IModelStore store,  String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Object retval = org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory.uriToEnum.get(uri);
+		Object retval = org.spdx.library.model.enumerations.SpdxEnumFactory.uriToEnum.get(uri);
 		if (Objects.nonNull(retval)) {
 			return retval;
 		} else if (SpdxConstantsCompatV2.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri).matches()) {

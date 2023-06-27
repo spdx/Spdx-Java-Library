@@ -34,6 +34,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 
 
 /**
@@ -198,7 +199,8 @@ public class ExternalSpdxElement extends SpdxElement implements IndividualUriVal
 	
 	public static String externalDocumentIdToNamespace(String externalDocumentId,
 			IModelStore stModelStore, String stDocumentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = stModelStore.getValue(stDocumentUri, externalDocumentId, SpdxConstantsCompatV2.PROP_EXTERNAL_SPDX_DOCUMENT);
+		Optional<Object> retval = stModelStore.getValue(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, externalDocumentId, false),
+				SpdxConstantsCompatV2.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!retval.isPresent()) {
 			throw new InvalidSPDXAnalysisException("No external document reference exists for document ID "+externalDocumentId);
 		}

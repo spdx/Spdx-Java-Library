@@ -31,14 +31,14 @@ import org.spdx.library.model.compat.v2.Relationship;
 import org.spdx.library.model.compat.v2.SpdxDocument;
 import org.spdx.library.model.compat.v2.SpdxFile;
 import org.spdx.library.model.compat.v2.SpdxSnippet;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
 import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.FileType;
+import org.spdx.library.model.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
 

@@ -38,17 +38,13 @@ import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxIdInUseException;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.TypedValue;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
-import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
@@ -61,6 +57,11 @@ import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 import org.spdx.library.model.compat.v2.pointer.SinglePointer;
 import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ReferenceCategory;
+import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -235,6 +236,7 @@ public abstract class ModelObject {
 	public List<String> verify() {
 		return verify(Version.CURRENT_SPDX_VERSION);
 	}
+	
 	/**
 	 * @param specVersion Version of the SPDX spec to verify against
 	 * @return Any verification errors or warnings associated with this object
@@ -257,6 +259,9 @@ public abstract class ModelObject {
 		return id;
 	}
 	
+	/**
+	 * @return the Object URI or anonymous ID
+	 */
 	public String getObjectUri() {
 		return modelStore.getIdType(id) == IdType.Anonymous ? id : 
 			SpdxConstantsCompatV2.LISTED_LICENSE_URL.equals(documentUri) ? documentUri + id :
@@ -341,7 +346,7 @@ public abstract class ModelObject {
 			if (!stModelStore.exists(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore))) {
 				return Optional.empty();
 			} else if (stModelStore.isCollectionProperty(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore), propertyDescriptor)) {
-				return Optional.of(new ModelCollection<>(stModelStore, stDocumentUri, stId, propertyDescriptor, copyManager, null));
+				return Optional.of(new ModelCollectionV2<>(stModelStore, stDocumentUri, stId, propertyDescriptor, copyManager, null));
 			} else {
 				return ModelStorageClassConverter.optionalStoredObjectToModelObject(stModelStore.getValue(CompatibleModelStoreWrapper.documentUriIdToUri(stDocumentUri, stId, stModelStore),
 						propertyDescriptor), 
@@ -742,8 +747,8 @@ public abstract class ModelObject {
 	 * @param propertyDescriptor Descriptor for the property
 	 * @return Collection of values associated with a property
 	 */
-	protected ModelCollection<?> getObjectPropertyValueCollection(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelCollection<Object>(this.modelStore, this.documentUri, this.id, propertyDescriptor, this.copyManager, type);
+	protected ModelCollectionV2<?> getObjectPropertyValueCollection(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
+		return new ModelCollectionV2<Object>(this.modelStore, this.documentUri, this.id, propertyDescriptor, this.copyManager, type);
 	}
 	
 	/**
@@ -832,8 +837,8 @@ public abstract class ModelObject {
 	// Some values are treated like null in comparisons - in particular empty model collections and 
 	// "no assertion" values and a filesAnalyzed filed with a value of true
 	private boolean isEquivalentToNull(Object propertyValue, PropertyDescriptor propertyDescriptor) {
-		if (propertyValue instanceof ModelCollection) {
-			return ((ModelCollection<?>) propertyValue).size() == 0;
+		if (propertyValue instanceof ModelCollectionV2) {
+			return ((ModelCollectionV2<?>) propertyValue).size() == 0;
 		} else if (isNoAssertion(propertyValue)) {
 			return true;
 		} else if (SpdxConstantsCompatV2.PROP_PACKAGE_FILES_ANALYZED.equals(propertyDescriptor.getName())) {
@@ -848,8 +853,8 @@ public abstract class ModelObject {
 	}
 
 	private boolean isEmptyModelCollection(Object value) {
-		return (value instanceof ModelCollection)
-				&& (((ModelCollection<?>) value).size() == 0);
+		return (value instanceof ModelCollectionV2)
+				&& (((ModelCollectionV2<?>) value).size() == 0);
 	}
 	
 	private boolean isNoAssertion(Object propertyValue) {
@@ -873,9 +878,9 @@ public abstract class ModelObject {
             }
         } else if (!valueB.isPresent()) {
             return isEmptyModelCollection(valueA.get());
-        } else if (valueA.get() instanceof ModelCollection && valueB.get() instanceof ModelCollection) {
-            List<?> myList = ((ModelCollection<?>)valueA.get()).toImmutableList();
-            List<?> compareList = ((ModelCollection<?>)valueB.get()).toImmutableList();
+        } else if (valueA.get() instanceof ModelCollectionV2 && valueB.get() instanceof ModelCollectionV2) {
+            List<?> myList = ((ModelCollectionV2<?>)valueA.get()).toImmutableList();
+            List<?> compareList = ((ModelCollectionV2<?>)valueB.get()).toImmutableList();
             if (!areEquivalent(myList, compareList, ignoreRelatedElements)) {
                 return false;
             }
@@ -1021,9 +1026,7 @@ public abstract class ModelObject {
 			return Objects.equals(id, comp.getId()) && Objects.equals(documentUri, comp.getDocumentUri());
 		}
 	}
-	
-
-	
+		
 	/**
 	 * Clone a new object using a different model store
 	 * @param modelStore

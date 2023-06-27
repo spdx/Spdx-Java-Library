@@ -54,9 +54,6 @@ public class ModelStorageClassConverter {
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelStorageClassConverter.class);
 	
-	public static void reset() {tempMgr = new ModelCopyManager();}//TODO: This should be removed
-	static ModelCopyManager tempMgr = new ModelCopyManager();//TODO: This is temporary - move to a parameter to ModelObject - this is not currently threadsafe
-
 	/**
 	 * Converts any typed value or individual value objects to a ModelObject,
 	 * returning an existing ModelObject if it exists or creates a new ModelObject

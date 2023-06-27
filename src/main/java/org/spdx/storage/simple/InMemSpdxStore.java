@@ -42,10 +42,10 @@ import org.spdx.library.DuplicateSpdxIdException;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxIdInUseException;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.ModelCollection;
-import org.spdx.library.model.compat.v2.SpdxIdInUseException;
+import org.spdx.library.model.compat.v2.ModelCollectionV2;
 import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
@@ -305,7 +305,7 @@ public class InMemSpdxStore implements IModelStore {
 				}
 				String documentUri = item.getObjectUri().substring(0, indexOfPound);
 				String id = item.getObjectUri().substring(indexOfPound + 1);
-				return Optional.of(new ModelCollection<>(this, documentUri, id, propertyDescriptor, null ,null));
+				return Optional.of(new ModelCollectionV2<>(this, documentUri, id, propertyDescriptor, null ,null));
 			} else {
 				throw new InvalidSPDXAnalysisException("Unimplemented version 3");
 			}

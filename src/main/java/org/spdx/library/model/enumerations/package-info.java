@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2019 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -15,14 +15,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library;
-
 /**
- * A set of static methods to help with common ModelObject functions
+ * This package contains all the enumerations used in the SPDX model.
+ * 
+ * For the enumerations to be stored properly, they must implement the IndividualUriValue interface.
+ * 
+ * The enumerations also must be added to the static map uriToEnum in the SpdxEnumFactory classes.
  * 
  * @author Gary O'Neall
- *
  */
-public class ModelObjectHelper {
-
-}
+package org.spdx.library.model.enumerations;

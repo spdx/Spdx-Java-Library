@@ -28,8 +28,6 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.Version;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
@@ -38,6 +36,8 @@ import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;

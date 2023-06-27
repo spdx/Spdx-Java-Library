@@ -36,7 +36,7 @@ import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.Version;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -65,7 +65,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 		Objects.requireNonNull(externalDocUri, "External document URI can not be null");
 		IModelStoreLock lock = stModelStore.enterCriticalSection(false);
 		try {
-			ModelCollection<ExternalDocumentRef> existingExternalRefs = new ModelCollection<ExternalDocumentRef>(stModelStore,stDocumentUri,
+			ModelCollectionV2<ExternalDocumentRef> existingExternalRefs = new ModelCollectionV2<ExternalDocumentRef>(stModelStore,stDocumentUri,
 					SpdxConstantsCompatV2.SPDX_DOCUMENT_ID, SpdxConstantsCompatV2.PROP_SPDX_EXTERNAL_DOC_REF, copyManager, ExternalDocumentRef.class);
 			for (Object externalRef:existingExternalRefs) {
 				if (!(externalRef instanceof ExternalDocumentRef)) {
@@ -188,7 +188,9 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @return the spdxDocumentNamespace or empty string if no namespace
 	 */
 	public String getSpdxDocumentNamespace() throws InvalidSPDXAnalysisException {
-		Optional<Object> docNamespace = getModelStore().getValue(getDocumentUri(), getId(), SpdxConstantsCompatV2.PROP_EXTERNAL_SPDX_DOCUMENT);
+		Optional<Object> docNamespace = getModelStore().getValue(
+				CompatibleModelStoreWrapper.documentUriIdToUri(getDocumentUri(), getId(), getModelStore().getIdType(getId()) == IdType.Anonymous), 
+				SpdxConstantsCompatV2.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!docNamespace.isPresent()) {
 			logger.warn("SPDX document namespace not found");
 			return "";

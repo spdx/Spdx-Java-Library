@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2;
+package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class GenericModelObject extends ModelObject {
 	}
 
 	/**
-	 * @param id
+	 * @param objectUri
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public GenericModelObject(String id) throws InvalidSPDXAnalysisException {
@@ -56,15 +56,15 @@ public class GenericModelObject extends ModelObject {
 	/**
 	 * @param modelStore
 	 * @param documentUri
-	 * @param id
+	 * @param objectUri
 	 * @param copyManager
 	 * @param create
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public GenericModelObject(IModelStore modelStore, String documentUri, String id, 
+	public GenericModelObject(IModelStore modelStore, String objectUri, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
-		super(modelStore, documentUri, id, copyManager, create);
+		super(modelStore, objectUri, copyManager, create);
 	}
 
 	/* (non-Javadoc)

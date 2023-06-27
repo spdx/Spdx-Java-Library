@@ -33,11 +33,10 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.library.SpdxIdInUseException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.TypedValue;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
@@ -46,6 +45,8 @@ import org.spdx.library.model.compat.v2.license.SimpleLicensingInfo;
 import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
+import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.ModelUpdate;
@@ -118,7 +119,6 @@ public class ModelObjectTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
-		ModelStorageClassConverter.reset();
 		store = DefaultModelStore.getDefaultModelStore();
 		docUri = DefaultModelStore.getDefaultDocumentUri();
 		copyManager = DefaultModelStore.getDefaultCopyManager();
@@ -318,8 +318,8 @@ public class ModelObjectTest extends TestCase {
 				assertTrue(compareLists(entry.getValue(), result.get()));
 			} else if (result.get() instanceof ModelObject) {
 				assertEquals(entry.getValue(), result.get());
-			} else if (result.get() instanceof ModelCollection) {
-				assertTrue(compareLists(entry.getValue(), ((ModelCollection<?>)result.get()).toImmutableList()));
+			} else if (result.get() instanceof ModelCollectionV2) {
+				assertTrue(compareLists(entry.getValue(), ((ModelCollectionV2<?>)result.get()).toImmutableList()));
 			} else {
 				assertEquals(entry.getValue(), result.get());
 			}
@@ -644,7 +644,7 @@ public class ModelObjectTest extends TestCase {
 		// Given
 		GenericModelObject firstObject = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		GenericModelObject secondObject = new GenericModelObject(store, docUri, "testId2", copyManager, true);
-		ModelCollection<GenericModelObject> emptyModelCollection = new ModelCollection<>(store, 
+		ModelCollectionV2<GenericModelObject> emptyModelCollection = new ModelCollectionV2<>(store, 
 				docUri, TEST_ID, TEST_PROPERTY1, copyManager, GenericModelObject.class);
 		firstObject.setPropertyValue(TEST_PROPERTY1, emptyModelCollection);
 		secondObject.setPropertyValue(TEST_PROPERTY2, emptyModelCollection);
@@ -884,7 +884,7 @@ public class ModelObjectTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		for (int i = 0; i < TEST_ANYLICENSEINFO_LIST_PROPERTIES.length; i++) {
-			ModelCollection<AnyLicenseInfo> result = (ModelCollection<AnyLicenseInfo>)(ModelCollection<?>)gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], AnyLicenseInfo.class);
+			ModelCollectionV2<AnyLicenseInfo> result = (ModelCollectionV2<AnyLicenseInfo>)(ModelCollectionV2<?>)gmo.getObjectPropertyValueSet(TEST_ANYLICENSEINFO_LIST_PROPERTIES[i], AnyLicenseInfo.class);
 			assertTrue(compareLists(TEST_ANYLICENSEINFO_LIST_PROP_VALUES[i], result.toImmutableList()));
 		}
 	}

@@ -18,7 +18,7 @@
 /**
  * @author Gary O'Neall
  * 
- * Model for the SPDX license related objects
+ * Model for the SPDX version 2 license related objects
  *
  */
 package org.spdx.library.model.compat.v2.license;

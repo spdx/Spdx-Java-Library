@@ -15,26 +15,35 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2.enumerations;
+package org.spdx.library.model.enumerations;
 
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 
 /**
- * Annotation types for the Annotation Class
+ * File Type is intrinsic to the file, independent of how the file is being used.  
+ * A file may have more than one file type assigned to it.
  * 
  * @author Gary O'Neall
  *
  */
-public enum AnnotationType implements IndividualUriValue {
-	
-	OTHER("annotationType_other"),
-	REVIEW("annotationType_review"), 
-	MISSING("not_allowed");
+public enum FileType implements IndividualUriValue {
+	APPLICATION("fileType_application"),
+	ARCHIVE("fileType_archive"),
+	AUDIO("fileType_audio"),
+	BINARY("fileType_binary"),
+	DOCUMENTATION("fileType_documentation"),
+	IMAGE("fileType_image"),
+	OTHER("fileType_other"),
+	SOURCE("fileType_source"),
+	SPDX("fileType_spdx"),
+	TEXT("fileType_text"),
+	VIDEO("fileType_video")
+	;
 	
 	private String longName;
 	
-	private AnnotationType(String longName) {
+	private FileType(String longName) {
 		this.longName = longName;
 	}
 	@Override

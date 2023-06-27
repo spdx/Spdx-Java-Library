@@ -25,7 +25,7 @@ import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
 import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactory;
+import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 

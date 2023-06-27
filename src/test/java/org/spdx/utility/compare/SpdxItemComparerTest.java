@@ -32,10 +32,10 @@ import org.spdx.library.model.compat.v2.Relationship;
 import org.spdx.library.model.compat.v2.SpdxDocument;
 import org.spdx.library.model.compat.v2.SpdxElement;
 import org.spdx.library.model.compat.v2.SpdxItem;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.enumerations.AnnotationType;
+import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;
