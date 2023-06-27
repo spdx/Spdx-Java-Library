@@ -183,7 +183,7 @@ public class ExternalDocumentRef extends ModelObject implements Comparable<Exter
 	 * @return the spdxDocumentNamespace or empty string if no namespace
 	 */
 	public String getSpdxDocumentNamespace() throws InvalidSPDXAnalysisException {
-		Optional<Object> docNamespace = getObjectPropertyValue(SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT);
+		Optional<Object> docNamespace = getModelStore().getValue(getDocumentUri(), getId(), SpdxConstants.PROP_EXTERNAL_SPDX_DOCUMENT);
 		if (!docNamespace.isPresent()) {
 			logger.warn("SPDX document namespace not found");
 			return "";
