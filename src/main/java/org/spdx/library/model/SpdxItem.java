@@ -111,7 +111,6 @@ public abstract class SpdxItem extends SpdxElement {
 		if (retval.isPresent()) {
 			return retval.get();
 		} else {
-			logger.warn("Missing required copyright text.  Returning empty string");
 			return "";
 		}
 	}
