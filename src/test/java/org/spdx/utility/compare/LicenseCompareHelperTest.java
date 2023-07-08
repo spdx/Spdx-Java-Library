@@ -51,36 +51,37 @@ import junit.framework.TestCase;
  *
  */
 public class LicenseCompareHelperTest extends TestCase {
-	
-	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
-	static final String ZPL_2_1_TEXT = "TestFiles" + File.separator + "ZPL-2.1.txt";
-	static final String GPL_3_TEXT = "TestFiles" + File.separator + "GPL-3.0-test.txt";
-    static final String BSD_PROTECTION_TEXT = "TestFiles" + File.separator + "BSD-Protection.txt";
-    static final String BSD_PROTECTION_TEMPLATE = "TestFiles" + File.separator + "BSD-Protection.template.txt";
-    static final String EUPL_1_2_TEXT = "TestFiles" + File.separator + "EUPL-1.2.txt";
-    static final String EUPL_1_2_TEMPLATE = "TestFiles" + File.separator + "EUPL-1.2.template.txt";
-    static final String GD_TEMPLATE = "TestFiles" + File.separator + "GD.template.txt";
-    static final String MULAN_PSL_2_TEMPLATE = "TestFiles" + File.separator + "MulanPSL-2.0.template.txt";
-    static final String MULAN_PSL_2_COMMA_TEXT = "TestFiles" + File.separator + "MulanPSL-2.0-comma.txt";
-    private static final String GROFF_COMMENTED_VERBATIM_TEXT = "TestFiles" + File.separator + "verbatim-man-page.txt";
-    private static final String VERBATIM_MAN_PAGES_TEMPLATE = "TestFiles" + File.separator + "Verbatim-man-pages.template.txt";
-    static final String PYTHON201_TEXT = "TestFiles" + File.separator + "Python-2.0.1.txt";
-    static final String PYTHON201_TEMPLATE = "TestFiles" + File.separator + "Python-2.0.1.template.txt";
-    static final String SGIB_1_0_TEXT = "TestFiles" + File.separator + "SGI-B-1.0.txt";
-    static final String SGIB_1_0_TEMPLATE = "TestFiles" + File.separator + "SGI-B-1.0.template.txt";
-    static final String APACHE_1_0_TEXT = "TestFiles" + File.separator + "Apache-1.0.txt";
-    static final String ATLASSAIN_BSD_FILE = "TestFiles" + File.separator + "atlassain-bsd";
-    static final String MPL_2_FROM_MOZILLA_FILE = "TestFiles" + File.separator + "mpl_2_from_mozilla.txt";
-    static final String XDEBUG_1_03_TEXT = "TestFiles" + File.separator + "Xdebug-1.03.txt";
-    static final String XDEBUG_1_03_TEMPLATE = "TestFiles" + File.separator + "Xdebug-1.03.template.txt";
-    static final String FTL_TEXT = "TestFiles" + File.separator + "FTL.txt";
-    static final String FTL_TEMPLATE = "TestFiles" + File.separator + "FTL.template.txt";
-    static final String PARITY7_TEXT = "TestFiles" + File.separator + "Parity-7.0.0.txt";
-    static final String PARITY7_TEMPLATE = "TestFiles" + File.separator + "Parity-7.0.0.template.txt";
-    static final String POLYFORM_NC_TEXT = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.txt";
-    static final String POLYFORM_NC_TEMPLATE = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.template.txt";
-    static final String APL_1_TEXT = "TestFiles" + File.separator + "APL-1.0.txt";
-    static final String APL_1_TEMPLATE = "TestFiles" + File.separator + "APL-1.0.template.txt";
+	static final String DIR = "src" + File.separator + "test" + File.separator + "resources";
+
+	static final String GPL_2_TEXT = DIR + File.separator + "GPL-2.0.txt";
+	static final String ZPL_2_1_TEXT = DIR + File.separator + "ZPL-2.1.txt";
+	static final String GPL_3_TEXT = DIR + File.separator + "GPL-3.0-test.txt";
+    static final String BSD_PROTECTION_TEXT = DIR + File.separator + "BSD-Protection.txt";
+    static final String BSD_PROTECTION_TEMPLATE = DIR + File.separator + "BSD-Protection.template.txt";
+    static final String EUPL_1_2_TEXT = DIR + File.separator + "EUPL-1.2.txt";
+    static final String EUPL_1_2_TEMPLATE = DIR + File.separator + "EUPL-1.2.template.txt";
+    static final String GD_TEMPLATE = DIR + File.separator + "GD.template.txt";
+    static final String MULAN_PSL_2_TEMPLATE = DIR + File.separator + "MulanPSL-2.0.template.txt";
+    static final String MULAN_PSL_2_COMMA_TEXT = DIR + File.separator + "MulanPSL-2.0-comma.txt";
+    private static final String GROFF_COMMENTED_VERBATIM_TEXT = DIR + File.separator + "verbatim-man-page.txt";
+    private static final String VERBATIM_MAN_PAGES_TEMPLATE = DIR + File.separator + "Verbatim-man-pages.template.txt";
+    static final String PYTHON201_TEXT = DIR + File.separator + "Python-2.0.1.txt";
+    static final String PYTHON201_TEMPLATE = DIR + File.separator + "Python-2.0.1.template.txt";
+    static final String SGIB_1_0_TEXT = DIR + File.separator + "SGI-B-1.0.txt";
+    static final String SGIB_1_0_TEMPLATE = DIR + File.separator + "SGI-B-1.0.template.txt";
+    static final String APACHE_1_0_TEXT = DIR + File.separator + "Apache-1.0.txt";
+    static final String ATLASSAIN_BSD_FILE = DIR + File.separator + "atlassain-bsd";
+    static final String MPL_2_FROM_MOZILLA_FILE = DIR + File.separator + "mpl_2_from_mozilla.txt";
+    static final String XDEBUG_1_03_TEXT = DIR + File.separator + "Xdebug-1.03.txt";
+    static final String XDEBUG_1_03_TEMPLATE = DIR + File.separator + "Xdebug-1.03.template.txt";
+    static final String FTL_TEXT = DIR + File.separator + "FTL.txt";
+    static final String FTL_TEMPLATE = DIR + File.separator + "FTL.template.txt";
+    static final String PARITY7_TEXT = DIR + File.separator + "Parity-7.0.0.txt";
+    static final String PARITY7_TEMPLATE = DIR + File.separator + "Parity-7.0.0.template.txt";
+    static final String POLYFORM_NC_TEXT = DIR + File.separator + "PolyForm-Noncommercial-1.0.0.txt";
+    static final String POLYFORM_NC_TEMPLATE = DIR + File.separator + "PolyForm-Noncommercial-1.0.0.template.txt";
+    static final String APL_1_TEXT = DIR + File.separator + "APL-1.0.txt";
+    static final String APL_1_TEMPLATE = DIR + File.separator + "APL-1.0.template.txt";
 
 	/**
 	 * @throws java.lang.Exception

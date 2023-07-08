@@ -41,12 +41,14 @@
         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       </repository>
 	</distributionManagement>
+
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	  <sonar.organization>spdx</sonar.organization>
 	  <sonar.projectKey>java-spdx-library</sonar.projectKey>
     </properties>
+
 	<profiles>
 		<profile>
 			<id>doclint-java8-disable</id>
@@ -137,43 +139,16 @@
   <build>
   		<resources>
 			<resource>
-				<targetPath>resources</targetPath>
-				<filtering>false</filtering>
-				<directory>resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
+				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 			<resource>
+				<directory>${project.basedir}</directory>
 				<targetPath>META-INF</targetPath>
-				<filtering>false</filtering>
-				<directory>.</directory>
 				<includes>
 					<include>LICENSE</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>src/main</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
 		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</testResource>
-			<testResource>
-				<filtering>false</filtering>
-				<directory>TestFiles</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</testResource>
-		</testResources>
 	<plugins>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>

@@ -19,13 +19,14 @@ import org.spdx.storage.simple.InMemSpdxStore;
 import junit.framework.TestCase;
 
 public class VerificationCodeGeneratorTest extends TestCase {
+	static final String DIR = "src" + File.separator + "test" + File.separator + "resources";
 	
-    static final String SOURCE_PATH = "TestFiles" + File.separator + "spdx-parser-source";
+    static final String SOURCE_PATH = DIR + File.separator + "spdx-parser-source";
 
     static final String[] SKIPPED_FILE_NAMES = new String[] {
-            "TestFiles" + File.separator + "spdx-parser-source" + File.separator + "org" + File.separator + "spdx" + File.separator + "rdfparser"
+            DIR + File.separator + "spdx-parser-source" + File.separator + "org" + File.separator + "spdx" + File.separator + "rdfparser"
                     + File.separator + "DOAPProject.java",
-            "TestFiles" + File.separator + "spdx-parser-source" + File.separator + "org" + File.separator + "spdx" + File.separator + "rdfparser"
+            DIR + File.separator + "spdx-parser-source" + File.separator + "org" + File.separator + "spdx" + File.separator + "rdfparser"
                     + File.separator + "SPDXFile.java"
     };
 
