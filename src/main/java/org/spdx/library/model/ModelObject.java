@@ -44,7 +44,9 @@ import org.spdx.library.Version;
 import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.model.core.CreationInfo;
 import org.spdx.library.model.core.Element;
+import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.licensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
@@ -177,9 +179,10 @@ public abstract class ModelObject {
 	 * Implementation of the specific verifications for this model object
 	 * @param specVersion Version of the SPDX spec to verify against
 	 * @param verifiedElementIds list of all Element Id's which have already been verified - prevents infinite recursion
+	 * @param profiles list of profile identifiers to validate against
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	protected abstract List<String> _verify(Set<String> verifiedElementIds, String specVersion);
+	protected abstract List<String> _verify(Set<String> verifiedElementIds, String specVersion, List<ProfileIdentifierType> profiles);
 	
 	/**
 	 * Enter a critical section. leaveCriticialSection must be called.
@@ -200,15 +203,37 @@ public abstract class ModelObject {
 	/**
 	 * @param specVersion Version of the SPDX spec to verify against
 	 * @param verifiedElementUris list of all element object URIs which have already been verified - prevents infinite recursion
+	 * @param profiles list of profile identifiers to validate against
 	 * @return Any verification errors or warnings associated with this object
 	 */
-	public List<String> verify(Set<String> verifiedElementUris, String specVersion) {
+	public List<String> verify(Set<String> verifiedElementUris, String specVersion, List<ProfileIdentifierType> profiles) {
 		if (verifiedElementUris.contains(this.objectUri)) {
 			return new ArrayList<>();
 		} else {
 			// The verifiedElementId is added in the SpdxElement._verify method
-			return _verify(verifiedElementUris, specVersion);
+			return _verify(verifiedElementUris, specVersion, profiles);
 		}
+	}
+	
+	/**
+	 * @param specVersion Version of the SPDX spec to verify against
+	 * @param verifiedElementUris list of all element object URIs which have already been verified - prevents infinite recursion
+	 * @return Any verification errors or warnings associated with this object
+	 */
+	public List<String> verify(Set<String> verifiedElementUris, String specVersion) {
+		List<ProfileIdentifierType> profiles = new ArrayList<>();
+		if (this instanceof Element) {
+			Optional<CreationInfo> creationInfo;
+			try {
+				creationInfo = ((Element)this).getCreationInfo();
+				if (creationInfo.isPresent()) {
+					profiles = new ArrayList<>(creationInfo.get().getProfiles());
+				}
+			} catch (InvalidSPDXAnalysisException e) {
+				logger.error("Error getting element profile for verification", e);
+			}
+		}
+		return verify(verifiedElementUris, specVersion, profiles);
 	}
 	
 	/**
@@ -217,6 +242,15 @@ public abstract class ModelObject {
 	 */
 	public List<String> verify() {
 		return verify(Version.CURRENT_SPDX_VERSION);
+	}
+	
+	/**
+	 * @param specVersion Version of the SPDX spec to verify against
+	 * @param profiles list of profile identifiers to validate against
+	 * @return Any verification errors or warnings associated with this object
+	 */
+	public List<String> verify(String specVersion, List<ProfileIdentifierType> profiles) {
+		return verify(new HashSet<String>(), specVersion, profiles);
 	}
 	
 	/**
@@ -649,7 +683,7 @@ public abstract class ModelObject {
 	 * @return true if the object is "to" part of a relationships
 	 */
 	private boolean isRelatedElement(PropertyDescriptor propertyDescriptor) {
-		return SpdxConstants.CORE_PROP_RELATED_SPDX_ELEMENT.equals(propertyDescriptor);
+		return SpdxConstants.CORE_PROP_TO.equals(propertyDescriptor);
 	}
 	
 	/**
