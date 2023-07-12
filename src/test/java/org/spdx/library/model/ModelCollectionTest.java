@@ -7,6 +7,7 @@ import java.util.List;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.model.core.Element;
 import org.spdx.storage.PropertyDescriptor;
 
 import junit.framework.TestCase;
@@ -17,12 +18,12 @@ public class ModelCollectionTest extends TestCase {
 	static final String[] ELEMENTS = new String[] {"e1", "e2", "e3", "e4"};
 	
 	//TODO: Change this to a version 3 GMO
-	GenericModelObject gmo;
+	Element gmo;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
-		gmo = new GenericModelObject();
+		gmo = new Element();
 	}
 
 	protected void tearDown() throws Exception {
