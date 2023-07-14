@@ -45,7 +45,9 @@ import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.CreationInfo;
+import org.spdx.library.model.core.CreationInfo.CreationInfoBuilder;
 import org.spdx.library.model.core.Element;
+import org.spdx.library.model.core.Payload.PayloadBuilder;
 import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.licensing.AnyLicenseInfo;
@@ -169,6 +171,14 @@ public abstract class ModelObject {
 		}
 	}
 	
+	/**
+	 * @param builder base builder to create the ModelObject from
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ModelObject(ModelObjectBuilder builder) throws InvalidSPDXAnalysisException {
+		this(builder.modelStore, builder.objectUri, builder.copyManager, true);
+	}
+
 	// Abstract methods that must be implemented in the subclasses
 	/**
 	 * @return The class name for this object.  Class names are defined in the constants file
@@ -947,4 +957,20 @@ public abstract class ModelObject {
 		return this.getType() + ":" + objectUri;
 	}
 
+	/**
+	 * Base builder class for all model objects
+	 *
+	 */
+	public static class ModelObjectBuilder  {
+		
+		public IModelStore modelStore;
+		public String objectUri;
+		public ModelCopyManager copyManager;
+
+		public ModelObjectBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
+			this.modelStore = modelStore;
+			this.objectUri = objectUri;
+			this.copyManager = copyManager;
+		}
+	}
 }
