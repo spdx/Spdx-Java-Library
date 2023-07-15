@@ -147,6 +147,7 @@ public abstract class ModelObject {
 		}
 		this.modelStore = modelStore;
 		this.copyManager = copyManager;
+		this.objectUri = objectUri;
 		Optional<TypedValue> existing = modelStore.getTypedValue(objectUri);
 		if (existing.isPresent()) {
 			if (create && !existing.get().getType().equals(getType())) {

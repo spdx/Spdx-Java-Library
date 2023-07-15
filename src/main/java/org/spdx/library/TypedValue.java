@@ -1,6 +1,7 @@
 package org.spdx.library;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,14 @@ import org.spdx.library.model.compat.v2.GenericSpdxItem;
  */
 public class TypedValue {
 	
-	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstantsCompatV2.ALL_SPDX_CLASSES));
+	static Set<String> SPDX_CLASSES;
+	
+	static {
+		Set<String> spdxClasses = new HashSet<>(Arrays.asList(SpdxConstantsCompatV2.ALL_SPDX_CLASSES));
+		spdxClasses.addAll(Arrays.asList(SpdxConstants.ALL_SPDX_CLASSES));
+		SPDX_CLASSES = Collections.unmodifiableSet(spdxClasses);
+	}
+	
 	
 	String objectUri;
 	String type;
