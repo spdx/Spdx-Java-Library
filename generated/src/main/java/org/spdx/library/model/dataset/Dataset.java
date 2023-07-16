@@ -112,7 +112,6 @@ public class Dataset extends SpdxPackage  {
 		getAnonymizationMethodUseds().addAll(builder.anonymizationMethodUseds);
 		getDataPreprocessings().addAll(builder.dataPreprocessings);
 		getKnownBiass().addAll(builder.knownBiass);
-		setSensitivePersonalInformation(builder.sensitivePersonalInformation);
 		setConfidentialityLevel(builder.confidentialityLevel);
 		setDatasetAvailability(builder.datasetAvailability);
 		setDatasetSize(builder.datasetSize);
@@ -147,32 +146,6 @@ public class Dataset extends SpdxPackage  {
 		return knownBiass;
 	}
 	
-
-		/**
-	 * @return the sensitivePersonalInformation
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<PresenceType> getSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof PresenceType)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<PresenceType>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param sensitivePersonalInformation the sensitivePersonalInformation to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Dataset setSensitivePersonalInformation(@Nullable PresenceType sensitivePersonalInformation) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION, sensitivePersonalInformation);
-		return this;
-	}
 	
 	/**
 	 * @return the confidentialityLevel
@@ -324,15 +297,7 @@ public class Dataset extends SpdxPackage  {
 	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-		Optional<PresenceType> sensitivePersonalInformation;
-		try {
-			sensitivePersonalInformation = getSensitivePersonalInformation();
-			if (sensitivePersonalInformation.isPresent()) {
-				retval.addAll(sensitivePersonalInformation.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting sensitivePersonalInformation for Dataset: "+e.getMessage());
-		}
+
 		try {
 			Optional<ConfidentialityLevelType> confidentialityLevel = getConfidentialityLevel();
 		} catch (InvalidSPDXAnalysisException e) {
@@ -394,7 +359,6 @@ public class Dataset extends SpdxPackage  {
 		Collection<String> anonymizationMethodUseds = new ArrayList<>();
 		Collection<String> dataPreprocessings = new ArrayList<>();
 		Collection<String> knownBiass = new ArrayList<>();
-		PresenceType sensitivePersonalInformation = null;
 		ConfidentialityLevelType confidentialityLevel = null;
 		DatasetAvailabilityType datasetAvailability = null;
 		Integer datasetSize = null;
@@ -521,16 +485,6 @@ public class Dataset extends SpdxPackage  {
 			if (Objects.nonNull(knownBiasCollection)) {
 				knownBiass.addAll(knownBiasCollection);
 			}
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of sensitivePersonalInformation
-		 * @parameter sensitivePersonalInformation value to set
-		 * @return this for chaining
-		**/
-		DatasetBuilder setsensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
-			this.sensitivePersonalInformation = sensitivePersonalInformation;
 			return this;
 		}
 		

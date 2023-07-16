@@ -29,7 +29,6 @@ import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Agent.AgentBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
-import org.spdx.utility.compare.UnitTestHelper;
 
 import junit.framework.TestCase;
 
