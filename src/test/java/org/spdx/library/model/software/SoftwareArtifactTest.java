@@ -21,11 +21,11 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.software.SoftwareArtifact.SoftwareArtifactBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,15 @@ import junit.framework.TestCase;
 public class SoftwareArtifactTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String CONTENT_IDENTIFIER_TEST_VALUE = "test contentIdentifier";
+	static final String ATTRIBUTION_TEXT_TEST_VALUE = "test attributionText";
+	static final String COPYRIGHT_TEXT_TEST_VALUE = "test copyrightText";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,17 +57,18 @@ public class SoftwareArtifactTest extends TestCase {
 	
 	public static SoftwareArtifactBuilder builderForSoftwareArtifactTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SoftwareArtifactBuilder retval = new SoftwareArtifactBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setdeclaredLicense(TEST_ANYLICENSE_INFO)
-		.setconcludedLicense(TEST_ANYLICENSE_INFO)
-		.setprimaryPurpose(SoftwarePurpose.ENUM)
-		.setcontentIdentifier("A string")
-		.setattributionText("A string")
-		.setcopyrightText("A string")
-		.getadditionalPurpose.add(SoftwarePurpose.ENUM)
-		***************/
+		SoftwareArtifactBuilder retval = new SoftwareArtifactBuilder(modelStore, objectUri, copyManager)
+				.setContentIdentifier(CONTENT_IDENTIFIER_TEST_VALUE)
+				.setAttributionText(ATTRIBUTION_TEXT_TEST_VALUE)
+				.setCopyrightText(COPYRIGHT_TEXT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.setDeclaredLicense(TEST_ANYLICENSE_INFO)
+				.setConcludedLicense(TEST_ANYLICENSE_INFO)
+				.setPrimaryPurpose(SoftwarePurpose.ENUM)
+				.addAdditionalPurpose(SoftwarePurpose.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -97,7 +103,7 @@ public class SoftwareArtifactTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.software.SoftwareArtifact#Element(org.spdx.library.model.software.SoftwareArtifact.SoftwareArtifactBuilder)}.
 	 */
 	public void testSoftwareArtifactSoftwareArtifactBuilder() throws InvalidSPDXAnalysisException {
-		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -146,10 +152,9 @@ public class SoftwareArtifactTest extends TestCase {
 	 */
 	public void testSoftwareArtifactsetContentIdentifier() throws InvalidSPDXAnalysisException {
 		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSoftwareArtifact.getContentIdentifier());
-//		testSoftwareArtifact.setContentIdentifier(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSoftwareArtifact.getContentIdentifier());
-		fail("Not yet implemented");
+		assertEquals(CONTENT_IDENTIFIER_TEST_VALUE, testSoftwareArtifact.getContentIdentifier());
+		testSoftwareArtifact.setContentIdentifier("new contentIdentifier value");
+		assertEquals("new contentIdentifier value", testSoftwareArtifact.getContentIdentifier());
 	}
 	
 	/**
@@ -157,10 +162,9 @@ public class SoftwareArtifactTest extends TestCase {
 	 */
 	public void testSoftwareArtifactsetAttributionText() throws InvalidSPDXAnalysisException {
 		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSoftwareArtifact.getAttributionText());
-//		testSoftwareArtifact.setAttributionText(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSoftwareArtifact.getAttributionText());
-		fail("Not yet implemented");
+		assertEquals(ATTRIBUTION_TEXT_TEST_VALUE, testSoftwareArtifact.getAttributionText());
+		testSoftwareArtifact.setAttributionText("new attributionText value");
+		assertEquals("new attributionText value", testSoftwareArtifact.getAttributionText());
 	}
 	
 	/**
@@ -168,25 +172,20 @@ public class SoftwareArtifactTest extends TestCase {
 	 */
 	public void testSoftwareArtifactsetCopyrightText() throws InvalidSPDXAnalysisException {
 		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSoftwareArtifact.getCopyrightText());
-//		testSoftwareArtifact.setCopyrightText(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSoftwareArtifact.getCopyrightText());
-		fail("Not yet implemented");
+		assertEquals(COPYRIGHT_TEXT_TEST_VALUE, testSoftwareArtifact.getCopyrightText());
+		testSoftwareArtifact.setCopyrightText("new copyrightText value");
+		assertEquals("new copyrightText value", testSoftwareArtifact.getCopyrightText());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.software.SoftwareArtifact#getAdditionalPurpose}.
 	 */
-	public void testSoftwareArtifactgetAdditionalPurpose() throws InvalidSPDXAnalysisException {
+	public void testSoftwareArtifactgetAdditionalPurposes() throws InvalidSPDXAnalysisException {
 		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testSoftwareArtifact.getAdditionalPurpose()));
-//		testSoftwareArtifact.getAdditionalPurpose().clear();
-//		testSoftwareArtifact.getAdditionalPurpose().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testSoftwareArtifact.getAdditionalPurpose()));
+//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testSoftwareArtifact.getAdditionalPurposes())));
+//		testSoftwareArtifact.getAdditionalPurposes().clear();
+//		testSoftwareArtifact.getAdditionalPurposes().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testSoftwareArtifact.getAdditionalPurposes())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

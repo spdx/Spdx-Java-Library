@@ -211,7 +211,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter createdUsing createdUsing to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addcreatedUsing(Tool createdUsing) {
+		CreationInfoBuilder addCreatedUsing(Tool createdUsing) {
 			if (Objects.nonNull(createdUsing)) {
 				createdUsings.add(createdUsing);
 			}
@@ -223,7 +223,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter createdUsingCollection collection to initialize the createdUsing
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAllcreatedUsing(Collection<Tool> createdUsingCollection) {
+		CreationInfoBuilder addAllCreatedUsing(Collection<Tool> createdUsingCollection) {
 			if (Objects.nonNull(createdUsingCollection)) {
 				createdUsings.addAll(createdUsingCollection);
 			}
@@ -235,7 +235,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter createdBy createdBy to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addcreatedBy(Agent createdBy) {
+		CreationInfoBuilder addCreatedBy(Agent createdBy) {
 			if (Objects.nonNull(createdBy)) {
 				createdBys.add(createdBy);
 			}
@@ -247,7 +247,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter createdByCollection collection to initialize the createdBy
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAllcreatedBy(Collection<Agent> createdByCollection) {
+		CreationInfoBuilder addAllCreatedBy(Collection<Agent> createdByCollection) {
 			if (Objects.nonNull(createdByCollection)) {
 				createdBys.addAll(createdByCollection);
 			}
@@ -259,7 +259,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter profile profile to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addprofile(ProfileIdentifierType profile) {
+		CreationInfoBuilder addProfile(ProfileIdentifierType profile) {
 			if (Objects.nonNull(profile)) {
 				profiles.add(profile);
 			}
@@ -271,7 +271,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter profileCollection collection to initialize the profile
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAllprofile(Collection<ProfileIdentifierType> profileCollection) {
+		CreationInfoBuilder addAllProfile(Collection<ProfileIdentifierType> profileCollection) {
 			if (Objects.nonNull(profileCollection)) {
 				profiles.addAll(profileCollection);
 			}
@@ -283,7 +283,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter created created to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addcreated(String created) {
+		CreationInfoBuilder addCreated(String created) {
 			if (Objects.nonNull(created)) {
 				createds.add(created);
 			}
@@ -295,7 +295,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter createdCollection collection to initialize the created
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAllcreated(Collection<String> createdCollection) {
+		CreationInfoBuilder addAllCreated(Collection<String> createdCollection) {
 			if (Objects.nonNull(createdCollection)) {
 				createds.addAll(createdCollection);
 			}
@@ -307,7 +307,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter dataLicense dataLicense to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder adddataLicense(String dataLicense) {
+		CreationInfoBuilder addDataLicense(String dataLicense) {
 			if (Objects.nonNull(dataLicense)) {
 				dataLicenses.add(dataLicense);
 			}
@@ -319,7 +319,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter dataLicenseCollection collection to initialize the dataLicense
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAlldataLicense(Collection<String> dataLicenseCollection) {
+		CreationInfoBuilder addAllDataLicense(Collection<String> dataLicenseCollection) {
 			if (Objects.nonNull(dataLicenseCollection)) {
 				dataLicenses.addAll(dataLicenseCollection);
 			}
@@ -331,7 +331,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter specVersion specVersion to add
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addspecVersion(String specVersion) {
+		CreationInfoBuilder addSpecVersion(String specVersion) {
 			if (Objects.nonNull(specVersion)) {
 				specVersions.add(specVersion);
 			}
@@ -343,7 +343,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter specVersionCollection collection to initialize the specVersion
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder addAllspecVersion(Collection<String> specVersionCollection) {
+		CreationInfoBuilder addAllSpecVersion(Collection<String> specVersionCollection) {
 			if (Objects.nonNull(specVersionCollection)) {
 				specVersions.addAll(specVersionCollection);
 			}
@@ -355,7 +355,7 @@ public class CreationInfo extends ModelObject  {
 		 * @parameter comment value to set
 		 * @return this for chaining
 		**/
-		CreationInfoBuilder setcomment(String comment) {
+		CreationInfoBuilder setComment(String comment) {
 			this.comment = comment;
 			return this;
 		}

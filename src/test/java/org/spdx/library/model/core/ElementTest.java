@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Element.ElementBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class ElementTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String DESCRIPTION_TEST_VALUE = "test description";
+	static final String SUMMARY_TEST_VALUE = "test summary";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,14 +56,15 @@ public class ElementTest extends TestCase {
 	
 	public static ElementBuilder builderForElementTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ElementBuilder retval = new ElementBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setdescription("A string")
-		.setsummary("A string")
-		.getexternalReference.add(ExternalReference)
-		.getexternalIdentifier.add(ExternalIdentifier)
-		***************/
+		ElementBuilder retval = new ElementBuilder(modelStore, objectUri, copyManager)
+				.setDescription(DESCRIPTION_TEST_VALUE)
+				.setSummary(SUMMARY_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.addExternalReference(ExternalReference)
+				.addExternalIdentifier(ExternalIdentifier)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -94,7 +99,7 @@ public class ElementTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Element#Element(org.spdx.library.model.core.Element.ElementBuilder)}.
 	 */
 	public void testElementElementBuilder() throws InvalidSPDXAnalysisException {
-		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -110,10 +115,9 @@ public class ElementTest extends TestCase {
 	 */
 	public void testElementsetDescription() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testElement.getDescription());
-//		testElement.setDescription(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testElement.getDescription());
-		fail("Not yet implemented");
+		assertEquals(DESCRIPTION_TEST_VALUE, testElement.getDescription());
+		testElement.setDescription("new description value");
+		assertEquals("new description value", testElement.getDescription());
 	}
 	
 	/**
@@ -121,37 +125,32 @@ public class ElementTest extends TestCase {
 	 */
 	public void testElementsetSummary() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testElement.getSummary());
-//		testElement.setSummary(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testElement.getSummary());
-		fail("Not yet implemented");
+		assertEquals(SUMMARY_TEST_VALUE, testElement.getSummary());
+		testElement.setSummary("new summary value");
+		assertEquals("new summary value", testElement.getSummary());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Element#getExternalReference}.
 	 */
-	public void testElementsetExternalReference() throws InvalidSPDXAnalysisException {
+	public void testElementgetExternalReferences() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElement.getExternalReference()));
-//		testElement.getExternalReference().clear();
-//		testElement.getExternalReference().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElement.getExternalReference()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElement.getExternalReferences())));
+//		testElement.getExternalReferences().clear();
+//		testElement.getExternalReferences().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElement.getExternalReferences())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Element#getExternalIdentifier}.
 	 */
-	public void testElementsetExternalIdentifier() throws InvalidSPDXAnalysisException {
+	public void testElementgetExternalIdentifiers() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElement.getExternalIdentifier()));
-//		testElement.getExternalIdentifier().clear();
-//		testElement.getExternalIdentifier().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElement.getExternalIdentifier()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElement.getExternalIdentifiers())));
+//		testElement.getExternalIdentifiers().clear();
+//		testElement.getExternalIdentifiers().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElement.getExternalIdentifiers())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

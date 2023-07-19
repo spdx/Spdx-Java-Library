@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.CvssV3VulnAssessmentRelationship.CvssV3VulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class CvssV3VulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class CvssV3VulnAssessmentRelationshipTest extends TestCase {
 	
 	public static CvssV3VulnAssessmentRelationshipBuilder builderForCvssV3VulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		CvssV3VulnAssessmentRelationshipBuilder retval = new CvssV3VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		CvssV3VulnAssessmentRelationshipBuilder retval = new CvssV3VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class CvssV3VulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.CvssV3VulnAssessmentRelationship#Element(org.spdx.library.model.security.CvssV3VulnAssessmentRelationship.CvssV3VulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testCvssV3VulnAssessmentRelationshipCvssV3VulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		CvssV3VulnAssessmentRelationship testCvssV3VulnAssessmentRelationship = builderForCvssV3VulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForCvssV3VulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class CvssV3VulnAssessmentRelationshipTest extends TestCase {
 		assertTrue(test2CvssV3VulnAssessmentRelationship.equivalent(testCvssV3VulnAssessmentRelationship));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

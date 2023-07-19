@@ -171,7 +171,7 @@ public class SsvcVulnAssessmentRelationship extends VulnAssessmentRelationship  
 		 * @parameter decisionType value to set
 		 * @return this for chaining
 		**/
-		SsvcVulnAssessmentRelationshipBuilder setdecisionType(SsvcDecisionType decisionType) {
+		SsvcVulnAssessmentRelationshipBuilder setDecisionType(SsvcDecisionType decisionType) {
 			this.decisionType = decisionType;
 			return this;
 		}

@@ -21,11 +21,11 @@ package org.spdx.library.model.expandedlicense;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.expandedlicense.ExtendableLicense.ExtendableLicenseBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class ExtendableLicenseTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class ExtendableLicenseTest extends TestCase {
 	
 	public static ExtendableLicenseBuilder builderForExtendableLicenseTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ExtendableLicenseBuilder retval = new ExtendableLicenseBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		ExtendableLicenseBuilder retval = new ExtendableLicenseBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class ExtendableLicenseTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.expandedlicense.ExtendableLicense#Element(org.spdx.library.model.expandedlicense.ExtendableLicense.ExtendableLicenseBuilder)}.
 	 */
 	public void testExtendableLicenseExtendableLicenseBuilder() throws InvalidSPDXAnalysisException {
-		ExtendableLicense testExtendableLicense = builderForExtendableLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForExtendableLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class ExtendableLicenseTest extends TestCase {
 		assertTrue(test2ExtendableLicense.equivalent(testExtendableLicense));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

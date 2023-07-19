@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.SoftwareAgent.SoftwareAgentBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class SoftwareAgentTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class SoftwareAgentTest extends TestCase {
 	
 	public static SoftwareAgentBuilder builderForSoftwareAgentTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SoftwareAgentBuilder retval = new SoftwareAgentBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		SoftwareAgentBuilder retval = new SoftwareAgentBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class SoftwareAgentTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.SoftwareAgent#Element(org.spdx.library.model.core.SoftwareAgent.SoftwareAgentBuilder)}.
 	 */
 	public void testSoftwareAgentSoftwareAgentBuilder() throws InvalidSPDXAnalysisException {
-		SoftwareAgent testSoftwareAgent = builderForSoftwareAgentTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSoftwareAgentTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class SoftwareAgentTest extends TestCase {
 		assertTrue(test2SoftwareAgent.equivalent(testSoftwareAgent));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

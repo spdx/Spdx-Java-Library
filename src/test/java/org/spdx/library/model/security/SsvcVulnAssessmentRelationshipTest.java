@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.SsvcVulnAssessmentRelationship.SsvcVulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +54,12 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 	
 	public static SsvcVulnAssessmentRelationshipBuilder builderForSsvcVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SsvcVulnAssessmentRelationshipBuilder retval = new SsvcVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setdecisionType(SsvcDecisionType.ENUM)
-		***************/
+		SsvcVulnAssessmentRelationshipBuilder retval = new SsvcVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.setDecisionType(SsvcDecisionType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +94,7 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.SsvcVulnAssessmentRelationship#Element(org.spdx.library.model.security.SsvcVulnAssessmentRelationship.SsvcVulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testSsvcVulnAssessmentRelationshipSsvcVulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		SsvcVulnAssessmentRelationship testSsvcVulnAssessmentRelationship = builderForSsvcVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSsvcVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -112,8 +115,4 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 //		assertEquals(NEW_TEST_VALUE, testSsvcVulnAssessmentRelationship.getDecisionType());
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

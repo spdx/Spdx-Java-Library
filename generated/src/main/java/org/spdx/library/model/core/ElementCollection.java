@@ -154,7 +154,7 @@ public class ElementCollection extends Element  {
 		 * @parameter element element to add
 		 * @return this for chaining
 		**/
-		ElementCollectionBuilder addelement(Element element) {
+		ElementCollectionBuilder addElement(Element element) {
 			if (Objects.nonNull(element)) {
 				elements.add(element);
 			}
@@ -166,7 +166,7 @@ public class ElementCollection extends Element  {
 		 * @parameter elementCollection collection to initialize the element
 		 * @return this for chaining
 		**/
-		ElementCollectionBuilder addAllelement(Collection<Element> elementCollection) {
+		ElementCollectionBuilder addAllElement(Collection<Element> elementCollection) {
 			if (Objects.nonNull(elementCollection)) {
 				elements.addAll(elementCollection);
 			}
@@ -178,7 +178,7 @@ public class ElementCollection extends Element  {
 		 * @parameter rootElement rootElement to add
 		 * @return this for chaining
 		**/
-		ElementCollectionBuilder addrootElement(Element rootElement) {
+		ElementCollectionBuilder addRootElement(Element rootElement) {
 			if (Objects.nonNull(rootElement)) {
 				rootElements.add(rootElement);
 			}
@@ -190,7 +190,7 @@ public class ElementCollection extends Element  {
 		 * @parameter rootElementCollection collection to initialize the rootElement
 		 * @return this for chaining
 		**/
-		ElementCollectionBuilder addAllrootElement(Collection<Element> rootElementCollection) {
+		ElementCollectionBuilder addAllRootElement(Collection<Element> rootElementCollection) {
 			if (Objects.nonNull(rootElementCollection)) {
 				rootElements.addAll(rootElementCollection);
 			}

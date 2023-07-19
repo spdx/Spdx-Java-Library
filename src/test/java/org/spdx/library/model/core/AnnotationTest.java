@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Annotation.AnnotationBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class AnnotationTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String STATEMENT_TEST_VALUE = "test statement";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,13 +55,14 @@ public class AnnotationTest extends TestCase {
 	
 	public static AnnotationBuilder builderForAnnotationTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		AnnotationBuilder retval = new AnnotationBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setsubject(Element testElement)
-		.setannotationType(AnnotationType.ENUM)
-		.setstatement("A string")
-		***************/
+		AnnotationBuilder retval = new AnnotationBuilder(modelStore, objectUri, copyManager)
+				.setStatement(STATEMENT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.setSubject(Element testElement)
+				.setAnnotationType(AnnotationType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -93,7 +97,7 @@ public class AnnotationTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Annotation#Element(org.spdx.library.model.core.Annotation.AnnotationBuilder)}.
 	 */
 	public void testAnnotationAnnotationBuilder() throws InvalidSPDXAnalysisException {
-		Annotation testAnnotation = builderForAnnotationTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForAnnotationTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -131,13 +135,8 @@ public class AnnotationTest extends TestCase {
 	 */
 	public void testAnnotationsetStatement() throws InvalidSPDXAnalysisException {
 		Annotation testAnnotation = builderForAnnotationTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testAnnotation.getStatement());
-//		testAnnotation.setStatement(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testAnnotation.getStatement());
-		fail("Not yet implemented");
+		assertEquals(STATEMENT_TEST_VALUE, testAnnotation.getStatement());
+		testAnnotation.setStatement("new statement value");
+		assertEquals("new statement value", testAnnotation.getStatement());
 	}
-
-/*
-*/
-
 }

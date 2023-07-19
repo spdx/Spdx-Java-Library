@@ -150,7 +150,7 @@ public class IntegrityMethod extends ModelObject  {
 		 * @parameter comment value to set
 		 * @return this for chaining
 		**/
-		IntegrityMethodBuilder setcomment(String comment) {
+		IntegrityMethodBuilder setComment(String comment) {
 			this.comment = comment;
 			return this;
 		}

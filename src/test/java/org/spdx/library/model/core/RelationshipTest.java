@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Relationship.RelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class RelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String START_TIME_TEST_VALUE = "test startTime";
+	static final String END_TIME_TEST_VALUE = "test endTime";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,16 +56,17 @@ public class RelationshipTest extends TestCase {
 	
 	public static RelationshipBuilder builderForRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		RelationshipBuilder retval = new RelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setfrom(Element testElement)
-		.setrelationshipType(RelationshipType.ENUM)
-		.setcompleteness(RelationshipCompleteness.ENUM)
-		.setstartTime("A string")
-		.setendTime("A string")
-		.getto.add(Element)
-		***************/
+		RelationshipBuilder retval = new RelationshipBuilder(modelStore, objectUri, copyManager)
+				.setStartTime(START_TIME_TEST_VALUE)
+				.setEndTime(END_TIME_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.setFrom(Element testElement)
+				.setRelationshipType(RelationshipType.ENUM)
+				.setCompleteness(RelationshipCompleteness.ENUM)
+				.addTo(Element)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -96,7 +101,7 @@ public class RelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Relationship#Element(org.spdx.library.model.core.Relationship.RelationshipBuilder)}.
 	 */
 	public void testRelationshipRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -145,10 +150,9 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetStartTime() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testRelationship.getStartTime());
-//		testRelationship.setStartTime(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testRelationship.getStartTime());
-		fail("Not yet implemented");
+		assertEquals(START_TIME_TEST_VALUE, testRelationship.getStartTime());
+		testRelationship.setStartTime("new startTime value");
+		assertEquals("new startTime value", testRelationship.getStartTime());
 	}
 	
 	/**
@@ -156,25 +160,20 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetEndTime() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testRelationship.getEndTime());
-//		testRelationship.setEndTime(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testRelationship.getEndTime());
-		fail("Not yet implemented");
+		assertEquals(END_TIME_TEST_VALUE, testRelationship.getEndTime());
+		testRelationship.setEndTime("new endTime value");
+		assertEquals("new endTime value", testRelationship.getEndTime());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Relationship#getTo}.
 	 */
-	public void testRelationshipsetTo() throws InvalidSPDXAnalysisException {
+	public void testRelationshipgetTos() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testRelationship.getTo()));
-//		testRelationship.getTo().clear();
-//		testRelationship.getTo().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testRelationship.getTo()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testRelationship.getTos())));
+//		testRelationship.getTos().clear();
+//		testRelationship.getTos().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testRelationship.getTos())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

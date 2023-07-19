@@ -21,24 +21,27 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Agent.AgentBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
+import org.spdx.utility.compare.UnitTestHelper;
 
 import junit.framework.TestCase;
 
 public class AgentTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -51,10 +54,11 @@ public class AgentTest extends TestCase {
 	
 	public static AgentBuilder builderForAgentTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		AgentBuilder retval = new AgentBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		AgentBuilder retval = new AgentBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -89,7 +93,7 @@ public class AgentTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Agent#Element(org.spdx.library.model.core.Agent.AgentBuilder)}.
 	 */
 	public void testAgentAgentBuilder() throws InvalidSPDXAnalysisException {
-		Agent testAgent = builderForAgentTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForAgentTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -99,8 +103,4 @@ public class AgentTest extends TestCase {
 		assertTrue(test2Agent.equivalent(testAgent));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

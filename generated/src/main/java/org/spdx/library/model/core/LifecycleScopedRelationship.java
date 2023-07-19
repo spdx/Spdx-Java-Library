@@ -156,7 +156,7 @@ public class LifecycleScopedRelationship extends Relationship  {
 		 * @parameter scope value to set
 		 * @return this for chaining
 		**/
-		LifecycleScopedRelationshipBuilder setscope(LifecycleScopeType scope) {
+		LifecycleScopedRelationshipBuilder setScope(LifecycleScopeType scope) {
 			this.scope = scope;
 			return this;
 		}

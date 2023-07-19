@@ -396,7 +396,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter metric metric to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addmetric(DictionaryEntry metric) {
+		AIPackageBuilder addMetric(DictionaryEntry metric) {
 			if (Objects.nonNull(metric)) {
 				metrics.add(metric);
 			}
@@ -408,7 +408,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter metricCollection collection to initialize the metric
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllmetric(Collection<DictionaryEntry> metricCollection) {
+		AIPackageBuilder addAllMetric(Collection<DictionaryEntry> metricCollection) {
 			if (Objects.nonNull(metricCollection)) {
 				metrics.addAll(metricCollection);
 			}
@@ -420,7 +420,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter hyperparameter hyperparameter to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addhyperparameter(DictionaryEntry hyperparameter) {
+		AIPackageBuilder addHyperparameter(DictionaryEntry hyperparameter) {
 			if (Objects.nonNull(hyperparameter)) {
 				hyperparameters.add(hyperparameter);
 			}
@@ -432,7 +432,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter hyperparameterCollection collection to initialize the hyperparameter
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllhyperparameter(Collection<DictionaryEntry> hyperparameterCollection) {
+		AIPackageBuilder addAllHyperparameter(Collection<DictionaryEntry> hyperparameterCollection) {
 			if (Objects.nonNull(hyperparameterCollection)) {
 				hyperparameters.addAll(hyperparameterCollection);
 			}
@@ -444,7 +444,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter metricDecisionThreshold metricDecisionThreshold to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addmetricDecisionThreshold(DictionaryEntry metricDecisionThreshold) {
+		AIPackageBuilder addMetricDecisionThreshold(DictionaryEntry metricDecisionThreshold) {
 			if (Objects.nonNull(metricDecisionThreshold)) {
 				metricDecisionThresholds.add(metricDecisionThreshold);
 			}
@@ -456,7 +456,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter metricDecisionThresholdCollection collection to initialize the metricDecisionThreshold
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllmetricDecisionThreshold(Collection<DictionaryEntry> metricDecisionThresholdCollection) {
+		AIPackageBuilder addAllMetricDecisionThreshold(Collection<DictionaryEntry> metricDecisionThresholdCollection) {
 			if (Objects.nonNull(metricDecisionThresholdCollection)) {
 				metricDecisionThresholds.addAll(metricDecisionThresholdCollection);
 			}
@@ -468,7 +468,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter domain domain to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder adddomain(String domain) {
+		AIPackageBuilder addDomain(String domain) {
 			if (Objects.nonNull(domain)) {
 				domains.add(domain);
 			}
@@ -480,7 +480,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter domainCollection collection to initialize the domain
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAlldomain(Collection<String> domainCollection) {
+		AIPackageBuilder addAllDomain(Collection<String> domainCollection) {
 			if (Objects.nonNull(domainCollection)) {
 				domains.addAll(domainCollection);
 			}
@@ -492,7 +492,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter standardCompliance standardCompliance to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addstandardCompliance(String standardCompliance) {
+		AIPackageBuilder addStandardCompliance(String standardCompliance) {
 			if (Objects.nonNull(standardCompliance)) {
 				standardCompliances.add(standardCompliance);
 			}
@@ -504,7 +504,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter standardComplianceCollection collection to initialize the standardCompliance
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllstandardCompliance(Collection<String> standardComplianceCollection) {
+		AIPackageBuilder addAllStandardCompliance(Collection<String> standardComplianceCollection) {
 			if (Objects.nonNull(standardComplianceCollection)) {
 				standardCompliances.addAll(standardComplianceCollection);
 			}
@@ -516,7 +516,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter modelDataPreprocessing modelDataPreprocessing to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addmodelDataPreprocessing(String modelDataPreprocessing) {
+		AIPackageBuilder addModelDataPreprocessing(String modelDataPreprocessing) {
 			if (Objects.nonNull(modelDataPreprocessing)) {
 				modelDataPreprocessings.add(modelDataPreprocessing);
 			}
@@ -528,7 +528,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter modelDataPreprocessingCollection collection to initialize the modelDataPreprocessing
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllmodelDataPreprocessing(Collection<String> modelDataPreprocessingCollection) {
+		AIPackageBuilder addAllModelDataPreprocessing(Collection<String> modelDataPreprocessingCollection) {
 			if (Objects.nonNull(modelDataPreprocessingCollection)) {
 				modelDataPreprocessings.addAll(modelDataPreprocessingCollection);
 			}
@@ -540,7 +540,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter typeOfModel typeOfModel to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addtypeOfModel(String typeOfModel) {
+		AIPackageBuilder addTypeOfModel(String typeOfModel) {
 			if (Objects.nonNull(typeOfModel)) {
 				typeOfModels.add(typeOfModel);
 			}
@@ -552,7 +552,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter typeOfModelCollection collection to initialize the typeOfModel
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAlltypeOfModel(Collection<String> typeOfModelCollection) {
+		AIPackageBuilder addAllTypeOfModel(Collection<String> typeOfModelCollection) {
 			if (Objects.nonNull(typeOfModelCollection)) {
 				typeOfModels.addAll(typeOfModelCollection);
 			}
@@ -564,7 +564,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter modelExplainability modelExplainability to add
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addmodelExplainability(String modelExplainability) {
+		AIPackageBuilder addModelExplainability(String modelExplainability) {
 			if (Objects.nonNull(modelExplainability)) {
 				modelExplainabilitys.add(modelExplainability);
 			}
@@ -576,7 +576,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter modelExplainabilityCollection collection to initialize the modelExplainability
 		 * @return this for chaining
 		**/
-		AIPackageBuilder addAllmodelExplainability(Collection<String> modelExplainabilityCollection) {
+		AIPackageBuilder addAllModelExplainability(Collection<String> modelExplainabilityCollection) {
 			if (Objects.nonNull(modelExplainabilityCollection)) {
 				modelExplainabilitys.addAll(modelExplainabilityCollection);
 			}
@@ -588,7 +588,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter sensitivePersonalInformation value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setsensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
+		AIPackageBuilder setSensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
 			this.sensitivePersonalInformation = sensitivePersonalInformation;
 			return this;
 		}
@@ -598,7 +598,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter safetyRiskAssessment value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setsafetyRiskAssessment(SafetyRiskAssessmentType safetyRiskAssessment) {
+		AIPackageBuilder setSafetyRiskAssessment(SafetyRiskAssessmentType safetyRiskAssessment) {
 			this.safetyRiskAssessment = safetyRiskAssessment;
 			return this;
 		}
@@ -608,7 +608,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter autonomyType value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setautonomyType(PresenceType autonomyType) {
+		AIPackageBuilder setAutonomyType(PresenceType autonomyType) {
 			this.autonomyType = autonomyType;
 			return this;
 		}
@@ -618,7 +618,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter informationAboutTraining value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setinformationAboutTraining(String informationAboutTraining) {
+		AIPackageBuilder setInformationAboutTraining(String informationAboutTraining) {
 			this.informationAboutTraining = informationAboutTraining;
 			return this;
 		}
@@ -628,7 +628,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter limitation value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setlimitation(String limitation) {
+		AIPackageBuilder setLimitation(String limitation) {
 			this.limitation = limitation;
 			return this;
 		}
@@ -638,7 +638,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter energyConsumption value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setenergyConsumption(String energyConsumption) {
+		AIPackageBuilder setEnergyConsumption(String energyConsumption) {
 			this.energyConsumption = energyConsumption;
 			return this;
 		}
@@ -648,7 +648,7 @@ public class AIPackage extends SpdxPackage  {
 		 * @parameter informationAboutApplication value to set
 		 * @return this for chaining
 		**/
-		AIPackageBuilder setinformationAboutApplication(String informationAboutApplication) {
+		AIPackageBuilder setInformationAboutApplication(String informationAboutApplication) {
 			this.informationAboutApplication = informationAboutApplication;
 			return this;
 		}

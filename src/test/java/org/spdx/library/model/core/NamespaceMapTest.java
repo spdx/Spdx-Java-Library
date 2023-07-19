@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.NamespaceMap.NamespaceMapBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class NamespaceMapTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String PREFIX_TEST_VALUE = "test prefix";
+	static final String NAMESPACE_TEST_VALUE = "test namespace";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +56,13 @@ public class NamespaceMapTest extends TestCase {
 	
 	public static NamespaceMapBuilder builderForNamespaceMapTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		NamespaceMapBuilder retval = new NamespaceMapBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setprefix("A string")
-		.setnamespace("A string")
-		***************/
+		NamespaceMapBuilder retval = new NamespaceMapBuilder(modelStore, objectUri, copyManager)
+				.setPrefix(PREFIX_TEST_VALUE)
+				.setNamespace(NAMESPACE_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +97,7 @@ public class NamespaceMapTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.NamespaceMap#Element(org.spdx.library.model.core.NamespaceMap.NamespaceMapBuilder)}.
 	 */
 	public void testNamespaceMapNamespaceMapBuilder() throws InvalidSPDXAnalysisException {
-		NamespaceMap testNamespaceMap = builderForNamespaceMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForNamespaceMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -108,10 +113,9 @@ public class NamespaceMapTest extends TestCase {
 	 */
 	public void testNamespaceMapsetPrefix() throws InvalidSPDXAnalysisException {
 		NamespaceMap testNamespaceMap = builderForNamespaceMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testNamespaceMap.getPrefix());
-//		testNamespaceMap.setPrefix(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testNamespaceMap.getPrefix());
-		fail("Not yet implemented");
+		assertEquals(PREFIX_TEST_VALUE, testNamespaceMap.getPrefix());
+		testNamespaceMap.setPrefix("new prefix value");
+		assertEquals("new prefix value", testNamespaceMap.getPrefix());
 	}
 	
 	/**
@@ -119,13 +123,8 @@ public class NamespaceMapTest extends TestCase {
 	 */
 	public void testNamespaceMapsetNamespace() throws InvalidSPDXAnalysisException {
 		NamespaceMap testNamespaceMap = builderForNamespaceMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testNamespaceMap.getNamespace());
-//		testNamespaceMap.setNamespace(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testNamespaceMap.getNamespace());
-		fail("Not yet implemented");
+		assertEquals(NAMESPACE_TEST_VALUE, testNamespaceMap.getNamespace());
+		testNamespaceMap.setNamespace("new namespace value");
+		assertEquals("new namespace value", testNamespaceMap.getNamespace());
 	}
-
-/*
-*/
-
 }

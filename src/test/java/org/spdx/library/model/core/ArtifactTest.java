@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Artifact.ArtifactBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,20 @@ import junit.framework.TestCase;
 public class ArtifactTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String RELEASE_TIME_TEST_VALUE = "test releaseTime";
+	static final String VALID_UNTIL_TIME_TEST_VALUE = "test validUntilTime";
+	static final String BUILT_TIME_TEST_VALUE = "test builtTime";
+	static final String STANDARD_TEST_VALUE1 = "test 1 standard";
+	static final String STANDARD_TEST_VALUE2 = "test 2 standard";
+	static final String STANDARD_TEST_VALUE3 = "test 3 standard";
+	static final List<String> STANDARD_TEST_LIST1 = Arrays.asList(new String[] { STANDARD_TEST_VALUE1, STANDARD_TEST_VALUE2 });
+	static final List<String> STANDARD_TEST_LIST2 = Arrays.asList(new String[] { STANDARD_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,16 +62,18 @@ public class ArtifactTest extends TestCase {
 	
 	public static ArtifactBuilder builderForArtifactTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ArtifactBuilder retval = new ArtifactBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setreleaseTime("A string")
-		.setvalidUntilTime("A string")
-		.setbuiltTime("A string")
-		.getoriginatedBy.add(Agent)
-		.getsuppliedBy.add(Agent)
-		.getstandard.add("Test string")
-		***************/
+		ArtifactBuilder retval = new ArtifactBuilder(modelStore, objectUri, copyManager)
+				.setReleaseTime(RELEASE_TIME_TEST_VALUE)
+				.setValidUntilTime(VALID_UNTIL_TIME_TEST_VALUE)
+				.setBuiltTime(BUILT_TIME_TEST_VALUE)
+				.addStandard(STANDARD_TEST_VALUE1)
+				.addStandard(STANDARD_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				.addOriginatedBy(Agent)
+				.addSuppliedBy(Agent)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -96,7 +108,7 @@ public class ArtifactTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Artifact#Element(org.spdx.library.model.core.Artifact.ArtifactBuilder)}.
 	 */
 	public void testArtifactArtifactBuilder() throws InvalidSPDXAnalysisException {
-		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -112,10 +124,9 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetReleaseTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testArtifact.getReleaseTime());
-//		testArtifact.setReleaseTime(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testArtifact.getReleaseTime());
-		fail("Not yet implemented");
+		assertEquals(RELEASE_TIME_TEST_VALUE, testArtifact.getReleaseTime());
+		testArtifact.setReleaseTime("new releaseTime value");
+		assertEquals("new releaseTime value", testArtifact.getReleaseTime());
 	}
 	
 	/**
@@ -123,10 +134,9 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetValidUntilTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testArtifact.getValidUntilTime());
-//		testArtifact.setValidUntilTime(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testArtifact.getValidUntilTime());
-		fail("Not yet implemented");
+		assertEquals(VALID_UNTIL_TIME_TEST_VALUE, testArtifact.getValidUntilTime());
+		testArtifact.setValidUntilTime("new validUntilTime value");
+		assertEquals("new validUntilTime value", testArtifact.getValidUntilTime());
 	}
 	
 	/**
@@ -134,49 +144,44 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetBuiltTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testArtifact.getBuiltTime());
-//		testArtifact.setBuiltTime(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testArtifact.getBuiltTime());
-		fail("Not yet implemented");
+		assertEquals(BUILT_TIME_TEST_VALUE, testArtifact.getBuiltTime());
+		testArtifact.setBuiltTime("new builtTime value");
+		assertEquals("new builtTime value", testArtifact.getBuiltTime());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Artifact#getOriginatedBy}.
 	 */
-	public void testArtifactsetOriginatedBy() throws InvalidSPDXAnalysisException {
+	public void testArtifactgetOriginatedBys() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testArtifact.getOriginatedBy()));
-//		testArtifact.getOriginatedBy().clear();
-//		testArtifact.getOriginatedBy().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getOriginatedBy()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testArtifact.getOriginatedBys())));
+//		testArtifact.getOriginatedBys().clear();
+//		testArtifact.getOriginatedBys().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getOriginatedBys())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Artifact#getSuppliedBy}.
 	 */
-	public void testArtifactsetSuppliedBy() throws InvalidSPDXAnalysisException {
+	public void testArtifactgetSuppliedBys() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBy()));
-//		testArtifact.getSuppliedBy().clear();
-//		testArtifact.getSuppliedBy().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBy()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBys())));
+//		testArtifact.getSuppliedBys().clear();
+//		testArtifact.getSuppliedBys().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBys())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.Artifact#getStandard}.
+	 * Test method for {@link org.spdx.library.model.core.Artifact#getStandards}.
 	 */
-	public void testArtifactgetStandard() throws InvalidSPDXAnalysisException {
+	public void testArtifactgetStandards() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testArtifact.getStandard()));
-//		testArtifact.getStandard().clear();
-//		testArtifact.getStandard().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getStandard()));
+		assertTrue(UnitTestHelper.isListsEqual(STANDARD_TEST_LIST1, new ArrayList<>(testArtifact.getStandards())));
+		testArtifact.getStandards().clear();
+		testArtifact.getStandards().addAll(STANDARD_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(STANDARD_TEST_LIST2, new ArrayList<>(testArtifact.getStandards())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

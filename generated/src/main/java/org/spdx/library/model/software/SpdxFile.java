@@ -150,7 +150,7 @@ public class SpdxFile extends SoftwareArtifact  {
 		 * @parameter contentType value to set
 		 * @return this for chaining
 		**/
-		SpdxFileBuilder setcontentType(String contentType) {
+		SpdxFileBuilder setContentType(String contentType) {
 			this.contentType = contentType;
 			return this;
 		}

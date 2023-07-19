@@ -184,7 +184,7 @@ public class Payload extends ModelObject  {
 		 * @parameter namespaces namespaces to add
 		 * @return this for chaining
 		**/
-		PayloadBuilder addnamespaces(NamespaceMap namespaces) {
+		PayloadBuilder addNamespaces(NamespaceMap namespaces) {
 			if (Objects.nonNull(namespaces)) {
 				namespacess.add(namespaces);
 			}
@@ -196,7 +196,7 @@ public class Payload extends ModelObject  {
 		 * @parameter namespacesCollection collection to initialize the namespaces
 		 * @return this for chaining
 		**/
-		PayloadBuilder addAllnamespaces(Collection<NamespaceMap> namespacesCollection) {
+		PayloadBuilder addAllNamespaces(Collection<NamespaceMap> namespacesCollection) {
 			if (Objects.nonNull(namespacesCollection)) {
 				namespacess.addAll(namespacesCollection);
 			}
@@ -208,7 +208,7 @@ public class Payload extends ModelObject  {
 		 * @parameter imports imports to add
 		 * @return this for chaining
 		**/
-		PayloadBuilder addimports(ExternalMap imports) {
+		PayloadBuilder addImports(ExternalMap imports) {
 			if (Objects.nonNull(imports)) {
 				importss.add(imports);
 			}
@@ -220,7 +220,7 @@ public class Payload extends ModelObject  {
 		 * @parameter importsCollection collection to initialize the imports
 		 * @return this for chaining
 		**/
-		PayloadBuilder addAllimports(Collection<ExternalMap> importsCollection) {
+		PayloadBuilder addAllImports(Collection<ExternalMap> importsCollection) {
 			if (Objects.nonNull(importsCollection)) {
 				importss.addAll(importsCollection);
 			}
@@ -232,7 +232,7 @@ public class Payload extends ModelObject  {
 		 * @parameter creationInfo value to set
 		 * @return this for chaining
 		**/
-		PayloadBuilder setcreationInfo(CreationInfo creationInfo) {
+		PayloadBuilder setCreationInfo(CreationInfo creationInfo) {
 			this.creationInfo = creationInfo;
 			return this;
 		}

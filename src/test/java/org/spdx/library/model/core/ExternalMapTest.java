@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.ExternalMap.ExternalMapBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,15 @@ import junit.framework.TestCase;
 public class ExternalMapTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String DEFINING_DOCUMENT_TEST_VALUE = "test definingDocument";
+	static final String LOCATION_HINT_TEST_VALUE = "test locationHint";
+	static final String EXTERNAL_ID_TEST_VALUE = "test externalId";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,14 +57,15 @@ public class ExternalMapTest extends TestCase {
 	
 	public static ExternalMapBuilder builderForExternalMapTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ExternalMapBuilder retval = new ExternalMapBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setdefiningDocument("A string")
-		.setlocationHint("A string")
-		.setexternalId("A string")
-		.getverifiedUsing.add(IntegrityMethod)
-		***************/
+		ExternalMapBuilder retval = new ExternalMapBuilder(modelStore, objectUri, copyManager)
+				.setDefiningDocument(DEFINING_DOCUMENT_TEST_VALUE)
+				.setLocationHint(LOCATION_HINT_TEST_VALUE)
+				.setExternalId(EXTERNAL_ID_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.addVerifiedUsing(IntegrityMethod)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -94,7 +100,7 @@ public class ExternalMapTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.ExternalMap#Element(org.spdx.library.model.core.ExternalMap.ExternalMapBuilder)}.
 	 */
 	public void testExternalMapExternalMapBuilder() throws InvalidSPDXAnalysisException {
-		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -110,10 +116,9 @@ public class ExternalMapTest extends TestCase {
 	 */
 	public void testExternalMapsetDefiningDocument() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalMap.getDefiningDocument());
-//		testExternalMap.setDefiningDocument(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalMap.getDefiningDocument());
-		fail("Not yet implemented");
+		assertEquals(DEFINING_DOCUMENT_TEST_VALUE, testExternalMap.getDefiningDocument());
+		testExternalMap.setDefiningDocument("new definingDocument value");
+		assertEquals("new definingDocument value", testExternalMap.getDefiningDocument());
 	}
 	
 	/**
@@ -121,10 +126,9 @@ public class ExternalMapTest extends TestCase {
 	 */
 	public void testExternalMapsetLocationHint() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalMap.getLocationHint());
-//		testExternalMap.setLocationHint(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalMap.getLocationHint());
-		fail("Not yet implemented");
+		assertEquals(LOCATION_HINT_TEST_VALUE, testExternalMap.getLocationHint());
+		testExternalMap.setLocationHint("new locationHint value");
+		assertEquals("new locationHint value", testExternalMap.getLocationHint());
 	}
 	
 	/**
@@ -132,25 +136,20 @@ public class ExternalMapTest extends TestCase {
 	 */
 	public void testExternalMapsetExternalId() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalMap.getExternalId());
-//		testExternalMap.setExternalId(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalMap.getExternalId());
-		fail("Not yet implemented");
+		assertEquals(EXTERNAL_ID_TEST_VALUE, testExternalMap.getExternalId());
+		testExternalMap.setExternalId("new externalId value");
+		assertEquals("new externalId value", testExternalMap.getExternalId());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.ExternalMap#getVerifiedUsing}.
 	 */
-	public void testExternalMapsetVerifiedUsing() throws InvalidSPDXAnalysisException {
+	public void testExternalMapgetVerifiedUsings() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testExternalMap.getVerifiedUsing()));
-//		testExternalMap.getVerifiedUsing().clear();
-//		testExternalMap.getVerifiedUsing().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testExternalMap.getVerifiedUsing()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testExternalMap.getVerifiedUsings())));
+//		testExternalMap.getVerifiedUsings().clear();
+//		testExternalMap.getVerifiedUsings().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testExternalMap.getVerifiedUsings())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

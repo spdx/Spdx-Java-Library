@@ -195,7 +195,7 @@ public class Hash extends IntegrityMethod  {
 		 * @parameter algorithm value to set
 		 * @return this for chaining
 		**/
-		HashBuilder setalgorithm(HashAlgorithm algorithm) {
+		HashBuilder setAlgorithm(HashAlgorithm algorithm) {
 			this.algorithm = algorithm;
 			return this;
 		}
@@ -205,7 +205,7 @@ public class Hash extends IntegrityMethod  {
 		 * @parameter hashValue value to set
 		 * @return this for chaining
 		**/
-		HashBuilder sethashValue(String hashValue) {
+		HashBuilder setHashValue(String hashValue) {
 			this.hashValue = hashValue;
 			return this;
 		}

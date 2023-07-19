@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Person.PersonBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class PersonTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class PersonTest extends TestCase {
 	
 	public static PersonBuilder builderForPersonTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		PersonBuilder retval = new PersonBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		PersonBuilder retval = new PersonBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class PersonTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Person#Element(org.spdx.library.model.core.Person.PersonBuilder)}.
 	 */
 	public void testPersonPersonBuilder() throws InvalidSPDXAnalysisException {
-		Person testPerson = builderForPersonTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForPersonTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class PersonTest extends TestCase {
 		assertTrue(test2Person.equivalent(testPerson));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

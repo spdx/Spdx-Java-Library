@@ -183,7 +183,7 @@ public class VexVulnAssessmentRelationship extends VulnAssessmentRelationship  {
 		 * @parameter statusNotes value to set
 		 * @return this for chaining
 		**/
-		VexVulnAssessmentRelationshipBuilder setstatusNotes(String statusNotes) {
+		VexVulnAssessmentRelationshipBuilder setStatusNotes(String statusNotes) {
 			this.statusNotes = statusNotes;
 			return this;
 		}
@@ -193,7 +193,7 @@ public class VexVulnAssessmentRelationship extends VulnAssessmentRelationship  {
 		 * @parameter vexVersion value to set
 		 * @return this for chaining
 		**/
-		VexVulnAssessmentRelationshipBuilder setvexVersion(String vexVersion) {
+		VexVulnAssessmentRelationshipBuilder setVexVersion(String vexVersion) {
 			this.vexVersion = vexVersion;
 			return this;
 		}

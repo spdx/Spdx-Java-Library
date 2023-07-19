@@ -21,11 +21,11 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.software.Sbom.SbomBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class SbomTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +54,12 @@ public class SbomTest extends TestCase {
 	
 	public static SbomBuilder builderForSbomTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SbomBuilder retval = new SbomBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.getsbomType.add(SBOMType.ENUM)
-		***************/
+		SbomBuilder retval = new SbomBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.addSbomType(SBOMType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +94,7 @@ public class SbomTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.software.Sbom#Element(org.spdx.library.model.software.Sbom.SbomBuilder)}.
 	 */
 	public void testSbomSbomBuilder() throws InvalidSPDXAnalysisException {
-		Sbom testSbom = builderForSbomTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSbomTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -105,16 +108,12 @@ public class SbomTest extends TestCase {
 	/**
 	 * Test method for {@link org.spdx.library.model.software.Sbom#getSbomType}.
 	 */
-	public void testSbomgetSbomType() throws InvalidSPDXAnalysisException {
+	public void testSbomgetSbomTypes() throws InvalidSPDXAnalysisException {
 		Sbom testSbom = builderForSbomTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testSbom.getSbomType()));
-//		testSbom.getSbomType().clear();
-//		testSbom.getSbomType().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testSbom.getSbomType()));
+//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testSbom.getSbomTypes())));
+//		testSbom.getSbomTypes().clear();
+//		testSbom.getSbomTypes().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testSbom.getSbomTypes())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

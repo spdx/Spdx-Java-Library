@@ -226,7 +226,7 @@ public class Artifact extends Element  {
 		 * @parameter originatedBy originatedBy to add
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addoriginatedBy(Agent originatedBy) {
+		ArtifactBuilder addOriginatedBy(Agent originatedBy) {
 			if (Objects.nonNull(originatedBy)) {
 				originatedBys.add(originatedBy);
 			}
@@ -238,7 +238,7 @@ public class Artifact extends Element  {
 		 * @parameter originatedByCollection collection to initialize the originatedBy
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addAlloriginatedBy(Collection<Agent> originatedByCollection) {
+		ArtifactBuilder addAllOriginatedBy(Collection<Agent> originatedByCollection) {
 			if (Objects.nonNull(originatedByCollection)) {
 				originatedBys.addAll(originatedByCollection);
 			}
@@ -250,7 +250,7 @@ public class Artifact extends Element  {
 		 * @parameter suppliedBy suppliedBy to add
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addsuppliedBy(Agent suppliedBy) {
+		ArtifactBuilder addSuppliedBy(Agent suppliedBy) {
 			if (Objects.nonNull(suppliedBy)) {
 				suppliedBys.add(suppliedBy);
 			}
@@ -262,7 +262,7 @@ public class Artifact extends Element  {
 		 * @parameter suppliedByCollection collection to initialize the suppliedBy
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addAllsuppliedBy(Collection<Agent> suppliedByCollection) {
+		ArtifactBuilder addAllSuppliedBy(Collection<Agent> suppliedByCollection) {
 			if (Objects.nonNull(suppliedByCollection)) {
 				suppliedBys.addAll(suppliedByCollection);
 			}
@@ -274,7 +274,7 @@ public class Artifact extends Element  {
 		 * @parameter standard standard to add
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addstandard(String standard) {
+		ArtifactBuilder addStandard(String standard) {
 			if (Objects.nonNull(standard)) {
 				standards.add(standard);
 			}
@@ -286,7 +286,7 @@ public class Artifact extends Element  {
 		 * @parameter standardCollection collection to initialize the standard
 		 * @return this for chaining
 		**/
-		ArtifactBuilder addAllstandard(Collection<String> standardCollection) {
+		ArtifactBuilder addAllStandard(Collection<String> standardCollection) {
 			if (Objects.nonNull(standardCollection)) {
 				standards.addAll(standardCollection);
 			}
@@ -298,7 +298,7 @@ public class Artifact extends Element  {
 		 * @parameter releaseTime value to set
 		 * @return this for chaining
 		**/
-		ArtifactBuilder setreleaseTime(String releaseTime) {
+		ArtifactBuilder setReleaseTime(String releaseTime) {
 			this.releaseTime = releaseTime;
 			return this;
 		}
@@ -308,7 +308,7 @@ public class Artifact extends Element  {
 		 * @parameter validUntilTime value to set
 		 * @return this for chaining
 		**/
-		ArtifactBuilder setvalidUntilTime(String validUntilTime) {
+		ArtifactBuilder setValidUntilTime(String validUntilTime) {
 			this.validUntilTime = validUntilTime;
 			return this;
 		}
@@ -318,7 +318,7 @@ public class Artifact extends Element  {
 		 * @parameter builtTime value to set
 		 * @return this for chaining
 		**/
-		ArtifactBuilder setbuiltTime(String builtTime) {
+		ArtifactBuilder setBuiltTime(String builtTime) {
 			this.builtTime = builtTime;
 			return this;
 		}

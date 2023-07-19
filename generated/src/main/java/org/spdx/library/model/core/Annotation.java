@@ -221,7 +221,7 @@ public class Annotation extends Element  {
 		 * @parameter subject value to set
 		 * @return this for chaining
 		**/
-		AnnotationBuilder setsubject(Element subject) {
+		AnnotationBuilder setSubject(Element subject) {
 			this.subject = subject;
 			return this;
 		}
@@ -231,7 +231,7 @@ public class Annotation extends Element  {
 		 * @parameter annotationType value to set
 		 * @return this for chaining
 		**/
-		AnnotationBuilder setannotationType(AnnotationType annotationType) {
+		AnnotationBuilder setAnnotationType(AnnotationType annotationType) {
 			this.annotationType = annotationType;
 			return this;
 		}
@@ -241,7 +241,7 @@ public class Annotation extends Element  {
 		 * @parameter statement value to set
 		 * @return this for chaining
 		**/
-		AnnotationBuilder setstatement(String statement) {
+		AnnotationBuilder setStatement(String statement) {
 			this.statement = statement;
 			return this;
 		}

@@ -275,7 +275,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter isFsfLibre value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setisFsfLibre(Boolean isFsfLibre) {
+		LicenseBuilder setIsFsfLibre(Boolean isFsfLibre) {
 			this.isFsfLibre = isFsfLibre;
 			return this;
 		}
@@ -285,7 +285,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter isDeprecatedLicenseId value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setisDeprecatedLicenseId(Boolean isDeprecatedLicenseId) {
+		LicenseBuilder setIsDeprecatedLicenseId(Boolean isDeprecatedLicenseId) {
 			this.isDeprecatedLicenseId = isDeprecatedLicenseId;
 			return this;
 		}
@@ -295,7 +295,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter isOsiApproved value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setisOsiApproved(Boolean isOsiApproved) {
+		LicenseBuilder setIsOsiApproved(Boolean isOsiApproved) {
 			this.isOsiApproved = isOsiApproved;
 			return this;
 		}
@@ -305,7 +305,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter standardLicenseTemplate value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setstandardLicenseTemplate(String standardLicenseTemplate) {
+		LicenseBuilder setStandardLicenseTemplate(String standardLicenseTemplate) {
 			this.standardLicenseTemplate = standardLicenseTemplate;
 			return this;
 		}
@@ -315,7 +315,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter standardLicenseHeader value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setstandardLicenseHeader(String standardLicenseHeader) {
+		LicenseBuilder setStandardLicenseHeader(String standardLicenseHeader) {
 			this.standardLicenseHeader = standardLicenseHeader;
 			return this;
 		}
@@ -325,7 +325,7 @@ public class License extends ExtendableLicense  {
 		 * @parameter licenseText value to set
 		 * @return this for chaining
 		**/
-		LicenseBuilder setlicenseText(String licenseText) {
+		LicenseBuilder setLicenseText(String licenseText) {
 			this.licenseText = licenseText;
 			return this;
 		}

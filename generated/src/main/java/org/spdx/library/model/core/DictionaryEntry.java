@@ -179,7 +179,7 @@ public class DictionaryEntry extends ModelObject  {
 		 * @parameter key value to set
 		 * @return this for chaining
 		**/
-		DictionaryEntryBuilder setkey(String key) {
+		DictionaryEntryBuilder setKey(String key) {
 			this.key = key;
 			return this;
 		}
@@ -189,7 +189,7 @@ public class DictionaryEntry extends ModelObject  {
 		 * @parameter value value to set
 		 * @return this for chaining
 		**/
-		DictionaryEntryBuilder setvalue(String value) {
+		DictionaryEntryBuilder setValue(String value) {
 			this.value = value;
 			return this;
 		}

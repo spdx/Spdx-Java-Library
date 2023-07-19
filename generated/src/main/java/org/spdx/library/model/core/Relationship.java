@@ -290,7 +290,7 @@ public class Relationship extends Element  {
 		 * @parameter to to to add
 		 * @return this for chaining
 		**/
-		RelationshipBuilder addto(Element to) {
+		RelationshipBuilder addTo(Element to) {
 			if (Objects.nonNull(to)) {
 				tos.add(to);
 			}
@@ -302,7 +302,7 @@ public class Relationship extends Element  {
 		 * @parameter toCollection collection to initialize the to
 		 * @return this for chaining
 		**/
-		RelationshipBuilder addAllto(Collection<Element> toCollection) {
+		RelationshipBuilder addAllTo(Collection<Element> toCollection) {
 			if (Objects.nonNull(toCollection)) {
 				tos.addAll(toCollection);
 			}
@@ -314,7 +314,7 @@ public class Relationship extends Element  {
 		 * @parameter from value to set
 		 * @return this for chaining
 		**/
-		RelationshipBuilder setfrom(Element from) {
+		RelationshipBuilder setFrom(Element from) {
 			this.from = from;
 			return this;
 		}
@@ -324,7 +324,7 @@ public class Relationship extends Element  {
 		 * @parameter relationshipType value to set
 		 * @return this for chaining
 		**/
-		RelationshipBuilder setrelationshipType(RelationshipType relationshipType) {
+		RelationshipBuilder setRelationshipType(RelationshipType relationshipType) {
 			this.relationshipType = relationshipType;
 			return this;
 		}
@@ -334,7 +334,7 @@ public class Relationship extends Element  {
 		 * @parameter completeness value to set
 		 * @return this for chaining
 		**/
-		RelationshipBuilder setcompleteness(RelationshipCompleteness completeness) {
+		RelationshipBuilder setCompleteness(RelationshipCompleteness completeness) {
 			this.completeness = completeness;
 			return this;
 		}
@@ -344,7 +344,7 @@ public class Relationship extends Element  {
 		 * @parameter startTime value to set
 		 * @return this for chaining
 		**/
-		RelationshipBuilder setstartTime(String startTime) {
+		RelationshipBuilder setStartTime(String startTime) {
 			this.startTime = startTime;
 			return this;
 		}
@@ -354,7 +354,7 @@ public class Relationship extends Element  {
 		 * @parameter endTime value to set
 		 * @return this for chaining
 		**/
-		RelationshipBuilder setendTime(String endTime) {
+		RelationshipBuilder setEndTime(String endTime) {
 			this.endTime = endTime;
 			return this;
 		}

@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Bundle.BundleBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class BundleTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String CONTEXT_TEST_VALUE = "test context";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +55,12 @@ public class BundleTest extends TestCase {
 	
 	public static BundleBuilder builderForBundleTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		BundleBuilder retval = new BundleBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setcontext("A string")
-		***************/
+		BundleBuilder retval = new BundleBuilder(modelStore, objectUri, copyManager)
+				.setContext(CONTEXT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +95,7 @@ public class BundleTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Bundle#Element(org.spdx.library.model.core.Bundle.BundleBuilder)}.
 	 */
 	public void testBundleBundleBuilder() throws InvalidSPDXAnalysisException {
-		Bundle testBundle = builderForBundleTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForBundleTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -107,13 +111,8 @@ public class BundleTest extends TestCase {
 	 */
 	public void testBundlesetContext() throws InvalidSPDXAnalysisException {
 		Bundle testBundle = builderForBundleTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testBundle.getContext());
-//		testBundle.setContext(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testBundle.getContext());
-		fail("Not yet implemented");
+		assertEquals(CONTEXT_TEST_VALUE, testBundle.getContext());
+		testBundle.setContext("new context value");
+		assertEquals("new context value", testBundle.getContext());
 	}
-
-/*
-*/
-
 }

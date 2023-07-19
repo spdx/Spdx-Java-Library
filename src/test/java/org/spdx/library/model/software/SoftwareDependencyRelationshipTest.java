@@ -21,11 +21,11 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.software.SoftwareDependencyRelationship.SoftwareDependencyRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class SoftwareDependencyRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +54,13 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	
 	public static SoftwareDependencyRelationshipBuilder builderForSoftwareDependencyRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SoftwareDependencyRelationshipBuilder retval = new SoftwareDependencyRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setsoftwareLinkage(SoftwareDependencyLinkType.ENUM)
-		.setconditionality(DependencyConditionalityType.ENUM)
-		***************/
+		SoftwareDependencyRelationshipBuilder retval = new SoftwareDependencyRelationshipBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.setSoftwareLinkage(SoftwareDependencyLinkType.ENUM)
+				.setConditionality(DependencyConditionalityType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +95,7 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.software.SoftwareDependencyRelationship#Element(org.spdx.library.model.software.SoftwareDependencyRelationship.SoftwareDependencyRelationshipBuilder)}.
 	 */
 	public void testSoftwareDependencyRelationshipSoftwareDependencyRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		SoftwareDependencyRelationship testSoftwareDependencyRelationship = builderForSoftwareDependencyRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSoftwareDependencyRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -124,8 +127,4 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 //		assertEquals(NEW_TEST_VALUE, testSoftwareDependencyRelationship.getConditionality());
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

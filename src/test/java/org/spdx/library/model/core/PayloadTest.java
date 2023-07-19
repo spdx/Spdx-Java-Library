@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Payload.PayloadBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class PayloadTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,13 +54,14 @@ public class PayloadTest extends TestCase {
 	
 	public static PayloadBuilder builderForPayloadTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		PayloadBuilder retval = new PayloadBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setcreationInfo(new CreationInfo())
-		.getnamespaces.add(NamespaceMap)
-		.getimports.add(ExternalMap)
-		***************/
+		PayloadBuilder retval = new PayloadBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.setCreationInfo(new CreationInfo())
+				.addNamespaces(NamespaceMap)
+				.addImports(ExternalMap)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -93,7 +96,7 @@ public class PayloadTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Payload#Element(org.spdx.library.model.core.Payload.PayloadBuilder)}.
 	 */
 	public void testPayloadPayloadBuilder() throws InvalidSPDXAnalysisException {
-		Payload testPayload = builderForPayloadTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForPayloadTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -118,28 +121,24 @@ public class PayloadTest extends TestCase {
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Payload#getNamespaces}.
 	 */
-	public void testPayloadsetNamespaces() throws InvalidSPDXAnalysisException {
+	public void testPayloadgetNamespacess() throws InvalidSPDXAnalysisException {
 		Payload testPayload = builderForPayloadTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testPayload.getNamespaces()));
-//		testPayload.getNamespaces().clear();
-//		testPayload.getNamespaces().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testPayload.getNamespaces()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testPayload.getNamespacess())));
+//		testPayload.getNamespacess().clear();
+//		testPayload.getNamespacess().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testPayload.getNamespacess())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.Payload#getImports}.
 	 */
-	public void testPayloadsetImports() throws InvalidSPDXAnalysisException {
+	public void testPayloadgetImportss() throws InvalidSPDXAnalysisException {
 		Payload testPayload = builderForPayloadTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testPayload.getImports()));
-//		testPayload.getImports().clear();
-//		testPayload.getImports().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testPayload.getImports()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testPayload.getImportss())));
+//		testPayload.getImportss().clear();
+//		testPayload.getImportss().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testPayload.getImportss())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

@@ -294,7 +294,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter additionalPurpose additionalPurpose to add
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder addadditionalPurpose(SoftwarePurpose additionalPurpose) {
+		SoftwareArtifactBuilder addAdditionalPurpose(SoftwarePurpose additionalPurpose) {
 			if (Objects.nonNull(additionalPurpose)) {
 				additionalPurposes.add(additionalPurpose);
 			}
@@ -306,7 +306,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter additionalPurposeCollection collection to initialize the additionalPurpose
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder addAlladditionalPurpose(Collection<SoftwarePurpose> additionalPurposeCollection) {
+		SoftwareArtifactBuilder addAllAdditionalPurpose(Collection<SoftwarePurpose> additionalPurposeCollection) {
 			if (Objects.nonNull(additionalPurposeCollection)) {
 				additionalPurposes.addAll(additionalPurposeCollection);
 			}
@@ -318,7 +318,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter declaredLicense value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setdeclaredLicense(AnyLicenseInfo declaredLicense) {
+		SoftwareArtifactBuilder setDeclaredLicense(AnyLicenseInfo declaredLicense) {
 			this.declaredLicense = declaredLicense;
 			return this;
 		}
@@ -328,7 +328,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter concludedLicense value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setconcludedLicense(AnyLicenseInfo concludedLicense) {
+		SoftwareArtifactBuilder setConcludedLicense(AnyLicenseInfo concludedLicense) {
 			this.concludedLicense = concludedLicense;
 			return this;
 		}
@@ -338,7 +338,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter primaryPurpose value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setprimaryPurpose(SoftwarePurpose primaryPurpose) {
+		SoftwareArtifactBuilder setPrimaryPurpose(SoftwarePurpose primaryPurpose) {
 			this.primaryPurpose = primaryPurpose;
 			return this;
 		}
@@ -348,7 +348,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter contentIdentifier value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setcontentIdentifier(String contentIdentifier) {
+		SoftwareArtifactBuilder setContentIdentifier(String contentIdentifier) {
 			this.contentIdentifier = contentIdentifier;
 			return this;
 		}
@@ -358,7 +358,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter attributionText value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setattributionText(String attributionText) {
+		SoftwareArtifactBuilder setAttributionText(String attributionText) {
 			this.attributionText = attributionText;
 			return this;
 		}
@@ -368,7 +368,7 @@ public class SoftwareArtifact extends Artifact  {
 		 * @parameter copyrightText value to set
 		 * @return this for chaining
 		**/
-		SoftwareArtifactBuilder setcopyrightText(String copyrightText) {
+		SoftwareArtifactBuilder setCopyrightText(String copyrightText) {
 			this.copyrightText = copyrightText;
 			return this;
 		}

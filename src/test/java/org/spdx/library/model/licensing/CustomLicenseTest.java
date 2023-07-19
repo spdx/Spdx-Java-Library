@@ -21,11 +21,11 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.licensing.CustomLicense.CustomLicenseBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class CustomLicenseTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class CustomLicenseTest extends TestCase {
 	
 	public static CustomLicenseBuilder builderForCustomLicenseTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		CustomLicenseBuilder retval = new CustomLicenseBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		CustomLicenseBuilder retval = new CustomLicenseBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class CustomLicenseTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.licensing.CustomLicense#Element(org.spdx.library.model.licensing.CustomLicense.CustomLicenseBuilder)}.
 	 */
 	public void testCustomLicenseCustomLicenseBuilder() throws InvalidSPDXAnalysisException {
-		CustomLicense testCustomLicense = builderForCustomLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForCustomLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class CustomLicenseTest extends TestCase {
 		assertTrue(test2CustomLicense.equivalent(testCustomLicense));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

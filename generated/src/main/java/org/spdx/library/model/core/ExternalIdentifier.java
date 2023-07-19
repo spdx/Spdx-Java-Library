@@ -248,7 +248,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter identifierLocator identifierLocator to add
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder addidentifierLocator(String identifierLocator) {
+		ExternalIdentifierBuilder addIdentifierLocator(String identifierLocator) {
 			if (Objects.nonNull(identifierLocator)) {
 				identifierLocators.add(identifierLocator);
 			}
@@ -260,7 +260,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter identifierLocatorCollection collection to initialize the identifierLocator
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder addAllidentifierLocator(Collection<String> identifierLocatorCollection) {
+		ExternalIdentifierBuilder addAllIdentifierLocator(Collection<String> identifierLocatorCollection) {
 			if (Objects.nonNull(identifierLocatorCollection)) {
 				identifierLocators.addAll(identifierLocatorCollection);
 			}
@@ -272,7 +272,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter externalIdentifierType value to set
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder setexternalIdentifierType(ExternalIdentifierType externalIdentifierType) {
+		ExternalIdentifierBuilder setExternalIdentifierType(ExternalIdentifierType externalIdentifierType) {
 			this.externalIdentifierType = externalIdentifierType;
 			return this;
 		}
@@ -282,7 +282,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter issuingAuthority value to set
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder setissuingAuthority(String issuingAuthority) {
+		ExternalIdentifierBuilder setIssuingAuthority(String issuingAuthority) {
 			this.issuingAuthority = issuingAuthority;
 			return this;
 		}
@@ -292,7 +292,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter identifier value to set
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder setidentifier(String identifier) {
+		ExternalIdentifierBuilder setIdentifier(String identifier) {
 			this.identifier = identifier;
 			return this;
 		}
@@ -302,7 +302,7 @@ public class ExternalIdentifier extends ModelObject  {
 		 * @parameter comment value to set
 		 * @return this for chaining
 		**/
-		ExternalIdentifierBuilder setcomment(String comment) {
+		ExternalIdentifierBuilder setComment(String comment) {
 			this.comment = comment;
 			return this;
 		}

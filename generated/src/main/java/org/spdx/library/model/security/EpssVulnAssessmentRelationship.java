@@ -175,7 +175,7 @@ public class EpssVulnAssessmentRelationship extends VulnAssessmentRelationship  
 		 * @parameter probability value to set
 		 * @return this for chaining
 		**/
-		EpssVulnAssessmentRelationshipBuilder setprobability(Integer probability) {
+		EpssVulnAssessmentRelationshipBuilder setProbability(Integer probability) {
 			this.probability = probability;
 			return this;
 		}

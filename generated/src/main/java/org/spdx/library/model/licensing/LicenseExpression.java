@@ -169,7 +169,7 @@ public class LicenseExpression extends AnyLicenseInfo  {
 		 * @parameter licenseExpression value to set
 		 * @return this for chaining
 		**/
-		LicenseExpressionBuilder setlicenseExpression(String licenseExpression) {
+		LicenseExpressionBuilder setLicenseExpression(String licenseExpression) {
 			this.licenseExpression = licenseExpression;
 			return this;
 		}

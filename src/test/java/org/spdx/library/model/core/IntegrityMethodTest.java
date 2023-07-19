@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.IntegrityMethod.IntegrityMethodBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class IntegrityMethodTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String COMMENT_TEST_VALUE = "test comment";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +55,12 @@ public class IntegrityMethodTest extends TestCase {
 	
 	public static IntegrityMethodBuilder builderForIntegrityMethodTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		IntegrityMethodBuilder retval = new IntegrityMethodBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setcomment("A string")
-		***************/
+		IntegrityMethodBuilder retval = new IntegrityMethodBuilder(modelStore, objectUri, copyManager)
+				.setComment(COMMENT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +95,7 @@ public class IntegrityMethodTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.IntegrityMethod#Element(org.spdx.library.model.core.IntegrityMethod.IntegrityMethodBuilder)}.
 	 */
 	public void testIntegrityMethodIntegrityMethodBuilder() throws InvalidSPDXAnalysisException {
-		IntegrityMethod testIntegrityMethod = builderForIntegrityMethodTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForIntegrityMethodTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -107,13 +111,8 @@ public class IntegrityMethodTest extends TestCase {
 	 */
 	public void testIntegrityMethodsetComment() throws InvalidSPDXAnalysisException {
 		IntegrityMethod testIntegrityMethod = builderForIntegrityMethodTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testIntegrityMethod.getComment());
-//		testIntegrityMethod.setComment(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testIntegrityMethod.getComment());
-		fail("Not yet implemented");
+		assertEquals(COMMENT_TEST_VALUE, testIntegrityMethod.getComment());
+		testIntegrityMethod.setComment("new comment value");
+		assertEquals("new comment value", testIntegrityMethod.getComment());
 	}
-
-/*
-*/
-
 }

@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.PositiveIntegerRange.PositiveIntegerRangeBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class PositiveIntegerRangeTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final Integer END_TEST_VALUE = 55;
+	static final Integer BEGIN_TEST_VALUE = 55;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +56,13 @@ public class PositiveIntegerRangeTest extends TestCase {
 	
 	public static PositiveIntegerRangeBuilder builderForPositiveIntegerRangeTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		PositiveIntegerRangeBuilder retval = new PositiveIntegerRangeBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setend(57)
-		.setbegin(57)
-		***************/
+		PositiveIntegerRangeBuilder retval = new PositiveIntegerRangeBuilder(modelStore, objectUri, copyManager)
+				.setEnd(END_TEST_VALUE)
+				.setBegin(BEGIN_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +97,7 @@ public class PositiveIntegerRangeTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.PositiveIntegerRange#Element(org.spdx.library.model.core.PositiveIntegerRange.PositiveIntegerRangeBuilder)}.
 	 */
 	public void testPositiveIntegerRangePositiveIntegerRangeBuilder() throws InvalidSPDXAnalysisException {
-		PositiveIntegerRange testPositiveIntegerRange = builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -108,10 +113,9 @@ public class PositiveIntegerRangeTest extends TestCase {
 	 */
 	public void testPositiveIntegerRangesetEnd() throws InvalidSPDXAnalysisException {
 		PositiveIntegerRange testPositiveIntegerRange = builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testPositiveIntegerRange.getEnd());
-//		testPositiveIntegerRange.setEnd(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testPositiveIntegerRange.getEnd());
-		fail("Not yet implemented");
+		assertEquals(END_TEST_VALUE, testPositiveIntegerRange.getEnd());
+		testPositiveIntegerRange.setEnd(new Integer(653));
+		assertEquals(new Integer(653), testPositiveIntegerRange.getEnd());
 	}
 	
 	/**
@@ -119,13 +123,8 @@ public class PositiveIntegerRangeTest extends TestCase {
 	 */
 	public void testPositiveIntegerRangesetBegin() throws InvalidSPDXAnalysisException {
 		PositiveIntegerRange testPositiveIntegerRange = builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testPositiveIntegerRange.getBegin());
-//		testPositiveIntegerRange.setBegin(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testPositiveIntegerRange.getBegin());
-		fail("Not yet implemented");
+		assertEquals(BEGIN_TEST_VALUE, testPositiveIntegerRange.getBegin());
+		testPositiveIntegerRange.setBegin(new Integer(653));
+		assertEquals(new Integer(653), testPositiveIntegerRange.getBegin());
 	}
-
-/*
-*/
-
 }

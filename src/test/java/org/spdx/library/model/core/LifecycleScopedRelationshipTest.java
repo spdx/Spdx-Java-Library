@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.LifecycleScopedRelationship.LifecycleScopedRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class LifecycleScopedRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +54,12 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 	
 	public static LifecycleScopedRelationshipBuilder builderForLifecycleScopedRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		LifecycleScopedRelationshipBuilder retval = new LifecycleScopedRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setscope(LifecycleScopeType.ENUM)
-		***************/
+		LifecycleScopedRelationshipBuilder retval = new LifecycleScopedRelationshipBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.setScope(LifecycleScopeType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +94,7 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.LifecycleScopedRelationship#Element(org.spdx.library.model.core.LifecycleScopedRelationship.LifecycleScopedRelationshipBuilder)}.
 	 */
 	public void testLifecycleScopedRelationshipLifecycleScopedRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		LifecycleScopedRelationship testLifecycleScopedRelationship = builderForLifecycleScopedRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForLifecycleScopedRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -112,8 +115,4 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 //		assertEquals(NEW_TEST_VALUE, testLifecycleScopedRelationship.getScope());
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

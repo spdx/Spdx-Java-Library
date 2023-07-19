@@ -147,7 +147,7 @@ public class Bundle extends ElementCollection  {
 		 * @parameter context value to set
 		 * @return this for chaining
 		**/
-		BundleBuilder setcontext(String context) {
+		BundleBuilder setContext(String context) {
 			this.context = context;
 			return this;
 		}

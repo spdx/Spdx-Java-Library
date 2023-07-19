@@ -218,7 +218,7 @@ public class VexNotAffectedVulnAssessmentRelationship extends VexVulnAssessmentR
 		 * @parameter justificationType value to set
 		 * @return this for chaining
 		**/
-		VexNotAffectedVulnAssessmentRelationshipBuilder setjustificationType(VexJustificationType justificationType) {
+		VexNotAffectedVulnAssessmentRelationshipBuilder setJustificationType(VexJustificationType justificationType) {
 			this.justificationType = justificationType;
 			return this;
 		}
@@ -228,7 +228,7 @@ public class VexNotAffectedVulnAssessmentRelationship extends VexVulnAssessmentR
 		 * @parameter impactStatementTime value to set
 		 * @return this for chaining
 		**/
-		VexNotAffectedVulnAssessmentRelationshipBuilder setimpactStatementTime(String impactStatementTime) {
+		VexNotAffectedVulnAssessmentRelationshipBuilder setImpactStatementTime(String impactStatementTime) {
 			this.impactStatementTime = impactStatementTime;
 			return this;
 		}
@@ -238,7 +238,7 @@ public class VexNotAffectedVulnAssessmentRelationship extends VexVulnAssessmentR
 		 * @parameter impactStatement value to set
 		 * @return this for chaining
 		**/
-		VexNotAffectedVulnAssessmentRelationshipBuilder setimpactStatement(String impactStatement) {
+		VexNotAffectedVulnAssessmentRelationshipBuilder setImpactStatement(String impactStatement) {
 			this.impactStatement = impactStatement;
 			return this;
 		}

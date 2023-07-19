@@ -190,7 +190,7 @@ public class SoftwareDependencyRelationship extends LifecycleScopedRelationship 
 		 * @parameter softwareLinkage value to set
 		 * @return this for chaining
 		**/
-		SoftwareDependencyRelationshipBuilder setsoftwareLinkage(SoftwareDependencyLinkType softwareLinkage) {
+		SoftwareDependencyRelationshipBuilder setSoftwareLinkage(SoftwareDependencyLinkType softwareLinkage) {
 			this.softwareLinkage = softwareLinkage;
 			return this;
 		}
@@ -200,7 +200,7 @@ public class SoftwareDependencyRelationship extends LifecycleScopedRelationship 
 		 * @parameter conditionality value to set
 		 * @return this for chaining
 		**/
-		SoftwareDependencyRelationshipBuilder setconditionality(DependencyConditionalityType conditionality) {
+		SoftwareDependencyRelationshipBuilder setConditionality(DependencyConditionalityType conditionality) {
 			this.conditionality = conditionality;
 			return this;
 		}

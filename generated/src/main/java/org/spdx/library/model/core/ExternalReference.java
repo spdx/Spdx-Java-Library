@@ -212,7 +212,7 @@ public class ExternalReference extends ModelObject  {
 		 * @parameter locator locator to add
 		 * @return this for chaining
 		**/
-		ExternalReferenceBuilder addlocator(String locator) {
+		ExternalReferenceBuilder addLocator(String locator) {
 			if (Objects.nonNull(locator)) {
 				locators.add(locator);
 			}
@@ -224,7 +224,7 @@ public class ExternalReference extends ModelObject  {
 		 * @parameter locatorCollection collection to initialize the locator
 		 * @return this for chaining
 		**/
-		ExternalReferenceBuilder addAlllocator(Collection<String> locatorCollection) {
+		ExternalReferenceBuilder addAllLocator(Collection<String> locatorCollection) {
 			if (Objects.nonNull(locatorCollection)) {
 				locators.addAll(locatorCollection);
 			}
@@ -236,7 +236,7 @@ public class ExternalReference extends ModelObject  {
 		 * @parameter externalReferenceType value to set
 		 * @return this for chaining
 		**/
-		ExternalReferenceBuilder setexternalReferenceType(ExternalReferenceType externalReferenceType) {
+		ExternalReferenceBuilder setExternalReferenceType(ExternalReferenceType externalReferenceType) {
 			this.externalReferenceType = externalReferenceType;
 			return this;
 		}
@@ -246,7 +246,7 @@ public class ExternalReference extends ModelObject  {
 		 * @parameter contentType value to set
 		 * @return this for chaining
 		**/
-		ExternalReferenceBuilder setcontentType(String contentType) {
+		ExternalReferenceBuilder setContentType(String contentType) {
 			this.contentType = contentType;
 			return this;
 		}
@@ -256,7 +256,7 @@ public class ExternalReference extends ModelObject  {
 		 * @parameter comment value to set
 		 * @return this for chaining
 		**/
-		ExternalReferenceBuilder setcomment(String comment) {
+		ExternalReferenceBuilder setComment(String comment) {
 			this.comment = comment;
 			return this;
 		}

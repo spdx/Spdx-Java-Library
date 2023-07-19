@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.VexAffectedVulnAssessmentRelationship.VexAffectedVulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,18 @@ import junit.framework.TestCase;
 public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String ACTION_STATEMENT_TEST_VALUE = "test actionStatement";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE1 = "test 1 actionStatementTime";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE2 = "test 2 actionStatementTime";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE3 = "test 3 actionStatementTime";
+	static final List<String> ACTION_STATEMENT_TIME_TEST_LIST1 = Arrays.asList(new String[] { ACTION_STATEMENT_TIME_TEST_VALUE1, ACTION_STATEMENT_TIME_TEST_VALUE2 });
+	static final List<String> ACTION_STATEMENT_TIME_TEST_LIST2 = Arrays.asList(new String[] { ACTION_STATEMENT_TIME_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +60,14 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	
 	public static VexAffectedVulnAssessmentRelationshipBuilder builderForVexAffectedVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		VexAffectedVulnAssessmentRelationshipBuilder retval = new VexAffectedVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setactionStatement("A string")
-		.getactionStatementTime.add("Test string")
-		***************/
+		VexAffectedVulnAssessmentRelationshipBuilder retval = new VexAffectedVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setActionStatement(ACTION_STATEMENT_TEST_VALUE)
+				.addActionStatementTime(ACTION_STATEMENT_TIME_TEST_VALUE1)
+				.addActionStatementTime(ACTION_STATEMENT_TIME_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +102,7 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.VexAffectedVulnAssessmentRelationship#Element(org.spdx.library.model.security.VexAffectedVulnAssessmentRelationship.VexAffectedVulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testVexAffectedVulnAssessmentRelationshipVexAffectedVulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		VexAffectedVulnAssessmentRelationship testVexAffectedVulnAssessmentRelationship = builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -108,25 +118,20 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexAffectedVulnAssessmentRelationshipsetActionStatement() throws InvalidSPDXAnalysisException {
 		VexAffectedVulnAssessmentRelationship testVexAffectedVulnAssessmentRelationship = builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVexAffectedVulnAssessmentRelationship.getActionStatement());
-//		testVexAffectedVulnAssessmentRelationship.setActionStatement(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVexAffectedVulnAssessmentRelationship.getActionStatement());
-		fail("Not yet implemented");
+		assertEquals(ACTION_STATEMENT_TEST_VALUE, testVexAffectedVulnAssessmentRelationship.getActionStatement());
+		testVexAffectedVulnAssessmentRelationship.setActionStatement("new actionStatement value");
+		assertEquals("new actionStatement value", testVexAffectedVulnAssessmentRelationship.getActionStatement());
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.security.VexAffectedVulnAssessmentRelationship#getActionStatementTime}.
+	 * Test method for {@link org.spdx.library.model.security.VexAffectedVulnAssessmentRelationship#getActionStatementTimes}.
 	 */
-	public void testVexAffectedVulnAssessmentRelationshipgetActionStatementTime() throws InvalidSPDXAnalysisException {
+	public void testVexAffectedVulnAssessmentRelationshipgetActionStatementTimes() throws InvalidSPDXAnalysisException {
 		VexAffectedVulnAssessmentRelationship testVexAffectedVulnAssessmentRelationship = builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTime()));
-//		testVexAffectedVulnAssessmentRelationship.getActionStatementTime().clear();
-//		testVexAffectedVulnAssessmentRelationship.getActionStatementTime().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTime()));
+		assertTrue(UnitTestHelper.isListsEqual(ACTION_STATEMENT_TIME_TEST_LIST1, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
+		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().clear();
+		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().addAll(ACTION_STATEMENT_TIME_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(ACTION_STATEMENT_TIME_TEST_LIST2, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

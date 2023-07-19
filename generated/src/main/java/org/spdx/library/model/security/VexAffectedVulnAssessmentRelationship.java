@@ -169,7 +169,7 @@ public class VexAffectedVulnAssessmentRelationship extends VexVulnAssessmentRela
 		 * @parameter actionStatementTime actionStatementTime to add
 		 * @return this for chaining
 		**/
-		VexAffectedVulnAssessmentRelationshipBuilder addactionStatementTime(String actionStatementTime) {
+		VexAffectedVulnAssessmentRelationshipBuilder addActionStatementTime(String actionStatementTime) {
 			if (Objects.nonNull(actionStatementTime)) {
 				actionStatementTimes.add(actionStatementTime);
 			}
@@ -181,7 +181,7 @@ public class VexAffectedVulnAssessmentRelationship extends VexVulnAssessmentRela
 		 * @parameter actionStatementTimeCollection collection to initialize the actionStatementTime
 		 * @return this for chaining
 		**/
-		VexAffectedVulnAssessmentRelationshipBuilder addAllactionStatementTime(Collection<String> actionStatementTimeCollection) {
+		VexAffectedVulnAssessmentRelationshipBuilder addAllActionStatementTime(Collection<String> actionStatementTimeCollection) {
 			if (Objects.nonNull(actionStatementTimeCollection)) {
 				actionStatementTimes.addAll(actionStatementTimeCollection);
 			}
@@ -193,7 +193,7 @@ public class VexAffectedVulnAssessmentRelationship extends VexVulnAssessmentRela
 		 * @parameter actionStatement value to set
 		 * @return this for chaining
 		**/
-		VexAffectedVulnAssessmentRelationshipBuilder setactionStatement(String actionStatement) {
+		VexAffectedVulnAssessmentRelationshipBuilder setActionStatement(String actionStatement) {
 			this.actionStatement = actionStatement;
 			return this;
 		}

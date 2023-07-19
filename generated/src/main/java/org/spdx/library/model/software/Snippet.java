@@ -203,7 +203,7 @@ public class Snippet extends SoftwareArtifact  {
 		 * @parameter byteRange value to set
 		 * @return this for chaining
 		**/
-		SnippetBuilder setbyteRange(PositiveIntegerRange byteRange) {
+		SnippetBuilder setByteRange(PositiveIntegerRange byteRange) {
 			this.byteRange = byteRange;
 			return this;
 		}
@@ -213,7 +213,7 @@ public class Snippet extends SoftwareArtifact  {
 		 * @parameter lineRange value to set
 		 * @return this for chaining
 		**/
-		SnippetBuilder setlineRange(PositiveIntegerRange lineRange) {
+		SnippetBuilder setLineRange(PositiveIntegerRange lineRange) {
 			this.lineRange = lineRange;
 			return this;
 		}

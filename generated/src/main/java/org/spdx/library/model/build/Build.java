@@ -286,7 +286,7 @@ public class Build extends Element  {
 		 * @parameter parameters parameters to add
 		 * @return this for chaining
 		**/
-		BuildBuilder addparameters(DictionaryEntry parameters) {
+		BuildBuilder addParameters(DictionaryEntry parameters) {
 			if (Objects.nonNull(parameters)) {
 				parameterss.add(parameters);
 			}
@@ -298,7 +298,7 @@ public class Build extends Element  {
 		 * @parameter parametersCollection collection to initialize the parameters
 		 * @return this for chaining
 		**/
-		BuildBuilder addAllparameters(Collection<DictionaryEntry> parametersCollection) {
+		BuildBuilder addAllParameters(Collection<DictionaryEntry> parametersCollection) {
 			if (Objects.nonNull(parametersCollection)) {
 				parameterss.addAll(parametersCollection);
 			}
@@ -310,7 +310,7 @@ public class Build extends Element  {
 		 * @parameter configSourceDigest configSourceDigest to add
 		 * @return this for chaining
 		**/
-		BuildBuilder addconfigSourceDigest(Hash configSourceDigest) {
+		BuildBuilder addConfigSourceDigest(Hash configSourceDigest) {
 			if (Objects.nonNull(configSourceDigest)) {
 				configSourceDigests.add(configSourceDigest);
 			}
@@ -322,7 +322,7 @@ public class Build extends Element  {
 		 * @parameter configSourceDigestCollection collection to initialize the configSourceDigest
 		 * @return this for chaining
 		**/
-		BuildBuilder addAllconfigSourceDigest(Collection<Hash> configSourceDigestCollection) {
+		BuildBuilder addAllConfigSourceDigest(Collection<Hash> configSourceDigestCollection) {
 			if (Objects.nonNull(configSourceDigestCollection)) {
 				configSourceDigests.addAll(configSourceDigestCollection);
 			}
@@ -334,7 +334,7 @@ public class Build extends Element  {
 		 * @parameter environment environment to add
 		 * @return this for chaining
 		**/
-		BuildBuilder addenvironment(DictionaryEntry environment) {
+		BuildBuilder addEnvironment(DictionaryEntry environment) {
 			if (Objects.nonNull(environment)) {
 				environments.add(environment);
 			}
@@ -346,7 +346,7 @@ public class Build extends Element  {
 		 * @parameter environmentCollection collection to initialize the environment
 		 * @return this for chaining
 		**/
-		BuildBuilder addAllenvironment(Collection<DictionaryEntry> environmentCollection) {
+		BuildBuilder addAllEnvironment(Collection<DictionaryEntry> environmentCollection) {
 			if (Objects.nonNull(environmentCollection)) {
 				environments.addAll(environmentCollection);
 			}
@@ -358,7 +358,7 @@ public class Build extends Element  {
 		 * @parameter configSourceEntrypoint configSourceEntrypoint to add
 		 * @return this for chaining
 		**/
-		BuildBuilder addconfigSourceEntrypoint(String configSourceEntrypoint) {
+		BuildBuilder addConfigSourceEntrypoint(String configSourceEntrypoint) {
 			if (Objects.nonNull(configSourceEntrypoint)) {
 				configSourceEntrypoints.add(configSourceEntrypoint);
 			}
@@ -370,7 +370,7 @@ public class Build extends Element  {
 		 * @parameter configSourceEntrypointCollection collection to initialize the configSourceEntrypoint
 		 * @return this for chaining
 		**/
-		BuildBuilder addAllconfigSourceEntrypoint(Collection<String> configSourceEntrypointCollection) {
+		BuildBuilder addAllConfigSourceEntrypoint(Collection<String> configSourceEntrypointCollection) {
 			if (Objects.nonNull(configSourceEntrypointCollection)) {
 				configSourceEntrypoints.addAll(configSourceEntrypointCollection);
 			}
@@ -382,7 +382,7 @@ public class Build extends Element  {
 		 * @parameter configSourceUri configSourceUri to add
 		 * @return this for chaining
 		**/
-		BuildBuilder addconfigSourceUri(String configSourceUri) {
+		BuildBuilder addConfigSourceUri(String configSourceUri) {
 			if (Objects.nonNull(configSourceUri)) {
 				configSourceUris.add(configSourceUri);
 			}
@@ -394,7 +394,7 @@ public class Build extends Element  {
 		 * @parameter configSourceUriCollection collection to initialize the configSourceUri
 		 * @return this for chaining
 		**/
-		BuildBuilder addAllconfigSourceUri(Collection<String> configSourceUriCollection) {
+		BuildBuilder addAllConfigSourceUri(Collection<String> configSourceUriCollection) {
 			if (Objects.nonNull(configSourceUriCollection)) {
 				configSourceUris.addAll(configSourceUriCollection);
 			}
@@ -406,7 +406,7 @@ public class Build extends Element  {
 		 * @parameter buildEndTime value to set
 		 * @return this for chaining
 		**/
-		BuildBuilder setbuildEndTime(String buildEndTime) {
+		BuildBuilder setBuildEndTime(String buildEndTime) {
 			this.buildEndTime = buildEndTime;
 			return this;
 		}
@@ -416,7 +416,7 @@ public class Build extends Element  {
 		 * @parameter buildType value to set
 		 * @return this for chaining
 		**/
-		BuildBuilder setbuildType(String buildType) {
+		BuildBuilder setBuildType(String buildType) {
 			this.buildType = buildType;
 			return this;
 		}
@@ -426,7 +426,7 @@ public class Build extends Element  {
 		 * @parameter buildStartTime value to set
 		 * @return this for chaining
 		**/
-		BuildBuilder setbuildStartTime(String buildStartTime) {
+		BuildBuilder setBuildStartTime(String buildStartTime) {
 			this.buildStartTime = buildStartTime;
 			return this;
 		}
@@ -436,7 +436,7 @@ public class Build extends Element  {
 		 * @parameter buildId value to set
 		 * @return this for chaining
 		**/
-		BuildBuilder setbuildId(String buildId) {
+		BuildBuilder setBuildId(String buildId) {
 			this.buildId = buildId;
 			return this;
 		}

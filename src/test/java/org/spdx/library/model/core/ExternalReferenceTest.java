@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.ExternalReference.ExternalReferenceBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,19 @@ import junit.framework.TestCase;
 public class ExternalReferenceTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String CONTENT_TYPE_TEST_VALUE = "test contentType";
+	static final String COMMENT_TEST_VALUE = "test comment";
+	static final String LOCATOR_TEST_VALUE1 = "test 1 locator";
+	static final String LOCATOR_TEST_VALUE2 = "test 2 locator";
+	static final String LOCATOR_TEST_VALUE3 = "test 3 locator";
+	static final List<String> LOCATOR_TEST_LIST1 = Arrays.asList(new String[] { LOCATOR_TEST_VALUE1, LOCATOR_TEST_VALUE2 });
+	static final List<String> LOCATOR_TEST_LIST2 = Arrays.asList(new String[] { LOCATOR_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,14 +61,16 @@ public class ExternalReferenceTest extends TestCase {
 	
 	public static ExternalReferenceBuilder builderForExternalReferenceTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ExternalReferenceBuilder retval = new ExternalReferenceBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setexternalReferenceType(ExternalReferenceType.ENUM)
-		.setcontentType("A string")
-		.setcomment("A string")
-		.getlocator.add("Test string")
-		***************/
+		ExternalReferenceBuilder retval = new ExternalReferenceBuilder(modelStore, objectUri, copyManager)
+				.setContentType(CONTENT_TYPE_TEST_VALUE)
+				.setComment(COMMENT_TEST_VALUE)
+				.addLocator(LOCATOR_TEST_VALUE1)
+				.addLocator(LOCATOR_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				.setExternalReferenceType(ExternalReferenceType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -94,7 +105,7 @@ public class ExternalReferenceTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.ExternalReference#Element(org.spdx.library.model.core.ExternalReference.ExternalReferenceBuilder)}.
 	 */
 	public void testExternalReferenceExternalReferenceBuilder() throws InvalidSPDXAnalysisException {
-		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -121,10 +132,9 @@ public class ExternalReferenceTest extends TestCase {
 	 */
 	public void testExternalReferencesetContentType() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalReference.getContentType());
-//		testExternalReference.setContentType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalReference.getContentType());
-		fail("Not yet implemented");
+		assertEquals(CONTENT_TYPE_TEST_VALUE, testExternalReference.getContentType());
+		testExternalReference.setContentType("new contentType value");
+		assertEquals("new contentType value", testExternalReference.getContentType());
 	}
 	
 	/**
@@ -132,25 +142,20 @@ public class ExternalReferenceTest extends TestCase {
 	 */
 	public void testExternalReferencesetComment() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalReference.getComment());
-//		testExternalReference.setComment(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalReference.getComment());
-		fail("Not yet implemented");
+		assertEquals(COMMENT_TEST_VALUE, testExternalReference.getComment());
+		testExternalReference.setComment("new comment value");
+		assertEquals("new comment value", testExternalReference.getComment());
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.ExternalReference#getLocator}.
+	 * Test method for {@link org.spdx.library.model.core.ExternalReference#getLocators}.
 	 */
-	public void testExternalReferencegetLocator() throws InvalidSPDXAnalysisException {
+	public void testExternalReferencegetLocators() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testExternalReference.getLocator()));
-//		testExternalReference.getLocator().clear();
-//		testExternalReference.getLocator().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testExternalReference.getLocator()));
+		assertTrue(UnitTestHelper.isListsEqual(LOCATOR_TEST_LIST1, new ArrayList<>(testExternalReference.getLocators())));
+		testExternalReference.getLocators().clear();
+		testExternalReference.getLocators().addAll(LOCATOR_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(LOCATOR_TEST_LIST2, new ArrayList<>(testExternalReference.getLocators())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

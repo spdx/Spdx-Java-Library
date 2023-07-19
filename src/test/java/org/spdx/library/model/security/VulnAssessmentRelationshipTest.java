@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.VulnAssessmentRelationship.VulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class VulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +54,13 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	
 	public static VulnAssessmentRelationshipBuilder builderForVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		VulnAssessmentRelationshipBuilder retval = new VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setassessedElement(Element testElement)
-		.setsuppliedBy(Element testElement)
-		***************/
+		VulnAssessmentRelationshipBuilder retval = new VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.setAssessedElement(Element testElement)
+				.setSuppliedBy(Element testElement)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +95,7 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.VulnAssessmentRelationship#Element(org.spdx.library.model.security.VulnAssessmentRelationship.VulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testVulnAssessmentRelationshipVulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -124,8 +127,4 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 //		assertEquals(NEW_TEST_VALUE, testVulnAssessmentRelationship.getSuppliedBy());
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

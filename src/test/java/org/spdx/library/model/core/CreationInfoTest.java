@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.CreationInfo.CreationInfoBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,28 @@ import junit.framework.TestCase;
 public class CreationInfoTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String COMMENT_TEST_VALUE = "test comment";
+	static final String CREATED_TEST_VALUE1 = "test 1 created";
+	static final String CREATED_TEST_VALUE2 = "test 2 created";
+	static final String CREATED_TEST_VALUE3 = "test 3 created";
+	static final List<String> CREATED_TEST_LIST1 = Arrays.asList(new String[] { CREATED_TEST_VALUE1, CREATED_TEST_VALUE2 });
+	static final List<String> CREATED_TEST_LIST2 = Arrays.asList(new String[] { CREATED_TEST_VALUE3 });
+	static final String DATA_LICENSE_TEST_VALUE1 = "test 1 dataLicense";
+	static final String DATA_LICENSE_TEST_VALUE2 = "test 2 dataLicense";
+	static final String DATA_LICENSE_TEST_VALUE3 = "test 3 dataLicense";
+	static final List<String> DATA_LICENSE_TEST_LIST1 = Arrays.asList(new String[] { DATA_LICENSE_TEST_VALUE1, DATA_LICENSE_TEST_VALUE2 });
+	static final List<String> DATA_LICENSE_TEST_LIST2 = Arrays.asList(new String[] { DATA_LICENSE_TEST_VALUE3 });
+	static final String SPEC_VERSION_TEST_VALUE1 = "test 1 specVersion";
+	static final String SPEC_VERSION_TEST_VALUE2 = "test 2 specVersion";
+	static final String SPEC_VERSION_TEST_VALUE3 = "test 3 specVersion";
+	static final List<String> SPEC_VERSION_TEST_LIST1 = Arrays.asList(new String[] { SPEC_VERSION_TEST_VALUE1, SPEC_VERSION_TEST_VALUE2 });
+	static final List<String> SPEC_VERSION_TEST_LIST2 = Arrays.asList(new String[] { SPEC_VERSION_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,17 +70,21 @@ public class CreationInfoTest extends TestCase {
 	
 	public static CreationInfoBuilder builderForCreationInfoTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		CreationInfoBuilder retval = new CreationInfoBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setcomment("A string")
-		.getcreatedUsing.add(Tool)
-		.getcreatedBy.add(Agent)
-		.getcreated.add("Test string")
-		.getdataLicense.add("Test string")
-		.getspecVersion.add("Test string")
-		.getprofile.add(ProfileIdentifierType.ENUM)
-		***************/
+		CreationInfoBuilder retval = new CreationInfoBuilder(modelStore, objectUri, copyManager)
+				.setComment(COMMENT_TEST_VALUE)
+				.addCreated(CREATED_TEST_VALUE1)
+				.addCreated(CREATED_TEST_VALUE2)
+				.addDataLicense(DATA_LICENSE_TEST_VALUE1)
+				.addDataLicense(DATA_LICENSE_TEST_VALUE2)
+				.addSpecVersion(SPEC_VERSION_TEST_VALUE1)
+				.addSpecVersion(SPEC_VERSION_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				.addCreatedUsing(Tool)
+				.addCreatedBy(Agent)
+				.addProfile(ProfileIdentifierType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -97,7 +119,7 @@ public class CreationInfoTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.CreationInfo#Element(org.spdx.library.model.core.CreationInfo.CreationInfoBuilder)}.
 	 */
 	public void testCreationInfoCreationInfoBuilder() throws InvalidSPDXAnalysisException {
-		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -113,85 +135,80 @@ public class CreationInfoTest extends TestCase {
 	 */
 	public void testCreationInfosetComment() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testCreationInfo.getComment());
-//		testCreationInfo.setComment(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testCreationInfo.getComment());
-		fail("Not yet implemented");
+		assertEquals(COMMENT_TEST_VALUE, testCreationInfo.getComment());
+		testCreationInfo.setComment("new comment value");
+		assertEquals("new comment value", testCreationInfo.getComment());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getCreatedUsing}.
 	 */
-	public void testCreationInfosetCreatedUsing() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetCreatedUsings() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedUsing()));
-//		testCreationInfo.getCreatedUsing().clear();
-//		testCreationInfo.getCreatedUsing().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedUsing()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedUsings())));
+//		testCreationInfo.getCreatedUsings().clear();
+//		testCreationInfo.getCreatedUsings().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedUsings())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getCreatedBy}.
 	 */
-	public void testCreationInfosetCreatedBy() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetCreatedBys() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedBy()));
-//		testCreationInfo.getCreatedBy().clear();
-//		testCreationInfo.getCreatedBy().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedBy()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedBys())));
+//		testCreationInfo.getCreatedBys().clear();
+//		testCreationInfo.getCreatedBys().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getCreatedBys())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getCreated}.
+	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getCreateds}.
 	 */
-	public void testCreationInfogetCreated() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetCreateds() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getCreated()));
-//		testCreationInfo.getCreated().clear();
-//		testCreationInfo.getCreated().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getCreated()));
+		assertTrue(UnitTestHelper.isListsEqual(CREATED_TEST_LIST1, new ArrayList<>(testCreationInfo.getCreateds())));
+		testCreationInfo.getCreateds().clear();
+		testCreationInfo.getCreateds().addAll(CREATED_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(CREATED_TEST_LIST2, new ArrayList<>(testCreationInfo.getCreateds())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getDataLicense}.
+	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getDataLicenses}.
 	 */
-	public void testCreationInfogetDataLicense() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetDataLicenses() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getDataLicense()));
-//		testCreationInfo.getDataLicense().clear();
-//		testCreationInfo.getDataLicense().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getDataLicense()));
+		assertTrue(UnitTestHelper.isListsEqual(DATA_LICENSE_TEST_LIST1, new ArrayList<>(testCreationInfo.getDataLicenses())));
+		testCreationInfo.getDataLicenses().clear();
+		testCreationInfo.getDataLicenses().addAll(DATA_LICENSE_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(DATA_LICENSE_TEST_LIST2, new ArrayList<>(testCreationInfo.getDataLicenses())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getSpecVersion}.
+	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getSpecVersions}.
 	 */
-	public void testCreationInfogetSpecVersion() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetSpecVersions() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getSpecVersion()));
-//		testCreationInfo.getSpecVersion().clear();
-//		testCreationInfo.getSpecVersion().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getSpecVersion()));
+		assertTrue(UnitTestHelper.isListsEqual(SPEC_VERSION_TEST_LIST1, new ArrayList<>(testCreationInfo.getSpecVersions())));
+		testCreationInfo.getSpecVersions().clear();
+		testCreationInfo.getSpecVersions().addAll(SPEC_VERSION_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(SPEC_VERSION_TEST_LIST2, new ArrayList<>(testCreationInfo.getSpecVersions())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.CreationInfo#getProfile}.
 	 */
-	public void testCreationInfogetProfile() throws InvalidSPDXAnalysisException {
+	public void testCreationInfogetProfiles() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getProfile()));
-//		testCreationInfo.getProfile().clear();
-//		testCreationInfo.getProfile().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getProfile()));
+//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getProfiles())));
+//		testCreationInfo.getProfiles().clear();
+//		testCreationInfo.getProfiles().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getProfiles())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

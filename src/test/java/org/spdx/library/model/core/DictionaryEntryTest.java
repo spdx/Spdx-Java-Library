@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.DictionaryEntry.DictionaryEntryBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class DictionaryEntryTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String KEY_TEST_VALUE = "test key";
+	static final String VALUE_TEST_VALUE = "test value";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +56,13 @@ public class DictionaryEntryTest extends TestCase {
 	
 	public static DictionaryEntryBuilder builderForDictionaryEntryTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		DictionaryEntryBuilder retval = new DictionaryEntryBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setkey("A string")
-		.setvalue("A string")
-		***************/
+		DictionaryEntryBuilder retval = new DictionaryEntryBuilder(modelStore, objectUri, copyManager)
+				.setKey(KEY_TEST_VALUE)
+				.setValue(VALUE_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +97,7 @@ public class DictionaryEntryTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.DictionaryEntry#Element(org.spdx.library.model.core.DictionaryEntry.DictionaryEntryBuilder)}.
 	 */
 	public void testDictionaryEntryDictionaryEntryBuilder() throws InvalidSPDXAnalysisException {
-		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -108,10 +113,9 @@ public class DictionaryEntryTest extends TestCase {
 	 */
 	public void testDictionaryEntrysetKey() throws InvalidSPDXAnalysisException {
 		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDictionaryEntry.getKey());
-//		testDictionaryEntry.setKey(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDictionaryEntry.getKey());
-		fail("Not yet implemented");
+		assertEquals(KEY_TEST_VALUE, testDictionaryEntry.getKey());
+		testDictionaryEntry.setKey("new key value");
+		assertEquals("new key value", testDictionaryEntry.getKey());
 	}
 	
 	/**
@@ -119,13 +123,8 @@ public class DictionaryEntryTest extends TestCase {
 	 */
 	public void testDictionaryEntrysetValue() throws InvalidSPDXAnalysisException {
 		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDictionaryEntry.getValue());
-//		testDictionaryEntry.setValue(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDictionaryEntry.getValue());
-		fail("Not yet implemented");
+		assertEquals(VALUE_TEST_VALUE, testDictionaryEntry.getValue());
+		testDictionaryEntry.setValue("new value value");
+		assertEquals("new value value", testDictionaryEntry.getValue());
 	}
-
-/*
-*/
-
 }

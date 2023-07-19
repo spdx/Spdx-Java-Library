@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.ExternalIdentifier.ExternalIdentifierBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,20 @@ import junit.framework.TestCase;
 public class ExternalIdentifierTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String ISSUING_AUTHORITY_TEST_VALUE = "test issuingAuthority";
+	static final String IDENTIFIER_TEST_VALUE = "test identifier";
+	static final String COMMENT_TEST_VALUE = "test comment";
+	static final String IDENTIFIER_LOCATOR_TEST_VALUE1 = "test 1 identifierLocator";
+	static final String IDENTIFIER_LOCATOR_TEST_VALUE2 = "test 2 identifierLocator";
+	static final String IDENTIFIER_LOCATOR_TEST_VALUE3 = "test 3 identifierLocator";
+	static final List<String> IDENTIFIER_LOCATOR_TEST_LIST1 = Arrays.asList(new String[] { IDENTIFIER_LOCATOR_TEST_VALUE1, IDENTIFIER_LOCATOR_TEST_VALUE2 });
+	static final List<String> IDENTIFIER_LOCATOR_TEST_LIST2 = Arrays.asList(new String[] { IDENTIFIER_LOCATOR_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,15 +62,17 @@ public class ExternalIdentifierTest extends TestCase {
 	
 	public static ExternalIdentifierBuilder builderForExternalIdentifierTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ExternalIdentifierBuilder retval = new ExternalIdentifierBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setexternalIdentifierType(ExternalIdentifierType.ENUM)
-		.setissuingAuthority("A string")
-		.setidentifier("A string")
-		.setcomment("A string")
-		.getidentifierLocator.add("Test string")
-		***************/
+		ExternalIdentifierBuilder retval = new ExternalIdentifierBuilder(modelStore, objectUri, copyManager)
+				.setIssuingAuthority(ISSUING_AUTHORITY_TEST_VALUE)
+				.setIdentifier(IDENTIFIER_TEST_VALUE)
+				.setComment(COMMENT_TEST_VALUE)
+				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE1)
+				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				.setExternalIdentifierType(ExternalIdentifierType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -95,7 +107,7 @@ public class ExternalIdentifierTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.ExternalIdentifier#Element(org.spdx.library.model.core.ExternalIdentifier.ExternalIdentifierBuilder)}.
 	 */
 	public void testExternalIdentifierExternalIdentifierBuilder() throws InvalidSPDXAnalysisException {
-		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -122,10 +134,9 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetIssuingAuthority() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalIdentifier.getIssuingAuthority());
-//		testExternalIdentifier.setIssuingAuthority(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalIdentifier.getIssuingAuthority());
-		fail("Not yet implemented");
+		assertEquals(ISSUING_AUTHORITY_TEST_VALUE, testExternalIdentifier.getIssuingAuthority());
+		testExternalIdentifier.setIssuingAuthority("new issuingAuthority value");
+		assertEquals("new issuingAuthority value", testExternalIdentifier.getIssuingAuthority());
 	}
 	
 	/**
@@ -133,10 +144,9 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetIdentifier() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalIdentifier.getIdentifier());
-//		testExternalIdentifier.setIdentifier(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalIdentifier.getIdentifier());
-		fail("Not yet implemented");
+		assertEquals(IDENTIFIER_TEST_VALUE, testExternalIdentifier.getIdentifier());
+		testExternalIdentifier.setIdentifier("new identifier value");
+		assertEquals("new identifier value", testExternalIdentifier.getIdentifier());
 	}
 	
 	/**
@@ -144,25 +154,20 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetComment() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalIdentifier.getComment());
-//		testExternalIdentifier.setComment(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalIdentifier.getComment());
-		fail("Not yet implemented");
+		assertEquals(COMMENT_TEST_VALUE, testExternalIdentifier.getComment());
+		testExternalIdentifier.setComment("new comment value");
+		assertEquals("new comment value", testExternalIdentifier.getComment());
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.core.ExternalIdentifier#getIdentifierLocator}.
+	 * Test method for {@link org.spdx.library.model.core.ExternalIdentifier#getIdentifierLocators}.
 	 */
-	public void testExternalIdentifiergetIdentifierLocator() throws InvalidSPDXAnalysisException {
+	public void testExternalIdentifiergetIdentifierLocators() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testExternalIdentifier.getIdentifierLocator()));
-//		testExternalIdentifier.getIdentifierLocator().clear();
-//		testExternalIdentifier.getIdentifierLocator().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testExternalIdentifier.getIdentifierLocator()));
+		assertTrue(UnitTestHelper.isListsEqual(IDENTIFIER_LOCATOR_TEST_LIST1, new ArrayList<>(testExternalIdentifier.getIdentifierLocators())));
+		testExternalIdentifier.getIdentifierLocators().clear();
+		testExternalIdentifier.getIdentifierLocators().addAll(IDENTIFIER_LOCATOR_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(IDENTIFIER_LOCATOR_TEST_LIST2, new ArrayList<>(testExternalIdentifier.getIdentifierLocators())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

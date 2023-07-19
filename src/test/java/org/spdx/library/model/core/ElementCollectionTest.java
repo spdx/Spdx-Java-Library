@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.ElementCollection.ElementCollectionBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class ElementCollectionTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +54,13 @@ public class ElementCollectionTest extends TestCase {
 	
 	public static ElementCollectionBuilder builderForElementCollectionTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		ElementCollectionBuilder retval = new ElementCollectionBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.getelement.add(Element)
-		.getrootElement.add(Element)
-		***************/
+		ElementCollectionBuilder retval = new ElementCollectionBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				.addElement(Element)
+				.addRootElement(Element)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +95,7 @@ public class ElementCollectionTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.ElementCollection#Element(org.spdx.library.model.core.ElementCollection.ElementCollectionBuilder)}.
 	 */
 	public void testElementCollectionElementCollectionBuilder() throws InvalidSPDXAnalysisException {
-		ElementCollection testElementCollection = builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -106,28 +109,24 @@ public class ElementCollectionTest extends TestCase {
 	/**
 	 * Test method for {@link org.spdx.library.model.core.ElementCollection#getElement}.
 	 */
-	public void testElementCollectionsetElement() throws InvalidSPDXAnalysisException {
+	public void testElementCollectiongetElements() throws InvalidSPDXAnalysisException {
 		ElementCollection testElementCollection = builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getElement()));
-//		testElementCollection.getElement().clear();
-//		testElementCollection.getElement().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getElement()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getElements())));
+//		testElementCollection.getElements().clear();
+//		testElementCollection.getElements().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getElements())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.core.ElementCollection#getRootElement}.
 	 */
-	public void testElementCollectionsetRootElement() throws InvalidSPDXAnalysisException {
+	public void testElementCollectiongetRootElements() throws InvalidSPDXAnalysisException {
 		ElementCollection testElementCollection = builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getRootElement()));
-//		testElementCollection.getRootElement().clear();
-//		testElementCollection.getRootElement().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getRootElement()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
+//		testElementCollection.getRootElements().clear();
+//		testElementCollection.getRootElements().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

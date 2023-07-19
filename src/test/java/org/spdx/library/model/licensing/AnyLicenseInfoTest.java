@@ -21,11 +21,11 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.licensing.AnyLicenseInfo.AnyLicenseInfoBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,12 @@ import junit.framework.TestCase;
 public class AnyLicenseInfoTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,10 +54,11 @@ public class AnyLicenseInfoTest extends TestCase {
 	
 	public static AnyLicenseInfoBuilder builderForAnyLicenseInfoTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		AnyLicenseInfoBuilder retval = new AnyLicenseInfoBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		***************/
+		AnyLicenseInfoBuilder retval = new AnyLicenseInfoBuilder(modelStore, objectUri, copyManager)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -90,7 +93,7 @@ public class AnyLicenseInfoTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.licensing.AnyLicenseInfo#Element(org.spdx.library.model.licensing.AnyLicenseInfo.AnyLicenseInfoBuilder)}.
 	 */
 	public void testAnyLicenseInfoAnyLicenseInfoBuilder() throws InvalidSPDXAnalysisException {
-		AnyLicenseInfo testAnyLicenseInfo = builderForAnyLicenseInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForAnyLicenseInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -100,8 +103,4 @@ public class AnyLicenseInfoTest extends TestCase {
 		assertTrue(test2AnyLicenseInfo.equivalent(testAnyLicenseInfo));
 		// TODO change some parameters for negative tests
 	}
-
-/*
-*/
-
 }

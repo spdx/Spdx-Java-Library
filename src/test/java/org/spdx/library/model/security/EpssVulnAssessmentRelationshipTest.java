@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.EpssVulnAssessmentRelationship.EpssVulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class EpssVulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final Integer PROBABILITY_TEST_VALUE = 55;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +55,12 @@ public class EpssVulnAssessmentRelationshipTest extends TestCase {
 	
 	public static EpssVulnAssessmentRelationshipBuilder builderForEpssVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		EpssVulnAssessmentRelationshipBuilder retval = new EpssVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setprobability(57)
-		***************/
+		EpssVulnAssessmentRelationshipBuilder retval = new EpssVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setProbability(PROBABILITY_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +95,7 @@ public class EpssVulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.EpssVulnAssessmentRelationship#Element(org.spdx.library.model.security.EpssVulnAssessmentRelationship.EpssVulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testEpssVulnAssessmentRelationshipEpssVulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		EpssVulnAssessmentRelationship testEpssVulnAssessmentRelationship = builderForEpssVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForEpssVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -107,13 +111,8 @@ public class EpssVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testEpssVulnAssessmentRelationshipsetProbability() throws InvalidSPDXAnalysisException {
 		EpssVulnAssessmentRelationship testEpssVulnAssessmentRelationship = builderForEpssVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testEpssVulnAssessmentRelationship.getProbability());
-//		testEpssVulnAssessmentRelationship.setProbability(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testEpssVulnAssessmentRelationship.getProbability());
-		fail("Not yet implemented");
+		assertEquals(PROBABILITY_TEST_VALUE, testEpssVulnAssessmentRelationship.getProbability());
+		testEpssVulnAssessmentRelationship.setProbability(new Integer(653));
+		assertEquals(new Integer(653), testEpssVulnAssessmentRelationship.getProbability());
 	}
-
-/*
-*/
-
 }

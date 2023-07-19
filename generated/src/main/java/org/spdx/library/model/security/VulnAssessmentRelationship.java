@@ -186,7 +186,7 @@ public class VulnAssessmentRelationship extends Relationship  {
 		 * @parameter assessedElement value to set
 		 * @return this for chaining
 		**/
-		VulnAssessmentRelationshipBuilder setassessedElement(Element assessedElement) {
+		VulnAssessmentRelationshipBuilder setAssessedElement(Element assessedElement) {
 			this.assessedElement = assessedElement;
 			return this;
 		}
@@ -196,7 +196,7 @@ public class VulnAssessmentRelationship extends Relationship  {
 		 * @parameter suppliedBy value to set
 		 * @return this for chaining
 		**/
-		VulnAssessmentRelationshipBuilder setsuppliedBy(Agent suppliedBy) {
+		VulnAssessmentRelationshipBuilder setSuppliedBy(Agent suppliedBy) {
 			this.suppliedBy = suppliedBy;
 			return this;
 		}

@@ -21,11 +21,11 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.licensing.LicenseExpression.LicenseExpressionBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class LicenseExpressionTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String LICENSE_EXPRESSION_TEST_VALUE = "test licenseExpression";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +55,12 @@ public class LicenseExpressionTest extends TestCase {
 	
 	public static LicenseExpressionBuilder builderForLicenseExpressionTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		LicenseExpressionBuilder retval = new LicenseExpressionBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setlicenseExpression("A string")
-		***************/
+		LicenseExpressionBuilder retval = new LicenseExpressionBuilder(modelStore, objectUri, copyManager)
+				.setLicenseExpression(LICENSE_EXPRESSION_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +95,7 @@ public class LicenseExpressionTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.licensing.LicenseExpression#Element(org.spdx.library.model.licensing.LicenseExpression.LicenseExpressionBuilder)}.
 	 */
 	public void testLicenseExpressionLicenseExpressionBuilder() throws InvalidSPDXAnalysisException {
-		LicenseExpression testLicenseExpression = builderForLicenseExpressionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForLicenseExpressionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -107,13 +111,8 @@ public class LicenseExpressionTest extends TestCase {
 	 */
 	public void testLicenseExpressionsetLicenseExpression() throws InvalidSPDXAnalysisException {
 		LicenseExpression testLicenseExpression = builderForLicenseExpressionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicenseExpression.getLicenseExpression());
-//		testLicenseExpression.setLicenseExpression(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicenseExpression.getLicenseExpression());
-		fail("Not yet implemented");
+		assertEquals(LICENSE_EXPRESSION_TEST_VALUE, testLicenseExpression.getLicenseExpression());
+		testLicenseExpression.setLicenseExpression("new licenseExpression value");
+		assertEquals("new licenseExpression value", testLicenseExpression.getLicenseExpression());
 	}
-
-/*
-*/
-
 }

@@ -185,7 +185,7 @@ public class NamespaceMap extends ModelObject  {
 		 * @parameter prefix value to set
 		 * @return this for chaining
 		**/
-		NamespaceMapBuilder setprefix(String prefix) {
+		NamespaceMapBuilder setPrefix(String prefix) {
 			this.prefix = prefix;
 			return this;
 		}
@@ -195,7 +195,7 @@ public class NamespaceMap extends ModelObject  {
 		 * @parameter namespace value to set
 		 * @return this for chaining
 		**/
-		NamespaceMapBuilder setnamespace(String namespace) {
+		NamespaceMapBuilder setNamespace(String namespace) {
 			this.namespace = namespace;
 			return this;
 		}

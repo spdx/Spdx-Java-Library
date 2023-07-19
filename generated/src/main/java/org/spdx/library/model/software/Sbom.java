@@ -138,7 +138,7 @@ public class Sbom extends Bom  {
 		 * @parameter sbomType sbomType to add
 		 * @return this for chaining
 		**/
-		SbomBuilder addsbomType(SBOMType sbomType) {
+		SbomBuilder addSbomType(SBOMType sbomType) {
 			if (Objects.nonNull(sbomType)) {
 				sbomTypes.add(sbomType);
 			}
@@ -150,7 +150,7 @@ public class Sbom extends Bom  {
 		 * @parameter sbomTypeCollection collection to initialize the sbomType
 		 * @return this for chaining
 		**/
-		SbomBuilder addAllsbomType(Collection<SBOMType> sbomTypeCollection) {
+		SbomBuilder addAllSbomType(Collection<SBOMType> sbomTypeCollection) {
 			if (Objects.nonNull(sbomTypeCollection)) {
 				sbomTypes.addAll(sbomTypeCollection);
 			}

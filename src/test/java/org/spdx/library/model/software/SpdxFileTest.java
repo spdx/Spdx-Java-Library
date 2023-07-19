@@ -21,11 +21,11 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.software.SpdxFile.SpdxFileBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class SpdxFileTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String CONTENT_TYPE_TEST_VALUE = "test contentType";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,11 +55,12 @@ public class SpdxFileTest extends TestCase {
 	
 	public static SpdxFileBuilder builderForSpdxFileTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		SpdxFileBuilder retval = new SpdxFileBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setcontentType("A string")
-		***************/
+		SpdxFileBuilder retval = new SpdxFileBuilder(modelStore, objectUri, copyManager)
+				.setContentType(CONTENT_TYPE_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -91,7 +95,7 @@ public class SpdxFileTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.software.SpdxFile#Element(org.spdx.library.model.software.SpdxFile.SpdxFileBuilder)}.
 	 */
 	public void testSpdxFileSpdxFileBuilder() throws InvalidSPDXAnalysisException {
-		SpdxFile testSpdxFile = builderForSpdxFileTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForSpdxFileTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -107,13 +111,8 @@ public class SpdxFileTest extends TestCase {
 	 */
 	public void testSpdxFilesetContentType() throws InvalidSPDXAnalysisException {
 		SpdxFile testSpdxFile = builderForSpdxFileTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSpdxFile.getContentType());
-//		testSpdxFile.setContentType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSpdxFile.getContentType());
-		fail("Not yet implemented");
+		assertEquals(CONTENT_TYPE_TEST_VALUE, testSpdxFile.getContentType());
+		testSpdxFile.setContentType("new contentType value");
+		assertEquals("new contentType value", testSpdxFile.getContentType());
 	}
-
-/*
-*/
-
 }

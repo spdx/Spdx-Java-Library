@@ -146,6 +146,7 @@ public class Dataset extends SpdxPackage  {
 		return knownBiass;
 	}
 	
+
 	
 	/**
 	 * @return the confidentialityLevel
@@ -373,7 +374,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter sensor sensor to add
 		 * @return this for chaining
 		**/
-		DatasetBuilder addsensor(DictionaryEntry sensor) {
+		DatasetBuilder addSensor(DictionaryEntry sensor) {
 			if (Objects.nonNull(sensor)) {
 				sensors.add(sensor);
 			}
@@ -385,7 +386,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter sensorCollection collection to initialize the sensor
 		 * @return this for chaining
 		**/
-		DatasetBuilder addAllsensor(Collection<DictionaryEntry> sensorCollection) {
+		DatasetBuilder addAllSensor(Collection<DictionaryEntry> sensorCollection) {
 			if (Objects.nonNull(sensorCollection)) {
 				sensors.addAll(sensorCollection);
 			}
@@ -397,7 +398,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetType datasetType to add
 		 * @return this for chaining
 		**/
-		DatasetBuilder adddatasetType(DatasetType datasetType) {
+		DatasetBuilder addDatasetType(DatasetType datasetType) {
 			if (Objects.nonNull(datasetType)) {
 				datasetTypes.add(datasetType);
 			}
@@ -409,7 +410,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetTypeCollection collection to initialize the datasetType
 		 * @return this for chaining
 		**/
-		DatasetBuilder addAlldatasetType(Collection<DatasetType> datasetTypeCollection) {
+		DatasetBuilder addAllDatasetType(Collection<DatasetType> datasetTypeCollection) {
 			if (Objects.nonNull(datasetTypeCollection)) {
 				datasetTypes.addAll(datasetTypeCollection);
 			}
@@ -421,7 +422,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter anonymizationMethodUsed anonymizationMethodUsed to add
 		 * @return this for chaining
 		**/
-		DatasetBuilder addanonymizationMethodUsed(String anonymizationMethodUsed) {
+		DatasetBuilder addAnonymizationMethodUsed(String anonymizationMethodUsed) {
 			if (Objects.nonNull(anonymizationMethodUsed)) {
 				anonymizationMethodUseds.add(anonymizationMethodUsed);
 			}
@@ -433,7 +434,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter anonymizationMethodUsedCollection collection to initialize the anonymizationMethodUsed
 		 * @return this for chaining
 		**/
-		DatasetBuilder addAllanonymizationMethodUsed(Collection<String> anonymizationMethodUsedCollection) {
+		DatasetBuilder addAllAnonymizationMethodUsed(Collection<String> anonymizationMethodUsedCollection) {
 			if (Objects.nonNull(anonymizationMethodUsedCollection)) {
 				anonymizationMethodUseds.addAll(anonymizationMethodUsedCollection);
 			}
@@ -445,7 +446,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter dataPreprocessing dataPreprocessing to add
 		 * @return this for chaining
 		**/
-		DatasetBuilder adddataPreprocessing(String dataPreprocessing) {
+		DatasetBuilder addDataPreprocessing(String dataPreprocessing) {
 			if (Objects.nonNull(dataPreprocessing)) {
 				dataPreprocessings.add(dataPreprocessing);
 			}
@@ -457,7 +458,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter dataPreprocessingCollection collection to initialize the dataPreprocessing
 		 * @return this for chaining
 		**/
-		DatasetBuilder addAlldataPreprocessing(Collection<String> dataPreprocessingCollection) {
+		DatasetBuilder addAllDataPreprocessing(Collection<String> dataPreprocessingCollection) {
 			if (Objects.nonNull(dataPreprocessingCollection)) {
 				dataPreprocessings.addAll(dataPreprocessingCollection);
 			}
@@ -469,7 +470,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter knownBias knownBias to add
 		 * @return this for chaining
 		**/
-		DatasetBuilder addknownBias(String knownBias) {
+		DatasetBuilder addKnownBias(String knownBias) {
 			if (Objects.nonNull(knownBias)) {
 				knownBiass.add(knownBias);
 			}
@@ -481,19 +482,19 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter knownBiasCollection collection to initialize the knownBias
 		 * @return this for chaining
 		**/
-		DatasetBuilder addAllknownBias(Collection<String> knownBiasCollection) {
+		DatasetBuilder addAllKnownBias(Collection<String> knownBiasCollection) {
 			if (Objects.nonNull(knownBiasCollection)) {
 				knownBiass.addAll(knownBiasCollection);
 			}
 			return this;
 		}
-		
+
 		/**
 		 * Sets the initial value of confidentialityLevel
 		 * @parameter confidentialityLevel value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setconfidentialityLevel(ConfidentialityLevelType confidentialityLevel) {
+		DatasetBuilder setConfidentialityLevel(ConfidentialityLevelType confidentialityLevel) {
 			this.confidentialityLevel = confidentialityLevel;
 			return this;
 		}
@@ -503,7 +504,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetAvailability value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setdatasetAvailability(DatasetAvailabilityType datasetAvailability) {
+		DatasetBuilder setDatasetAvailability(DatasetAvailabilityType datasetAvailability) {
 			this.datasetAvailability = datasetAvailability;
 			return this;
 		}
@@ -513,7 +514,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetSize value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setdatasetSize(Integer datasetSize) {
+		DatasetBuilder setDatasetSize(Integer datasetSize) {
 			this.datasetSize = datasetSize;
 			return this;
 		}
@@ -523,7 +524,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter intendedUse value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setintendedUse(String intendedUse) {
+		DatasetBuilder setIntendedUse(String intendedUse) {
 			this.intendedUse = intendedUse;
 			return this;
 		}
@@ -533,7 +534,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetNoise value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setdatasetNoise(String datasetNoise) {
+		DatasetBuilder setDatasetNoise(String datasetNoise) {
 			this.datasetNoise = datasetNoise;
 			return this;
 		}
@@ -543,7 +544,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter dataCollectionProcess value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setdataCollectionProcess(String dataCollectionProcess) {
+		DatasetBuilder setDataCollectionProcess(String dataCollectionProcess) {
 			this.dataCollectionProcess = dataCollectionProcess;
 			return this;
 		}
@@ -553,7 +554,7 @@ public class Dataset extends SpdxPackage  {
 		 * @parameter datasetUpdateMechanism value to set
 		 * @return this for chaining
 		**/
-		DatasetBuilder setdatasetUpdateMechanism(String datasetUpdateMechanism) {
+		DatasetBuilder setDatasetUpdateMechanism(String datasetUpdateMechanism) {
 			this.datasetUpdateMechanism = datasetUpdateMechanism;
 			return this;
 		}

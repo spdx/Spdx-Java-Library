@@ -21,11 +21,11 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.licensing.LicenseAddition.LicenseAdditionBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class LicenseAdditionTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String STANDARD_ADDITION_TEMPLATE_TEST_VALUE = "test standardAdditionTemplate";
+	static final String ADDITION_TEXT_TEST_VALUE = "test additionText";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,13 +56,14 @@ public class LicenseAdditionTest extends TestCase {
 	
 	public static LicenseAdditionBuilder builderForLicenseAdditionTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		LicenseAdditionBuilder retval = new LicenseAdditionBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setisDeprecatedAdditionId(true)
-		.setstandardAdditionTemplate("A string")
-		.setadditionText("A string")
-		***************/
+		LicenseAdditionBuilder retval = new LicenseAdditionBuilder(modelStore, objectUri, copyManager)
+				.setIsDeprecatedAdditionId(true)
+				.setStandardAdditionTemplate(STANDARD_ADDITION_TEMPLATE_TEST_VALUE)
+				.setAdditionText(ADDITION_TEXT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -93,7 +98,7 @@ public class LicenseAdditionTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.licensing.LicenseAddition#Element(org.spdx.library.model.licensing.LicenseAddition.LicenseAdditionBuilder)}.
 	 */
 	public void testLicenseAdditionLicenseAdditionBuilder() throws InvalidSPDXAnalysisException {
-		LicenseAddition testLicenseAddition = builderForLicenseAdditionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForLicenseAdditionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -109,10 +114,9 @@ public class LicenseAdditionTest extends TestCase {
 	 */
 	public void testLicenseAdditionsetIsDeprecatedAdditionId() throws InvalidSPDXAnalysisException {
 		LicenseAddition testLicenseAddition = builderForLicenseAdditionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicenseAddition.getIsDeprecatedAdditionId());
-//		testLicenseAddition.setIsDeprecatedAdditionId(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicenseAddition.getIsDeprecatedAdditionId());
-		fail("Not yet implemented");
+		assertEquals(new Boolean(true), testLicenseAddition.getIsDeprecatedAdditionId());
+		testLicenseAddition.setIsDeprecatedAdditionId(false);
+		assertEquals(new Boolean(false), testLicenseAddition.getIsDeprecatedAdditionId());
 	}
 	
 	/**
@@ -120,10 +124,9 @@ public class LicenseAdditionTest extends TestCase {
 	 */
 	public void testLicenseAdditionsetStandardAdditionTemplate() throws InvalidSPDXAnalysisException {
 		LicenseAddition testLicenseAddition = builderForLicenseAdditionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicenseAddition.getStandardAdditionTemplate());
-//		testLicenseAddition.setStandardAdditionTemplate(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicenseAddition.getStandardAdditionTemplate());
-		fail("Not yet implemented");
+		assertEquals(STANDARD_ADDITION_TEMPLATE_TEST_VALUE, testLicenseAddition.getStandardAdditionTemplate());
+		testLicenseAddition.setStandardAdditionTemplate("new standardAdditionTemplate value");
+		assertEquals("new standardAdditionTemplate value", testLicenseAddition.getStandardAdditionTemplate());
 	}
 	
 	/**
@@ -131,13 +134,8 @@ public class LicenseAdditionTest extends TestCase {
 	 */
 	public void testLicenseAdditionsetAdditionText() throws InvalidSPDXAnalysisException {
 		LicenseAddition testLicenseAddition = builderForLicenseAdditionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicenseAddition.getAdditionText());
-//		testLicenseAddition.setAdditionText(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicenseAddition.getAdditionText());
-		fail("Not yet implemented");
+		assertEquals(ADDITION_TEXT_TEST_VALUE, testLicenseAddition.getAdditionText());
+		testLicenseAddition.setAdditionText("new additionText value");
+		assertEquals("new additionText value", testLicenseAddition.getAdditionText());
 	}
-
-/*
-*/
-
 }

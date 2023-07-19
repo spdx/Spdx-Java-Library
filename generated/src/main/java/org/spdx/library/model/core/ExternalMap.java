@@ -214,7 +214,7 @@ public class ExternalMap extends ModelObject  {
 		 * @parameter verifiedUsing verifiedUsing to add
 		 * @return this for chaining
 		**/
-		ExternalMapBuilder addverifiedUsing(IntegrityMethod verifiedUsing) {
+		ExternalMapBuilder addVerifiedUsing(IntegrityMethod verifiedUsing) {
 			if (Objects.nonNull(verifiedUsing)) {
 				verifiedUsings.add(verifiedUsing);
 			}
@@ -226,7 +226,7 @@ public class ExternalMap extends ModelObject  {
 		 * @parameter verifiedUsingCollection collection to initialize the verifiedUsing
 		 * @return this for chaining
 		**/
-		ExternalMapBuilder addAllverifiedUsing(Collection<IntegrityMethod> verifiedUsingCollection) {
+		ExternalMapBuilder addAllVerifiedUsing(Collection<IntegrityMethod> verifiedUsingCollection) {
 			if (Objects.nonNull(verifiedUsingCollection)) {
 				verifiedUsings.addAll(verifiedUsingCollection);
 			}
@@ -238,7 +238,7 @@ public class ExternalMap extends ModelObject  {
 		 * @parameter definingDocument value to set
 		 * @return this for chaining
 		**/
-		ExternalMapBuilder setdefiningDocument(String definingDocument) {
+		ExternalMapBuilder setDefiningDocument(String definingDocument) {
 			this.definingDocument = definingDocument;
 			return this;
 		}
@@ -248,7 +248,7 @@ public class ExternalMap extends ModelObject  {
 		 * @parameter locationHint value to set
 		 * @return this for chaining
 		**/
-		ExternalMapBuilder setlocationHint(String locationHint) {
+		ExternalMapBuilder setLocationHint(String locationHint) {
 			this.locationHint = locationHint;
 			return this;
 		}
@@ -258,7 +258,7 @@ public class ExternalMap extends ModelObject  {
 		 * @parameter externalId value to set
 		 * @return this for chaining
 		**/
-		ExternalMapBuilder setexternalId(String externalId) {
+		ExternalMapBuilder setExternalId(String externalId) {
 			this.externalId = externalId;
 			return this;
 		}

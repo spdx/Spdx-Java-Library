@@ -21,11 +21,11 @@ package org.spdx.library.model.dataset;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.dataset.Dataset.DatasetBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,32 @@ import junit.framework.TestCase;
 public class DatasetTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final Integer DATASET_SIZE_TEST_VALUE = 55;
+	static final String INTENDED_USE_TEST_VALUE = "test intendedUse";
+	static final String DATASET_NOISE_TEST_VALUE = "test datasetNoise";
+	static final String DATA_COLLECTION_PROCESS_TEST_VALUE = "test dataCollectionProcess";
+	static final String DATASET_UPDATE_MECHANISM_TEST_VALUE = "test datasetUpdateMechanism";
+	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE1 = "test 1 anonymizationMethodUsed";
+	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE2 = "test 2 anonymizationMethodUsed";
+	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE3 = "test 3 anonymizationMethodUsed";
+	static final List<String> ANONYMIZATION_METHOD_USED_TEST_LIST1 = Arrays.asList(new String[] { ANONYMIZATION_METHOD_USED_TEST_VALUE1, ANONYMIZATION_METHOD_USED_TEST_VALUE2 });
+	static final List<String> ANONYMIZATION_METHOD_USED_TEST_LIST2 = Arrays.asList(new String[] { ANONYMIZATION_METHOD_USED_TEST_VALUE3 });
+	static final String DATA_PREPROCESSING_TEST_VALUE1 = "test 1 dataPreprocessing";
+	static final String DATA_PREPROCESSING_TEST_VALUE2 = "test 2 dataPreprocessing";
+	static final String DATA_PREPROCESSING_TEST_VALUE3 = "test 3 dataPreprocessing";
+	static final List<String> DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE1, DATA_PREPROCESSING_TEST_VALUE2 });
+	static final List<String> DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE3 });
+	static final String KNOWN_BIAS_TEST_VALUE1 = "test 1 knownBias";
+	static final String KNOWN_BIAS_TEST_VALUE2 = "test 2 knownBias";
+	static final String KNOWN_BIAS_TEST_VALUE3 = "test 3 knownBias";
+	static final List<String> KNOWN_BIAS_TEST_LIST1 = Arrays.asList(new String[] { KNOWN_BIAS_TEST_VALUE1, KNOWN_BIAS_TEST_VALUE2 });
+	static final List<String> KNOWN_BIAS_TEST_LIST2 = Arrays.asList(new String[] { KNOWN_BIAS_TEST_VALUE3 });
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,23 +74,27 @@ public class DatasetTest extends TestCase {
 	
 	public static DatasetBuilder builderForDatasetTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		DatasetBuilder retval = new DatasetBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setsensitivePersonalInformation(new PresenceType())
-		.setconfidentialityLevel(ConfidentialityLevelType.ENUM)
-		.setdatasetAvailability(DatasetAvailabilityType.ENUM)
-		.setdatasetSize(57)
-		.setintendedUse("A string")
-		.setdatasetNoise("A string")
-		.setdataCollectionProcess("A string")
-		.setdatasetUpdateMechanism("A string")
-		.getsensor.add(DictionaryEntry)
-		.getanonymizationMethodUsed.add("Test string")
-		.getdataPreprocessing.add("Test string")
-		.getknownBias.add("Test string")
-		.getdatasetType.add(DatasetType.ENUM)
-		***************/
+		DatasetBuilder retval = new DatasetBuilder(modelStore, objectUri, copyManager)
+				.setDatasetSize(DATASET_SIZE_TEST_VALUE)
+				.setIntendedUse(INTENDED_USE_TEST_VALUE)
+				.setDatasetNoise(DATASET_NOISE_TEST_VALUE)
+				.setDataCollectionProcess(DATA_COLLECTION_PROCESS_TEST_VALUE)
+				.setDatasetUpdateMechanism(DATASET_UPDATE_MECHANISM_TEST_VALUE)
+				.addAnonymizationMethodUsed(ANONYMIZATION_METHOD_USED_TEST_VALUE1)
+				.addAnonymizationMethodUsed(ANONYMIZATION_METHOD_USED_TEST_VALUE2)
+				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE1)
+				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE2)
+				.addKnownBias(KNOWN_BIAS_TEST_VALUE1)
+				.addKnownBias(KNOWN_BIAS_TEST_VALUE2)
+				//TODO: Add in test values
+				/********************
+				.setSensitivePersonalInformation(new PresenceType())
+				.setConfidentialityLevel(ConfidentialityLevelType.ENUM)
+				.setDatasetAvailability(DatasetAvailabilityType.ENUM)
+				.addSensor(DictionaryEntry)
+				.addDatasetType(DatasetType.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -103,7 +129,7 @@ public class DatasetTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.dataset.Dataset#Element(org.spdx.library.model.dataset.Dataset.DatasetBuilder)}.
 	 */
 	public void testDatasetDatasetBuilder() throws InvalidSPDXAnalysisException {
-		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -152,10 +178,9 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetDatasetSize() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDataset.getDatasetSize());
-//		testDataset.setDatasetSize(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDataset.getDatasetSize());
-		fail("Not yet implemented");
+		assertEquals(DATASET_SIZE_TEST_VALUE, testDataset.getDatasetSize());
+		testDataset.setDatasetSize(new Integer(653));
+		assertEquals(new Integer(653), testDataset.getDatasetSize());
 	}
 	
 	/**
@@ -163,10 +188,9 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetIntendedUse() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDataset.getIntendedUse());
-//		testDataset.setIntendedUse(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDataset.getIntendedUse());
-		fail("Not yet implemented");
+		assertEquals(INTENDED_USE_TEST_VALUE, testDataset.getIntendedUse());
+		testDataset.setIntendedUse("new intendedUse value");
+		assertEquals("new intendedUse value", testDataset.getIntendedUse());
 	}
 	
 	/**
@@ -174,10 +198,9 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetDatasetNoise() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDataset.getDatasetNoise());
-//		testDataset.setDatasetNoise(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDataset.getDatasetNoise());
-		fail("Not yet implemented");
+		assertEquals(DATASET_NOISE_TEST_VALUE, testDataset.getDatasetNoise());
+		testDataset.setDatasetNoise("new datasetNoise value");
+		assertEquals("new datasetNoise value", testDataset.getDatasetNoise());
 	}
 	
 	/**
@@ -185,10 +208,9 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetDataCollectionProcess() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDataset.getDataCollectionProcess());
-//		testDataset.setDataCollectionProcess(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDataset.getDataCollectionProcess());
-		fail("Not yet implemented");
+		assertEquals(DATA_COLLECTION_PROCESS_TEST_VALUE, testDataset.getDataCollectionProcess());
+		testDataset.setDataCollectionProcess("new dataCollectionProcess value");
+		assertEquals("new dataCollectionProcess value", testDataset.getDataCollectionProcess());
 	}
 	
 	/**
@@ -196,73 +218,68 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetDatasetUpdateMechanism() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testDataset.getDatasetUpdateMechanism());
-//		testDataset.setDatasetUpdateMechanism(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testDataset.getDatasetUpdateMechanism());
-		fail("Not yet implemented");
+		assertEquals(DATASET_UPDATE_MECHANISM_TEST_VALUE, testDataset.getDatasetUpdateMechanism());
+		testDataset.setDatasetUpdateMechanism("new datasetUpdateMechanism value");
+		assertEquals("new datasetUpdateMechanism value", testDataset.getDatasetUpdateMechanism());
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getSensor}.
 	 */
-	public void testDatasetsetSensor() throws InvalidSPDXAnalysisException {
+	public void testDatasetgetSensors() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testDataset.getSensor()));
-//		testDataset.getSensor().clear();
-//		testDataset.getSensor().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testDataset.getSensor()));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testDataset.getSensors())));
+//		testDataset.getSensors().clear();
+//		testDataset.getSensors().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testDataset.getSensors())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getAnonymizationMethodUsed}.
+	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getAnonymizationMethodUseds}.
 	 */
-	public void testDatasetgetAnonymizationMethodUsed() throws InvalidSPDXAnalysisException {
+	public void testDatasetgetAnonymizationMethodUseds() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testDataset.getAnonymizationMethodUsed()));
-//		testDataset.getAnonymizationMethodUsed().clear();
-//		testDataset.getAnonymizationMethodUsed().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testDataset.getAnonymizationMethodUsed()));
+		assertTrue(UnitTestHelper.isListsEqual(ANONYMIZATION_METHOD_USED_TEST_LIST1, new ArrayList<>(testDataset.getAnonymizationMethodUseds())));
+		testDataset.getAnonymizationMethodUseds().clear();
+		testDataset.getAnonymizationMethodUseds().addAll(ANONYMIZATION_METHOD_USED_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(ANONYMIZATION_METHOD_USED_TEST_LIST2, new ArrayList<>(testDataset.getAnonymizationMethodUseds())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getDataPreprocessing}.
+	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getDataPreprocessings}.
 	 */
-	public void testDatasetgetDataPreprocessing() throws InvalidSPDXAnalysisException {
+	public void testDatasetgetDataPreprocessings() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testDataset.getDataPreprocessing()));
-//		testDataset.getDataPreprocessing().clear();
-//		testDataset.getDataPreprocessing().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testDataset.getDataPreprocessing()));
+		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST1, new ArrayList<>(testDataset.getDataPreprocessings())));
+		testDataset.getDataPreprocessings().clear();
+		testDataset.getDataPreprocessings().addAll(DATA_PREPROCESSING_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testDataset.getDataPreprocessings())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getKnownBias}.
+	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getKnownBiass}.
 	 */
-	public void testDatasetgetKnownBias() throws InvalidSPDXAnalysisException {
+	public void testDatasetgetKnownBiass() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testDataset.getKnownBias()));
-//		testDataset.getKnownBias().clear();
-//		testDataset.getKnownBias().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testDataset.getKnownBias()));
+		assertTrue(UnitTestHelper.isListsEqual(KNOWN_BIAS_TEST_LIST1, new ArrayList<>(testDataset.getKnownBiass())));
+		testDataset.getKnownBiass().clear();
+		testDataset.getKnownBiass().addAll(KNOWN_BIAS_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(KNOWN_BIAS_TEST_LIST2, new ArrayList<>(testDataset.getKnownBiass())));
 		fail("Not yet implemented");
 	}
 	
 	/**
 	 * Test method for {@link org.spdx.library.model.dataset.Dataset#getDatasetType}.
 	 */
-	public void testDatasetgetDatasetType() throws InvalidSPDXAnalysisException {
+	public void testDatasetgetDatasetTypes() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testDataset.getDatasetType()));
-//		testDataset.getDatasetType().clear();
-//		testDataset.getDatasetType().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testDataset.getDatasetType()));
+//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testDataset.getDatasetTypes())));
+//		testDataset.getDatasetTypes().clear();
+//		testDataset.getDatasetTypes().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testDataset.getDatasetTypes())));
 		fail("Not yet implemented");
 	}
-
-/*
-*/
-
 }

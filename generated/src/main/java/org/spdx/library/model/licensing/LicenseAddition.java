@@ -207,7 +207,7 @@ public class LicenseAddition extends Element  {
 		 * @parameter isDeprecatedAdditionId value to set
 		 * @return this for chaining
 		**/
-		LicenseAdditionBuilder setisDeprecatedAdditionId(Boolean isDeprecatedAdditionId) {
+		LicenseAdditionBuilder setIsDeprecatedAdditionId(Boolean isDeprecatedAdditionId) {
 			this.isDeprecatedAdditionId = isDeprecatedAdditionId;
 			return this;
 		}
@@ -217,7 +217,7 @@ public class LicenseAddition extends Element  {
 		 * @parameter standardAdditionTemplate value to set
 		 * @return this for chaining
 		**/
-		LicenseAdditionBuilder setstandardAdditionTemplate(String standardAdditionTemplate) {
+		LicenseAdditionBuilder setStandardAdditionTemplate(String standardAdditionTemplate) {
 			this.standardAdditionTemplate = standardAdditionTemplate;
 			return this;
 		}
@@ -227,7 +227,7 @@ public class LicenseAddition extends Element  {
 		 * @parameter additionText value to set
 		 * @return this for chaining
 		**/
-		LicenseAdditionBuilder setadditionText(String additionText) {
+		LicenseAdditionBuilder setAdditionText(String additionText) {
 			this.additionText = additionText;
 			return this;
 		}

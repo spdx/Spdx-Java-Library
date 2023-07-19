@@ -210,7 +210,7 @@ public class PositiveIntegerRange extends ModelObject  {
 		 * @parameter end value to set
 		 * @return this for chaining
 		**/
-		PositiveIntegerRangeBuilder setend(Integer end) {
+		PositiveIntegerRangeBuilder setEnd(Integer end) {
 			this.end = end;
 			return this;
 		}
@@ -220,7 +220,7 @@ public class PositiveIntegerRange extends ModelObject  {
 		 * @parameter begin value to set
 		 * @return this for chaining
 		**/
-		PositiveIntegerRangeBuilder setbegin(Integer begin) {
+		PositiveIntegerRangeBuilder setBegin(Integer begin) {
 			this.begin = begin;
 			return this;
 		}

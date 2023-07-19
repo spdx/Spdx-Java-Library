@@ -249,7 +249,7 @@ public class SpdxPackage extends SoftwareArtifact  {
 		 * @parameter downloadLocation value to set
 		 * @return this for chaining
 		**/
-		SpdxPackageBuilder setdownloadLocation(String downloadLocation) {
+		SpdxPackageBuilder setDownloadLocation(String downloadLocation) {
 			this.downloadLocation = downloadLocation;
 			return this;
 		}
@@ -259,7 +259,7 @@ public class SpdxPackage extends SoftwareArtifact  {
 		 * @parameter sourceInfo value to set
 		 * @return this for chaining
 		**/
-		SpdxPackageBuilder setsourceInfo(String sourceInfo) {
+		SpdxPackageBuilder setSourceInfo(String sourceInfo) {
 			this.sourceInfo = sourceInfo;
 			return this;
 		}
@@ -269,7 +269,7 @@ public class SpdxPackage extends SoftwareArtifact  {
 		 * @parameter packageVersion value to set
 		 * @return this for chaining
 		**/
-		SpdxPackageBuilder setpackageVersion(String packageVersion) {
+		SpdxPackageBuilder setPackageVersion(String packageVersion) {
 			this.packageVersion = packageVersion;
 			return this;
 		}
@@ -279,7 +279,7 @@ public class SpdxPackage extends SoftwareArtifact  {
 		 * @parameter homePage value to set
 		 * @return this for chaining
 		**/
-		SpdxPackageBuilder sethomePage(String homePage) {
+		SpdxPackageBuilder setHomePage(String homePage) {
 			this.homePage = homePage;
 			return this;
 		}
@@ -289,7 +289,7 @@ public class SpdxPackage extends SoftwareArtifact  {
 		 * @parameter packageUrl value to set
 		 * @return this for chaining
 		**/
-		SpdxPackageBuilder setpackageUrl(String packageUrl) {
+		SpdxPackageBuilder setPackageUrl(String packageUrl) {
 			this.packageUrl = packageUrl;
 			return this;
 		}

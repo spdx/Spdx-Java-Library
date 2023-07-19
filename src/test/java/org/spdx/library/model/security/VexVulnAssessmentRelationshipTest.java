@@ -21,11 +21,11 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.security.VexVulnAssessmentRelationship.VexVulnAssessmentRelationshipBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,14 @@ import junit.framework.TestCase;
 public class VexVulnAssessmentRelationshipTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String STATUS_NOTES_TEST_VALUE = "test statusNotes";
+	static final String VEX_VERSION_TEST_VALUE = "test vexVersion";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +56,13 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	
 	public static VexVulnAssessmentRelationshipBuilder builderForVexVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		VexVulnAssessmentRelationshipBuilder retval = new VexVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setstatusNotes("A string")
-		.setvexVersion("A string")
-		***************/
+		VexVulnAssessmentRelationshipBuilder retval = new VexVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setStatusNotes(STATUS_NOTES_TEST_VALUE)
+				.setVexVersion(VEX_VERSION_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +97,7 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.security.VexVulnAssessmentRelationship#Element(org.spdx.library.model.security.VexVulnAssessmentRelationship.VexVulnAssessmentRelationshipBuilder)}.
 	 */
 	public void testVexVulnAssessmentRelationshipVexVulnAssessmentRelationshipBuilder() throws InvalidSPDXAnalysisException {
-		VexVulnAssessmentRelationship testVexVulnAssessmentRelationship = builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -108,10 +113,9 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexVulnAssessmentRelationshipsetStatusNotes() throws InvalidSPDXAnalysisException {
 		VexVulnAssessmentRelationship testVexVulnAssessmentRelationship = builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVexVulnAssessmentRelationship.getStatusNotes());
-//		testVexVulnAssessmentRelationship.setStatusNotes(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVexVulnAssessmentRelationship.getStatusNotes());
-		fail("Not yet implemented");
+		assertEquals(STATUS_NOTES_TEST_VALUE, testVexVulnAssessmentRelationship.getStatusNotes());
+		testVexVulnAssessmentRelationship.setStatusNotes("new statusNotes value");
+		assertEquals("new statusNotes value", testVexVulnAssessmentRelationship.getStatusNotes());
 	}
 	
 	/**
@@ -119,13 +123,8 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexVulnAssessmentRelationshipsetVexVersion() throws InvalidSPDXAnalysisException {
 		VexVulnAssessmentRelationship testVexVulnAssessmentRelationship = builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVexVulnAssessmentRelationship.getVexVersion());
-//		testVexVulnAssessmentRelationship.setVexVersion(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVexVulnAssessmentRelationship.getVexVersion());
-		fail("Not yet implemented");
+		assertEquals(VEX_VERSION_TEST_VALUE, testVexVulnAssessmentRelationship.getVexVersion());
+		testVexVulnAssessmentRelationship.setVexVersion("new vexVersion value");
+		assertEquals("new vexVersion value", testVexVulnAssessmentRelationship.getVexVersion());
 	}
-
-/*
-*/
-
 }

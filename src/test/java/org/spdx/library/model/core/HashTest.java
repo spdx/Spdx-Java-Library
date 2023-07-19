@@ -21,11 +21,11 @@ package org.spdx.library.model.core;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.core.Hash.HashBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,13 @@ import junit.framework.TestCase;
 public class HashTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String HASH_VALUE_TEST_VALUE = "test hashValue";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,12 +55,13 @@ public class HashTest extends TestCase {
 	
 	public static HashBuilder builderForHashTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		HashBuilder retval = new HashBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setalgorithm(HashAlgorithm.ENUM)
-		.sethashValue("A string")
-		***************/
+		HashBuilder retval = new HashBuilder(modelStore, objectUri, copyManager)
+				.setHashValue(HASH_VALUE_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				.setAlgorithm(HashAlgorithm.ENUM)
+				***************/
+				;
 		return retval;
 	}
 	
@@ -92,7 +96,7 @@ public class HashTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.core.Hash#Element(org.spdx.library.model.core.Hash.HashBuilder)}.
 	 */
 	public void testHashHashBuilder() throws InvalidSPDXAnalysisException {
-		Hash testHash = builderForHashTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForHashTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -119,13 +123,8 @@ public class HashTest extends TestCase {
 	 */
 	public void testHashsetHashValue() throws InvalidSPDXAnalysisException {
 		Hash testHash = builderForHashTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testHash.getHashValue());
-//		testHash.setHashValue(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testHash.getHashValue());
-		fail("Not yet implemented");
+		assertEquals(HASH_VALUE_TEST_VALUE, testHash.getHashValue());
+		testHash.setHashValue("new hashValue value");
+		assertEquals("new hashValue value", testHash.getHashValue());
 	}
-
-/*
-*/
-
 }

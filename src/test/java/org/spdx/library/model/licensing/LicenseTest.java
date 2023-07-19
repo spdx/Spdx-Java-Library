@@ -21,11 +21,11 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.licensing.License.LicenseBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -36,10 +36,15 @@ import junit.framework.TestCase;
 public class LicenseTest extends TestCase {
 
 	static final String TEST_OBJECT_URI = "https://test.uri/testuri";
+	
 
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String STANDARD_LICENSE_TEMPLATE_TEST_VALUE = "test standardLicenseTemplate";
+	static final String STANDARD_LICENSE_HEADER_TEST_VALUE = "test standardLicenseHeader";
+	static final String LICENSE_TEXT_TEST_VALUE = "test licenseText";
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		modelStore = new InMemSpdxStore();
@@ -52,16 +57,17 @@ public class LicenseTest extends TestCase {
 	
 	public static LicenseBuilder builderForLicenseTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		LicenseBuilder retval = new LicenseBuilder(modelStore, objectUri, copyManager);
-		//TODO: Add in test values
-		/********************
-		.setisFsfLibre(true)
-		.setisDeprecatedLicenseId(true)
-		.setisOsiApproved(true)
-		.setstandardLicenseTemplate("A string")
-		.setstandardLicenseHeader("A string")
-		.setlicenseText("A string")
-		***************/
+		LicenseBuilder retval = new LicenseBuilder(modelStore, objectUri, copyManager)
+				.setIsFsfLibre(true)
+				.setIsDeprecatedLicenseId(true)
+				.setIsOsiApproved(true)
+				.setStandardLicenseTemplate(STANDARD_LICENSE_TEMPLATE_TEST_VALUE)
+				.setStandardLicenseHeader(STANDARD_LICENSE_HEADER_TEST_VALUE)
+				.setLicenseText(LICENSE_TEXT_TEST_VALUE)
+				//TODO: Add in test values
+				/********************
+				***************/
+				;
 		return retval;
 	}
 	
@@ -96,7 +102,7 @@ public class LicenseTest extends TestCase {
 	 * Test method for {@link org.spdx.library.model.licensing.License#Element(org.spdx.library.model.licensing.License.LicenseBuilder)}.
 	 */
 	public void testLicenseLicenseBuilder() throws InvalidSPDXAnalysisException {
-		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
 	}
 	
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
@@ -112,10 +118,9 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetIsFsfLibre() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getIsFsfLibre());
-//		testLicense.setIsFsfLibre(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getIsFsfLibre());
-		fail("Not yet implemented");
+		assertEquals(new Boolean(true), testLicense.getIsFsfLibre());
+		testLicense.setIsFsfLibre(false);
+		assertEquals(new Boolean(false), testLicense.getIsFsfLibre());
 	}
 	
 	/**
@@ -123,10 +128,9 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetIsDeprecatedLicenseId() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getIsDeprecatedLicenseId());
-//		testLicense.setIsDeprecatedLicenseId(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getIsDeprecatedLicenseId());
-		fail("Not yet implemented");
+		assertEquals(new Boolean(true), testLicense.getIsDeprecatedLicenseId());
+		testLicense.setIsDeprecatedLicenseId(false);
+		assertEquals(new Boolean(false), testLicense.getIsDeprecatedLicenseId());
 	}
 	
 	/**
@@ -134,10 +138,9 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetIsOsiApproved() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getIsOsiApproved());
-//		testLicense.setIsOsiApproved(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getIsOsiApproved());
-		fail("Not yet implemented");
+		assertEquals(new Boolean(true), testLicense.getIsOsiApproved());
+		testLicense.setIsOsiApproved(false);
+		assertEquals(new Boolean(false), testLicense.getIsOsiApproved());
 	}
 	
 	/**
@@ -145,10 +148,9 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetStandardLicenseTemplate() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getStandardLicenseTemplate());
-//		testLicense.setStandardLicenseTemplate(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getStandardLicenseTemplate());
-		fail("Not yet implemented");
+		assertEquals(STANDARD_LICENSE_TEMPLATE_TEST_VALUE, testLicense.getStandardLicenseTemplate());
+		testLicense.setStandardLicenseTemplate("new standardLicenseTemplate value");
+		assertEquals("new standardLicenseTemplate value", testLicense.getStandardLicenseTemplate());
 	}
 	
 	/**
@@ -156,10 +158,9 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetStandardLicenseHeader() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getStandardLicenseHeader());
-//		testLicense.setStandardLicenseHeader(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getStandardLicenseHeader());
-		fail("Not yet implemented");
+		assertEquals(STANDARD_LICENSE_HEADER_TEST_VALUE, testLicense.getStandardLicenseHeader());
+		testLicense.setStandardLicenseHeader("new standardLicenseHeader value");
+		assertEquals("new standardLicenseHeader value", testLicense.getStandardLicenseHeader());
 	}
 	
 	/**
@@ -167,13 +168,8 @@ public class LicenseTest extends TestCase {
 	 */
 	public void testLicensesetLicenseText() throws InvalidSPDXAnalysisException {
 		License testLicense = builderForLicenseTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLicense.getLicenseText());
-//		testLicense.setLicenseText(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLicense.getLicenseText());
-		fail("Not yet implemented");
+		assertEquals(LICENSE_TEXT_TEST_VALUE, testLicense.getLicenseText());
+		testLicense.setLicenseText("new licenseText value");
+		assertEquals("new licenseText value", testLicense.getLicenseText());
 	}
-
-/*
-*/
-
 }

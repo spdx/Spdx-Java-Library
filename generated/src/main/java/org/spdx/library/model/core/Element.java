@@ -198,7 +198,7 @@ public class Element extends Payload  {
 		 * @parameter externalReference externalReference to add
 		 * @return this for chaining
 		**/
-		ElementBuilder addexternalReference(ExternalReference externalReference) {
+		ElementBuilder addExternalReference(ExternalReference externalReference) {
 			if (Objects.nonNull(externalReference)) {
 				externalReferences.add(externalReference);
 			}
@@ -210,7 +210,7 @@ public class Element extends Payload  {
 		 * @parameter externalReferenceCollection collection to initialize the externalReference
 		 * @return this for chaining
 		**/
-		ElementBuilder addAllexternalReference(Collection<ExternalReference> externalReferenceCollection) {
+		ElementBuilder addAllExternalReference(Collection<ExternalReference> externalReferenceCollection) {
 			if (Objects.nonNull(externalReferenceCollection)) {
 				externalReferences.addAll(externalReferenceCollection);
 			}
@@ -222,7 +222,7 @@ public class Element extends Payload  {
 		 * @parameter externalIdentifier externalIdentifier to add
 		 * @return this for chaining
 		**/
-		ElementBuilder addexternalIdentifier(ExternalIdentifier externalIdentifier) {
+		ElementBuilder addExternalIdentifier(ExternalIdentifier externalIdentifier) {
 			if (Objects.nonNull(externalIdentifier)) {
 				externalIdentifiers.add(externalIdentifier);
 			}
@@ -234,7 +234,7 @@ public class Element extends Payload  {
 		 * @parameter externalIdentifierCollection collection to initialize the externalIdentifier
 		 * @return this for chaining
 		**/
-		ElementBuilder addAllexternalIdentifier(Collection<ExternalIdentifier> externalIdentifierCollection) {
+		ElementBuilder addAllExternalIdentifier(Collection<ExternalIdentifier> externalIdentifierCollection) {
 			if (Objects.nonNull(externalIdentifierCollection)) {
 				externalIdentifiers.addAll(externalIdentifierCollection);
 			}
@@ -246,7 +246,7 @@ public class Element extends Payload  {
 		 * @parameter description value to set
 		 * @return this for chaining
 		**/
-		ElementBuilder setdescription(String description) {
+		ElementBuilder setDescription(String description) {
 			this.description = description;
 			return this;
 		}
@@ -256,7 +256,7 @@ public class Element extends Payload  {
 		 * @parameter summary value to set
 		 * @return this for chaining
 		**/
-		ElementBuilder setsummary(String summary) {
+		ElementBuilder setSummary(String summary) {
 			this.summary = summary;
 			return this;
 		}
