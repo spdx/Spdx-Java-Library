@@ -21,22 +21,22 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
 /**
@@ -121,12 +121,6 @@ public class EpssVulnAssessmentRelationship extends VulnAssessmentRelationship  
 		if (isStrict() && Objects.isNull(probability)) {
 			throw new InvalidSPDXAnalysisException("probability is a required property");
 		}
-		if (isStrict() && Objects.nonNull(probability) && probability < 1) {
-			throw new InvalidSPDXAnalysisException("probability value " + probability + " is less than the minimum 1 in EpssVulnAssessmentRelationship");
-		}
-		if (isStrict() && Objects.nonNull(probability) && probability > 1) {
-			throw new InvalidSPDXAnalysisException("probability value " + probability + " is greater than the maximum 1 in EpssVulnAssessmentRelationship");
-		}
 		setPropertyValue(SpdxConstants.SECURITY_PROP_PROBABILITY, probability);
 		return this;
 	}
@@ -149,12 +143,6 @@ public class EpssVulnAssessmentRelationship extends VulnAssessmentRelationship  
 			if (Objects.isNull(probability)) {
 				retval.add("Missing probability in EpssVulnAssessmentRelationship");
 			}
-			if (Objects.nonNull(probability) && probability < 1) {
-				retval.add("probability value " + probability + " is less than the minimum 1 in EpssVulnAssessmentRelationship");
-			}
-			if (Objects.nonNull(probability) && probability > 1) {
-				retval.add("probability value " + probability + " is greater than the maximum 1 in EpssVulnAssessmentRelationship");
-			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting probability for EpssVulnAssessmentRelationship: "+e.getMessage());
 		}
@@ -163,6 +151,32 @@ public class EpssVulnAssessmentRelationship extends VulnAssessmentRelationship  
 	
 	public static class EpssVulnAssessmentRelationshipBuilder extends VulnAssessmentRelationshipBuilder {
 	
+		/**
+		 * Create an EpssVulnAssessmentRelationshipBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public EpssVulnAssessmentRelationshipBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an EpssVulnAssessmentRelationshipBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public EpssVulnAssessmentRelationshipBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a EpssVulnAssessmentRelationshipBuilder
+		 * @param modelStore model store for the built EpssVulnAssessmentRelationship
+		 * @param objectUri objectUri for the built EpssVulnAssessmentRelationship
+		 * @param copyManager optional copyManager for the built EpssVulnAssessmentRelationship
+		 */
 		public EpssVulnAssessmentRelationshipBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

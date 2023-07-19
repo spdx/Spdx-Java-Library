@@ -21,23 +21,21 @@ package org.spdx.library.model.ai;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.DictionaryEntry;
 import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.software.SpdxPackage;
@@ -107,6 +105,7 @@ public class AIPackage extends SpdxPackage  {
 	 * @param builder Builder to create the AIPackage from
 	 * @throws InvalidSPDXAnalysisException when unable to create the AIPackage
 	 */
+	 @SuppressWarnings("unchecked")
 	protected AIPackage(AIPackageBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
 		metrics = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC, DictionaryEntry.class);
@@ -322,36 +321,43 @@ public class AIPackage extends SpdxPackage  {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<PresenceType> sensitivePersonalInformation = getSensitivePersonalInformation();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting sensitivePersonalInformation for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<SafetyRiskAssessmentType> safetyRiskAssessment = getSafetyRiskAssessment();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting safetyRiskAssessment for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<PresenceType> autonomyType = getAutonomyType();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting autonomyType for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> informationAboutTraining = getInformationAboutTraining();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting informationAboutTraining for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> limitation = getLimitation();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting limitation for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> energyConsumption = getEnergyConsumption();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting energyConsumption for AIPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> informationAboutApplication = getInformationAboutApplication();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting informationAboutApplication for AIPackage: "+e.getMessage());
@@ -370,6 +376,32 @@ public class AIPackage extends SpdxPackage  {
 	
 	public static class AIPackageBuilder extends SpdxPackageBuilder {
 	
+		/**
+		 * Create an AIPackageBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public AIPackageBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an AIPackageBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public AIPackageBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a AIPackageBuilder
+		 * @param modelStore model store for the built AIPackage
+		 * @param objectUri objectUri for the built AIPackage
+		 * @param copyManager optional copyManager for the built AIPackage
+		 */
 		public AIPackageBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

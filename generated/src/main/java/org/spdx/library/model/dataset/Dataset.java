@@ -21,23 +21,23 @@ package org.spdx.library.model.dataset;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.DictionaryEntry;
 import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.software.SpdxPackage;
@@ -100,6 +100,7 @@ public class Dataset extends SpdxPackage  {
 	 * @param builder Builder to create the Dataset from
 	 * @throws InvalidSPDXAnalysisException when unable to create the Dataset
 	 */
+	 @SuppressWarnings("unchecked")
 	protected Dataset(DatasetBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
 		sensors = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_SENSOR, DictionaryEntry.class);
@@ -112,6 +113,7 @@ public class Dataset extends SpdxPackage  {
 		getAnonymizationMethodUseds().addAll(builder.anonymizationMethodUseds);
 		getDataPreprocessings().addAll(builder.dataPreprocessings);
 		getKnownBiass().addAll(builder.knownBiass);
+		setSensitivePersonalInformation(builder.sensitivePersonalInformation);
 		setConfidentialityLevel(builder.confidentialityLevel);
 		setDatasetAvailability(builder.datasetAvailability);
 		setDatasetSize(builder.datasetSize);
@@ -147,6 +149,31 @@ public class Dataset extends SpdxPackage  {
 	}
 	
 
+		/**
+	 * @return the sensitivePersonalInformation
+	 */
+	 @SuppressWarnings("unchecked")
+	public Optional<PresenceType> getSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION);
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof PresenceType)) {
+				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
+			}
+			return (Optional<PresenceType>)(Optional<?>)(retval);
+		} else {
+			return Optional.empty();
+		}
+	}
+	
+	/**
+	 * @param sensitivePersonalInformation the sensitivePersonalInformation to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Dataset setSensitivePersonalInformation(@Nullable PresenceType sensitivePersonalInformation) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION, sensitivePersonalInformation);
+		return this;
+	}
 	
 	/**
 	 * @return the confidentialityLevel
@@ -213,9 +240,6 @@ public class Dataset extends SpdxPackage  {
 	public Dataset setDatasetSize(@Nullable Integer datasetSize) throws InvalidSPDXAnalysisException {
 		if (isStrict() && Objects.nonNull(datasetSize) && datasetSize < 0) {
 			throw new InvalidSPDXAnalysisException("datasetSize value " + datasetSize + " is less than the minimum 0 in Dataset");
-		}
-		if (isStrict() && Objects.nonNull(datasetSize) && datasetSize > 1) {
-			throw new InvalidSPDXAnalysisException("datasetSize value " + datasetSize + " is greater than the maximum 1 in Dataset");
 		}
 		setPropertyValue(SpdxConstants.DATASET_PROP_DATASET_SIZE, datasetSize);
 		return this;
@@ -298,13 +322,23 @@ public class Dataset extends SpdxPackage  {
 	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-
+		Optional<PresenceType> sensitivePersonalInformation;
 		try {
+			sensitivePersonalInformation = getSensitivePersonalInformation();
+			if (sensitivePersonalInformation.isPresent()) {
+				retval.addAll(sensitivePersonalInformation.get().verify(verifiedIds, specVersion, profiles));
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting sensitivePersonalInformation for Dataset: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
 			Optional<ConfidentialityLevelType> confidentialityLevel = getConfidentialityLevel();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting confidentialityLevel for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<DatasetAvailabilityType> datasetAvailability = getDatasetAvailability();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetAvailability for Dataset: "+e.getMessage());
@@ -314,28 +348,29 @@ public class Dataset extends SpdxPackage  {
 			if (datasetSize.isPresent() && datasetSize.get() < 0) {
 				retval.add("datasetSize value " + datasetSize.get() + " is less than the minimum 0 in Dataset");
 			}
-			if (datasetSize.isPresent() && datasetSize.get() > 1) {
-				retval.add("datasetSize value " + datasetSize.get() + " is greater than the maximum 1 in Dataset");
-			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetSize for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> intendedUse = getIntendedUse();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting intendedUse for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> datasetNoise = getDatasetNoise();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetNoise for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> dataCollectionProcess = getDataCollectionProcess();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting dataCollectionProcess for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> datasetUpdateMechanism = getDatasetUpdateMechanism();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetUpdateMechanism for Dataset: "+e.getMessage());
@@ -343,14 +378,37 @@ public class Dataset extends SpdxPackage  {
 		for (DictionaryEntry sensor:sensors) {
 			retval.addAll(sensor.verify(verifiedIds, specVersion, profiles));
 		}
-		if (datasetTypes.size() < 1) {
-			retval.add("datasetTypes size " + datasetTypes.size() + " is less than 1 in Dataset");
-		}
 		return retval;
 	}
 	
 	public static class DatasetBuilder extends SpdxPackageBuilder {
 	
+		/**
+		 * Create an DatasetBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public DatasetBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an DatasetBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public DatasetBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a DatasetBuilder
+		 * @param modelStore model store for the built Dataset
+		 * @param objectUri objectUri for the built Dataset
+		 * @param copyManager optional copyManager for the built Dataset
+		 */
 		public DatasetBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}
@@ -360,6 +418,7 @@ public class Dataset extends SpdxPackage  {
 		Collection<String> anonymizationMethodUseds = new ArrayList<>();
 		Collection<String> dataPreprocessings = new ArrayList<>();
 		Collection<String> knownBiass = new ArrayList<>();
+		PresenceType sensitivePersonalInformation = null;
 		ConfidentialityLevelType confidentialityLevel = null;
 		DatasetAvailabilityType datasetAvailability = null;
 		Integer datasetSize = null;
@@ -488,7 +547,17 @@ public class Dataset extends SpdxPackage  {
 			}
 			return this;
 		}
-
+		
+		/**
+		 * Sets the initial value of sensitivePersonalInformation
+		 * @parameter sensitivePersonalInformation value to set
+		 * @return this for chaining
+		**/
+		DatasetBuilder setSensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
+			this.sensitivePersonalInformation = sensitivePersonalInformation;
+			return this;
+		}
+		
 		/**
 		 * Sets the initial value of confidentialityLevel
 		 * @parameter confidentialityLevel value to set

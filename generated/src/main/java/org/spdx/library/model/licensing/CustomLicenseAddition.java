@@ -21,22 +21,19 @@ package org.spdx.library.model.licensing;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
 /**
@@ -118,6 +115,32 @@ public class CustomLicenseAddition extends LicenseAddition  {
 	
 	public static class CustomLicenseAdditionBuilder extends LicenseAdditionBuilder {
 	
+		/**
+		 * Create an CustomLicenseAdditionBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public CustomLicenseAdditionBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an CustomLicenseAdditionBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public CustomLicenseAdditionBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a CustomLicenseAdditionBuilder
+		 * @param modelStore model store for the built CustomLicenseAddition
+		 * @param objectUri objectUri for the built CustomLicenseAddition
+		 * @param copyManager optional copyManager for the built CustomLicenseAddition
+		 */
 		public CustomLicenseAdditionBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

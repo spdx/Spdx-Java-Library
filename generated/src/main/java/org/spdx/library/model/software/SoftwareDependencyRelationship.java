@@ -21,22 +21,19 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.LifecycleScopedRelationship;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
@@ -163,11 +160,13 @@ public class SoftwareDependencyRelationship extends LifecycleScopedRelationship 
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<SoftwareDependencyLinkType> softwareLinkage = getSoftwareLinkage();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting softwareLinkage for SoftwareDependencyRelationship: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<DependencyConditionalityType> conditionality = getConditionality();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting conditionality for SoftwareDependencyRelationship: "+e.getMessage());
@@ -177,6 +176,32 @@ public class SoftwareDependencyRelationship extends LifecycleScopedRelationship 
 	
 	public static class SoftwareDependencyRelationshipBuilder extends LifecycleScopedRelationshipBuilder {
 	
+		/**
+		 * Create an SoftwareDependencyRelationshipBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public SoftwareDependencyRelationshipBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an SoftwareDependencyRelationshipBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public SoftwareDependencyRelationshipBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a SoftwareDependencyRelationshipBuilder
+		 * @param modelStore model store for the built SoftwareDependencyRelationship
+		 * @param objectUri objectUri for the built SoftwareDependencyRelationship
+		 * @param copyManager optional copyManager for the built SoftwareDependencyRelationship
+		 */
 		public SoftwareDependencyRelationshipBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

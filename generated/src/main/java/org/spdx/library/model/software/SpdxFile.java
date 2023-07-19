@@ -21,22 +21,19 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
 /**
@@ -129,6 +126,7 @@ public class SpdxFile extends SoftwareArtifact  {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> contentType = getContentType();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting contentType for SpdxFile: "+e.getMessage());
@@ -138,6 +136,32 @@ public class SpdxFile extends SoftwareArtifact  {
 	
 	public static class SpdxFileBuilder extends SoftwareArtifactBuilder {
 	
+		/**
+		 * Create an SpdxFileBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public SpdxFileBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an SpdxFileBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public SpdxFileBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a SpdxFileBuilder
+		 * @param modelStore model store for the built SpdxFile
+		 * @param objectUri objectUri for the built SpdxFile
+		 * @param copyManager optional copyManager for the built SpdxFile
+		 */
 		public SpdxFileBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

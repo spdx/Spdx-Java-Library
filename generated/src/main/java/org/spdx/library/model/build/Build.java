@@ -21,23 +21,23 @@ package org.spdx.library.model.build;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.DictionaryEntry;
 import org.spdx.library.model.core.Element;
 import org.spdx.library.model.core.Hash;
@@ -104,6 +104,7 @@ public class Build extends Element  {
 	 * @param builder Builder to create the Build from
 	 * @throws InvalidSPDXAnalysisException when unable to create the Build
 	 */
+	 @SuppressWarnings("unchecked")
 	protected Build(BuildBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
 		parameterss = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.BUILD_PROP_PARAMETERS, DictionaryEntry.class);
@@ -230,6 +231,7 @@ public class Build extends Element  {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> buildEndTime = getBuildEndTime();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting buildEndTime for Build: "+e.getMessage());
@@ -243,11 +245,13 @@ public class Build extends Element  {
 			retval.add("Error getting buildType for Build: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> buildStartTime = getBuildStartTime();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting buildStartTime for Build: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> buildId = getBuildId();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting buildId for Build: "+e.getMessage());
@@ -266,6 +270,32 @@ public class Build extends Element  {
 	
 	public static class BuildBuilder extends ElementBuilder {
 	
+		/**
+		 * Create an BuildBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public BuildBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an BuildBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public BuildBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a BuildBuilder
+		 * @param modelStore model store for the built Build
+		 * @param objectUri objectUri for the built Build
+		 * @param copyManager optional copyManager for the built Build
+		 */
 		public BuildBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

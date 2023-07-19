@@ -21,22 +21,19 @@ package org.spdx.library.model.security;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
 /**
@@ -156,11 +153,13 @@ public class VexVulnAssessmentRelationship extends VulnAssessmentRelationship  {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> statusNotes = getStatusNotes();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting statusNotes for VexVulnAssessmentRelationship: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> vexVersion = getVexVersion();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting vexVersion for VexVulnAssessmentRelationship: "+e.getMessage());
@@ -170,6 +169,32 @@ public class VexVulnAssessmentRelationship extends VulnAssessmentRelationship  {
 	
 	public static class VexVulnAssessmentRelationshipBuilder extends VulnAssessmentRelationshipBuilder {
 	
+		/**
+		 * Create an VexVulnAssessmentRelationshipBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public VexVulnAssessmentRelationshipBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an VexVulnAssessmentRelationshipBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public VexVulnAssessmentRelationshipBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a VexVulnAssessmentRelationshipBuilder
+		 * @param modelStore model store for the built VexVulnAssessmentRelationship
+		 * @param objectUri objectUri for the built VexVulnAssessmentRelationship
+		 * @param copyManager optional copyManager for the built VexVulnAssessmentRelationship
+		 */
 		public VexVulnAssessmentRelationshipBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}

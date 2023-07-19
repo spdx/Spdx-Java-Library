@@ -176,6 +176,7 @@ public abstract class ModelObject {
 	 */
 	public ModelObject(ModelObjectBuilder builder) throws InvalidSPDXAnalysisException {
 		this(builder.modelStore, builder.objectUri, builder.copyManager, true);
+		this.strict = builder.strict;
 	}
 
 	// Abstract methods that must be implemented in the subclasses
@@ -965,11 +966,16 @@ public abstract class ModelObject {
 		public IModelStore modelStore;
 		public String objectUri;
 		public ModelCopyManager copyManager;
+		public boolean strict = true;
 
 		public ModelObjectBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			this.modelStore = modelStore;
 			this.objectUri = objectUri;
 			this.copyManager = copyManager;
+		}
+		
+		public void setStrict(boolean strict) {
+			this.strict = strict;
 		}
 	}
 }

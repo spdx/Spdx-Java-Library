@@ -21,22 +21,19 @@ package org.spdx.library.model.software;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObject;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
+import java.util.Optional;
+import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 
 /**
@@ -204,26 +201,31 @@ public class SpdxPackage extends SoftwareArtifact  {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> downloadLocation = getDownloadLocation();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting downloadLocation for SpdxPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> sourceInfo = getSourceInfo();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting sourceInfo for SpdxPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> packageVersion = getPackageVersion();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting packageVersion for SpdxPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> homePage = getHomePage();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting homePage for SpdxPackage: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
 			Optional<String> packageUrl = getPackageUrl();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting packageUrl for SpdxPackage: "+e.getMessage());
@@ -233,6 +235,32 @@ public class SpdxPackage extends SoftwareArtifact  {
 	
 	public static class SpdxPackageBuilder extends SoftwareArtifactBuilder {
 	
+		/**
+		 * Create an SpdxPackageBuilder from another model object copying the modelStore and copyManager and using an anonymous ID
+		 * @param from model object to copy the model store and copyManager from
+		 * @throws InvalidSPDXAnalysisException
+		 */
+		public SpdxPackageBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
+		}
+	
+		/**
+		 * Create an SpdxPackageBuilder from another model object copying the modelStore and copyManager
+		 * @param from model object to copy the model store and copyManager from
+		 * @param objectUri URI for the object
+		 * @param objectUri
+		 */
+		public SpdxPackageBuilder(ModelObject from, String objectUri) {
+			this(from.getModelStore(), objectUri, from.getCopyManager());
+			setStrict(from.isStrict());
+		}
+		
+		/**
+		 * Creates a SpdxPackageBuilder
+		 * @param modelStore model store for the built SpdxPackage
+		 * @param objectUri objectUri for the built SpdxPackage
+		 * @param copyManager optional copyManager for the built SpdxPackage
+		 */
 		public SpdxPackageBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			super(modelStore, objectUri, copyManager);
 		}
