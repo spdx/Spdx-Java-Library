@@ -20,8 +20,8 @@
  * 
  * For the enumerations to be stored properly, they must implement the IndividualUriValue interface.
  * 
- * The enumerations also must be added to the static map uriToEnum in the SpdxEnumFactory classes.
+ * The enumerations also must be added to the static map uriToEnum in the SpdxEnumFactoryCompatV2 classes.
  * 
  * @author Gary O'Neall
  */
-package org.spdx.library.model.enumerations;
+package org.spdx.library.model.compat.v2.enumerations;

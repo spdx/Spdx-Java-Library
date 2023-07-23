@@ -32,8 +32,6 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 
-import java.util.Optional;
-import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.expandedlicense.ExtendableLicense;
 

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -111,8 +112,8 @@ public class IntegrityMethodTest extends TestCase {
 	 */
 	public void testIntegrityMethodsetComment() throws InvalidSPDXAnalysisException {
 		IntegrityMethod testIntegrityMethod = builderForIntegrityMethodTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(COMMENT_TEST_VALUE, testIntegrityMethod.getComment());
+		assertEquals(Optional.of(COMMENT_TEST_VALUE), testIntegrityMethod.getComment());
 		testIntegrityMethod.setComment("new comment value");
-		assertEquals("new comment value", testIntegrityMethod.getComment());
+		assertEquals(Optional.of("new comment value"), testIntegrityMethod.getComment());
 	}
 }

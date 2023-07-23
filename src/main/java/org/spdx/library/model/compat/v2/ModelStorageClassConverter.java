@@ -71,7 +71,7 @@ public class ModelStorageClassConverter {
 			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (value instanceof IndividualUriValue) {	// Note: this must be before the check for TypedValue
 			SimpleUriValue suv = new SimpleUriValue((IndividualUriValue)value);
-			return suv.toModelObject(modelStore, null, documentUri);
+			return suv.toModelObject(modelStore, null, documentUri, null);
 		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
 			String id = tv.getObjectUri().startsWith(documentUri) ? tv.getObjectUri().substring(documentUri.length() + 1) : 
@@ -103,7 +103,8 @@ public class ModelStorageClassConverter {
 	public static Optional<Object> optionalStoredObjectToModelObject(Optional<Object> value, 
 			String stDocumentUri, IModelStore stModelStore, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (value.isPresent() && value.get() instanceof IndividualUriValue) {
-			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(stModelStore, copyManager, stDocumentUri));
+			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get())
+					.toModelObject(stModelStore, copyManager, stDocumentUri, null));
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
 			return Optional.of(SpdxModelFactory.createModelObjectV2(stModelStore, stDocumentUri, 

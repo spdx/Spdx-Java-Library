@@ -6,8 +6,8 @@ import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore.IdType;
 
 import junit.framework.TestCase;

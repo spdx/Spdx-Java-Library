@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2022 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -15,28 +15,35 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.enumerations;
+package org.spdx.library.model.compat.v2.enumerations;
 
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 
 /**
- * Reference category for external refs
+ * Package Purpose is intrinsic to how the package is being used rather than the content of the package.
  * 
  * @author Gary O'Neall
  *
  */
-public enum ReferenceCategory implements IndividualUriValue {
-	PACKAGE_MANAGER("referenceCategory_packageManager"),
-	SECURITY("referenceCategory_security"),
-	OTHER("referenceCategory_other"),
-	PERSISTENT_ID("referenceCategory_persistentId"),
-	MISSING("invalid_missing")
-	;
-
+public enum Purpose implements IndividualUriValue {
+	
+	APPLICATION("purpose_application"),
+	FRAMEWORK("purpose_framework"), 
+	LIBRARY("purpose_library"), 
+	OPERATING_SYSTEM("purpose_operatingSystem"),
+	DEVICE("purpose_device"),
+	FIRMWARE("purpose_firmware"),
+	SOURCE("purpose_source"),
+	FILE("purpose_file"),
+	INSTALL("purpose_install"),
+	ARCHIVE("purpose_archive"),
+	CONTAINER("purpose_container"),
+	OTHER("purpose_other");
+	
 private String longName;
 	
-	private ReferenceCategory(String longName) {
+	private Purpose(String longName) {
 		this.longName = longName;
 	}
 	@Override
@@ -51,4 +58,5 @@ private String longName;
 	public String getNameSpace() {
 		return SpdxConstantsCompatV2.SPDX_NAMESPACE;
 	}
+
 }

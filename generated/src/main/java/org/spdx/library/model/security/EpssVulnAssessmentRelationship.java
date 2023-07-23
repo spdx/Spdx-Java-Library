@@ -140,7 +140,8 @@ public class EpssVulnAssessmentRelationship extends VulnAssessmentRelationship  
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
 			Integer probability = getProbability();
-			if (Objects.isNull(probability)) {
+			if (Objects.isNull(probability) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.SECURITY }))) {
 				retval.add("Missing probability in EpssVulnAssessmentRelationship");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

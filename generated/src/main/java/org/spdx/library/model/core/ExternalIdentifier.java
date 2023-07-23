@@ -203,7 +203,8 @@ public class ExternalIdentifier extends ModelObject  {
 		List<String> retval = new ArrayList<>();
 		try {
 			ExternalIdentifierType externalIdentifierType = getExternalIdentifierType();
-			if (Objects.isNull(externalIdentifierType)) {
+			if (Objects.isNull(externalIdentifierType) && 
+						Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing externalIdentifierType in ExternalIdentifier");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -217,7 +218,8 @@ public class ExternalIdentifier extends ModelObject  {
 		}
 		try {
 			String identifier = getIdentifier();
-			if (Objects.isNull(identifier)) {
+			if (Objects.isNull(identifier) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing identifier in ExternalIdentifier");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

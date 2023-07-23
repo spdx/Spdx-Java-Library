@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -111,9 +112,9 @@ public class SnippetTest extends TestCase {
 	 */
 	public void testSnippetsetByteRange() throws InvalidSPDXAnalysisException {
 		Snippet testSnippet = builderForSnippetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSnippet.getByteRange());
+//		assertEquals(Optional.of(TEST_VALUE), testSnippet.getByteRange());
 //		testSnippet.setByteRange(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSnippet.getByteRange());
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testSnippet.getByteRange());
 		fail("Not yet implemented");
 	}
 	
@@ -122,9 +123,9 @@ public class SnippetTest extends TestCase {
 	 */
 	public void testSnippetsetLineRange() throws InvalidSPDXAnalysisException {
 		Snippet testSnippet = builderForSnippetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSnippet.getLineRange());
+//		assertEquals(Optional.of(TEST_VALUE), testSnippet.getLineRange());
 //		testSnippet.setLineRange(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSnippet.getLineRange());
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testSnippet.getLineRange());
 		fail("Not yet implemented");
 	}
 }

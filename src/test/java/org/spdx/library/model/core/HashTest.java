@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -42,6 +43,8 @@ public class HashTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final String HASH_VALUE_TEST_VALUE = "test hashValue";
+	static final HashAlgorithm ALGORITHM_TEST_VALUE1 = HashAlgorithm.values()[0];
+	static final HashAlgorithm ALGORITHM_TEST_VALUE2 = HashAlgorithm.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -57,9 +60,9 @@ public class HashTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		HashBuilder retval = new HashBuilder(modelStore, objectUri, copyManager)
 				.setHashValue(HASH_VALUE_TEST_VALUE)
+				.setAlgorithm(ALGORITHM_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setAlgorithm(HashAlgorithm.ENUM)
 				***************/
 				;
 		return retval;
@@ -112,10 +115,9 @@ public class HashTest extends TestCase {
 	 */
 	public void testHashsetAlgorithm() throws InvalidSPDXAnalysisException {
 		Hash testHash = builderForHashTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testHash.getAlgorithm());
-//		testHash.setAlgorithm(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testHash.getAlgorithm());
-		fail("Not yet implemented");
+		assertEquals(ALGORITHM_TEST_VALUE1, testHash.getAlgorithm());
+		testHash.setAlgorithm(ALGORITHM_TEST_VALUE2);
+		assertEquals(ALGORITHM_TEST_VALUE2, testHash.getAlgorithm());
 	}
 	
 	/**

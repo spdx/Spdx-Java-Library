@@ -96,13 +96,13 @@ public class SpdxModelFactory {
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_POINTER_COMPOUNT_POINTER, org.spdx.library.model.compat.v2.pointer.CompoundPointer.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_SINGLE_POINTER, org.spdx.library.model.compat.v2.pointer.SinglePointer.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_CROSS_REF, org.spdx.library.model.compat.v2.license.CrossRef.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_FILE_TYPE, org.spdx.library.model.enumerations.FileType.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_ANNOTATION_TYPE, org.spdx.library.model.enumerations.AnnotationType.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_CHECKSUM_ALGORITHM_TYPE, org.spdx.library.model.enumerations.ChecksumAlgorithm.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_CATEGORY_TYPE, org.spdx.library.model.enumerations.ReferenceCategory.class);
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_RELATIONSHIP_TYPE, org.spdx.library.model.enumerations.RelationshipType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_FILE_TYPE, org.spdx.library.model.compat.v2.enumerations.FileType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_ANNOTATION_TYPE, org.spdx.library.model.compat.v2.enumerations.AnnotationType.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_CHECKSUM_ALGORITHM_TYPE, org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_CATEGORY_TYPE, org.spdx.library.model.compat.v2.enumerations.ReferenceCategory.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_REFERENCE_RELATIONSHIP_TYPE, org.spdx.library.model.compat.v2.enumerations.RelationshipType.class);
 		typeToClassV2.put(SpdxConstantsCompatV2.CLASS_EXTERNAL_EXTRACTED_LICENSE, org.spdx.library.model.compat.v2.license.ExternalExtractedLicenseInfo.class);	
-		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_PURPOSE, org.spdx.library.model.enumerations.Purpose.class);
+		typeToClassV2.put(SpdxConstantsCompatV2.ENUM_PURPOSE, org.spdx.library.model.compat.v2.enumerations.Purpose.class);
 		SPDX_TYPE_TO_CLASS_V2 = Collections.unmodifiableMap(typeToClassV2);
 		Map<String, Class<?>> typeToClassV3 = new HashMap<>();
 		//TODO Add V3 class strings

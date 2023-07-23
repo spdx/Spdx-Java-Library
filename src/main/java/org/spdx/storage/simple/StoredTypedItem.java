@@ -25,7 +25,7 @@ import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.TypedValue;
 import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.enumerations.SpdxEnumFactory;
+import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -431,7 +431,7 @@ public class StoredTypedItem extends TypedValue {
 				if (!clazz.isAssignableFrom(value.getClass())) {
 					if (value instanceof IndividualUriValue) {
 						String uri = ((IndividualUriValue)value).getIndividualURI();
-						Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
+						Enum<?> spdxEnum = SpdxEnumFactoryCompatV2.uriToEnum.get(uri);
 						if (Objects.nonNull(spdxEnum)) {
 							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
 								return false;
@@ -499,7 +499,7 @@ public class StoredTypedItem extends TypedValue {
 			if (SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri)) {
 				return true;
 			}
-			Enum<?> spdxEnum = SpdxEnumFactory.uriToEnum.get(uri);
+			Enum<?> spdxEnum = SpdxEnumFactoryCompatV2.uriToEnum.get(uri);
 			if (Objects.nonNull(spdxEnum)) {
 				return clazz.isAssignableFrom(spdxEnum.getClass());
 			} else {

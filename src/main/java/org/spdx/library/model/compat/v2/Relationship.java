@@ -27,7 +27,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.Version;
-import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 
 /**

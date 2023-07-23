@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
 /**
  * Holds static methods used for verify various property values

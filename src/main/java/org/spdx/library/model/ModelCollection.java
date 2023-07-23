@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -36,6 +37,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxObjectNotInStoreException;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -51,6 +53,10 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	private String objectUri;
 	private PropertyDescriptor propertyDescriptor;
 	private ModelCopyManager copyManager;
+	/**
+	 * Map of URI's of elements referenced but not present in the store
+	 */
+	protected Map<String, ExternalMap> externalMap;
 	private Class<?> type;
 //	private boolean licensePrimitiveAssignable;  // If true, NONE and NOASSERTION should be converted to NoneLicense and NoAssertionLicense
 	
@@ -80,11 +86,12 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	 * @param propertyDescriptor descriptor for the property use for the model collections
 	 * @param copyManager if non-null, use this to copy properties when referenced outside this model store
 	 * @param type The class of the elements to be stored in the collection if none, null if not known
-	 * @throws InvalidSPDXAnalysisException
+	 * @param externalMap Map of URI's of elements referenced but not present in the store
+	 * @throws InvalidSPDXAnalysisException on parsing or store errors
 	 */
 	public ModelCollection(IModelStore modelStore, String objectUri, PropertyDescriptor propertyDescriptor,
 			@Nullable ModelCopyManager copyManager,
-			@Nullable Class<?> type) throws InvalidSPDXAnalysisException {
+			@Nullable Class<?> type, Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(modelStore, "Model store can not be null");
 		this.modelStore = modelStore;
 		Objects.requireNonNull(objectUri, "Object URI or anonymous ID can not be null");
@@ -142,7 +149,7 @@ public class ModelCollection<T extends Object> implements Collection<Object> {
 	
 	private Object checkConvertTypedValue(Object value) {
 		try {
-			Object retval = ModelObjectHelper.storedObjectToModelObject(value, modelStore, copyManager);
+			Object retval = ModelObjectHelper.storedObjectToModelObject(value, modelStore, copyManager, externalMap);
 //			if (licensePrimitiveAssignable && retval instanceof IndividualUriValue) {
 //				String uri = ((IndividualUriValue)retval).getIndividualURI();
 //				if (SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri)) {

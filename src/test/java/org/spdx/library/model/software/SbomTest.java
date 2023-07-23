@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -41,6 +42,10 @@ public class SbomTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final SBOMType SBOM_TYPE_TEST_VALUE1 = SBOMType.values()[0];
+	static final SBOMType SBOM_TYPE_TEST_VALUE2 = SBOMType.values()[1];
+	static final List<SBOMType> SBOM_TYPE_TEST_LIST1 = Arrays.asList(new SBOMType[] { SBOM_TYPE_TEST_VALUE1, SBOM_TYPE_TEST_VALUE2 });
+	static final List<SBOMType> SBOM_TYPE_TEST_LIST2 = Arrays.asList(new SBOMType[] { SBOM_TYPE_TEST_VALUE1 });
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -55,9 +60,10 @@ public class SbomTest extends TestCase {
 	public static SbomBuilder builderForSbomTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SbomBuilder retval = new SbomBuilder(modelStore, objectUri, copyManager)
+				.addSbomType(SBOM_TYPE_TEST_VALUE1)
+				.addSbomType(SBOM_TYPE_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.addSbomType(SBOMType.ENUM)
 				***************/
 				;
 		return retval;
@@ -110,10 +116,9 @@ public class SbomTest extends TestCase {
 	 */
 	public void testSbomgetSbomTypes() throws InvalidSPDXAnalysisException {
 		Sbom testSbom = builderForSbomTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testSbom.getSbomTypes())));
-//		testSbom.getSbomTypes().clear();
-//		testSbom.getSbomTypes().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testSbom.getSbomTypes())));
-		fail("Not yet implemented");
+		assertTrue(UnitTestHelper.isListsEqual(SBOM_TYPE_TEST_LIST1, new ArrayList<>(testSbom.getSbomTypes())));
+		testSbom.getSbomTypes().clear();
+		testSbom.getSbomTypes().addAll(SBOM_TYPE_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(SBOM_TYPE_TEST_LIST2, new ArrayList<>(testSbom.getSbomTypes())));
 	}
 }

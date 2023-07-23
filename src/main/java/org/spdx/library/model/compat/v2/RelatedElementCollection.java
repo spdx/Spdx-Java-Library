@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxIdInUseException;
-import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;

@@ -39,13 +39,13 @@ import org.spdx.library.model.compat.v2.SpdxElement;
 import org.spdx.library.model.compat.v2.SpdxFile;
 import org.spdx.library.model.compat.v2.SpdxPackage;
 import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.FileType;
+import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.enumerations.AnnotationType;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.enumerations.ReferenceCategory;
-import org.spdx.library.model.enumerations.RelationshipType;
 
 import junit.framework.TestCase;
 

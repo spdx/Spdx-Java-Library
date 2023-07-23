@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -115,9 +116,9 @@ public class ElementTest extends TestCase {
 	 */
 	public void testElementsetDescription() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(DESCRIPTION_TEST_VALUE, testElement.getDescription());
+		assertEquals(Optional.of(DESCRIPTION_TEST_VALUE), testElement.getDescription());
 		testElement.setDescription("new description value");
-		assertEquals("new description value", testElement.getDescription());
+		assertEquals(Optional.of("new description value"), testElement.getDescription());
 	}
 	
 	/**
@@ -125,9 +126,9 @@ public class ElementTest extends TestCase {
 	 */
 	public void testElementsetSummary() throws InvalidSPDXAnalysisException {
 		Element testElement = builderForElementTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(SUMMARY_TEST_VALUE, testElement.getSummary());
+		assertEquals(Optional.of(SUMMARY_TEST_VALUE), testElement.getSummary());
 		testElement.setSummary("new summary value");
-		assertEquals("new summary value", testElement.getSummary());
+		assertEquals(Optional.of("new summary value"), testElement.getSummary());
 	}
 	
 	/**

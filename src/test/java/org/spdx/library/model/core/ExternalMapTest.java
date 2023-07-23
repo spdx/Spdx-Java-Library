@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -116,9 +117,9 @@ public class ExternalMapTest extends TestCase {
 	 */
 	public void testExternalMapsetDefiningDocument() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(DEFINING_DOCUMENT_TEST_VALUE, testExternalMap.getDefiningDocument());
+		assertEquals(Optional.of(DEFINING_DOCUMENT_TEST_VALUE), testExternalMap.getDefiningDocument());
 		testExternalMap.setDefiningDocument("new definingDocument value");
-		assertEquals("new definingDocument value", testExternalMap.getDefiningDocument());
+		assertEquals(Optional.of("new definingDocument value"), testExternalMap.getDefiningDocument());
 	}
 	
 	/**
@@ -126,9 +127,9 @@ public class ExternalMapTest extends TestCase {
 	 */
 	public void testExternalMapsetLocationHint() throws InvalidSPDXAnalysisException {
 		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(LOCATION_HINT_TEST_VALUE, testExternalMap.getLocationHint());
+		assertEquals(Optional.of(LOCATION_HINT_TEST_VALUE), testExternalMap.getLocationHint());
 		testExternalMap.setLocationHint("new locationHint value");
-		assertEquals("new locationHint value", testExternalMap.getLocationHint());
+		assertEquals(Optional.of("new locationHint value"), testExternalMap.getLocationHint());
 	}
 	
 	/**

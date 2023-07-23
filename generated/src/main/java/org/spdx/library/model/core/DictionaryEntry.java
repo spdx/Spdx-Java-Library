@@ -150,7 +150,8 @@ public class DictionaryEntry extends ModelObject  {
 		List<String> retval = new ArrayList<>();
 		try {
 			String key = getKey();
-			if (Objects.isNull(key)) {
+			if (Objects.isNull(key) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing key in DictionaryEntry");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -43,6 +44,8 @@ public class ExternalReferenceTest extends TestCase {
 
 	static final String CONTENT_TYPE_TEST_VALUE = "test contentType";
 	static final String COMMENT_TEST_VALUE = "test comment";
+	static final ExternalReferenceType EXTERNAL_REFERENCE_TYPE_TEST_VALUE1 = ExternalReferenceType.values()[0];
+	static final ExternalReferenceType EXTERNAL_REFERENCE_TYPE_TEST_VALUE2 = ExternalReferenceType.values()[1];
 	static final String LOCATOR_TEST_VALUE1 = "test 1 locator";
 	static final String LOCATOR_TEST_VALUE2 = "test 2 locator";
 	static final String LOCATOR_TEST_VALUE3 = "test 3 locator";
@@ -66,9 +69,9 @@ public class ExternalReferenceTest extends TestCase {
 				.setComment(COMMENT_TEST_VALUE)
 				.addLocator(LOCATOR_TEST_VALUE1)
 				.addLocator(LOCATOR_TEST_VALUE2)
+				.setExternalReferenceType(EXTERNAL_REFERENCE_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setExternalReferenceType(ExternalReferenceType.ENUM)
 				***************/
 				;
 		return retval;
@@ -121,10 +124,9 @@ public class ExternalReferenceTest extends TestCase {
 	 */
 	public void testExternalReferencesetExternalReferenceType() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalReference.getExternalReferenceType());
-//		testExternalReference.setExternalReferenceType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalReference.getExternalReferenceType());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(EXTERNAL_REFERENCE_TYPE_TEST_VALUE1), testExternalReference.getExternalReferenceType());
+		testExternalReference.setExternalReferenceType(EXTERNAL_REFERENCE_TYPE_TEST_VALUE2);
+		assertEquals(Optional.of(EXTERNAL_REFERENCE_TYPE_TEST_VALUE2), testExternalReference.getExternalReferenceType());
 	}
 	
 	/**
@@ -132,9 +134,9 @@ public class ExternalReferenceTest extends TestCase {
 	 */
 	public void testExternalReferencesetContentType() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(CONTENT_TYPE_TEST_VALUE, testExternalReference.getContentType());
+		assertEquals(Optional.of(CONTENT_TYPE_TEST_VALUE), testExternalReference.getContentType());
 		testExternalReference.setContentType("new contentType value");
-		assertEquals("new contentType value", testExternalReference.getContentType());
+		assertEquals(Optional.of("new contentType value"), testExternalReference.getContentType());
 	}
 	
 	/**
@@ -142,9 +144,9 @@ public class ExternalReferenceTest extends TestCase {
 	 */
 	public void testExternalReferencesetComment() throws InvalidSPDXAnalysisException {
 		ExternalReference testExternalReference = builderForExternalReferenceTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(COMMENT_TEST_VALUE, testExternalReference.getComment());
+		assertEquals(Optional.of(COMMENT_TEST_VALUE), testExternalReference.getComment());
 		testExternalReference.setComment("new comment value");
-		assertEquals("new comment value", testExternalReference.getComment());
+		assertEquals(Optional.of("new comment value"), testExternalReference.getComment());
 	}
 	
 	/**
@@ -156,6 +158,5 @@ public class ExternalReferenceTest extends TestCase {
 		testExternalReference.getLocators().clear();
 		testExternalReference.getLocators().addAll(LOCATOR_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(LOCATOR_TEST_LIST2, new ArrayList<>(testExternalReference.getLocators())));
-		fail("Not yet implemented");
 	}
 }

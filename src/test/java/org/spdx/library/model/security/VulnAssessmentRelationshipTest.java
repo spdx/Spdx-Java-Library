@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -111,9 +112,9 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVulnAssessmentRelationshipsetAssessedElement() throws InvalidSPDXAnalysisException {
 		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVulnAssessmentRelationship.getAssessedElement());
+//		assertEquals(Optional.of(TEST_VALUE), testVulnAssessmentRelationship.getAssessedElement());
 //		testVulnAssessmentRelationship.setAssessedElement(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVulnAssessmentRelationship.getAssessedElement());
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testVulnAssessmentRelationship.getAssessedElement());
 		fail("Not yet implemented");
 	}
 	
@@ -122,9 +123,9 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVulnAssessmentRelationshipsetSuppliedBy() throws InvalidSPDXAnalysisException {
 		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVulnAssessmentRelationship.getSuppliedBy());
+//		assertEquals(Optional.of(TEST_VALUE), testVulnAssessmentRelationship.getSuppliedBy());
 //		testVulnAssessmentRelationship.setSuppliedBy(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVulnAssessmentRelationship.getSuppliedBy());
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testVulnAssessmentRelationship.getSuppliedBy());
 		fail("Not yet implemented");
 	}
 }

@@ -17,6 +17,8 @@
  */
 package org.spdx.library;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -24,6 +26,9 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.model.ExternalElement;
+import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -80,14 +85,17 @@ public class SimpleUriValue implements IndividualUriValue {
 	}
 	
 	/**
-	 * inflate the value back to either an Enum (if the URI matches), an ExternalSpdxElement if it matches the pattern of an external SPDX element 
-	 * or returns itself otherwise
-	 * @param store
+	 * inflate the value back to either an Enum (if the URI matches),  an ExternalSpdxElement if the uri is found in the
+	 * externalMap or if it matches the pattern of a V2 compatible external SPDX element, an Individual object, or returns itself otherwise
+	 * @param store store to use for the inflated object
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
+	 * @param defaultNamespace optional document namespace when creating V2 compatible external document references
+	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @return Enum, ExternalSpdxElement or itself depending on the pattern
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on any store or parsing error
 	 */
-	public Object toModelObject(IModelStore store, ModelCopyManager copyManager, @Nullable String defaultNamespace) throws InvalidSPDXAnalysisException {
+	public Object toModelObject(IModelStore store, ModelCopyManager copyManager, @Nullable String defaultNamespace,
+			@Nullable Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
 		if (store.getSpdxVersion().compareTo(SpdxMajorVersion.VERSION_3) < 0) {
 			if (Objects.isNull(defaultNamespace)) {
 				logger.error("Default namespace can not be null for SPDX 2 model stores");
@@ -95,12 +103,44 @@ public class SimpleUriValue implements IndividualUriValue {
 			}
 			return toModelObjectV2Compat(store, defaultNamespace, copyManager);
 		} else {
-			throw new InvalidSPDXAnalysisException("Not implemented");
+			return toModelObject(store, copyManager, Objects.isNull(externalMap) ? new HashMap<>() : externalMap);
 		}
 	}
 	
+	/**
+	 * inflate the value back to either an Enum (if the URI matches),  an ExternalSpdxElement if the uri is found in the
+	 * externalMap, an Individual object, or returns itself otherwise
+	 * @param store store to use for the inflated object
+	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
+	 * @param externalMap map of URI's to ExternalMaps for any external elements
+	 * @return Enum, ExternalSpdxElement, individual or itself depending on the pattern
+	 * @throws InvalidSPDXAnalysisException on any store or parsing error
+	 */
+	private Object toModelObject(IModelStore store,  ModelCopyManager copyManager, Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
+		Object retval = SpdxEnumFactory.uriToEnum.get(uri);
+		if (Objects.nonNull(retval)) {
+			return retval;
+		} else if (externalMap.containsKey(uri)) {
+			return new ExternalElement(store, uri, copyManager, externalMap.get(uri));
+		} else if (SpdxIndividualFactory.uriToIndividual.containsKey(uri)) {
+			return SpdxIndividualFactory.uriToIndividual.get(uri);
+		} else {
+			logger.warn("URI "+uri+" does not match any model object or enumeration");
+			return this;
+		}
+	}
+	
+	/**
+	 * inflate the value back to either an Enum (if the URI matches), an ExternalSpdxElement if it matches the pattern of an external SPDX element 
+	 * or returns itself otherwise
+	 * @param store store to store the inflated object
+	 * @param documentUri document URI to use if creating an external document reference
+	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
+	 * @return Enum, ExternalSpdxElement or itself depending on the pattern
+	 * @throws InvalidSPDXAnalysisException on any store or parsing error
+	 */
 	private Object toModelObjectV2Compat(IModelStore store,  String documentUri, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		Object retval = org.spdx.library.model.enumerations.SpdxEnumFactory.uriToEnum.get(uri);
+		Object retval = SpdxEnumFactoryCompatV2.uriToEnum.get(uri);
 		if (Objects.nonNull(retval)) {
 			return retval;
 		} else if (SpdxConstantsCompatV2.EXTERNAL_SPDX_ELEMENT_URI_PATTERN.matcher(uri).matches()) {

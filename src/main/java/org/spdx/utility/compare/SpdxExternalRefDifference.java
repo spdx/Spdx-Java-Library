@@ -23,7 +23,7 @@ import java.util.Optional;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.model.compat.v2.ExternalRef;
 import org.spdx.library.model.compat.v2.ReferenceType;
-import org.spdx.library.model.enumerations.ReferenceCategory;
+import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
 
 /**
  * Contains information on differences between two different External Refs.

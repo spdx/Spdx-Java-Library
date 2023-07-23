@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.enumerations;
+package org.spdx.library.model.compat.v2.enumerations;
 
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;

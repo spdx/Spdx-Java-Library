@@ -234,17 +234,16 @@ public class Relationship extends Element  {
 			from = getFrom();
 			if (Objects.nonNull(from)) {
 				retval.addAll(from.verify(verifiedIds, specVersion, profiles));
-			} else {
-				if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 					retval.add("Missing from in from");
-				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting from for Relationship: "+e.getMessage());
 		}
 		try {
 			RelationshipType relationshipType = getRelationshipType();
-			if (Objects.isNull(relationshipType)) {
+			if (Objects.isNull(relationshipType) && 
+						Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing relationshipType in Relationship");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

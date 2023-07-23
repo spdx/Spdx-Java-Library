@@ -162,7 +162,8 @@ public class Hash extends IntegrityMethod  {
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
 			HashAlgorithm algorithm = getAlgorithm();
-			if (Objects.isNull(algorithm)) {
+			if (Objects.isNull(algorithm) && 
+						Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing algorithm in Hash");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -170,7 +171,8 @@ public class Hash extends IntegrityMethod  {
 		}
 		try {
 			String hashValue = getHashValue();
-			if (Objects.isNull(hashValue)) {
+			if (Objects.isNull(hashValue) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing hashValue in Hash");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

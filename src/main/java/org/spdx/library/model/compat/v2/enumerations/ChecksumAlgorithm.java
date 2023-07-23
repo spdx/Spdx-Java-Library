@@ -15,26 +15,41 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.enumerations;
+package org.spdx.library.model.compat.v2.enumerations;
 
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 
 /**
- * Annotation types for the Annotation Class
+ * Enum constants for Checksum Algorithms
  * 
  * @author Gary O'Neall
  *
  */
-public enum AnnotationType implements IndividualUriValue {
+public enum ChecksumAlgorithm implements IndividualUriValue {
+	SHA1("checksumAlgorithm_sha1"),
+	MD5("checksumAlgorithm_md5"),
+	SHA256("checksumAlgorithm_sha256"), 
+	MISSING("InvalidMissingChecksum"),
+	SHA224("checksumAlgorithm_sha224"),
+	SHA384("checksumAlgorithm_sha384"),
+	SHA512("checksumAlgorithm_sha512"),
+	MD2("checksumAlgorithm_md2"),
+	MD4("checksumAlgorithm_md4"),
+	MD6("checksumAlgorithm_md6"),
+	SHA3_256("checksumAlgorithm_sha3_256"),
+	SHA3_384("checksumAlgorithm_sha3_384"),
+	SHA3_512("checksumAlgorithm_sha3_512"),
+	BLAKE2b_256("checksumAlgorithm_blake2b256"),
+	BLAKE2b_384("checksumAlgorithm_blake2b384"),
+	BLAKE2b_512("checksumAlgorithm_blake2b512"),
+	BLAKE3("checksumAlgorithm_blake3"),
+	ADLER32("checksumAlgorithm_adler32"),
+	;
+
+	private final String longName;
 	
-	OTHER("annotationType_other"),
-	REVIEW("annotationType_review"), 
-	MISSING("not_allowed");
-	
-	private String longName;
-	
-	private AnnotationType(String longName) {
+	private ChecksumAlgorithm(String longName) {
 		this.longName = longName;
 	}
 	@Override

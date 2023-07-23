@@ -153,7 +153,8 @@ public class NamespaceMap extends ModelObject  {
 		List<String> retval = new ArrayList<>();
 		try {
 			String prefix = getPrefix();
-			if (Objects.isNull(prefix)) {
+			if (Objects.isNull(prefix) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing prefix in NamespaceMap");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
@@ -161,7 +162,8 @@ public class NamespaceMap extends ModelObject  {
 		}
 		try {
 			String namespace = getNamespace();
-			if (Objects.isNull(namespace)) {
+			if (Objects.isNull(namespace) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing namespace in NamespaceMap");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

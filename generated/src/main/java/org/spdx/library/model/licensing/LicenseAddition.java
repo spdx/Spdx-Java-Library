@@ -184,7 +184,8 @@ public class LicenseAddition extends Element  {
 		}
 		try {
 			String additionText = getAdditionText();
-			if (Objects.isNull(additionText)) {
+			if (Objects.isNull(additionText) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.LICENSING }))) {
 				retval.add("Missing additionText in LicenseAddition");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

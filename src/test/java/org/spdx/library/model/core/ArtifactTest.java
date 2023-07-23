@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -124,9 +125,9 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetReleaseTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(RELEASE_TIME_TEST_VALUE, testArtifact.getReleaseTime());
+		assertEquals(Optional.of(RELEASE_TIME_TEST_VALUE), testArtifact.getReleaseTime());
 		testArtifact.setReleaseTime("new releaseTime value");
-		assertEquals("new releaseTime value", testArtifact.getReleaseTime());
+		assertEquals(Optional.of("new releaseTime value"), testArtifact.getReleaseTime());
 	}
 	
 	/**
@@ -134,9 +135,9 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetValidUntilTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(VALID_UNTIL_TIME_TEST_VALUE, testArtifact.getValidUntilTime());
+		assertEquals(Optional.of(VALID_UNTIL_TIME_TEST_VALUE), testArtifact.getValidUntilTime());
 		testArtifact.setValidUntilTime("new validUntilTime value");
-		assertEquals("new validUntilTime value", testArtifact.getValidUntilTime());
+		assertEquals(Optional.of("new validUntilTime value"), testArtifact.getValidUntilTime());
 	}
 	
 	/**
@@ -144,9 +145,9 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetBuiltTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(BUILT_TIME_TEST_VALUE, testArtifact.getBuiltTime());
+		assertEquals(Optional.of(BUILT_TIME_TEST_VALUE), testArtifact.getBuiltTime());
 		testArtifact.setBuiltTime("new builtTime value");
-		assertEquals("new builtTime value", testArtifact.getBuiltTime());
+		assertEquals(Optional.of("new builtTime value"), testArtifact.getBuiltTime());
 	}
 	
 	/**
@@ -182,6 +183,5 @@ public class ArtifactTest extends TestCase {
 		testArtifact.getStandards().clear();
 		testArtifact.getStandards().addAll(STANDARD_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(STANDARD_TEST_LIST2, new ArrayList<>(testArtifact.getStandards())));
-		fail("Not yet implemented");
 	}
 }

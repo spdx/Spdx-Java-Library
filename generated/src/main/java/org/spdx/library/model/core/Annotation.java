@@ -180,17 +180,16 @@ public class Annotation extends Element  {
 			subject = getSubject();
 			if (Objects.nonNull(subject)) {
 				retval.addAll(subject.verify(verifiedIds, specVersion, profiles));
-			} else {
-				if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 					retval.add("Missing subject in subject");
-				}
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting subject for Annotation: "+e.getMessage());
 		}
 		try {
 			AnnotationType annotationType = getAnnotationType();
-			if (Objects.isNull(annotationType)) {
+			if (Objects.isNull(annotationType) && 
+						Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing annotationType in Annotation");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

@@ -25,7 +25,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
 
 import junit.framework.TestCase;
 

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -44,6 +45,8 @@ public class ExternalIdentifierTest extends TestCase {
 	static final String ISSUING_AUTHORITY_TEST_VALUE = "test issuingAuthority";
 	static final String IDENTIFIER_TEST_VALUE = "test identifier";
 	static final String COMMENT_TEST_VALUE = "test comment";
+	static final ExternalIdentifierType EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE1 = ExternalIdentifierType.values()[0];
+	static final ExternalIdentifierType EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE2 = ExternalIdentifierType.values()[1];
 	static final String IDENTIFIER_LOCATOR_TEST_VALUE1 = "test 1 identifierLocator";
 	static final String IDENTIFIER_LOCATOR_TEST_VALUE2 = "test 2 identifierLocator";
 	static final String IDENTIFIER_LOCATOR_TEST_VALUE3 = "test 3 identifierLocator";
@@ -68,9 +71,9 @@ public class ExternalIdentifierTest extends TestCase {
 				.setComment(COMMENT_TEST_VALUE)
 				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE1)
 				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE2)
+				.setExternalIdentifierType(EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setExternalIdentifierType(ExternalIdentifierType.ENUM)
 				***************/
 				;
 		return retval;
@@ -123,10 +126,9 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetExternalIdentifierType() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testExternalIdentifier.getExternalIdentifierType());
-//		testExternalIdentifier.setExternalIdentifierType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testExternalIdentifier.getExternalIdentifierType());
-		fail("Not yet implemented");
+		assertEquals(EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE1, testExternalIdentifier.getExternalIdentifierType());
+		testExternalIdentifier.setExternalIdentifierType(EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE2);
+		assertEquals(EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE2, testExternalIdentifier.getExternalIdentifierType());
 	}
 	
 	/**
@@ -134,9 +136,9 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetIssuingAuthority() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(ISSUING_AUTHORITY_TEST_VALUE, testExternalIdentifier.getIssuingAuthority());
+		assertEquals(Optional.of(ISSUING_AUTHORITY_TEST_VALUE), testExternalIdentifier.getIssuingAuthority());
 		testExternalIdentifier.setIssuingAuthority("new issuingAuthority value");
-		assertEquals("new issuingAuthority value", testExternalIdentifier.getIssuingAuthority());
+		assertEquals(Optional.of("new issuingAuthority value"), testExternalIdentifier.getIssuingAuthority());
 	}
 	
 	/**
@@ -154,9 +156,9 @@ public class ExternalIdentifierTest extends TestCase {
 	 */
 	public void testExternalIdentifiersetComment() throws InvalidSPDXAnalysisException {
 		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(COMMENT_TEST_VALUE, testExternalIdentifier.getComment());
+		assertEquals(Optional.of(COMMENT_TEST_VALUE), testExternalIdentifier.getComment());
 		testExternalIdentifier.setComment("new comment value");
-		assertEquals("new comment value", testExternalIdentifier.getComment());
+		assertEquals(Optional.of("new comment value"), testExternalIdentifier.getComment());
 	}
 	
 	/**
@@ -168,6 +170,5 @@ public class ExternalIdentifierTest extends TestCase {
 		testExternalIdentifier.getIdentifierLocators().clear();
 		testExternalIdentifier.getIdentifierLocators().addAll(IDENTIFIER_LOCATOR_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(IDENTIFIER_LOCATOR_TEST_LIST2, new ArrayList<>(testExternalIdentifier.getIdentifierLocators())));
-		fail("Not yet implemented");
 	}
 }

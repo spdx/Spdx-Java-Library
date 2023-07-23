@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -118,9 +119,9 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexAffectedVulnAssessmentRelationshipsetActionStatement() throws InvalidSPDXAnalysisException {
 		VexAffectedVulnAssessmentRelationship testVexAffectedVulnAssessmentRelationship = builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(ACTION_STATEMENT_TEST_VALUE, testVexAffectedVulnAssessmentRelationship.getActionStatement());
+		assertEquals(Optional.of(ACTION_STATEMENT_TEST_VALUE), testVexAffectedVulnAssessmentRelationship.getActionStatement());
 		testVexAffectedVulnAssessmentRelationship.setActionStatement("new actionStatement value");
-		assertEquals("new actionStatement value", testVexAffectedVulnAssessmentRelationship.getActionStatement());
+		assertEquals(Optional.of("new actionStatement value"), testVexAffectedVulnAssessmentRelationship.getActionStatement());
 	}
 	
 	/**
@@ -132,6 +133,5 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().clear();
 		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().addAll(ACTION_STATEMENT_TIME_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(ACTION_STATEMENT_TIME_TEST_LIST2, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
-		fail("Not yet implemented");
 	}
 }

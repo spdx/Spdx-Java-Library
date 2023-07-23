@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -113,9 +114,9 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexVulnAssessmentRelationshipsetStatusNotes() throws InvalidSPDXAnalysisException {
 		VexVulnAssessmentRelationship testVexVulnAssessmentRelationship = builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(STATUS_NOTES_TEST_VALUE, testVexVulnAssessmentRelationship.getStatusNotes());
+		assertEquals(Optional.of(STATUS_NOTES_TEST_VALUE), testVexVulnAssessmentRelationship.getStatusNotes());
 		testVexVulnAssessmentRelationship.setStatusNotes("new statusNotes value");
-		assertEquals("new statusNotes value", testVexVulnAssessmentRelationship.getStatusNotes());
+		assertEquals(Optional.of("new statusNotes value"), testVexVulnAssessmentRelationship.getStatusNotes());
 	}
 	
 	/**
@@ -123,8 +124,8 @@ public class VexVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexVulnAssessmentRelationshipsetVexVersion() throws InvalidSPDXAnalysisException {
 		VexVulnAssessmentRelationship testVexVulnAssessmentRelationship = builderForVexVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(VEX_VERSION_TEST_VALUE, testVexVulnAssessmentRelationship.getVexVersion());
+		assertEquals(Optional.of(VEX_VERSION_TEST_VALUE), testVexVulnAssessmentRelationship.getVexVersion());
 		testVexVulnAssessmentRelationship.setVexVersion("new vexVersion value");
-		assertEquals("new vexVersion value", testVexVulnAssessmentRelationship.getVexVersion());
+		assertEquals(Optional.of("new vexVersion value"), testVexVulnAssessmentRelationship.getVexVersion());
 	}
 }

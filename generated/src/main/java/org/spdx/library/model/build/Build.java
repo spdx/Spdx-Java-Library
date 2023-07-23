@@ -238,7 +238,8 @@ public class Build extends Element  {
 		}
 		try {
 			String buildType = getBuildType();
-			if (Objects.isNull(buildType)) {
+			if (Objects.isNull(buildType) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.BUILD }))) {
 				retval.add("Missing buildType in Build");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

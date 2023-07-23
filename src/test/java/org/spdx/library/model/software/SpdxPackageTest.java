@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -119,9 +120,9 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	public void testSpdxPackagesetDownloadLocation() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(DOWNLOAD_LOCATION_TEST_VALUE, testSpdxPackage.getDownloadLocation());
+		assertEquals(Optional.of(DOWNLOAD_LOCATION_TEST_VALUE), testSpdxPackage.getDownloadLocation());
 		testSpdxPackage.setDownloadLocation("new downloadLocation value");
-		assertEquals("new downloadLocation value", testSpdxPackage.getDownloadLocation());
+		assertEquals(Optional.of("new downloadLocation value"), testSpdxPackage.getDownloadLocation());
 	}
 	
 	/**
@@ -129,9 +130,9 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	public void testSpdxPackagesetSourceInfo() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(SOURCE_INFO_TEST_VALUE, testSpdxPackage.getSourceInfo());
+		assertEquals(Optional.of(SOURCE_INFO_TEST_VALUE), testSpdxPackage.getSourceInfo());
 		testSpdxPackage.setSourceInfo("new sourceInfo value");
-		assertEquals("new sourceInfo value", testSpdxPackage.getSourceInfo());
+		assertEquals(Optional.of("new sourceInfo value"), testSpdxPackage.getSourceInfo());
 	}
 	
 	/**
@@ -139,9 +140,9 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	public void testSpdxPackagesetPackageVersion() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(PACKAGE_VERSION_TEST_VALUE, testSpdxPackage.getPackageVersion());
+		assertEquals(Optional.of(PACKAGE_VERSION_TEST_VALUE), testSpdxPackage.getPackageVersion());
 		testSpdxPackage.setPackageVersion("new packageVersion value");
-		assertEquals("new packageVersion value", testSpdxPackage.getPackageVersion());
+		assertEquals(Optional.of("new packageVersion value"), testSpdxPackage.getPackageVersion());
 	}
 	
 	/**
@@ -149,9 +150,9 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	public void testSpdxPackagesetHomePage() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(HOME_PAGE_TEST_VALUE, testSpdxPackage.getHomePage());
+		assertEquals(Optional.of(HOME_PAGE_TEST_VALUE), testSpdxPackage.getHomePage());
 		testSpdxPackage.setHomePage("new homePage value");
-		assertEquals("new homePage value", testSpdxPackage.getHomePage());
+		assertEquals(Optional.of("new homePage value"), testSpdxPackage.getHomePage());
 	}
 	
 	/**
@@ -159,8 +160,8 @@ public class SpdxPackageTest extends TestCase {
 	 */
 	public void testSpdxPackagesetPackageUrl() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(PACKAGE_URL_TEST_VALUE, testSpdxPackage.getPackageUrl());
+		assertEquals(Optional.of(PACKAGE_URL_TEST_VALUE), testSpdxPackage.getPackageUrl());
 		testSpdxPackage.setPackageUrl("new packageUrl value");
-		assertEquals("new packageUrl value", testSpdxPackage.getPackageUrl());
+		assertEquals(Optional.of("new packageUrl value"), testSpdxPackage.getPackageUrl());
 	}
 }

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -111,8 +112,8 @@ public class BundleTest extends TestCase {
 	 */
 	public void testBundlesetContext() throws InvalidSPDXAnalysisException {
 		Bundle testBundle = builderForBundleTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(CONTEXT_TEST_VALUE, testBundle.getContext());
+		assertEquals(Optional.of(CONTEXT_TEST_VALUE), testBundle.getContext());
 		testBundle.setContext("new context value");
-		assertEquals("new context value", testBundle.getContext());
+		assertEquals(Optional.of("new context value"), testBundle.getContext());
 	}
 }

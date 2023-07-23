@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -43,6 +44,10 @@ public class RelationshipTest extends TestCase {
 
 	static final String START_TIME_TEST_VALUE = "test startTime";
 	static final String END_TIME_TEST_VALUE = "test endTime";
+	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE1 = RelationshipType.values()[0];
+	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE2 = RelationshipType.values()[1];
+	static final RelationshipCompleteness COMPLETENESS_TEST_VALUE1 = RelationshipCompleteness.values()[0];
+	static final RelationshipCompleteness COMPLETENESS_TEST_VALUE2 = RelationshipCompleteness.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -59,11 +64,11 @@ public class RelationshipTest extends TestCase {
 		RelationshipBuilder retval = new RelationshipBuilder(modelStore, objectUri, copyManager)
 				.setStartTime(START_TIME_TEST_VALUE)
 				.setEndTime(END_TIME_TEST_VALUE)
+				.setRelationshipType(RELATIONSHIP_TYPE_TEST_VALUE1)
+				.setCompleteness(COMPLETENESS_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
 				.setFrom(Element testElement)
-				.setRelationshipType(RelationshipType.ENUM)
-				.setCompleteness(RelationshipCompleteness.ENUM)
 				.addTo(Element)
 				***************/
 				;
@@ -128,10 +133,9 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetRelationshipType() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testRelationship.getRelationshipType());
-//		testRelationship.setRelationshipType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testRelationship.getRelationshipType());
-		fail("Not yet implemented");
+		assertEquals(RELATIONSHIP_TYPE_TEST_VALUE1, testRelationship.getRelationshipType());
+		testRelationship.setRelationshipType(RELATIONSHIP_TYPE_TEST_VALUE2);
+		assertEquals(RELATIONSHIP_TYPE_TEST_VALUE2, testRelationship.getRelationshipType());
 	}
 	
 	/**
@@ -139,10 +143,9 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetCompleteness() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testRelationship.getCompleteness());
-//		testRelationship.setCompleteness(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testRelationship.getCompleteness());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE1), testRelationship.getCompleteness());
+		testRelationship.setCompleteness(COMPLETENESS_TEST_VALUE2);
+		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE2), testRelationship.getCompleteness());
 	}
 	
 	/**
@@ -150,9 +153,9 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetStartTime() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(START_TIME_TEST_VALUE, testRelationship.getStartTime());
+		assertEquals(Optional.of(START_TIME_TEST_VALUE), testRelationship.getStartTime());
 		testRelationship.setStartTime("new startTime value");
-		assertEquals("new startTime value", testRelationship.getStartTime());
+		assertEquals(Optional.of("new startTime value"), testRelationship.getStartTime());
 	}
 	
 	/**
@@ -160,9 +163,9 @@ public class RelationshipTest extends TestCase {
 	 */
 	public void testRelationshipsetEndTime() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(END_TIME_TEST_VALUE, testRelationship.getEndTime());
+		assertEquals(Optional.of(END_TIME_TEST_VALUE), testRelationship.getEndTime());
 		testRelationship.setEndTime("new endTime value");
-		assertEquals("new endTime value", testRelationship.getEndTime());
+		assertEquals(Optional.of("new endTime value"), testRelationship.getEndTime());
 	}
 	
 	/**

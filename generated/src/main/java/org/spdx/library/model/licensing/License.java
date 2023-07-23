@@ -252,7 +252,8 @@ public class License extends ExtendableLicense  {
 		}
 		try {
 			String licenseText = getLicenseText();
-			if (Objects.isNull(licenseText)) {
+			if (Objects.isNull(licenseText) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.LICENSING }))) {
 				retval.add("Missing licenseText in License");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

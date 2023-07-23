@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.enumerations;
+package org.spdx.library.model.compat.v2.enumerations;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import java.util.Map;
  * @author gary
  *
  */
-public class SpdxEnumFactory {
+public class SpdxEnumFactoryCompatV2 {
 	
 	/**
 	 * Map of enum URI's to their Enum values
@@ -55,7 +55,7 @@ public class SpdxEnumFactory {
 		uriToEnum = Collections.unmodifiableMap(map);
 	}
 
-	private SpdxEnumFactory() {
+	private SpdxEnumFactoryCompatV2() {
 		// this is only a static class
 	}
 

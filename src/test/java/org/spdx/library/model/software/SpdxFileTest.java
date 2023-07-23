@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -111,8 +112,8 @@ public class SpdxFileTest extends TestCase {
 	 */
 	public void testSpdxFilesetContentType() throws InvalidSPDXAnalysisException {
 		SpdxFile testSpdxFile = builderForSpdxFileTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(CONTENT_TYPE_TEST_VALUE, testSpdxFile.getContentType());
+		assertEquals(Optional.of(CONTENT_TYPE_TEST_VALUE), testSpdxFile.getContentType());
 		testSpdxFile.setContentType("new contentType value");
-		assertEquals("new contentType value", testSpdxFile.getContentType());
+		assertEquals(Optional.of("new contentType value"), testSpdxFile.getContentType());
 	}
 }

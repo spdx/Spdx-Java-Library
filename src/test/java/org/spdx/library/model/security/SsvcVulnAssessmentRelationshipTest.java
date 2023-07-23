@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -41,6 +42,8 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final SsvcDecisionType DECISION_TYPE_TEST_VALUE1 = SsvcDecisionType.values()[0];
+	static final SsvcDecisionType DECISION_TYPE_TEST_VALUE2 = SsvcDecisionType.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -55,9 +58,9 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 	public static SsvcVulnAssessmentRelationshipBuilder builderForSsvcVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SsvcVulnAssessmentRelationshipBuilder retval = new SsvcVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setDecisionType(DECISION_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setDecisionType(SsvcDecisionType.ENUM)
 				***************/
 				;
 		return retval;
@@ -110,9 +113,8 @@ public class SsvcVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testSsvcVulnAssessmentRelationshipsetDecisionType() throws InvalidSPDXAnalysisException {
 		SsvcVulnAssessmentRelationship testSsvcVulnAssessmentRelationship = builderForSsvcVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSsvcVulnAssessmentRelationship.getDecisionType());
-//		testSsvcVulnAssessmentRelationship.setDecisionType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSsvcVulnAssessmentRelationship.getDecisionType());
-		fail("Not yet implemented");
+		assertEquals(DECISION_TYPE_TEST_VALUE1, testSsvcVulnAssessmentRelationship.getDecisionType());
+		testSsvcVulnAssessmentRelationship.setDecisionType(DECISION_TYPE_TEST_VALUE2);
+		assertEquals(DECISION_TYPE_TEST_VALUE2, testSsvcVulnAssessmentRelationship.getDecisionType());
 	}
 }

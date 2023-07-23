@@ -146,7 +146,8 @@ public class LicenseExpression extends AnyLicenseInfo  {
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
 			String licenseExpression = getLicenseExpression();
-			if (Objects.isNull(licenseExpression)) {
+			if (Objects.isNull(licenseExpression) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.LICENSING }))) {
 				retval.add("Missing licenseExpression in LicenseExpression");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

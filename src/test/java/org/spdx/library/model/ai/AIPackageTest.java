@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -45,6 +46,12 @@ public class AIPackageTest extends TestCase {
 	static final String LIMITATION_TEST_VALUE = "test limitation";
 	static final String ENERGY_CONSUMPTION_TEST_VALUE = "test energyConsumption";
 	static final String INFORMATION_ABOUT_APPLICATION_TEST_VALUE = "test informationAboutApplication";
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1 = PresenceType.values()[0];
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2 = PresenceType.values()[1];
+	static final SafetyRiskAssessmentType SAFETY_RISK_ASSESSMENT_TEST_VALUE1 = SafetyRiskAssessmentType.values()[0];
+	static final SafetyRiskAssessmentType SAFETY_RISK_ASSESSMENT_TEST_VALUE2 = SafetyRiskAssessmentType.values()[1];
+	static final PresenceType AUTONOMY_TYPE_TEST_VALUE1 = PresenceType.values()[0];
+	static final PresenceType AUTONOMY_TYPE_TEST_VALUE2 = PresenceType.values()[1];
 	static final String DOMAIN_TEST_VALUE1 = "test 1 domain";
 	static final String DOMAIN_TEST_VALUE2 = "test 2 domain";
 	static final String DOMAIN_TEST_VALUE3 = "test 3 domain";
@@ -98,11 +105,11 @@ public class AIPackageTest extends TestCase {
 				.addTypeOfModel(TYPE_OF_MODEL_TEST_VALUE2)
 				.addModelExplainability(MODEL_EXPLAINABILITY_TEST_VALUE1)
 				.addModelExplainability(MODEL_EXPLAINABILITY_TEST_VALUE2)
+				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
+				.setSafetyRiskAssessment(SAFETY_RISK_ASSESSMENT_TEST_VALUE1)
+				.setAutonomyType(AUTONOMY_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setSensitivePersonalInformation(PresenceType.ENUM)
-				.setSafetyRiskAssessment(SafetyRiskAssessmentType.ENUM)
-				.setAutonomyType(PresenceType.ENUM)
 				.addMetric(DictionaryEntry)
 				.addHyperparameter(DictionaryEntry)
 				.addMetricDecisionThreshold(DictionaryEntry)
@@ -158,10 +165,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testAIPackage.getSensitivePersonalInformation());
-//		testAIPackage.setSensitivePersonalInformation(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testAIPackage.getSensitivePersonalInformation());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1), testAIPackage.getSensitivePersonalInformation());
+		testAIPackage.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2);
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2), testAIPackage.getSensitivePersonalInformation());
 	}
 	
 	/**
@@ -169,10 +175,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetSafetyRiskAssessment() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testAIPackage.getSafetyRiskAssessment());
-//		testAIPackage.setSafetyRiskAssessment(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testAIPackage.getSafetyRiskAssessment());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(SAFETY_RISK_ASSESSMENT_TEST_VALUE1), testAIPackage.getSafetyRiskAssessment());
+		testAIPackage.setSafetyRiskAssessment(SAFETY_RISK_ASSESSMENT_TEST_VALUE2);
+		assertEquals(Optional.of(SAFETY_RISK_ASSESSMENT_TEST_VALUE2), testAIPackage.getSafetyRiskAssessment());
 	}
 	
 	/**
@@ -180,10 +185,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetAutonomyType() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testAIPackage.getAutonomyType());
-//		testAIPackage.setAutonomyType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testAIPackage.getAutonomyType());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(AUTONOMY_TYPE_TEST_VALUE1), testAIPackage.getAutonomyType());
+		testAIPackage.setAutonomyType(AUTONOMY_TYPE_TEST_VALUE2);
+		assertEquals(Optional.of(AUTONOMY_TYPE_TEST_VALUE2), testAIPackage.getAutonomyType());
 	}
 	
 	/**
@@ -191,9 +195,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetInformationAboutTraining() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(INFORMATION_ABOUT_TRAINING_TEST_VALUE, testAIPackage.getInformationAboutTraining());
+		assertEquals(Optional.of(INFORMATION_ABOUT_TRAINING_TEST_VALUE), testAIPackage.getInformationAboutTraining());
 		testAIPackage.setInformationAboutTraining("new informationAboutTraining value");
-		assertEquals("new informationAboutTraining value", testAIPackage.getInformationAboutTraining());
+		assertEquals(Optional.of("new informationAboutTraining value"), testAIPackage.getInformationAboutTraining());
 	}
 	
 	/**
@@ -201,9 +205,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetLimitation() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(LIMITATION_TEST_VALUE, testAIPackage.getLimitation());
+		assertEquals(Optional.of(LIMITATION_TEST_VALUE), testAIPackage.getLimitation());
 		testAIPackage.setLimitation("new limitation value");
-		assertEquals("new limitation value", testAIPackage.getLimitation());
+		assertEquals(Optional.of("new limitation value"), testAIPackage.getLimitation());
 	}
 	
 	/**
@@ -211,9 +215,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetEnergyConsumption() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(ENERGY_CONSUMPTION_TEST_VALUE, testAIPackage.getEnergyConsumption());
+		assertEquals(Optional.of(ENERGY_CONSUMPTION_TEST_VALUE), testAIPackage.getEnergyConsumption());
 		testAIPackage.setEnergyConsumption("new energyConsumption value");
-		assertEquals("new energyConsumption value", testAIPackage.getEnergyConsumption());
+		assertEquals(Optional.of("new energyConsumption value"), testAIPackage.getEnergyConsumption());
 	}
 	
 	/**
@@ -221,9 +225,9 @@ public class AIPackageTest extends TestCase {
 	 */
 	public void testAIPackagesetInformationAboutApplication() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(INFORMATION_ABOUT_APPLICATION_TEST_VALUE, testAIPackage.getInformationAboutApplication());
+		assertEquals(Optional.of(INFORMATION_ABOUT_APPLICATION_TEST_VALUE), testAIPackage.getInformationAboutApplication());
 		testAIPackage.setInformationAboutApplication("new informationAboutApplication value");
-		assertEquals("new informationAboutApplication value", testAIPackage.getInformationAboutApplication());
+		assertEquals(Optional.of("new informationAboutApplication value"), testAIPackage.getInformationAboutApplication());
 	}
 	
 	/**
@@ -271,7 +275,6 @@ public class AIPackageTest extends TestCase {
 		testAIPackage.getDomains().clear();
 		testAIPackage.getDomains().addAll(DOMAIN_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(DOMAIN_TEST_LIST2, new ArrayList<>(testAIPackage.getDomains())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -283,7 +286,6 @@ public class AIPackageTest extends TestCase {
 		testAIPackage.getStandardCompliances().clear();
 		testAIPackage.getStandardCompliances().addAll(STANDARD_COMPLIANCE_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(STANDARD_COMPLIANCE_TEST_LIST2, new ArrayList<>(testAIPackage.getStandardCompliances())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -295,7 +297,6 @@ public class AIPackageTest extends TestCase {
 		testAIPackage.getModelDataPreprocessings().clear();
 		testAIPackage.getModelDataPreprocessings().addAll(MODEL_DATA_PREPROCESSING_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(MODEL_DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testAIPackage.getModelDataPreprocessings())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -307,7 +308,6 @@ public class AIPackageTest extends TestCase {
 		testAIPackage.getTypeOfModels().clear();
 		testAIPackage.getTypeOfModels().addAll(TYPE_OF_MODEL_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(TYPE_OF_MODEL_TEST_LIST2, new ArrayList<>(testAIPackage.getTypeOfModels())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -319,6 +319,5 @@ public class AIPackageTest extends TestCase {
 		testAIPackage.getModelExplainabilitys().clear();
 		testAIPackage.getModelExplainabilitys().addAll(MODEL_EXPLAINABILITY_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(MODEL_EXPLAINABILITY_TEST_LIST2, new ArrayList<>(testAIPackage.getModelExplainabilitys())));
-		fail("Not yet implemented");
 	}
 }

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -134,9 +135,9 @@ public class BuildTest extends TestCase {
 	 */
 	public void testBuildsetBuildEndTime() throws InvalidSPDXAnalysisException {
 		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(BUILD_END_TIME_TEST_VALUE, testBuild.getBuildEndTime());
+		assertEquals(Optional.of(BUILD_END_TIME_TEST_VALUE), testBuild.getBuildEndTime());
 		testBuild.setBuildEndTime("new buildEndTime value");
-		assertEquals("new buildEndTime value", testBuild.getBuildEndTime());
+		assertEquals(Optional.of("new buildEndTime value"), testBuild.getBuildEndTime());
 	}
 	
 	/**
@@ -154,9 +155,9 @@ public class BuildTest extends TestCase {
 	 */
 	public void testBuildsetBuildStartTime() throws InvalidSPDXAnalysisException {
 		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(BUILD_START_TIME_TEST_VALUE, testBuild.getBuildStartTime());
+		assertEquals(Optional.of(BUILD_START_TIME_TEST_VALUE), testBuild.getBuildStartTime());
 		testBuild.setBuildStartTime("new buildStartTime value");
-		assertEquals("new buildStartTime value", testBuild.getBuildStartTime());
+		assertEquals(Optional.of("new buildStartTime value"), testBuild.getBuildStartTime());
 	}
 	
 	/**
@@ -164,9 +165,9 @@ public class BuildTest extends TestCase {
 	 */
 	public void testBuildsetBuildId() throws InvalidSPDXAnalysisException {
 		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(BUILD_ID_TEST_VALUE, testBuild.getBuildId());
+		assertEquals(Optional.of(BUILD_ID_TEST_VALUE), testBuild.getBuildId());
 		testBuild.setBuildId("new buildId value");
-		assertEquals("new buildId value", testBuild.getBuildId());
+		assertEquals(Optional.of("new buildId value"), testBuild.getBuildId());
 	}
 	
 	/**
@@ -214,7 +215,6 @@ public class BuildTest extends TestCase {
 		testBuild.getConfigSourceEntrypoints().clear();
 		testBuild.getConfigSourceEntrypoints().addAll(CONFIG_SOURCE_ENTRYPOINT_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(CONFIG_SOURCE_ENTRYPOINT_TEST_LIST2, new ArrayList<>(testBuild.getConfigSourceEntrypoints())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -226,6 +226,5 @@ public class BuildTest extends TestCase {
 		testBuild.getConfigSourceUris().clear();
 		testBuild.getConfigSourceUris().addAll(CONFIG_SOURCE_URI_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(CONFIG_SOURCE_URI_TEST_LIST2, new ArrayList<>(testBuild.getConfigSourceUris())));
-		fail("Not yet implemented");
 	}
 }

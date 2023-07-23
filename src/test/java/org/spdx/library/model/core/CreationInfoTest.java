@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -57,6 +58,10 @@ public class CreationInfoTest extends TestCase {
 	static final String SPEC_VERSION_TEST_VALUE3 = "test 3 specVersion";
 	static final List<String> SPEC_VERSION_TEST_LIST1 = Arrays.asList(new String[] { SPEC_VERSION_TEST_VALUE1, SPEC_VERSION_TEST_VALUE2 });
 	static final List<String> SPEC_VERSION_TEST_LIST2 = Arrays.asList(new String[] { SPEC_VERSION_TEST_VALUE3 });
+	static final ProfileIdentifierType PROFILE_TEST_VALUE1 = ProfileIdentifierType.values()[0];
+	static final ProfileIdentifierType PROFILE_TEST_VALUE2 = ProfileIdentifierType.values()[1];
+	static final List<ProfileIdentifierType> PROFILE_TEST_LIST1 = Arrays.asList(new ProfileIdentifierType[] { PROFILE_TEST_VALUE1, PROFILE_TEST_VALUE2 });
+	static final List<ProfileIdentifierType> PROFILE_TEST_LIST2 = Arrays.asList(new ProfileIdentifierType[] { PROFILE_TEST_VALUE1 });
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -78,11 +83,12 @@ public class CreationInfoTest extends TestCase {
 				.addDataLicense(DATA_LICENSE_TEST_VALUE2)
 				.addSpecVersion(SPEC_VERSION_TEST_VALUE1)
 				.addSpecVersion(SPEC_VERSION_TEST_VALUE2)
+				.addProfile(PROFILE_TEST_VALUE1)
+				.addProfile(PROFILE_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
 				.addCreatedUsing(Tool)
 				.addCreatedBy(Agent)
-				.addProfile(ProfileIdentifierType.ENUM)
 				***************/
 				;
 		return retval;
@@ -135,9 +141,9 @@ public class CreationInfoTest extends TestCase {
 	 */
 	public void testCreationInfosetComment() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(COMMENT_TEST_VALUE, testCreationInfo.getComment());
+		assertEquals(Optional.of(COMMENT_TEST_VALUE), testCreationInfo.getComment());
 		testCreationInfo.setComment("new comment value");
-		assertEquals("new comment value", testCreationInfo.getComment());
+		assertEquals(Optional.of("new comment value"), testCreationInfo.getComment());
 	}
 	
 	/**
@@ -173,7 +179,6 @@ public class CreationInfoTest extends TestCase {
 		testCreationInfo.getCreateds().clear();
 		testCreationInfo.getCreateds().addAll(CREATED_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(CREATED_TEST_LIST2, new ArrayList<>(testCreationInfo.getCreateds())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -185,7 +190,6 @@ public class CreationInfoTest extends TestCase {
 		testCreationInfo.getDataLicenses().clear();
 		testCreationInfo.getDataLicenses().addAll(DATA_LICENSE_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(DATA_LICENSE_TEST_LIST2, new ArrayList<>(testCreationInfo.getDataLicenses())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -197,7 +201,6 @@ public class CreationInfoTest extends TestCase {
 		testCreationInfo.getSpecVersions().clear();
 		testCreationInfo.getSpecVersions().addAll(SPEC_VERSION_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(SPEC_VERSION_TEST_LIST2, new ArrayList<>(testCreationInfo.getSpecVersions())));
-		fail("Not yet implemented");
 	}
 	
 	/**
@@ -205,10 +208,9 @@ public class CreationInfoTest extends TestCase {
 	 */
 	public void testCreationInfogetProfiles() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEqual(TEST_VALUE, new ArrayList<>(testCreationInfo.getProfiles())));
-//		testCreationInfo.getProfiles().clear();
-//		testCreationInfo.getProfiles().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEqual(NEW_TEST_VALUE, new ArrayList<>(testCreationInfo.getProfiles())));
-		fail("Not yet implemented");
+		assertTrue(UnitTestHelper.isListsEqual(PROFILE_TEST_LIST1, new ArrayList<>(testCreationInfo.getProfiles())));
+		testCreationInfo.getProfiles().clear();
+		testCreationInfo.getProfiles().addAll(PROFILE_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(PROFILE_TEST_LIST2, new ArrayList<>(testCreationInfo.getProfiles())));
 	}
 }

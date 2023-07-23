@@ -17,13 +17,17 @@
  */
 package org.spdx.library.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -42,6 +46,7 @@ public class SimpleUriValueTest extends TestCase {
 	static final String EXTERNAL_SPDX_ELEMENT_ID = SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM + "TEST";
 	static final String EXTERNAL_SPDX_URI = EXTERNAL_DOC_NAMSPACE + "#" + EXTERNAL_SPDX_ELEMENT_ID;
 	static final String NON_INTERESTING_URI = "https://nothing/to/see/here";
+	static final Map<String, ExternalMap> EXTERNAL_MAP = new HashMap<>();
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -86,16 +91,19 @@ public class SimpleUriValueTest extends TestCase {
 		org.spdx.library.model.compat.v2.GenericModelObject gmo = 
 				new org.spdx.library.model.compat.v2.GenericModelObject(store, "http://doc", "id", copyManager, true);
 		new org.spdx.library.model.compat.v2.SpdxDocument(gmo.getModelStore(), gmo.getDocumentUri(), gmo.getCopyManager(), true);
-		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
+		Object result = new SimpleUriValue(EXTERNAL_SPDX_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(),
+				gmo.getDocumentUri(), EXTERNAL_MAP);
 		assertTrue(result instanceof org.spdx.library.model.compat.v2.ExternalSpdxElement);
 		org.spdx.library.model.compat.v2.ExternalSpdxElement externalElement = (org.spdx.library.model.compat.v2.ExternalSpdxElement)result;
 		assertEquals(EXTERNAL_SPDX_ELEMENT_ID, externalElement.getExternalElementId());
 		assertEquals(EXTERNAL_SPDX_URI, externalElement.getExternalSpdxElementURI());
 		
-		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
+		result = new SimpleUriValue(ENUM_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(),
+				gmo.getDocumentUri(), EXTERNAL_MAP);
 		assertEquals(TEST_ENUM, result);
 		
-		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(), gmo.getDocumentUri());
+		result = new SimpleUriValue(NON_INTERESTING_URI).toModelObject(gmo.getModelStore(), gmo.getCopyManager(),
+				gmo.getDocumentUri(), EXTERNAL_MAP);
 		assertTrue(result instanceof SimpleUriValue);
 		assertEquals(NON_INTERESTING_URI, ((SimpleUriValue)result).getIndividualURI());
 	}

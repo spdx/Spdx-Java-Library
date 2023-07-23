@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -41,6 +42,10 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final SoftwareDependencyLinkType SOFTWARE_LINKAGE_TEST_VALUE1 = SoftwareDependencyLinkType.values()[0];
+	static final SoftwareDependencyLinkType SOFTWARE_LINKAGE_TEST_VALUE2 = SoftwareDependencyLinkType.values()[1];
+	static final DependencyConditionalityType CONDITIONALITY_TEST_VALUE1 = DependencyConditionalityType.values()[0];
+	static final DependencyConditionalityType CONDITIONALITY_TEST_VALUE2 = DependencyConditionalityType.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -55,10 +60,10 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	public static SoftwareDependencyRelationshipBuilder builderForSoftwareDependencyRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SoftwareDependencyRelationshipBuilder retval = new SoftwareDependencyRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setSoftwareLinkage(SOFTWARE_LINKAGE_TEST_VALUE1)
+				.setConditionality(CONDITIONALITY_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setSoftwareLinkage(SoftwareDependencyLinkType.ENUM)
-				.setConditionality(DependencyConditionalityType.ENUM)
 				***************/
 				;
 		return retval;
@@ -111,10 +116,9 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	 */
 	public void testSoftwareDependencyRelationshipsetSoftwareLinkage() throws InvalidSPDXAnalysisException {
 		SoftwareDependencyRelationship testSoftwareDependencyRelationship = builderForSoftwareDependencyRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSoftwareDependencyRelationship.getSoftwareLinkage());
-//		testSoftwareDependencyRelationship.setSoftwareLinkage(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSoftwareDependencyRelationship.getSoftwareLinkage());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(SOFTWARE_LINKAGE_TEST_VALUE1), testSoftwareDependencyRelationship.getSoftwareLinkage());
+		testSoftwareDependencyRelationship.setSoftwareLinkage(SOFTWARE_LINKAGE_TEST_VALUE2);
+		assertEquals(Optional.of(SOFTWARE_LINKAGE_TEST_VALUE2), testSoftwareDependencyRelationship.getSoftwareLinkage());
 	}
 	
 	/**
@@ -122,9 +126,8 @@ public class SoftwareDependencyRelationshipTest extends TestCase {
 	 */
 	public void testSoftwareDependencyRelationshipsetConditionality() throws InvalidSPDXAnalysisException {
 		SoftwareDependencyRelationship testSoftwareDependencyRelationship = builderForSoftwareDependencyRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testSoftwareDependencyRelationship.getConditionality());
-//		testSoftwareDependencyRelationship.setConditionality(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testSoftwareDependencyRelationship.getConditionality());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(CONDITIONALITY_TEST_VALUE1), testSoftwareDependencyRelationship.getConditionality());
+		testSoftwareDependencyRelationship.setConditionality(CONDITIONALITY_TEST_VALUE2);
+		assertEquals(Optional.of(CONDITIONALITY_TEST_VALUE2), testSoftwareDependencyRelationship.getConditionality());
 	}
 }

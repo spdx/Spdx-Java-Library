@@ -19,8 +19,10 @@ package org.spdx.library.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -44,10 +46,11 @@ import org.spdx.library.Version;
 import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
 import org.spdx.library.model.core.CreationInfo;
 import org.spdx.library.model.core.Element;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.library.model.core.ProfileIdentifierType;
-import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.library.model.licensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
@@ -107,6 +110,11 @@ public abstract class ModelObject {
 	protected boolean strict = true;
 	
 	NotEquivalentReason lastNotEquivalentReason = null;
+	
+	/**
+	 * Map of URI's of elements referenced but not present in the store
+	 */
+	protected Map<String, ExternalMap> externalMap = new HashMap<>();
 	
 	/**
 	 * Create a new Model Object using an Anonymous ID with the defualt store and default document URI
@@ -177,6 +185,7 @@ public abstract class ModelObject {
 	public ModelObject(ModelObjectBuilder builder) throws InvalidSPDXAnalysisException {
 		this(builder.modelStore, builder.objectUri, builder.copyManager, true);
 		this.strict = builder.strict;
+		this.externalMap = builder.externalMap;
 	}
 
 	// Abstract methods that must be implemented in the subclasses
@@ -299,6 +308,20 @@ public abstract class ModelObject {
 		this.strict = strict;
 	}
 	
+	/**
+	 * @return the externalMap
+	 */
+	public Map<String, ExternalMap> getExternalMap() {
+		return externalMap;
+	}
+
+	/**
+	 * @param externalMap the externalMap to set
+	 */
+	public void setExternalMap(Map<String, ExternalMap> externalMap) {
+		this.externalMap = externalMap;
+	}
+
 	//The following methods are to manage the properties associated with the model object
 	/**
 	 * @return all names of property descriptors currently associated with this object
@@ -314,7 +337,7 @@ public abstract class ModelObject {
 	 * @return value associated with a property
 	 */
 	protected Optional<Object> getObjectPropertyValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = ModelObjectHelper.getObjectPropertyValue(modelStore, objectUri, propertyDescriptor, copyManager);
+		Optional<Object> retval = ModelObjectHelper.getObjectPropertyValue(modelStore, objectUri, propertyDescriptor, copyManager, externalMap);
 		if (retval.isPresent() && retval.get() instanceof ModelObject && !strict) {
 			((ModelObject)retval.get()).setStrict(strict);
 		}
@@ -401,7 +424,7 @@ public abstract class ModelObject {
 		if (!(result.get() instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Individual Value or enum");
 		}
-		Enum<?> retval = SpdxEnumFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
+		Enum<?> retval = SpdxEnumFactoryCompatV2.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
 			logger.error("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
 			throw new InvalidSPDXAnalysisException("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
@@ -452,7 +475,7 @@ public abstract class ModelObject {
 		} else if (result.get() instanceof AnyLicenseInfo) {
 			return (Optional<AnyLicenseInfo>)(Optional<?>)result;
 		} else if (result.get() instanceof SimpleUriValue) {
-			Object val = ((SimpleUriValue)(result.get())).toModelObject(modelStore, copyManager, null);
+			Object val = ((SimpleUriValue)(result.get())).toModelObject(modelStore, copyManager, null, externalMap);
 			if (val instanceof AnyLicenseInfo) {
 				return Optional.of((AnyLicenseInfo)val);
 			} else {
@@ -479,7 +502,7 @@ public abstract class ModelObject {
 		} else if (result.get() instanceof Element) {
 			return (Optional<Element>)(Optional<?>)result;
 		} else if (result.get() instanceof SimpleUriValue) {
-			Object val = ((SimpleUriValue)(result.get())).toModelObject(modelStore, copyManager, null);
+			Object val = ((SimpleUriValue)(result.get())).toModelObject(modelStore, copyManager, null, externalMap);
 			if (val instanceof Element) {
 				return Optional.of((Element)val);
 			} else {
@@ -582,7 +605,7 @@ public abstract class ModelObject {
 	 * @return Set of values associated with a property
 	 */
 	protected ModelSet<?> getObjectPropertyValueSet(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelSet<Object>(this.modelStore, this.objectUri, propertyDescriptor, this.copyManager, type);
+		return new ModelSet<Object>(this.modelStore, this.objectUri, propertyDescriptor, this.copyManager, type, externalMap);
 	}
 	
 	/**
@@ -590,7 +613,7 @@ public abstract class ModelObject {
 	 * @return Collection of values associated with a property
 	 */
 	protected ModelCollection<?> getObjectPropertyValueCollection(PropertyDescriptor propertyDescriptor, Class<?> type) throws InvalidSPDXAnalysisException {
-		return new ModelCollection<Object>(this.modelStore, this.objectUri, propertyDescriptor, this.copyManager, type);
+		return new ModelCollection<Object>(this.modelStore, this.objectUri, propertyDescriptor, this.copyManager, type, externalMap);
 	}
 	
 	/**
@@ -967,6 +990,7 @@ public abstract class ModelObject {
 		public String objectUri;
 		public ModelCopyManager copyManager;
 		public boolean strict = true;
+		public Map<String, ExternalMap> externalMap = new HashMap<>();
 
 		public ModelObjectBuilder(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) {
 			this.modelStore = modelStore;
@@ -976,6 +1000,10 @@ public abstract class ModelObject {
 		
 		public void setStrict(boolean strict) {
 			this.strict = strict;
+		}
+		
+		public void setExternalMap(Map<String, ExternalMap> externalMap) {
+			this.externalMap = externalMap;
 		}
 	}
 }

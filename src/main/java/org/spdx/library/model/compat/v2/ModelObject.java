@@ -45,6 +45,11 @@ import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxVerificationHelper;
 import org.spdx.library.TypedValue;
 import org.spdx.library.Version;
+import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
+import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
+import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
 import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
 import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
@@ -57,11 +62,6 @@ import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
 import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
 import org.spdx.library.model.compat.v2.pointer.SinglePointer;
 import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
-import org.spdx.library.model.enumerations.AnnotationType;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.ReferenceCategory;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.enumerations.SpdxEnumFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -474,7 +474,7 @@ public abstract class ModelObject {
 		if (!(result.get() instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException("Property "+propertyDescriptor+" is not of type Individual Value or enum");
 		}
-		Enum<?> retval = SpdxEnumFactory.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
+		Enum<?> retval = SpdxEnumFactoryCompatV2.uriToEnum.get(((IndividualUriValue)result.get()).getIndividualURI());
 		if (Objects.isNull(retval)) {
 			logger.error("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());
 			throw new InvalidSPDXAnalysisException("Unknown individual value for enum: "+((IndividualUriValue)result.get()).getIndividualURI());

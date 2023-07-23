@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -41,6 +42,8 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final LifecycleScopeType SCOPE_TEST_VALUE1 = LifecycleScopeType.values()[0];
+	static final LifecycleScopeType SCOPE_TEST_VALUE2 = LifecycleScopeType.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -55,9 +58,9 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 	public static LifecycleScopedRelationshipBuilder builderForLifecycleScopedRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		LifecycleScopedRelationshipBuilder retval = new LifecycleScopedRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setScope(SCOPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setScope(LifecycleScopeType.ENUM)
 				***************/
 				;
 		return retval;
@@ -110,9 +113,8 @@ public class LifecycleScopedRelationshipTest extends TestCase {
 	 */
 	public void testLifecycleScopedRelationshipsetScope() throws InvalidSPDXAnalysisException {
 		LifecycleScopedRelationship testLifecycleScopedRelationship = builderForLifecycleScopedRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testLifecycleScopedRelationship.getScope());
-//		testLifecycleScopedRelationship.setScope(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testLifecycleScopedRelationship.getScope());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(SCOPE_TEST_VALUE1), testLifecycleScopedRelationship.getScope());
+		testLifecycleScopedRelationship.setScope(SCOPE_TEST_VALUE2);
+		assertEquals(Optional.of(SCOPE_TEST_VALUE2), testLifecycleScopedRelationship.getScope());
 	}
 }

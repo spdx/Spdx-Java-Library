@@ -19,6 +19,7 @@ package org.spdx.library.model;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.PropertyDescriptor;
@@ -42,16 +44,18 @@ public class ModelSet<T extends Object> extends ModelCollection<T> {
 	static final Logger logger = LoggerFactory.getLogger(ModelSet.class);
 	
 	/**
-	 * @param modelStore
-	 * @param objectUri
-	 * @param propertyDescriptor
-	 * @param copyManager
-	 * @param type
-	 * @throws InvalidSPDXAnalysisException
+	 * @param modelStore Storage for the model collection
+	 * @param objectUri Object URI or anonymous ID
+	 * @param propertyDescriptor descriptor for the property use for the model collections
+	 * @param copyManager if non-null, use this to copy properties when referenced outside this model store
+	 * @param type The class of the elements to be stored in the collection if none, null if not known
+	 * @param externalMap Map of URI's of elements referenced but not present in the store
+	 * @throws InvalidSPDXAnalysisException on parsing or store errors
 	 */
 	public ModelSet(IModelStore modelStore, String objectUri, PropertyDescriptor propertyDescriptor, 
-			@Nullable ModelCopyManager copyManager, @Nullable Class<?> type) throws InvalidSPDXAnalysisException {
-		super(modelStore, objectUri, propertyDescriptor, copyManager, type);
+			@Nullable ModelCopyManager copyManager, @Nullable Class<?> type,
+			Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
+		super(modelStore, objectUri, propertyDescriptor, copyManager, type, externalMap);
 	}
 	
 	@Override

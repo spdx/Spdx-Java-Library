@@ -188,7 +188,8 @@ public class ExternalMap extends ModelObject  {
 		}
 		try {
 			String externalId = getExternalId();
-			if (Objects.isNull(externalId)) {
+			if (Objects.isNull(externalId) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing externalId in ExternalMap");
 			}
 		} catch (InvalidSPDXAnalysisException e) {

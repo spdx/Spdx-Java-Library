@@ -160,7 +160,8 @@ public class PositiveIntegerRange extends ModelObject  {
 		List<String> retval = new ArrayList<>();
 		try {
 			Integer end = getEnd();
-			if (Objects.isNull(end)) {
+			if (Objects.isNull(end) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing end in PositiveIntegerRange");
 			}
 			if (Objects.nonNull(end) && end < 1) {
@@ -171,7 +172,8 @@ public class PositiveIntegerRange extends ModelObject  {
 		}
 		try {
 			Integer begin = getBegin();
-			if (Objects.isNull(begin)) {
+			if (Objects.isNull(begin) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 				retval.add("Missing begin in PositiveIntegerRange");
 			}
 			if (Objects.nonNull(begin) && begin < 1) {

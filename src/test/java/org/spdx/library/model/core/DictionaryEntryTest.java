@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -123,8 +124,8 @@ public class DictionaryEntryTest extends TestCase {
 	 */
 	public void testDictionaryEntrysetValue() throws InvalidSPDXAnalysisException {
 		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(VALUE_TEST_VALUE, testDictionaryEntry.getValue());
+		assertEquals(Optional.of(VALUE_TEST_VALUE), testDictionaryEntry.getValue());
 		testDictionaryEntry.setValue("new value value");
-		assertEquals("new value value", testDictionaryEntry.getValue());
+		assertEquals(Optional.of("new value value"), testDictionaryEntry.getValue());
 	}
 }

@@ -20,6 +20,7 @@ package org.spdx.library.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.SpdxObjectNotInStoreException;
 import org.spdx.library.TypedValue;
+import org.spdx.library.model.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
@@ -56,21 +58,23 @@ public class ModelObjectHelper {
 	 * @param objectUri the Object URI or anonymous ID
 	 * @param propertyDescriptor property descriptor for the property
 	 * @param copyManager if non null, any ModelObject property value not stored in the modelStore under the stDocumentUri will be copied to make it available
+	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @return value associated with a property
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Optional<Object> getObjectPropertyValue(IModelStore modelStore, String objectUri,
-			PropertyDescriptor propertyDescriptor, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			PropertyDescriptor propertyDescriptor, ModelCopyManager copyManager,
+			@Nullable Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
 		IModelStoreLock lock = modelStore.enterCriticalSection(false);
 		// NOTE: we use a write lock since the ModelStorageClassConverter may end up creating objects in the store
 		try {
 			if (!modelStore.exists(objectUri)) {
 				return Optional.empty();
 			} else if (modelStore.isCollectionProperty(objectUri, propertyDescriptor)) {
-				return Optional.of(new ModelCollection<>(modelStore, objectUri, propertyDescriptor, copyManager, null));
+				return Optional.of(new ModelCollection<>(modelStore, objectUri, propertyDescriptor, copyManager, null, externalMap));
 			} else {
 				return optionalStoredObjectToModelObject(modelStore.getValue(objectUri,
-						propertyDescriptor), modelStore, copyManager);
+						propertyDescriptor), modelStore, copyManager, externalMap);
 			}
 		} finally {
 			lock.unlock();
@@ -181,14 +185,16 @@ public class ModelObjectHelper {
 	 * @param modelStore  ModelStore to use in fetching or creating
 	 * @param copyManager   if not null, copy any referenced ID's outside of this
 	 *                      document/model store
+	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @return the object itself unless it is a TypedValue, in which case a
 	 *         ModelObject is returned
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Optional<Object> optionalStoredObjectToModelObject(Optional<Object> value, 
-			IModelStore modelStore, ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			IModelStore modelStore, ModelCopyManager copyManager, @Nullable Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
 		if (value.isPresent() && value.get() instanceof IndividualUriValue) {
-			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(modelStore, copyManager, null));
+			return Optional.of(new SimpleUriValue((IndividualUriValue)value.get()).toModelObject(modelStore, copyManager, 
+					null, externalMap));
 		} else if (value.isPresent() && value.get() instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value.get();
 			return Optional.of(SpdxModelFactory.createModelObject(modelStore, 
@@ -238,15 +244,16 @@ public class ModelObjectHelper {
 	 * @param modelStore  ModelStore to use in fetching or creating
 	 * @param copyManager if not null, copy any referenced ID's outside of this
 	 *                    document/model store
+	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @return the object itself unless it is a TypedValue, in which case a
 	 *         ModelObject is returned
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Object storedObjectToModelObject(Object value, IModelStore modelStore,
-			ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+			ModelCopyManager copyManager, @Nullable Map<String, ExternalMap> externalMap) throws InvalidSPDXAnalysisException {
 		if (value instanceof IndividualUriValue) {	// Note: this must be before the check for TypedValue
 			SimpleUriValue suv = new SimpleUriValue((IndividualUriValue)value);
-			return suv.toModelObject(modelStore, copyManager, null);
+			return suv.toModelObject(modelStore, copyManager, null, externalMap);
 		} else if (value instanceof TypedValue) {
 			TypedValue tv = (TypedValue)value;
 			return SpdxModelFactory.getModelObject(modelStore, tv.getObjectUri(), tv.getType(), copyManager, true);

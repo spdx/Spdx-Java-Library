@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -112,9 +113,9 @@ public class PayloadTest extends TestCase {
 	 */
 	public void testPayloadsetCreationInfo() throws InvalidSPDXAnalysisException {
 		Payload testPayload = builderForPayloadTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testPayload.getCreationInfo());
+//		assertEquals(Optional.of(TEST_VALUE), testPayload.getCreationInfo());
 //		testPayload.setCreationInfo(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testPayload.getCreationInfo());
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testPayload.getCreationInfo());
 		fail("Not yet implemented");
 	}
 	

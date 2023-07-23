@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
@@ -43,6 +44,8 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 
 	static final String IMPACT_STATEMENT_TIME_TEST_VALUE = "test impactStatementTime";
 	static final String IMPACT_STATEMENT_TEST_VALUE = "test impactStatement";
+	static final VexJustificationType JUSTIFICATION_TYPE_TEST_VALUE1 = VexJustificationType.values()[0];
+	static final VexJustificationType JUSTIFICATION_TYPE_TEST_VALUE2 = VexJustificationType.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -59,9 +62,9 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 		VexNotAffectedVulnAssessmentRelationshipBuilder retval = new VexNotAffectedVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
 				.setImpactStatementTime(IMPACT_STATEMENT_TIME_TEST_VALUE)
 				.setImpactStatement(IMPACT_STATEMENT_TEST_VALUE)
+				.setJustificationType(JUSTIFICATION_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setJustificationType(VexJustificationType.ENUM)
 				***************/
 				;
 		return retval;
@@ -114,10 +117,9 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexNotAffectedVulnAssessmentRelationshipsetJustificationType() throws InvalidSPDXAnalysisException {
 		VexNotAffectedVulnAssessmentRelationship testVexNotAffectedVulnAssessmentRelationship = builderForVexNotAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
-//		testVexNotAffectedVulnAssessmentRelationship.setJustificationType(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(JUSTIFICATION_TYPE_TEST_VALUE1), testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
+		testVexNotAffectedVulnAssessmentRelationship.setJustificationType(JUSTIFICATION_TYPE_TEST_VALUE2);
+		assertEquals(Optional.of(JUSTIFICATION_TYPE_TEST_VALUE2), testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
 	}
 	
 	/**
@@ -125,9 +127,9 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexNotAffectedVulnAssessmentRelationshipsetImpactStatementTime() throws InvalidSPDXAnalysisException {
 		VexNotAffectedVulnAssessmentRelationship testVexNotAffectedVulnAssessmentRelationship = builderForVexNotAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(IMPACT_STATEMENT_TIME_TEST_VALUE, testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
+		assertEquals(Optional.of(IMPACT_STATEMENT_TIME_TEST_VALUE), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
 		testVexNotAffectedVulnAssessmentRelationship.setImpactStatementTime("new impactStatementTime value");
-		assertEquals("new impactStatementTime value", testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
+		assertEquals(Optional.of("new impactStatementTime value"), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
 	}
 	
 	/**
@@ -135,8 +137,8 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	 */
 	public void testVexNotAffectedVulnAssessmentRelationshipsetImpactStatement() throws InvalidSPDXAnalysisException {
 		VexNotAffectedVulnAssessmentRelationship testVexNotAffectedVulnAssessmentRelationship = builderForVexNotAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(IMPACT_STATEMENT_TEST_VALUE, testVexNotAffectedVulnAssessmentRelationship.getImpactStatement());
+		assertEquals(Optional.of(IMPACT_STATEMENT_TEST_VALUE), testVexNotAffectedVulnAssessmentRelationship.getImpactStatement());
 		testVexNotAffectedVulnAssessmentRelationship.setImpactStatement("new impactStatement value");
-		assertEquals("new impactStatement value", testVexNotAffectedVulnAssessmentRelationship.getImpactStatement());
+		assertEquals(Optional.of("new impactStatement value"), testVexNotAffectedVulnAssessmentRelationship.getImpactStatement());
 	}
 }

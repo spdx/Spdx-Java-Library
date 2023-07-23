@@ -147,7 +147,8 @@ public class SsvcVulnAssessmentRelationship extends VulnAssessmentRelationship  
 		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
 		try {
 			SsvcDecisionType decisionType = getDecisionType();
-			if (Objects.isNull(decisionType)) {
+			if (Objects.isNull(decisionType) && 
+						Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.SECURITY }))) {
 				retval.add("Missing decisionType in SsvcVulnAssessmentRelationship");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
