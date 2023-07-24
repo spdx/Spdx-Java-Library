@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.ExternalElement;
 import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
-import org.spdx.library.model.core.ExternalMap;
+import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 
 /**

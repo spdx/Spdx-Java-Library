@@ -47,11 +47,11 @@ import org.spdx.library.NotEquivalentReason.NotEquivalent;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
-import org.spdx.library.model.core.CreationInfo;
-import org.spdx.library.model.core.Element;
-import org.spdx.library.model.core.ExternalMap;
-import org.spdx.library.model.core.ProfileIdentifierType;
-import org.spdx.library.model.licensing.AnyLicenseInfo;
+import org.spdx.library.model.v3.core.CreationInfo;
+import org.spdx.library.model.v3.core.Element;
+import org.spdx.library.model.v3.core.ExternalMap;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
+import org.spdx.library.model.v3.licensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
@@ -242,11 +242,11 @@ public abstract class ModelObject {
 	public List<String> verify(Set<String> verifiedElementUris, String specVersion) {
 		List<ProfileIdentifierType> profiles = new ArrayList<>();
 		if (this instanceof Element) {
-			Optional<CreationInfo> creationInfo;
+			CreationInfo creationInfo;
 			try {
 				creationInfo = ((Element)this).getCreationInfo();
-				if (creationInfo.isPresent()) {
-					profiles = new ArrayList<>(creationInfo.get().getProfiles());
+				if (Objects.nonNull(creationInfo)) {
+					profiles = new ArrayList<>(creationInfo.getProfiles());
 				}
 			} catch (InvalidSPDXAnalysisException e) {
 				logger.error("Error getting element profile for verification", e);

@@ -111,5 +111,4 @@ public class SimpleUriValueTest extends TestCase {
 	public void testToModelObject() throws InvalidSPDXAnalysisException {
 		fail("Unimplemented");
 	}
-
 }

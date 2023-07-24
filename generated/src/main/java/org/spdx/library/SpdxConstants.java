@@ -39,7 +39,7 @@ public class SpdxConstants {
 	/**
 	 * AI namespace
 	 */
-	public static final String A_I_NAMESPACE = "https://spdx.org/rdf/AI";
+	public static final String A_I_NAMESPACE = "https://spdx.org/rdf/v3/AI";
 	public static final PropertyDescriptor A_I_PROP_AUTONOMY_TYPE = new PropertyDescriptor("autonomyType", A_I_NAMESPACE);
 	public static final PropertyDescriptor A_I_PROP_DOMAIN = new PropertyDescriptor("domain", A_I_NAMESPACE);
 	public static final PropertyDescriptor A_I_PROP_ENERGY_CONSUMPTION = new PropertyDescriptor("energyConsumption", A_I_NAMESPACE);
@@ -59,7 +59,7 @@ public class SpdxConstants {
 	/**
 	 * Build namespace
 	 */
-	public static final String BUILD_NAMESPACE = "https://spdx.org/rdf/Build";
+	public static final String BUILD_NAMESPACE = "https://spdx.org/rdf/v3/Build";
 	public static final PropertyDescriptor BUILD_PROP_BUILD_END_TIME = new PropertyDescriptor("buildEndTime", BUILD_NAMESPACE);
 	public static final PropertyDescriptor BUILD_PROP_BUILD_ID = new PropertyDescriptor("buildId", BUILD_NAMESPACE);
 	public static final PropertyDescriptor BUILD_PROP_BUILD_START_TIME = new PropertyDescriptor("buildStartTime", BUILD_NAMESPACE);
@@ -73,7 +73,7 @@ public class SpdxConstants {
 	/**
 	 * Core namespace
 	 */
-	public static final String CORE_NAMESPACE = "https://spdx.org/rdf/Core";
+	public static final String CORE_NAMESPACE = "https://spdx.org/rdf/v3/Core";
 	public static final PropertyDescriptor CORE_PROP_ALGORITHM = new PropertyDescriptor("algorithm", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_ANNOTATION_TYPE = new PropertyDescriptor("annotationType", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_BEGIN = new PropertyDescriptor("begin", CORE_NAMESPACE);
@@ -106,10 +106,8 @@ public class SpdxConstants {
 	public static final PropertyDescriptor CORE_PROP_KEY = new PropertyDescriptor("key", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_LOCATION_HINT = new PropertyDescriptor("locationHint", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_LOCATOR = new PropertyDescriptor("locator", CORE_NAMESPACE);
-	public static final PropertyDescriptor CORE_PROP_NAMESPACE = new PropertyDescriptor("namespace", CORE_NAMESPACE);
-	public static final PropertyDescriptor CORE_PROP_NAMESPACES = new PropertyDescriptor("namespaces", CORE_NAMESPACE);
+	public static final PropertyDescriptor CORE_PROP_NAME = new PropertyDescriptor("name", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_ORIGINATED_BY = new PropertyDescriptor("originatedBy", CORE_NAMESPACE);
-	public static final PropertyDescriptor CORE_PROP_PREFIX = new PropertyDescriptor("prefix", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_PROFILE = new PropertyDescriptor("profile", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_RELATIONSHIP_TYPE = new PropertyDescriptor("relationshipType", CORE_NAMESPACE);
 	public static final PropertyDescriptor CORE_PROP_RELEASE_TIME = new PropertyDescriptor("releaseTime", CORE_NAMESPACE);
@@ -130,7 +128,7 @@ public class SpdxConstants {
 	/**
 	 * Dataset namespace
 	 */
-	public static final String DATASET_NAMESPACE = "https://spdx.org/rdf/Dataset";
+	public static final String DATASET_NAMESPACE = "https://spdx.org/rdf/v3/Dataset";
 	public static final PropertyDescriptor DATASET_PROP_ANONYMIZATION_METHOD_USED = new PropertyDescriptor("anonymizationMethodUsed", DATASET_NAMESPACE);
 	public static final PropertyDescriptor DATASET_PROP_CONFIDENTIALITY_LEVEL = new PropertyDescriptor("confidentialityLevel", DATASET_NAMESPACE);
 	public static final PropertyDescriptor DATASET_PROP_DATA_COLLECTION_PROCESS = new PropertyDescriptor("dataCollectionProcess", DATASET_NAMESPACE);
@@ -146,24 +144,35 @@ public class SpdxConstants {
 	public static final PropertyDescriptor DATASET_PROP_SENSOR = new PropertyDescriptor("sensor", DATASET_NAMESPACE);
 	
 	/**
+	 * ExpandedLicense namespace
+	 */
+	public static final String EXPANDED_LICENSE_NAMESPACE = "https://spdx.org/rdf/v3/ExpandedLicense";
+	public static final PropertyDescriptor EXPANDED_LICENSE_PROP_MEMBER = new PropertyDescriptor("member", EXPANDED_LICENSE_NAMESPACE);
+	
+	/**
 	 * Licensing namespace
 	 */
-	public static final String LICENSING_NAMESPACE = "https://spdx.org/rdf/Licensing";
+	public static final String LICENSING_NAMESPACE = "https://spdx.org/rdf/v3/Licensing";
 	public static final PropertyDescriptor LICENSING_PROP_ADDITION_TEXT = new PropertyDescriptor("additionText", LICENSING_NAMESPACE);
+	public static final PropertyDescriptor LICENSING_PROP_DEPRECATED_VERSION = new PropertyDescriptor("deprecatedVersion", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_IS_DEPRECATED_ADDITION_ID = new PropertyDescriptor("isDeprecatedAdditionId", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_IS_DEPRECATED_LICENSE_ID = new PropertyDescriptor("isDeprecatedLicenseId", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_IS_FSF_LIBRE = new PropertyDescriptor("isFsfLibre", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_IS_OSI_APPROVED = new PropertyDescriptor("isOsiApproved", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_LICENSE_EXPRESSION = new PropertyDescriptor("licenseExpression", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_LICENSE_TEXT = new PropertyDescriptor("licenseText", LICENSING_NAMESPACE);
+	public static final PropertyDescriptor LICENSING_PROP_LIST_VERSION_ADDED = new PropertyDescriptor("listVersionAdded", LICENSING_NAMESPACE);
+	public static final PropertyDescriptor LICENSING_PROP_OBSOLETED_BY = new PropertyDescriptor("obsoletedBy", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_STANDARD_ADDITION_TEMPLATE = new PropertyDescriptor("standardAdditionTemplate", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_STANDARD_LICENSE_HEADER = new PropertyDescriptor("standardLicenseHeader", LICENSING_NAMESPACE);
 	public static final PropertyDescriptor LICENSING_PROP_STANDARD_LICENSE_TEMPLATE = new PropertyDescriptor("standardLicenseTemplate", LICENSING_NAMESPACE);
+	public static final PropertyDescriptor LICENSING_PROP_SUBJECT_ADDITION = new PropertyDescriptor("subjectAddition", LICENSING_NAMESPACE);
+	public static final PropertyDescriptor LICENSING_PROP_SUBJECT_LICENSE = new PropertyDescriptor("subjectLicense", LICENSING_NAMESPACE);
 	
 	/**
 	 * Security namespace
 	 */
-	public static final String SECURITY_NAMESPACE = "https://spdx.org/rdf/Security";
+	public static final String SECURITY_NAMESPACE = "https://spdx.org/rdf/v3/Security";
 	public static final PropertyDescriptor SECURITY_PROP_ACTION_STATEMENT = new PropertyDescriptor("actionStatement", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_ACTION_STATEMENT_TIME = new PropertyDescriptor("actionStatementTime", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_ASSESSED_ELEMENT = new PropertyDescriptor("assessedElement", SECURITY_NAMESPACE);
@@ -174,15 +183,21 @@ public class SpdxConstants {
 	public static final PropertyDescriptor SECURITY_PROP_IMPACT_STATEMENT_TIME = new PropertyDescriptor("impactStatementTime", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_JUSTIFICATION_TYPE = new PropertyDescriptor("justificationType", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_LOCATOR = new PropertyDescriptor("locator", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_MODIFIED_TIME = new PropertyDescriptor("modifiedTime", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_PROBABILITY = new PropertyDescriptor("probability", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_PUBLISHED_TIME = new PropertyDescriptor("publishedTime", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_SCORE = new PropertyDescriptor("score", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_SEVERITY = new PropertyDescriptor("severity", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_STATUS_NOTES = new PropertyDescriptor("statusNotes", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_SUPPLIED_BY = new PropertyDescriptor("suppliedBy", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_VECTOR = new PropertyDescriptor("vector", SECURITY_NAMESPACE);
 	public static final PropertyDescriptor SECURITY_PROP_VEX_VERSION = new PropertyDescriptor("vexVersion", SECURITY_NAMESPACE);
+	public static final PropertyDescriptor SECURITY_PROP_WITHDRAWN_TIME = new PropertyDescriptor("withdrawnTime", SECURITY_NAMESPACE);
 	
 	/**
 	 * Software namespace
 	 */
-	public static final String SOFTWARE_NAMESPACE = "https://spdx.org/rdf/Software";
+	public static final String SOFTWARE_NAMESPACE = "https://spdx.org/rdf/v3/Software";
 	public static final PropertyDescriptor SOFTWARE_PROP_ADDITIONAL_PURPOSE = new PropertyDescriptor("additionalPurpose", SOFTWARE_NAMESPACE);
 	public static final PropertyDescriptor SOFTWARE_PROP_ATTRIBUTION_TEXT = new PropertyDescriptor("attributionText", SOFTWARE_NAMESPACE);
 	public static final PropertyDescriptor SOFTWARE_PROP_BYTE_RANGE = new PropertyDescriptor("byteRange", SOFTWARE_NAMESPACE);
@@ -203,113 +218,106 @@ public class SpdxConstants {
 	public static final PropertyDescriptor SOFTWARE_PROP_SOURCE_INFO = new PropertyDescriptor("sourceInfo", SOFTWARE_NAMESPACE);
 	
 	// class types
-	static final String SOFTWARE_SOFTWARE_PURPOSE = "Software.SoftwarePurpose";
-	static final String DATASET_DATASET = "Dataset.Dataset";
-	static final String CORE_SEM_VER = "Core.SemVer";
-	static final String CORE_LIFECYCLE_SCOPE_TYPE = "Core.LifecycleScopeType";
-	static final String LICENSING_WITH_ADDITION_OPERATOR = "Licensing.WithAdditionOperator";
-	static final String SECURITY_VEX_JUSTIFICATION_TYPE = "Security.VexJustificationType";
-	static final String SOFTWARE_SOFTWARE_DEPENDENCY_LINK_TYPE = "Software.SoftwareDependencyLinkType";
-	static final String DATASET_CONFIDENTIALITY_LEVEL_TYPE = "Dataset.ConfidentialityLevelType";
-	static final String SOFTWARE_SOFTWARE_DEPENDENCY_RELATIONSHIP = "Software.SoftwareDependencyRelationship";
-	static final String CORE_HASH_ALGORITHM = "Core.HashAlgorithm";
-	static final String CORE_EXTERNAL_REFERENCE_TYPE = "Core.ExternalReferenceType";
-	static final String SOFTWARE_SNIPPET = "Software.Snippet";
-	static final String SECURITY_SSVC_VULN_ASSESSMENT_RELATIONSHIP = "Security.SsvcVulnAssessmentRelationship";
-	static final String SECURITY_VEX_UNDER_INVESTIGATION_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexUnderInvestigationVulnAssessmentRelationship";
-	static final String CORE_ANONYMOUS_PAYLOAD = "Core.AnonymousPayload";
-	static final String LICENSING_LICENSE_ADDITION = "Licensing.LicenseAddition";
-	static final String DATASET_DATASET_TYPE = "Dataset.DatasetType";
-	static final String LICENSING_OR_LATER_OPERATOR = "Licensing.OrLaterOperator";
-	static final String CORE_POSITIVE_INTEGER_RANGE = "Core.PositiveIntegerRange";
-	static final String DATASET_DATASET_AVAILABILITY_TYPE = "Dataset.DatasetAvailabilityType";
-	static final String SOFTWARE_S_B_O_M_TYPE = "Software.SBOMType";
-	static final String SECURITY_VULN_ASSESSMENT_RELATIONSHIP = "Security.VulnAssessmentRelationship";
-	static final String SECURITY_EPSS_VULN_ASSESSMENT_RELATIONSHIP = "Security.EpssVulnAssessmentRelationship";
-	static final String EXPANDED_LICENSE_CONJUNCTIVE_LICENSE_SET = "ExpandedLicense.ConjunctiveLicenseSet";
-	static final String SECURITY_CVSS_V_2_VULN_ASSESSMENT_RELATIONSHIP = "Security.CvssV2VulnAssessmentRelationship";
-	static final String CORE_RELATIONSHIP_COMPLETENESS = "Core.RelationshipCompleteness";
-	static final String CORE_PROFILE_IDENTIFIER_TYPE = "Core.ProfileIdentifierType";
-	static final String SOFTWARE_SOFTWARE_ARTIFACT = "Software.SoftwareArtifact";
-	static final String LICENSING_LISTED_LICENSE = "Licensing.ListedLicense";
-	static final String SECURITY_SSVC_DECISION_TYPE = "Security.SsvcDecisionType";
-	static final String SOFTWARE_SPDX_FILE = "Software.SpdxFile";
-	static final String CORE_ANNOTATION = "Core.Annotation";
-	static final String CORE_MEDIA_TYPE = "Core.MediaType";
-	static final String CORE_TOOL = "Core.Tool";
-	static final String CORE_EXTERNAL_MAP = "Core.ExternalMap";
-	static final String CORE_EXTERNAL_IDENTIFIER = "Core.ExternalIdentifier";
-	static final String CORE_ANNOTATION_TYPE = "Core.AnnotationType";
-	static final String LICENSING_ANY_LICENSE_INFO = "Licensing.AnyLicenseInfo";
-	static final String CORE_ELEMENT_COLLECTION = "Core.ElementCollection";
-	static final String CORE_HASH = "Core.Hash";
-	static final String A_I_SAFETY_RISK_ASSESSMENT_TYPE = "AI.SafetyRiskAssessmentType";
-	static final String SECURITY_CVSS_V_3_VULN_ASSESSMENT_RELATIONSHIP = "Security.CvssV3VulnAssessmentRelationship";
-	static final String LICENSING_LICENSE_EXPRESSION = "Licensing.LicenseExpression";
-	static final String CORE_LIFECYCLE_SCOPED_RELATIONSHIP = "Core.LifecycleScopedRelationship";
-	static final String LICENSING_LICENSE = "Licensing.License";
-	static final String SOFTWARE_DEPENDENCY_CONDITIONALITY_TYPE = "Software.DependencyConditionalityType";
-	static final String CORE_INTEGRITY_METHOD = "Core.IntegrityMethod";
-	static final String CORE_BUNDLE = "Core.Bundle";
-	static final String SECURITY_EXPLOIT_CATALOG_VULN_ASSESSMENT_RELATIONSHIP = "Security.ExploitCatalogVulnAssessmentRelationship";
-	static final String CORE_ARTIFACT = "Core.Artifact";
-	static final String LICENSING_CUSTOM_LICENSE = "Licensing.CustomLicense";
-	static final String CORE_EXTERNAL_REFERENCE = "Core.ExternalReference";
-	static final String CORE_DICTIONARY_ENTRY = "Core.DictionaryEntry";
-	static final String EXPANDED_LICENSE_DISJUNCTIVE_LICENSE_SET = "ExpandedLicense.DisjunctiveLicenseSet";
-	static final String LICENSING_LISTED_LICENSE_EXCEPTION = "Licensing.ListedLicenseException";
-	static final String CORE_EXTERNAL_IDENTIFIER_TYPE = "Core.ExternalIdentifierType";
-	static final String SECURITY_VEX_NOT_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexNotAffectedVulnAssessmentRelationship";
-	static final String CORE_ELEMENT = "Core.Element";
-	static final String SECURITY_VULNERABILITY = "Security.Vulnerability";
-	static final String CORE_NAMESPACE_MAP = "Core.NamespaceMap";
-	static final String CORE_PERSON = "Core.Person";
-	static final String SECURITY_VEX_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexVulnAssessmentRelationship";
-	static final String CORE_ORGANIZATION = "Core.Organization";
-	static final String SECURITY_EXPLOIT_CATALOG_TYPE = "Security.ExploitCatalogType";
-	static final String CORE_CREATION_INFO = "Core.CreationInfo";
-	static final String CORE_RELATIONSHIP = "Core.Relationship";
-	static final String SECURITY_VEX_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexAffectedVulnAssessmentRelationship";
-	static final String BUILD_BUILD = "Build.Build";
-	static final String SOFTWARE_SPDX_PACKAGE = "Software.SpdxPackage";
-	static final String SOFTWARE_SBOM = "Software.Sbom";
-	static final String CORE_SPDX_DOCUMENT = "Core.SpdxDocument";
-	static final String SECURITY_VEX_FIXED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexFixedVulnAssessmentRelationship";
-	static final String A_I_A_I_PACKAGE = "AI.AIPackage";
-	static final String CORE_PAYLOAD = "Core.Payload";
-	static final String A_I_PRESENCE_TYPE = "AI.PresenceType";
-	static final String LICENSING_CUSTOM_LICENSE_ADDITION = "Licensing.CustomLicenseAddition";
-	static final String CORE_BOM = "Core.Bom";
-	static final String CORE_SOFTWARE_AGENT = "Core.SoftwareAgent";
-	static final String EXPANDED_LICENSE_EXTENDABLE_LICENSE = "ExpandedLicense.ExtendableLicense";
-	static final String CORE_AGENT = "Core.Agent";
-	static final String CORE_DATE_TIME = "Core.DateTime";
-	static final String CORE_RELATIONSHIP_TYPE = "Core.RelationshipType";
+	public static final String CORE_DICTIONARY_ENTRY = "Core.DictionaryEntry";
+	public static final String DATASET_CONFIDENTIALITY_LEVEL_TYPE = "Dataset.ConfidentialityLevelType";
+	public static final String CORE_BOM = "Core.Bom";
+	public static final String A_I_SAFETY_RISK_ASSESSMENT_TYPE = "AI.SafetyRiskAssessmentType";
+	public static final String LICENSING_LICENSE_EXPRESSION = "Licensing.LicenseExpression";
+	public static final String LICENSING_CUSTOM_LICENSE_ADDITION = "Licensing.CustomLicenseAddition";
+	public static final String CORE_ANNOTATION = "Core.Annotation";
+	public static final String SOFTWARE_SPDX_FILE = "Software.SpdxFile";
+	public static final String SOFTWARE_SOFTWARE_ARTIFACT = "Software.SoftwareArtifact";
+	public static final String SECURITY_VEX_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexAffectedVulnAssessmentRelationship";
+	public static final String DATASET_DATASET = "Dataset.Dataset";
+	public static final String SECURITY_SSVC_VULN_ASSESSMENT_RELATIONSHIP = "Security.SsvcVulnAssessmentRelationship";
+	public static final String LICENSING_LISTED_LICENSE = "Licensing.ListedLicense";
+	public static final String CORE_INTEGRITY_METHOD = "Core.IntegrityMethod";
+	public static final String SOFTWARE_SNIPPET = "Software.Snippet";
+	public static final String LICENSING_LICENSE_ADDITION = "Licensing.LicenseAddition";
+	public static final String SECURITY_EPSS_VULN_ASSESSMENT_RELATIONSHIP = "Security.EpssVulnAssessmentRelationship";
+	public static final String LICENSING_EXTENDABLE_LICENSE = "Licensing.ExtendableLicense";
+	public static final String EXPANDED_LICENSE_CONJUNCTIVE_LICENSE_SET = "ExpandedLicense.ConjunctiveLicenseSet";
+	public static final String LICENSING_WITH_ADDITION_OPERATOR = "Licensing.WithAdditionOperator";
+	public static final String SOFTWARE_SBOM_TYPE = "Software.SbomType";
+	public static final String CORE_TOOL = "Core.Tool";
+	public static final String CORE_EXTERNAL_IDENTIFIER = "Core.ExternalIdentifier";
+	public static final String CORE_ELEMENT_COLLECTION = "Core.ElementCollection";
+	public static final String CORE_ANNOTATION_TYPE = "Core.AnnotationType";
+	public static final String SOFTWARE_SOFTWARE_DEPENDENCY_RELATIONSHIP = "Software.SoftwareDependencyRelationship";
+	public static final String SECURITY_VEX_JUSTIFICATION_TYPE = "Security.VexJustificationType";
+	public static final String A_I_A_I_PACKAGE = "AI.AIPackage";
+	public static final String LICENSING_ANY_LICENSE_INFO = "Licensing.AnyLicenseInfo";
+	public static final String SECURITY_EXPLOIT_CATALOG_TYPE = "Security.ExploitCatalogType";
+	public static final String LICENSING_LISTED_LICENSE_EXCEPTION = "Licensing.ListedLicenseException";
+	public static final String A_I_PRESENCE_TYPE = "AI.PresenceType";
+	public static final String SOFTWARE_SOFTWARE_PURPOSE = "Software.SoftwarePurpose";
+	public static final String CORE_ELEMENT = "Core.Element";
+	public static final String CORE_PERSON = "Core.Person";
+	public static final String SOFTWARE_DEPENDENCY_CONDITIONALITY_TYPE = "Software.DependencyConditionalityType";
+	public static final String DATASET_DATASET_AVAILABILITY_TYPE = "Dataset.DatasetAvailabilityType";
+	public static final String LICENSING_OR_LATER_OPERATOR = "Licensing.OrLaterOperator";
+	public static final String CORE_EXTERNAL_MAP = "Core.ExternalMap";
+	public static final String LICENSING_LICENSE = "Licensing.License";
+	public static final String SECURITY_VULN_ASSESSMENT_RELATIONSHIP = "Security.VulnAssessmentRelationship";
+	public static final String CORE_AGENT = "Core.Agent";
+	public static final String SOFTWARE_SPDX_PACKAGE = "Software.SpdxPackage";
+	public static final String CORE_EXTERNAL_IDENTIFIER_TYPE = "Core.ExternalIdentifierType";
+	public static final String SOFTWARE_SOFTWARE_DEPENDENCY_LINK_TYPE = "Software.SoftwareDependencyLinkType";
+	public static final String CORE_POSITIVE_INTEGER_RANGE = "Core.PositiveIntegerRange";
+	public static final String CORE_HASH = "Core.Hash";
+	public static final String DATASET_DATASET_TYPE = "Dataset.DatasetType";
+	public static final String CORE_EXTERNAL_REFERENCE = "Core.ExternalReference";
+	public static final String CORE_SPDX_DOCUMENT = "Core.SpdxDocument";
+	public static final String SECURITY_VEX_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexVulnAssessmentRelationship";
+	public static final String SECURITY_CVSS_V2_VULN_ASSESSMENT_RELATIONSHIP = "Security.CvssV2VulnAssessmentRelationship";
+	public static final String EXPANDED_LICENSE_DISJUNCTIVE_LICENSE_SET = "ExpandedLicense.DisjunctiveLicenseSet";
+	public static final String CORE_BUNDLE = "Core.Bundle";
+	public static final String SOFTWARE_SBOM = "Software.Sbom";
+	public static final String CORE_LIFECYCLE_SCOPE_TYPE = "Core.LifecycleScopeType";
+	public static final String SECURITY_VEX_UNDER_INVESTIGATION_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexUnderInvestigationVulnAssessmentRelationship";
+	public static final String SECURITY_VEX_FIXED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexFixedVulnAssessmentRelationship";
+	public static final String CORE_HASH_ALGORITHM = "Core.HashAlgorithm";
+	public static final String SECURITY_EXPLOIT_CATALOG_VULN_ASSESSMENT_RELATIONSHIP = "Security.ExploitCatalogVulnAssessmentRelationship";
+	public static final String CORE_SOFTWARE_AGENT = "Core.SoftwareAgent";
+	public static final String CORE_CREATION_INFO = "Core.CreationInfo";
+	public static final String SECURITY_CVSS_V3_VULN_ASSESSMENT_RELATIONSHIP = "Security.CvssV3VulnAssessmentRelationship";
+	public static final String CORE_ORGANIZATION = "Core.Organization";
+	public static final String CORE_RELATIONSHIP = "Core.Relationship";
+	public static final String LICENSING_CUSTOM_LICENSE = "Licensing.CustomLicense";
+	public static final String CORE_RELATIONSHIP_TYPE = "Core.RelationshipType";
+	public static final String CORE_RELATIONSHIP_COMPLETENESS = "Core.RelationshipCompleteness";
+	public static final String CORE_ARTIFACT = "Core.Artifact";
+	public static final String CORE_LIFECYCLE_SCOPED_RELATIONSHIP = "Core.LifecycleScopedRelationship";
+	public static final String SECURITY_VEX_NOT_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP = "Security.VexNotAffectedVulnAssessmentRelationship";
+	public static final String CORE_PROFILE_IDENTIFIER_TYPE = "Core.ProfileIdentifierType";
+	public static final String BUILD_BUILD = "Build.Build";
+	public static final String SECURITY_SSVC_DECISION_TYPE = "Security.SsvcDecisionType";
+	public static final String SECURITY_VULNERABILITY = "Security.Vulnerability";
+	public static final String CORE_EXTERNAL_REFERENCE_TYPE = "Core.ExternalReferenceType";
 	
-	static final String[] ALL_SPDX_CLASSES = {SOFTWARE_SOFTWARE_PURPOSE, DATASET_DATASET, CORE_SEM_VER, 
-			CORE_LIFECYCLE_SCOPE_TYPE, LICENSING_WITH_ADDITION_OPERATOR, SECURITY_VEX_JUSTIFICATION_TYPE, 
-			SOFTWARE_SOFTWARE_DEPENDENCY_LINK_TYPE, DATASET_CONFIDENTIALITY_LEVEL_TYPE, 
-			SOFTWARE_SOFTWARE_DEPENDENCY_RELATIONSHIP, CORE_HASH_ALGORITHM, CORE_EXTERNAL_REFERENCE_TYPE, 
-			SOFTWARE_SNIPPET, SECURITY_SSVC_VULN_ASSESSMENT_RELATIONSHIP, SECURITY_VEX_UNDER_INVESTIGATION_VULN_ASSESSMENT_RELATIONSHIP, 
-			CORE_ANONYMOUS_PAYLOAD, LICENSING_LICENSE_ADDITION, DATASET_DATASET_TYPE, 
-			LICENSING_OR_LATER_OPERATOR, CORE_POSITIVE_INTEGER_RANGE, DATASET_DATASET_AVAILABILITY_TYPE, 
-			SOFTWARE_S_B_O_M_TYPE, SECURITY_VULN_ASSESSMENT_RELATIONSHIP, SECURITY_EPSS_VULN_ASSESSMENT_RELATIONSHIP, 
-			EXPANDED_LICENSE_CONJUNCTIVE_LICENSE_SET, SECURITY_CVSS_V_2_VULN_ASSESSMENT_RELATIONSHIP, 
-			CORE_RELATIONSHIP_COMPLETENESS, CORE_PROFILE_IDENTIFIER_TYPE, SOFTWARE_SOFTWARE_ARTIFACT, 
-			LICENSING_LISTED_LICENSE, SECURITY_SSVC_DECISION_TYPE, SOFTWARE_SPDX_FILE, 
-			CORE_ANNOTATION, CORE_MEDIA_TYPE, CORE_TOOL, CORE_EXTERNAL_MAP, CORE_EXTERNAL_IDENTIFIER, 
-			CORE_ANNOTATION_TYPE, LICENSING_ANY_LICENSE_INFO, CORE_ELEMENT_COLLECTION, 
-			CORE_HASH, A_I_SAFETY_RISK_ASSESSMENT_TYPE, SECURITY_CVSS_V_3_VULN_ASSESSMENT_RELATIONSHIP, 
-			LICENSING_LICENSE_EXPRESSION, CORE_LIFECYCLE_SCOPED_RELATIONSHIP, LICENSING_LICENSE, 
-			SOFTWARE_DEPENDENCY_CONDITIONALITY_TYPE, CORE_INTEGRITY_METHOD, CORE_BUNDLE, 
-			SECURITY_EXPLOIT_CATALOG_VULN_ASSESSMENT_RELATIONSHIP, CORE_ARTIFACT, LICENSING_CUSTOM_LICENSE, 
-			CORE_EXTERNAL_REFERENCE, CORE_DICTIONARY_ENTRY, EXPANDED_LICENSE_DISJUNCTIVE_LICENSE_SET, 
-			LICENSING_LISTED_LICENSE_EXCEPTION, CORE_EXTERNAL_IDENTIFIER_TYPE, SECURITY_VEX_NOT_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP, 
-			CORE_ELEMENT, SECURITY_VULNERABILITY, CORE_NAMESPACE_MAP, CORE_PERSON, 
-			SECURITY_VEX_VULN_ASSESSMENT_RELATIONSHIP, CORE_ORGANIZATION, SECURITY_EXPLOIT_CATALOG_TYPE, 
-			CORE_CREATION_INFO, CORE_RELATIONSHIP, SECURITY_VEX_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP, 
-			BUILD_BUILD, SOFTWARE_SPDX_PACKAGE, SOFTWARE_SBOM, CORE_SPDX_DOCUMENT, 
-			SECURITY_VEX_FIXED_VULN_ASSESSMENT_RELATIONSHIP, A_I_A_I_PACKAGE, CORE_PAYLOAD, 
-			A_I_PRESENCE_TYPE, LICENSING_CUSTOM_LICENSE_ADDITION, CORE_BOM, CORE_SOFTWARE_AGENT, 
-			EXPANDED_LICENSE_EXTENDABLE_LICENSE, CORE_AGENT, CORE_DATE_TIME, CORE_RELATIONSHIP_TYPE};
+	public static final String[] ALL_SPDX_CLASSES = {CORE_DICTIONARY_ENTRY, DATASET_CONFIDENTIALITY_LEVEL_TYPE, 
+			CORE_BOM, A_I_SAFETY_RISK_ASSESSMENT_TYPE, LICENSING_LICENSE_EXPRESSION, 
+			LICENSING_CUSTOM_LICENSE_ADDITION, CORE_ANNOTATION, SOFTWARE_SPDX_FILE, 
+			SOFTWARE_SOFTWARE_ARTIFACT, SECURITY_VEX_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP, 
+			DATASET_DATASET, SECURITY_SSVC_VULN_ASSESSMENT_RELATIONSHIP, LICENSING_LISTED_LICENSE, 
+			CORE_INTEGRITY_METHOD, SOFTWARE_SNIPPET, LICENSING_LICENSE_ADDITION, SECURITY_EPSS_VULN_ASSESSMENT_RELATIONSHIP, 
+			LICENSING_EXTENDABLE_LICENSE, EXPANDED_LICENSE_CONJUNCTIVE_LICENSE_SET, 
+			LICENSING_WITH_ADDITION_OPERATOR, SOFTWARE_SBOM_TYPE, CORE_TOOL, CORE_EXTERNAL_IDENTIFIER, 
+			CORE_ELEMENT_COLLECTION, CORE_ANNOTATION_TYPE, SOFTWARE_SOFTWARE_DEPENDENCY_RELATIONSHIP, 
+			SECURITY_VEX_JUSTIFICATION_TYPE, A_I_A_I_PACKAGE, LICENSING_ANY_LICENSE_INFO, 
+			SECURITY_EXPLOIT_CATALOG_TYPE, LICENSING_LISTED_LICENSE_EXCEPTION, A_I_PRESENCE_TYPE, 
+			SOFTWARE_SOFTWARE_PURPOSE, CORE_ELEMENT, CORE_PERSON, SOFTWARE_DEPENDENCY_CONDITIONALITY_TYPE, 
+			DATASET_DATASET_AVAILABILITY_TYPE, LICENSING_OR_LATER_OPERATOR, CORE_EXTERNAL_MAP, 
+			LICENSING_LICENSE, SECURITY_VULN_ASSESSMENT_RELATIONSHIP, CORE_AGENT, SOFTWARE_SPDX_PACKAGE, 
+			CORE_EXTERNAL_IDENTIFIER_TYPE, SOFTWARE_SOFTWARE_DEPENDENCY_LINK_TYPE, 
+			CORE_POSITIVE_INTEGER_RANGE, CORE_HASH, DATASET_DATASET_TYPE, CORE_EXTERNAL_REFERENCE, 
+			CORE_SPDX_DOCUMENT, SECURITY_VEX_VULN_ASSESSMENT_RELATIONSHIP, SECURITY_CVSS_V2_VULN_ASSESSMENT_RELATIONSHIP, 
+			EXPANDED_LICENSE_DISJUNCTIVE_LICENSE_SET, CORE_BUNDLE, SOFTWARE_SBOM, CORE_LIFECYCLE_SCOPE_TYPE, 
+			SECURITY_VEX_UNDER_INVESTIGATION_VULN_ASSESSMENT_RELATIONSHIP, SECURITY_VEX_FIXED_VULN_ASSESSMENT_RELATIONSHIP, 
+			CORE_HASH_ALGORITHM, SECURITY_EXPLOIT_CATALOG_VULN_ASSESSMENT_RELATIONSHIP, 
+			CORE_SOFTWARE_AGENT, CORE_CREATION_INFO, SECURITY_CVSS_V3_VULN_ASSESSMENT_RELATIONSHIP, 
+			CORE_ORGANIZATION, CORE_RELATIONSHIP, LICENSING_CUSTOM_LICENSE, CORE_RELATIONSHIP_TYPE, 
+			CORE_RELATIONSHIP_COMPLETENESS, CORE_ARTIFACT, CORE_LIFECYCLE_SCOPED_RELATIONSHIP, 
+			SECURITY_VEX_NOT_AFFECTED_VULN_ASSESSMENT_RELATIONSHIP, CORE_PROFILE_IDENTIFIER_TYPE, 
+			BUILD_BUILD, SECURITY_SSVC_DECISION_TYPE, SECURITY_VULNERABILITY, CORE_EXTERNAL_REFERENCE_TYPE};
 }

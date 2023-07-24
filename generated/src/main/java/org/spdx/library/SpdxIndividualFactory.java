@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.spdx.library.model.core.Element;
+import org.spdx.library.model.v3.core.Element;
 
  
 /**

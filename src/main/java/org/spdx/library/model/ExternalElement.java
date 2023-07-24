@@ -28,14 +28,12 @@ import javax.annotation.Nullable;
 import org.spdx.library.IndividualUriValue;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.model.core.CreationInfo;
-import org.spdx.library.model.core.Element;
-import org.spdx.library.model.core.ExternalIdentifier;
-import org.spdx.library.model.core.ExternalMap;
-import org.spdx.library.model.core.ExternalReference;
-import org.spdx.library.model.core.NamespaceMap;
-import org.spdx.library.model.core.Payload;
-import org.spdx.library.model.core.ProfileIdentifierType;
+import org.spdx.library.model.v3.core.CreationInfo;
+import org.spdx.library.model.v3.core.Element;
+import org.spdx.library.model.v3.core.ExternalIdentifier;
+import org.spdx.library.model.v3.core.ExternalMap;
+import org.spdx.library.model.v3.core.ExternalReference;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -80,11 +78,7 @@ public class ExternalElement extends Element implements IndividualUriValue {
 	}
 	
 	// Getters and Setters
-	
-	@Override
-	public Collection<NamespaceMap> getNamespacess() {
-		throw new RuntimeException(new InvalidSPDXAnalysisException(getObjectUri() + " is external to this object store."));
-	}
+
 	/**
 	 * @return the externalMap
 	 */
@@ -92,28 +86,14 @@ public class ExternalElement extends Element implements IndividualUriValue {
 		return this.external;
 	}
 
-	@Override
-	public Collection<ExternalMap> getImportss() {
-		throw new RuntimeException(new InvalidSPDXAnalysisException(getObjectUri() + " is external to this object store."));
-	}
 	
 
 		/**
 	 * @return the creationInfo
 	 */
 	 @Override
-	public Optional<CreationInfo> getCreationInfo() throws InvalidSPDXAnalysisException {
+	public CreationInfo getCreationInfo() throws InvalidSPDXAnalysisException {
 		 throw new InvalidSPDXAnalysisException(getObjectUri() + " is external to this object store.");
-	}
-	
-	/**
-	 * @param creationInfo the creationInfo to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	 @Override
-	public Payload setCreationInfo(@Nullable CreationInfo creationInfo) throws InvalidSPDXAnalysisException {
-		throw new InvalidSPDXAnalysisException(getObjectUri() + " is external to this object store.");
 	}
 	
 	@Override

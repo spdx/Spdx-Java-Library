@@ -37,7 +37,7 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxIdNotFoundException;
 import org.spdx.library.SpdxInvalidTypeException;
 import org.spdx.library.SpdxObjectNotInStoreException;
-import org.spdx.library.model.core.ExternalMap;
+import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
