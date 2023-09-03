@@ -249,7 +249,7 @@
 				<executions>
 					<execution>
 						<id>build-spdx</id>
-						<phase>prepare-package</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>createSPDX</goal>
 						</goals>
