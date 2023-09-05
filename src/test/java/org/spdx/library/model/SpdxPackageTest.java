@@ -141,7 +141,7 @@ public class SpdxPackageTest extends TestCase {
 		LICENSE3 = new ExtractedLicenseInfo("LicenseRef-3", "License Text 3");
 		
 		FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 
-				"FileName1", LICENSE1, Arrays.asList(new AnyLicenseInfo[] {LICENSE2}), 
+				"./FileName1", LICENSE1, Arrays.asList(new AnyLicenseInfo[] {LICENSE2}), 
 				COPYRIGHT_TEXT1, CHECKSUM1)
 				.setComment("File Comment1")
 				.setLicenseComments(LICENSE_COMMENT1)
@@ -151,7 +151,7 @@ public class SpdxPackageTest extends TestCase {
 				.build();
 				
 		FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()), 
-				"FileName2", LICENSE2, Arrays.asList(new AnyLicenseInfo[] {LICENSE1, LICENSE2}), 
+				"./FileName2", LICENSE2, Arrays.asList(new AnyLicenseInfo[] {LICENSE1, LICENSE2}), 
 				COPYRIGHT_TEXT2, CHECKSUM4)
 				.setComment("File Comment2")
 				.setLicenseComments(LICENSE_COMMENT2)

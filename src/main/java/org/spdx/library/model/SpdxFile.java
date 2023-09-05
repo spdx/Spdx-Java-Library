@@ -269,6 +269,9 @@ public class SpdxFile extends SpdxItem implements Comparable<SpdxFile> {
 			Optional<String> myName = this.getName();
 			if (myName.isPresent()) {
 				fileName = myName.get();
+				if (fileName.startsWith("/")) {
+					retval.add("File name name must be relative - the name must not start with a '/'.  Found "+fileName);
+				}
 			} else {
 				retval.add("Missing required file name");
 			}
