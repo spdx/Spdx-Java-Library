@@ -501,5 +501,10 @@ public class SpdxFileTest extends TestCase {
 				.build();
 		result = file2.verify();
 		assertTrue(result.isEmpty());
+		SpdxFile file3 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+				"filename", COMPLEX_LICENSE, Arrays.asList(CONJUNCTIVE_LICENSES), SpdxConstants.NOASSERTION_VALUE, SHA1)
+				.build();
+		result = file3.verify();
+		assertTrue(result.isEmpty());
 	}
 }
