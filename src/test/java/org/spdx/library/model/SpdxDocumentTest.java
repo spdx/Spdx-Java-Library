@@ -125,7 +125,7 @@ public class SpdxDocumentTest extends TestCase {
 		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
 				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
 		FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"FileName1", LICENSE1, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE2}), 
+				"./FileName1", LICENSE1, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE2}), 
 				"File Copyright1", CHECKSUM1)
 				.setComment("FileComment 1")
 				.setLicenseComments("License Comment1")
@@ -135,7 +135,7 @@ public class SpdxDocumentTest extends TestCase {
 				.build();
 
 		FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"FileName2", LICENSE2, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE3}), 
+				"./FileName2", LICENSE2, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE3}), 
 				"File Copyright2", CHECKSUM2)
 				.setComment("FileComment 2")
 				.setLicenseComments("License Comment2")
@@ -145,7 +145,7 @@ public class SpdxDocumentTest extends TestCase {
 				.build();
 
 		FILE3 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"FileName3", LICENSE3, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE1}), 
+				"./FileName3", LICENSE3, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE1}), 
 				"File Copyright2", CHECKSUM1)
 				.setComment("FileComment 3")
 				.setLicenseComments("License Comment3")

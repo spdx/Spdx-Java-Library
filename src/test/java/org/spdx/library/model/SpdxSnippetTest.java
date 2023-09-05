@@ -142,11 +142,11 @@ public class SpdxSnippetTest extends TestCase {
 		}));
 		
 		FROM_FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"fromFile1", COMPLEX_LICENSE, Arrays.asList(NON_STD_LICENSES), SpdxConstants.NOASSERTION_VALUE, 
+				"./fromFile1", COMPLEX_LICENSE, Arrays.asList(NON_STD_LICENSES), SpdxConstants.NOASSERTION_VALUE, 
 				gmo.createChecksum(ChecksumAlgorithm.SHA1, "1123456789abcdef0123456789abcdef01234567")).build();
 
 		FROM_FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
-				"fromFile2", STANDARD_LICENSES[0], Arrays.asList(STANDARD_LICENSES), SpdxConstants.NOASSERTION_VALUE, 
+				"./fromFile2", STANDARD_LICENSES[0], Arrays.asList(STANDARD_LICENSES), SpdxConstants.NOASSERTION_VALUE, 
 				gmo.createChecksum(ChecksumAlgorithm.SHA1, "5555556789abcdef0123456789abcdef01234567")).build();
 		
 		BOP_POINTER1_1 = gmo.createByteOffsetPointer(FROM_FILE1, OFFSET1_1);
