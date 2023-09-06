@@ -603,8 +603,8 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		
 		// files depends on if the filesAnalyzed flag
 		try {
-			if (getFiles().size() !=0 && !filesAnalyzed) {
-				retval.add("Warning: Found analyzed files for package " + pkgName + " when analyzedFiles is set to false.")
+			if (getFiles().size() != 0 && !filesAnalyzed) {
+				retval.add("Warning: Found analyzed files for package " + pkgName + " when analyzedFiles is set to false.");
 			}
 			for (SpdxFile file:getFiles()) {
 				List<String> verify = file.verify(verifiedIds, specVersion);
@@ -721,7 +721,7 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
-		boolean filesAnalyzed, String pkgName, Set<String> verifiedIds, List<String> retval, String specVersion) {
+			boolean filesAnalyzed, String pkgName, Set<String> verifiedIds, List<String> retval, String specVersion) {
 		if (licenseInfoFromFiles.size() != 0 && !filesAnalyzed) {
 			retval.add("License information from files must not be included when files not analyzed. Package " + pkgName);
 		} else {
