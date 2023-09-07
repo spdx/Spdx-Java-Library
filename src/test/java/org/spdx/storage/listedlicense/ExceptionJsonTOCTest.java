@@ -85,44 +85,44 @@ public class ExceptionJsonTOCTest extends TestCase {
 		ExceptionJsonTOC ejt = new ExceptionJsonTOC();
 		InMemSpdxStore store = new InMemSpdxStore();
 		String docUri = "http://temp.doc.uri";
-		String detailsUrl1 = "http://details1";
+		String detailsUrl1 = "./details1";
 		String exceptionId1 = "id1";
 		boolean deprecated1 = true;
 		String name1 = "name1";
-		String reference1 = "http://reference1";
+		String reference1 = "./reference1";
 		List<String> seeAlso1 = Arrays.asList(new String[]{"http://seeAlso1", "http://seeAlso2", "http://seeAlso3"});
-		String detailsUrl2 = "http://details2";
+		String detailsUrl2 = "./details2";
 		boolean deprecated2 = false;
 		String exceptionId2 = "id2";
 		String name2 = "name2";
-		String reference2 = "http://reference2";
+		String reference2 = "./reference2";
 		List<String> seeAlso2 = Arrays.asList(new String[]{"http://seeAlso4"});
 		
 		ListedLicenseException ex1 = new ListedLicenseException(store, docUri, exceptionId1, null, true);
 		ex1.setName(name1);
 		ex1.setSeeAlso(seeAlso1);
-		ejt.addException(ex1, detailsUrl1, reference1, deprecated1);
+		ejt.addException(ex1, reference1, detailsUrl1, deprecated1);
 		
 		ListedLicenseException ex2 = new ListedLicenseException(store, docUri, exceptionId2, null, true);
 		ex2.setName(name2);
 		ex2.setSeeAlso(seeAlso2);
-		ejt.addException(ex2, detailsUrl2, reference2, deprecated2);
+		ejt.addException(ex2, reference2, detailsUrl2, deprecated2);
 		
 		List<ExceptionJsonTOC.ExceptionJson> result = ejt.getExceptions();
 		assertEquals(2, result.size());
 		assertEquals(deprecated1, result.get(0).isDeprecatedLicenseId());
-		assertEquals(detailsUrl1, result.get(0).getDetailsUrl());
+		assertEquals(detailsUrl1.substring(2), result.get(0).getDetailsUrl().substring(result.get(0).getDetailsUrl().lastIndexOf('/') + 1));
 		assertEquals(exceptionId1, result.get(0).getLicenseExceptionId());
 		assertEquals(name1, result.get(0).getName());
-		assertEquals(reference1, result.get(0).getReference());
+		assertEquals(reference1.substring(2), result.get(0).getReference().substring(result.get(0).getReference().lastIndexOf('/') + 1));
 		assertEquals(1, result.get(0).getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso1, result.get(0).getSeeAlso()));
 		
 		assertEquals(deprecated2, result.get(1).isDeprecatedLicenseId());
-		assertEquals(detailsUrl2, result.get(1).getDetailsUrl());
+		assertEquals(detailsUrl2.substring(2), result.get(1).getDetailsUrl().substring(result.get(1).getDetailsUrl().lastIndexOf('/') + 1));
 		assertEquals(exceptionId2, result.get(1).getLicenseExceptionId());
 		assertEquals(name2, result.get(1).getName());
-		assertEquals(reference2, result.get(1).getReference());
+		assertEquals(reference2.substring(2), result.get(1).getReference().substring(result.get(1).getReference().lastIndexOf('/') + 1));
 		assertEquals(2, result.get(1).getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso2, result.get(1).getSeeAlso()));
 		

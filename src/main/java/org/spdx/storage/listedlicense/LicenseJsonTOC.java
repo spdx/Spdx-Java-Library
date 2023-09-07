@@ -256,7 +256,7 @@ public class LicenseJsonTOC {
 		this.releaseDate = releaseDate;
 	}
 
-	private static String toAbsoluteURL(String relURL) {
+	protected static String toAbsoluteURL(String relURL) {
 		String retval = relURL.startsWith("./") ? relURL.substring(2) : relURL;
 		return SpdxConstants.LISTED_LICENSE_URL + retval;
 	}
