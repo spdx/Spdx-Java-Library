@@ -221,16 +221,20 @@ public class SpdxPackageTest extends TestCase {
 		pkg.setStrict(false);
 		List<String> result = pkg.verify();
 		assertEquals(0, result.size());
-		// verification code
+		// verification code is optional
 		pkg.setPackageVerificationCode(null);
-		assertEquals(1, pkg.verify().size());
+		assertEquals(0, pkg.verify().size());
 		
-		// Make sure no files are allowed when filesAnalyzed is false
+		// Make sure no files and no licenses from files are allowed when filesAnalyzed is false
 		pkg.setFilesAnalyzed(false);
-		assertEquals(1, pkg.verify().size());
-		
-		//Make sure we're valid with no files and no verification code when filesAnalyzed = false.
+		assertEquals(2, pkg.verify().size());
+
+		// Make sure no licenses are allowed when filesAnalyzed = false
 		pkg.getFiles().clear();
+		assertEquals(1, pkg.verify().size());
+
+		// Make sure we're valid with no files and no licenses and no verification code when filesAnalyzed = false
+		pkg.getLicenseInfoFromFiles().clear();
 		assertEquals(0, pkg.verify().size());	
 	}
 	

@@ -383,9 +383,6 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxPackage setPackageVerificationCode(SpdxPackageVerificationCode verificationCode) throws InvalidSPDXAnalysisException {
-		if (strict && Objects.isNull(verificationCode) && isFilesAnalyzed()) {
-			throw new InvalidSPDXAnalysisException("Can not set required verificationCode to null");
-		}
 		setPropertyValue(SpdxConstants.PROP_PACKAGE_VERIFICATION_CODE, verificationCode);
 		return this;
 	}
@@ -606,19 +603,13 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		
 		// files depends on if the filesAnalyzed flag
 		try {
-			if (getFiles().size() == 0) {
-				if (filesAnalyzed) {
-					retval.add("Missing required package files for "+pkgName);
-				}
-			} else {
-				if (!filesAnalyzed) {
-					retval.add("Warning: Found analyzed files for package "+pkgName+" when analyzedFiles is set to false.");
-				}
-				for (SpdxFile file:getFiles()) {
-					List<String> verify = file.verify(verifiedIds, specVersion);
-					addNameToWarnings(verify);
-					retval.addAll(verify);
-				}
+			if (getFiles().size() != 0 && !filesAnalyzed) {
+				retval.add("Warning: Found analyzed files for package " + pkgName + " when analyzedFiles is set to false.");
+			}
+			for (SpdxFile file:getFiles()) {
+				List<String> verify = file.verify(verifiedIds, specVersion);
+				addNameToWarnings(verify);
+				retval.addAll(verify);
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Invalid package files: "+e.getMessage());
@@ -627,11 +618,11 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 		// verification code
 		try {
 			Optional<SpdxPackageVerificationCode> verificationCode = this.getPackageVerificationCode();
-			if (!verificationCode.isPresent() && filesAnalyzed) {
-				retval.add("Missing required package verification code for package " + pkgName);
-			} else if (verificationCode.isPresent() && !verificationCode.get().getValue().isEmpty() && !filesAnalyzed) {
+			if (verificationCode.isPresent()
+					&& !verificationCode.get().getValue().isEmpty()
+					&& !filesAnalyzed) {
 				retval.add("Verification code must not be included when files not analyzed.");
-			} else if (filesAnalyzed) {
+			} else if (filesAnalyzed && verificationCode.isPresent()) {
 				List<String> verify = verificationCode.get().verify(verifiedIds, specVersion);
 				addNameToWarnings(verify);
 				retval.addAll(verify);
@@ -730,32 +721,30 @@ public class SpdxPackage extends SpdxItem implements Comparable<SpdxPackage> {
 	}
 
 	private void verifyLicenseInfosInFiles(Collection<AnyLicenseInfo> licenseInfoFromFiles, 
-	        boolean filesAnalyzed, String pkgName, Set<String> verifiedIds, List<String> retval, String specVersion) {
-        if (licenseInfoFromFiles.size() == 0 && filesAnalyzed) {
-        	if (Version.versionLessThan(specVersion, Version.TWO_POINT_THREE_VERSION)) {
-        		retval.add("Missing required license information from files for "+pkgName);
-        	}
-        } else {
-            boolean foundNonSimpleLic = false;
-            for (AnyLicenseInfo lic:licenseInfoFromFiles) {
-                List<String> verify = lic.verify(verifiedIds, specVersion);
-                addNameToWarnings(verify);
-                retval.addAll(verify);
-                if (!(lic instanceof SimpleLicensingInfo ||
-                        lic instanceof SpdxNoAssertionLicense ||
-                        lic instanceof SpdxNoneLicense ||
-                        lic instanceof OrLaterOperator ||
-                        lic instanceof WithExceptionOperator)) {
-                    foundNonSimpleLic = true;
-                }
-            }
-            if (foundNonSimpleLic) {
-                retval.add("license info from files contains complex licenses for "+pkgName);
-            }
-        }
-    }
+			boolean filesAnalyzed, String pkgName, Set<String> verifiedIds, List<String> retval, String specVersion) {
+		if (licenseInfoFromFiles.size() != 0 && !filesAnalyzed) {
+			retval.add("License information from files must not be included when files not analyzed. Package " + pkgName);
+		} else {
+			boolean foundNonSimpleLic = false;
+			for (AnyLicenseInfo lic:licenseInfoFromFiles) {
+				List<String> verify = lic.verify(verifiedIds, specVersion);
+				addNameToWarnings(verify);
+				retval.addAll(verify);
+				if (!(lic instanceof SimpleLicensingInfo ||
+					lic instanceof SpdxNoAssertionLicense ||
+					lic instanceof SpdxNoneLicense ||
+					lic instanceof OrLaterOperator ||
+					lic instanceof WithExceptionOperator)) {
+						foundNonSimpleLic = true;
+				}
+			}
+			if (foundNonSimpleLic) {
+				retval.add("license info from files contains complex licenses for "+pkgName);
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public int compareTo(SpdxPackage pkg) {
 		// sort order is determined by the name and the version		
 		
