@@ -80,6 +80,14 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	 */
 	public SpdxListedLicenseWebStore() throws InvalidSPDXAnalysisException {
 		super();
+		if (cacheEnabled) {
+			try {
+				final File cacheDirectory = new File(cacheDir);
+				Files.createDirectories(cacheDirectory.toPath());
+			} catch (IOException ioe) {
+				throw new InvalidSPDXAnalysisException("Unable to create cache directory: " + cacheDir, ioe);
+			}
+		}
 	}
 
 	/**
@@ -118,11 +126,8 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	private InputStream getUrlInputStreamThroughCache(final URL url) throws IOException {
 		final String cacheKey           = base64Encode(url);
-		final File   cacheDirectory     = new File(cacheDir);
 		final File   cachedFile         = new File(cacheDir, cacheKey);
 		final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
-
-		Files.createDirectories(cacheDirectory.toPath());
 
 		if (cachedFile.exists() && cachedMetadataFile.exists()) {
 			final HashMap<String,String> cachedMetadata = readMetadataFile(cachedMetadataFile);
