@@ -243,30 +243,22 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		cacheMiss(url, connection);
 	}
 
-	private InputStream getUrlInputStreamDirect(final URL url) throws IOException {
+	private InputStream getUrlInputStreamDirect(URL url) throws IOException {
 		InputStream       result     = null;
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setReadTimeout(READ_TIMEOUT);
-
 		final URL redirectUrl = processPossibleRedirect(connection);
 
 		if (redirectUrl != null) {
+			url        = redirectUrl;
 			connection = (HttpURLConnection)redirectUrl.openConnection();
 			connection.setReadTimeout(READ_TIMEOUT);
-
-			final int status = connection.getResponseCode();
-			if (status == HttpURLConnection.HTTP_OK) {
-				result = redirectUrl.openConnection().getInputStream();
-			} else {
-				throw new IOException("Unexpected HTTP status code from " + redirectUrl.toString() + ": " + status);
-			}
+		}
+		final int status = connection.getResponseCode();
+		if (status == HttpURLConnection.HTTP_OK) {
+			result = connection.getInputStream();
 		} else {
-			final int status = connection.getResponseCode();
-			if (status == HttpURLConnection.HTTP_OK) {
-				result = connection.getInputStream();
-			} else {
-				throw new IOException("Unexpected HTTP status code from " + url.toString() + ": " + status);
-			}
+			throw new IOException("Unexpected HTTP status code from " + url.toString() + ": " + status);
 		}
 		return result;
 	}
