@@ -64,7 +64,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	private static final int READ_TIMEOUT = 5000;
 	private static final int IO_BUFFER_SIZE = 8192;
-	private static final long CACHE_CHECK_INTERVAL_SECS = 86400;   // 24 hours, in seconds
+	private static final long DEFAULT_CACHE_CHECK_INTERVAL_SECS = 86400;   // 24 hours, in seconds
 
 	static final List<String> WHITE_LIST = Collections.unmodifiableList(Arrays.asList(
 			"spdx.org", "spdx.dev", "spdx.com", "spdx.info")); // Allowed host names for the SPDX listed licenses
@@ -95,7 +95,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 				throw new InvalidSPDXAnalysisException("Unable to create cache directory: " + cacheDir, ioe);
 			}
 		}
-		long tmpCacheCheckIntervalSecs = CACHE_CHECK_INTERVAL_SECS;
+		long tmpCacheCheckIntervalSecs = DEFAULT_CACHE_CHECK_INTERVAL_SECS;
 		try {
 			tmpCacheCheckIntervalSecs = Long.parseLong(
 					System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.cacheCheckIntervalSecs"));
