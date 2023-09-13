@@ -20,7 +20,7 @@ The methods enterCriticalSection and leaveCritialSection are available to suppor
 The library is available in [Maven Central org.spdx:java-spdx-library](https://search.maven.org/artifact/org.spdx/java-spdx-library).
 
 If you are using Maven, you can add the following dependency in your POM file:
-```
+```xml
 <dependency>
   <groupId>org.spdx</groupId>
   <artifactId>java-spdx-library</artifactId>
@@ -28,12 +28,22 @@ If you are using Maven, you can add the following dependency in your POM file:
 </dependency>
 ```
 
-[API JavaDocs are available here.](https://spdx.github.io/Spdx-Java-Library/)
+[API JavaDocs are available here](https://spdx.github.io/Spdx-Java-Library/).
 
 There are a couple of static classes that help common usage scenarios:
 
-- org.spdx.library.SPDXModelFactory supports the creation of specific model objects
-- org.spdx.library.model.license.LicenseInfoFactory supports the parsing of SPDX license expressions, creation, and comparison of SPDX licenses
+- `org.spdx.library.SPDXModelFactory` supports the creation of specific model objects
+- `org.spdx.library.model.license.LicenseInfoFactory` supports the parsing of SPDX license expressions, creation, and comparison of SPDX licenses
+
+## Configuration options
+
+`Spdx-Java-Library` is configured using Java system properties, as those allow both human operator configuration (via JVM `-D` command line options) as well as programmatic configuration by downstream code that needs automated control.
+
+Currently the library offers these configuration options:
+1. `org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.enableCache` - a boolean that enables or disables the WebStore's local cache. Defaults to `false` (the cache is disabled). The cache location is determined as per the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) i.e. `${XDG_CACHE_HOME}/Spdx-Java-Library` or `${HOME}/.cache/Spdx-Java-Library`).
+2. `org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.cacheCheckIntervalSecs` - a long that controls how often each cache entry is rechecked for staleness, in units of seconds. Defaults to 86,400 seconds (24 hours). Set to 0 (zero) to have each cache entry checked every time (note: this will result in a lot more network I/O and negatively impact performance, albeit not as much as not using the cache at all).
+
+Note that both of these configuration options can only be modified prior to initialization of Spdx-Java-Library. Once the library is initialized, subsequent changes to either or both of these Java properties will have no effect.
 
 ## Update for new properties or classes
 To update Spdx-Java-Library, the following is a very brief checklist:
