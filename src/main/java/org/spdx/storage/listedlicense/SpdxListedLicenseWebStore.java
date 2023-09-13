@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
@@ -63,7 +64,8 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	private static final int READ_TIMEOUT = 5000;
 	private static final int IO_BUFFER_SIZE = 8192;
-	
+	private static final long CACHE_CHECK_INTERVAL_SECS = 86400;   // 24 hours, in seconds
+
 	static final List<String> WHITE_LIST = Collections.unmodifiableList(Arrays.asList(
 			"spdx.org", "spdx.dev", "spdx.com", "spdx.info")); // Allowed host names for the SPDX listed licenses
 
@@ -76,6 +78,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	private final boolean cacheEnabled = Boolean.parseBoolean(
 			System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.enableCache"));
+	private final long cacheCheckIntervalSecs;
 
 	final DateTimeFormatter iso8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'").withZone(ZoneOffset.UTC);
 
@@ -92,6 +95,14 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 				throw new InvalidSPDXAnalysisException("Unable to create cache directory: " + cacheDir, ioe);
 			}
 		}
+		long tmpCacheCheckIntervalSecs = CACHE_CHECK_INTERVAL_SECS;
+		try {
+			tmpCacheCheckIntervalSecs = Long.parseLong(
+					System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.cacheCheckIntervalSecs"));
+		} catch(NumberFormatException nfe) {
+			// Ignore parse failures - in this case we use the default value of 24 hours
+		}
+		cacheCheckIntervalSecs = tmpCacheCheckIntervalSecs;
 	}
 
 	/**
@@ -138,23 +149,14 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 				final HashMap<String,String> cachedMetadata = readMetadataFile(cachedMetadataFile);
 
 				if (cachedMetadata != null) {
-					final String eTag = cachedMetadata.get("eTag");
-					final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-					connection.setReadTimeout(READ_TIMEOUT);
-					connection.setRequestProperty("If-None-Match", eTag);
-					final int status = connection.getResponseCode();
-					if (status != HttpURLConnection.HTTP_NOT_MODIFIED) {
-						cacheMiss(url, connection);
-					} else {
-						logger.debug("Cache hit for " + String.valueOf(url));
-					}
+					checkCache(cachedMetadataFile, cachedMetadata, url);
 				} else {
 					cacheMiss(url);
 				}
 			} catch (IOException ioe) {
-				// We know we have a locally cached file here, so if we happen to get an error while making the ETag
-				// request to check if it's up-to-date, we can safely ignore it and fall back on the (possibly stale)
-				// cached content file.  This makes the code more robust when the cache has previously been populated.
+				// We know we have a locally cached file here, so if we happen to get an exception we can safely ignore
+				// it and fall back on the (possibly stale) cached content file.  This makes the code more robust in the
+				// presence of network errors when the cache has previously been populated.
 			}
 		} else {
 			cacheMiss(url);
@@ -196,7 +198,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			result = new Gson().fromJson(r, new TypeToken<HashMap<String, String>>(){}.getType());
 		}
 		catch (IOException ioe) {
-			result = null;  // Treat errors as a cache miss
+			result = null;  // Treat metadata read errors as a cache miss
 		}
 		return result;
 	}
@@ -226,6 +228,34 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		}
 	}
 
+	private void checkCache(final File cachedMetadataFile, final HashMap<String,String> cachedMetadata, final URL url) throws IOException {
+		final Instant lastChecked = Instant.parse(cachedMetadata.get("lastChecked"));
+        final long    difference  = Math.abs(ChronoUnit.SECONDS.between(Instant.now(), lastChecked));
+
+		if (difference > cacheCheckIntervalSecs) {
+			// It's been a while since we checked the cached download of this URL for staleness, so make an ETag request
+			logger.debug("Outside cache check interval; checking for updates to " + String.valueOf(url));
+			final String            eTag       = cachedMetadata.get("eTag");
+			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setReadTimeout(READ_TIMEOUT);
+			connection.setRequestProperty("If-None-Match", eTag);
+			final int status = connection.getResponseCode();
+			if (status != HttpURLConnection.HTTP_NOT_MODIFIED) {
+				// The content of the URL has changed, which we handle the same as a cache miss (i.e. we re-download
+				// the content, and write a new metadata file from scratch)
+				cacheMiss(url, connection);
+			} else {
+				// The content hasn't changed, so just update the lastChecked metadata but otherwise do nothing
+				logger.debug("Cache hit for " + String.valueOf(url));
+				cachedMetadata.put("lastChecked", iso8601.format(Instant.now()));
+				writeMetadataFile(cachedMetadataFile, cachedMetadata);
+			}
+		} else {
+			// We checked recently, so don't need to do anything - the cached content will be used
+			logger.debug("Within cache check interval; skipping check of updates to " + String.valueOf(url));
+		}
+	}
+
 	private void cacheMiss(URL url, HttpURLConnection connection) throws IOException {
 		logger.debug("Cache miss for " + String.valueOf(url));
 
@@ -243,6 +273,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			final HashMap<String, String> metadata = new HashMap<String, String>();
 			metadata.put("eTag", connection.getHeaderField("ETag"));
 			metadata.put("downloadedAt", iso8601.format(Instant.now()));
+			metadata.put("lastChecked", iso8601.format(Instant.now()));
 			metadata.put("sourceUrl", url.toString());
 			writeMetadataFile(cachedMetadataFile, metadata);
 		} else {
