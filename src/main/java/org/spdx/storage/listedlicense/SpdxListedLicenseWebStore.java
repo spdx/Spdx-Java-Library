@@ -80,7 +80,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.enableCache"));
 	private final long cacheCheckIntervalSecs;
 
-	final DateTimeFormatter iso8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'").withZone(ZoneOffset.UTC);
+	private final DateTimeFormatter iso8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'").withZone(ZoneOffset.UTC);
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
