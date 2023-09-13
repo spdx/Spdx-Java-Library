@@ -47,6 +47,8 @@ import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 
@@ -56,6 +58,8 @@ import org.spdx.library.SpdxConstants;
  *
  */
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
+
+	private static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class);
 
 	private static final int READ_TIMEOUT = 5000;
 	private static final int IO_BUFFER_SIZE = 8192;
@@ -130,20 +134,27 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
 
 		if (cachedFile.exists() && cachedMetadataFile.exists()) {
-			final HashMap<String,String> cachedMetadata = readMetadataFile(cachedMetadataFile);
+			try {
+				final HashMap<String,String> cachedMetadata = readMetadataFile(cachedMetadataFile);
 
-			if (cachedMetadata != null)
-			{
-				final String            eTag       = cachedMetadata.get("eTag");
-				final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-				connection.setReadTimeout(READ_TIMEOUT);
-				connection.setRequestProperty("If-None-Match", eTag);
-				final int status = connection.getResponseCode();
-				if (status != HttpURLConnection.HTTP_NOT_MODIFIED) {
-					cacheMiss(url, connection);
+				if (cachedMetadata != null) {
+					final String eTag = cachedMetadata.get("eTag");
+					final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setReadTimeout(READ_TIMEOUT);
+					connection.setRequestProperty("If-None-Match", eTag);
+					final int status = connection.getResponseCode();
+					if (status != HttpURLConnection.HTTP_NOT_MODIFIED) {
+						cacheMiss(url, connection);
+					} else {
+						logger.debug("Cache hit for " + String.valueOf(url));
+					}
+				} else {
+					cacheMiss(url);
 				}
-			} else {
-				cacheMiss(url);
+			} catch (IOException ioe) {
+				// We know we have a locally cached file here, so if we happen to get an error while making the ETag
+				// request to check if it's up-to-date, we can safely ignore it and fall back on the (possibly stale)
+				// cached content file.  This makes the code more robust when the cache has previously been populated.
 			}
 		} else {
 			cacheMiss(url);
@@ -216,6 +227,8 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	}
 
 	private void cacheMiss(URL url, HttpURLConnection connection) throws IOException {
+		logger.debug("Cache miss for " + String.valueOf(url));
+
 		final URL redirectUrl = processPossibleRedirect(connection);
 		if (redirectUrl != null) {
 			url        = redirectUrl;
