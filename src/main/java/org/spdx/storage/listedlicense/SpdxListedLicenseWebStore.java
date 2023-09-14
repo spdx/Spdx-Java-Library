@@ -63,7 +63,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			try {
 				redirectUrl = new URL(redirectUrlStr);
 			} catch(Exception ex) {
-				throw new IOException("Invalid redirect URL");
+				throw new IOException("Invalid redirect URL", ex);
 			}
 			if (!redirectUrl.getProtocol().toLowerCase().startsWith("http")) {
 				throw new IOException("Invalid redirect protocol");
