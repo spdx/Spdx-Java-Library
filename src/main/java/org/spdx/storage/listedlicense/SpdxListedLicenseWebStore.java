@@ -72,9 +72,9 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	// See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 	private final String cacheDir = ((System.getenv("XDG_CACHE_HOME") == null ||
 			System.getenv("XDG_CACHE_HOME").trim() == "") ?
-			System.getProperty("user.home") + "/.cache" :
+			System.getProperty("user.home") + File.separator + ".cache" :
 			System.getenv("XDG_CACHE_HOME")) +
-			"/Spdx-Java-Library";
+			File.separator + "Spdx-Java-Library";
 
 	private final String JAVA_PROPERTY_CACHE_ENABLED = "org.spdx.storage.listedlicense.enableCache";
 	private final String JAVA_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.storage.listedlicense.cacheCheckIntervalSecs";
