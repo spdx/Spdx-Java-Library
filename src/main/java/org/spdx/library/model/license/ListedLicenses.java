@@ -85,13 +85,13 @@ public class ListedLicenses {
                 }
             } catch (IOException e) {
                 // Ignore it and fall through
-                logger.warn("IO Exception reading listed license properties file: " + e.getMessage());
+                logger.warn("IO Exception reading listed license properties file: " + e.getMessage(), e);
             } finally {
                 if (in != null) {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        logger.warn("Unable to close listed license properties file: " + e.getMessage());
+                        logger.warn("Unable to close listed license properties file: " + e.getMessage(), e);
                     }
                 }
             }
@@ -108,7 +108,7 @@ public class ListedLicenses {
         		try {
         			licenseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage());
+        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage(), ex);
         			licenseModelStore = null;
         		}
         	}
@@ -116,8 +116,8 @@ public class ListedLicenses {
         		try {
         			licenseModelStore = new SpdxListedLicenseLocalStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Error loading cached SPDX licenses");
-        			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses");
+        			logger.error("Error loading cached SPDX licenses", ex);
+        			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses", ex);
         		}
         	}
         } finally {

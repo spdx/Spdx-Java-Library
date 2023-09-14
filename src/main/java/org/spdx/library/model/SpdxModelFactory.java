@@ -294,7 +294,7 @@ public class SpdxModelFactory {
 			try {
 				return Optional.of(new ExternalSpdxElement(modelStore, documentUri, id, copyManager, true));
 			} catch(InvalidSPDXAnalysisException ex) {
-				logger.warn("Attempting to get a model object for an invalid SPDX ID.  Returning empty");
+				logger.warn("Attempting to get a model object for an invalid SPDX ID.  Returning empty", ex);
 				return Optional.empty();
 			}
 		}

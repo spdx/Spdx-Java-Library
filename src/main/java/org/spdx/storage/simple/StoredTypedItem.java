@@ -200,7 +200,7 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.add(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName, ex);
 		}
 	}
 	
@@ -222,7 +222,7 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.remove(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName, ex);
 		}
 	}
 
@@ -257,7 +257,7 @@ public class StoredTypedItem extends TypedValue {
 			}
 			return list.remove(value);
 		} catch (Exception ex) {
-			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName);
+			throw new SpdxInvalidTypeException("Invalid list type for "+propertyName, ex);
 		}
 	}
 	

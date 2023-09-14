@@ -146,7 +146,7 @@ public class SpdxListedLicense extends License {
 				try {
 					return SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
 				} catch(LicenseTemplateRuleException ex) {
-					throw new InvalidLicenseTemplateException("Invalid license expression found in license text for license "+getName()+":"+ex.getMessage());
+					throw new InvalidLicenseTemplateException("Invalid license expression found in license text for license "+getName()+":"+ex.getMessage(), ex);
 				}
 			} else {
 				return SpdxLicenseTemplateHelper.formatEscapeHTML(this.getLicenseText());
@@ -179,7 +179,7 @@ public class SpdxListedLicense extends License {
 				try {
 					return SpdxLicenseTemplateHelper.templateTextToHtml(templateText);
 				} catch(LicenseTemplateRuleException ex) {
-					throw new InvalidLicenseTemplateException("Invalid license expression found in standard license header for license "+getName()+":"+ex.getMessage());
+					throw new InvalidLicenseTemplateException("Invalid license expression found in standard license header for license "+getName()+":"+ex.getMessage(), ex);
 				}
 			} else {
 				return SpdxLicenseTemplateHelper.formatEscapeHTML(this.getStandardLicenseHeader());

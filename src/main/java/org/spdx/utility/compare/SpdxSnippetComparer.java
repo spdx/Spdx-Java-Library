@@ -91,7 +91,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw new SpdxCompareException("SPDX error getting byte range: "+e.getMessage());
+				throw new SpdxCompareException("SPDX error getting byte range: "+e.getMessage(), e);
 			}
 			try {
 			    Optional<StartEndPointer> lineRange = snippet.getLineRange();
@@ -111,14 +111,14 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw new SpdxCompareException("SPDX error getting line range: "+e.getMessage());
+				throw new SpdxCompareException("SPDX error getting line range: "+e.getMessage(), e);
 			}
 			try {
 				SpdxFile fromFile = snippet.getSnippetFromFile();
 				SpdxFile fromFile2 = snippet2.getSnippetFromFile();
 				compareSnippetFromFiles(spdxDocument, fromFile, document2, fromFile2);
 			} catch (InvalidSPDXAnalysisException e) {
-				throw new SpdxCompareException("SPDX error getting snippet from file: "+e.getMessage());
+				throw new SpdxCompareException("SPDX error getting snippet from file: "+e.getMessage(), e);
 			}
 			try {
 				if (!SpdxComparer.stringsEqual(snippet2.getName(), snippet.getName())) {
@@ -126,7 +126,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 					this.differenceFound = true;
 				}
 			} catch (InvalidSPDXAnalysisException e) {
-				throw new SpdxCompareException("SPDX error comparing snippet names: "+e.getMessage());
+				throw new SpdxCompareException("SPDX error comparing snippet names: "+e.getMessage(), e);
 			}
 		}
 		inProgress = false;
