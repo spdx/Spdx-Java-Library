@@ -50,6 +50,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.Configuration;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 
@@ -76,8 +77,8 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			System.getenv("XDG_CACHE_HOME")) +
 			File.separator + "Spdx-Java-Library";
 
-	private final String JAVA_PROPERTY_CACHE_ENABLED = "org.spdx.storage.listedlicense.enableCache";
-	private final String JAVA_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.storage.listedlicense.cacheCheckIntervalSecs";
+	private final String CONFIG_PROPERTY_CACHE_ENABLED = "org.spdx.storage.listedlicense.enableCache";
+	private final String CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.storage.listedlicense.cacheCheckIntervalSecs";
 	private final boolean cacheEnabled;
 	private final long cacheCheckIntervalSecs;
 
@@ -90,7 +91,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		super();
 
 		// Initialise cache
-		boolean tmpCacheEnabled = Boolean.parseBoolean(System.getProperty(JAVA_PROPERTY_CACHE_ENABLED));
+		boolean tmpCacheEnabled = Boolean.parseBoolean(Configuration.getInstance().getProperty(CONFIG_PROPERTY_CACHE_ENABLED, "false"));
 		if (tmpCacheEnabled) {
 			try {
 				final File cacheDirectory = new File(cacheDir);
@@ -103,7 +104,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 		cacheEnabled = tmpCacheEnabled;
 		long tmpCacheCheckIntervalSecs = DEFAULT_CACHE_CHECK_INTERVAL_SECS;
 		try {
-			tmpCacheCheckIntervalSecs = Long.parseLong(System.getProperty(JAVA_PROPERTY_CACHE_CHECK_INTERVAL_SECS));
+			tmpCacheCheckIntervalSecs = Long.parseLong(Configuration.getInstance().getProperty(CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS));
 		} catch(NumberFormatException nfe) {
 			// Ignore parse failures - in this case we use the default value of 24 hours
 		}
