@@ -96,7 +96,7 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 				final File cacheDirectory = new File(cacheDir);
 				Files.createDirectories(cacheDirectory.toPath());
 			} catch (IOException ioe) {
-				logger.warn("Unable to create cache directory '" + cacheDir "'; continuing with cache disabled.", ioe);
+				logger.warn("Unable to create cache directory '" + cacheDir + "'; continuing with cache disabled.", ioe);
 				tmpCacheEnabled = false;
 			}
 		}
