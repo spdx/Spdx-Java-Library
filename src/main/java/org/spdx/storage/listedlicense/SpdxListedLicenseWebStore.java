@@ -76,8 +76,9 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 			System.getenv("XDG_CACHE_HOME")) +
 			"/Spdx-Java-Library";
 
-	private final boolean cacheEnabled = Boolean.parseBoolean(
-			System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.enableCache"));
+	private final String JAVA_PROPERTY_CACHE_ENABLED = "org.spdx.storage.listedlicense.enableCache";
+	private final String JAVA_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.storage.listedlicense.cacheCheckIntervalSecs";
+	private final boolean cacheEnabled;
 	private final long cacheCheckIntervalSecs;
 
 	private final DateTimeFormatter iso8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'").withZone(ZoneOffset.UTC);
@@ -87,18 +88,22 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	 */
 	public SpdxListedLicenseWebStore() throws InvalidSPDXAnalysisException {
 		super();
-		if (cacheEnabled) {
+
+		// Initialise cache
+		boolean tmpCacheEnabled = Boolean.parseBoolean(System.getProperty(JAVA_PROPERTY_CACHE_ENABLED));
+		if (tmpCacheEnabled) {
 			try {
 				final File cacheDirectory = new File(cacheDir);
 				Files.createDirectories(cacheDirectory.toPath());
 			} catch (IOException ioe) {
-				throw new InvalidSPDXAnalysisException("Unable to create cache directory: " + cacheDir, ioe);
+				logger.warn("Unable to create cache directory '" + cacheDir "'; continuing with cache disabled.", ioe);
+				tmpCacheEnabled = false;
 			}
 		}
+		cacheEnabled = tmpCacheEnabled;
 		long tmpCacheCheckIntervalSecs = DEFAULT_CACHE_CHECK_INTERVAL_SECS;
 		try {
-			tmpCacheCheckIntervalSecs = Long.parseLong(
-					System.getProperty("org.spdx.storage.listedlicense.SpdxListedLicenseWebStore.cacheCheckIntervalSecs"));
+			tmpCacheCheckIntervalSecs = Long.parseLong(System.getProperty(JAVA_PROPERTY_CACHE_CHECK_INTERVAL_SECS));
 		} catch(NumberFormatException nfe) {
 			// Ignore parse failures - in this case we use the default value of 24 hours
 		}
