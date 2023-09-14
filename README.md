@@ -37,13 +37,14 @@ There are a couple of static classes that help common usage scenarios:
 
 ## Configuration options
 
-`Spdx-Java-Library` is configured using Java system properties, as those allow both human operator configuration (via JVM `-D` command line options) as well as programmatic configuration by downstream code that needs automated control.
+`Spdx-Java-Library` can be configured using either Java system properties or a Java properties file located in the runtime CLASSPATH at `/resources/spdx-java-library.properties`.
 
-Currently the library offers these configuration options:
-1. `org.spdx.storage.listedlicense.enableCache` - a boolean that enables or disables the WebStore's local cache. Defaults to `false` (the cache is disabled). The cache location is determined as per the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) (i.e. `${XDG_CACHE_HOME}/Spdx-Java-Library` or `${HOME}/.cache/Spdx-Java-Library`).
-2. `org.spdx.storage.listedlicense.cacheCheckIntervalSecs` - a long that controls how often each cache entry is rechecked for staleness, in units of seconds. Defaults to 86,400 seconds (24 hours). Set to 0 (zero) to have each cache entry checked every time (note: this will result in a lot more network I/O and negatively impact performance, albeit there is still a substantial performance saving vs not using the cache at all).
+The library has these configuration options:
+1. `SPDXParser.OnlyUseLocalLicenses` - a boolean that controls whether the (potentially out of date) listed license information bundled inside the JAR is used (true), vs the library downloading the latest files from the SPDX website (false). Default is false (always download the latest files from the SPDX website).
+2. `org.spdx.storage.listedlicense.enableCache` - a boolean that enables or disables the WebStore's local cache. Defaults to `false` (the cache is disabled). The cache location is determined as per the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) (i.e. `${XDG_CACHE_HOME}/Spdx-Java-Library` or `${HOME}/.cache/Spdx-Java-Library`).
+3. `org.spdx.storage.listedlicense.cacheCheckIntervalSecs` - a long that controls how often each cache entry is rechecked for staleness, in units of seconds. Defaults to 86,400 seconds (24 hours). Set to 0 (zero) to have each cache entry checked every time (note: this will result in a lot more network I/O and negatively impact performance, albeit there is still a substantial performance saving vs not using the cache at all).
 
-Note that both of these configuration options can only be modified prior to initialization of Spdx-Java-Library. Once the library is initialized, subsequent changes to either or both of these Java properties will have no effect.
+Note that these configuration options can only be modified prior to first use of Spdx-Java-Library. Once the library is initialized, subsequent changes will have no effect.
 
 ## Update for new properties or classes
 To update Spdx-Java-Library, the following is a very brief checklist:
