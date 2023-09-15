@@ -162,7 +162,8 @@ public final class DownloadCache {
     }
 
     /**
-     * @param url The URL to get an input stream for.
+     * @param url The URL to get an input stream for.  Note that redirects issued by this url are restricted to known
+     *            SPDX hosts. Redirects to other hosts will cause an IOException to be thrown.
      * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
      *        types, depending on whether the content is being served out of cache or not.
      * @throws IOException When an IO error of some kind occurs.
