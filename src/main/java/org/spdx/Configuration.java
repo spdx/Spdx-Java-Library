@@ -101,6 +101,7 @@ public final class Configuration {
             } catch (IOException e) {
                 // Ignore it and fall through
                 logger.warn("IO Exception reading configuration properties file '" + propertiesFileName + "': " + e.getMessage(), e);
+                result = null;
             } finally {
                 if (in != null) {
                     try {
