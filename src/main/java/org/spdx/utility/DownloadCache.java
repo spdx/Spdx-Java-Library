@@ -55,15 +55,20 @@ import org.slf4j.LoggerFactory;
 import org.spdx.Configuration;
 
 /**
- * This singleton class provides a configurable download cache for the rest of the library.  If enabled, URLs that are
- * downloaded using this class will be automatically cached locally on disk (in a directory that adheres to the XDG Base
- * Directory Specification - https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html), and any
- * subsequent requests will be served out of that cache.  Cache entries will be automatically checked for staleness
- * (via HTTP ETag requests) on subsequent runs
+ * This singleton class provides a flexible download cache for the rest of the library.  If enabled, URLs that are
+ * requested using this class will have their content automatically cached locally on disk (in a directory that adheres
+ * to the XDG Base Directory Specification - https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html),
+ * and any subsequent requests will be served out of that cache.  Cache entries will also be automatically checked every
+ * so often for staleness using HTTP ETag requests (which are more efficient than full HTTP requests).  The interval
+ * between such checks is configurable (and can even be turned off, which makes every download request re-check the URL
+ * for staleness).
  *
- * The class supports these Configuration options:
- * org.spdx.storage.listedlicense.enableCache -
- * org.spdx.storage.listedlicense.cacheCheckIntervalSecs
+ * The cache is configured via these Configuration options:
+ * * org.spdx.storage.listedlicense.enableCache:
+ *   Controls whether the cache is enabled or not. Defaults to false i.e. the cache is disabled.
+ * * org.spdx.storage.listedlicense.cacheCheckIntervalSecs:
+ *   How many seconds should the cache wait between issuing ETag requests to determine whether cached content is
+ *   stale? Defaults to 86,400 seconds (24 hours).
  */
 public final class DownloadCache {
     private static final Logger logger = LoggerFactory.getLogger(DownloadCache.class);
