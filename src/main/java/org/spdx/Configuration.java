@@ -42,6 +42,7 @@ public final class Configuration {
     private Configuration() {
         Properties tmpProperties = loadProperties(CONFIGURATION_PROPERTIES_FILENAME);
         if (tmpProperties == null) {
+            // This is to preserve backwards compatibility with version 1.1.7 of the library and earlier
             tmpProperties = loadProperties(DEPRECATED_CONFIGURATION_PROPERTIES_FILENAME);
             if (tmpProperties != null) {
                 logger.warn("You are using a deprecated property filename ('" + DEPRECATED_CONFIGURATION_PROPERTIES_FILENAME + "'). Please consider migrating to the new name ('" + CONFIGURATION_PROPERTIES_FILENAME + "').");
