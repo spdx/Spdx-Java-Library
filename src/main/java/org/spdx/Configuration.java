@@ -25,10 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A configuration class for the Spdx-Java-Library. When a caller attempts to retrieve a configuration property, it
+ * The configuration class for the Spdx-Java-Library. When a caller attempts to retrieve a configuration property, it
  * will first be checked in the Java system properties (i.e. set via `-D` command line options to the JVM, or by
  * programmatic calls to `System.setProperty()` in code), and will then fallback on a properties file in the classpath.
  * That file must be called `/resources/spdx-java-library.properties`.
+ *
+ * Please see the documentation for specifics on what configuration options Spdx-Java-Library supports, and how they
+ * impact the library's behavior.
  */
 public final class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class.getName());
