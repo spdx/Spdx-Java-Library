@@ -173,7 +173,6 @@ public final class DownloadCache {
     }
 
     /**
-     *
      * @param url The URL to get an input stream for.
      * @param restrictRedirects A flag that controls whether redirects returned by url are restricted to known SPDX
      *                          hosts or not. Defaults to true. USE EXTREME CAUTION WHEN TURNING THIS OFF!
