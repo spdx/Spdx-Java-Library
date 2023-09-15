@@ -86,7 +86,7 @@ public final class Configuration {
      * encountered during the process (e.g., the properties file doesn't exist, etc.).
      *
      * @param propertiesFileName the name of the file to load, including path (if any)
-     * @return a (possibly empty) set of properties
+     * @return a (possibly empty) set of properties, or null if the properties file doesn't exist on the CLASSPATH
      */
     private static Properties loadProperties(final String propertiesFileName) {
         Properties result = null;
