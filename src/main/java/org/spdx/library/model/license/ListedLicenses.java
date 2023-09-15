@@ -74,7 +74,7 @@ public class ListedLicenses {
         		try {
         			licenseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage());
+        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage(), ex);
         			licenseModelStore = null;
         		}
         	}
@@ -82,8 +82,8 @@ public class ListedLicenses {
         		try {
         			licenseModelStore = new SpdxListedLicenseLocalStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Error loading cached SPDX licenses");
-        			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses");
+        			logger.error("Error loading cached SPDX licenses", ex);
+        			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses", ex);
         		}
         	}
         } finally {

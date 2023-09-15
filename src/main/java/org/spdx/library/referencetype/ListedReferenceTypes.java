@@ -66,7 +66,7 @@ public class ListedReferenceTypes {
                 }
         	} catch (IOException e) {
                 logger.warn("IO Exception reading listed reference type properties file: " 
-                				+ e.getMessage() + ", loading properties from class properties file.");
+                				+ e.getMessage() + ", loading properties from class properties file.", e);
         	}
         	if (Objects.isNull(in)) {
         		try {
@@ -77,7 +77,7 @@ public class ListedReferenceTypes {
                 		logger.error("Unable to load listed reference type properties");
                 	}
                 } catch (IOException ex2) {
-                	logger.error("IO exception reading listed reference type properties from class properties file: "+ex2.getMessage());
+                	logger.error("IO exception reading listed reference type properties from class properties file: "+ex2.getMessage(), ex2);
                 }
         	}
         } finally {
@@ -85,7 +85,7 @@ public class ListedReferenceTypes {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    logger.warn("Unable to close listed license properties file: " + e.getMessage());
+                    logger.warn("Unable to close listed license properties file: " + e.getMessage(), e);
                 }
             }
         }
@@ -165,7 +165,7 @@ public class ListedReferenceTypes {
 			retval = new URI(SpdxConstants.SPDX_LISTED_REFERENCE_TYPES_PREFIX + listedReferenceName);
 		} catch (URISyntaxException e) {
 			logger.error("Error forming listed license URI",e);
-			throw new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type syntax.");
+			throw new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type syntax.",e);
 		}
     	if (!isListedReferenceType(retval)) {
     		throw new InvalidSPDXAnalysisException(listedReferenceName + " is not a valid SPDX listed reference type.");

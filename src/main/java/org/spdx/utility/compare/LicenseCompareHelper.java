@@ -244,14 +244,14 @@ public class LicenseCompareHelper {
 	            }
 	            return sb.toString();
 	        } catch (IOException e) {
-	            logger.warn("IO error reading strings?!?");
+	            logger.warn("IO error reading strings?!?", e);
 	            return s;
 	        } finally {
                 if (Objects.nonNull(reader)) {
                     try {
                         reader.close();
                     } catch (IOException e) {
-                        logger.warn("IO error closing a string reader?!?");
+                        logger.warn("IO error closing a string reader?!?", e);
                     }
                 }
 	        }
