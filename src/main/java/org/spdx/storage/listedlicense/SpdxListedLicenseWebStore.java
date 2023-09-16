@@ -19,26 +19,23 @@ package org.spdx.storage.listedlicense;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.utility.DownloadCache;
 
 /**
- * @author gary
+ * @author gary   Original code
+ * @author pmonks Optional caching of downloaded files
  *
  */
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
-	private static final int READ_TIMEOUT = 5000;
-	
-	static final List<String> WHITE_LIST = Collections.unmodifiableList(Arrays.asList(
-			"spdx.org", "spdx.dev", "spdx.com", "spdx.info")); // Allowed host names for the SPDX listed licenses
+	private static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class);
+
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
@@ -46,34 +43,9 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 	public SpdxListedLicenseWebStore() throws InvalidSPDXAnalysisException {
 		super();
 	}
-	
-	private InputStream getUrlInputStream(URL url) throws IOException {
-		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-		connection.setReadTimeout(READ_TIMEOUT);
-		int status = connection.getResponseCode();
-		if (status != HttpURLConnection.HTTP_OK && 
-			(status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-						|| status == HttpURLConnection.HTTP_SEE_OTHER)) {
-				// redirect
-			String redirectUrlStr = connection.getHeaderField("Location");
-			if (Objects.isNull(redirectUrlStr) || redirectUrlStr.isEmpty()) {
-				throw new IOException("Empty redirect URL response");
-			}
-			URL redirectUrl;
-			try {
-				redirectUrl = new URL(redirectUrlStr);
-			} catch(Exception ex) {
-				throw new IOException("Invalid redirect URL", ex);
-			}
-			if (!redirectUrl.getProtocol().toLowerCase().startsWith("http")) {
-				throw new IOException("Invalid redirect protocol");
-			}
-			if (!WHITE_LIST.contains(redirectUrl.getHost())) {
-				throw new IOException("Invalid redirect host - not on the allowed 'white list'");
-			}
-			connection = (HttpURLConnection)redirectUrl.openConnection();
-		}
-		return connection.getInputStream();
+
+	private InputStream getUrlInputStream(final URL url) throws IOException {
+		return DownloadCache.getInstance().getUrlInputStream(url);
 	}
 
 	@Override
