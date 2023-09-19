@@ -89,8 +89,8 @@ public final class DownloadCache {
             System.getenv("XDG_CACHE_HOME")) +
             File.separator + "Spdx-Java-Library";
 
-    private final String CONFIG_PROPERTY_CACHE_ENABLED = "org.spdx.storage.listedlicense.enableCache";
-    private final String CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.storage.listedlicense.cacheCheckIntervalSecs";
+    private final String CONFIG_PROPERTY_CACHE_ENABLED = "org.spdx.downloadCacheEnabled";
+    private final String CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.downloadCacheCheckIntervalSecs";
     private final boolean cacheEnabled;
     private final long cacheCheckIntervalSecs;
 
