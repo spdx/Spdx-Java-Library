@@ -59,11 +59,11 @@ public class ListedLicenses {
 	 * This constructor should only be called by the getListedLicenses method
 	 */
 	private ListedLicenses() {
-		// Note: this code confusingly uses different property values depending on the source (Java system property vs properties file),
-		// so we have to check both names in order to not break downstream consumers' legacy configurations.  This is _NOT_ recommended for
-		// any new code that leverages the Configuration class.
-		onlyUseLocalLicenses = Boolean.parseBoolean(Configuration.getInstance().getProperty("SPDXParser.OnlyUseLocalLicenses",
-				                                    Configuration.getInstance().getProperty("OnlyUseLocalLicenses", "false")));
+		// Note: this code is confusing as this property changed names several times over time, and we want to preserve
+		// backwards compatibility for those downstream library users who are using the old/deprecated names
+		onlyUseLocalLicenses = Boolean.parseBoolean(Configuration.getInstance().getProperty("org.spdx.useJARLicenseInfoOnly",
+				                                      Configuration.getInstance().getProperty("SPDXParser.OnlyUseLocalLicenses",
+				                                        Configuration.getInstance().getProperty("OnlyUseLocalLicenses", "false"))));
 		initializeLicenseModelStore();
 	}
 

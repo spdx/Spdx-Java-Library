@@ -1,6 +1,6 @@
-# if true, only use license information from the set of licenses stored within the JAR file at release time, rather than
-# downloading the latest versions from the SPDX website
-SPDXParser.OnlyUseLocalLicenses=false
+# if true, only use license information stored within the JAR file at release time, rather than downloading the latest
+# versions from the SPDX website
+org.spdx.useJARLicenseInfoOnly=false
 
 # if true, enable the download cache
 org.spdx.downloadCacheEnabled=false
