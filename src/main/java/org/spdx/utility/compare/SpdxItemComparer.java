@@ -93,7 +93,7 @@ public class SpdxItemComparer {
 	public void addDocumentItem(SpdxDocument spdxDocument,
 			SpdxItem spdxItem) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		if (this.itemInProgress) {
-			new SpdxCompareException("Trying to add a document item while another document item is being added.");
+			throw new SpdxCompareException("Trying to add a document item while another document item is being added.");
 		}
 		Optional<String> oName = spdxItem.getName();
 		if (this.name == null) {
@@ -101,7 +101,7 @@ public class SpdxItemComparer {
 				this.name = oName.get();
 			}
 		} else if (oName.isPresent() && !this.name.equals(oName.get()) && !(this instanceof SpdxSnippetComparer)) {
-			new SpdxCompareException("Names do not match for item being added to comparer: "+
+			throw new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxItem.getName()+", expecting "+this.name);
 		}
 		this.itemInProgress = true;
@@ -384,7 +384,7 @@ public class SpdxItemComparer {
 	 */
 	protected void checkInProgress() throws SpdxCompareException {
 		if (itemInProgress) {
-			new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed");
+			throw new SpdxCompareException("File compare in progress - can not obtain compare results until compare has completed");
 		}
 	}
 	
@@ -393,7 +393,7 @@ public class SpdxItemComparer {
 	 */
 	protected void checkCompareMade() throws SpdxCompareException {
 		if (this.documentItem.entrySet().size() < 1) {
-			new SpdxCompareException("Trying to obtain results of a file compare before a file compare has been performed");
+			throw new SpdxCompareException("Trying to obtain results of a file compare before a file compare has been performed");
 		}	
 	}
 

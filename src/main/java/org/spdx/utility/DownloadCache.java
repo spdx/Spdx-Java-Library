@@ -84,7 +84,7 @@ public final class DownloadCache {
 
     // See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     private final String cacheDir = ((System.getenv("XDG_CACHE_HOME") == null ||
-            System.getenv("XDG_CACHE_HOME").trim() == "") ?
+            System.getenv("XDG_CACHE_HOME").trim().isEmpty()) ?
             System.getProperty("user.home") + File.separator + ".cache" :
             System.getenv("XDG_CACHE_HOME")) +
             File.separator + "Spdx-Java-Library";
