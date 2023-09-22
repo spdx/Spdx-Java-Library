@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 import org.spdx.utility.DownloadCache;
@@ -33,9 +31,6 @@ import org.spdx.utility.DownloadCache;
  *
  */
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
-
-	private static final Logger logger = LoggerFactory.getLogger(SpdxListedLicenseModelStore.class);
-
 
 	/**
 	 * @throws InvalidSPDXAnalysisException
