@@ -32,8 +32,8 @@
 	</organization>
 	<scm>
 		<url>https://github.com/spdx/Spdx-Java-Library</url>
-		<connection>scm:git:git://github.com/spdx/Spdx-Java-Library.git</connection>
-		<developerConnection>scm:git:git@github.com:/spdx/Spdx-Java-Library.git</developerConnection>
+		<connection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</connection>
+		<developerConnection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</developerConnection>
 		<tag>master</tag>
 	</scm>
 	<distributionManagement>
