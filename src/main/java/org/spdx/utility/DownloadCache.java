@@ -143,11 +143,15 @@ public final class DownloadCache {
                     if (f.isDirectory()) {
                         rmdir(f);
                     } else {
-                        f.delete();
+                        if (!f.delete()) {
+                        	throw new RuntimeException("Unable to delete file from cache: "+f.getAbsolutePath());
+                        }
                     }
                 }
             }
-            dir.delete();
+            if (!dir.delete()) {
+            	throw new RuntimeException("Unable to delete directory from cache: "+dir.getAbsolutePath());
+            }
         }
     }
 
@@ -400,12 +404,10 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private void writeMetadataFile(final File metadataFile, HashMap<String,String> metadata) throws IOException {
-        final Writer w = new BufferedWriter(new FileWriter(metadataFile));
-        try {
+        ;
+        try (final Writer w = new BufferedWriter(new FileWriter(metadataFile))) {
             new Gson().toJson(metadata, new TypeToken<HashMap<String, String>>(){}.getType(), w);
-        } finally {
             w.flush();
-            w.close();
         }
     }
 
@@ -417,18 +419,15 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private void writeContentFile(final InputStream is, final File cachedFile) throws IOException {
-        final OutputStream cacheFileOutputStream = new BufferedOutputStream(new FileOutputStream(cachedFile));
-        try {
-            byte[] ioBuffer = new byte[IO_BUFFER_SIZE];
+    	try (final OutputStream cacheFileOutputStream = new BufferedOutputStream(new FileOutputStream(cachedFile))) {
+    		byte[] ioBuffer = new byte[IO_BUFFER_SIZE];
             int length;
             while ((length = is.read(ioBuffer)) != -1) {
                 cacheFileOutputStream.write(ioBuffer, 0, length);
             }
-        } finally {
-            is.close();
             cacheFileOutputStream.flush();
-            cacheFileOutputStream.close();
-        }
+    	}
+    	is.close();
     }
 
     /**
