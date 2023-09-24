@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.spdx</groupId>
 	<artifactId>java-spdx-library</artifactId>
-	<version>1.1.8-SNAPSHOT</version>
+	<version>1.1.8</version>
 	<packaging>jar</packaging>
 
 	<name>java-spdx-library</name>
@@ -34,7 +32,7 @@
 		<url>https://github.com/spdx/Spdx-Java-Library</url>
 		<connection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</connection>
 		<developerConnection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</developerConnection>
-		<tag>master</tag>
+		<tag>v1.1.8</tag>
 	</scm>
 	<distributionManagement>
 		<repository>
@@ -45,7 +43,7 @@
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.outputTimestamp>1675930644</project.build.outputTimestamp>
+		<project.build.outputTimestamp>1695578869</project.build.outputTimestamp>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
