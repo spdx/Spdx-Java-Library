@@ -1,4 +1,7 @@
 package org.spdx.library.model.license;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +10,7 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 
 import junit.framework.TestCase;
+import org.spdx.storage.listedlicense.SpdxListedLicenseModelStore;
 
 /**
  * Copyright (c) 2019 Source Auditor Inc.
@@ -120,7 +124,9 @@ public class ListedLicensesTest extends TestCase {
 	}
 	
 	public void testGetExceptionIds() throws InvalidSPDXAnalysisException {
-		assertTrue(ListedLicenses.getListedLicenses().getSpdxListedExceptionIds().size() >= NUM_3_7_EXCEPTION);
+		List<String> result = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
+		assertTrue(result.size() >= NUM_3_7_EXCEPTION);
+		assertTrue(result.contains("389-exception"));
 	}
 	
 	public void testListedLicenseIdCaseSensitive() {
@@ -154,4 +160,47 @@ public class ListedLicensesTest extends TestCase {
 	        assertTrue(idProp.get() instanceof String);
 	        assertEquals(id, idProp.get());
 	    }
+
+	public void testLicenseListInitializeListedLicenses() throws InvalidSPDXAnalysisException {
+		try {
+			ListedLicenses.initializeListedLicenses(new SpdxListedLicenseModelStore() {
+				@Override
+				public InputStream getTocInputStream() throws IOException {
+					return ListedLicensesTest.class.getResourceAsStream("licenses.json");
+				}
+
+				@Override
+				public InputStream getExceptionTocInputStream() throws IOException {
+					return ListedLicensesTest.class.getResourceAsStream("exceptions.json");
+				}
+
+				@Override
+				public InputStream getLicenseInputStream(String licenseId) throws IOException {
+					throw new UnsupportedOperationException("this shouldn't be used in tests");
+				}
+
+				@Override
+				public InputStream getExceptionInputStream(String exceptionId) throws IOException {
+					throw new UnsupportedOperationException("this shouldn't be used in tests");
+				}
+
+				@Override
+				public void close() throws Exception {
+					// Nothing to do for the either the in-memory or the web store
+				}
+			});
+			List<String> licenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+			assertEquals(1, licenseIds.size());
+			assertFalse(licenseIds.contains("Apache-2.0"));
+			assertTrue(licenseIds.contains("TEST"));
+
+			List<String> exceptionIds = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
+			assertEquals(1, licenseIds.size());
+			assertFalse(exceptionIds.contains("389-exception"));
+			assertTrue(exceptionIds.contains("TEST-exception"));
+		} finally {
+			// since ListedLicenses in a singleton, reset it after running this test
+			ListedLicenses.resetListedLicenses();
+		}
+	}
 }

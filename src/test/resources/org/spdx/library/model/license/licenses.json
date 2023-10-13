@@ -1,0 +1,18 @@
+{
+  "licenseListVersion": "1.1-test",
+  "licenses": [
+    {
+      "reference": "https://spdx.org/licenses/test.html",
+      "isDeprecatedLicenseId": false,
+      "detailsUrl": "https://spdx.org/licenses/test.json",
+      "referenceNumber": 1,
+      "name": "Some fake licenses for tests",
+      "licenseId": "TEST",
+      "seeAlso": [
+        "https://opensource.org/licenses/TEST"
+      ],
+      "isOsiApproved": true
+    }
+  ],
+  "releaseDate": "1999-01-01"
+}

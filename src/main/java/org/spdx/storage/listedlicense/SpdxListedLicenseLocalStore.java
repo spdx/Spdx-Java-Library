@@ -38,7 +38,7 @@ public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	}
 
 	@Override
-	InputStream getTocInputStream() throws IOException {
+	public InputStream getTocInputStream() throws IOException {
 		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + LICENSE_TOC_FILENAME;
     	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
     	if (retval == null) {
@@ -48,7 +48,7 @@ public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	}
 
 	@Override
-	InputStream getLicenseInputStream(String licenseId) throws IOException {
+	public InputStream getLicenseInputStream(String licenseId) throws IOException {
 		
 		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + licenseId + JSON_SUFFIX;
     	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
@@ -59,7 +59,7 @@ public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	}
 
 	@Override
-	InputStream getExceptionTocInputStream() throws IOException {
+	public InputStream getExceptionTocInputStream() throws IOException {
 		String fileName = LISTED_LICENSE_JSON_LOCAL_DIR + "/" + EXCEPTION_TOC_FILENAME;
     	InputStream retval = SpdxListedLicenseLocalStore.class.getResourceAsStream("/" + fileName);
     	if (retval == null) {
@@ -69,7 +69,7 @@ public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	}
 
 	@Override
-	InputStream getExceptionInputStream(String exceptionId) throws IOException {
+	public InputStream getExceptionInputStream(String exceptionId) throws IOException {
 		return getLicenseInputStream(exceptionId);
 	}
 	
