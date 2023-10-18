@@ -64,6 +64,14 @@ public class ListedLicenses {
 		initializeLicenseModelStore();
 	}
 
+	/**
+	 * This constructor should only be called by the initializeListedLicenses method,
+	 * to programmatically configure licenseModelStore from the application consuming this library
+	 */
+	private ListedLicenses(IListedLicenseStore licenseModelStore) {
+		this.licenseModelStore = licenseModelStore;
+	}
+
     private void initializeLicenseModelStore() {
         listedLicenseModificationLock.writeLock().lock();
         try {
@@ -89,7 +97,6 @@ public class ListedLicenses {
 	}
 
 	public static ListedLicenses getListedLicenses() {
-	    
 	    ListedLicenses retval = null;
 	    listedLicenseModificationLock.readLock().lock();
 	    try {
@@ -110,7 +117,25 @@ public class ListedLicenses {
 	    }
         return retval;
     }
-	
+
+	/**
+	 * Initializes the listed licenses singleton from a provided cache. This will
+	 * ignore all configuration around fetching remote licenses.
+	 *
+	 * @param licenseStore a preconfigured licenseStore, see {@link SpdxListedLicenseLocalStore} for
+	 *                     an example.
+	 * @return a singleton instance
+	 */
+	public static ListedLicenses initializeListedLicenses(IListedLicenseStore licenseStore) {
+			listedLicenseModificationLock.writeLock().lock();
+			try {
+				listedLicenses = new ListedLicenses(licenseStore);
+				return listedLicenses;
+			} finally {
+				listedLicenseModificationLock.writeLock().unlock();
+			}
+		}
+
 	/**
 	 * Resets all of the cached license information and reloads the license IDs
 	 * NOTE: This method should be used with caution, it will negatively impact

@@ -1,0 +1,17 @@
+{
+  "licenseListVersion": "1.1-test",
+  "exceptions": [
+    {
+      "reference": "./TEST-exception.json",
+      "isDeprecatedLicenseId": false,
+      "detailsUrl": "./TEST-exception.html",
+      "referenceNumber": 1,
+      "name": "TEST Directory Server Exception",
+      "licenseExceptionId": "TEST-exception",
+      "seeAlso": [
+        "http://example.com/TEST_Exception_License_Text"
+      ]
+    }
+  ],
+  "releaseDate": "1999-01-01"
+}

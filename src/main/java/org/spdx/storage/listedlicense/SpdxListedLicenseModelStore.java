@@ -114,25 +114,25 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @return InputStream for the Table of Contents of the licenses formated in JSON SPDX
 	 * @throws IOException
 	 */
-	abstract InputStream getTocInputStream() throws IOException;
+	public abstract InputStream getTocInputStream() throws IOException;
 	
 	/**
 	 * @return InputStream for the Table of Contents of the exceptions formated in JSON SPDX
 	 * @throws IOException
 	 */
-	abstract InputStream getExceptionTocInputStream() throws IOException;
+	public abstract InputStream getExceptionTocInputStream() throws IOException;
 	
 	/**
 	 * @return InputStream for a license formated in SPDX JSON
 	 * @throws IOException
 	 */
-	abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
+	public abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
 	
 	/**
 	 * @return InputStream for an exception formated in SPDX JSON
 	 * @throws IOException
 	 */
-	abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
+	public abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
 
 	/**
 	 * Loads all license and exception ID's from the appropriate JSON files
