@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -195,26 +195,33 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code>static <a href="ListedLicenses.html" title="class in org.spdx.library.model.license">ListedLicenses</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#initializeListedLicenses(org.spdx.storage.listedlicense.IListedLicenseStore)">initializeListedLicenses</a></span>&#8203;(<a href="../../../storage/listedlicense/IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a>&nbsp;licenseStore)</code></th>
+<td class="colLast">
+<div class="block">Initializes the listed licenses singleton from a provided cache.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSpdxListedExceptionId(java.lang.String)">isSpdxListedExceptionId</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;exceptionId)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSpdxListedLicenseId(java.lang.String)">isSpdxListedLicenseId</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseId)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#listedExceptionIdCaseSensitive(java.lang.String)">listedExceptionIdCaseSensitive</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;exceptionId)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#listedLicenseIdCaseSensitive(java.lang.String)">listedLicenseIdCaseSensitive</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseId)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static <a href="ListedLicenses.html" title="class in org.spdx.library.model.license">ListedLicenses</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resetListedLicenses()">resetListedLicenses</a></span>()</code></th>
 <td class="colLast">
@@ -254,6 +261,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getListedLicenses</h4>
 <pre class="methodSignature">public static&nbsp;<a href="ListedLicenses.html" title="class in org.spdx.library.model.license">ListedLicenses</a>&nbsp;getListedLicenses()</pre>
+</li>
+</ul>
+<a id="initializeListedLicenses(org.spdx.storage.listedlicense.IListedLicenseStore)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initializeListedLicenses</h4>
+<pre class="methodSignature">public static&nbsp;<a href="ListedLicenses.html" title="class in org.spdx.library.model.license">ListedLicenses</a>&nbsp;initializeListedLicenses&#8203;(<a href="../../../storage/listedlicense/IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a>&nbsp;licenseStore)</pre>
+<div class="block">Initializes the listed licenses singleton from a provided cache. This will
+ ignore all configuration around fetching remote licenses.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>licenseStore</code> - a preconfigured licenseStore, see <a href="../../../storage/listedlicense/SpdxListedLicenseLocalStore.html" title="class in org.spdx.storage.listedlicense"><code>SpdxListedLicenseLocalStore</code></a> for
+                     an example.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a singleton instance</dd>
+</dl>
 </li>
 </ul>
 <a id="resetListedLicenses()">

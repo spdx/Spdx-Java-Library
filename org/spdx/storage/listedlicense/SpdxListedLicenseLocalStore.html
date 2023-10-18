@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -213,6 +213,26 @@ extends <a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.stor
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#close()">close</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getExceptionInputStream(java.lang.String)">getExceptionInputStream</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;exceptionId)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getExceptionTocInputStream()">getExceptionTocInputStream</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLicenseInputStream(java.lang.String)">getLicenseInputStream</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseId)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTocInputStream()">getTocInputStream</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.org.spdx.storage.listedlicense.SpdxListedLicenseModelStore">
@@ -268,6 +288,78 @@ extends <a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.stor
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="getTocInputStream()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTocInputStream</h4>
+<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a>&nbsp;getTocInputStream()
+                              throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="SpdxListedLicenseModelStore.html#getTocInputStream()">getTocInputStream</a></code>&nbsp;in class&nbsp;<code><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>InputStream for the Table of Contents of the licenses formated in JSON SPDX</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a id="getLicenseInputStream(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLicenseInputStream</h4>
+<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a>&nbsp;getLicenseInputStream&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseId)
+                                  throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="SpdxListedLicenseModelStore.html#getLicenseInputStream(java.lang.String)">getLicenseInputStream</a></code>&nbsp;in class&nbsp;<code><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>InputStream for a license formated in SPDX JSON</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a id="getExceptionTocInputStream()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getExceptionTocInputStream</h4>
+<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a>&nbsp;getExceptionTocInputStream()
+                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="SpdxListedLicenseModelStore.html#getExceptionTocInputStream()">getExceptionTocInputStream</a></code>&nbsp;in class&nbsp;<code><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>InputStream for the Table of Contents of the exceptions formated in JSON SPDX</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a id="getExceptionInputStream(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getExceptionInputStream</h4>
+<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io" class="externalLink">InputStream</a>&nbsp;getExceptionInputStream&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;exceptionId)
+                                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="SpdxListedLicenseModelStore.html#getExceptionInputStream(java.lang.String)">getExceptionInputStream</a></code>&nbsp;in class&nbsp;<code><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>InputStream for an exception formated in SPDX JSON</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a id="close()">
 <!--   -->
 </a>
