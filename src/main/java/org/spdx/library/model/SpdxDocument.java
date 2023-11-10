@@ -184,11 +184,15 @@ public class SpdxDocument extends SpdxElement {
 	public Collection<ExtractedLicenseInfo> getExtractedLicenseInfos() throws InvalidSPDXAnalysisException {
 		return this.extractedLicenseInfos;
 	}
-	
+
 	/**
-	 * Add a license info to the collection of extracted license infos
-	 * @param licenseInfo
-	 * @return
+	 * Add a license info to the collection of extracted license infos.
+	 *
+	 * <p> Useful for adding license texts for licenseRefs.
+	 *
+	 * @param licenseInfo object containing license information
+	 * @return true if the underlying collection changed due to this call
+	 * @see SpdxDocument#createExtractedLicense(String, String)
 	 */
 	public boolean addExtractedLicenseInfos(ExtractedLicenseInfo licenseInfo) {
 		Objects.requireNonNull(licenseInfo, "License info can not be null");
@@ -197,8 +201,9 @@ public class SpdxDocument extends SpdxElement {
 
 	/**
 	 * Clear the extractedLicenseInfos and add all elements from extractedLicenseInfos
-	 * @param extractedLicenseInfos
-	 * @return this to enable chaining of sets
+	 *
+	 * @param extractedLicenseInfos the new list of license infos
+	 * @return this to enable chaining of setter calls
 	 */
 	public SpdxDocument setExtractedLicenseInfos(List<ExtractedLicenseInfo> extractedLicenseInfos) {
 		Objects.requireNonNull(extractedLicenseInfos, "Extracted license infos can not be null");
