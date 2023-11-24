@@ -44,35 +44,72 @@ import org.spdx.utility.compare.LicenseCompareHelper;
  *
  */
 public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo {
-	
+
+	/**
+	 * Create a new ExtractedLicenseInfo object
+	 *
+	 * <p> Users of the library should not call this constructor directly but use
+	 * {@link org.spdx.library.model.SpdxDocument#createExtractedLicense SpdxDocument#createExtractedLicense}.
+	 * This ensures correct behaviour between that document and its {@link ExtractedLicenseInfo} instance.
+	 *
+	 * <p> Otherwise, the object may misbehave, such as with
+	 * {@link org.spdx.library.model.SpdxDocument#addExtractedLicenseInfos SpdxDocument#addExtractedLicenseInfos}.
+	 *
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public ExtractedLicenseInfo() throws InvalidSPDXAnalysisException {
 		super(DefaultModelStore.getDefaultModelStore().getNextId(IdType.LicenseRef, DefaultModelStore.getDefaultDocumentUri()));
 	}
-	
+
+	/**
+	 * Create a new ExtractedLicenseInfo object
+	 *
+	 * <p> Users of the library should not call this constructor directly but use
+	 * {@link org.spdx.library.model.SpdxDocument#createExtractedLicense SpdxDocument#createExtractedLicense}.
+	 * This ensures correct behaviour between that document and its {@link ExtractedLicenseInfo} instance.
+	 *
+	 * <p> Otherwise, the object may misbehave, such as with
+	 * {@link org.spdx.library.model.SpdxDocument#addExtractedLicenseInfos SpdxDocument#addExtractedLicenseInfos}.
+	 *
+	 * @param id identifier for the license
+	 * @throws InvalidSPDXAnalysisException
+	 */
 	public ExtractedLicenseInfo(String id) throws InvalidSPDXAnalysisException {
 		super(id);
 	}
 
 	/**
 	 * Create a new ExtractedLicenseInfo object
-	 * @param modelStore container which includes the license
+	 *
+	 * <p> Users of the library should prefer
+	 * {@link org.spdx.library.model.SpdxDocument#createExtractedLicense SpdxDocument#createExtractedLicense}.
+	 *
+	 * @param modelStore  container which includes the license
 	 * @param documentUri URI for the SPDX document containing the license
-	 * @param id identifier for the license
+	 * @param id          identifier for the license
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
-	 * @param create if true, create the license if it does not exist
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param create      if true, create the license if it does not exist
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExtractedLicenseInfo(IModelStore modelStore, String documentUri, String id, 
 			@Nullable ModelCopyManager copyManager, boolean create)
 			throws InvalidSPDXAnalysisException {
 		super(modelStore, documentUri, id, copyManager, create);
 	}
-	
+
 	/**
 	 * Create a new ExtractedLicenseInfo using the ID and text
-	 * @param id
-	 * @param text
-	 * @throws InvalidSPDXAnalysisException 
+	 *
+	 * <p> Users of the library should not call this constructor directly but use
+	 * {@link org.spdx.library.model.SpdxDocument#createExtractedLicense SpdxDocument#createExtractedLicense}.
+	 * This ensures correct behaviour between that document and its {@link ExtractedLicenseInfo} instance.
+	 *
+	 * <p> Otherwise, the object may misbehave, such as with
+	 * {@link org.spdx.library.model.SpdxDocument#addExtractedLicenseInfos SpdxDocument#addExtractedLicenseInfos}.
+	 *
+	 * @param id   identifier for the license
+	 * @param text text to associate with the license
+	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExtractedLicenseInfo(String id, String text) throws InvalidSPDXAnalysisException {
 		super(id);
@@ -101,7 +138,9 @@ public class ExtractedLicenseInfo extends AbstractExtractedLicenseInfo {
 	}
 
 	/**
-	 * @param text the text to set
+	 * Sets the license text.
+	 * <p> Affects both this object and the underlying store.
+	 * @param text text to associate with the license
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void setExtractedText(String text) throws InvalidSPDXAnalysisException {

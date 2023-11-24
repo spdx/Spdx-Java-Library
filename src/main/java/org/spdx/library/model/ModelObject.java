@@ -40,13 +40,8 @@ import org.spdx.library.model.enumerations.ChecksumAlgorithm;
 import org.spdx.library.model.enumerations.ReferenceCategory;
 import org.spdx.library.model.enumerations.RelationshipType;
 import org.spdx.library.model.enumerations.SpdxEnumFactory;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.license.*;
 import org.spdx.library.model.license.CrossRef.CrossRefBuilder;
-import org.spdx.library.model.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.license.SpdxNoneLicense;
 import org.spdx.library.model.pointer.ByteOffsetPointer;
 import org.spdx.library.model.pointer.LineCharPointer;
 import org.spdx.library.model.pointer.SinglePointer;
@@ -1417,6 +1412,24 @@ public abstract class ModelObject {
 		Objects.requireNonNull(url, "URL can not be null");
 		return new CrossRefBuilder(this.modelStore, this.documentUri, 
 				this.modelStore.getNextId(IdType.Anonymous,  this.documentUri), this.copyManager, url);
+	}
+
+	/**
+	 * Constructs {@link ExtractedLicenseInfo} with text set.
+	 *
+	 * <p> Note that object construction has side-effects relating to a document and modelStore,
+	 * requiring document context.
+	 * This may bind usage of {@link ExtractedLicenseInfo} instances to the document that they were created by!
+	 *
+	 * @param id id that the text relates to
+	 * @param text license text corresponding to the id
+	 * @return returns a constructed object
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public ExtractedLicenseInfo createExtractedLicense(String id, String text) throws InvalidSPDXAnalysisException {
+		ExtractedLicenseInfo eli = new ExtractedLicenseInfo(modelStore, documentUri, id, copyManager, true);
+		eli.setExtractedText(text);
+		return eli;
 	}
 	
 	@Override
