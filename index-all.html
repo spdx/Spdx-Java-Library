@@ -195,7 +195,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/SpdxDocument.html#addExtractedLicenseInfos(org.spdx.library.model.license.ExtractedLicenseInfo)">addExtractedLicenseInfos(ExtractedLicenseInfo)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/SpdxDocument.html" title="class in org.spdx.library.model">SpdxDocument</a></dt>
 <dd>
-<div class="block">Add a license info to the collection of extracted license infos</div>
+<div class="block">Add a license info to the collection of extracted license infos.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/SpdxPackage.html#addFile(org.spdx.library.model.SpdxFile)">addFile(SpdxFile)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/SpdxPackage.html" title="class in org.spdx.library.model">SpdxPackage</a></dt>
 <dd>
@@ -777,6 +777,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/ModelObject.html#createExternalRef(org.spdx.library.model.enumerations.ReferenceCategory,org.spdx.library.model.ReferenceType,java.lang.String,java.lang.String)">createExternalRef(ReferenceCategory, ReferenceType, String, String)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/ModelObject.html" title="class in org.spdx.library.model">ModelObject</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/model/ModelObject.html#createExtractedLicense(java.lang.String,java.lang.String)">createExtractedLicense(String, String)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/ModelObject.html" title="class in org.spdx.library.model">ModelObject</a></dt>
+<dd>
+<div class="block">Constructs <a href="org/spdx/library/model/license/ExtractedLicenseInfo.html" title="class in org.spdx.library.model.license"><code>ExtractedLicenseInfo</code></a> with text set.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/ModelObject.html#createLineCharPointer(org.spdx.library.model.SpdxElement,int)">createLineCharPointer(SpdxElement, int)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/ModelObject.html" title="class in org.spdx.library.model">ModelObject</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/SpdxModelFactory.html#createModelObject(org.spdx.storage.IModelStore,java.lang.String,java.lang.String,java.lang.String,org.spdx.library.ModelCopyManager)">createModelObject(IModelStore, String, String, String, ModelCopyManager)</a></span> - Static method in class org.spdx.library.model.<a href="org/spdx/library/model/SpdxModelFactory.html" title="class in org.spdx.library.model">SpdxModelFactory</a></dt>
@@ -1167,9 +1171,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">An ExtractedLicensingInfo represents a license or licensing notice that was found in the package.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/license/ExtractedLicenseInfo.html#%3Cinit%3E()">ExtractedLicenseInfo()</a></span> - Constructor for class org.spdx.library.model.license.<a href="org/spdx/library/model/license/ExtractedLicenseInfo.html" title="class in org.spdx.library.model.license">ExtractedLicenseInfo</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Create a new ExtractedLicenseInfo object</div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/license/ExtractedLicenseInfo.html#%3Cinit%3E(java.lang.String)">ExtractedLicenseInfo(String)</a></span> - Constructor for class org.spdx.library.model.license.<a href="org/spdx/library/model/license/ExtractedLicenseInfo.html" title="class in org.spdx.library.model.license">ExtractedLicenseInfo</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Create a new ExtractedLicenseInfo object</div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/license/ExtractedLicenseInfo.html#%3Cinit%3E(java.lang.String,java.lang.String)">ExtractedLicenseInfo(String, String)</a></span> - Constructor for class org.spdx.library.model.license.<a href="org/spdx/library/model/license/ExtractedLicenseInfo.html" title="class in org.spdx.library.model.license">ExtractedLicenseInfo</a></dt>
 <dd>
 <div class="block">Create a new ExtractedLicenseInfo using the ID and text</div>
@@ -3948,7 +3956,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Clear the extractedLicenseInfos and add all elements from extractedLicenseInfos</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/license/ExtractedLicenseInfo.html#setExtractedText(java.lang.String)">setExtractedText(String)</a></span> - Method in class org.spdx.library.model.license.<a href="org/spdx/library/model/license/ExtractedLicenseInfo.html" title="class in org.spdx.library.model.license">ExtractedLicenseInfo</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the license text.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/SpdxFile.SpdxFileBuilder.html#setFileContributors(java.util.Collection)">setFileContributors(Collection&lt;String&gt;)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/SpdxFile.SpdxFileBuilder.html" title="class in org.spdx.library.model">SpdxFile.SpdxFileBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/model/SpdxPackage.SpdxPackageBuilder.html#setFiles(java.util.Collection)">setFiles(Collection&lt;SpdxFile&gt;)</a></span> - Method in class org.spdx.library.model.<a href="org/spdx/library/model/SpdxPackage.SpdxPackageBuilder.html" title="class in org.spdx.library.model">SpdxPackage.SpdxPackageBuilder</a></dt>
