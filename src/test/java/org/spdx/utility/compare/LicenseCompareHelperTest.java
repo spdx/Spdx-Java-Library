@@ -89,6 +89,8 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String BSD_2_CLAUSE_TEMPLATE = "TestFiles" + File.separator + "BSD-2-Clause.template.txt";
     static final String EPL_2 = "TestFiles" + File.separator + "EPL-2.0.txt";
     static final String EPL_2_TEMPLATE = "TestFiles" + File.separator + "EPL-2.0.template.txt";
+    static final String GPL_2_NL = "TestFiles" + File.separator + "GPL-2.0-NL.txt";
+    static final String GPL_2_TEMPLATE = "TestFiles" + File.separator + "GPL-2.0-only.template.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -1048,6 +1050,19 @@ public class LicenseCompareHelperTest extends TestCase {
         String templateText = UnitTestHelper.fileToText(EPL_2_TEMPLATE);
         SpdxListedLicense lic = new SpdxListedLicense(
                 new SpdxListedLicense.Builder("EPL-2.0", "EPL-2.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
+    public void testGpl20ConsistentMatch() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(GPL_2_TEXT);
+        String templateText = UnitTestHelper.fileToText(GPL_2_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("GPL-2.0", "GPL-2.0", licText)
                 .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {

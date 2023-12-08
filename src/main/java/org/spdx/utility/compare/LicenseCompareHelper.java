@@ -52,6 +52,7 @@ import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
+import org.spdx.utility.compare.FilterTemplateOutputHandler.OptionalTextHandling;
 import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 /**
@@ -646,18 +647,33 @@ public class LicenseCompareHelper {
 	@Deprecated
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, boolean includeVarText) throws SpdxCompareException {
 		return getNonOptionalLicenseText(licenseTemplate,
-				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT);
+				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT,
+						OptionalTextHandling.OMIT);
 	}
 	
 	/**
-	 * Get the text of a license minus any optional text - note: this include the default variable text
+	 * Get the text of a license minus any optional text
 	 * @param licenseTemplate license template containing optional and var tags
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @return list of strings for all non-optional license text.  
 	 * @throws SpdxCompareException
 	 */
-	public static List<String> getNonOptionalLicenseText(String licenseTemplate, VarTextHandling varTextHandling) throws SpdxCompareException {
-		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(varTextHandling);
+	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
+			VarTextHandling varTextHandling) throws SpdxCompareException {
+		return getNonOptionalLicenseText(licenseTemplate, varTextHandling, OptionalTextHandling.OMIT);
+	}
+	
+	/**
+	 * Get the text of a license converting variable and optional text according to the options
+	 * @param licenseTemplate license template containing optional and var tags
+	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
+	 * @param optionalTextHandling include optional text, exclude, or include a regex for the optional text
+	 * @return list of strings for all non-optional license text.  
+	 * @throws SpdxCompareException
+	 */
+	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
+			VarTextHandling varTextHandling, OptionalTextHandling optionalTextHandling) throws SpdxCompareException {
+		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(varTextHandling, optionalTextHandling);
 		try {
 			SpdxLicenseTemplateHelper.parseTemplate(licenseTemplate, filteredOutput);
 		} catch (LicenseTemplateRuleException e) {
@@ -686,9 +702,9 @@ public class LicenseCompareHelper {
 		String lastRegex = "";
 		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
 			String line = nonOptionalText.get(startTextIndex++);
-			if (startPatternBuilder.length() > 0 && line.trim().length() > 0 && !startPatternBuilder.toString().endsWith("}")) {
-				startPatternBuilder.append(".{0,50}"); //TODO: Replace this with the optional text match itself - requires redesign
-			}
+//			if (startPatternBuilder.length() > 0 && line.trim().length() > 0 && !startPatternBuilder.toString().endsWith("}")) {
+//				startPatternBuilder.append(".{0").append(regexLimit); //TODO: Replace this with the optional text match itself - requires redesign
+//			}
 			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
 			boolean inRegex = false; // if it starts with a regex, it will start with a blank line
 			for (String regexSplit:regexSplits) {
@@ -753,9 +769,9 @@ public class LicenseCompareHelper {
 						(endTextIndex == lastProcessedStartLine && (numberOfWords - endWordCount) < (nonOptionalText.get(endTextIndex).length() - wordsInLastLine)))) {	// Check to make sure we're not overlapping the start words
 			List<String> nonEmptyTokens = new ArrayList<>();
 			String line = nonOptionalText.get(endTextIndex);
-			if (endTextReversePattern.size() > 0 && line.trim().length() > 0 && !endTextReversePattern.get(endTextReversePattern.size()-1).endsWith("}")) {
-				endTextReversePattern.add(".{0,50}"); //TODO: Replace this with the optional text match itself - requires redesign
-			}
+//			if (endTextReversePattern.size() > 0 && line.trim().length() > 0 && !endTextReversePattern.get(endTextReversePattern.size()-1).endsWith("}")) {
+//				endTextReversePattern.add(".{0,50}"); //TODO: Replace this with the optional text match itself - requires redesign
+//			}
 			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
 			boolean inRegex = false;
 			for (String regexSplit:regexSplits) {
@@ -953,7 +969,8 @@ public class LicenseCompareHelper {
 			return null;
 		}
 
-		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), VarTextHandling.REGEX);
+		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), 
+				VarTextHandling.REGEX, OptionalTextHandling.REGEX_USING_TOKENS);
 		if (templateNonOptionalText.size() > 0 && templateNonOptionalText.get(0).startsWith("~~~.")) {
 			// Change to a non-greedy match
 			String firstLine = templateNonOptionalText.get(0);
