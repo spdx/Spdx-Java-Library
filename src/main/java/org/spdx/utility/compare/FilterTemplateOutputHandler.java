@@ -85,7 +85,7 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 			currentString.append(text);
 		} else if (OptionalTextHandling.REGEX_USING_TOKENS.equals(optionalTextHandling)) {
 			optionalTokens.get(optionalDepth).addAll(Arrays.asList(
-					LicenseCompareHelper.tokenizeLicenseText(text, new HashMap<Integer, LineColumn>())));
+					LicenseCompareHelper.tokenizeLicenseText(text, new HashMap<>())));
 		}
 	}
 
@@ -140,12 +140,11 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 	}
 
 	/**
-	 * @param tokens list of tokens
 	 * @return regular expression with quoted tokens
 	 */
 	private String toTokenRegex(List<String> tokens) {
 		StringBuilder sb = new StringBuilder();
-		for (String token:optionalTokens.get(optionalDepth)) {
+		for (String token:tokens) {
 			token = token.trim();
 			if (LicenseCompareHelper.NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
 				token = LicenseCompareHelper.NORMALIZE_TOKENS.get(token.toLowerCase());
