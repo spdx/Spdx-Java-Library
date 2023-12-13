@@ -52,6 +52,7 @@ import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
+import org.spdx.utility.compare.FilterTemplateOutputHandler.OptionalTextHandling;
 import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 /**
@@ -646,18 +647,33 @@ public class LicenseCompareHelper {
 	@Deprecated
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, boolean includeVarText) throws SpdxCompareException {
 		return getNonOptionalLicenseText(licenseTemplate,
-				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT);
+				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT,
+						OptionalTextHandling.OMIT);
 	}
 	
 	/**
-	 * Get the text of a license minus any optional text - note: this include the default variable text
+	 * Get the text of a license minus any optional text
 	 * @param licenseTemplate license template containing optional and var tags
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @return list of strings for all non-optional license text.  
 	 * @throws SpdxCompareException
 	 */
-	public static List<String> getNonOptionalLicenseText(String licenseTemplate, VarTextHandling varTextHandling) throws SpdxCompareException {
-		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(varTextHandling);
+	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
+			VarTextHandling varTextHandling) throws SpdxCompareException {
+		return getNonOptionalLicenseText(licenseTemplate, varTextHandling, OptionalTextHandling.OMIT);
+	}
+	
+	/**
+	 * Get the text of a license converting variable and optional text according to the options
+	 * @param licenseTemplate license template containing optional and var tags
+	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
+	 * @param optionalTextHandling include optional text, exclude, or include a regex for the optional text
+	 * @return list of strings for all non-optional license text.  
+	 * @throws SpdxCompareException
+	 */
+	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
+			VarTextHandling varTextHandling, OptionalTextHandling optionalTextHandling) throws SpdxCompareException {
+		FilterTemplateOutputHandler filteredOutput = new FilterTemplateOutputHandler(varTextHandling, optionalTextHandling);
 		try {
 			SpdxLicenseTemplateHelper.parseTemplate(licenseTemplate, filteredOutput);
 		} catch (LicenseTemplateRuleException e) {
@@ -672,23 +688,20 @@ public class LicenseCompareHelper {
 	 * Creates a regular expression pattern to match the start of a license text
 	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
 	 * @param numberOfWords Number of words to use in the match
-	 * @return Pattern which will match the start of the license text
+	 * @return A pair of Patterns the first of which will match the start of the license text the second of which will match the end of the license
 	 */
-	public static Pattern nonOptionalTextToStartPattern(List<String> nonOptionalText, int numberOfWords) {
+	public static Pair<Pattern, Pattern> nonOptionalTextToPatterns(List<String> nonOptionalText, int numberOfWords) {
 		if (Objects.isNull(nonOptionalText) || nonOptionalText.size() == 0 || numberOfWords < 1) {
-			return Pattern.compile("");
+			return new ImmutablePair<>(Pattern.compile(""), Pattern.compile(""));
 		}
 		int startWordCount = 0;
 		int startTextIndex = 0;
 		int wordsInLastLine = 0;	// keep track of the number of words processed in the last start line to make sure we don't overlap words in the end lines
-		StringBuilder patternBuilder = new StringBuilder();
+		StringBuilder startPatternBuilder = new StringBuilder();
 		String regexLimit = "," + Integer.toString(numberOfWords * 10) + "}";
 		String lastRegex = "";
 		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
 			String line = nonOptionalText.get(startTextIndex++);
-			if (patternBuilder.length() > 0 && line.trim().length() > 0 && !patternBuilder.toString().endsWith("}")) {
-				patternBuilder.append(".{0,5}");
-			}
 			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
 			boolean inRegex = false; // if it starts with a regex, it will start with a blank line
 			for (String regexSplit:regexSplits) {
@@ -701,7 +714,7 @@ public class LicenseCompareHelper {
 					} else {
 						regexToAppend = regexSplit;
 					}
-					if (patternBuilder.toString().endsWith("}") && regexToAppend.endsWith("}")) {
+					if (startPatternBuilder.toString().endsWith("}") && regexToAppend.endsWith("}")) {
 						// collapse consecutive match anything
 						Matcher lastRegexMatch = REGEX_QUANTIFIER_PATTERN.matcher(lastRegex);
 						Matcher regexToAppendMatch = REGEX_QUANTIFIER_PATTERN.matcher(regexToAppend);
@@ -712,12 +725,12 @@ public class LicenseCompareHelper {
 								regexToAppend = ""; // already covered by previous regex
 							} else {
 								// remove the last max
-								patternBuilder.setLength(patternBuilder.length()-(lastRegexMatch.group(2).length()+1));
+								startPatternBuilder.setLength(startPatternBuilder.length()-(lastRegexMatch.group(2).length()+1));
 								regexToAppend = regexToAppend.substring(regexToAppend.indexOf(',')+1);
 							}
 						}
 					}
-					patternBuilder.append(regexToAppend);
+					startPatternBuilder.append(regexToAppend);
 					lastRegex = regexToAppend;
 					startWordCount++;
 					inRegex = false;
@@ -731,8 +744,8 @@ public class LicenseCompareHelper {
 							if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
 								token = NORMALIZE_TOKENS.get(token.toLowerCase());
 							}
-							patternBuilder.append(Pattern.quote(token));
-							patternBuilder.append("\\s*");
+							startPatternBuilder.append(Pattern.quote(token));
+							startPatternBuilder.append("\\s*");
 							startWordCount++;
 							wordsInLastLine++;
 						}
@@ -741,8 +754,9 @@ public class LicenseCompareHelper {
 				}
 			}
 		}
-		patternBuilder.append(".{0,36000}");
+		
 		// End words
+		StringBuilder endPatternBuilder = new StringBuilder();
 		List<String> endTextReversePattern = new ArrayList<>();
 		int endTextIndex = nonOptionalText.size()-1;
 		int endWordCount = 0;
@@ -782,6 +796,9 @@ public class LicenseCompareHelper {
 					endTextReversePattern.add(token.substring(FilterTemplateOutputHandler.REGEX_ESCAPE.length()));
 				} else {
 					endTextReversePattern.add("\\s*");
+					if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
+						token = NORMALIZE_TOKENS.get(token.toLowerCase());
+					}
 					endTextReversePattern.add(Pattern.quote(token));
 				}
 				remainingTokens--;
@@ -791,9 +808,11 @@ public class LicenseCompareHelper {
 		
 		int revPatternIndex = endTextReversePattern.size()-1;
 		while (revPatternIndex >= 0) {
-			patternBuilder.append(endTextReversePattern.get(revPatternIndex--));
+			endPatternBuilder.append(endTextReversePattern.get(revPatternIndex--));
 		}
-		return Pattern.compile(patternBuilder.toString(), Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
+		return new ImmutablePair<>(
+				Pattern.compile(startPatternBuilder.toString(), Pattern.DOTALL|Pattern.CASE_INSENSITIVE),
+				Pattern.compile(endPatternBuilder.toString(), Pattern.DOTALL|Pattern.CASE_INSENSITIVE));
 	}
 	
 	/**
@@ -944,7 +963,8 @@ public class LicenseCompareHelper {
 			return null;
 		}
 
-		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), VarTextHandling.REGEX);
+		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), 
+				VarTextHandling.REGEX, OptionalTextHandling.REGEX_USING_TOKENS);
 		if (templateNonOptionalText.size() > 0 && templateNonOptionalText.get(0).startsWith("~~~.")) {
 			// Change to a non-greedy match
 			String firstLine = templateNonOptionalText.get(0);
@@ -954,7 +974,8 @@ public class LicenseCompareHelper {
 				templateNonOptionalText.set(0, firstLine);
 			}
 		}
-		Pattern matchPattern = nonOptionalTextToStartPattern(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
+		Pair<Pattern, Pattern> matchPatterns = nonOptionalTextToPatterns(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
+
 		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
 		String normalizedText = removeCommentChars(normalizeText(text));
 		normalizedText = normalizedText.replaceAll("(-|=|\\*){3,}", "");  // Remove ----, ***,  and ====
@@ -967,13 +988,15 @@ public class LicenseCompareHelper {
 			charPositions.add(new ImmutablePair<>(0, 0));
 		}
 
-		Matcher matcher = matchPattern.matcher(compareText);
-		if(matcher.find()) {
-			startIndex = findOriginalStart(matcher.start(), charPositions);
-			endIndex = findOriginalStart(matcher.end(), charPositions);
-			result = normalizedText.substring(startIndex, endIndex);
+		Matcher startMatcher = matchPatterns.getLeft().matcher(compareText);
+		if(startMatcher.find()) {
+			startIndex = findOriginalStart(startMatcher.start(), charPositions);
+			Matcher endMatcher = matchPatterns.getRight().matcher(compareText);
+			if (endMatcher.find()) {
+				endIndex = findOriginalStart(endMatcher.end(), charPositions);
+				result = normalizedText.substring(startIndex, endIndex);
+			}
 		}
-
 		return result;
 	}
 
@@ -994,7 +1017,7 @@ public class LicenseCompareHelper {
 		try {
 			String completeText = findTemplateWithinText(text, license.getStandardLicenseTemplate());
 			if (completeText != null) {
-				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
+				return !isTextStandardLicense(license, completeText).isDifferenceFound();
 			}
 		} catch (SpdxCompareException e) {
 			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
