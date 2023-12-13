@@ -166,6 +166,11 @@ implements <a href="../../licenseTemplate/ILicenseTemplateOutputHandler.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="FilterTemplateOutputHandler.OptionalTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.OptionalTextHandling</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -217,6 +222,11 @@ implements <a href="../../licenseTemplate/ILicenseTemplateOutputHandler.html" ti
 </tr>
 <tr class="rowColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling)">FilterTemplateOutputHandler</a></span>&#8203;(<a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling,org.spdx.utility.compare.FilterTemplateOutputHandler.OptionalTextHandling)">FilterTemplateOutputHandler</a></span>&#8203;(<a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling,
+                           <a href="FilterTemplateOutputHandler.OptionalTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.OptionalTextHandling</a>&nbsp;optionalTextHandling)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -352,13 +362,28 @@ public&nbsp;FilterTemplateOutputHandler&#8203;(boolean&nbsp;includeVarText)</pre
 <a id="&lt;init&gt;(org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>FilterTemplateOutputHandler</h4>
 <pre>public&nbsp;FilterTemplateOutputHandler&#8203;(<a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>varTextHandling</code> - include original, exclude, or include the regex (enclosed with "~~~") for "var" text</dd>
+</dl>
+</li>
+</ul>
+<a id="&lt;init&gt;(org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling,org.spdx.utility.compare.FilterTemplateOutputHandler.OptionalTextHandling)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>FilterTemplateOutputHandler</h4>
+<pre>public&nbsp;FilterTemplateOutputHandler&#8203;(<a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling,
+                                   <a href="FilterTemplateOutputHandler.OptionalTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.OptionalTextHandling</a>&nbsp;optionalTextHandling)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>varTextHandling</code> - include original, exclude, or include the regex (enclosed with "~~~") for "var" text</dd>
+<dd><code>optionalTextHandling</code> - include optional text, exclude, or include a regex for the optional text</dd>
 </dl>
 </li>
 </ul>
