@@ -357,7 +357,7 @@ public class LicenseCompareHelper {
 	 * Tokenizes the license text, normalizes quotes, lowercases and converts
 	 * multi-words for better equiv. comparisons
 	 * 
-	 * @param tokenToLocation location for all of the tokens
+	 * @param tokenToLocation location for all of the tokens by line and column
 	 * @param licenseText
 	 * @return tokens
 	 */
@@ -686,10 +686,12 @@ public class LicenseCompareHelper {
 	
 	/**
 	 * Creates a regular expression pattern to match the start of a license text
+	 * This method should be replaced by the <code>TemplateRegexGenerator</code> class and methods
 	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
 	 * @param numberOfWords Number of words to use in the match
 	 * @return A pair of Patterns the first of which will match the start of the license text the second of which will match the end of the license
 	 */
+	@Deprecated
 	public static Pair<Pattern, Pattern> nonOptionalTextToPatterns(List<String> nonOptionalText, int numberOfWords) {
 		if (Objects.isNull(nonOptionalText) || nonOptionalText.size() == 0 || numberOfWords < 1) {
 			return new ImmutablePair<>(Pattern.compile(""), Pattern.compile(""));
@@ -874,132 +876,6 @@ public class LicenseCompareHelper {
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}
-	
-	/**
-	 * Replace any <code>NORMALIZE_TOKENS</code> with their normalized form for searching via the <code>nonOptionalTextToStartPattern</code>
-	 * @param charPositions List that matches the starting char position of the normalized text to the 
-	 * start positions of the original list
-	 * @param licenseText text to be normalized
-	 * @return tokens
-	 * @throws IOException 
-	 */
-	private static String normalizeTokensForRegex(String licenseText, List<Pair<Integer, Integer>> charPositions) throws IOException {
-		StringBuilder result = new StringBuilder();
-		BufferedReader reader = null;
-		Pattern spaceSplitter = Pattern.compile("(.+?)\\s+");
-		try {
-			reader = new BufferedReader(new StringReader(licenseText));
-			int originalCurrentLinePosition = 0;
-			String line = reader.readLine();
-			while (line != null) {
-				int lineCharPosition = 0;
-				Matcher lineMatcher = spaceSplitter.matcher(line);
-				while (lineMatcher.find()) {
-					String token = lineMatcher.group(1).trim();
-					if (!token.isEmpty() && NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
-						// we need to replace with the normalized token
-						result.append(line.substring(lineCharPosition, lineMatcher.start(1)));
-						int normalizedPosition = result.length();
-						token = NORMALIZE_TOKENS.get(token.toLowerCase());
-						result.append(token);
-						charPositions.add(new ImmutablePair<>(normalizedPosition, originalCurrentLinePosition + lineMatcher.start(1)));
-						charPositions.add(new ImmutablePair<>(result.length(), originalCurrentLinePosition + lineMatcher.end(1)));
-						lineCharPosition = lineMatcher.end(1);
-					}
-				}
-				result.append(line.substring(lineCharPosition));
-				originalCurrentLinePosition = originalCurrentLinePosition + line.length() + "\n".length();
-				line = reader.readLine();
-				if (line != null) {
-					result.append("\n");
-				}
-			}
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return result.toString();
-	}
-	
-	/**
-	 * @param position position in the normalized text
-	 * @param charPositions List that matches the starting char position of the normalized text to the 
-	 * start positions of the original list
-	 * @return char position of the original text
-	 */
-	private static int findOriginalStart(int position, List<Pair<Integer, Integer>> charPositions) {
-		if (charPositions == null || charPositions.isEmpty()) {
-			return position;
-		}
-		Pair<Integer, Integer> lastPair = charPositions.get(0);
-		int i = 1;
-		while (i < charPositions.size() && lastPair.getKey() < position) {
-			lastPair = charPositions.get(i);
-			i++;
-		}
-		return lastPair.getValue() + (position - lastPair.getKey());
-	}
-
-	/**
-	 * Returns just the section of subtext that matches the given template (license or license exception) from within
-	 * the given text, or null if it isn't found.
-	 * @param text The text to scan for the template.
-	 * @param template The template (including vars, optional text, etc.).
-	 * @return Just the section of subtext that matches the template, or null if it isn't found.
-	 * @throws SpdxCompareException If an error occurs in the comparison.
-	 */
-	private static String findTemplateWithinText(String text, String template) throws SpdxCompareException {
-		// Get match status
-		String result = null;
-		int startIndex = -1;
-		int endIndex = -1;
-
-		if (text == null || text.isEmpty() || template == null) {
-			return null;
-		}
-
-		List<String> templateNonOptionalText = getNonOptionalLicenseText(removeCommentChars(template), 
-				VarTextHandling.REGEX, OptionalTextHandling.REGEX_USING_TOKENS);
-		if (templateNonOptionalText.size() > 0 && templateNonOptionalText.get(0).startsWith("~~~.")) {
-			// Change to a non-greedy match
-			String firstLine = templateNonOptionalText.get(0);
-			if (!firstLine.startsWith("~~~.?")) {
-				// yes - it's currently greedy
-				firstLine = "~~~.?" + firstLine.substring(4);
-				templateNonOptionalText.set(0, firstLine);
-			}
-		}
-		Pair<Pattern, Pattern> matchPatterns = nonOptionalTextToPatterns(templateNonOptionalText, CROSS_REF_NUM_WORDS_MATCH);
-
-		List<Pair<Integer, Integer>> charPositions = new ArrayList<>();
-		String normalizedText = removeCommentChars(normalizeText(text));
-		normalizedText = normalizedText.replaceAll("(-|=|\\*){3,}", "");  // Remove ----, ***,  and ====
-		String compareText;
-		try {
-			compareText = normalizeTokensForRegex(normalizedText, charPositions);
-		} catch (IOException e1) {
-			// Just use the straight normalized license text
-			compareText = normalizeText(text);
-			charPositions.add(new ImmutablePair<>(0, 0));
-		}
-
-		Matcher startMatcher = matchPatterns.getLeft().matcher(compareText);
-		if(startMatcher.find()) {
-			startIndex = findOriginalStart(startMatcher.start(), charPositions);
-			Matcher endMatcher = matchPatterns.getRight().matcher(compareText);
-			if (endMatcher.find()) {
-				endIndex = findOriginalStart(endMatcher.end(), charPositions);
-				result = normalizedText.substring(startIndex, endIndex);
-			}
-		}
-		return result;
-	}
-
 
 	/**
 	 * Detect if a text contains the standard license (perhaps along with other text before and/or after)
@@ -1015,7 +891,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, license.getStandardLicenseTemplate());
+			String completeText = new TemplateRegexGenerator(license.getStandardLicenseTemplate()).findTemplateWithinText(text);
 			if (completeText != null) {
 				return !isTextStandardLicense(license, completeText).isDifferenceFound();
 			}
@@ -1043,7 +919,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, exception.getLicenseExceptionTemplate());
+			String completeText = new TemplateRegexGenerator(exception.getLicenseExceptionTemplate()).findTemplateWithinText(text);
 			if (completeText != null) {
 				result = !isTextStandardException(exception, completeText).isDifferenceFound();
 			}
