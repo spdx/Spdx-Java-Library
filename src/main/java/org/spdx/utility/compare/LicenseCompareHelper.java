@@ -686,7 +686,7 @@ public class LicenseCompareHelper {
 	
 	/**
 	 * Creates a regular expression pattern to match the start of a license text
-	 * This method should be replaced by the <code>TemplateRegexGenerator</code> class and methods
+	 * This method should be replaced by the <code>TemplateRegexMatcher</code> class and methods
 	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
 	 * @param numberOfWords Number of words to use in the match
 	 * @return A pair of Patterns the first of which will match the start of the license text the second of which will match the end of the license
@@ -818,6 +818,33 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
+	 * @param template Template in the standard template format used for comparison
+	 * @param compareText Text to compare using the template
+	 * @return any differences found
+	 * @throws SpdxCompareException
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static DifferenceDescription isTextMatchingTemplate(String template, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
+		try {
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
+		} catch (IOException e1) {
+			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
+		}
+		try {
+		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
+			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(template), compareTemplateOutputHandler);
+		} catch (LicenseTemplateRuleException e) {
+			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
+		} catch (LicenseParserException e) {
+			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
+		}
+		return compareTemplateOutputHandler.getDifferences();
+	}
+		
+		
+	
+	/**
 	 * Compares license text to the license text of an SPDX Standard License
 	 * @param license SPDX Standard License to compare
 	 * @param compareText Text to compare to the standard license
@@ -830,21 +857,7 @@ public class LicenseCompareHelper {
 		if (licenseTemplate == null || licenseTemplate.trim().isEmpty()) {
 			licenseTemplate = license.getLicenseText();
 		}
-		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
-		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
-		} catch (IOException e1) {
-			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
-		}
-		try {
-		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
-			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(licenseTemplate), compareTemplateOutputHandler);
-		} catch (LicenseTemplateRuleException e) {
-			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
-		} catch (LicenseParserException e) {
-			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
-		}
-		return compareTemplateOutputHandler.getDifferences();
+		return isTextMatchingTemplate(licenseTemplate, compareText);
 	}
 	
 	/**
@@ -860,21 +873,7 @@ public class LicenseCompareHelper {
 		if (exceptionTemplate == null || exceptionTemplate.trim().isEmpty()) {
 			exceptionTemplate = exception.getLicenseExceptionText();
 		}
-		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
-		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
-		} catch (IOException e1) {
-			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
-		}
-		try {
-		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
-			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(exceptionTemplate), compareTemplateOutputHandler);
-		} catch (LicenseTemplateRuleException e) {
-			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
-		} catch (LicenseParserException e) {
-			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
-		}
-		return compareTemplateOutputHandler.getDifferences();
+		return isTextMatchingTemplate(exceptionTemplate, compareText);
 	}
 
 	/**
@@ -884,24 +883,15 @@ public class LicenseCompareHelper {
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
-		boolean result = false;
-
-		if (text == null || text.isEmpty() || license == null) {
-			return false;
-		}
-
 		try {
-			String completeText = new TemplateRegexGenerator(license.getStandardLicenseTemplate()).findTemplateWithinText(text);
-			if (completeText != null) {
-				return !isTextStandardLicense(license, completeText).isDifferenceFound();
-			}
+			return new TemplateRegexMatcher(license.getStandardLicenseTemplate()).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
 			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			return false;
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			return false;
 		}
-
-		return result;
 	}
 
 
@@ -913,22 +903,16 @@ public class LicenseCompareHelper {
 	 */
 	public static boolean isStandardLicenseExceptionWithinText(String text, ListedLicenseException exception) {
 		boolean result = false;
-
 		if (text == null || text.isEmpty() || exception == null) {
 			return false;
 		}
-
 		try {
-			String completeText = new TemplateRegexGenerator(exception.getLicenseExceptionTemplate()).findTemplateWithinText(text);
-			if (completeText != null) {
-				result = !isTextStandardException(exception, completeText).isDifferenceFound();
-			}
+			return new TemplateRegexMatcher(exception.getLicenseExceptionTemplate()).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
 			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
 		} catch (InvalidSPDXAnalysisException e) {
 			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
 		}
-
 		return result;
 	}
 
