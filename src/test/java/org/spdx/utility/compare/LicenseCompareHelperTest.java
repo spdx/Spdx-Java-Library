@@ -91,6 +91,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String EPL_2_TEMPLATE = "TestFiles" + File.separator + "EPL-2.0.template.txt";
     static final String GPL_2_NL = "TestFiles" + File.separator + "GPL-2.0-NL.txt";
     static final String GPL_2_TEMPLATE = "TestFiles" + File.separator + "GPL-2.0-only.template.txt";
+    static final String IMAGE_MAGIK_TEMPLATE = "TestFiles" + File.separator + "ImageMagick.template.txt";
 
 	/**
 	 * @throws java.lang.Exception
@@ -1069,6 +1070,15 @@ public class LicenseCompareHelperTest extends TestCase {
         	fail(diff.getDifferenceMessage());
         }
         assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
+    public void testImageMagikTextWithin() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE);
+        String templateText = UnitTestHelper.fileToText(IMAGE_MAGIK_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("imageMagik", "imageMagik", licText)
+                .setTemplate(templateText));
+        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
     }
     
 }
