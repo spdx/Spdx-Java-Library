@@ -287,7 +287,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#getNonOptionalLicenseText(java.lang.String,boolean)">getNonOptionalLicenseText</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseTemplate,
                          boolean&nbsp;includeVarText)</code></th>
 <td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this method.</div>
+</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -719,6 +721,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">TemplateRegexMatcher.</span><code><span class="memberNameLink"><a href="../TemplateRegexMatcher.html#isTemplateMatchWithinText(java.lang.String)">isTemplateMatchWithinText</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextMatchingTemplate(java.lang.String,java.lang.String)">isTextMatchingTemplate</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;template,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextStandardException(org.spdx.library.model.license.LicenseException,java.lang.String)">isTextStandardException</a></span>&#8203;(<a href="../../../library/model/license/LicenseException.html" title="class in org.spdx.library.model.license">LicenseException</a>&nbsp;exception,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
@@ -822,6 +835,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="../../../library/model/Annotation.html" title="class in org.spdx.library.model">Annotation</a>&gt;&nbsp;uniqueAnnotationsA,
                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="../../../library/model/Annotation.html" title="class in org.spdx.library.model">Annotation</a>&gt;&nbsp;uniqueAnnotationsB)</code></th>
 <td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../TemplateRegexMatcher.html#%3Cinit%3E(java.lang.String)">TemplateRegexMatcher</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;template)</code></th>
+<td class="colLast">
+<div class="block">Generates regular expressions from a license or exception template</div>
+</td>
 </tr>
 </tbody>
 </table>

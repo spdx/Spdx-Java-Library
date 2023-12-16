@@ -195,7 +195,25 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <td class="colFirst"><code>class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../utility/compare/FilterTemplateOutputHandler.html" title="class in org.spdx.utility.compare">FilterTemplateOutputHandler</a></span></code></th>
 <td class="colLast">
-<div class="block">Filter the template output to create a list of strings filtering out optional and/or var text</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this class.</div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../utility/compare/TemplateRegexMatcher.html" title="class in org.spdx.utility.compare">TemplateRegexMatcher</a></span></code></th>
+<td class="colLast">
+<div class="block">Constructs a regular expression from a license or exception template and provide a matching method
+ to see if code matching the template exists within the text provided
+ 
+ Note that the regular expression assumes a fully normalized text string to match
+ 
+ <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
+ 
+ <code>getCompleteRegex()</code> will return a regular expression for the entire license where
+ <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
+ and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license</div>
 </td>
 </tr>
 </tbody>

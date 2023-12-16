@@ -97,12 +97,37 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h1 title="Deprecated API" class="title">Deprecated API</h1>
 <h2 title="Contents">Contents</h2>
 <ul>
+<li><a href="#class">Classes</a></li>
 <li><a href="#field">Fields</a></li>
 <li><a href="#method">Methods</a></li>
 <li><a href="#constructor">Constructors</a></li>
 </ul>
 </div>
-<div class="contentContainer"><a id="field">
+<div class="contentContainer"><a id="class">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<table class="deprecatedSummary">
+<caption><span>Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Class</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<th class="colDeprecatedItemName" scope="row"><a href="org/spdx/utility/compare/FilterTemplateOutputHandler.html" title="class in org.spdx.utility.compare">org.spdx.utility.compare.FilterTemplateOutputHandler</a></th>
+<td class="colLast">
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this class.  This class will be removed in the next major release.
+ 
+ Filter the template output to create a list of strings filtering out optional and/or var text</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<a id="field">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -156,7 +181,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="rowColor">
 <th class="colDeprecatedItemName" scope="row"><a href="org/spdx/utility/compare/LicenseCompareHelper.html#getNonOptionalLicenseText(java.lang.String,boolean)">org.spdx.utility.compare.LicenseCompareHelper.getNonOptionalLicenseText&#8203;(String, boolean)</a></th>
-<td class="colLast"></td>
+<td class="colLast">
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
+ Get the text of a license minus any optional text - note: this include the default variable text</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colDeprecatedItemName" scope="row"><a href="org/spdx/utility/compare/LicenseCompareHelper.html#nonOptionalTextToPatterns(java.util.List,int)">org.spdx.utility.compare.LicenseCompareHelper.nonOptionalTextToPatterns&#8203;(List&lt;String&gt;, int)</a></th>
+<td class="colLast">
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
+ Creates a regular expression pattern to match the start of a license text
+ This method should be replaced by the <code>TemplateRegexMatcher</code> class and methods</div>
+</td>
 </tr>
 </tbody>
 </table>

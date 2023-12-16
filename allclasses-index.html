@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":2,"i1":2,"i2":4,"i3":2,"i4":2,"i5":2,"i6":4,"i7":2,"i8":2,"i9":2,"i10":2,"i11":2,"i12":2,"i13":2,"i14":2,"i15":2,"i16":8,"i17":2,"i18":2,"i19":2,"i20":2,"i21":2,"i22":2,"i23":2,"i24":2,"i25":4,"i26":2,"i27":4,"i28":4,"i29":2,"i30":2,"i31":2,"i32":2,"i33":1,"i34":1,"i35":1,"i36":1,"i37":4,"i38":1,"i39":1,"i40":1,"i41":2,"i42":8,"i43":8,"i44":8,"i45":8,"i46":1,"i47":2,"i48":2,"i49":2,"i50":2,"i51":2,"i52":2,"i53":2,"i54":2,"i55":2,"i56":8,"i57":8,"i58":2,"i59":2,"i60":4,"i61":8,"i62":2,"i63":2,"i64":2,"i65":2,"i66":2,"i67":2,"i68":2,"i69":2,"i70":2,"i71":2,"i72":2,"i73":4,"i74":2,"i75":2,"i76":4,"i77":2,"i78":2,"i79":2,"i80":4,"i81":2,"i82":2,"i83":2,"i84":8,"i85":2,"i86":2,"i87":2,"i88":2,"i89":2,"i90":2,"i91":2,"i92":2,"i93":2,"i94":2,"i95":2,"i96":2,"i97":8,"i98":8,"i99":8,"i100":8,"i101":2,"i102":2,"i103":2,"i104":2,"i105":2,"i106":2,"i107":2,"i108":8,"i109":2,"i110":2,"i111":2,"i112":2,"i113":2,"i114":2,"i115":2,"i116":2,"i117":8,"i118":2,"i119":2,"i120":2,"i121":2,"i122":2,"i123":2,"i124":2,"i125":2,"i126":2,"i127":2,"i128":2,"i129":2,"i130":2,"i131":2,"i132":2,"i133":2};
+var data = {"i0":2,"i1":2,"i2":4,"i3":2,"i4":2,"i5":2,"i6":4,"i7":2,"i8":2,"i9":2,"i10":2,"i11":2,"i12":2,"i13":2,"i14":2,"i15":2,"i16":8,"i17":2,"i18":2,"i19":2,"i20":2,"i21":2,"i22":2,"i23":2,"i24":2,"i25":4,"i26":2,"i27":4,"i28":4,"i29":2,"i30":2,"i31":2,"i32":2,"i33":1,"i34":1,"i35":1,"i36":1,"i37":4,"i38":1,"i39":1,"i40":1,"i41":2,"i42":8,"i43":8,"i44":8,"i45":8,"i46":1,"i47":2,"i48":2,"i49":2,"i50":2,"i51":2,"i52":2,"i53":2,"i54":2,"i55":2,"i56":8,"i57":8,"i58":2,"i59":2,"i60":4,"i61":8,"i62":2,"i63":2,"i64":2,"i65":2,"i66":2,"i67":2,"i68":2,"i69":2,"i70":2,"i71":2,"i72":2,"i73":4,"i74":2,"i75":2,"i76":4,"i77":2,"i78":2,"i79":2,"i80":4,"i81":2,"i82":2,"i83":2,"i84":8,"i85":2,"i86":2,"i87":2,"i88":2,"i89":2,"i90":2,"i91":2,"i92":2,"i93":2,"i94":2,"i95":2,"i96":2,"i97":8,"i98":8,"i99":8,"i100":8,"i101":2,"i102":2,"i103":2,"i104":2,"i105":2,"i106":2,"i107":2,"i108":8,"i109":2,"i110":2,"i111":2,"i112":2,"i113":2,"i114":2,"i115":2,"i116":2,"i117":8,"i118":2,"i119":2,"i120":2,"i121":2,"i122":2,"i123":2,"i124":2,"i125":2,"i126":2,"i127":2,"i128":2,"i129":2,"i130":2,"i131":2,"i132":2,"i133":2,"i134":2};
 var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"],4:["t3","Enum Summary"],8:["t4","Exception Summary"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -269,8 +269,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><a href="org/spdx/utility/compare/FilterTemplateOutputHandler.html" title="class in org.spdx.utility.compare">FilterTemplateOutputHandler</a></td>
-<th class="colLast" scope="row">
-<div class="block">Filter the template output to create a list of strings filtering out optional and/or var text</div>
+<th class="colLast" scope="row">Deprecated.
+<div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this class.</div>
 </th>
 </tr>
 <tr id="i27" class="rowColor">
@@ -852,36 +852,51 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </th>
 </tr>
 <tr id="i128" class="altColor">
+<td class="colFirst"><a href="org/spdx/utility/compare/TemplateRegexMatcher.html" title="class in org.spdx.utility.compare">TemplateRegexMatcher</a></td>
+<th class="colLast" scope="row">
+<div class="block">Constructs a regular expression from a license or exception template and provide a matching method
+ to see if code matching the template exists within the text provided
+ 
+ Note that the regular expression assumes a fully normalized text string to match
+ 
+ <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
+ 
+ <code>getCompleteRegex()</code> will return a regular expression for the entire license where
+ <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
+ and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license</div>
+</th>
+</tr>
+<tr id="i129" class="rowColor">
 <td class="colFirst"><a href="org/spdx/licenseTemplate/TextTemplateOutputHandler.html" title="class in org.spdx.licenseTemplate">TextTemplateOutputHandler</a></td>
 <th class="colLast" scope="row">
 <div class="block">License template output handler for generating a text version of a license from a license template.</div>
 </th>
 </tr>
-<tr id="i129" class="rowColor">
+<tr id="i130" class="altColor">
 <td class="colFirst"><a href="org/spdx/library/model/TypedValue.html" title="class in org.spdx.library.model">TypedValue</a></td>
 <th class="colLast" scope="row">
 <div class="block">Value which is a stored typed item</div>
 </th>
 </tr>
-<tr id="i130" class="altColor">
+<tr id="i131" class="rowColor">
 <td class="colFirst"><a href="org/spdx/utility/verificationcode/VerificationCodeGenerator.html" title="class in org.spdx.utility.verificationcode">VerificationCodeGenerator</a></td>
 <th class="colLast" scope="row">
 <div class="block">Generates a package verification code from a directory of source code or an array of <code>SPDXFile</code>s.</div>
 </th>
 </tr>
-<tr id="i131" class="rowColor">
+<tr id="i132" class="altColor">
 <td class="colFirst"><a href="org/spdx/library/Version.html" title="class in org.spdx.library">Version</a></td>
 <th class="colLast" scope="row">
 <div class="block">Static class to manage the SPDX versions and the version of the implementation classes</div>
 </th>
 </tr>
-<tr id="i132" class="altColor">
+<tr id="i133" class="rowColor">
 <td class="colFirst"><a href="org/spdx/library/model/license/WithExceptionOperator.html" title="class in org.spdx.library.model.license">WithExceptionOperator</a></td>
 <th class="colLast" scope="row">
 <div class="block">A license that has a With exception operator (e.g.</div>
 </th>
 </tr>
-<tr id="i133" class="rowColor">
+<tr id="i134" class="altColor">
 <td class="colFirst"><a href="org/spdx/library/Write.html" title="class in org.spdx.library">Write</a></td>
 <th class="colLast" scope="row">
 <div class="block">Static class to provide write operations to the model.</div>
