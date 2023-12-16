@@ -26,10 +26,13 @@ import org.spdx.licenseTemplate.ILicenseTemplateOutputHandler;
 import org.spdx.licenseTemplate.LicenseTemplateRule;
 
 /**
+ * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this class.  This class will be removed in the next major release.
+ * 
  * Filter the template output to create a list of strings filtering out optional and/or var text
  * @author Gary O'Neall
  *
  */
+@Deprecated
 public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandler {
 	
 	public static final String REGEX_ESCAPE = "~~~";

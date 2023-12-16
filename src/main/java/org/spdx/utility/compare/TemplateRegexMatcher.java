@@ -57,10 +57,10 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	
 	static final String REGEX_GLOBAL_MODIFIERS = "(?im)"; // ignore case and muti-line
 	
-	static abstract class RegexElement {
+	interface RegexElement {
 	}
 	
-	static class RegexList extends RegexElement {
+	static class RegexList implements RegexElement {
 		private List<RegexElement> elements = new ArrayList<>();
 		
 		public void addElement(RegexElement element) {
@@ -92,7 +92,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		}
 	}
 	
-	static class RegexToken extends RegexElement {
+	static class RegexToken implements RegexElement {
 		private String token;
 		
 		public RegexToken(String token) {
@@ -111,7 +111,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		}
 	}
 	
-	static class RegexPattern extends RegexElement {
+	static class RegexPattern implements RegexElement {
 		private String pattern;
 		
 		public RegexPattern(String pattern) {
@@ -194,7 +194,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 			}
 		}
 		// Need to check if the string starts with a greedy regex and change to non-greedy
-		if (result.getElements().size() > 0) {
+		if (!result.getElements().isEmpty()) {
 			RegexElement firstElement = result.getElements().get(0);
 			if (firstElement instanceof RegexPattern) {
 				String pattern = ((RegexPattern)firstElement).pattern;
@@ -248,7 +248,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	 * @return the text matching the beginning and end regular expressions for the template.  Null if there is no match.
 	 * @throws SpdxCompareException
 	 */
-	private @Nullable String findTemplateWithinText(String text) throws SpdxCompareException {
+	private @Nullable String findTemplateWithinText(String text) {
 		// Get match status
 		String result = null;
 		int startIndex = -1;

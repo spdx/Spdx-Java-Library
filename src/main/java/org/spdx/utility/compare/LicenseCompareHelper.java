@@ -60,6 +60,7 @@ import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings("deprecation")
 public class LicenseCompareHelper {
 	
 	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
@@ -638,6 +639,7 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
+	 * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
 	 * Get the text of a license minus any optional text - note: this include the default variable text
 	 * @param licenseTemplate license template containing optional and var tags
 	 * @param includeVarText if true, include the default variable text; if false remove the variable text
@@ -685,6 +687,7 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
+	 * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
 	 * Creates a regular expression pattern to match the start of a license text
 	 * This method should be replaced by the <code>TemplateRegexMatcher</code> class and methods
 	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
