@@ -42,6 +42,7 @@ import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
  * 
  * <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
  * 
+ * <code>getQuickMatchRegex()</code> will return a regular expression with limited backtracking which can be used for a quick search
  * <code>getCompleteRegex()</code> will return a regular expression for the entire license where
  * <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
  * and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license
@@ -53,7 +54,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	
 	static final Logger logger = LoggerFactory.getLogger(TemplateRegexMatcher.class);
 	
-	static final int WORD_LIMIT = 25; // number of words to search for at the beginning and end of the template
+	static final int WORD_LIMIT = 25; // number of words to search for in the quick match, beginning and end of the template
 	
 	static final String REGEX_GLOBAL_MODIFIERS = "(?im)"; // ignore case and muti-line
 	
@@ -178,6 +179,45 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	}
 	
 	/**
+	 * @param wordLimit maximum number of contiguous words to match
+	 * @return a regular expression to match the template with minimum backtracking - avoiding optional and var tags
+	 */
+	public String getQuickMatchRegex(int wordLimit) {
+		RegexList result = new RegexList();
+		int index = 0;
+		int numWords = 0;
+		List<RegexElement> elementList = regexPatternList.getElements();
+		int largestContiguousText = 0; // number of contiguous tokens in a regular text
+		while (index < elementList.size() && numWords <= wordLimit) {
+			RegexElement element = elementList.get(index++);
+			result.addElement(element);
+			if (element instanceof RegexToken) {
+				numWords++;
+			} else {
+				if (numWords > largestContiguousText) {
+					largestContiguousText = numWords;
+				}
+				result.getElements().clear();
+				numWords = 0;
+			}
+		}
+		if (numWords < largestContiguousText) {
+			// Need to retry to get as much as we can
+			while (index < elementList.size() && numWords <= largestContiguousText) {
+				RegexElement element = elementList.get(index++);
+				result.addElement(element);
+				if (element instanceof RegexToken) {
+					numWords++;
+				} else {
+					result.getElements().clear();
+					numWords = 0;
+				}
+			}
+		}
+		return REGEX_GLOBAL_MODIFIERS + result.toString();
+	}
+	
+	/**
 	 * @param wordLimit number of non optional words to include in the pattern
 	 * @return a regex to match the start of the license per the template
 	 */
@@ -269,15 +309,18 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		
 		String compareText = normalizedText.toString();
 
-		Pattern startPattern = Pattern.compile(getStartRegex(WORD_LIMIT));
-		Matcher startMatcher = startPattern.matcher(compareText);
-		if(startMatcher.find()) {
-			startIndex = startMatcher.start();
-			Pattern endPattern = Pattern.compile(getEndRegex(WORD_LIMIT));
-			Matcher endMatcher = endPattern.matcher(compareText);
-			if (endMatcher.find()) {
-				endIndex = endMatcher.end();
-				result = compareText.substring(startIndex, endIndex);
+		Pattern quickPattern = Pattern.compile(getQuickMatchRegex(WORD_LIMIT));
+		if (quickPattern.matcher(compareText).find()) {
+			Pattern startPattern = Pattern.compile(getStartRegex(WORD_LIMIT));
+			Matcher startMatcher = startPattern.matcher(compareText);
+			if(startMatcher.find()) {
+				startIndex = startMatcher.start();
+				Pattern endPattern = Pattern.compile(getEndRegex(WORD_LIMIT));
+				Matcher endMatcher = endPattern.matcher(compareText);
+				if (endMatcher.find()) {
+					endIndex = endMatcher.end();
+					result = compareText.substring(startIndex, endIndex);
+				}
 			}
 		}
 		return result;
