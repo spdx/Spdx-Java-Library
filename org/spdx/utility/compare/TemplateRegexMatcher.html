@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -146,6 +146,7 @@ implements <a href="../../licenseTemplate/ILicenseTemplateOutputHandler.html" ti
  
  <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
  
+ <code>getQuickMatchRegex()</code> will return a regular expression with limited backtracking which can be used for a quick search
  <code>getCompleteRegex()</code> will return a regular expression for the entire license where
  <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
  and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license</div>
@@ -229,22 +230,27 @@ implements <a href="../../licenseTemplate/ILicenseTemplateOutputHandler.html" ti
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getStartRegex(int)">getStartRegex</a></span>&#8203;(int&nbsp;wordLimit)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getQuickMatchRegex(int)">getQuickMatchRegex</a></span>&#8203;(int&nbsp;wordLimit)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getStartRegex(int)">getStartRegex</a></span>&#8203;(int&nbsp;wordLimit)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isTemplateMatchWithinText(java.lang.String)">isTemplateMatchWithinText</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#text(java.lang.String)">text</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)</code></th>
 <td class="colLast">
 <div class="block">Text for processing</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#variableRule(org.spdx.licenseTemplate.LicenseTemplateRule)">variableRule</a></span>&#8203;(<a href="../../licenseTemplate/LicenseTemplateRule.html" title="class in org.spdx.licenseTemplate">LicenseTemplateRule</a>&nbsp;rule)</code></th>
 <td class="colLast">
@@ -310,6 +316,21 @@ implements <a href="../../licenseTemplate/ILicenseTemplateOutputHandler.html" ti
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the complete regular expression for the template</dd>
+</dl>
+</li>
+</ul>
+<a id="getQuickMatchRegex(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getQuickMatchRegex</h4>
+<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;getQuickMatchRegex&#8203;(int&nbsp;wordLimit)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>wordLimit</code> - maximum number of contiguous words to match</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a regular expression to match the template with minimum backtracking - avoiding optional and var tags</dd>
 </dl>
 </li>
 </ul>
