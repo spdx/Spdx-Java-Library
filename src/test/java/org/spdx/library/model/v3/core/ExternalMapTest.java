@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,8 +42,8 @@ public class ExternalMapTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String EXTERNAL_ID_TEST_VALUE = "test externalId";
 	static final String DEFINING_DOCUMENT_TEST_VALUE = "test definingDocument";
+	static final String EXTERNAL_ID_TEST_VALUE = "test externalId";
 	static final String LOCATION_HINT_TEST_VALUE = "test locationHint";
 	
 	protected void setUp() throws Exception {
@@ -59,8 +59,8 @@ public class ExternalMapTest extends TestCase {
 	public static ExternalMapBuilder builderForExternalMapTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		ExternalMapBuilder retval = new ExternalMapBuilder(modelStore, objectUri, copyManager)
-				.setExternalId(EXTERNAL_ID_TEST_VALUE)
 				.setDefiningDocument(DEFINING_DOCUMENT_TEST_VALUE)
+				.setExternalId(EXTERNAL_ID_TEST_VALUE)
 				.setLocationHint(LOCATION_HINT_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
@@ -113,16 +113,6 @@ public class ExternalMapTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.ExternalMap#setExternalId}.
-	 */
-	public void testExternalMapsetExternalId() throws InvalidSPDXAnalysisException {
-		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(EXTERNAL_ID_TEST_VALUE, testExternalMap.getExternalId());
-		testExternalMap.setExternalId("new externalId value");
-		assertEquals("new externalId value", testExternalMap.getExternalId());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.ExternalMap#setDefiningDocument}.
 	 */
 	public void testExternalMapsetDefiningDocument() throws InvalidSPDXAnalysisException {
@@ -130,6 +120,16 @@ public class ExternalMapTest extends TestCase {
 		assertEquals(Optional.of(DEFINING_DOCUMENT_TEST_VALUE), testExternalMap.getDefiningDocument());
 		testExternalMap.setDefiningDocument("new definingDocument value");
 		assertEquals(Optional.of("new definingDocument value"), testExternalMap.getDefiningDocument());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.ExternalMap#setExternalId}.
+	 */
+	public void testExternalMapsetExternalId() throws InvalidSPDXAnalysisException {
+		ExternalMap testExternalMap = builderForExternalMapTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(EXTERNAL_ID_TEST_VALUE, testExternalMap.getExternalId());
+		testExternalMap.setExternalId("new externalId value");
+		assertEquals("new externalId value", testExternalMap.getExternalId());
 	}
 	
 	/**

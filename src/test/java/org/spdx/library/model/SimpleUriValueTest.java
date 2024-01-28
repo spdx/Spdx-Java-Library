@@ -27,7 +27,7 @@ import org.spdx.library.SimpleUriValue;
 import org.spdx.library.SpdxConstantsCompatV2;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
-import org.spdx.library.model.core.ExternalMap;
+import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,11 +42,11 @@ public class SpdxPackageTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String SOURCE_INFO_TEST_VALUE = "test sourceInfo";
-	static final String HOME_PAGE_TEST_VALUE = "test homePage";
-	static final String PACKAGE_VERSION_TEST_VALUE = "test packageVersion";
 	static final String PACKAGE_URL_TEST_VALUE = "test packageUrl";
+	static final String HOME_PAGE_TEST_VALUE = "test homePage";
 	static final String DOWNLOAD_LOCATION_TEST_VALUE = "test downloadLocation";
+	static final String PACKAGE_VERSION_TEST_VALUE = "test packageVersion";
+	static final String SOURCE_INFO_TEST_VALUE = "test sourceInfo";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -61,11 +61,11 @@ public class SpdxPackageTest extends TestCase {
 	public static SpdxPackageBuilder builderForSpdxPackageTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SpdxPackageBuilder retval = new SpdxPackageBuilder(modelStore, objectUri, copyManager)
-				.setSourceInfo(SOURCE_INFO_TEST_VALUE)
-				.setHomePage(HOME_PAGE_TEST_VALUE)
-				.setPackageVersion(PACKAGE_VERSION_TEST_VALUE)
 				.setPackageUrl(PACKAGE_URL_TEST_VALUE)
+				.setHomePage(HOME_PAGE_TEST_VALUE)
 				.setDownloadLocation(DOWNLOAD_LOCATION_TEST_VALUE)
+				.setPackageVersion(PACKAGE_VERSION_TEST_VALUE)
+				.setSourceInfo(SOURCE_INFO_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				***************/
@@ -116,13 +116,13 @@ public class SpdxPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setSourceInfo}.
+	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setPackageUrl}.
 	 */
-	public void testSpdxPackagesetSourceInfo() throws InvalidSPDXAnalysisException {
+	public void testSpdxPackagesetPackageUrl() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(SOURCE_INFO_TEST_VALUE), testSpdxPackage.getSourceInfo());
-		testSpdxPackage.setSourceInfo("new sourceInfo value");
-		assertEquals(Optional.of("new sourceInfo value"), testSpdxPackage.getSourceInfo());
+		assertEquals(Optional.of(PACKAGE_URL_TEST_VALUE), testSpdxPackage.getPackageUrl());
+		testSpdxPackage.setPackageUrl("new packageUrl value");
+		assertEquals(Optional.of("new packageUrl value"), testSpdxPackage.getPackageUrl());
 	}
 	
 	/**
@@ -136,6 +136,16 @@ public class SpdxPackageTest extends TestCase {
 	}
 	
 	/**
+	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setDownloadLocation}.
+	 */
+	public void testSpdxPackagesetDownloadLocation() throws InvalidSPDXAnalysisException {
+		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(DOWNLOAD_LOCATION_TEST_VALUE), testSpdxPackage.getDownloadLocation());
+		testSpdxPackage.setDownloadLocation("new downloadLocation value");
+		assertEquals(Optional.of("new downloadLocation value"), testSpdxPackage.getDownloadLocation());
+	}
+	
+	/**
 	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setPackageVersion}.
 	 */
 	public void testSpdxPackagesetPackageVersion() throws InvalidSPDXAnalysisException {
@@ -146,22 +156,12 @@ public class SpdxPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setPackageUrl}.
+	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setSourceInfo}.
 	 */
-	public void testSpdxPackagesetPackageUrl() throws InvalidSPDXAnalysisException {
+	public void testSpdxPackagesetSourceInfo() throws InvalidSPDXAnalysisException {
 		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(PACKAGE_URL_TEST_VALUE), testSpdxPackage.getPackageUrl());
-		testSpdxPackage.setPackageUrl("new packageUrl value");
-		assertEquals(Optional.of("new packageUrl value"), testSpdxPackage.getPackageUrl());
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SpdxPackage#setDownloadLocation}.
-	 */
-	public void testSpdxPackagesetDownloadLocation() throws InvalidSPDXAnalysisException {
-		SpdxPackage testSpdxPackage = builderForSpdxPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(DOWNLOAD_LOCATION_TEST_VALUE), testSpdxPackage.getDownloadLocation());
-		testSpdxPackage.setDownloadLocation("new downloadLocation value");
-		assertEquals(Optional.of("new downloadLocation value"), testSpdxPackage.getDownloadLocation());
+		assertEquals(Optional.of(SOURCE_INFO_TEST_VALUE), testSpdxPackage.getSourceInfo());
+		testSpdxPackage.setSourceInfo("new sourceInfo value");
+		assertEquals(Optional.of("new sourceInfo value"), testSpdxPackage.getSourceInfo());
 	}
 }

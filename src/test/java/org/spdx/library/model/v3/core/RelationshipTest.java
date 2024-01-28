@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,10 +42,12 @@ public class RelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE1 = RelationshipType.values()[0];
-	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE2 = RelationshipType.values()[1];
+	static final String START_TIME_TEST_VALUE = "test startTime";
+	static final String END_TIME_TEST_VALUE = "test endTime";
 	static final RelationshipCompleteness COMPLETENESS_TEST_VALUE1 = RelationshipCompleteness.values()[0];
 	static final RelationshipCompleteness COMPLETENESS_TEST_VALUE2 = RelationshipCompleteness.values()[1];
+	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE1 = RelationshipType.values()[0];
+	static final RelationshipType RELATIONSHIP_TYPE_TEST_VALUE2 = RelationshipType.values()[1];
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -60,13 +62,13 @@ public class RelationshipTest extends TestCase {
 	public static RelationshipBuilder builderForRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		RelationshipBuilder retval = new RelationshipBuilder(modelStore, objectUri, copyManager)
-				.setRelationshipType(RELATIONSHIP_TYPE_TEST_VALUE1)
+				.setStartTime(START_TIME_TEST_VALUE)
+				.setEndTime(END_TIME_TEST_VALUE)
 				.setCompleteness(COMPLETENESS_TEST_VALUE1)
+				.setRelationshipType(RELATIONSHIP_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setEndTime(new DateTime())
 				.setFrom(new Element())
-				.setStartTime(new DateTime())
 				.addTo(Element)
 				***************/
 				;
@@ -116,17 +118,6 @@ public class RelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setEndTime}.
-	 */
-	public void testRelationshipsetEndTime() throws InvalidSPDXAnalysisException {
-		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testRelationship.getEndTime());
-//		testRelationship.setEndTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testRelationship.getEndTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setFrom}.
 	 */
 	public void testRelationshipsetFrom() throws InvalidSPDXAnalysisException {
@@ -138,14 +129,13 @@ public class RelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setStartTime}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setCompleteness}.
 	 */
-	public void testRelationshipsetStartTime() throws InvalidSPDXAnalysisException {
+	public void testRelationshipsetCompleteness() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testRelationship.getStartTime());
-//		testRelationship.setStartTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testRelationship.getStartTime());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE1), testRelationship.getCompleteness());
+		testRelationship.setCompleteness(COMPLETENESS_TEST_VALUE2);
+		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE2), testRelationship.getCompleteness());
 	}
 	
 	/**
@@ -159,13 +149,23 @@ public class RelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setCompleteness}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setStartTime}.
 	 */
-	public void testRelationshipsetCompleteness() throws InvalidSPDXAnalysisException {
+	public void testRelationshipsetStartTime() throws InvalidSPDXAnalysisException {
 		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE1), testRelationship.getCompleteness());
-		testRelationship.setCompleteness(COMPLETENESS_TEST_VALUE2);
-		assertEquals(Optional.of(COMPLETENESS_TEST_VALUE2), testRelationship.getCompleteness());
+		assertEquals(Optional.of(START_TIME_TEST_VALUE), testRelationship.getStartTime());
+		testRelationship.setStartTime("new startTime value");
+		assertEquals(Optional.of("new startTime value"), testRelationship.getStartTime());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.Relationship#setEndTime}.
+	 */
+	public void testRelationshipsetEndTime() throws InvalidSPDXAnalysisException {
+		Relationship testRelationship = builderForRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(END_TIME_TEST_VALUE), testRelationship.getEndTime());
+		testRelationship.setEndTime("new endTime value");
+		assertEquals(Optional.of("new endTime value"), testRelationship.getEndTime());
 	}
 	
 	/**

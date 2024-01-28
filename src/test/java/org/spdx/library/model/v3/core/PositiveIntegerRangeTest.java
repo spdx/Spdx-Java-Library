@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,8 +42,8 @@ public class PositiveIntegerRangeTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final Integer BEGIN_TEST_VALUE = 55;
 	static final Integer END_TEST_VALUE = 55;
+	static final Integer BEGIN_TEST_VALUE = 55;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -58,8 +58,8 @@ public class PositiveIntegerRangeTest extends TestCase {
 	public static PositiveIntegerRangeBuilder builderForPositiveIntegerRangeTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		PositiveIntegerRangeBuilder retval = new PositiveIntegerRangeBuilder(modelStore, objectUri, copyManager)
-				.setBegin(BEGIN_TEST_VALUE)
 				.setEnd(END_TEST_VALUE)
+				.setBegin(BEGIN_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				***************/
@@ -110,16 +110,6 @@ public class PositiveIntegerRangeTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.PositiveIntegerRange#setBegin}.
-	 */
-	public void testPositiveIntegerRangesetBegin() throws InvalidSPDXAnalysisException {
-		PositiveIntegerRange testPositiveIntegerRange = builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(BEGIN_TEST_VALUE, testPositiveIntegerRange.getBegin());
-		testPositiveIntegerRange.setBegin(new Integer(653));
-		assertEquals(new Integer(653), testPositiveIntegerRange.getBegin());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.PositiveIntegerRange#setEnd}.
 	 */
 	public void testPositiveIntegerRangesetEnd() throws InvalidSPDXAnalysisException {
@@ -127,5 +117,15 @@ public class PositiveIntegerRangeTest extends TestCase {
 		assertEquals(END_TEST_VALUE, testPositiveIntegerRange.getEnd());
 		testPositiveIntegerRange.setEnd(new Integer(653));
 		assertEquals(new Integer(653), testPositiveIntegerRange.getEnd());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.PositiveIntegerRange#setBegin}.
+	 */
+	public void testPositiveIntegerRangesetBegin() throws InvalidSPDXAnalysisException {
+		PositiveIntegerRange testPositiveIntegerRange = builderForPositiveIntegerRangeTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(BEGIN_TEST_VALUE, testPositiveIntegerRange.getBegin());
+		testPositiveIntegerRange.setBegin(new Integer(653));
+		assertEquals(new Integer(653), testPositiveIntegerRange.getBegin());
 	}
 }

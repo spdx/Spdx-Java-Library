@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.model.v3.core.PresenceType;
 import org.spdx.library.model.v3.dataset.Dataset.DatasetBuilder;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -43,29 +44,31 @@ public class DatasetTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final Integer DATASET_SIZE_TEST_VALUE = 55;
+	static final String DATASET_UPDATE_MECHANISM_TEST_VALUE = "test datasetUpdateMechanism";
+	static final String DATA_COLLECTION_PROCESS_TEST_VALUE = "test dataCollectionProcess";
 	static final String INTENDED_USE_TEST_VALUE = "test intendedUse";
 	static final String DATASET_NOISE_TEST_VALUE = "test datasetNoise";
-	static final String DATA_COLLECTION_PROCESS_TEST_VALUE = "test dataCollectionProcess";
-	static final String DATASET_UPDATE_MECHANISM_TEST_VALUE = "test datasetUpdateMechanism";
-	static final ConfidentialityLevelType CONFIDENTIALITY_LEVEL_TEST_VALUE1 = ConfidentialityLevelType.values()[0];
-	static final ConfidentialityLevelType CONFIDENTIALITY_LEVEL_TEST_VALUE2 = ConfidentialityLevelType.values()[1];
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1 = PresenceType.values()[0];
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2 = PresenceType.values()[1];
 	static final DatasetAvailabilityType DATASET_AVAILABILITY_TEST_VALUE1 = DatasetAvailabilityType.values()[0];
 	static final DatasetAvailabilityType DATASET_AVAILABILITY_TEST_VALUE2 = DatasetAvailabilityType.values()[1];
+	static final ConfidentialityLevelType CONFIDENTIALITY_LEVEL_TEST_VALUE1 = ConfidentialityLevelType.values()[0];
+	static final ConfidentialityLevelType CONFIDENTIALITY_LEVEL_TEST_VALUE2 = ConfidentialityLevelType.values()[1];
 	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE1 = "test 1 anonymizationMethodUsed";
 	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE2 = "test 2 anonymizationMethodUsed";
 	static final String ANONYMIZATION_METHOD_USED_TEST_VALUE3 = "test 3 anonymizationMethodUsed";
 	static final List<String> ANONYMIZATION_METHOD_USED_TEST_LIST1 = Arrays.asList(new String[] { ANONYMIZATION_METHOD_USED_TEST_VALUE1, ANONYMIZATION_METHOD_USED_TEST_VALUE2 });
 	static final List<String> ANONYMIZATION_METHOD_USED_TEST_LIST2 = Arrays.asList(new String[] { ANONYMIZATION_METHOD_USED_TEST_VALUE3 });
-	static final String DATA_PREPROCESSING_TEST_VALUE1 = "test 1 dataPreprocessing";
-	static final String DATA_PREPROCESSING_TEST_VALUE2 = "test 2 dataPreprocessing";
-	static final String DATA_PREPROCESSING_TEST_VALUE3 = "test 3 dataPreprocessing";
-	static final List<String> DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE1, DATA_PREPROCESSING_TEST_VALUE2 });
-	static final List<String> DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE3 });
 	static final String KNOWN_BIAS_TEST_VALUE1 = "test 1 knownBias";
 	static final String KNOWN_BIAS_TEST_VALUE2 = "test 2 knownBias";
 	static final String KNOWN_BIAS_TEST_VALUE3 = "test 3 knownBias";
 	static final List<String> KNOWN_BIAS_TEST_LIST1 = Arrays.asList(new String[] { KNOWN_BIAS_TEST_VALUE1, KNOWN_BIAS_TEST_VALUE2 });
 	static final List<String> KNOWN_BIAS_TEST_LIST2 = Arrays.asList(new String[] { KNOWN_BIAS_TEST_VALUE3 });
+	static final String DATA_PREPROCESSING_TEST_VALUE1 = "test 1 dataPreprocessing";
+	static final String DATA_PREPROCESSING_TEST_VALUE2 = "test 2 dataPreprocessing";
+	static final String DATA_PREPROCESSING_TEST_VALUE3 = "test 3 dataPreprocessing";
+	static final List<String> DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE1, DATA_PREPROCESSING_TEST_VALUE2 });
+	static final List<String> DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { DATA_PREPROCESSING_TEST_VALUE3 });
 	static final DatasetType DATASET_TYPE_TEST_VALUE1 = DatasetType.values()[0];
 	static final DatasetType DATASET_TYPE_TEST_VALUE2 = DatasetType.values()[1];
 	static final List<DatasetType> DATASET_TYPE_TEST_LIST1 = Arrays.asList(new DatasetType[] { DATASET_TYPE_TEST_VALUE1, DATASET_TYPE_TEST_VALUE2 });
@@ -85,23 +88,23 @@ public class DatasetTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		DatasetBuilder retval = new DatasetBuilder(modelStore, objectUri, copyManager)
 				.setDatasetSize(DATASET_SIZE_TEST_VALUE)
+				.setDatasetUpdateMechanism(DATASET_UPDATE_MECHANISM_TEST_VALUE)
+				.setDataCollectionProcess(DATA_COLLECTION_PROCESS_TEST_VALUE)
 				.setIntendedUse(INTENDED_USE_TEST_VALUE)
 				.setDatasetNoise(DATASET_NOISE_TEST_VALUE)
-				.setDataCollectionProcess(DATA_COLLECTION_PROCESS_TEST_VALUE)
-				.setDatasetUpdateMechanism(DATASET_UPDATE_MECHANISM_TEST_VALUE)
 				.addAnonymizationMethodUsed(ANONYMIZATION_METHOD_USED_TEST_VALUE1)
 				.addAnonymizationMethodUsed(ANONYMIZATION_METHOD_USED_TEST_VALUE2)
-				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE1)
-				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE2)
 				.addKnownBias(KNOWN_BIAS_TEST_VALUE1)
 				.addKnownBias(KNOWN_BIAS_TEST_VALUE2)
-				.setConfidentialityLevel(CONFIDENTIALITY_LEVEL_TEST_VALUE1)
+				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE1)
+				.addDataPreprocessing(DATA_PREPROCESSING_TEST_VALUE2)
+				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
 				.setDatasetAvailability(DATASET_AVAILABILITY_TEST_VALUE1)
+				.setConfidentialityLevel(CONFIDENTIALITY_LEVEL_TEST_VALUE1)
 				.addDatasetType(DATASET_TYPE_TEST_VALUE1)
 				.addDatasetType(DATASET_TYPE_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.setSensitivePersonalInformation(new PresenceType())
 				.addSensor(DictionaryEntry)
 				***************/
 				;
@@ -155,20 +158,9 @@ public class DatasetTest extends TestCase {
 	 */
 	public void testDatasetsetSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
 		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testDataset.getSensitivePersonalInformation());
-//		testDataset.setSensitivePersonalInformation(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testDataset.getSensitivePersonalInformation());
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setConfidentialityLevel}.
-	 */
-	public void testDatasetsetConfidentialityLevel() throws InvalidSPDXAnalysisException {
-		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(CONFIDENTIALITY_LEVEL_TEST_VALUE1), testDataset.getConfidentialityLevel());
-		testDataset.setConfidentialityLevel(CONFIDENTIALITY_LEVEL_TEST_VALUE2);
-		assertEquals(Optional.of(CONFIDENTIALITY_LEVEL_TEST_VALUE2), testDataset.getConfidentialityLevel());
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1), testDataset.getSensitivePersonalInformation());
+		testDataset.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2);
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2), testDataset.getSensitivePersonalInformation());
 	}
 	
 	/**
@@ -182,6 +174,16 @@ public class DatasetTest extends TestCase {
 	}
 	
 	/**
+	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setConfidentialityLevel}.
+	 */
+	public void testDatasetsetConfidentialityLevel() throws InvalidSPDXAnalysisException {
+		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(CONFIDENTIALITY_LEVEL_TEST_VALUE1), testDataset.getConfidentialityLevel());
+		testDataset.setConfidentialityLevel(CONFIDENTIALITY_LEVEL_TEST_VALUE2);
+		assertEquals(Optional.of(CONFIDENTIALITY_LEVEL_TEST_VALUE2), testDataset.getConfidentialityLevel());
+	}
+	
+	/**
 	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setDatasetSize}.
 	 */
 	public void testDatasetsetDatasetSize() throws InvalidSPDXAnalysisException {
@@ -189,6 +191,26 @@ public class DatasetTest extends TestCase {
 		assertEquals(Optional.of(DATASET_SIZE_TEST_VALUE), testDataset.getDatasetSize());
 		testDataset.setDatasetSize(new Integer(653));
 		assertEquals(Optional.of(new Integer(653)), testDataset.getDatasetSize());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setDatasetUpdateMechanism}.
+	 */
+	public void testDatasetsetDatasetUpdateMechanism() throws InvalidSPDXAnalysisException {
+		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(DATASET_UPDATE_MECHANISM_TEST_VALUE), testDataset.getDatasetUpdateMechanism());
+		testDataset.setDatasetUpdateMechanism("new datasetUpdateMechanism value");
+		assertEquals(Optional.of("new datasetUpdateMechanism value"), testDataset.getDatasetUpdateMechanism());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setDataCollectionProcess}.
+	 */
+	public void testDatasetsetDataCollectionProcess() throws InvalidSPDXAnalysisException {
+		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(DATA_COLLECTION_PROCESS_TEST_VALUE), testDataset.getDataCollectionProcess());
+		testDataset.setDataCollectionProcess("new dataCollectionProcess value");
+		assertEquals(Optional.of("new dataCollectionProcess value"), testDataset.getDataCollectionProcess());
 	}
 	
 	/**
@@ -209,26 +231,6 @@ public class DatasetTest extends TestCase {
 		assertEquals(Optional.of(DATASET_NOISE_TEST_VALUE), testDataset.getDatasetNoise());
 		testDataset.setDatasetNoise("new datasetNoise value");
 		assertEquals(Optional.of("new datasetNoise value"), testDataset.getDatasetNoise());
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setDataCollectionProcess}.
-	 */
-	public void testDatasetsetDataCollectionProcess() throws InvalidSPDXAnalysisException {
-		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(DATA_COLLECTION_PROCESS_TEST_VALUE), testDataset.getDataCollectionProcess());
-		testDataset.setDataCollectionProcess("new dataCollectionProcess value");
-		assertEquals(Optional.of("new dataCollectionProcess value"), testDataset.getDataCollectionProcess());
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#setDatasetUpdateMechanism}.
-	 */
-	public void testDatasetsetDatasetUpdateMechanism() throws InvalidSPDXAnalysisException {
-		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(DATASET_UPDATE_MECHANISM_TEST_VALUE), testDataset.getDatasetUpdateMechanism());
-		testDataset.setDatasetUpdateMechanism("new datasetUpdateMechanism value");
-		assertEquals(Optional.of("new datasetUpdateMechanism value"), testDataset.getDatasetUpdateMechanism());
 	}
 	
 	/**
@@ -255,17 +257,6 @@ public class DatasetTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#getDataPreprocessings}.
-	 */
-	public void testDatasetgetDataPreprocessings() throws InvalidSPDXAnalysisException {
-		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST1, new ArrayList<>(testDataset.getDataPreprocessings())));
-		testDataset.getDataPreprocessings().clear();
-		testDataset.getDataPreprocessings().addAll(DATA_PREPROCESSING_TEST_LIST2);
-		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testDataset.getDataPreprocessings())));
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#getKnownBiass}.
 	 */
 	public void testDatasetgetKnownBiass() throws InvalidSPDXAnalysisException {
@@ -274,6 +265,17 @@ public class DatasetTest extends TestCase {
 		testDataset.getKnownBiass().clear();
 		testDataset.getKnownBiass().addAll(KNOWN_BIAS_TEST_LIST2);
 		assertTrue(UnitTestHelper.isListsEqual(KNOWN_BIAS_TEST_LIST2, new ArrayList<>(testDataset.getKnownBiass())));
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.dataset.Dataset#getDataPreprocessings}.
+	 */
+	public void testDatasetgetDataPreprocessings() throws InvalidSPDXAnalysisException {
+		Dataset testDataset = builderForDatasetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST1, new ArrayList<>(testDataset.getDataPreprocessings())));
+		testDataset.getDataPreprocessings().clear();
+		testDataset.getDataPreprocessings().addAll(DATA_PREPROCESSING_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testDataset.getDataPreprocessings())));
 	}
 	
 	/**

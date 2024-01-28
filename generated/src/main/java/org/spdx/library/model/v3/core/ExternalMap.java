@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -91,8 +91,8 @@ public class ExternalMap extends ModelObject  {
 		super(builder);
 		verifiedUsings = (Collection<IntegrityMethod>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_VERIFIED_USING, IntegrityMethod.class);
 		getVerifiedUsings().addAll(builder.verifiedUsings);
-		setExternalId(builder.externalId);
 		setDefiningDocument(builder.definingDocument);
+		setExternalId(builder.externalId);
 		setLocationHint(builder.locationHint);
 	}
 
@@ -109,6 +109,22 @@ public class ExternalMap extends ModelObject  {
 		return verifiedUsings;
 	}
 	
+
+		/**
+	 * @return the definingDocument
+	 */
+	public Optional<String> getDefiningDocument() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_DEFINING_DOCUMENT);
+	}
+	/**
+	 * @param definingDocument the definingDocument to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ExternalMap setDefiningDocument(@Nullable String definingDocument) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_DEFINING_DOCUMENT, definingDocument);
+		return this;
+	}
 
 	/**
 	 * @return the externalId
@@ -127,22 +143,6 @@ public class ExternalMap extends ModelObject  {
 			throw new InvalidSPDXAnalysisException("externalId is a required property");
 		}
 		setPropertyValue(SpdxConstants.CORE_PROP_EXTERNAL_ID, externalId);
-		return this;
-	}
-
-		/**
-	 * @return the definingDocument
-	 */
-	public Optional<String> getDefiningDocument() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_DEFINING_DOCUMENT);
-	}
-	/**
-	 * @param definingDocument the definingDocument to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public ExternalMap setDefiningDocument(@Nullable String definingDocument) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_DEFINING_DOCUMENT, definingDocument);
 		return this;
 	}
 
@@ -172,8 +172,14 @@ public class ExternalMap extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> definingDocument = getDefiningDocument();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting definingDocument for ExternalMap: "+e.getMessage());
+		}
 		try {
 			String externalId = getExternalId();
 			if (Objects.isNull(externalId) &&
@@ -185,18 +191,12 @@ public class ExternalMap extends ModelObject  {
 		}
 		try {
 			@SuppressWarnings("unused")
-			Optional<String> definingDocument = getDefiningDocument();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting definingDocument for ExternalMap: "+e.getMessage());
-		}
-		try {
-			@SuppressWarnings("unused")
 			Optional<String> locationHint = getLocationHint();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting locationHint for ExternalMap: "+e.getMessage());
 		}
 		for (IntegrityMethod verifiedUsing:verifiedUsings) {
-			retval.addAll(verifiedUsing.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(verifiedUsing.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -234,8 +234,8 @@ public class ExternalMap extends ModelObject  {
 		}
 		
 		Collection<IntegrityMethod> verifiedUsings = new ArrayList<>();
-		String externalId = null;
 		String definingDocument = null;
+		String externalId = null;
 		String locationHint = null;
 		
 		
@@ -264,22 +264,22 @@ public class ExternalMap extends ModelObject  {
 		}
 		
 		/**
-		 * Sets the initial value of externalId
-		 * @parameter externalId value to set
-		 * @return this for chaining
-		**/
-		public ExternalMapBuilder setExternalId(String externalId) {
-			this.externalId = externalId;
-			return this;
-		}
-		
-		/**
 		 * Sets the initial value of definingDocument
 		 * @parameter definingDocument value to set
 		 * @return this for chaining
 		**/
 		public ExternalMapBuilder setDefiningDocument(String definingDocument) {
 			this.definingDocument = definingDocument;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of externalId
+		 * @parameter externalId value to set
+		 * @return this for chaining
+		**/
+		public ExternalMapBuilder setExternalId(String externalId) {
+			this.externalId = externalId;
 			return this;
 		}
 		

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -83,8 +83,8 @@ public class PositiveIntegerRange extends ModelObject  {
 	 */
 	protected PositiveIntegerRange(PositiveIntegerRangeBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
-		setBegin(builder.begin);
 		setEnd(builder.end);
+		setBegin(builder.begin);
 	}
 
 	/* (non-Javadoc)
@@ -97,30 +97,6 @@ public class PositiveIntegerRange extends ModelObject  {
 	
 	// Getters and Setters
 	
-	
-	/**
-	 * @return the begin
-	 */
-	public @Nullable Integer getBegin() throws InvalidSPDXAnalysisException {
-		Optional<Integer> retval = getIntegerPropertyValue(SpdxConstants.CORE_PROP_BEGIN);
-		return retval.isPresent() ? retval.get() : null;
-	}
-	
-	/**
-	 * @param begin the begin to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public PositiveIntegerRange setBegin(@Nullable Integer begin) throws InvalidSPDXAnalysisException {
-		if (isStrict() && Objects.isNull(begin)) {
-			throw new InvalidSPDXAnalysisException("begin is a required property");
-		}
-		if (isStrict() && Objects.nonNull(begin) && begin < 1) {
-			throw new InvalidSPDXAnalysisException("begin value " + begin + " is less than the minimum 1 in PositiveIntegerRange");
-		}
-		setPropertyValue(SpdxConstants.CORE_PROP_BEGIN, begin);
-		return this;
-	}
 	
 	/**
 	 * @return the end
@@ -146,6 +122,30 @@ public class PositiveIntegerRange extends ModelObject  {
 		return this;
 	}
 	
+	/**
+	 * @return the begin
+	 */
+	public @Nullable Integer getBegin() throws InvalidSPDXAnalysisException {
+		Optional<Integer> retval = getIntegerPropertyValue(SpdxConstants.CORE_PROP_BEGIN);
+		return retval.isPresent() ? retval.get() : null;
+	}
+	
+	/**
+	 * @param begin the begin to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public PositiveIntegerRange setBegin(@Nullable Integer begin) throws InvalidSPDXAnalysisException {
+		if (isStrict() && Objects.isNull(begin)) {
+			throw new InvalidSPDXAnalysisException("begin is a required property");
+		}
+		if (isStrict() && Objects.nonNull(begin) && begin < 1) {
+			throw new InvalidSPDXAnalysisException("begin value " + begin + " is less than the minimum 1 in PositiveIntegerRange");
+		}
+		setPropertyValue(SpdxConstants.CORE_PROP_BEGIN, begin);
+		return this;
+	}
+	
 	
 	@Override
 	public String toString() {
@@ -156,20 +156,8 @@ public class PositiveIntegerRange extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		try {
-			Integer begin = getBegin();
-			if (Objects.isNull(begin) &&
-					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
-				retval.add("Missing begin in PositiveIntegerRange");
-			}
-			if (Objects.nonNull(begin) && begin < 1) {
-				retval.add("begin value " + begin + " is less than the minimum 1 in PositiveIntegerRange");
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting begin for PositiveIntegerRange: "+e.getMessage());
-		}
 		try {
 			Integer end = getEnd();
 			if (Objects.isNull(end) &&
@@ -181,6 +169,18 @@ public class PositiveIntegerRange extends ModelObject  {
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting end for PositiveIntegerRange: "+e.getMessage());
+		}
+		try {
+			Integer begin = getBegin();
+			if (Objects.isNull(begin) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+				retval.add("Missing begin in PositiveIntegerRange");
+			}
+			if (Objects.nonNull(begin) && begin < 1) {
+				retval.add("begin value " + begin + " is less than the minimum 1 in PositiveIntegerRange");
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting begin for PositiveIntegerRange: "+e.getMessage());
 		}
 		return retval;
 	}
@@ -217,19 +217,9 @@ public class PositiveIntegerRange extends ModelObject  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
-		Integer begin = null;
 		Integer end = null;
+		Integer begin = null;
 		
-		
-		/**
-		 * Sets the initial value of begin
-		 * @parameter begin value to set
-		 * @return this for chaining
-		**/
-		public PositiveIntegerRangeBuilder setBegin(Integer begin) {
-			this.begin = begin;
-			return this;
-		}
 		
 		/**
 		 * Sets the initial value of end
@@ -238,6 +228,16 @@ public class PositiveIntegerRange extends ModelObject  {
 		**/
 		public PositiveIntegerRangeBuilder setEnd(Integer end) {
 			this.end = end;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of begin
+		 * @parameter begin value to set
+		 * @return this for chaining
+		**/
+		public PositiveIntegerRangeBuilder setBegin(Integer begin) {
+			this.begin = begin;
 			return this;
 		}
 	

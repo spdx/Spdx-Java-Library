@@ -27,14 +27,14 @@ import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants;
 import org.spdx.library.model.ModelObjectForTesting.ModelObjectForTestingBuilder;
-import org.spdx.library.model.core.ExternalMap;
-import org.spdx.library.model.core.HashAlgorithm;
-import org.spdx.library.model.expandedlicense.ConjunctiveLicenseSet;
-import org.spdx.library.model.licensing.AnyLicenseInfo;
-import org.spdx.library.model.licensing.CustomLicense;
-import org.spdx.library.model.licensing.ListedLicense;
-import org.spdx.library.model.licensing.ListedLicenseException;
-import org.spdx.library.model.licensing.ListedLicenseException.ListedLicenseExceptionBuilder;
+import org.spdx.library.model.v3.core.ExternalMap;
+import org.spdx.library.model.v3.core.HashAlgorithm;
+import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException.ListedLicenseExceptionBuilder;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IdType;
@@ -134,14 +134,16 @@ public class ModelObjectTest extends TestCase {
 		eli1.setLicenseText("eli1 text");
 		ConjunctiveLicenseSet cls = new ConjunctiveLicenseSet(store, store.getNextId(IdType.Anonymous, null), copyManager, true);
 		
-		cls.addMember(new ListedLicense(store, "Apache-2.0", copyManager, true));
-		cls.addMember(eli1);
+		cls.getMembers().add(new ListedLicense(store, "Apache-2.0", copyManager, true));
+		cls.getMembers().add(eli1);
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
 			Arrays.asList(new ModelObject[] {lex, eli1}),
 			Arrays.asList(new HashAlgorithm[] {HashAlgorithm.SHA256, HashAlgorithm.SHA1}),
 			Arrays.asList(new Integer[] {1, 3, 5})};
 		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObject[] {lex, eli1};
+		// TODO: Changes these back once we have the individuals implemented
+		/*
 		TEST_ANYLICENSEINFO_PROP_VALUES = new AnyLicenseInfo[] {new ListedLicense(store, "Apache-2.0", copyManager, true),
 				eli1, new SpdxNoneLicense()};
 		TEST_ANYLICENSEINFO_LIST_PROP_VALUES = new List<?>[] {Arrays.asList(new AnyLicenseInfo[] {new ListedLicense(store, "MIT", copyManager, true), 
@@ -149,6 +151,16 @@ public class ModelObjectTest extends TestCase {
 			Arrays.asList(new AnyLicenseInfo[] {new SpdxNoAssertionLicense()}),
 			Arrays.asList(new AnyLicenseInfo[] {cls, eli1})
 		};
+		*/
+		
+		TEST_ANYLICENSEINFO_PROP_VALUES = new AnyLicenseInfo[] {new ListedLicense(store, "Apache-2.0", copyManager, true),
+				eli1};
+		TEST_ANYLICENSEINFO_LIST_PROP_VALUES = new List<?>[] {Arrays.asList(new AnyLicenseInfo[] {new ListedLicense(store, "MIT", copyManager, true), 
+				eli1, new ListedLicense(store, "GPL-2.0-only", copyManager, true)}),
+			Arrays.asList(new AnyLicenseInfo[] {new ListedLicense(store, "Apache-2.0", copyManager, true)}),
+			Arrays.asList(new AnyLicenseInfo[] {cls, eli1})
+		};
+		
 		
 		ALL_PROPERTY_VALUES = new HashMap<>();
 		for (int i = 0; i < TEST_STRING_VALUE_PROPERTIES.length; i++) {

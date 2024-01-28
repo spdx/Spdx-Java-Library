@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,6 +42,7 @@ public class SpdxFileTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String CONTENT_TYPE_TEST_VALUE = "test contentType";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -56,9 +57,9 @@ public class SpdxFileTest extends TestCase {
 	public static SpdxFileBuilder builderForSpdxFileTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SpdxFileBuilder retval = new SpdxFileBuilder(modelStore, objectUri, copyManager)
+				.setContentType(CONTENT_TYPE_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
-				.setContentType(new MediaType())
 				***************/
 				;
 		return retval;
@@ -111,9 +112,8 @@ public class SpdxFileTest extends TestCase {
 	 */
 	public void testSpdxFilesetContentType() throws InvalidSPDXAnalysisException {
 		SpdxFile testSpdxFile = builderForSpdxFileTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testSpdxFile.getContentType());
-//		testSpdxFile.setContentType(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testSpdxFile.getContentType());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(CONTENT_TYPE_TEST_VALUE), testSpdxFile.getContentType());
+		testSpdxFile.setContentType("new contentType value");
+		assertEquals(Optional.of("new contentType value"), testSpdxFile.getContentType());
 	}
 }

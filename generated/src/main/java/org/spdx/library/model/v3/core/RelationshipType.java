@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -62,6 +62,7 @@ public enum RelationshipType implements IndividualUriValue {
 	CONTAINS("contains"),
 	DESCENDANT("descendant"),
 	TEST_CASE("testCase"),
+	CONCLUDED_LICENSE("concludedLicense"),
 	PREREQUISITE("prerequisite"),
 	REQUIREMENT_FOR("requirementFor"),
 	OTHER("other"),
@@ -70,6 +71,7 @@ public enum RelationshipType implements IndividualUriValue {
 	TEST_DEPENDENCY("testDependency"),
 	DEV_DEPENDENCY("devDependency"),
 	STATIC_LINK("staticLink"),
+	DECLARED_LICENSE("declaredLicense"),
 	AFFECTS("affects"),
 	ON_BEHALF_OF("onBehalfOf"),
 	EVIDENCE_FOR("evidenceFor"),

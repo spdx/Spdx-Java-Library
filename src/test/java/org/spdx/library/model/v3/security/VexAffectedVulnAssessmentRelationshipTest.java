@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -43,6 +43,11 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final String ACTION_STATEMENT_TEST_VALUE = "test actionStatement";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE1 = "test 1 actionStatementTime";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE2 = "test 2 actionStatementTime";
+	static final String ACTION_STATEMENT_TIME_TEST_VALUE3 = "test 3 actionStatementTime";
+	static final List<String> ACTION_STATEMENT_TIME_TEST_LIST1 = Arrays.asList(new String[] { ACTION_STATEMENT_TIME_TEST_VALUE1, ACTION_STATEMENT_TIME_TEST_VALUE2 });
+	static final List<String> ACTION_STATEMENT_TIME_TEST_LIST2 = Arrays.asList(new String[] { ACTION_STATEMENT_TIME_TEST_VALUE3 });
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -58,9 +63,10 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		VexAffectedVulnAssessmentRelationshipBuilder retval = new VexAffectedVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
 				.setActionStatement(ACTION_STATEMENT_TEST_VALUE)
+				.addActionStatementTime(ACTION_STATEMENT_TIME_TEST_VALUE1)
+				.addActionStatementTime(ACTION_STATEMENT_TIME_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.addActionStatementTime(DateTime)
 				***************/
 				;
 		return retval;
@@ -119,14 +125,13 @@ public class VexAffectedVulnAssessmentRelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.security.VexAffectedVulnAssessmentRelationship#getActionStatementTime}.
+	 * Test method for {@link org.spdx.library.model.v3.security.VexAffectedVulnAssessmentRelationship#getActionStatementTimes}.
 	 */
 	public void testVexAffectedVulnAssessmentRelationshipgetActionStatementTimes() throws InvalidSPDXAnalysisException {
 		VexAffectedVulnAssessmentRelationship testVexAffectedVulnAssessmentRelationship = builderForVexAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
-//		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().clear();
-//		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
-		fail("Not yet implemented");
+		assertTrue(UnitTestHelper.isListsEqual(ACTION_STATEMENT_TIME_TEST_LIST1, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
+		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().clear();
+		testVexAffectedVulnAssessmentRelationship.getActionStatementTimes().addAll(ACTION_STATEMENT_TIME_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(ACTION_STATEMENT_TIME_TEST_LIST2, new ArrayList<>(testVexAffectedVulnAssessmentRelationship.getActionStatementTimes())));
 	}
 }

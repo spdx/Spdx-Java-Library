@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -100,9 +100,9 @@ public class Person extends Agent  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		return retval;
 	}
 	

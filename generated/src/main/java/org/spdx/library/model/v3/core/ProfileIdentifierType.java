@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -30,14 +30,15 @@ import org.spdx.library.IndividualUriValue;
  */
 public enum ProfileIdentifierType implements IndividualUriValue {
 
+	EXPANDED_LICENSING("expandedLicensing"),
 	BUILD("build"),
 	EXTENSION("extension"),
 	SECURITY("security"),
 	DATASET("dataset"),
+	SIMPLE_LICENSING("simpleLicensing"),
 	USAGE("usage"),
 	SOFTWARE("software"),
 	CORE("core"),
-	LICENSING("licensing"),
 	AI("ai");
 	
 	private String longName;

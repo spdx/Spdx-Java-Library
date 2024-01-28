@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -100,10 +100,10 @@ public class CreationInfo extends ModelObject  {
 		getCreatedBys().addAll(builder.createdBys);
 		getCreatedUsings().addAll(builder.createdUsings);
 		getProfiles().addAll(builder.profiles);
-		setCreated(builder.created);
 		setSpecVersion(builder.specVersion);
-		setDataLicense(builder.dataLicense);
 		setComment(builder.comment);
+		setDataLicense(builder.dataLicense);
+		setCreated(builder.created);
 	}
 
 	/* (non-Javadoc)
@@ -126,74 +126,23 @@ public class CreationInfo extends ModelObject  {
 	}
 	
 
-		/**
-	 * @return the created
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getCreated() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_CREATED);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param created the created to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public CreationInfo setCreated(@Nullable DateTime created) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_CREATED, created);
-		return this;
-	}
-
 	/**
 	 * @return the specVersion
 	 */
-	 @SuppressWarnings("unchecked")
-	public @Nullable SemVer getSpecVersion() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_SPEC_VERSION);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof SemVer)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (SemVer)(retval.get());
-		} else {
-			return null;
-		}
+	public @Nullable String getSpecVersion() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.CORE_PROP_SPEC_VERSION);
+		return retval.isPresent() ? retval.get() : null;
 	}
-		
-	/**
+		/**
 	 * @param specVersion the specVersion to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public CreationInfo setSpecVersion(@Nullable SemVer specVersion) throws InvalidSPDXAnalysisException {
+	public CreationInfo setSpecVersion(@Nullable String specVersion) throws InvalidSPDXAnalysisException {
 		if (isStrict() && Objects.isNull(specVersion)) {
 			throw new InvalidSPDXAnalysisException("specVersion is a required property");
 		}
 		setPropertyValue(SpdxConstants.CORE_PROP_SPEC_VERSION, specVersion);
-		return this;
-	}
-
-		/**
-	 * @return the dataLicense
-	 */
-	public Optional<String> getDataLicense() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_DATA_LICENSE);
-	}
-	/**
-	 * @param dataLicense the dataLicense to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public CreationInfo setDataLicense(@Nullable String dataLicense) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_DATA_LICENSE, dataLicense);
 		return this;
 	}
 
@@ -212,6 +161,46 @@ public class CreationInfo extends ModelObject  {
 		setPropertyValue(SpdxConstants.CORE_PROP_COMMENT, comment);
 		return this;
 	}
+
+	/**
+	 * @return the dataLicense
+	 */
+	public @Nullable String getDataLicense() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.CORE_PROP_DATA_LICENSE);
+		return retval.isPresent() ? retval.get() : null;
+	}
+		/**
+	 * @param dataLicense the dataLicense to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public CreationInfo setDataLicense(@Nullable String dataLicense) throws InvalidSPDXAnalysisException {
+		if (isStrict() && Objects.isNull(dataLicense)) {
+			throw new InvalidSPDXAnalysisException("dataLicense is a required property");
+		}
+		setPropertyValue(SpdxConstants.CORE_PROP_DATA_LICENSE, dataLicense);
+		return this;
+	}
+
+	/**
+	 * @return the created
+	 */
+	public @Nullable String getCreated() throws InvalidSPDXAnalysisException {
+		Optional<String> retval = getStringPropertyValue(SpdxConstants.CORE_PROP_CREATED);
+		return retval.isPresent() ? retval.get() : null;
+	}
+		/**
+	 * @param created the created to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public CreationInfo setCreated(@Nullable String created) throws InvalidSPDXAnalysisException {
+		if (isStrict() && Objects.isNull(created)) {
+			throw new InvalidSPDXAnalysisException("created is a required property");
+		}
+		setPropertyValue(SpdxConstants.CORE_PROP_CREATED, created);
+		return this;
+	}
 	
 	
 	@Override
@@ -223,33 +212,16 @@ public class CreationInfo extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		Optional<DateTime> created;
 		try {
-			created = getCreated();
-			if (created.isPresent()) {
-				retval.addAll(created.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting created for CreationInfo: "+e.getMessage());
-		}
-		SemVer specVersion;
-		try {
-			specVersion = getSpecVersion();
-			if (Objects.nonNull(specVersion)) {
-				retval.addAll(specVersion.verify(verifiedIds, specVersion, profiles));
-			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
-					retval.add("Missing specVersion in CreationInfo");
+			String specVersion = getSpecVersion();
+			if (Objects.isNull(specVersion) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+				retval.add("Missing specVersion in CreationInfo");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting specVersion for CreationInfo: "+e.getMessage());
-		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> dataLicense = getDataLicense();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting dataLicense for CreationInfo: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
@@ -257,11 +229,29 @@ public class CreationInfo extends ModelObject  {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting comment for CreationInfo: "+e.getMessage());
 		}
+		try {
+			String dataLicense = getDataLicense();
+			if (Objects.isNull(dataLicense) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+				retval.add("Missing dataLicense in CreationInfo");
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting dataLicense for CreationInfo: "+e.getMessage());
+		}
+		try {
+			String created = getCreated();
+			if (Objects.isNull(created) &&
+					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
+				retval.add("Missing created in CreationInfo");
+			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting created for CreationInfo: "+e.getMessage());
+		}
 		for (Agent createdBy:createdBys) {
-			retval.addAll(createdBy.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(createdBy.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		for (Tool createdUsing:createdUsings) {
-			retval.addAll(createdUsing.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(createdUsing.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -301,10 +291,10 @@ public class CreationInfo extends ModelObject  {
 		Collection<Agent> createdBys = new ArrayList<>();
 		Collection<Tool> createdUsings = new ArrayList<>();
 		Collection<ProfileIdentifierType> profiles = new ArrayList<>();
-		DateTime created = null;
-		SemVer specVersion = null;
-		String dataLicense = null;
+		String specVersion = null;
 		String comment = null;
+		String dataLicense = null;
+		String created = null;
 		
 		
 		/**
@@ -380,22 +370,22 @@ public class CreationInfo extends ModelObject  {
 		}
 		
 		/**
-		 * Sets the initial value of created
-		 * @parameter created value to set
-		 * @return this for chaining
-		**/
-		public CreationInfoBuilder setCreated(DateTime created) {
-			this.created = created;
-			return this;
-		}
-		
-		/**
 		 * Sets the initial value of specVersion
 		 * @parameter specVersion value to set
 		 * @return this for chaining
 		**/
-		public CreationInfoBuilder setSpecVersion(SemVer specVersion) {
+		public CreationInfoBuilder setSpecVersion(String specVersion) {
 			this.specVersion = specVersion;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of comment
+		 * @parameter comment value to set
+		 * @return this for chaining
+		**/
+		public CreationInfoBuilder setComment(String comment) {
+			this.comment = comment;
 			return this;
 		}
 		
@@ -410,12 +400,12 @@ public class CreationInfo extends ModelObject  {
 		}
 		
 		/**
-		 * Sets the initial value of comment
-		 * @parameter comment value to set
+		 * Sets the initial value of created
+		 * @parameter created value to set
 		 * @return this for chaining
 		**/
-		public CreationInfoBuilder setComment(String comment) {
-			this.comment = comment;
+		public CreationInfoBuilder setCreated(String created) {
+			this.created = created;
 			return this;
 		}
 	

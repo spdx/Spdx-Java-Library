@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -90,11 +90,11 @@ public class Relationship extends Element  {
 		super(builder);
 		tos = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_TO, Element.class);
 		getTos().addAll(builder.tos);
-		setEndTime(builder.endTime);
 		setFrom(builder.from);
-		setStartTime(builder.startTime);
-		setRelationshipType(builder.relationshipType);
 		setCompleteness(builder.completeness);
+		setRelationshipType(builder.relationshipType);
+		setStartTime(builder.startTime);
+		setEndTime(builder.endTime);
 	}
 
 	/* (non-Javadoc)
@@ -110,32 +110,6 @@ public class Relationship extends Element  {
 		return tos;
 	}
 	
-
-		/**
-	 * @return the endTime
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getEndTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_END_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param endTime the endTime to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Relationship setEndTime(@Nullable DateTime endTime) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_END_TIME, endTime);
-		return this;
-	}
 
 	/**
 	 * @return the from
@@ -165,30 +139,29 @@ public class Relationship extends Element  {
 		setPropertyValue(SpdxConstants.CORE_PROP_FROM, from);
 		return this;
 	}
-
-		/**
-	 * @return the startTime
+	
+	/**
+	 * @return the completeness
 	 */
 	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getStartTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_START_TIME);
+	public Optional<RelationshipCompleteness> getCompleteness() throws InvalidSPDXAnalysisException {
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.CORE_PROP_COMPLETENESS);
 		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
+			if (!(retval.get() instanceof RelationshipCompleteness)) {
 				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
 			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
+			return (Optional<RelationshipCompleteness>)(Optional<?>)(retval);
 		} else {
 			return Optional.empty();
 		}
 	}
-	
 	/**
-	 * @param startTime the startTime to set
+	 * @param completeness the completeness to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Relationship setStartTime(@Nullable DateTime startTime) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_START_TIME, startTime);
+	public Relationship setCompleteness(@Nullable RelationshipCompleteness completeness) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_COMPLETENESS, completeness);
 		return this;
 	}
 	
@@ -218,29 +191,36 @@ public class Relationship extends Element  {
 		setPropertyValue(SpdxConstants.CORE_PROP_RELATIONSHIP_TYPE, relationshipType);
 		return this;
 	}
-	
-	/**
-	 * @return the completeness
+
+		/**
+	 * @return the startTime
 	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<RelationshipCompleteness> getCompleteness() throws InvalidSPDXAnalysisException {
-		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.CORE_PROP_COMPLETENESS);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof RelationshipCompleteness)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<RelationshipCompleteness>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
+	public Optional<String> getStartTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_START_TIME);
 	}
 	/**
-	 * @param completeness the completeness to set
+	 * @param startTime the startTime to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Relationship setCompleteness(@Nullable RelationshipCompleteness completeness) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_COMPLETENESS, completeness);
+	public Relationship setStartTime(@Nullable String startTime) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_START_TIME, startTime);
+		return this;
+	}
+
+		/**
+	 * @return the endTime
+	 */
+	public Optional<String> getEndTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_END_TIME);
+	}
+	/**
+	 * @param endTime the endTime to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Relationship setEndTime(@Nullable String endTime) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_END_TIME, endTime);
 		return this;
 	}
 	
@@ -254,37 +234,25 @@ public class Relationship extends Element  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-		Optional<DateTime> endTime;
-		try {
-			endTime = getEndTime();
-			if (endTime.isPresent()) {
-				retval.addAll(endTime.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting endTime for Relationship: "+e.getMessage());
-		}
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		Element from;
 		try {
 			from = getFrom();
 			if (Objects.nonNull(from)) {
-				retval.addAll(from.verify(verifiedIds, specVersion, profiles));
+				retval.addAll(from.verify(verifiedIds, specVersionForVerify, profiles));
 			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 					retval.add("Missing from in Relationship");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting from for Relationship: "+e.getMessage());
 		}
-		Optional<DateTime> startTime;
 		try {
-			startTime = getStartTime();
-			if (startTime.isPresent()) {
-				retval.addAll(startTime.get().verify(verifiedIds, specVersion, profiles));
-			}
+			@SuppressWarnings("unused")
+			Optional<RelationshipCompleteness> completeness = getCompleteness();
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting startTime for Relationship: "+e.getMessage());
+			retval.add("Error getting completeness for Relationship: "+e.getMessage());
 		}
 		try {
 			RelationshipType relationshipType = getRelationshipType();
@@ -297,12 +265,18 @@ public class Relationship extends Element  {
 		}
 		try {
 			@SuppressWarnings("unused")
-			Optional<RelationshipCompleteness> completeness = getCompleteness();
+			Optional<String> startTime = getStartTime();
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting completeness for Relationship: "+e.getMessage());
+			retval.add("Error getting startTime for Relationship: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> endTime = getEndTime();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting endTime for Relationship: "+e.getMessage());
 		}
 		for (Element to:tos) {
-			retval.addAll(to.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(to.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -340,11 +314,11 @@ public class Relationship extends Element  {
 		}
 		
 		Collection<Element> tos = new ArrayList<>();
-		DateTime endTime = null;
 		Element from = null;
-		DateTime startTime = null;
-		RelationshipType relationshipType = null;
 		RelationshipCompleteness completeness = null;
+		RelationshipType relationshipType = null;
+		String startTime = null;
+		String endTime = null;
 		
 		
 		/**
@@ -372,16 +346,6 @@ public class Relationship extends Element  {
 		}
 		
 		/**
-		 * Sets the initial value of endTime
-		 * @parameter endTime value to set
-		 * @return this for chaining
-		**/
-		public RelationshipBuilder setEndTime(DateTime endTime) {
-			this.endTime = endTime;
-			return this;
-		}
-		
-		/**
 		 * Sets the initial value of from
 		 * @parameter from value to set
 		 * @return this for chaining
@@ -392,12 +356,12 @@ public class Relationship extends Element  {
 		}
 		
 		/**
-		 * Sets the initial value of startTime
-		 * @parameter startTime value to set
+		 * Sets the initial value of completeness
+		 * @parameter completeness value to set
 		 * @return this for chaining
 		**/
-		public RelationshipBuilder setStartTime(DateTime startTime) {
-			this.startTime = startTime;
+		public RelationshipBuilder setCompleteness(RelationshipCompleteness completeness) {
+			this.completeness = completeness;
 			return this;
 		}
 		
@@ -412,12 +376,22 @@ public class Relationship extends Element  {
 		}
 		
 		/**
-		 * Sets the initial value of completeness
-		 * @parameter completeness value to set
+		 * Sets the initial value of startTime
+		 * @parameter startTime value to set
 		 * @return this for chaining
 		**/
-		public RelationshipBuilder setCompleteness(RelationshipCompleteness completeness) {
-			this.completeness = completeness;
+		public RelationshipBuilder setStartTime(String startTime) {
+			this.startTime = startTime;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of endTime
+		 * @parameter endTime value to set
+		 * @return this for chaining
+		**/
+		public RelationshipBuilder setEndTime(String endTime) {
+			this.endTime = endTime;
 			return this;
 		}
 	

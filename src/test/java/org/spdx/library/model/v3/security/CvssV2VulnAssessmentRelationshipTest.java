@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -43,8 +43,8 @@ public class CvssV2VulnAssessmentRelationshipTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final Integer SCORE_TEST_VALUE = 55;
-	static final String SEVERITY_TEST_VALUE = "test severity";
 	static final String VECTOR_TEST_VALUE = "test vector";
+	static final String SEVERITY_TEST_VALUE = "test severity";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -60,8 +60,8 @@ public class CvssV2VulnAssessmentRelationshipTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		CvssV2VulnAssessmentRelationshipBuilder retval = new CvssV2VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
 				.setScore(SCORE_TEST_VALUE)
-				.setSeverity(SEVERITY_TEST_VALUE)
 				.setVector(VECTOR_TEST_VALUE)
+				.setSeverity(SEVERITY_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				***************/
@@ -122,16 +122,6 @@ public class CvssV2VulnAssessmentRelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.security.CvssV2VulnAssessmentRelationship#setSeverity}.
-	 */
-	public void testCvssV2VulnAssessmentRelationshipsetSeverity() throws InvalidSPDXAnalysisException {
-		CvssV2VulnAssessmentRelationship testCvssV2VulnAssessmentRelationship = builderForCvssV2VulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(SEVERITY_TEST_VALUE), testCvssV2VulnAssessmentRelationship.getSeverity());
-		testCvssV2VulnAssessmentRelationship.setSeverity("new severity value");
-		assertEquals(Optional.of("new severity value"), testCvssV2VulnAssessmentRelationship.getSeverity());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.security.CvssV2VulnAssessmentRelationship#setVector}.
 	 */
 	public void testCvssV2VulnAssessmentRelationshipsetVector() throws InvalidSPDXAnalysisException {
@@ -139,5 +129,15 @@ public class CvssV2VulnAssessmentRelationshipTest extends TestCase {
 		assertEquals(Optional.of(VECTOR_TEST_VALUE), testCvssV2VulnAssessmentRelationship.getVector());
 		testCvssV2VulnAssessmentRelationship.setVector("new vector value");
 		assertEquals(Optional.of("new vector value"), testCvssV2VulnAssessmentRelationship.getVector());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.security.CvssV2VulnAssessmentRelationship#setSeverity}.
+	 */
+	public void testCvssV2VulnAssessmentRelationshipsetSeverity() throws InvalidSPDXAnalysisException {
+		CvssV2VulnAssessmentRelationship testCvssV2VulnAssessmentRelationship = builderForCvssV2VulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(SEVERITY_TEST_VALUE), testCvssV2VulnAssessmentRelationship.getSeverity());
+		testCvssV2VulnAssessmentRelationship.setSeverity("new severity value");
+		assertEquals(Optional.of("new severity value"), testCvssV2VulnAssessmentRelationship.getSeverity());
 	}
 }

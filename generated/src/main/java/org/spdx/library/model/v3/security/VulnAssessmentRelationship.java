@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -34,10 +34,9 @@ import org.spdx.storage.IModelStore.IModelStoreLock;
 
 import java.util.Optional;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.core.Agent;
-import org.spdx.library.model.v3.core.DateTime;
 import org.spdx.library.model.v3.core.Element;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.core.Relationship;
 
 /**
@@ -87,9 +86,9 @@ public class VulnAssessmentRelationship extends Relationship  {
 	protected VulnAssessmentRelationship(VulnAssessmentRelationshipBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
 		setSuppliedBy(builder.suppliedBy);
-		setPublishedTime(builder.publishedTime);
-		setWithdrawnTime(builder.withdrawnTime);
 		setAssessedElement(builder.assessedElement);
+		setWithdrawnTime(builder.withdrawnTime);
+		setPublishedTime(builder.publishedTime);
 		setModifiedTime(builder.modifiedTime);
 	}
 
@@ -131,58 +130,6 @@ public class VulnAssessmentRelationship extends Relationship  {
 	}
 
 		/**
-	 * @return the publishedTime
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getPublishedTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.SECURITY_PROP_PUBLISHED_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param publishedTime the publishedTime to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public VulnAssessmentRelationship setPublishedTime(@Nullable DateTime publishedTime) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.SECURITY_PROP_PUBLISHED_TIME, publishedTime);
-		return this;
-	}
-
-		/**
-	 * @return the withdrawnTime
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getWithdrawnTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.SECURITY_PROP_WITHDRAWN_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param withdrawnTime the withdrawnTime to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public VulnAssessmentRelationship setWithdrawnTime(@Nullable DateTime withdrawnTime) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.SECURITY_PROP_WITHDRAWN_TIME, withdrawnTime);
-		return this;
-	}
-
-		/**
 	 * @return the assessedElement
 	 */
 	 @SuppressWarnings("unchecked")
@@ -209,27 +156,49 @@ public class VulnAssessmentRelationship extends Relationship  {
 	}
 
 		/**
+	 * @return the withdrawnTime
+	 */
+	public Optional<String> getWithdrawnTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.SECURITY_PROP_WITHDRAWN_TIME);
+	}
+	/**
+	 * @param withdrawnTime the withdrawnTime to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public VulnAssessmentRelationship setWithdrawnTime(@Nullable String withdrawnTime) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.SECURITY_PROP_WITHDRAWN_TIME, withdrawnTime);
+		return this;
+	}
+
+		/**
+	 * @return the publishedTime
+	 */
+	public Optional<String> getPublishedTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.SECURITY_PROP_PUBLISHED_TIME);
+	}
+	/**
+	 * @param publishedTime the publishedTime to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public VulnAssessmentRelationship setPublishedTime(@Nullable String publishedTime) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.SECURITY_PROP_PUBLISHED_TIME, publishedTime);
+		return this;
+	}
+
+		/**
 	 * @return the modifiedTime
 	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getModifiedTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.SECURITY_PROP_MODIFIED_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
+	public Optional<String> getModifiedTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.SECURITY_PROP_MODIFIED_TIME);
 	}
-	
 	/**
 	 * @param modifiedTime the modifiedTime to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public VulnAssessmentRelationship setModifiedTime(@Nullable DateTime modifiedTime) throws InvalidSPDXAnalysisException {
+	public VulnAssessmentRelationship setModifiedTime(@Nullable String modifiedTime) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.SECURITY_PROP_MODIFIED_TIME, modifiedTime);
 		return this;
 	}
@@ -244,51 +213,42 @@ public class VulnAssessmentRelationship extends Relationship  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		Optional<Agent> suppliedBy;
 		try {
 			suppliedBy = getSuppliedBy();
 			if (suppliedBy.isPresent()) {
-				retval.addAll(suppliedBy.get().verify(verifiedIds, specVersion, profiles));
+				retval.addAll(suppliedBy.get().verify(verifiedIds, specVersionForVerify, profiles));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting suppliedBy for VulnAssessmentRelationship: "+e.getMessage());
-		}
-		Optional<DateTime> publishedTime;
-		try {
-			publishedTime = getPublishedTime();
-			if (publishedTime.isPresent()) {
-				retval.addAll(publishedTime.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting publishedTime for VulnAssessmentRelationship: "+e.getMessage());
-		}
-		Optional<DateTime> withdrawnTime;
-		try {
-			withdrawnTime = getWithdrawnTime();
-			if (withdrawnTime.isPresent()) {
-				retval.addAll(withdrawnTime.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting withdrawnTime for VulnAssessmentRelationship: "+e.getMessage());
 		}
 		Optional<Element> assessedElement;
 		try {
 			assessedElement = getAssessedElement();
 			if (assessedElement.isPresent()) {
-				retval.addAll(assessedElement.get().verify(verifiedIds, specVersion, profiles));
+				retval.addAll(assessedElement.get().verify(verifiedIds, specVersionForVerify, profiles));
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting assessedElement for VulnAssessmentRelationship: "+e.getMessage());
 		}
-		Optional<DateTime> modifiedTime;
 		try {
-			modifiedTime = getModifiedTime();
-			if (modifiedTime.isPresent()) {
-				retval.addAll(modifiedTime.get().verify(verifiedIds, specVersion, profiles));
-			}
+			@SuppressWarnings("unused")
+			Optional<String> withdrawnTime = getWithdrawnTime();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting withdrawnTime for VulnAssessmentRelationship: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> publishedTime = getPublishedTime();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting publishedTime for VulnAssessmentRelationship: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> modifiedTime = getModifiedTime();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting modifiedTime for VulnAssessmentRelationship: "+e.getMessage());
 		}
@@ -328,10 +288,10 @@ public class VulnAssessmentRelationship extends Relationship  {
 		}
 		
 		Agent suppliedBy = null;
-		DateTime publishedTime = null;
-		DateTime withdrawnTime = null;
 		Element assessedElement = null;
-		DateTime modifiedTime = null;
+		String withdrawnTime = null;
+		String publishedTime = null;
+		String modifiedTime = null;
 		
 		
 		/**
@@ -341,26 +301,6 @@ public class VulnAssessmentRelationship extends Relationship  {
 		**/
 		public VulnAssessmentRelationshipBuilder setSuppliedBy(Agent suppliedBy) {
 			this.suppliedBy = suppliedBy;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of publishedTime
-		 * @parameter publishedTime value to set
-		 * @return this for chaining
-		**/
-		public VulnAssessmentRelationshipBuilder setPublishedTime(DateTime publishedTime) {
-			this.publishedTime = publishedTime;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of withdrawnTime
-		 * @parameter withdrawnTime value to set
-		 * @return this for chaining
-		**/
-		public VulnAssessmentRelationshipBuilder setWithdrawnTime(DateTime withdrawnTime) {
-			this.withdrawnTime = withdrawnTime;
 			return this;
 		}
 		
@@ -375,11 +315,31 @@ public class VulnAssessmentRelationship extends Relationship  {
 		}
 		
 		/**
+		 * Sets the initial value of withdrawnTime
+		 * @parameter withdrawnTime value to set
+		 * @return this for chaining
+		**/
+		public VulnAssessmentRelationshipBuilder setWithdrawnTime(String withdrawnTime) {
+			this.withdrawnTime = withdrawnTime;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of publishedTime
+		 * @parameter publishedTime value to set
+		 * @return this for chaining
+		**/
+		public VulnAssessmentRelationshipBuilder setPublishedTime(String publishedTime) {
+			this.publishedTime = publishedTime;
+			return this;
+		}
+		
+		/**
 		 * Sets the initial value of modifiedTime
 		 * @parameter modifiedTime value to set
 		 * @return this for chaining
 		**/
-		public VulnAssessmentRelationshipBuilder setModifiedTime(DateTime modifiedTime) {
+		public VulnAssessmentRelationshipBuilder setModifiedTime(String modifiedTime) {
 			this.modifiedTime = modifiedTime;
 			return this;
 		}

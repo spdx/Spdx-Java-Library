@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -59,6 +59,7 @@ public class SnippetTest extends TestCase {
 				//TODO: Add in test values
 				/********************
 				.setLineRange(new PositiveIntegerRange())
+				.setSnippetFromFile(new SpdxFile())
 				.setByteRange(new PositiveIntegerRange())
 				***************/
 				;
@@ -115,6 +116,17 @@ public class SnippetTest extends TestCase {
 //		assertEquals(Optional.of(TEST_VALUE), testSnippet.getLineRange());
 //		testSnippet.setLineRange(NEW_TEST_VALUE);
 //		assertEquals(Optional.of(NEW_TEST_VALUE), testSnippet.getLineRange());
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.software.Snippet#setSnippetFromFile}.
+	 */
+	public void testSnippetsetSnippetFromFile() throws InvalidSPDXAnalysisException {
+		Snippet testSnippet = builderForSnippetTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+//		assertEquals(TEST_VALUE, testSnippet.getSnippetFromFile());
+//		testSnippet.setSnippetFromFile(NEW_TEST_VALUE);
+//		assertEquals(NEW_TEST_VALUE, testSnippet.getSnippetFromFile());
 		fail("Not yet implemented");
 	}
 	

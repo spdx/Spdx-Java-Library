@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -43,6 +43,8 @@ public class BuildTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final String BUILD_TYPE_TEST_VALUE = "test buildType";
+	static final String BUILD_END_TIME_TEST_VALUE = "test buildEndTime";
+	static final String BUILD_START_TIME_TEST_VALUE = "test buildStartTime";
 	static final String BUILD_ID_TEST_VALUE = "test buildId";
 	static final String CONFIG_SOURCE_URI_TEST_VALUE1 = "test 1 configSourceUri";
 	static final String CONFIG_SOURCE_URI_TEST_VALUE2 = "test 2 configSourceUri";
@@ -69,6 +71,8 @@ public class BuildTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		BuildBuilder retval = new BuildBuilder(modelStore, objectUri, copyManager)
 				.setBuildType(BUILD_TYPE_TEST_VALUE)
+				.setBuildEndTime(BUILD_END_TIME_TEST_VALUE)
+				.setBuildStartTime(BUILD_START_TIME_TEST_VALUE)
 				.setBuildId(BUILD_ID_TEST_VALUE)
 				.addConfigSourceUri(CONFIG_SOURCE_URI_TEST_VALUE1)
 				.addConfigSourceUri(CONFIG_SOURCE_URI_TEST_VALUE2)
@@ -76,11 +80,9 @@ public class BuildTest extends TestCase {
 				.addConfigSourceEntrypoint(CONFIG_SOURCE_ENTRYPOINT_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.setBuildEndTime(new DateTime())
-				.setBuildStartTime(new DateTime())
+				.addEnvironment(DictionaryEntry)
 				.addConfigSourceDigest(Hash)
 				.addParameters(DictionaryEntry)
-				.addEnvironment(DictionaryEntry)
 				***************/
 				;
 		return retval;
@@ -129,28 +131,6 @@ public class BuildTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildEndTime}.
-	 */
-	public void testBuildsetBuildEndTime() throws InvalidSPDXAnalysisException {
-		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testBuild.getBuildEndTime());
-//		testBuild.setBuildEndTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testBuild.getBuildEndTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildStartTime}.
-	 */
-	public void testBuildsetBuildStartTime() throws InvalidSPDXAnalysisException {
-		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testBuild.getBuildStartTime());
-//		testBuild.setBuildStartTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testBuild.getBuildStartTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildType}.
 	 */
 	public void testBuildsetBuildType() throws InvalidSPDXAnalysisException {
@@ -161,6 +141,26 @@ public class BuildTest extends TestCase {
 	}
 	
 	/**
+	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildEndTime}.
+	 */
+	public void testBuildsetBuildEndTime() throws InvalidSPDXAnalysisException {
+		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(BUILD_END_TIME_TEST_VALUE), testBuild.getBuildEndTime());
+		testBuild.setBuildEndTime("new buildEndTime value");
+		assertEquals(Optional.of("new buildEndTime value"), testBuild.getBuildEndTime());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildStartTime}.
+	 */
+	public void testBuildsetBuildStartTime() throws InvalidSPDXAnalysisException {
+		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(BUILD_START_TIME_TEST_VALUE), testBuild.getBuildStartTime());
+		testBuild.setBuildStartTime("new buildStartTime value");
+		assertEquals(Optional.of("new buildStartTime value"), testBuild.getBuildStartTime());
+	}
+	
+	/**
 	 * Test method for {@link org.spdx.library.model.v3.build.Build#setBuildId}.
 	 */
 	public void testBuildsetBuildId() throws InvalidSPDXAnalysisException {
@@ -168,6 +168,18 @@ public class BuildTest extends TestCase {
 		assertEquals(Optional.of(BUILD_ID_TEST_VALUE), testBuild.getBuildId());
 		testBuild.setBuildId("new buildId value");
 		assertEquals(Optional.of("new buildId value"), testBuild.getBuildId());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.build.Build#getEnvironment}.
+	 */
+	public void testBuildgetEnvironments() throws InvalidSPDXAnalysisException {
+		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testBuild.getEnvironments())));
+//		testBuild.getEnvironments().clear();
+//		testBuild.getEnvironments().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testBuild.getEnvironments())));
+		fail("Not yet implemented");
 	}
 	
 	/**
@@ -191,18 +203,6 @@ public class BuildTest extends TestCase {
 //		testBuild.getParameterss().clear();
 //		testBuild.getParameterss().addAll(NEW_TEST_VALUE);
 //		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testBuild.getParameterss())));
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.build.Build#getEnvironment}.
-	 */
-	public void testBuildgetEnvironments() throws InvalidSPDXAnalysisException {
-		Build testBuild = builderForBuildTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testBuild.getEnvironments())));
-//		testBuild.getEnvironments().clear();
-//		testBuild.getEnvironments().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testBuild.getEnvironments())));
 		fail("Not yet implemented");
 	}
 	

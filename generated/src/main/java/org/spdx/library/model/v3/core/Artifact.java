@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -46,7 +46,6 @@ import org.spdx.library.SpdxConstants;
  */
 public class Artifact extends Element  {
 
-	Collection<Agent> suppliedBys;
 	Collection<Agent> originatedBys;
 	Collection<String> standards;
 	
@@ -77,7 +76,6 @@ public class Artifact extends Element  {
 	public Artifact(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager,
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, objectUri, copyManager, create);
-		suppliedBys = (Collection<Agent>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_SUPPLIED_BY, Agent.class);
 		originatedBys = (Collection<Agent>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ORIGINATED_BY, Agent.class);
 		standards = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_STANDARD, String.class);
 	}
@@ -90,15 +88,14 @@ public class Artifact extends Element  {
 	 @SuppressWarnings("unchecked")
 	protected Artifact(ArtifactBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
-		suppliedBys = (Collection<Agent>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_SUPPLIED_BY, Agent.class);
 		originatedBys = (Collection<Agent>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ORIGINATED_BY, Agent.class);
 		standards = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_STANDARD, String.class);
-		getSuppliedBys().addAll(builder.suppliedBys);
 		getOriginatedBys().addAll(builder.originatedBys);
 		getStandards().addAll(builder.standards);
+		setSuppliedBy(builder.suppliedBy);
 		setValidUntilTime(builder.validUntilTime);
-		setReleaseTime(builder.releaseTime);
 		setBuiltTime(builder.builtTime);
+		setReleaseTime(builder.releaseTime);
 	}
 
 	/* (non-Javadoc)
@@ -110,9 +107,6 @@ public class Artifact extends Element  {
 	}
 	
 	// Getters and Setters
-	public Collection<Agent> getSuppliedBys() {
-		return suppliedBys;
-	}
 	public Collection<Agent> getOriginatedBys() {
 		return originatedBys;
 	}
@@ -122,80 +116,76 @@ public class Artifact extends Element  {
 	
 
 		/**
-	 * @return the validUntilTime
+	 * @return the suppliedBy
 	 */
 	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getValidUntilTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_VALID_UNTIL_TIME);
+	public Optional<Agent> getSuppliedBy() throws InvalidSPDXAnalysisException {
+		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_SUPPLIED_BY);
 		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
+			if (!(retval.get() instanceof Agent)) {
 				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
 			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
+			return (Optional<Agent>)(Optional<?>)(retval);
 		} else {
 			return Optional.empty();
 		}
 	}
 	
+	/**
+	 * @param suppliedBy the suppliedBy to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Artifact setSuppliedBy(@Nullable Agent suppliedBy) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_SUPPLIED_BY, suppliedBy);
+		return this;
+	}
+
+		/**
+	 * @return the validUntilTime
+	 */
+	public Optional<String> getValidUntilTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_VALID_UNTIL_TIME);
+	}
 	/**
 	 * @param validUntilTime the validUntilTime to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Artifact setValidUntilTime(@Nullable DateTime validUntilTime) throws InvalidSPDXAnalysisException {
+	public Artifact setValidUntilTime(@Nullable String validUntilTime) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.CORE_PROP_VALID_UNTIL_TIME, validUntilTime);
-		return this;
-	}
-
-		/**
-	 * @return the releaseTime
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getReleaseTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_RELEASE_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/**
-	 * @param releaseTime the releaseTime to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Artifact setReleaseTime(@Nullable DateTime releaseTime) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_RELEASE_TIME, releaseTime);
 		return this;
 	}
 
 		/**
 	 * @return the builtTime
 	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<DateTime> getBuiltTime() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_BUILT_TIME);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof DateTime)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<DateTime>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
+	public Optional<String> getBuiltTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_BUILT_TIME);
 	}
-	
 	/**
 	 * @param builtTime the builtTime to set
 	 * @return this to chain setters
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public Artifact setBuiltTime(@Nullable DateTime builtTime) throws InvalidSPDXAnalysisException {
+	public Artifact setBuiltTime(@Nullable String builtTime) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.CORE_PROP_BUILT_TIME, builtTime);
+		return this;
+	}
+
+		/**
+	 * @return the releaseTime
+	 */
+	public Optional<String> getReleaseTime() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_RELEASE_TIME);
+	}
+	/**
+	 * @param releaseTime the releaseTime to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Artifact setReleaseTime(@Nullable String releaseTime) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_RELEASE_TIME, releaseTime);
 		return this;
 	}
 	
@@ -209,41 +199,38 @@ public class Artifact extends Element  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-		Optional<DateTime> validUntilTime;
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
+		Optional<Agent> suppliedBy;
 		try {
-			validUntilTime = getValidUntilTime();
-			if (validUntilTime.isPresent()) {
-				retval.addAll(validUntilTime.get().verify(verifiedIds, specVersion, profiles));
+			suppliedBy = getSuppliedBy();
+			if (suppliedBy.isPresent()) {
+				retval.addAll(suppliedBy.get().verify(verifiedIds, specVersionForVerify, profiles));
 			}
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting suppliedBy for Artifact: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> validUntilTime = getValidUntilTime();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting validUntilTime for Artifact: "+e.getMessage());
 		}
-		Optional<DateTime> releaseTime;
 		try {
-			releaseTime = getReleaseTime();
-			if (releaseTime.isPresent()) {
-				retval.addAll(releaseTime.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting releaseTime for Artifact: "+e.getMessage());
-		}
-		Optional<DateTime> builtTime;
-		try {
-			builtTime = getBuiltTime();
-			if (builtTime.isPresent()) {
-				retval.addAll(builtTime.get().verify(verifiedIds, specVersion, profiles));
-			}
+			@SuppressWarnings("unused")
+			Optional<String> builtTime = getBuiltTime();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting builtTime for Artifact: "+e.getMessage());
 		}
-		for (Agent suppliedBy:suppliedBys) {
-			retval.addAll(suppliedBy.verify(verifiedIds, specVersion, profiles));
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> releaseTime = getReleaseTime();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting releaseTime for Artifact: "+e.getMessage());
 		}
 		for (Agent originatedBy:originatedBys) {
-			retval.addAll(originatedBy.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(originatedBy.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -280,37 +267,13 @@ public class Artifact extends Element  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
-		Collection<Agent> suppliedBys = new ArrayList<>();
 		Collection<Agent> originatedBys = new ArrayList<>();
 		Collection<String> standards = new ArrayList<>();
-		DateTime validUntilTime = null;
-		DateTime releaseTime = null;
-		DateTime builtTime = null;
+		Agent suppliedBy = null;
+		String validUntilTime = null;
+		String builtTime = null;
+		String releaseTime = null;
 		
-		
-		/**
-		 * Adds a suppliedBy to the initial collection
-		 * @parameter suppliedBy suppliedBy to add
-		 * @return this for chaining
-		**/
-		public ArtifactBuilder addSuppliedBy(Agent suppliedBy) {
-			if (Objects.nonNull(suppliedBy)) {
-				suppliedBys.add(suppliedBy);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds all elements from a collection to the initial suppliedBy collection
-		 * @parameter suppliedByCollection collection to initialize the suppliedBy
-		 * @return this for chaining
-		**/
-		public ArtifactBuilder addAllSuppliedBy(Collection<Agent> suppliedByCollection) {
-			if (Objects.nonNull(suppliedByCollection)) {
-				suppliedBys.addAll(suppliedByCollection);
-			}
-			return this;
-		}
 		
 		/**
 		 * Adds a originatedBy to the initial collection
@@ -361,22 +324,22 @@ public class Artifact extends Element  {
 		}
 		
 		/**
-		 * Sets the initial value of validUntilTime
-		 * @parameter validUntilTime value to set
+		 * Sets the initial value of suppliedBy
+		 * @parameter suppliedBy value to set
 		 * @return this for chaining
 		**/
-		public ArtifactBuilder setValidUntilTime(DateTime validUntilTime) {
-			this.validUntilTime = validUntilTime;
+		public ArtifactBuilder setSuppliedBy(Agent suppliedBy) {
+			this.suppliedBy = suppliedBy;
 			return this;
 		}
 		
 		/**
-		 * Sets the initial value of releaseTime
-		 * @parameter releaseTime value to set
+		 * Sets the initial value of validUntilTime
+		 * @parameter validUntilTime value to set
 		 * @return this for chaining
 		**/
-		public ArtifactBuilder setReleaseTime(DateTime releaseTime) {
-			this.releaseTime = releaseTime;
+		public ArtifactBuilder setValidUntilTime(String validUntilTime) {
+			this.validUntilTime = validUntilTime;
 			return this;
 		}
 		
@@ -385,8 +348,18 @@ public class Artifact extends Element  {
 		 * @parameter builtTime value to set
 		 * @return this for chaining
 		**/
-		public ArtifactBuilder setBuiltTime(DateTime builtTime) {
+		public ArtifactBuilder setBuiltTime(String builtTime) {
 			this.builtTime = builtTime;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of releaseTime
+		 * @parameter releaseTime value to set
+		 * @return this for chaining
+		**/
+		public ArtifactBuilder setReleaseTime(String releaseTime) {
+			this.releaseTime = releaseTime;
 			return this;
 		}
 	

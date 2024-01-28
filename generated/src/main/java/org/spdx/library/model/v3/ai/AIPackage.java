@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -36,8 +36,9 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.core.DictionaryEntry;
+import org.spdx.library.model.v3.core.PresenceType;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.software.SpdxPackage;
 
 /**
@@ -54,14 +55,14 @@ import org.spdx.library.model.v3.software.SpdxPackage;
  */
 public class AIPackage extends SpdxPackage  {
 
-	Collection<DictionaryEntry> hyperparameters;
-	Collection<DictionaryEntry> metricDecisionThresholds;
 	Collection<DictionaryEntry> metrics;
-	Collection<String> typeOfModels;
-	Collection<String> modelDataPreprocessings;
+	Collection<DictionaryEntry> metricDecisionThresholds;
+	Collection<DictionaryEntry> hyperparameters;
+	Collection<String> domains;
 	Collection<String> standardCompliances;
 	Collection<String> modelExplainabilitys;
-	Collection<String> domains;
+	Collection<String> typeOfModels;
+	Collection<String> modelDataPreprocessings;
 	
 	/**
 	 * Create the AIPackage with default model store and generated anonymous ID
@@ -90,14 +91,14 @@ public class AIPackage extends SpdxPackage  {
 	public AIPackage(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager,
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, objectUri, copyManager, create);
-		hyperparameters = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_HYPERPARAMETER, DictionaryEntry.class);
-		metricDecisionThresholds = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC_DECISION_THRESHOLD, DictionaryEntry.class);
 		metrics = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC, DictionaryEntry.class);
-		typeOfModels = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_TYPE_OF_MODEL, String.class);
-		modelDataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_DATA_PREPROCESSING, String.class);
+		metricDecisionThresholds = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC_DECISION_THRESHOLD, DictionaryEntry.class);
+		hyperparameters = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_HYPERPARAMETER, DictionaryEntry.class);
+		domains = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_DOMAIN, String.class);
 		standardCompliances = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_STANDARD_COMPLIANCE, String.class);
 		modelExplainabilitys = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_EXPLAINABILITY, String.class);
-		domains = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_DOMAIN, String.class);
+		typeOfModels = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_TYPE_OF_MODEL, String.class);
+		modelDataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_DATA_PREPROCESSING, String.class);
 	}
 
 	/**
@@ -108,29 +109,29 @@ public class AIPackage extends SpdxPackage  {
 	 @SuppressWarnings("unchecked")
 	protected AIPackage(AIPackageBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
-		hyperparameters = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_HYPERPARAMETER, DictionaryEntry.class);
-		metricDecisionThresholds = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC_DECISION_THRESHOLD, DictionaryEntry.class);
 		metrics = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC, DictionaryEntry.class);
-		typeOfModels = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_TYPE_OF_MODEL, String.class);
-		modelDataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_DATA_PREPROCESSING, String.class);
+		metricDecisionThresholds = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_METRIC_DECISION_THRESHOLD, DictionaryEntry.class);
+		hyperparameters = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_HYPERPARAMETER, DictionaryEntry.class);
+		domains = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_DOMAIN, String.class);
 		standardCompliances = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_STANDARD_COMPLIANCE, String.class);
 		modelExplainabilitys = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_EXPLAINABILITY, String.class);
-		domains = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_DOMAIN, String.class);
-		getHyperparameters().addAll(builder.hyperparameters);
-		getMetricDecisionThresholds().addAll(builder.metricDecisionThresholds);
+		typeOfModels = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_TYPE_OF_MODEL, String.class);
+		modelDataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.A_I_PROP_MODEL_DATA_PREPROCESSING, String.class);
 		getMetrics().addAll(builder.metrics);
-		getTypeOfModels().addAll(builder.typeOfModels);
-		getModelDataPreprocessings().addAll(builder.modelDataPreprocessings);
+		getMetricDecisionThresholds().addAll(builder.metricDecisionThresholds);
+		getHyperparameters().addAll(builder.hyperparameters);
+		getDomains().addAll(builder.domains);
 		getStandardCompliances().addAll(builder.standardCompliances);
 		getModelExplainabilitys().addAll(builder.modelExplainabilitys);
-		getDomains().addAll(builder.domains);
-		setSensitivePersonalInformation(builder.sensitivePersonalInformation);
+		getTypeOfModels().addAll(builder.typeOfModels);
+		getModelDataPreprocessings().addAll(builder.modelDataPreprocessings);
 		setSafetyRiskAssessment(builder.safetyRiskAssessment);
 		setAutonomyType(builder.autonomyType);
+		setSensitivePersonalInformation(builder.sensitivePersonalInformation);
 		setLimitation(builder.limitation);
-		setEnergyConsumption(builder.energyConsumption);
 		setInformationAboutApplication(builder.informationAboutApplication);
 		setInformationAboutTraining(builder.informationAboutTraining);
+		setEnergyConsumption(builder.energyConsumption);
 	}
 
 	/* (non-Javadoc)
@@ -142,20 +143,17 @@ public class AIPackage extends SpdxPackage  {
 	}
 	
 	// Getters and Setters
-	public Collection<DictionaryEntry> getHyperparameters() {
-		return hyperparameters;
+	public Collection<DictionaryEntry> getMetrics() {
+		return metrics;
 	}
 	public Collection<DictionaryEntry> getMetricDecisionThresholds() {
 		return metricDecisionThresholds;
 	}
-	public Collection<DictionaryEntry> getMetrics() {
-		return metrics;
+	public Collection<DictionaryEntry> getHyperparameters() {
+		return hyperparameters;
 	}
-	public Collection<String> getTypeOfModels() {
-		return typeOfModels;
-	}
-	public Collection<String> getModelDataPreprocessings() {
-		return modelDataPreprocessings;
+	public Collection<String> getDomains() {
+		return domains;
 	}
 	public Collection<String> getStandardCompliances() {
 		return standardCompliances;
@@ -163,35 +161,13 @@ public class AIPackage extends SpdxPackage  {
 	public Collection<String> getModelExplainabilitys() {
 		return modelExplainabilitys;
 	}
-	public Collection<String> getDomains() {
-		return domains;
+	public Collection<String> getTypeOfModels() {
+		return typeOfModels;
+	}
+	public Collection<String> getModelDataPreprocessings() {
+		return modelDataPreprocessings;
 	}
 	
-	
-	/**
-	 * @return the sensitivePersonalInformation
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<PresenceType> getSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
-		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.A_I_PROP_SENSITIVE_PERSONAL_INFORMATION);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof PresenceType)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<PresenceType>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	/**
-	 * @param sensitivePersonalInformation the sensitivePersonalInformation to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public AIPackage setSensitivePersonalInformation(@Nullable PresenceType sensitivePersonalInformation) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.A_I_PROP_SENSITIVE_PERSONAL_INFORMATION, sensitivePersonalInformation);
-		return this;
-	}
 	
 	/**
 	 * @return the safetyRiskAssessment
@@ -242,6 +218,31 @@ public class AIPackage extends SpdxPackage  {
 		setPropertyValue(SpdxConstants.A_I_PROP_AUTONOMY_TYPE, autonomyType);
 		return this;
 	}
+	
+	/**
+	 * @return the sensitivePersonalInformation
+	 */
+	 @SuppressWarnings("unchecked")
+	public Optional<PresenceType> getSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.A_I_PROP_SENSITIVE_PERSONAL_INFORMATION);
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof PresenceType)) {
+				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
+			}
+			return (Optional<PresenceType>)(Optional<?>)(retval);
+		} else {
+			return Optional.empty();
+		}
+	}
+	/**
+	 * @param sensitivePersonalInformation the sensitivePersonalInformation to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public AIPackage setSensitivePersonalInformation(@Nullable PresenceType sensitivePersonalInformation) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.A_I_PROP_SENSITIVE_PERSONAL_INFORMATION, sensitivePersonalInformation);
+		return this;
+	}
 
 		/**
 	 * @return the limitation
@@ -256,22 +257,6 @@ public class AIPackage extends SpdxPackage  {
 	 */
 	public AIPackage setLimitation(@Nullable String limitation) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.A_I_PROP_LIMITATION, limitation);
-		return this;
-	}
-
-		/**
-	 * @return the energyConsumption
-	 */
-	public Optional<String> getEnergyConsumption() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.A_I_PROP_ENERGY_CONSUMPTION);
-	}
-	/**
-	 * @param energyConsumption the energyConsumption to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public AIPackage setEnergyConsumption(@Nullable String energyConsumption) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.A_I_PROP_ENERGY_CONSUMPTION, energyConsumption);
 		return this;
 	}
 
@@ -306,6 +291,22 @@ public class AIPackage extends SpdxPackage  {
 		setPropertyValue(SpdxConstants.A_I_PROP_INFORMATION_ABOUT_TRAINING, informationAboutTraining);
 		return this;
 	}
+
+		/**
+	 * @return the energyConsumption
+	 */
+	public Optional<String> getEnergyConsumption() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.A_I_PROP_ENERGY_CONSUMPTION);
+	}
+	/**
+	 * @param energyConsumption the energyConsumption to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public AIPackage setEnergyConsumption(@Nullable String energyConsumption) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.A_I_PROP_ENERGY_CONSUMPTION, energyConsumption);
+		return this;
+	}
 	
 	
 	@Override
@@ -317,15 +318,9 @@ public class AIPackage extends SpdxPackage  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-		try {
-			@SuppressWarnings("unused")
-			Optional<PresenceType> sensitivePersonalInformation = getSensitivePersonalInformation();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting sensitivePersonalInformation for AIPackage: "+e.getMessage());
-		}
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		try {
 			@SuppressWarnings("unused")
 			Optional<SafetyRiskAssessmentType> safetyRiskAssessment = getSafetyRiskAssessment();
@@ -340,15 +335,15 @@ public class AIPackage extends SpdxPackage  {
 		}
 		try {
 			@SuppressWarnings("unused")
-			Optional<String> limitation = getLimitation();
+			Optional<PresenceType> sensitivePersonalInformation = getSensitivePersonalInformation();
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting limitation for AIPackage: "+e.getMessage());
+			retval.add("Error getting sensitivePersonalInformation for AIPackage: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
-			Optional<String> energyConsumption = getEnergyConsumption();
+			Optional<String> limitation = getLimitation();
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting energyConsumption for AIPackage: "+e.getMessage());
+			retval.add("Error getting limitation for AIPackage: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
@@ -362,14 +357,20 @@ public class AIPackage extends SpdxPackage  {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting informationAboutTraining for AIPackage: "+e.getMessage());
 		}
-		for (DictionaryEntry hyperparameter:hyperparameters) {
-			retval.addAll(hyperparameter.verify(verifiedIds, specVersion, profiles));
-		}
-		for (DictionaryEntry metricDecisionThreshold:metricDecisionThresholds) {
-			retval.addAll(metricDecisionThreshold.verify(verifiedIds, specVersion, profiles));
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> energyConsumption = getEnergyConsumption();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting energyConsumption for AIPackage: "+e.getMessage());
 		}
 		for (DictionaryEntry metric:metrics) {
-			retval.addAll(metric.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(metric.verify(verifiedIds, specVersionForVerify, profiles));
+		}
+		for (DictionaryEntry metricDecisionThreshold:metricDecisionThresholds) {
+			retval.addAll(metricDecisionThreshold.verify(verifiedIds, specVersionForVerify, profiles));
+		}
+		for (DictionaryEntry hyperparameter:hyperparameters) {
+			retval.addAll(hyperparameter.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -406,43 +407,43 @@ public class AIPackage extends SpdxPackage  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
-		Collection<DictionaryEntry> hyperparameters = new ArrayList<>();
-		Collection<DictionaryEntry> metricDecisionThresholds = new ArrayList<>();
 		Collection<DictionaryEntry> metrics = new ArrayList<>();
-		Collection<String> typeOfModels = new ArrayList<>();
-		Collection<String> modelDataPreprocessings = new ArrayList<>();
+		Collection<DictionaryEntry> metricDecisionThresholds = new ArrayList<>();
+		Collection<DictionaryEntry> hyperparameters = new ArrayList<>();
+		Collection<String> domains = new ArrayList<>();
 		Collection<String> standardCompliances = new ArrayList<>();
 		Collection<String> modelExplainabilitys = new ArrayList<>();
-		Collection<String> domains = new ArrayList<>();
-		PresenceType sensitivePersonalInformation = null;
+		Collection<String> typeOfModels = new ArrayList<>();
+		Collection<String> modelDataPreprocessings = new ArrayList<>();
 		SafetyRiskAssessmentType safetyRiskAssessment = null;
 		PresenceType autonomyType = null;
+		PresenceType sensitivePersonalInformation = null;
 		String limitation = null;
-		String energyConsumption = null;
 		String informationAboutApplication = null;
 		String informationAboutTraining = null;
+		String energyConsumption = null;
 		
 		
 		/**
-		 * Adds a hyperparameter to the initial collection
-		 * @parameter hyperparameter hyperparameter to add
+		 * Adds a metric to the initial collection
+		 * @parameter metric metric to add
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addHyperparameter(DictionaryEntry hyperparameter) {
-			if (Objects.nonNull(hyperparameter)) {
-				hyperparameters.add(hyperparameter);
+		public AIPackageBuilder addMetric(DictionaryEntry metric) {
+			if (Objects.nonNull(metric)) {
+				metrics.add(metric);
 			}
 			return this;
 		}
 		
 		/**
-		 * Adds all elements from a collection to the initial hyperparameter collection
-		 * @parameter hyperparameterCollection collection to initialize the hyperparameter
+		 * Adds all elements from a collection to the initial metric collection
+		 * @parameter metricCollection collection to initialize the metric
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addAllHyperparameter(Collection<DictionaryEntry> hyperparameterCollection) {
-			if (Objects.nonNull(hyperparameterCollection)) {
-				hyperparameters.addAll(hyperparameterCollection);
+		public AIPackageBuilder addAllMetric(Collection<DictionaryEntry> metricCollection) {
+			if (Objects.nonNull(metricCollection)) {
+				metrics.addAll(metricCollection);
 			}
 			return this;
 		}
@@ -472,73 +473,49 @@ public class AIPackage extends SpdxPackage  {
 		}
 		
 		/**
-		 * Adds a metric to the initial collection
-		 * @parameter metric metric to add
+		 * Adds a hyperparameter to the initial collection
+		 * @parameter hyperparameter hyperparameter to add
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addMetric(DictionaryEntry metric) {
-			if (Objects.nonNull(metric)) {
-				metrics.add(metric);
+		public AIPackageBuilder addHyperparameter(DictionaryEntry hyperparameter) {
+			if (Objects.nonNull(hyperparameter)) {
+				hyperparameters.add(hyperparameter);
 			}
 			return this;
 		}
 		
 		/**
-		 * Adds all elements from a collection to the initial metric collection
-		 * @parameter metricCollection collection to initialize the metric
+		 * Adds all elements from a collection to the initial hyperparameter collection
+		 * @parameter hyperparameterCollection collection to initialize the hyperparameter
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addAllMetric(Collection<DictionaryEntry> metricCollection) {
-			if (Objects.nonNull(metricCollection)) {
-				metrics.addAll(metricCollection);
+		public AIPackageBuilder addAllHyperparameter(Collection<DictionaryEntry> hyperparameterCollection) {
+			if (Objects.nonNull(hyperparameterCollection)) {
+				hyperparameters.addAll(hyperparameterCollection);
 			}
 			return this;
 		}
 		
 		/**
-		 * Adds a typeOfModel to the initial collection
-		 * @parameter typeOfModel typeOfModel to add
+		 * Adds a domain to the initial collection
+		 * @parameter domain domain to add
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addTypeOfModel(String typeOfModel) {
-			if (Objects.nonNull(typeOfModel)) {
-				typeOfModels.add(typeOfModel);
+		public AIPackageBuilder addDomain(String domain) {
+			if (Objects.nonNull(domain)) {
+				domains.add(domain);
 			}
 			return this;
 		}
 		
 		/**
-		 * Adds all elements from a collection to the initial typeOfModel collection
-		 * @parameter typeOfModelCollection collection to initialize the typeOfModel
+		 * Adds all elements from a collection to the initial domain collection
+		 * @parameter domainCollection collection to initialize the domain
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addAllTypeOfModel(Collection<String> typeOfModelCollection) {
-			if (Objects.nonNull(typeOfModelCollection)) {
-				typeOfModels.addAll(typeOfModelCollection);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds a modelDataPreprocessing to the initial collection
-		 * @parameter modelDataPreprocessing modelDataPreprocessing to add
-		 * @return this for chaining
-		**/
-		public AIPackageBuilder addModelDataPreprocessing(String modelDataPreprocessing) {
-			if (Objects.nonNull(modelDataPreprocessing)) {
-				modelDataPreprocessings.add(modelDataPreprocessing);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds all elements from a collection to the initial modelDataPreprocessing collection
-		 * @parameter modelDataPreprocessingCollection collection to initialize the modelDataPreprocessing
-		 * @return this for chaining
-		**/
-		public AIPackageBuilder addAllModelDataPreprocessing(Collection<String> modelDataPreprocessingCollection) {
-			if (Objects.nonNull(modelDataPreprocessingCollection)) {
-				modelDataPreprocessings.addAll(modelDataPreprocessingCollection);
+		public AIPackageBuilder addAllDomain(Collection<String> domainCollection) {
+			if (Objects.nonNull(domainCollection)) {
+				domains.addAll(domainCollection);
 			}
 			return this;
 		}
@@ -592,36 +569,50 @@ public class AIPackage extends SpdxPackage  {
 		}
 		
 		/**
-		 * Adds a domain to the initial collection
-		 * @parameter domain domain to add
+		 * Adds a typeOfModel to the initial collection
+		 * @parameter typeOfModel typeOfModel to add
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addDomain(String domain) {
-			if (Objects.nonNull(domain)) {
-				domains.add(domain);
+		public AIPackageBuilder addTypeOfModel(String typeOfModel) {
+			if (Objects.nonNull(typeOfModel)) {
+				typeOfModels.add(typeOfModel);
 			}
 			return this;
 		}
 		
 		/**
-		 * Adds all elements from a collection to the initial domain collection
-		 * @parameter domainCollection collection to initialize the domain
+		 * Adds all elements from a collection to the initial typeOfModel collection
+		 * @parameter typeOfModelCollection collection to initialize the typeOfModel
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder addAllDomain(Collection<String> domainCollection) {
-			if (Objects.nonNull(domainCollection)) {
-				domains.addAll(domainCollection);
+		public AIPackageBuilder addAllTypeOfModel(Collection<String> typeOfModelCollection) {
+			if (Objects.nonNull(typeOfModelCollection)) {
+				typeOfModels.addAll(typeOfModelCollection);
 			}
 			return this;
 		}
 		
 		/**
-		 * Sets the initial value of sensitivePersonalInformation
-		 * @parameter sensitivePersonalInformation value to set
+		 * Adds a modelDataPreprocessing to the initial collection
+		 * @parameter modelDataPreprocessing modelDataPreprocessing to add
 		 * @return this for chaining
 		**/
-		public AIPackageBuilder setSensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
-			this.sensitivePersonalInformation = sensitivePersonalInformation;
+		public AIPackageBuilder addModelDataPreprocessing(String modelDataPreprocessing) {
+			if (Objects.nonNull(modelDataPreprocessing)) {
+				modelDataPreprocessings.add(modelDataPreprocessing);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds all elements from a collection to the initial modelDataPreprocessing collection
+		 * @parameter modelDataPreprocessingCollection collection to initialize the modelDataPreprocessing
+		 * @return this for chaining
+		**/
+		public AIPackageBuilder addAllModelDataPreprocessing(Collection<String> modelDataPreprocessingCollection) {
+			if (Objects.nonNull(modelDataPreprocessingCollection)) {
+				modelDataPreprocessings.addAll(modelDataPreprocessingCollection);
+			}
 			return this;
 		}
 		
@@ -646,22 +637,22 @@ public class AIPackage extends SpdxPackage  {
 		}
 		
 		/**
+		 * Sets the initial value of sensitivePersonalInformation
+		 * @parameter sensitivePersonalInformation value to set
+		 * @return this for chaining
+		**/
+		public AIPackageBuilder setSensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
+			this.sensitivePersonalInformation = sensitivePersonalInformation;
+			return this;
+		}
+		
+		/**
 		 * Sets the initial value of limitation
 		 * @parameter limitation value to set
 		 * @return this for chaining
 		**/
 		public AIPackageBuilder setLimitation(String limitation) {
 			this.limitation = limitation;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of energyConsumption
-		 * @parameter energyConsumption value to set
-		 * @return this for chaining
-		**/
-		public AIPackageBuilder setEnergyConsumption(String energyConsumption) {
-			this.energyConsumption = energyConsumption;
 			return this;
 		}
 		
@@ -682,6 +673,16 @@ public class AIPackage extends SpdxPackage  {
 		**/
 		public AIPackageBuilder setInformationAboutTraining(String informationAboutTraining) {
 			this.informationAboutTraining = informationAboutTraining;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of energyConsumption
+		 * @parameter energyConsumption value to set
+		 * @return this for chaining
+		**/
+		public AIPackageBuilder setEnergyConsumption(String energyConsumption) {
+			this.energyConsumption = energyConsumption;
 			return this;
 		}
 	

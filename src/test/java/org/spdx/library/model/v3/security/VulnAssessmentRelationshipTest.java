@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,6 +42,9 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String WITHDRAWN_TIME_TEST_VALUE = "test withdrawnTime";
+	static final String PUBLISHED_TIME_TEST_VALUE = "test publishedTime";
+	static final String MODIFIED_TIME_TEST_VALUE = "test modifiedTime";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -56,13 +59,13 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	public static VulnAssessmentRelationshipBuilder builderForVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		VulnAssessmentRelationshipBuilder retval = new VulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setWithdrawnTime(WITHDRAWN_TIME_TEST_VALUE)
+				.setPublishedTime(PUBLISHED_TIME_TEST_VALUE)
+				.setModifiedTime(MODIFIED_TIME_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				.setSuppliedBy(new Agent())
-				.setPublishedTime(new DateTime())
-				.setWithdrawnTime(new DateTime())
 				.setAssessedElement(new Element())
-				.setModifiedTime(new DateTime())
 				***************/
 				;
 		return retval;
@@ -122,28 +125,6 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setPublishedTime}.
-	 */
-	public void testVulnAssessmentRelationshipsetPublishedTime() throws InvalidSPDXAnalysisException {
-		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testVulnAssessmentRelationship.getPublishedTime());
-//		testVulnAssessmentRelationship.setPublishedTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testVulnAssessmentRelationship.getPublishedTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setWithdrawnTime}.
-	 */
-	public void testVulnAssessmentRelationshipsetWithdrawnTime() throws InvalidSPDXAnalysisException {
-		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testVulnAssessmentRelationship.getWithdrawnTime());
-//		testVulnAssessmentRelationship.setWithdrawnTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testVulnAssessmentRelationship.getWithdrawnTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setAssessedElement}.
 	 */
 	public void testVulnAssessmentRelationshipsetAssessedElement() throws InvalidSPDXAnalysisException {
@@ -155,13 +136,32 @@ public class VulnAssessmentRelationshipTest extends TestCase {
 	}
 	
 	/**
+	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setWithdrawnTime}.
+	 */
+	public void testVulnAssessmentRelationshipsetWithdrawnTime() throws InvalidSPDXAnalysisException {
+		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(WITHDRAWN_TIME_TEST_VALUE), testVulnAssessmentRelationship.getWithdrawnTime());
+		testVulnAssessmentRelationship.setWithdrawnTime("new withdrawnTime value");
+		assertEquals(Optional.of("new withdrawnTime value"), testVulnAssessmentRelationship.getWithdrawnTime());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setPublishedTime}.
+	 */
+	public void testVulnAssessmentRelationshipsetPublishedTime() throws InvalidSPDXAnalysisException {
+		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(PUBLISHED_TIME_TEST_VALUE), testVulnAssessmentRelationship.getPublishedTime());
+		testVulnAssessmentRelationship.setPublishedTime("new publishedTime value");
+		assertEquals(Optional.of("new publishedTime value"), testVulnAssessmentRelationship.getPublishedTime());
+	}
+	
+	/**
 	 * Test method for {@link org.spdx.library.model.v3.security.VulnAssessmentRelationship#setModifiedTime}.
 	 */
 	public void testVulnAssessmentRelationshipsetModifiedTime() throws InvalidSPDXAnalysisException {
 		VulnAssessmentRelationship testVulnAssessmentRelationship = builderForVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testVulnAssessmentRelationship.getModifiedTime());
-//		testVulnAssessmentRelationship.setModifiedTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testVulnAssessmentRelationship.getModifiedTime());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(MODIFIED_TIME_TEST_VALUE), testVulnAssessmentRelationship.getModifiedTime());
+		testVulnAssessmentRelationship.setModifiedTime("new modifiedTime value");
+		assertEquals(Optional.of("new modifiedTime value"), testVulnAssessmentRelationship.getModifiedTime());
 	}
 }

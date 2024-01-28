@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,6 +42,7 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String IMPACT_STATEMENT_TIME_TEST_VALUE = "test impactStatementTime";
 	static final String IMPACT_STATEMENT_TEST_VALUE = "test impactStatement";
 	static final VexJustificationType JUSTIFICATION_TYPE_TEST_VALUE1 = VexJustificationType.values()[0];
 	static final VexJustificationType JUSTIFICATION_TYPE_TEST_VALUE2 = VexJustificationType.values()[1];
@@ -59,11 +60,11 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	public static VexNotAffectedVulnAssessmentRelationshipBuilder builderForVexNotAffectedVulnAssessmentRelationshipTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		VexNotAffectedVulnAssessmentRelationshipBuilder retval = new VexNotAffectedVulnAssessmentRelationshipBuilder(modelStore, objectUri, copyManager)
+				.setImpactStatementTime(IMPACT_STATEMENT_TIME_TEST_VALUE)
 				.setImpactStatement(IMPACT_STATEMENT_TEST_VALUE)
 				.setJustificationType(JUSTIFICATION_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.setImpactStatementTime(new DateTime())
 				***************/
 				;
 		return retval;
@@ -112,17 +113,6 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.security.VexNotAffectedVulnAssessmentRelationship#setImpactStatementTime}.
-	 */
-	public void testVexNotAffectedVulnAssessmentRelationshipsetImpactStatementTime() throws InvalidSPDXAnalysisException {
-		VexNotAffectedVulnAssessmentRelationship testVexNotAffectedVulnAssessmentRelationship = builderForVexNotAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
-//		testVexNotAffectedVulnAssessmentRelationship.setImpactStatementTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.security.VexNotAffectedVulnAssessmentRelationship#setJustificationType}.
 	 */
 	public void testVexNotAffectedVulnAssessmentRelationshipsetJustificationType() throws InvalidSPDXAnalysisException {
@@ -130,6 +120,16 @@ public class VexNotAffectedVulnAssessmentRelationshipTest extends TestCase {
 		assertEquals(Optional.of(JUSTIFICATION_TYPE_TEST_VALUE1), testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
 		testVexNotAffectedVulnAssessmentRelationship.setJustificationType(JUSTIFICATION_TYPE_TEST_VALUE2);
 		assertEquals(Optional.of(JUSTIFICATION_TYPE_TEST_VALUE2), testVexNotAffectedVulnAssessmentRelationship.getJustificationType());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.security.VexNotAffectedVulnAssessmentRelationship#setImpactStatementTime}.
+	 */
+	public void testVexNotAffectedVulnAssessmentRelationshipsetImpactStatementTime() throws InvalidSPDXAnalysisException {
+		VexNotAffectedVulnAssessmentRelationship testVexNotAffectedVulnAssessmentRelationship = builderForVexNotAffectedVulnAssessmentRelationshipTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(IMPACT_STATEMENT_TIME_TEST_VALUE), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
+		testVexNotAffectedVulnAssessmentRelationship.setImpactStatementTime("new impactStatementTime value");
+		assertEquals(Optional.of("new impactStatementTime value"), testVexNotAffectedVulnAssessmentRelationship.getImpactStatementTime());
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,7 +42,6 @@ public class SpdxDocumentTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String NAME_TEST_VALUE = "test name";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -57,7 +56,6 @@ public class SpdxDocumentTest extends TestCase {
 	public static SpdxDocumentBuilder builderForSpdxDocumentTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SpdxDocumentBuilder retval = new SpdxDocumentBuilder(modelStore, objectUri, copyManager)
-				.setName(NAME_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				***************/
@@ -105,15 +103,5 @@ public class SpdxDocumentTest extends TestCase {
 		assertTrue(testSpdxDocument.equivalent(test2SpdxDocument));
 		assertTrue(test2SpdxDocument.equivalent(testSpdxDocument));
 		// TODO change some parameters for negative tests
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.SpdxDocument#setName}.
-	 */
-	public void testSpdxDocumentsetName() throws InvalidSPDXAnalysisException {
-		SpdxDocument testSpdxDocument = builderForSpdxDocumentTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(NAME_TEST_VALUE), testSpdxDocument.getName());
-		testSpdxDocument.setName("new name value");
-		assertEquals(Optional.of("new name value"), testSpdxDocument.getName());
 	}
 }

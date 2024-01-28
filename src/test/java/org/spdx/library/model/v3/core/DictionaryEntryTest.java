@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,8 +42,8 @@ public class DictionaryEntryTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String KEY_TEST_VALUE = "test key";
 	static final String VALUE_TEST_VALUE = "test value";
+	static final String KEY_TEST_VALUE = "test key";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -58,8 +58,8 @@ public class DictionaryEntryTest extends TestCase {
 	public static DictionaryEntryBuilder builderForDictionaryEntryTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		DictionaryEntryBuilder retval = new DictionaryEntryBuilder(modelStore, objectUri, copyManager)
-				.setKey(KEY_TEST_VALUE)
 				.setValue(VALUE_TEST_VALUE)
+				.setKey(KEY_TEST_VALUE)
 				//TODO: Add in test values
 				/********************
 				***************/
@@ -110,16 +110,6 @@ public class DictionaryEntryTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.DictionaryEntry#setKey}.
-	 */
-	public void testDictionaryEntrysetKey() throws InvalidSPDXAnalysisException {
-		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(KEY_TEST_VALUE, testDictionaryEntry.getKey());
-		testDictionaryEntry.setKey("new key value");
-		assertEquals("new key value", testDictionaryEntry.getKey());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.DictionaryEntry#setValue}.
 	 */
 	public void testDictionaryEntrysetValue() throws InvalidSPDXAnalysisException {
@@ -127,5 +117,15 @@ public class DictionaryEntryTest extends TestCase {
 		assertEquals(Optional.of(VALUE_TEST_VALUE), testDictionaryEntry.getValue());
 		testDictionaryEntry.setValue("new value value");
 		assertEquals(Optional.of("new value value"), testDictionaryEntry.getValue());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.DictionaryEntry#setKey}.
+	 */
+	public void testDictionaryEntrysetKey() throws InvalidSPDXAnalysisException {
+		DictionaryEntry testDictionaryEntry = builderForDictionaryEntryTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(KEY_TEST_VALUE, testDictionaryEntry.getKey());
+		testDictionaryEntry.setKey("new key value");
+		assertEquals("new key value", testDictionaryEntry.getKey());
 	}
 }

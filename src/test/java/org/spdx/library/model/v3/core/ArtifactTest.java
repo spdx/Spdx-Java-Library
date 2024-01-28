@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,6 +42,9 @@ public class ArtifactTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
+	static final String VALID_UNTIL_TIME_TEST_VALUE = "test validUntilTime";
+	static final String BUILT_TIME_TEST_VALUE = "test builtTime";
+	static final String RELEASE_TIME_TEST_VALUE = "test releaseTime";
 	static final String STANDARD_TEST_VALUE1 = "test 1 standard";
 	static final String STANDARD_TEST_VALUE2 = "test 2 standard";
 	static final String STANDARD_TEST_VALUE3 = "test 3 standard";
@@ -61,14 +64,14 @@ public class ArtifactTest extends TestCase {
 	public static ArtifactBuilder builderForArtifactTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		ArtifactBuilder retval = new ArtifactBuilder(modelStore, objectUri, copyManager)
+				.setValidUntilTime(VALID_UNTIL_TIME_TEST_VALUE)
+				.setBuiltTime(BUILT_TIME_TEST_VALUE)
+				.setReleaseTime(RELEASE_TIME_TEST_VALUE)
 				.addStandard(STANDARD_TEST_VALUE1)
 				.addStandard(STANDARD_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.setValidUntilTime(new DateTime())
-				.setReleaseTime(new DateTime())
-				.setBuiltTime(new DateTime())
-				.addSuppliedBy(Agent)
+				.setSuppliedBy(new Agent())
 				.addOriginatedBy(Agent)
 				***************/
 				;
@@ -118,25 +121,24 @@ public class ArtifactTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#setValidUntilTime}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#setSuppliedBy}.
 	 */
-	public void testArtifactsetValidUntilTime() throws InvalidSPDXAnalysisException {
+	public void testArtifactsetSuppliedBy() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testArtifact.getValidUntilTime());
-//		testArtifact.setValidUntilTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testArtifact.getValidUntilTime());
+//		assertEquals(Optional.of(TEST_VALUE), testArtifact.getSuppliedBy());
+//		testArtifact.setSuppliedBy(NEW_TEST_VALUE);
+//		assertEquals(Optional.of(NEW_TEST_VALUE), testArtifact.getSuppliedBy());
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#setReleaseTime}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#setValidUntilTime}.
 	 */
-	public void testArtifactsetReleaseTime() throws InvalidSPDXAnalysisException {
+	public void testArtifactsetValidUntilTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testArtifact.getReleaseTime());
-//		testArtifact.setReleaseTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testArtifact.getReleaseTime());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(VALID_UNTIL_TIME_TEST_VALUE), testArtifact.getValidUntilTime());
+		testArtifact.setValidUntilTime("new validUntilTime value");
+		assertEquals(Optional.of("new validUntilTime value"), testArtifact.getValidUntilTime());
 	}
 	
 	/**
@@ -144,22 +146,19 @@ public class ArtifactTest extends TestCase {
 	 */
 	public void testArtifactsetBuiltTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testArtifact.getBuiltTime());
-//		testArtifact.setBuiltTime(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testArtifact.getBuiltTime());
-		fail("Not yet implemented");
+		assertEquals(Optional.of(BUILT_TIME_TEST_VALUE), testArtifact.getBuiltTime());
+		testArtifact.setBuiltTime("new builtTime value");
+		assertEquals(Optional.of("new builtTime value"), testArtifact.getBuiltTime());
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#getSuppliedBy}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Artifact#setReleaseTime}.
 	 */
-	public void testArtifactgetSuppliedBys() throws InvalidSPDXAnalysisException {
+	public void testArtifactsetReleaseTime() throws InvalidSPDXAnalysisException {
 		Artifact testArtifact = builderForArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBys())));
-//		testArtifact.getSuppliedBys().clear();
-//		testArtifact.getSuppliedBys().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testArtifact.getSuppliedBys())));
-		fail("Not yet implemented");
+		assertEquals(Optional.of(RELEASE_TIME_TEST_VALUE), testArtifact.getReleaseTime());
+		testArtifact.setReleaseTime("new releaseTime value");
+		assertEquals(Optional.of("new releaseTime value"), testArtifact.getReleaseTime());
 	}
 	
 	/**

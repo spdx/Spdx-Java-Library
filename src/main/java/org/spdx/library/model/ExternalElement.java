@@ -32,7 +32,7 @@ import org.spdx.library.model.v3.core.CreationInfo;
 import org.spdx.library.model.v3.core.Element;
 import org.spdx.library.model.v3.core.ExternalIdentifier;
 import org.spdx.library.model.v3.core.ExternalMap;
-import org.spdx.library.model.v3.core.ExternalReference;
+import org.spdx.library.model.v3.core.ExternalRef;
 import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.storage.IModelStore;
 
@@ -97,7 +97,7 @@ public class ExternalElement extends Element implements IndividualUriValue {
 	}
 	
 	@Override
-	public Collection<ExternalReference> getExternalReferences() {
+	public Collection<ExternalRef> getExternalRefs() {
 		throw new RuntimeException(new InvalidSPDXAnalysisException(getObjectUri() + " is external to this object store."));
 	}
 	@Override
@@ -149,7 +149,7 @@ public class ExternalElement extends Element implements IndividualUriValue {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
 		return new ArrayList<>();
 	}
 

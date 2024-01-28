@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -85,8 +85,8 @@ public class DictionaryEntry extends ModelObject  {
 	 */
 	protected DictionaryEntry(DictionaryEntryBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
-		setKey(builder.key);
 		setValue(builder.value);
+		setKey(builder.key);
 	}
 
 	/* (non-Javadoc)
@@ -99,6 +99,22 @@ public class DictionaryEntry extends ModelObject  {
 	
 	// Getters and Setters
 	
+
+		/**
+	 * @return the value
+	 */
+	public Optional<String> getValue() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_VALUE);
+	}
+	/**
+	 * @param value the value to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public DictionaryEntry setValue(@Nullable String value) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_VALUE, value);
+		return this;
+	}
 
 	/**
 	 * @return the key
@@ -119,22 +135,6 @@ public class DictionaryEntry extends ModelObject  {
 		setPropertyValue(SpdxConstants.CORE_PROP_KEY, key);
 		return this;
 	}
-
-		/**
-	 * @return the value
-	 */
-	public Optional<String> getValue() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_VALUE);
-	}
-	/**
-	 * @param value the value to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public DictionaryEntry setValue(@Nullable String value) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_VALUE, value);
-		return this;
-	}
 	
 	
 	@Override
@@ -146,8 +146,14 @@ public class DictionaryEntry extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> value = getValue();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting value for DictionaryEntry: "+e.getMessage());
+		}
 		try {
 			String key = getKey();
 			if (Objects.isNull(key) &&
@@ -156,12 +162,6 @@ public class DictionaryEntry extends ModelObject  {
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting key for DictionaryEntry: "+e.getMessage());
-		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> value = getValue();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting value for DictionaryEntry: "+e.getMessage());
 		}
 		return retval;
 	}
@@ -198,19 +198,9 @@ public class DictionaryEntry extends ModelObject  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
-		String key = null;
 		String value = null;
+		String key = null;
 		
-		
-		/**
-		 * Sets the initial value of key
-		 * @parameter key value to set
-		 * @return this for chaining
-		**/
-		public DictionaryEntryBuilder setKey(String key) {
-			this.key = key;
-			return this;
-		}
 		
 		/**
 		 * Sets the initial value of value
@@ -219,6 +209,16 @@ public class DictionaryEntry extends ModelObject  {
 		**/
 		public DictionaryEntryBuilder setValue(String value) {
 			this.value = value;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of key
+		 * @parameter key value to set
+		 * @return this for chaining
+		**/
+		public DictionaryEntryBuilder setKey(String key) {
+			this.key = key;
 			return this;
 		}
 	

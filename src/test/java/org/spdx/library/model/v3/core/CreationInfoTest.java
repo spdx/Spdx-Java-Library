@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,8 +42,10 @@ public class CreationInfoTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String DATA_LICENSE_TEST_VALUE = "test dataLicense";
+	static final String SPEC_VERSION_TEST_VALUE = "test specVersion";
 	static final String COMMENT_TEST_VALUE = "test comment";
+	static final String DATA_LICENSE_TEST_VALUE = "test dataLicense";
+	static final String CREATED_TEST_VALUE = "test created";
 	static final ProfileIdentifierType PROFILE_TEST_VALUE1 = ProfileIdentifierType.values()[0];
 	static final ProfileIdentifierType PROFILE_TEST_VALUE2 = ProfileIdentifierType.values()[1];
 	static final List<ProfileIdentifierType> PROFILE_TEST_LIST1 = Arrays.asList(new ProfileIdentifierType[] { PROFILE_TEST_VALUE1, PROFILE_TEST_VALUE2 });
@@ -62,14 +64,14 @@ public class CreationInfoTest extends TestCase {
 	public static CreationInfoBuilder builderForCreationInfoTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		CreationInfoBuilder retval = new CreationInfoBuilder(modelStore, objectUri, copyManager)
-				.setDataLicense(DATA_LICENSE_TEST_VALUE)
+				.setSpecVersion(SPEC_VERSION_TEST_VALUE)
 				.setComment(COMMENT_TEST_VALUE)
+				.setDataLicense(DATA_LICENSE_TEST_VALUE)
+				.setCreated(CREATED_TEST_VALUE)
 				.addProfile(PROFILE_TEST_VALUE1)
 				.addProfile(PROFILE_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.setCreated(new DateTime())
-				.setSpecVersion(new SemVer())
 				.addCreatedBy(Agent)
 				.addCreatedUsing(Tool)
 				***************/
@@ -120,35 +122,13 @@ public class CreationInfoTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.CreationInfo#setCreated}.
-	 */
-	public void testCreationInfosetCreated() throws InvalidSPDXAnalysisException {
-		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testCreationInfo.getCreated());
-//		testCreationInfo.setCreated(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testCreationInfo.getCreated());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.CreationInfo#setSpecVersion}.
 	 */
 	public void testCreationInfosetSpecVersion() throws InvalidSPDXAnalysisException {
 		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(TEST_VALUE, testCreationInfo.getSpecVersion());
-//		testCreationInfo.setSpecVersion(NEW_TEST_VALUE);
-//		assertEquals(NEW_TEST_VALUE, testCreationInfo.getSpecVersion());
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.CreationInfo#setDataLicense}.
-	 */
-	public void testCreationInfosetDataLicense() throws InvalidSPDXAnalysisException {
-		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(DATA_LICENSE_TEST_VALUE), testCreationInfo.getDataLicense());
-		testCreationInfo.setDataLicense("new dataLicense value");
-		assertEquals(Optional.of("new dataLicense value"), testCreationInfo.getDataLicense());
+		assertEquals(SPEC_VERSION_TEST_VALUE, testCreationInfo.getSpecVersion());
+		testCreationInfo.setSpecVersion("new specVersion value");
+		assertEquals("new specVersion value", testCreationInfo.getSpecVersion());
 	}
 	
 	/**
@@ -159,6 +139,26 @@ public class CreationInfoTest extends TestCase {
 		assertEquals(Optional.of(COMMENT_TEST_VALUE), testCreationInfo.getComment());
 		testCreationInfo.setComment("new comment value");
 		assertEquals(Optional.of("new comment value"), testCreationInfo.getComment());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.CreationInfo#setDataLicense}.
+	 */
+	public void testCreationInfosetDataLicense() throws InvalidSPDXAnalysisException {
+		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(DATA_LICENSE_TEST_VALUE, testCreationInfo.getDataLicense());
+		testCreationInfo.setDataLicense("new dataLicense value");
+		assertEquals("new dataLicense value", testCreationInfo.getDataLicense());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.CreationInfo#setCreated}.
+	 */
+	public void testCreationInfosetCreated() throws InvalidSPDXAnalysisException {
+		CreationInfo testCreationInfo = builderForCreationInfoTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(CREATED_TEST_VALUE, testCreationInfo.getCreated());
+		testCreationInfo.setCreated("new created value");
+		assertEquals("new created value", testCreationInfo.getCreated());
 	}
 	
 	/**

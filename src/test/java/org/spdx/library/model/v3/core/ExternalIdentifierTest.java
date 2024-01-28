@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -43,8 +43,8 @@ public class ExternalIdentifierTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final String COMMENT_TEST_VALUE = "test comment";
-	static final String IDENTIFIER_TEST_VALUE = "test identifier";
 	static final String ISSUING_AUTHORITY_TEST_VALUE = "test issuingAuthority";
+	static final String IDENTIFIER_TEST_VALUE = "test identifier";
 	static final ExternalIdentifierType EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE1 = ExternalIdentifierType.values()[0];
 	static final ExternalIdentifierType EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE2 = ExternalIdentifierType.values()[1];
 	static final String IDENTIFIER_LOCATOR_TEST_VALUE1 = "test 1 identifierLocator";
@@ -67,8 +67,8 @@ public class ExternalIdentifierTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		ExternalIdentifierBuilder retval = new ExternalIdentifierBuilder(modelStore, objectUri, copyManager)
 				.setComment(COMMENT_TEST_VALUE)
-				.setIdentifier(IDENTIFIER_TEST_VALUE)
 				.setIssuingAuthority(ISSUING_AUTHORITY_TEST_VALUE)
+				.setIdentifier(IDENTIFIER_TEST_VALUE)
 				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE1)
 				.addIdentifierLocator(IDENTIFIER_LOCATOR_TEST_VALUE2)
 				.setExternalIdentifierType(EXTERNAL_IDENTIFIER_TYPE_TEST_VALUE1)
@@ -142,16 +142,6 @@ public class ExternalIdentifierTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.ExternalIdentifier#setIdentifier}.
-	 */
-	public void testExternalIdentifiersetIdentifier() throws InvalidSPDXAnalysisException {
-		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(IDENTIFIER_TEST_VALUE, testExternalIdentifier.getIdentifier());
-		testExternalIdentifier.setIdentifier("new identifier value");
-		assertEquals("new identifier value", testExternalIdentifier.getIdentifier());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.ExternalIdentifier#setIssuingAuthority}.
 	 */
 	public void testExternalIdentifiersetIssuingAuthority() throws InvalidSPDXAnalysisException {
@@ -159,6 +149,16 @@ public class ExternalIdentifierTest extends TestCase {
 		assertEquals(Optional.of(ISSUING_AUTHORITY_TEST_VALUE), testExternalIdentifier.getIssuingAuthority());
 		testExternalIdentifier.setIssuingAuthority("new issuingAuthority value");
 		assertEquals(Optional.of("new issuingAuthority value"), testExternalIdentifier.getIssuingAuthority());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.ExternalIdentifier#setIdentifier}.
+	 */
+	public void testExternalIdentifiersetIdentifier() throws InvalidSPDXAnalysisException {
+		ExternalIdentifier testExternalIdentifier = builderForExternalIdentifierTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(IDENTIFIER_TEST_VALUE, testExternalIdentifier.getIdentifier());
+		testExternalIdentifier.setIdentifier("new identifier value");
+		assertEquals("new identifier value", testExternalIdentifier.getIdentifier());
 	}
 	
 	/**

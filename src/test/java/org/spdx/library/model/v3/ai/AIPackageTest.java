@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -28,6 +28,7 @@ import java.util.Optional;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.model.v3.ai.AIPackage.AIPackageBuilder;
+import org.spdx.library.model.v3.core.PresenceType;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -43,25 +44,20 @@ public class AIPackageTest extends TestCase {
 	ModelCopyManager copyManager;
 
 	static final String LIMITATION_TEST_VALUE = "test limitation";
-	static final String ENERGY_CONSUMPTION_TEST_VALUE = "test energyConsumption";
 	static final String INFORMATION_ABOUT_APPLICATION_TEST_VALUE = "test informationAboutApplication";
 	static final String INFORMATION_ABOUT_TRAINING_TEST_VALUE = "test informationAboutTraining";
-	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1 = PresenceType.values()[0];
-	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2 = PresenceType.values()[1];
+	static final String ENERGY_CONSUMPTION_TEST_VALUE = "test energyConsumption";
 	static final SafetyRiskAssessmentType SAFETY_RISK_ASSESSMENT_TEST_VALUE1 = SafetyRiskAssessmentType.values()[0];
 	static final SafetyRiskAssessmentType SAFETY_RISK_ASSESSMENT_TEST_VALUE2 = SafetyRiskAssessmentType.values()[1];
 	static final PresenceType AUTONOMY_TYPE_TEST_VALUE1 = PresenceType.values()[0];
 	static final PresenceType AUTONOMY_TYPE_TEST_VALUE2 = PresenceType.values()[1];
-	static final String TYPE_OF_MODEL_TEST_VALUE1 = "test 1 typeOfModel";
-	static final String TYPE_OF_MODEL_TEST_VALUE2 = "test 2 typeOfModel";
-	static final String TYPE_OF_MODEL_TEST_VALUE3 = "test 3 typeOfModel";
-	static final List<String> TYPE_OF_MODEL_TEST_LIST1 = Arrays.asList(new String[] { TYPE_OF_MODEL_TEST_VALUE1, TYPE_OF_MODEL_TEST_VALUE2 });
-	static final List<String> TYPE_OF_MODEL_TEST_LIST2 = Arrays.asList(new String[] { TYPE_OF_MODEL_TEST_VALUE3 });
-	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE1 = "test 1 modelDataPreprocessing";
-	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE2 = "test 2 modelDataPreprocessing";
-	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE3 = "test 3 modelDataPreprocessing";
-	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE1, MODEL_DATA_PREPROCESSING_TEST_VALUE2 });
-	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE3 });
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1 = PresenceType.values()[0];
+	static final PresenceType SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2 = PresenceType.values()[1];
+	static final String DOMAIN_TEST_VALUE1 = "test 1 domain";
+	static final String DOMAIN_TEST_VALUE2 = "test 2 domain";
+	static final String DOMAIN_TEST_VALUE3 = "test 3 domain";
+	static final List<String> DOMAIN_TEST_LIST1 = Arrays.asList(new String[] { DOMAIN_TEST_VALUE1, DOMAIN_TEST_VALUE2 });
+	static final List<String> DOMAIN_TEST_LIST2 = Arrays.asList(new String[] { DOMAIN_TEST_VALUE3 });
 	static final String STANDARD_COMPLIANCE_TEST_VALUE1 = "test 1 standardCompliance";
 	static final String STANDARD_COMPLIANCE_TEST_VALUE2 = "test 2 standardCompliance";
 	static final String STANDARD_COMPLIANCE_TEST_VALUE3 = "test 3 standardCompliance";
@@ -72,11 +68,16 @@ public class AIPackageTest extends TestCase {
 	static final String MODEL_EXPLAINABILITY_TEST_VALUE3 = "test 3 modelExplainability";
 	static final List<String> MODEL_EXPLAINABILITY_TEST_LIST1 = Arrays.asList(new String[] { MODEL_EXPLAINABILITY_TEST_VALUE1, MODEL_EXPLAINABILITY_TEST_VALUE2 });
 	static final List<String> MODEL_EXPLAINABILITY_TEST_LIST2 = Arrays.asList(new String[] { MODEL_EXPLAINABILITY_TEST_VALUE3 });
-	static final String DOMAIN_TEST_VALUE1 = "test 1 domain";
-	static final String DOMAIN_TEST_VALUE2 = "test 2 domain";
-	static final String DOMAIN_TEST_VALUE3 = "test 3 domain";
-	static final List<String> DOMAIN_TEST_LIST1 = Arrays.asList(new String[] { DOMAIN_TEST_VALUE1, DOMAIN_TEST_VALUE2 });
-	static final List<String> DOMAIN_TEST_LIST2 = Arrays.asList(new String[] { DOMAIN_TEST_VALUE3 });
+	static final String TYPE_OF_MODEL_TEST_VALUE1 = "test 1 typeOfModel";
+	static final String TYPE_OF_MODEL_TEST_VALUE2 = "test 2 typeOfModel";
+	static final String TYPE_OF_MODEL_TEST_VALUE3 = "test 3 typeOfModel";
+	static final List<String> TYPE_OF_MODEL_TEST_LIST1 = Arrays.asList(new String[] { TYPE_OF_MODEL_TEST_VALUE1, TYPE_OF_MODEL_TEST_VALUE2 });
+	static final List<String> TYPE_OF_MODEL_TEST_LIST2 = Arrays.asList(new String[] { TYPE_OF_MODEL_TEST_VALUE3 });
+	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE1 = "test 1 modelDataPreprocessing";
+	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE2 = "test 2 modelDataPreprocessing";
+	static final String MODEL_DATA_PREPROCESSING_TEST_VALUE3 = "test 3 modelDataPreprocessing";
+	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE1, MODEL_DATA_PREPROCESSING_TEST_VALUE2 });
+	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE3 });
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -92,27 +93,27 @@ public class AIPackageTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		AIPackageBuilder retval = new AIPackageBuilder(modelStore, objectUri, copyManager)
 				.setLimitation(LIMITATION_TEST_VALUE)
-				.setEnergyConsumption(ENERGY_CONSUMPTION_TEST_VALUE)
 				.setInformationAboutApplication(INFORMATION_ABOUT_APPLICATION_TEST_VALUE)
 				.setInformationAboutTraining(INFORMATION_ABOUT_TRAINING_TEST_VALUE)
-				.addTypeOfModel(TYPE_OF_MODEL_TEST_VALUE1)
-				.addTypeOfModel(TYPE_OF_MODEL_TEST_VALUE2)
-				.addModelDataPreprocessing(MODEL_DATA_PREPROCESSING_TEST_VALUE1)
-				.addModelDataPreprocessing(MODEL_DATA_PREPROCESSING_TEST_VALUE2)
+				.setEnergyConsumption(ENERGY_CONSUMPTION_TEST_VALUE)
+				.addDomain(DOMAIN_TEST_VALUE1)
+				.addDomain(DOMAIN_TEST_VALUE2)
 				.addStandardCompliance(STANDARD_COMPLIANCE_TEST_VALUE1)
 				.addStandardCompliance(STANDARD_COMPLIANCE_TEST_VALUE2)
 				.addModelExplainability(MODEL_EXPLAINABILITY_TEST_VALUE1)
 				.addModelExplainability(MODEL_EXPLAINABILITY_TEST_VALUE2)
-				.addDomain(DOMAIN_TEST_VALUE1)
-				.addDomain(DOMAIN_TEST_VALUE2)
-				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
+				.addTypeOfModel(TYPE_OF_MODEL_TEST_VALUE1)
+				.addTypeOfModel(TYPE_OF_MODEL_TEST_VALUE2)
+				.addModelDataPreprocessing(MODEL_DATA_PREPROCESSING_TEST_VALUE1)
+				.addModelDataPreprocessing(MODEL_DATA_PREPROCESSING_TEST_VALUE2)
 				.setSafetyRiskAssessment(SAFETY_RISK_ASSESSMENT_TEST_VALUE1)
 				.setAutonomyType(AUTONOMY_TYPE_TEST_VALUE1)
+				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
-				.addHyperparameter(DictionaryEntry)
-				.addMetricDecisionThreshold(DictionaryEntry)
 				.addMetric(DictionaryEntry)
+				.addMetricDecisionThreshold(DictionaryEntry)
+				.addHyperparameter(DictionaryEntry)
 				***************/
 				;
 		return retval;
@@ -161,16 +162,6 @@ public class AIPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setSensitivePersonalInformation}.
-	 */
-	public void testAIPackagesetSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
-		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1), testAIPackage.getSensitivePersonalInformation());
-		testAIPackage.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2);
-		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2), testAIPackage.getSensitivePersonalInformation());
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setSafetyRiskAssessment}.
 	 */
 	public void testAIPackagesetSafetyRiskAssessment() throws InvalidSPDXAnalysisException {
@@ -191,6 +182,16 @@ public class AIPackageTest extends TestCase {
 	}
 	
 	/**
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setSensitivePersonalInformation}.
+	 */
+	public void testAIPackagesetSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
+		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1), testAIPackage.getSensitivePersonalInformation());
+		testAIPackage.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2);
+		assertEquals(Optional.of(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE2), testAIPackage.getSensitivePersonalInformation());
+	}
+	
+	/**
 	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setLimitation}.
 	 */
 	public void testAIPackagesetLimitation() throws InvalidSPDXAnalysisException {
@@ -198,16 +199,6 @@ public class AIPackageTest extends TestCase {
 		assertEquals(Optional.of(LIMITATION_TEST_VALUE), testAIPackage.getLimitation());
 		testAIPackage.setLimitation("new limitation value");
 		assertEquals(Optional.of("new limitation value"), testAIPackage.getLimitation());
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setEnergyConsumption}.
-	 */
-	public void testAIPackagesetEnergyConsumption() throws InvalidSPDXAnalysisException {
-		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(ENERGY_CONSUMPTION_TEST_VALUE), testAIPackage.getEnergyConsumption());
-		testAIPackage.setEnergyConsumption("new energyConsumption value");
-		assertEquals(Optional.of("new energyConsumption value"), testAIPackage.getEnergyConsumption());
 	}
 	
 	/**
@@ -231,14 +222,24 @@ public class AIPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getHyperparameter}.
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#setEnergyConsumption}.
 	 */
-	public void testAIPackagegetHyperparameters() throws InvalidSPDXAnalysisException {
+	public void testAIPackagesetEnergyConsumption() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testAIPackage.getHyperparameters())));
-//		testAIPackage.getHyperparameters().clear();
-//		testAIPackage.getHyperparameters().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testAIPackage.getHyperparameters())));
+		assertEquals(Optional.of(ENERGY_CONSUMPTION_TEST_VALUE), testAIPackage.getEnergyConsumption());
+		testAIPackage.setEnergyConsumption("new energyConsumption value");
+		assertEquals(Optional.of("new energyConsumption value"), testAIPackage.getEnergyConsumption());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getMetric}.
+	 */
+	public void testAIPackagegetMetrics() throws InvalidSPDXAnalysisException {
+		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testAIPackage.getMetrics())));
+//		testAIPackage.getMetrics().clear();
+//		testAIPackage.getMetrics().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testAIPackage.getMetrics())));
 		fail("Not yet implemented");
 	}
 	
@@ -255,37 +256,26 @@ public class AIPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getMetric}.
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getHyperparameter}.
 	 */
-	public void testAIPackagegetMetrics() throws InvalidSPDXAnalysisException {
+	public void testAIPackagegetHyperparameters() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testAIPackage.getMetrics())));
-//		testAIPackage.getMetrics().clear();
-//		testAIPackage.getMetrics().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testAIPackage.getMetrics())));
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testAIPackage.getHyperparameters())));
+//		testAIPackage.getHyperparameters().clear();
+//		testAIPackage.getHyperparameters().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testAIPackage.getHyperparameters())));
 		fail("Not yet implemented");
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getTypeOfModels}.
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getDomains}.
 	 */
-	public void testAIPackagegetTypeOfModels() throws InvalidSPDXAnalysisException {
+	public void testAIPackagegetDomains() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertTrue(UnitTestHelper.isListsEqual(TYPE_OF_MODEL_TEST_LIST1, new ArrayList<>(testAIPackage.getTypeOfModels())));
-		testAIPackage.getTypeOfModels().clear();
-		testAIPackage.getTypeOfModels().addAll(TYPE_OF_MODEL_TEST_LIST2);
-		assertTrue(UnitTestHelper.isListsEqual(TYPE_OF_MODEL_TEST_LIST2, new ArrayList<>(testAIPackage.getTypeOfModels())));
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getModelDataPreprocessings}.
-	 */
-	public void testAIPackagegetModelDataPreprocessings() throws InvalidSPDXAnalysisException {
-		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertTrue(UnitTestHelper.isListsEqual(MODEL_DATA_PREPROCESSING_TEST_LIST1, new ArrayList<>(testAIPackage.getModelDataPreprocessings())));
-		testAIPackage.getModelDataPreprocessings().clear();
-		testAIPackage.getModelDataPreprocessings().addAll(MODEL_DATA_PREPROCESSING_TEST_LIST2);
-		assertTrue(UnitTestHelper.isListsEqual(MODEL_DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testAIPackage.getModelDataPreprocessings())));
+		assertTrue(UnitTestHelper.isListsEqual(DOMAIN_TEST_LIST1, new ArrayList<>(testAIPackage.getDomains())));
+		testAIPackage.getDomains().clear();
+		testAIPackage.getDomains().addAll(DOMAIN_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(DOMAIN_TEST_LIST2, new ArrayList<>(testAIPackage.getDomains())));
 	}
 	
 	/**
@@ -311,13 +301,24 @@ public class AIPackageTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getDomains}.
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getTypeOfModels}.
 	 */
-	public void testAIPackagegetDomains() throws InvalidSPDXAnalysisException {
+	public void testAIPackagegetTypeOfModels() throws InvalidSPDXAnalysisException {
 		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertTrue(UnitTestHelper.isListsEqual(DOMAIN_TEST_LIST1, new ArrayList<>(testAIPackage.getDomains())));
-		testAIPackage.getDomains().clear();
-		testAIPackage.getDomains().addAll(DOMAIN_TEST_LIST2);
-		assertTrue(UnitTestHelper.isListsEqual(DOMAIN_TEST_LIST2, new ArrayList<>(testAIPackage.getDomains())));
+		assertTrue(UnitTestHelper.isListsEqual(TYPE_OF_MODEL_TEST_LIST1, new ArrayList<>(testAIPackage.getTypeOfModels())));
+		testAIPackage.getTypeOfModels().clear();
+		testAIPackage.getTypeOfModels().addAll(TYPE_OF_MODEL_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(TYPE_OF_MODEL_TEST_LIST2, new ArrayList<>(testAIPackage.getTypeOfModels())));
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.ai.AIPackage#getModelDataPreprocessings}.
+	 */
+	public void testAIPackagegetModelDataPreprocessings() throws InvalidSPDXAnalysisException {
+		AIPackage testAIPackage = builderForAIPackageTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertTrue(UnitTestHelper.isListsEqual(MODEL_DATA_PREPROCESSING_TEST_LIST1, new ArrayList<>(testAIPackage.getModelDataPreprocessings())));
+		testAIPackage.getModelDataPreprocessings().clear();
+		testAIPackage.getModelDataPreprocessings().addAll(MODEL_DATA_PREPROCESSING_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(MODEL_DATA_PREPROCESSING_TEST_LIST2, new ArrayList<>(testAIPackage.getModelDataPreprocessings())));
 	}
 }

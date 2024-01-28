@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.spdx.library.model.v3.ai.PresenceType;
 import org.spdx.library.model.v3.ai.SafetyRiskAssessmentType;
 import org.spdx.library.model.v3.core.AnnotationType;
 import org.spdx.library.model.v3.core.ExternalIdentifierType;
-import org.spdx.library.model.v3.core.ExternalReferenceType;
+import org.spdx.library.model.v3.core.ExternalRefType;
 import org.spdx.library.model.v3.core.HashAlgorithm;
 import org.spdx.library.model.v3.core.LifecycleScopeType;
+import org.spdx.library.model.v3.core.PresenceType;
 import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.core.RelationshipCompleteness;
 import org.spdx.library.model.v3.core.RelationshipType;
@@ -79,11 +79,11 @@ public class SpdxEnumFactory {
 			map.put(enumVal.getIndividualURI(), enumVal);
 		}
 		
-		for (ExploitCatalogType enumVal:ExploitCatalogType.values()) {
+		for (ExternalRefType enumVal:ExternalRefType.values()) {
 			map.put(enumVal.getIndividualURI(), enumVal);
 		}
 		
-		for (PresenceType enumVal:PresenceType.values()) {
+		for (ExploitCatalogType enumVal:ExploitCatalogType.values()) {
 			map.put(enumVal.getIndividualURI(), enumVal);
 		}
 		
@@ -104,6 +104,10 @@ public class SpdxEnumFactory {
 		}
 		
 		for (SoftwareDependencyLinkType enumVal:SoftwareDependencyLinkType.values()) {
+			map.put(enumVal.getIndividualURI(), enumVal);
+		}
+		
+		for (PresenceType enumVal:PresenceType.values()) {
 			map.put(enumVal.getIndividualURI(), enumVal);
 		}
 		
@@ -132,10 +136,6 @@ public class SpdxEnumFactory {
 		}
 		
 		for (SsvcDecisionType enumVal:SsvcDecisionType.values()) {
-			map.put(enumVal.getIndividualURI(), enumVal);
-		}
-		
-		for (ExternalReferenceType enumVal:ExternalReferenceType.values()) {
 			map.put(enumVal.getIndividualURI(), enumVal);
 		}
 		uriToEnum = Collections.unmodifiableMap(map);

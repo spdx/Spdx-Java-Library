@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -51,9 +51,10 @@ import org.spdx.library.SpdxConstants;
  */
 public class Element extends ModelObject  {
 
+	Collection<ExternalRef> externalRefs;
+	Collection<Extension> extensions;
 	Collection<ExternalIdentifier> externalIdentifiers;
 	Collection<IntegrityMethod> verifiedUsings;
-	Collection<ExternalReference> externalReferences;
 	
 	/**
 	 * Create the Element with default model store and generated anonymous ID
@@ -82,9 +83,10 @@ public class Element extends ModelObject  {
 	public Element(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager,
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, objectUri, copyManager, create);
+		externalRefs = (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_REF, ExternalRef.class);
+		extensions = (Collection<Extension>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTENSION, Extension.class);
 		externalIdentifiers = (Collection<ExternalIdentifier>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_IDENTIFIER, ExternalIdentifier.class);
 		verifiedUsings = (Collection<IntegrityMethod>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_VERIFIED_USING, IntegrityMethod.class);
-		externalReferences = (Collection<ExternalReference>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_REFERENCE, ExternalReference.class);
 	}
 
 	/**
@@ -95,17 +97,19 @@ public class Element extends ModelObject  {
 	 @SuppressWarnings("unchecked")
 	protected Element(ElementBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
+		externalRefs = (Collection<ExternalRef>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_REF, ExternalRef.class);
+		extensions = (Collection<Extension>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTENSION, Extension.class);
 		externalIdentifiers = (Collection<ExternalIdentifier>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_IDENTIFIER, ExternalIdentifier.class);
 		verifiedUsings = (Collection<IntegrityMethod>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_VERIFIED_USING, IntegrityMethod.class);
-		externalReferences = (Collection<ExternalReference>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_EXTERNAL_REFERENCE, ExternalReference.class);
+		getExternalRefs().addAll(builder.externalRefs);
+		getExtensions().addAll(builder.extensions);
 		getExternalIdentifiers().addAll(builder.externalIdentifiers);
 		getVerifiedUsings().addAll(builder.verifiedUsings);
-		getExternalReferences().addAll(builder.externalReferences);
 		setCreationInfo(builder.creationInfo);
+		setSummary(builder.summary);
+		setDescription(builder.description);
 		setComment(builder.comment);
 		setName(builder.name);
-		setDescription(builder.description);
-		setSummary(builder.summary);
 	}
 
 	/* (non-Javadoc)
@@ -117,21 +121,25 @@ public class Element extends ModelObject  {
 	}
 	
 	// Getters and Setters
+	public Collection<ExternalRef> getExternalRefs() {
+		return externalRefs;
+	}
+	public Collection<Extension> getExtensions() {
+		return extensions;
+	}
 	public Collection<ExternalIdentifier> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 	public Collection<IntegrityMethod> getVerifiedUsings() {
 		return verifiedUsings;
 	}
-	public Collection<ExternalReference> getExternalReferences() {
-		return externalReferences;
-	}
 	
 
 	/**
 	 * @return the creationInfo
 	 */
-	 public @Nullable CreationInfo getCreationInfo() throws InvalidSPDXAnalysisException {
+	 @SuppressWarnings("unchecked")
+	public @Nullable CreationInfo getCreationInfo() throws InvalidSPDXAnalysisException {
 		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.CORE_PROP_CREATION_INFO);
 		if (retval.isPresent()) {
 			if (!(retval.get() instanceof CreationInfo)) {
@@ -153,6 +161,38 @@ public class Element extends ModelObject  {
 			throw new InvalidSPDXAnalysisException("creationInfo is a required property");
 		}
 		setPropertyValue(SpdxConstants.CORE_PROP_CREATION_INFO, creationInfo);
+		return this;
+	}
+
+		/**
+	 * @return the summary
+	 */
+	public Optional<String> getSummary() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_SUMMARY);
+	}
+	/**
+	 * @param summary the summary to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Element setSummary(@Nullable String summary) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_SUMMARY, summary);
+		return this;
+	}
+
+		/**
+	 * @return the description
+	 */
+	public Optional<String> getDescription() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_DESCRIPTION);
+	}
+	/**
+	 * @param description the description to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Element setDescription(@Nullable String description) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_DESCRIPTION, description);
 		return this;
 	}
 
@@ -187,38 +227,6 @@ public class Element extends ModelObject  {
 		setPropertyValue(SpdxConstants.CORE_PROP_NAME, name);
 		return this;
 	}
-
-		/**
-	 * @return the description
-	 */
-	public Optional<String> getDescription() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_DESCRIPTION);
-	}
-	/**
-	 * @param description the description to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Element setDescription(@Nullable String description) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_DESCRIPTION, description);
-		return this;
-	}
-
-		/**
-	 * @return the summary
-	 */
-	public Optional<String> getSummary() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_SUMMARY);
-	}
-	/**
-	 * @param summary the summary to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Element setSummary(@Nullable String summary) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_SUMMARY, summary);
-		return this;
-	}
 	
 	
 	@Override
@@ -230,18 +238,30 @@ public class Element extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
 		CreationInfo creationInfo;
 		try {
 			creationInfo = getCreationInfo();
 			if (Objects.nonNull(creationInfo)) {
-				retval.addAll(creationInfo.verify(verifiedIds, specVersion, profiles));
+				retval.addAll(creationInfo.verify(verifiedIds, specVersionForVerify, profiles));
 			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 					retval.add("Missing creationInfo in Element");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting creationInfo for Element: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> summary = getSummary();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting summary for Element: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> description = getDescription();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting description for Element: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
@@ -255,26 +275,17 @@ public class Element extends ModelObject  {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting name for Element: "+e.getMessage());
 		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> description = getDescription();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting description for Element: "+e.getMessage());
+		for (ExternalRef externalRef:externalRefs) {
+			retval.addAll(externalRef.verify(verifiedIds, specVersionForVerify, profiles));
 		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> summary = getSummary();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting summary for Element: "+e.getMessage());
+		for (Extension extension:extensions) {
+			retval.addAll(extension.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		for (ExternalIdentifier externalIdentifier:externalIdentifiers) {
-			retval.addAll(externalIdentifier.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(externalIdentifier.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		for (IntegrityMethod verifiedUsing:verifiedUsings) {
-			retval.addAll(verifiedUsing.verify(verifiedIds, specVersion, profiles));
-		}
-		for (ExternalReference externalReference:externalReferences) {
-			retval.addAll(externalReference.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(verifiedUsing.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -311,15 +322,64 @@ public class Element extends ModelObject  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
+		Collection<ExternalRef> externalRefs = new ArrayList<>();
+		Collection<Extension> extensions = new ArrayList<>();
 		Collection<ExternalIdentifier> externalIdentifiers = new ArrayList<>();
 		Collection<IntegrityMethod> verifiedUsings = new ArrayList<>();
-		Collection<ExternalReference> externalReferences = new ArrayList<>();
 		CreationInfo creationInfo = null;
+		String summary = null;
+		String description = null;
 		String comment = null;
 		String name = null;
-		String description = null;
-		String summary = null;
 		
+		
+		/**
+		 * Adds a externalRef to the initial collection
+		 * @parameter externalRef externalRef to add
+		 * @return this for chaining
+		**/
+		public ElementBuilder addExternalRef(ExternalRef externalRef) {
+			if (Objects.nonNull(externalRef)) {
+				externalRefs.add(externalRef);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds all elements from a collection to the initial externalRef collection
+		 * @parameter externalRefCollection collection to initialize the externalRef
+		 * @return this for chaining
+		**/
+		public ElementBuilder addAllExternalRef(Collection<ExternalRef> externalRefCollection) {
+			if (Objects.nonNull(externalRefCollection)) {
+				externalRefs.addAll(externalRefCollection);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds a extension to the initial collection
+		 * @parameter extension extension to add
+		 * @return this for chaining
+		**/
+		public ElementBuilder addExtension(Extension extension) {
+			if (Objects.nonNull(extension)) {
+				extensions.add(extension);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds all elements from a collection to the initial extension collection
+		 * @parameter extensionCollection collection to initialize the extension
+		 * @return this for chaining
+		**/
+		public ElementBuilder addAllExtension(Collection<Extension> extensionCollection) {
+			if (Objects.nonNull(extensionCollection)) {
+				extensions.addAll(extensionCollection);
+			}
+			return this;
+		}
 		
 		/**
 		 * Adds a externalIdentifier to the initial collection
@@ -370,36 +430,32 @@ public class Element extends ModelObject  {
 		}
 		
 		/**
-		 * Adds a externalReference to the initial collection
-		 * @parameter externalReference externalReference to add
-		 * @return this for chaining
-		**/
-		public ElementBuilder addExternalReference(ExternalReference externalReference) {
-			if (Objects.nonNull(externalReference)) {
-				externalReferences.add(externalReference);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds all elements from a collection to the initial externalReference collection
-		 * @parameter externalReferenceCollection collection to initialize the externalReference
-		 * @return this for chaining
-		**/
-		public ElementBuilder addAllExternalReference(Collection<ExternalReference> externalReferenceCollection) {
-			if (Objects.nonNull(externalReferenceCollection)) {
-				externalReferences.addAll(externalReferenceCollection);
-			}
-			return this;
-		}
-		
-		/**
 		 * Sets the initial value of creationInfo
 		 * @parameter creationInfo value to set
 		 * @return this for chaining
 		**/
 		public ElementBuilder setCreationInfo(CreationInfo creationInfo) {
 			this.creationInfo = creationInfo;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of summary
+		 * @parameter summary value to set
+		 * @return this for chaining
+		**/
+		public ElementBuilder setSummary(String summary) {
+			this.summary = summary;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of description
+		 * @parameter description value to set
+		 * @return this for chaining
+		**/
+		public ElementBuilder setDescription(String description) {
+			this.description = description;
 			return this;
 		}
 		
@@ -420,26 +476,6 @@ public class Element extends ModelObject  {
 		**/
 		public ElementBuilder setName(String name) {
 			this.name = name;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of description
-		 * @parameter description value to set
-		 * @return this for chaining
-		**/
-		public ElementBuilder setDescription(String description) {
-			this.description = description;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of summary
-		 * @parameter summary value to set
-		 * @return this for chaining
-		**/
-		public ElementBuilder setSummary(String summary) {
-			this.summary = summary;
 			return this;
 		}
 	

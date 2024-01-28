@@ -9,8 +9,8 @@ import java.util.Map;
 import org.spdx.library.DefaultModelStore;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.core.Element;
-import org.spdx.library.model.core.ExternalMap;
+import org.spdx.library.model.v3.core.Element;
+import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.storage.PropertyDescriptor;
 
 import junit.framework.TestCase;

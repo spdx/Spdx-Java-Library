@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -42,11 +42,15 @@ public class SoftwareArtifactTest extends TestCase {
 	IModelStore modelStore;
 	ModelCopyManager copyManager;
 
-	static final String ATTRIBUTION_TEXT_TEST_VALUE = "test attributionText";
 	static final String CONTENT_IDENTIFIER_TEST_VALUE = "test contentIdentifier";
 	static final String COPYRIGHT_TEXT_TEST_VALUE = "test copyrightText";
 	static final SoftwarePurpose PRIMARY_PURPOSE_TEST_VALUE1 = SoftwarePurpose.values()[0];
 	static final SoftwarePurpose PRIMARY_PURPOSE_TEST_VALUE2 = SoftwarePurpose.values()[1];
+	static final String ATTRIBUTION_TEXT_TEST_VALUE1 = "test 1 attributionText";
+	static final String ATTRIBUTION_TEXT_TEST_VALUE2 = "test 2 attributionText";
+	static final String ATTRIBUTION_TEXT_TEST_VALUE3 = "test 3 attributionText";
+	static final List<String> ATTRIBUTION_TEXT_TEST_LIST1 = Arrays.asList(new String[] { ATTRIBUTION_TEXT_TEST_VALUE1, ATTRIBUTION_TEXT_TEST_VALUE2 });
+	static final List<String> ATTRIBUTION_TEXT_TEST_LIST2 = Arrays.asList(new String[] { ATTRIBUTION_TEXT_TEST_VALUE3 });
 	static final SoftwarePurpose ADDITIONAL_PURPOSE_TEST_VALUE1 = SoftwarePurpose.values()[0];
 	static final SoftwarePurpose ADDITIONAL_PURPOSE_TEST_VALUE2 = SoftwarePurpose.values()[1];
 	static final List<SoftwarePurpose> ADDITIONAL_PURPOSE_TEST_LIST1 = Arrays.asList(new SoftwarePurpose[] { ADDITIONAL_PURPOSE_TEST_VALUE1, ADDITIONAL_PURPOSE_TEST_VALUE2 });
@@ -65,16 +69,15 @@ public class SoftwareArtifactTest extends TestCase {
 	public static SoftwareArtifactBuilder builderForSoftwareArtifactTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		SoftwareArtifactBuilder retval = new SoftwareArtifactBuilder(modelStore, objectUri, copyManager)
-				.setAttributionText(ATTRIBUTION_TEXT_TEST_VALUE)
 				.setContentIdentifier(CONTENT_IDENTIFIER_TEST_VALUE)
 				.setCopyrightText(COPYRIGHT_TEXT_TEST_VALUE)
+				.addAttributionText(ATTRIBUTION_TEXT_TEST_VALUE1)
+				.addAttributionText(ATTRIBUTION_TEXT_TEST_VALUE2)
 				.setPrimaryPurpose(PRIMARY_PURPOSE_TEST_VALUE1)
 				.addAdditionalPurpose(ADDITIONAL_PURPOSE_TEST_VALUE1)
 				.addAdditionalPurpose(ADDITIONAL_PURPOSE_TEST_VALUE2)
 				//TODO: Add in test values
 				/********************
-				.setConcludedLicense(new AnyLicenseInfo())
-				.setDeclaredLicense(new AnyLicenseInfo())
 				***************/
 				;
 		return retval;
@@ -123,28 +126,6 @@ public class SoftwareArtifactTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SoftwareArtifact#setConcludedLicense}.
-	 */
-	public void testSoftwareArtifactsetConcludedLicense() throws InvalidSPDXAnalysisException {
-		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testSoftwareArtifact.getConcludedLicense());
-//		testSoftwareArtifact.setConcludedLicense(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testSoftwareArtifact.getConcludedLicense());
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SoftwareArtifact#setDeclaredLicense}.
-	 */
-	public void testSoftwareArtifactsetDeclaredLicense() throws InvalidSPDXAnalysisException {
-		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertEquals(Optional.of(TEST_VALUE), testSoftwareArtifact.getDeclaredLicense());
-//		testSoftwareArtifact.setDeclaredLicense(NEW_TEST_VALUE);
-//		assertEquals(Optional.of(NEW_TEST_VALUE), testSoftwareArtifact.getDeclaredLicense());
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.software.SoftwareArtifact#setPrimaryPurpose}.
 	 */
 	public void testSoftwareArtifactsetPrimaryPurpose() throws InvalidSPDXAnalysisException {
@@ -152,16 +133,6 @@ public class SoftwareArtifactTest extends TestCase {
 		assertEquals(Optional.of(PRIMARY_PURPOSE_TEST_VALUE1), testSoftwareArtifact.getPrimaryPurpose());
 		testSoftwareArtifact.setPrimaryPurpose(PRIMARY_PURPOSE_TEST_VALUE2);
 		assertEquals(Optional.of(PRIMARY_PURPOSE_TEST_VALUE2), testSoftwareArtifact.getPrimaryPurpose());
-	}
-	
-	/**
-	 * Test method for {@link org.spdx.library.model.v3.software.SoftwareArtifact#setAttributionText}.
-	 */
-	public void testSoftwareArtifactsetAttributionText() throws InvalidSPDXAnalysisException {
-		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-		assertEquals(Optional.of(ATTRIBUTION_TEXT_TEST_VALUE), testSoftwareArtifact.getAttributionText());
-		testSoftwareArtifact.setAttributionText("new attributionText value");
-		assertEquals(Optional.of("new attributionText value"), testSoftwareArtifact.getAttributionText());
 	}
 	
 	/**
@@ -182,6 +153,17 @@ public class SoftwareArtifactTest extends TestCase {
 		assertEquals(Optional.of(COPYRIGHT_TEXT_TEST_VALUE), testSoftwareArtifact.getCopyrightText());
 		testSoftwareArtifact.setCopyrightText("new copyrightText value");
 		assertEquals(Optional.of("new copyrightText value"), testSoftwareArtifact.getCopyrightText());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.software.SoftwareArtifact#getAttributionTexts}.
+	 */
+	public void testSoftwareArtifactgetAttributionTexts() throws InvalidSPDXAnalysisException {
+		SoftwareArtifact testSoftwareArtifact = builderForSoftwareArtifactTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+		assertTrue(UnitTestHelper.isListsEqual(ATTRIBUTION_TEXT_TEST_LIST1, new ArrayList<>(testSoftwareArtifact.getAttributionTexts())));
+		testSoftwareArtifact.getAttributionTexts().clear();
+		testSoftwareArtifact.getAttributionTexts().addAll(ATTRIBUTION_TEXT_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(ATTRIBUTION_TEXT_TEST_LIST2, new ArrayList<>(testSoftwareArtifact.getAttributionTexts())));
 	}
 	
 	/**

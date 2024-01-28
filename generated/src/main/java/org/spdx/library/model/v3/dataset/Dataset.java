@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -38,8 +38,9 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.core.DictionaryEntry;
+import org.spdx.library.model.v3.core.PresenceType;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
 import org.spdx.library.model.v3.software.SpdxPackage;
 
 /**
@@ -57,8 +58,8 @@ public class Dataset extends SpdxPackage  {
 
 	Collection<DictionaryEntry> sensors;
 	Collection<String> anonymizationMethodUseds;
-	Collection<String> dataPreprocessings;
 	Collection<String> knownBiass;
+	Collection<String> dataPreprocessings;
 	Collection<DatasetType> datasetTypes;
 	
 	/**
@@ -91,8 +92,8 @@ public class Dataset extends SpdxPackage  {
 		sensors = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_SENSOR, DictionaryEntry.class);
 		datasetTypes = (Collection<DatasetType>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATASET_TYPE, DatasetType.class);
 		anonymizationMethodUseds = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_ANONYMIZATION_METHOD_USED, String.class);
-		dataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATA_PREPROCESSING, String.class);
 		knownBiass = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_KNOWN_BIAS, String.class);
+		dataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATA_PREPROCESSING, String.class);
 	}
 
 	/**
@@ -106,21 +107,21 @@ public class Dataset extends SpdxPackage  {
 		sensors = (Collection<DictionaryEntry>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_SENSOR, DictionaryEntry.class);
 		datasetTypes = (Collection<DatasetType>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATASET_TYPE, DatasetType.class);
 		anonymizationMethodUseds = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_ANONYMIZATION_METHOD_USED, String.class);
-		dataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATA_PREPROCESSING, String.class);
 		knownBiass = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_KNOWN_BIAS, String.class);
+		dataPreprocessings = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.DATASET_PROP_DATA_PREPROCESSING, String.class);
 		getSensors().addAll(builder.sensors);
 		getDatasetTypes().addAll(builder.datasetTypes);
 		getAnonymizationMethodUseds().addAll(builder.anonymizationMethodUseds);
-		getDataPreprocessings().addAll(builder.dataPreprocessings);
 		getKnownBiass().addAll(builder.knownBiass);
+		getDataPreprocessings().addAll(builder.dataPreprocessings);
 		setSensitivePersonalInformation(builder.sensitivePersonalInformation);
-		setConfidentialityLevel(builder.confidentialityLevel);
 		setDatasetAvailability(builder.datasetAvailability);
+		setConfidentialityLevel(builder.confidentialityLevel);
 		setDatasetSize(builder.datasetSize);
+		setDatasetUpdateMechanism(builder.datasetUpdateMechanism);
+		setDataCollectionProcess(builder.dataCollectionProcess);
 		setIntendedUse(builder.intendedUse);
 		setDatasetNoise(builder.datasetNoise);
-		setDataCollectionProcess(builder.dataCollectionProcess);
-		setDatasetUpdateMechanism(builder.datasetUpdateMechanism);
 	}
 
 	/* (non-Javadoc)
@@ -141,20 +142,20 @@ public class Dataset extends SpdxPackage  {
 	public Collection<String> getAnonymizationMethodUseds() {
 		return anonymizationMethodUseds;
 	}
-	public Collection<String> getDataPreprocessings() {
-		return dataPreprocessings;
-	}
 	public Collection<String> getKnownBiass() {
 		return knownBiass;
 	}
+	public Collection<String> getDataPreprocessings() {
+		return dataPreprocessings;
+	}
 	
-
-		/**
+	
+	/**
 	 * @return the sensitivePersonalInformation
 	 */
 	 @SuppressWarnings("unchecked")
 	public Optional<PresenceType> getSensitivePersonalInformation() throws InvalidSPDXAnalysisException {
-		Optional<Object> retval = getObjectPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION);
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION);
 		if (retval.isPresent()) {
 			if (!(retval.get() instanceof PresenceType)) {
 				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
@@ -164,7 +165,6 @@ public class Dataset extends SpdxPackage  {
 			return Optional.empty();
 		}
 	}
-	
 	/**
 	 * @param sensitivePersonalInformation the sensitivePersonalInformation to set
 	 * @return this to chain setters
@@ -172,31 +172,6 @@ public class Dataset extends SpdxPackage  {
 	 */
 	public Dataset setSensitivePersonalInformation(@Nullable PresenceType sensitivePersonalInformation) throws InvalidSPDXAnalysisException {
 		setPropertyValue(SpdxConstants.DATASET_PROP_SENSITIVE_PERSONAL_INFORMATION, sensitivePersonalInformation);
-		return this;
-	}
-	
-	/**
-	 * @return the confidentialityLevel
-	 */
-	 @SuppressWarnings("unchecked")
-	public Optional<ConfidentialityLevelType> getConfidentialityLevel() throws InvalidSPDXAnalysisException {
-		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.DATASET_PROP_CONFIDENTIALITY_LEVEL);
-		if (retval.isPresent()) {
-			if (!(retval.get() instanceof ConfidentialityLevelType)) {
-				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
-			}
-			return (Optional<ConfidentialityLevelType>)(Optional<?>)(retval);
-		} else {
-			return Optional.empty();
-		}
-	}
-	/**
-	 * @param confidentialityLevel the confidentialityLevel to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Dataset setConfidentialityLevel(@Nullable ConfidentialityLevelType confidentialityLevel) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.DATASET_PROP_CONFIDENTIALITY_LEVEL, confidentialityLevel);
 		return this;
 	}
 	
@@ -226,6 +201,31 @@ public class Dataset extends SpdxPackage  {
 	}
 	
 	/**
+	 * @return the confidentialityLevel
+	 */
+	 @SuppressWarnings("unchecked")
+	public Optional<ConfidentialityLevelType> getConfidentialityLevel() throws InvalidSPDXAnalysisException {
+		Optional<Enum<?>> retval = getEnumPropertyValue(SpdxConstants.DATASET_PROP_CONFIDENTIALITY_LEVEL);
+		if (retval.isPresent()) {
+			if (!(retval.get() instanceof ConfidentialityLevelType)) {
+				throw new InvalidSPDXAnalysisException("Incorrect type stored for ");
+			}
+			return (Optional<ConfidentialityLevelType>)(Optional<?>)(retval);
+		} else {
+			return Optional.empty();
+		}
+	}
+	/**
+	 * @param confidentialityLevel the confidentialityLevel to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Dataset setConfidentialityLevel(@Nullable ConfidentialityLevelType confidentialityLevel) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.DATASET_PROP_CONFIDENTIALITY_LEVEL, confidentialityLevel);
+		return this;
+	}
+	
+	/**
 	 * @return the datasetSize
 	 */
 	public Optional<Integer> getDatasetSize() throws InvalidSPDXAnalysisException {
@@ -242,6 +242,38 @@ public class Dataset extends SpdxPackage  {
 			throw new InvalidSPDXAnalysisException("datasetSize value " + datasetSize + " is less than the minimum 0 in Dataset");
 		}
 		setPropertyValue(SpdxConstants.DATASET_PROP_DATASET_SIZE, datasetSize);
+		return this;
+	}
+
+		/**
+	 * @return the datasetUpdateMechanism
+	 */
+	public Optional<String> getDatasetUpdateMechanism() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.DATASET_PROP_DATASET_UPDATE_MECHANISM);
+	}
+	/**
+	 * @param datasetUpdateMechanism the datasetUpdateMechanism to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Dataset setDatasetUpdateMechanism(@Nullable String datasetUpdateMechanism) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.DATASET_PROP_DATASET_UPDATE_MECHANISM, datasetUpdateMechanism);
+		return this;
+	}
+
+		/**
+	 * @return the dataCollectionProcess
+	 */
+	public Optional<String> getDataCollectionProcess() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.DATASET_PROP_DATA_COLLECTION_PROCESS);
+	}
+	/**
+	 * @param dataCollectionProcess the dataCollectionProcess to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public Dataset setDataCollectionProcess(@Nullable String dataCollectionProcess) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.DATASET_PROP_DATA_COLLECTION_PROCESS, dataCollectionProcess);
 		return this;
 	}
 
@@ -276,38 +308,6 @@ public class Dataset extends SpdxPackage  {
 		setPropertyValue(SpdxConstants.DATASET_PROP_DATASET_NOISE, datasetNoise);
 		return this;
 	}
-
-		/**
-	 * @return the dataCollectionProcess
-	 */
-	public Optional<String> getDataCollectionProcess() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.DATASET_PROP_DATA_COLLECTION_PROCESS);
-	}
-	/**
-	 * @param dataCollectionProcess the dataCollectionProcess to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Dataset setDataCollectionProcess(@Nullable String dataCollectionProcess) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.DATASET_PROP_DATA_COLLECTION_PROCESS, dataCollectionProcess);
-		return this;
-	}
-
-		/**
-	 * @return the datasetUpdateMechanism
-	 */
-	public Optional<String> getDatasetUpdateMechanism() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.DATASET_PROP_DATASET_UPDATE_MECHANISM);
-	}
-	/**
-	 * @param datasetUpdateMechanism the datasetUpdateMechanism to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public Dataset setDatasetUpdateMechanism(@Nullable String datasetUpdateMechanism) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.DATASET_PROP_DATASET_UPDATE_MECHANISM, datasetUpdateMechanism);
-		return this;
-	}
 	
 	
 	@Override
@@ -319,23 +319,14 @@ public class Dataset extends SpdxPackage  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
-		Optional<PresenceType> sensitivePersonalInformation;
-		try {
-			sensitivePersonalInformation = getSensitivePersonalInformation();
-			if (sensitivePersonalInformation.isPresent()) {
-				retval.addAll(sensitivePersonalInformation.get().verify(verifiedIds, specVersion, profiles));
-			}
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting sensitivePersonalInformation for Dataset: "+e.getMessage());
-		}
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		try {
 			@SuppressWarnings("unused")
-			Optional<ConfidentialityLevelType> confidentialityLevel = getConfidentialityLevel();
+			Optional<PresenceType> sensitivePersonalInformation = getSensitivePersonalInformation();
 		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting confidentialityLevel for Dataset: "+e.getMessage());
+			retval.add("Error getting sensitivePersonalInformation for Dataset: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
@@ -344,12 +335,30 @@ public class Dataset extends SpdxPackage  {
 			retval.add("Error getting datasetAvailability for Dataset: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
+			Optional<ConfidentialityLevelType> confidentialityLevel = getConfidentialityLevel();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting confidentialityLevel for Dataset: "+e.getMessage());
+		}
+		try {
 			Optional<Integer> datasetSize = getDatasetSize();
 			if (datasetSize.isPresent() && datasetSize.get() < 0) {
 				retval.add("datasetSize value " + datasetSize.get() + " is less than the minimum 0 in Dataset");
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetSize for Dataset: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> datasetUpdateMechanism = getDatasetUpdateMechanism();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting datasetUpdateMechanism for Dataset: "+e.getMessage());
+		}
+		try {
+			@SuppressWarnings("unused")
+			Optional<String> dataCollectionProcess = getDataCollectionProcess();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting dataCollectionProcess for Dataset: "+e.getMessage());
 		}
 		try {
 			@SuppressWarnings("unused")
@@ -363,20 +372,8 @@ public class Dataset extends SpdxPackage  {
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting datasetNoise for Dataset: "+e.getMessage());
 		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> dataCollectionProcess = getDataCollectionProcess();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting dataCollectionProcess for Dataset: "+e.getMessage());
-		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> datasetUpdateMechanism = getDatasetUpdateMechanism();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting datasetUpdateMechanism for Dataset: "+e.getMessage());
-		}
 		for (DictionaryEntry sensor:sensors) {
-			retval.addAll(sensor.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(sensor.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -416,16 +413,16 @@ public class Dataset extends SpdxPackage  {
 		Collection<DictionaryEntry> sensors = new ArrayList<>();
 		Collection<DatasetType> datasetTypes = new ArrayList<>();
 		Collection<String> anonymizationMethodUseds = new ArrayList<>();
-		Collection<String> dataPreprocessings = new ArrayList<>();
 		Collection<String> knownBiass = new ArrayList<>();
+		Collection<String> dataPreprocessings = new ArrayList<>();
 		PresenceType sensitivePersonalInformation = null;
-		ConfidentialityLevelType confidentialityLevel = null;
 		DatasetAvailabilityType datasetAvailability = null;
+		ConfidentialityLevelType confidentialityLevel = null;
 		Integer datasetSize = null;
+		String datasetUpdateMechanism = null;
+		String dataCollectionProcess = null;
 		String intendedUse = null;
 		String datasetNoise = null;
-		String dataCollectionProcess = null;
-		String datasetUpdateMechanism = null;
 		
 		
 		/**
@@ -501,30 +498,6 @@ public class Dataset extends SpdxPackage  {
 		}
 		
 		/**
-		 * Adds a dataPreprocessing to the initial collection
-		 * @parameter dataPreprocessing dataPreprocessing to add
-		 * @return this for chaining
-		**/
-		public DatasetBuilder addDataPreprocessing(String dataPreprocessing) {
-			if (Objects.nonNull(dataPreprocessing)) {
-				dataPreprocessings.add(dataPreprocessing);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds all elements from a collection to the initial dataPreprocessing collection
-		 * @parameter dataPreprocessingCollection collection to initialize the dataPreprocessing
-		 * @return this for chaining
-		**/
-		public DatasetBuilder addAllDataPreprocessing(Collection<String> dataPreprocessingCollection) {
-			if (Objects.nonNull(dataPreprocessingCollection)) {
-				dataPreprocessings.addAll(dataPreprocessingCollection);
-			}
-			return this;
-		}
-		
-		/**
 		 * Adds a knownBias to the initial collection
 		 * @parameter knownBias knownBias to add
 		 * @return this for chaining
@@ -549,22 +522,36 @@ public class Dataset extends SpdxPackage  {
 		}
 		
 		/**
+		 * Adds a dataPreprocessing to the initial collection
+		 * @parameter dataPreprocessing dataPreprocessing to add
+		 * @return this for chaining
+		**/
+		public DatasetBuilder addDataPreprocessing(String dataPreprocessing) {
+			if (Objects.nonNull(dataPreprocessing)) {
+				dataPreprocessings.add(dataPreprocessing);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds all elements from a collection to the initial dataPreprocessing collection
+		 * @parameter dataPreprocessingCollection collection to initialize the dataPreprocessing
+		 * @return this for chaining
+		**/
+		public DatasetBuilder addAllDataPreprocessing(Collection<String> dataPreprocessingCollection) {
+			if (Objects.nonNull(dataPreprocessingCollection)) {
+				dataPreprocessings.addAll(dataPreprocessingCollection);
+			}
+			return this;
+		}
+		
+		/**
 		 * Sets the initial value of sensitivePersonalInformation
 		 * @parameter sensitivePersonalInformation value to set
 		 * @return this for chaining
 		**/
 		public DatasetBuilder setSensitivePersonalInformation(PresenceType sensitivePersonalInformation) {
 			this.sensitivePersonalInformation = sensitivePersonalInformation;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of confidentialityLevel
-		 * @parameter confidentialityLevel value to set
-		 * @return this for chaining
-		**/
-		public DatasetBuilder setConfidentialityLevel(ConfidentialityLevelType confidentialityLevel) {
-			this.confidentialityLevel = confidentialityLevel;
 			return this;
 		}
 		
@@ -579,12 +566,42 @@ public class Dataset extends SpdxPackage  {
 		}
 		
 		/**
+		 * Sets the initial value of confidentialityLevel
+		 * @parameter confidentialityLevel value to set
+		 * @return this for chaining
+		**/
+		public DatasetBuilder setConfidentialityLevel(ConfidentialityLevelType confidentialityLevel) {
+			this.confidentialityLevel = confidentialityLevel;
+			return this;
+		}
+		
+		/**
 		 * Sets the initial value of datasetSize
 		 * @parameter datasetSize value to set
 		 * @return this for chaining
 		**/
 		public DatasetBuilder setDatasetSize(Integer datasetSize) {
 			this.datasetSize = datasetSize;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of datasetUpdateMechanism
+		 * @parameter datasetUpdateMechanism value to set
+		 * @return this for chaining
+		**/
+		public DatasetBuilder setDatasetUpdateMechanism(String datasetUpdateMechanism) {
+			this.datasetUpdateMechanism = datasetUpdateMechanism;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of dataCollectionProcess
+		 * @parameter dataCollectionProcess value to set
+		 * @return this for chaining
+		**/
+		public DatasetBuilder setDataCollectionProcess(String dataCollectionProcess) {
+			this.dataCollectionProcess = dataCollectionProcess;
 			return this;
 		}
 		
@@ -605,26 +622,6 @@ public class Dataset extends SpdxPackage  {
 		**/
 		public DatasetBuilder setDatasetNoise(String datasetNoise) {
 			this.datasetNoise = datasetNoise;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of dataCollectionProcess
-		 * @parameter dataCollectionProcess value to set
-		 * @return this for chaining
-		**/
-		public DatasetBuilder setDataCollectionProcess(String dataCollectionProcess) {
-			this.dataCollectionProcess = dataCollectionProcess;
-			return this;
-		}
-		
-		/**
-		 * Sets the initial value of datasetUpdateMechanism
-		 * @parameter datasetUpdateMechanism value to set
-		 * @return this for chaining
-		**/
-		public DatasetBuilder setDatasetUpdateMechanism(String datasetUpdateMechanism) {
-			this.datasetUpdateMechanism = datasetUpdateMechanism;
 			return this;
 		}
 	

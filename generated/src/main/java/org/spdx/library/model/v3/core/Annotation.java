@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -47,7 +47,7 @@ import org.spdx.library.SpdxConstants;
  */
 public class Annotation extends Element  {
 
-	Collection<MediaType> contentTypes;
+	Collection<String> contentTypes;
 	
 	/**
 	 * Create the Annotation with default model store and generated anonymous ID
@@ -76,7 +76,7 @@ public class Annotation extends Element  {
 	public Annotation(IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager,
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, objectUri, copyManager, create);
-		contentTypes = (Collection<MediaType>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_CONTENT_TYPE, MediaType.class);
+		contentTypes = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_CONTENT_TYPE, String.class);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class Annotation extends Element  {
 	 @SuppressWarnings("unchecked")
 	protected Annotation(AnnotationBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
-		contentTypes = (Collection<MediaType>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_CONTENT_TYPE, MediaType.class);
+		contentTypes = (Collection<String>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_CONTENT_TYPE, String.class);
 		getContentTypes().addAll(builder.contentTypes);
 		setSubject(builder.subject);
 		setAnnotationType(builder.annotationType);
@@ -103,7 +103,7 @@ public class Annotation extends Element  {
 	}
 	
 	// Getters and Setters
-	public Collection<MediaType> getContentTypes() {
+	public Collection<String> getContentTypes() {
 		return contentTypes;
 	}
 	
@@ -190,14 +190,14 @@ public class Annotation extends Element  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		Element subject;
 		try {
 			subject = getSubject();
 			if (Objects.nonNull(subject)) {
-				retval.addAll(subject.verify(verifiedIds, specVersion, profiles));
+				retval.addAll(subject.verify(verifiedIds, specVersionForVerify, profiles));
 			} else if (!Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
 					retval.add("Missing subject in Annotation");
 			}
@@ -218,9 +218,6 @@ public class Annotation extends Element  {
 			Optional<String> statement = getStatement();
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting statement for Annotation: "+e.getMessage());
-		}
-		for (MediaType contentType:contentTypes) {
-			retval.addAll(contentType.verify(verifiedIds, specVersion, profiles));
 		}
 		return retval;
 	}
@@ -257,7 +254,7 @@ public class Annotation extends Element  {
 			super(modelStore, objectUri, copyManager);
 		}
 		
-		Collection<MediaType> contentTypes = new ArrayList<>();
+		Collection<String> contentTypes = new ArrayList<>();
 		Element subject = null;
 		AnnotationType annotationType = null;
 		String statement = null;
@@ -268,7 +265,7 @@ public class Annotation extends Element  {
 		 * @parameter contentType contentType to add
 		 * @return this for chaining
 		**/
-		public AnnotationBuilder addContentType(MediaType contentType) {
+		public AnnotationBuilder addContentType(String contentType) {
 			if (Objects.nonNull(contentType)) {
 				contentTypes.add(contentType);
 			}
@@ -280,7 +277,7 @@ public class Annotation extends Element  {
 		 * @parameter contentTypeCollection collection to initialize the contentType
 		 * @return this for chaining
 		**/
-		public AnnotationBuilder addAllContentType(Collection<MediaType> contentTypeCollection) {
+		public AnnotationBuilder addAllContentType(Collection<String> contentTypeCollection) {
 			if (Objects.nonNull(contentTypeCollection)) {
 				contentTypes.addAll(contentTypeCollection);
 			}

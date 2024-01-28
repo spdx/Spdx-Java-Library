@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -92,8 +92,8 @@ public class ExternalIdentifier extends ModelObject  {
 		getIdentifierLocators().addAll(builder.identifierLocators);
 		setExternalIdentifierType(builder.externalIdentifierType);
 		setComment(builder.comment);
-		setIdentifier(builder.identifier);
 		setIssuingAuthority(builder.issuingAuthority);
+		setIdentifier(builder.identifier);
 	}
 
 	/* (non-Javadoc)
@@ -153,6 +153,22 @@ public class ExternalIdentifier extends ModelObject  {
 		return this;
 	}
 
+		/**
+	 * @return the issuingAuthority
+	 */
+	public Optional<String> getIssuingAuthority() throws InvalidSPDXAnalysisException {
+		return getStringPropertyValue(SpdxConstants.CORE_PROP_ISSUING_AUTHORITY);
+	}
+	/**
+	 * @param issuingAuthority the issuingAuthority to set
+	 * @return this to chain setters
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public ExternalIdentifier setIssuingAuthority(@Nullable String issuingAuthority) throws InvalidSPDXAnalysisException {
+		setPropertyValue(SpdxConstants.CORE_PROP_ISSUING_AUTHORITY, issuingAuthority);
+		return this;
+	}
+
 	/**
 	 * @return the identifier
 	 */
@@ -172,22 +188,6 @@ public class ExternalIdentifier extends ModelObject  {
 		setPropertyValue(SpdxConstants.CORE_PROP_IDENTIFIER, identifier);
 		return this;
 	}
-
-		/**
-	 * @return the issuingAuthority
-	 */
-	public Optional<String> getIssuingAuthority() throws InvalidSPDXAnalysisException {
-		return getStringPropertyValue(SpdxConstants.CORE_PROP_ISSUING_AUTHORITY);
-	}
-	/**
-	 * @param issuingAuthority the issuingAuthority to set
-	 * @return this to chain setters
-	 * @throws InvalidSPDXAnalysisException 
-	 */
-	public ExternalIdentifier setIssuingAuthority(@Nullable String issuingAuthority) throws InvalidSPDXAnalysisException {
-		setPropertyValue(SpdxConstants.CORE_PROP_ISSUING_AUTHORITY, issuingAuthority);
-		return this;
-	}
 	
 	
 	@Override
@@ -199,7 +199,7 @@ public class ExternalIdentifier extends ModelObject  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
 		try {
 			ExternalIdentifierType externalIdentifierType = getExternalIdentifierType();
@@ -217,6 +217,12 @@ public class ExternalIdentifier extends ModelObject  {
 			retval.add("Error getting comment for ExternalIdentifier: "+e.getMessage());
 		}
 		try {
+			@SuppressWarnings("unused")
+			Optional<String> issuingAuthority = getIssuingAuthority();
+		} catch (InvalidSPDXAnalysisException e) {
+			retval.add("Error getting issuingAuthority for ExternalIdentifier: "+e.getMessage());
+		}
+		try {
 			String identifier = getIdentifier();
 			if (Objects.isNull(identifier) &&
 					Collections.disjoint(profiles, Arrays.asList(new ProfileIdentifierType[] { ProfileIdentifierType.CORE }))) {
@@ -224,12 +230,6 @@ public class ExternalIdentifier extends ModelObject  {
 			}
 		} catch (InvalidSPDXAnalysisException e) {
 			retval.add("Error getting identifier for ExternalIdentifier: "+e.getMessage());
-		}
-		try {
-			@SuppressWarnings("unused")
-			Optional<String> issuingAuthority = getIssuingAuthority();
-		} catch (InvalidSPDXAnalysisException e) {
-			retval.add("Error getting issuingAuthority for ExternalIdentifier: "+e.getMessage());
 		}
 		return retval;
 	}
@@ -269,8 +269,8 @@ public class ExternalIdentifier extends ModelObject  {
 		Collection<String> identifierLocators = new ArrayList<>();
 		ExternalIdentifierType externalIdentifierType = null;
 		String comment = null;
-		String identifier = null;
 		String issuingAuthority = null;
+		String identifier = null;
 		
 		
 		/**
@@ -318,22 +318,22 @@ public class ExternalIdentifier extends ModelObject  {
 		}
 		
 		/**
-		 * Sets the initial value of identifier
-		 * @parameter identifier value to set
-		 * @return this for chaining
-		**/
-		public ExternalIdentifierBuilder setIdentifier(String identifier) {
-			this.identifier = identifier;
-			return this;
-		}
-		
-		/**
 		 * Sets the initial value of issuingAuthority
 		 * @parameter issuingAuthority value to set
 		 * @return this for chaining
 		**/
 		public ExternalIdentifierBuilder setIssuingAuthority(String issuingAuthority) {
 			this.issuingAuthority = issuingAuthority;
+			return this;
+		}
+		
+		/**
+		 * Sets the initial value of identifier
+		 * @parameter identifier value to set
+		 * @return this for chaining
+		**/
+		public ExternalIdentifierBuilder setIdentifier(String identifier) {
+			this.identifier = identifier;
 			return this;
 		}
 	

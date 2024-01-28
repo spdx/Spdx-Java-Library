@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -48,8 +48,8 @@ import org.spdx.library.SpdxConstants;
 public class ElementCollection extends Element  {
 
 	Collection<ExternalMap> importss;
-	Collection<Element> rootElements;
 	Collection<Element> elements;
+	Collection<Element> rootElements;
 	
 	/**
 	 * Create the ElementCollection with default model store and generated anonymous ID
@@ -79,8 +79,8 @@ public class ElementCollection extends Element  {
 			boolean create)	throws InvalidSPDXAnalysisException {
 		super(modelStore, objectUri, copyManager, create);
 		importss = (Collection<ExternalMap>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_IMPORTS, ExternalMap.class);
-		rootElements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ROOT_ELEMENT, Element.class);
 		elements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ELEMENT, Element.class);
+		rootElements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ROOT_ELEMENT, Element.class);
 	}
 
 	/**
@@ -92,11 +92,11 @@ public class ElementCollection extends Element  {
 	protected ElementCollection(ElementCollectionBuilder builder) throws InvalidSPDXAnalysisException {
 		super(builder);
 		importss = (Collection<ExternalMap>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_IMPORTS, ExternalMap.class);
-		rootElements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ROOT_ELEMENT, Element.class);
 		elements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ELEMENT, Element.class);
+		rootElements = (Collection<Element>)(Collection<?>)this.getObjectPropertyValueCollection(SpdxConstants.CORE_PROP_ROOT_ELEMENT, Element.class);
 		getImportss().addAll(builder.importss);
-		getRootElements().addAll(builder.rootElements);
 		getElements().addAll(builder.elements);
+		getRootElements().addAll(builder.rootElements);
 	}
 
 	/* (non-Javadoc)
@@ -111,11 +111,11 @@ public class ElementCollection extends Element  {
 	public Collection<ExternalMap> getImportss() {
 		return importss;
 	}
-	public Collection<Element> getRootElements() {
-		return rootElements;
-	}
 	public Collection<Element> getElements() {
 		return elements;
+	}
+	public Collection<Element> getRootElements() {
+		return rootElements;
 	}
 	
 	
@@ -129,17 +129,17 @@ public class ElementCollection extends Element  {
 	 * @see org.spdx.library.model.ModelObject#_verify(java.util.List)
 	 */
 	@Override
-	protected List<String> _verify(Set<String> verifiedIds, String specVersion, List<ProfileIdentifierType> profiles) {
+	public List<String> _verify(Set<String> verifiedIds, String specVersionForVerify, List<ProfileIdentifierType> profiles) {
 		List<String> retval = new ArrayList<>();
-		retval.addAll(super._verify(verifiedIds, specVersion, profiles));
+		retval.addAll(super._verify(verifiedIds, specVersionForVerify, profiles));
 		for (ExternalMap imports:importss) {
-			retval.addAll(imports.verify(verifiedIds, specVersion, profiles));
-		}
-		for (Element rootElement:rootElements) {
-			retval.addAll(rootElement.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(imports.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		for (Element element:elements) {
-			retval.addAll(element.verify(verifiedIds, specVersion, profiles));
+			retval.addAll(element.verify(verifiedIds, specVersionForVerify, profiles));
+		}
+		for (Element rootElement:rootElements) {
+			retval.addAll(rootElement.verify(verifiedIds, specVersionForVerify, profiles));
 		}
 		return retval;
 	}
@@ -177,8 +177,8 @@ public class ElementCollection extends Element  {
 		}
 		
 		Collection<ExternalMap> importss = new ArrayList<>();
-		Collection<Element> rootElements = new ArrayList<>();
 		Collection<Element> elements = new ArrayList<>();
+		Collection<Element> rootElements = new ArrayList<>();
 		
 		
 		/**
@@ -206,30 +206,6 @@ public class ElementCollection extends Element  {
 		}
 		
 		/**
-		 * Adds a rootElement to the initial collection
-		 * @parameter rootElement rootElement to add
-		 * @return this for chaining
-		**/
-		public ElementCollectionBuilder addRootElement(Element rootElement) {
-			if (Objects.nonNull(rootElement)) {
-				rootElements.add(rootElement);
-			}
-			return this;
-		}
-		
-		/**
-		 * Adds all elements from a collection to the initial rootElement collection
-		 * @parameter rootElementCollection collection to initialize the rootElement
-		 * @return this for chaining
-		**/
-		public ElementCollectionBuilder addAllRootElement(Collection<Element> rootElementCollection) {
-			if (Objects.nonNull(rootElementCollection)) {
-				rootElements.addAll(rootElementCollection);
-			}
-			return this;
-		}
-		
-		/**
 		 * Adds a element to the initial collection
 		 * @parameter element element to add
 		 * @return this for chaining
@@ -249,6 +225,30 @@ public class ElementCollection extends Element  {
 		public ElementCollectionBuilder addAllElement(Collection<Element> elementCollection) {
 			if (Objects.nonNull(elementCollection)) {
 				elements.addAll(elementCollection);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds a rootElement to the initial collection
+		 * @parameter rootElement rootElement to add
+		 * @return this for chaining
+		**/
+		public ElementCollectionBuilder addRootElement(Element rootElement) {
+			if (Objects.nonNull(rootElement)) {
+				rootElements.add(rootElement);
+			}
+			return this;
+		}
+		
+		/**
+		 * Adds all elements from a collection to the initial rootElement collection
+		 * @parameter rootElementCollection collection to initialize the rootElement
+		 * @return this for chaining
+		**/
+		public ElementCollectionBuilder addAllRootElement(Collection<Element> rootElementCollection) {
+			if (Objects.nonNull(rootElementCollection)) {
+				rootElements.addAll(rootElementCollection);
 			}
 			return this;
 		}

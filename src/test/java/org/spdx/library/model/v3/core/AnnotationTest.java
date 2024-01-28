@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -45,6 +45,11 @@ public class AnnotationTest extends TestCase {
 	static final String STATEMENT_TEST_VALUE = "test statement";
 	static final AnnotationType ANNOTATION_TYPE_TEST_VALUE1 = AnnotationType.values()[0];
 	static final AnnotationType ANNOTATION_TYPE_TEST_VALUE2 = AnnotationType.values()[1];
+	static final String CONTENT_TYPE_TEST_VALUE1 = "test 1 contentType";
+	static final String CONTENT_TYPE_TEST_VALUE2 = "test 2 contentType";
+	static final String CONTENT_TYPE_TEST_VALUE3 = "test 3 contentType";
+	static final List<String> CONTENT_TYPE_TEST_LIST1 = Arrays.asList(new String[] { CONTENT_TYPE_TEST_VALUE1, CONTENT_TYPE_TEST_VALUE2 });
+	static final List<String> CONTENT_TYPE_TEST_LIST2 = Arrays.asList(new String[] { CONTENT_TYPE_TEST_VALUE3 });
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -60,11 +65,12 @@ public class AnnotationTest extends TestCase {
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		AnnotationBuilder retval = new AnnotationBuilder(modelStore, objectUri, copyManager)
 				.setStatement(STATEMENT_TEST_VALUE)
+				.addContentType(CONTENT_TYPE_TEST_VALUE1)
+				.addContentType(CONTENT_TYPE_TEST_VALUE2)
 				.setAnnotationType(ANNOTATION_TYPE_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
 				.setSubject(new Element())
-				.addContentType(MediaType)
 				***************/
 				;
 		return retval;
@@ -144,14 +150,13 @@ public class AnnotationTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.Annotation#getContentType}.
+	 * Test method for {@link org.spdx.library.model.v3.core.Annotation#getContentTypes}.
 	 */
 	public void testAnnotationgetContentTypes() throws InvalidSPDXAnalysisException {
 		Annotation testAnnotation = builderForAnnotationTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testAnnotation.getContentTypes())));
-//		testAnnotation.getContentTypes().clear();
-//		testAnnotation.getContentTypes().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testAnnotation.getContentTypes())));
-		fail("Not yet implemented");
+		assertTrue(UnitTestHelper.isListsEqual(CONTENT_TYPE_TEST_LIST1, new ArrayList<>(testAnnotation.getContentTypes())));
+		testAnnotation.getContentTypes().clear();
+		testAnnotation.getContentTypes().addAll(CONTENT_TYPE_TEST_LIST2);
+		assertTrue(UnitTestHelper.isListsEqual(CONTENT_TYPE_TEST_LIST2, new ArrayList<>(testAnnotation.getContentTypes())));
 	}
 }

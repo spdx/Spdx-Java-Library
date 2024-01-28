@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -59,8 +59,8 @@ public class ElementCollectionTest extends TestCase {
 				//TODO: Add in test values
 				/********************
 				.addImports(ExternalMap)
-				.addRootElement(Element)
 				.addElement(Element)
+				.addRootElement(Element)
 				***************/
 				;
 		return retval;
@@ -121,18 +121,6 @@ public class ElementCollectionTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.spdx.library.model.v3.core.ElementCollection#getRootElement}.
-	 */
-	public void testElementCollectiongetRootElements() throws InvalidSPDXAnalysisException {
-		ElementCollection testElementCollection = builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
-//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
-//		testElementCollection.getRootElements().clear();
-//		testElementCollection.getRootElements().addAll(NEW_TEST_VALUE);
-//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
-		fail("Not yet implemented");
-	}
-	
-	/**
 	 * Test method for {@link org.spdx.library.model.v3.core.ElementCollection#getElement}.
 	 */
 	public void testElementCollectiongetElements() throws InvalidSPDXAnalysisException {
@@ -141,6 +129,18 @@ public class ElementCollectionTest extends TestCase {
 //		testElementCollection.getElements().clear();
 //		testElementCollection.getElements().addAll(NEW_TEST_VALUE);
 //		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getElements())));
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.model.v3.core.ElementCollection#getRootElement}.
+	 */
+	public void testElementCollectiongetRootElements() throws InvalidSPDXAnalysisException {
+		ElementCollection testElementCollection = builderForElementCollectionTests(modelStore, TEST_OBJECT_URI, copyManager).build();
+//		assertTrue(UnitTestHelper.isListsEquivalent(TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
+//		testElementCollection.getRootElements().clear();
+//		testElementCollection.getRootElements().addAll(NEW_TEST_VALUE);
+//		assertTrue(UnitTestHelper.isListsEquivalent(NEW_TEST_VALUE, new ArrayList<>(testElementCollection.getRootElements())));
 		fail("Not yet implemented");
 	}
 }

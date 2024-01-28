@@ -51,7 +51,7 @@ import org.spdx.library.model.v3.core.CreationInfo;
 import org.spdx.library.model.v3.core.Element;
 import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.library.model.v3.core.ProfileIdentifierType;
-import org.spdx.library.model.v3.licensing.AnyLicenseInfo;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
