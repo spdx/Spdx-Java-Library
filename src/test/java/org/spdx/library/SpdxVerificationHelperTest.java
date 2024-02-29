@@ -156,6 +156,12 @@ public class SpdxVerificationHelperTest extends TestCase {
 	public void testVerifyDownloadLocation() {
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("NONE")));
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("NOASSERTION")));
+        //file
+        assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("file:/Users/dummy/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar")));
+        assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("file://Users/dummy_user/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar")));
+        assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("file:/path.123A/dummy_123/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar")));
+        assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("file://path_ . -abc/dummy.user/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar")));
+
 		// http
 		assertTrue(Objects.isNull(SpdxVerificationHelper.verifyDownloadLocation("http://ftp.gnu.org/gnu/glibc/glibc-ports-2.15.tar.gz")));
 		// git
