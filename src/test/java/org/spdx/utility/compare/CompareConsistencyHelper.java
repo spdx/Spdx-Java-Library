@@ -12,14 +12,13 @@ import org.spdx.library.model.license.SpdxListedLicense;
 public class CompareConsistencyHelper {
 
     /**
-     * Tests for consistency across the various comparison methods in LicenseCompareHelper, and returns either null
-     * (no inconsistencies found), or a String describing all of the detected inconsistencies.
+     * Tests for consistency across the various comparison methods in LicenseCompareHelper.
      *
      * Note: assumes that `text` contains just a single license text, with no extraneous prefix or suffix text.
      *
-     * @param licenseId The SPDX license identifier that's expected to be detected within text.
-     * @param text      The license text being tested.
-     * @return Whether consistency across the APIs under test was found or not.
+     * @param licenseId The SPDX license identifier that's expected to be detected within `text`.
+     * @param text      The license text being used to test API consistency.
+     * @return null if no inconsistencies were found, or a String describing the detected inconsistencies.
      */
     public static String explainCompareInconsistencies(final String licenseId, final String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
         StringBuilder result = new StringBuilder();
