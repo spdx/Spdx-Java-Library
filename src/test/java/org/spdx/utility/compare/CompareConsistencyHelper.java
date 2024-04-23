@@ -39,35 +39,35 @@ public class CompareConsistencyHelper {
             throw new IllegalArgumentException("Could not find listed license for identifier " + licenseId);
         }
 
-        final boolean      differenceFound                    = LicenseCompareHelper.isTextStandardLicense(listedLicense, text).isDifferenceFound();
-        final boolean      standardLicenseWithinText          = LicenseCompareHelper.isStandardLicenseWithinText(text, listedLicense);
-        final List<String> standardLicensesWithinText         = Arrays.asList(LicenseCompareHelper.matchingStandardLicenseIds(text));
-        final List<String> matchingStandardLicensesWithinText = LicenseCompareHelper.matchingStandardLicenseIdsWithinText(text);
+        final boolean      isDifferenceFound                    = LicenseCompareHelper.isTextStandardLicense(listedLicense, text).isDifferenceFound();
+        final boolean      isStandardLicenseWithinText          = LicenseCompareHelper.isStandardLicenseWithinText(text, listedLicense);
+        final List<String> matchingStandardLicenseIds           = Arrays.asList(LicenseCompareHelper.matchingStandardLicenseIds(text));
+        final List<String> matchingStandardLicenseIdsWithinText = LicenseCompareHelper.matchingStandardLicenseIdsWithinText(text);
 
-        // Note: we sort the elements because we don't care about different orderings within each list - just that they contain the same elements (in any order)
-        Collections.sort(standardLicensesWithinText);
-        Collections.sort(matchingStandardLicensesWithinText);
+        // Note: we sort these lists because we don't care about different orderings within them - just that they contain the same elements (in any order)
+        Collections.sort(matchingStandardLicenseIds);
+        Collections.sort(matchingStandardLicenseIdsWithinText);
 
-        if (differenceFound == standardLicenseWithinText) {  // Note: this condition seems backwards, but only because one variable indicates whether there was a difference, while the other indicates whether the license was found (they're logically opposite)
-            result.append("  * LicenseCompareHelper.isTextStandardLicense() and LicenseCompareHelper.isStandardLicenseWithinText()\n");
+        if (isDifferenceFound == isStandardLicenseWithinText) {  // Note: this condition seems backwards, but only because one variable indicates whether there was a difference, while the other indicates whether the license was found (they're logically opposite)
+            result.append("  * .isTextStandardLicense() and .isStandardLicenseWithinText()\n");
         }
 
-        if (standardLicenseWithinText && (standardLicensesWithinText == null || standardLicensesWithinText.isEmpty())) {
-            result.append("  * LicenseCompareHelper.isStandardLicenseWithinText() and LicenseCompareHelper.matchingStandardLicenseIds()\n");
+        if (isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
+            result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicenseIds()\n");
         }
 
-        if (standardLicenseWithinText && (matchingStandardLicensesWithinText == null || matchingStandardLicensesWithinText.isEmpty())) {
-            result.append("  * LicenseCompareHelper.isStandardLicenseWithinText() and LicenseCompareHelper.matchingStandardLicensesWithinText()\n");
+        if (isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
+            result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicensesWithinText()\n");
         }
 
-        if (!Objects.equals(standardLicensesWithinText, matchingStandardLicensesWithinText)) {
-            result.append("  * LicenseCompareHelper.matchingStandardLicenseIds() and LicenseCompareHelper.matchingStandardLicenseIdsWithinText()\n");
+        if (!Objects.equals(matchingStandardLicenseIds, matchingStandardLicenseIdsWithinText)) {
+            result.append("  * .matchingStandardLicenseIds() and .matchingStandardLicenseIdsWithinText()\n");
         }
 
         if (result.toString().trim().isEmpty()) {
             return null;
         } else {
-            return(("While testing API consistency with a text known to be " + licenseId + ", inconsistencies were found between:\n" + result.toString()).trim());
+            return(("While testing API consistency with a " + licenseId + " text, inconsistencies were found between LicenseCompareHelper APIs:\n" + result.toString()).trim());
         }
     }
 
