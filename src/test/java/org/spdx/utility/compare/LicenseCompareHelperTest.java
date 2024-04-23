@@ -1081,7 +1081,7 @@ public class LicenseCompareHelperTest extends TestCase {
         assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
     }
 
-	private void consistencyTest(String licenseId, String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+	private void consistencyTest(final String licenseId, final String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
 		final String inconsistencies = CompareConsistencyHelper.explainCompareInconsistencies(licenseId, text);
 		assertNull(inconsistencies, inconsistencies);
 	}
