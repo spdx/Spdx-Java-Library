@@ -62,13 +62,13 @@ public class CompareConsistencyHelper {
         }
 
         if (!Objects.equals(standardLicensesWithinText, matchingStandardLicensesWithinText)) {
-            result.append("  * LicenseCompareHelper.matchingStandardLicenseIds() and LicenseCompareHelper.matchingStandardLicenseIdsWithinText()");
+            result.append("  * LicenseCompareHelper.matchingStandardLicenseIds() and LicenseCompareHelper.matchingStandardLicenseIdsWithinText()\n");
         }
 
         if (result.toString().trim().isEmpty()) {
             return null;
         } else {
-            return(("Inconsistencies found between:\n" + result.toString()).trim());
+            return(("While testing API consistency with a text known to be " + licenseId + ", inconsistencies were found between:\n" + result.toString()).trim());
         }
     }
 
