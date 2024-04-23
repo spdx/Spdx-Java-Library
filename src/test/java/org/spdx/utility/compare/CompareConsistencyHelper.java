@@ -52,11 +52,19 @@ public class CompareConsistencyHelper {
             result.append("  * .isTextStandardLicense() and .isStandardLicenseWithinText()\n");
         }
 
-        if (isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
+        if (!isDifferenceFound && matchingStandardLicenseIds.isEmpty()) {
+            result.append("  * .isTextStandardLicense() and .matchingStandardLicenseIds()\n");
+        }
+
+        if (!isDifferenceFound && matchingStandardLicenseIdsWithinText.isEmpty()) {
+            result.append("  * .isTextStandardLicense() and .matchingStandardLicensesWithinText()\n");
+        }
+
+        if (!isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicenseIds()\n");
         }
 
-        if (isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
+        if (!isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicensesWithinText()\n");
         }
 

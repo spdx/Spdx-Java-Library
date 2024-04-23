@@ -1081,18 +1081,18 @@ public class LicenseCompareHelperTest extends TestCase {
         assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
     }
 
-	private void consistencyTest(final String licenseId, final String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+	private void assertAPIConsistency(final String licenseId, final String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
 		final String inconsistencies = CompareConsistencyHelper.explainCompareInconsistencies(licenseId, text);
 		assertNull(inconsistencies, inconsistencies);
 	}
 
 	public void testAPIConsistency() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		consistencyTest("MIT",          UnitTestHelper.fileToText(MIT_2_SPACES));
-		consistencyTest("BSD-2-Clause", UnitTestHelper.fileToText(BSD_2_CLAUSE_NL));
+		assertAPIConsistency("MIT",          UnitTestHelper.fileToText(MIT_2_SPACES));
+		assertAPIConsistency("BSD-2-Clause", UnitTestHelper.fileToText(BSD_2_CLAUSE_NL));
 
 		if (UnitTestHelper.runSlowTests()) {
-			consistencyTest("GPL-2.0-only", UnitTestHelper.fileToText(GPL_2_TEXT));
-			consistencyTest("MPL-2.0",      UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE));
+			assertAPIConsistency("GPL-2.0-only", UnitTestHelper.fileToText(GPL_2_TEXT));
+			assertAPIConsistency("MPL-2.0",      UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE));
 		}
 	}
 
