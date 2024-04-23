@@ -36,7 +36,7 @@ public class CompareConsistencyHelper {
         final SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId);
 
         if (listedLicense == null) {
-            throw new IllegalArgumentException("could not find listed license for identifier" + licenseId);
+            throw new IllegalArgumentException("Could not find listed license for identifier " + licenseId);
         }
 
         final boolean      differenceFound                    = LicenseCompareHelper.isTextStandardLicense(listedLicense, text).isDifferenceFound();
