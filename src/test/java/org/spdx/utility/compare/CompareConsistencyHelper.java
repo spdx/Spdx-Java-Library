@@ -52,19 +52,19 @@ public class CompareConsistencyHelper {
             result.append("  * .isTextStandardLicense() and .isStandardLicenseWithinText()\n");
         }
 
-        if (!isDifferenceFound && matchingStandardLicenseIds.isEmpty()) {
+        if (!isDifferenceFound && !matchingStandardLicenseIds.contains(licenseId)) {
             result.append("  * .isTextStandardLicense() and .matchingStandardLicenseIds()\n");
         }
 
-        if (!isDifferenceFound && matchingStandardLicenseIdsWithinText.isEmpty()) {
+        if (!isDifferenceFound && !matchingStandardLicenseIdsWithinText.contains(licenseId)) {
             result.append("  * .isTextStandardLicense() and .matchingStandardLicensesWithinText()\n");
         }
 
-        if (isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
+        if (isStandardLicenseWithinText && !matchingStandardLicenseIds.contains(licenseId)) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicenseIds()\n");
         }
 
-        if (isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
+        if (isStandardLicenseWithinText && !matchingStandardLicenseIdsWithinText.contains(licenseId)) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicensesWithinText()\n");
         }
 
