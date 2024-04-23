@@ -48,7 +48,7 @@ public class CompareConsistencyHelper {
         Collections.sort(matchingStandardLicenseIds);
         Collections.sort(matchingStandardLicenseIdsWithinText);
 
-        if (isDifferenceFound == isStandardLicenseWithinText) {  // Note: this condition seems backwards, but only because one variable indicates whether there was a difference, while the other indicates whether the license was found (they're logically opposite)
+        if (isDifferenceFound == isStandardLicenseWithinText) {  // Note: this condition may seem backwards, but only because one variable indicates whether there was a difference, while the other indicates whether the license was found (they're logically opposite)
             result.append("  * .isTextStandardLicense() and .isStandardLicenseWithinText()\n");
         }
 
@@ -60,11 +60,11 @@ public class CompareConsistencyHelper {
             result.append("  * .isTextStandardLicense() and .matchingStandardLicensesWithinText()\n");
         }
 
-        if (!isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
+        if (isStandardLicenseWithinText && matchingStandardLicenseIds.isEmpty()) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicenseIds()\n");
         }
 
-        if (!isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
+        if (isStandardLicenseWithinText && matchingStandardLicenseIdsWithinText.isEmpty()) {
             result.append("  * .isStandardLicenseWithinText() and .matchingStandardLicensesWithinText()\n");
         }
 
