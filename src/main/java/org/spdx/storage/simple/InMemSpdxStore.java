@@ -18,16 +18,14 @@
 package org.spdx.storage.simple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
@@ -38,15 +36,16 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.DuplicateSpdxIdException;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxIdInUseException;
-import org.spdx.library.SpdxIdNotFoundException;
-import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.ModelCollectionV2;
-import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
+import org.spdx.core.DuplicateSpdxIdException;
+import org.spdx.core.IExternalElementInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.ModelCollection;
+import org.spdx.core.ModelRegistry;
+import org.spdx.core.SpdxIdInUseException;
+import org.spdx.core.SpdxIdNotFoundException;
+import org.spdx.core.TypedValue;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -73,12 +72,16 @@ public class InMemSpdxStore implements IModelStore {
 	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
 	public static final String ANON_PREFIX = "__anon__";
 	static Pattern ANON_ID_PATTERN_GENERATED = Pattern.compile(ANON_PREFIX+GENERATED+"(\\d+)$");
-	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstantsCompatV2.LITERAL_VALUES));
 
 	/**
 	 * Map of property object URI's to typed value items
 	 */
 	protected Map<String, StoredTypedItem> typedValueMap = Collections.synchronizedMap(new LinkedHashMap<>());
+	
+	/**
+	 * Map of an objectUri to a map of documentUri's to external element information
+	 */
+	protected Map<String, Map<String, IExternalElementInfo>> objectUriExternalMap = new HashMap<>();
 	private int nextNextLicenseId = 0;
 	private int nextNextDocumentId = 0;
 	private int nextNextSpdxId = 0;
@@ -105,30 +108,62 @@ public class InMemSpdxStore implements IModelStore {
 
 	};
 	
-	private SpdxMajorVersion spdxVersion;
 	
 	public InMemSpdxStore() {
-		this(SpdxMajorVersion.VERSION_3);
+
+	}
+
+	/**
+	 * Adds an external reference for a given collection
+	 * @param externalObjectUri URI of the external SPDX Element or License
+	 * @param collectionUri URI of the SPDX document or collection
+	 * @param externalElementInfo info about the external element
+	 * @return the previous external mapping for the collection, null if no previous value is present
+	 */
+	@Override
+	public synchronized @Nullable IExternalElementInfo addExternalReference(String externalObjectUri, String collectionUri, IExternalElementInfo externalElementInfo) {
+		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
+		if (Objects.isNull(externalObjectToCollectionMap)) {
+			externalObjectToCollectionMap = new HashMap<>();
+		}
+		return externalObjectToCollectionMap.put(collectionUri, externalElementInfo);
 	}
 	
 	/**
-	 * @param spdxVersion the major SPDX version for the model store (e.g. "2" or "3")
+	 * @param externalObjectUri object URI for an element external to a collection
+	 * @return a map of collection (or document) URI's mapped to their external element info for the given object URI
 	 */
-	public InMemSpdxStore(SpdxMajorVersion spdxVersion) {
-		this.spdxVersion = spdxVersion;
+	@Override
+	public synchronized @Nullable Map<String, IExternalElementInfo> getExternalReferenceMap(String externalObjectUri) {
+		return objectUriExternalMap.get(externalObjectUri);
 	}
-
+	
+	/**
+	 * @param externalObjectUri URI of the external SPDX Element or License
+	 * @param collectionUri URI of the SPDX document or collection
+	 * @return the externalElementInfo associated with the collection for a given external element
+	 */
+	@Override
+	public synchronized @Nullable IExternalElementInfo getExternalElementInfo(String externalObjectUri, String collectionUri) {
+		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
+		if (Objects.isNull(externalObjectToCollectionMap)) {
+			return null;
+		} else {
+			return externalObjectToCollectionMap.get(collectionUri);
+		}
+	}
+	
 	@Override
 	public boolean exists(String objectUri) {
 		return typedValueMap.containsKey(objectUri.toLowerCase());
 	}
 
 	@Override
-	public void create(String objectUri, String type) throws InvalidSPDXAnalysisException {
-		StoredTypedItem value = new StoredTypedItem(objectUri, type);
-		updateNextIds(objectUri);
-		if (Objects.nonNull(this.typedValueMap.putIfAbsent(objectUri.toLowerCase(), value))) {
-			throw new DuplicateSpdxIdException("Object URI "+objectUri+" already exists.");
+	public void create(TypedValue typedValue) throws InvalidSPDXAnalysisException {
+		StoredTypedItem value = new StoredTypedItem(typedValue.getObjectUri(), typedValue.getType(), typedValue.getSpecVersion());
+		updateNextIds(typedValue.getObjectUri());
+		if (Objects.nonNull(this.typedValueMap.putIfAbsent(typedValue.getObjectUri().toLowerCase(), value))) {
+			throw new DuplicateSpdxIdException("Object URI "+typedValue.getObjectUri()+" already exists.");
 		}
 	}
 
@@ -297,18 +332,12 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public Optional<Object> getValue(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = getItem(objectUri);
+		Class<?> itemClass = ModelRegistry.getModelRegistry().typeToClass(item.getType(), item.getSpecVersion());
+		if (Objects.isNull(itemClass)) {
+			throw new InvalidSPDXAnalysisException("Unknown type "+item.getType()+" for spec version "+item.getSpecVersion());
+		}
 		if (item.isCollectionProperty(propertyDescriptor)) {
-			if (this.spdxVersion.compareTo(SpdxMajorVersion.VERSION_3) < 0) {
-				int indexOfPound = item.getObjectUri().lastIndexOf('#');
-				if (indexOfPound < 0) {
-					throw new InvalidSPDXAnalysisException("Object URIs in SPDX 2 compatible stores must contain a '#' to determine the document URI");
-				}
-				String documentUri = item.getObjectUri().substring(0, indexOfPound);
-				String id = item.getObjectUri().substring(indexOfPound + 1);
-				return Optional.of(new ModelCollectionV2<>(this, documentUri, id, propertyDescriptor, null ,null));
-			} else {
-				throw new InvalidSPDXAnalysisException("Unimplemented version 3");
-			}
+			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, itemClass, item.getSpecVersion()));
 		} else {
 			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}
@@ -322,7 +351,6 @@ public class InMemSpdxStore implements IModelStore {
 			case DocumentRef: return (nameSpace == null ? "" : nameSpace) + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
 			case SpdxId: return (nameSpace == null ? "" : nameSpace) + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
 			case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
-			case Literal: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Literal");
 			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
 		}
 	}
@@ -370,13 +398,13 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public boolean isCollectionMembersAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor,
 			Class<?> clazz) throws InvalidSPDXAnalysisException {
-		return getItem(objectUri).isCollectionMembersAssignableTo(propertyDescriptor, clazz, spdxVersion);
+		return getItem(objectUri).isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 	}
 
 	@Override
-	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, Class<?> clazz)
+	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion)
 			throws InvalidSPDXAnalysisException {
-		return getItem(objectUri).isPropertyValueAssignableTo(propertyDescriptor, clazz);
+		return getItem(objectUri).isPropertyValueAssignableTo(propertyDescriptor, clazz, specVersion);
 	}
 
 	@Override
@@ -401,9 +429,6 @@ public class InMemSpdxStore implements IModelStore {
 		if (id.startsWith(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM) |
 				id.contains("#" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
-		}
-		if (LITERAL_VALUE_SET.contains(id)) {
-			return IdType.Literal;
 		}
 		if (id.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
 			return IdType.ListedLicense;
@@ -504,13 +529,5 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public void close() throws Exception {
 		// Nothing to do for the in-memory store
-	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getSpdxVersion()
-	 */
-	@Override
-	public SpdxMajorVersion getSpdxVersion() {
-		return this.spdxVersion;
 	}
 }

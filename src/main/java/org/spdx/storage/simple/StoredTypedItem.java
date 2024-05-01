@@ -1,14 +1,11 @@
 package org.spdx.storage.simple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,15 +14,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.IndividualUriValue;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxInvalidTypeException;
-import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.TypedValue;
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.enumerations.SpdxEnumFactoryCompatV2;
+import org.spdx.core.CoreModelObject;
+import org.spdx.core.IndividualUriValue;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.ModelRegistry;
+import org.spdx.core.ModelRegistryException;
+import org.spdx.core.SpdxCoreConstants.SpdxMajorVersion;
+import org.spdx.core.SpdxInvalidTypeException;
+import org.spdx.core.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -41,16 +37,14 @@ public class StoredTypedItem extends TypedValue {
 
 	private static final String NO_ID_ID = "__NO_ID__";  // ID to use in list has map for non-typed values
 	
-	static Set<String> SPDX_CLASSES = new HashSet<>(Arrays.asList(SpdxConstantsCompatV2.ALL_SPDX_CLASSES));
-
 	private ConcurrentHashMap<PropertyDescriptor, Object> properties = new ConcurrentHashMap<>();
 	
 	private int referenceCount = 0;
 	
 	private final ReadWriteLock countLock = new ReentrantReadWriteLock();
 	
-	public StoredTypedItem(String objectUri, String type) throws InvalidSPDXAnalysisException {
-		super(objectUri, type);
+	public StoredTypedItem(String objectUri, String type, String specVersion) throws InvalidSPDXAnalysisException {
+		super(objectUri, type, specVersion);
 	}
 	
 	/**
@@ -119,7 +113,7 @@ public class StoredTypedItem extends TypedValue {
 	public void setValue(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
-		if (value instanceof ModelObject) {
+		if (value instanceof CoreModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (value instanceof List || value instanceof Collection) {
 			throw new SpdxInvalidTypeException("Can not store list values directly.  Use addValueToCollection.");
@@ -162,7 +156,7 @@ public class StoredTypedItem extends TypedValue {
 	public boolean addValueToList(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
-		if (value instanceof ModelObject) {
+		if (value instanceof CoreModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (!value.getClass().isPrimitive() && 
 				!value.getClass().isAssignableFrom(String.class) &&
@@ -403,8 +397,9 @@ public class StoredTypedItem extends TypedValue {
 	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz class to test against
 	 * @return true if the property with the propertyDescriptor can be assigned to clazz for the latest SPDX version
+	 * @throws ModelRegistryException 
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws ModelRegistryException {
 		return isCollectionMembersAssignableTo(propertyDescriptor, clazz, SpdxMajorVersion.latestVersion());
 	}
 
@@ -413,8 +408,9 @@ public class StoredTypedItem extends TypedValue {
 	 * @param clazz class to test against
 	 * @param specVersion Version of the SPDX Spec
 	 * @return true if the property with the propertyDescriptor can be assigned to clazz
+	 * @throws ModelRegistryException 
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) throws ModelRegistryException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object map = properties.get(propertyDescriptor);
@@ -431,18 +427,19 @@ public class StoredTypedItem extends TypedValue {
 				if (!clazz.isAssignableFrom(value.getClass())) {
 					if (value instanceof IndividualUriValue) {
 						String uri = ((IndividualUriValue)value).getIndividualURI();
-						Enum<?> spdxEnum = SpdxEnumFactoryCompatV2.uriToEnum.get(uri);
+						Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion);
 						if (Objects.nonNull(spdxEnum)) {
 							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
 								return false;
 							}
-						} else if (!(SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri) ||
-								SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri))) {
+						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, specVersion))) {
 							return false;
+							//TODO: Test for type of individual
 						}
 					} else if (value instanceof TypedValue) {
+						TypedValue typedValue = (TypedValue)value;
 						try {
-							if (clazz != TypedValue.class && !clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType(), specVersion))) {
+							if (clazz != TypedValue.class && !clazz.isAssignableFrom(ModelRegistry.getModelRegistry().typeToClass(typedValue.getType(), typedValue.getSpecVersion()))) {
 								return false;
 							}
 						} catch (InvalidSPDXAnalysisException e) {
@@ -461,19 +458,11 @@ public class StoredTypedItem extends TypedValue {
 	/**
 	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz class to test against
+	 * @param specVersion Version of the spec to test for
 	 * @return true if the property can be assigned to type clazz for the latest SPDX spec version
+	 * @throws ModelRegistryException 
 	 */
-	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
-		return isPropertyValueAssignableTo(propertyDescriptor, clazz, SpdxMajorVersion.latestVersion());
-	}
-
-	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param clazz class to test against
-	 * @param specVersion Version of the SPDX Spec
-	 * @return true if the property can be assigned to type clazz
-	 */
-	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) {
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion) throws ModelRegistryException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object value = properties.get(propertyDescriptor);
@@ -484,8 +473,9 @@ public class StoredTypedItem extends TypedValue {
 			return true;
 		}
 		if (value instanceof TypedValue) {
+			TypedValue typedValue = (TypedValue)value;
 			try {
-				return clazz.isAssignableFrom(SpdxModelFactory.typeToClass(((TypedValue)value).getType(), specVersion));
+				return clazz.isAssignableFrom(ModelRegistry.getModelRegistry().typeToClass(typedValue.getType(), typedValue.getSpecVersion()));
 			} catch (InvalidSPDXAnalysisException e) {
 				logger.error("Error converting typed value to class",e);
 				return false;
@@ -493,13 +483,11 @@ public class StoredTypedItem extends TypedValue {
 		}
 		if (value instanceof IndividualUriValue) {
 			String uri = ((IndividualUriValue)value).getIndividualURI();
-			if (SpdxConstantsCompatV2.URI_VALUE_NOASSERTION.equals(uri)) {
+			if (Objects.nonNull(ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion))) {
 				return true;
 			}
-			if (SpdxConstantsCompatV2.URI_VALUE_NONE.equals(uri)) {
-				return true;
-			}
-			Enum<?> spdxEnum = SpdxEnumFactoryCompatV2.uriToEnum.get(uri);
+			//TODO: Check for individual URI types
+			Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion);
 			if (Objects.nonNull(spdxEnum)) {
 				return clazz.isAssignableFrom(spdxEnum.getClass());
 			} else {

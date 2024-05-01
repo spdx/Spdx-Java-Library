@@ -23,13 +23,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+
 /**
  * Static class to manage the SPDX versions and the version of the implementation classes
  * @author Gary O'Neall
  *
  */
 public class Version {
-
 
 	public static final String POINT_EIGHT_SPDX_VERSION = "SPDX-0.8";
 	public static final String POINT_NINE_SPDX_VERSION = "SPDX-0.9";

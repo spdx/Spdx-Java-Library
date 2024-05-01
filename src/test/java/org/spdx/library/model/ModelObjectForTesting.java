@@ -72,7 +72,7 @@ public class ModelObjectForTesting extends ModelObject {
 	 * @param builder
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ModelObjectForTesting(ModelObjectBuilder builder)
+	public ModelObjectForTesting(CoreModelObjectBuilder builder)
 			throws InvalidSPDXAnalysisException {
 		super(builder);
 	}
@@ -94,7 +94,7 @@ public class ModelObjectForTesting extends ModelObject {
 		return new ArrayList<String>();
 	}
 	
-	public static class ModelObjectForTestingBuilder extends ModelObjectBuilder {
+	public static class ModelObjectForTestingBuilder extends CoreModelObjectBuilder {
 		
 		/**
 		 * Create an ElementBuilder from another model object copying the modelStore and copyManager and using an anonymous ID

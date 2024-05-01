@@ -27,7 +27,8 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -44,7 +45,7 @@ import org.spdx.storage.PropertyDescriptor;
  * @author Gary O'Neall
  *
  */
-public class ModelCopyManager {
+public class ModelCopyManager implements IModelCopyManager {
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelCopyManager.class);
 	
@@ -145,6 +146,7 @@ public class ModelCopyManager {
 	 * @param fromDocumentUri Document URI for the source item
 	 * @param fromId ID source ID
 	 * @param type Type to copy
+	 * @param toSpecVersion version of the spec the to value should comply with
 	 * @param excludeLicenseDetails If true, don't copy over properties of the listed licenses
 	 * @param fromNamespace optional namespace of the from property
 	 * @param toNamespace optional namespace of the to property
@@ -154,7 +156,7 @@ public class ModelCopyManager {
 	 */
 	public void copy(IModelStore toStore, String toObjectUri, 
 			IModelStore fromStore, String fromObjectUri, 
-			String type, boolean excludeLicenseDetails,
+			String type, boolean excludeLicenseDetails, String toSpecVersion,
 			@Nullable String fromNamespace, @Nullable String toNamespace,
 			@Nullable String fromCollectionNamespace,
 			@Nullable String toCollectionNamespace) throws InvalidSPDXAnalysisException {
@@ -167,7 +169,7 @@ public class ModelCopyManager {
 			return;	// trying to copy the same thing!
 		}
 		if (!toStore.exists(toObjectUri)) {
-			toStore.create(toObjectUri, type);
+			toStore.create(toObjectUri, type, toSpecVersion);
 		}
 		putCopiedId(fromStore, fromObjectUri, toStore, toObjectUri, toNamespace);
 		if (!(excludeLicenseDetails && 

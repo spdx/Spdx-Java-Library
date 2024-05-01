@@ -18,18 +18,20 @@
 package org.spdx.library.model.compat.v2;
 
 
+import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.SpdxCoreConstants.SpdxMajorVersion;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.model.v2.GenericModelObject;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.SpdxElement;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -57,7 +59,7 @@ public class SpdxElementTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		DefaultModelStore.initialize(new InMemSpdxStore(SpdxMajorVersion.VERSION_2), "http://default/document", new ModelCopyManager());
 		gmo = new GenericModelObject();
 		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1",
 			AnnotationType.OTHER, DATE_NOW, "Comment1");

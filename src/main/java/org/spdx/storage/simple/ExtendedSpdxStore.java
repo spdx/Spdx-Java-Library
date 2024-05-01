@@ -19,12 +19,16 @@ package org.spdx.storage.simple;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.TypedValue;
+import javax.annotation.Nullable;
+
+import org.spdx.core.IExternalElementInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.TypedValue;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -61,8 +65,8 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#create(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void create(String objectUri, String type) throws InvalidSPDXAnalysisException {
-		baseStore.create(objectUri, type);
+	public void create(TypedValue typedValue) throws InvalidSPDXAnalysisException {
+		baseStore.create(typedValue);
 	}
 
 	/* (non-Javadoc)
@@ -198,9 +202,9 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#isPropertyValueAssignableTo(java.lang.String, java.lang.String, java.lang.String, java.lang.Class)
 	 */
 	@Override
-	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, Class<?> clazz)
-			throws InvalidSPDXAnalysisException {
-		return baseStore.isPropertyValueAssignableTo(objectUri, propertyDescriptor, clazz);
+	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, 
+			Class<?> clazz, String specVersion)	throws InvalidSPDXAnalysisException {
+		return baseStore.isPropertyValueAssignableTo(objectUri, propertyDescriptor, clazz, specVersion);
 	}
 
 	/* (non-Javadoc)
@@ -263,6 +267,21 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	@Override
 	public void close() throws Exception {
 		baseStore.close();
+	}
+	
+	@Override
+	public synchronized @Nullable IExternalElementInfo getExternalElementInfo(String externalObjectUri, String collectionUri) {
+		return baseStore.getExternalElementInfo(externalObjectUri, collectionUri);
+	}
+	
+	@Override
+	public synchronized @Nullable Map<String, IExternalElementInfo> getExternalReferenceMap(String externalObjectUri) {
+		return baseStore.getExternalReferenceMap(externalObjectUri);
+	}
+	
+	@Override
+	public synchronized @Nullable IExternalElementInfo addExternalReference(String externalObjectUri, String collectionUri, IExternalElementInfo externalElementInfo) {
+		return baseStore.addExternalReference(externalObjectUri, collectionUri, externalElementInfo);
 	}
 
 }
