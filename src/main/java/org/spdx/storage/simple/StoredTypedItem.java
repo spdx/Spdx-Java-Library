@@ -19,7 +19,6 @@ import org.spdx.core.IndividualUriValue;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.ModelRegistry;
 import org.spdx.core.ModelRegistryException;
-import org.spdx.core.SpdxCoreConstants.SpdxMajorVersion;
 import org.spdx.core.SpdxInvalidTypeException;
 import org.spdx.core.TypedValue;
 import org.spdx.storage.IModelStore;
@@ -392,25 +391,14 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Trying to find contains for non list type for property "+propertyDescriptor);
 		}
 	}
-	
-	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param clazz class to test against
-	 * @return true if the property with the propertyDescriptor can be assigned to clazz for the latest SPDX version
-	 * @throws ModelRegistryException 
-	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws ModelRegistryException {
-		return isCollectionMembersAssignableTo(propertyDescriptor, clazz, SpdxMajorVersion.latestVersion());
-	}
 
 	/**
 	 * @param propertyDescriptor descriptor for the property
 	 * @param clazz class to test against
-	 * @param specVersion Version of the SPDX Spec
 	 * @return true if the property with the propertyDescriptor can be assigned to clazz
 	 * @throws ModelRegistryException 
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, SpdxMajorVersion specVersion) throws ModelRegistryException {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws ModelRegistryException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object map = properties.get(propertyDescriptor);
@@ -427,12 +415,12 @@ public class StoredTypedItem extends TypedValue {
 				if (!clazz.isAssignableFrom(value.getClass())) {
 					if (value instanceof IndividualUriValue) {
 						String uri = ((IndividualUriValue)value).getIndividualURI();
-						Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion);
+						Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, getSpecVersion());
 						if (Objects.nonNull(spdxEnum)) {
 							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
 								return false;
 							}
-						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, specVersion))) {
+						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, getSpecVersion()))) {
 							return false;
 							//TODO: Test for type of individual
 						}
