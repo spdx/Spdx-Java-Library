@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.Configuration;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
+import org.spdx.library.model.SpdxIdNotFoundException;
 import org.spdx.library.model.SpdxModelFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
@@ -175,11 +176,19 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		return (SpdxListedLicense)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null);
+		try {
+			return (SpdxListedLicense) SpdxModelFactory.getModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, licenseId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE, null, false);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
 	}
 	
 	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (ListedLicenseException)SpdxModelFactory.createModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, exceptionId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		try {
+			return (ListedLicenseException) SpdxModelFactory.getModelObject(this.licenseModelStore, SpdxConstants.LISTED_LICENSE_URL, exceptionId, SpdxConstants.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null, false);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
 	}
 	
 	/**
