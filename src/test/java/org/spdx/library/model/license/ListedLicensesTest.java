@@ -80,6 +80,12 @@ public class ListedLicensesTest extends TestCase {
 		assertEquals(id, result.getLicenseId());
 	}
 
+	public void testGetListedLicenseByIdReturnsNull() throws InvalidSPDXAnalysisException {
+		String id = "XXXX";
+		SpdxListedLicense result = ListedLicenses.getListedLicenses().getListedLicenseById(id);
+		assertNull(result);
+	}
+
 	public void testGetLicenseIbyIdLocal() throws InvalidSPDXAnalysisException {
 		System.setProperty("SPDXParser.OnlyUseLocalLicenses", "true");
 		ListedLicenses.resetListedLicenses();
@@ -109,6 +115,14 @@ public class ListedLicensesTest extends TestCase {
 		assertEquals(id, result.getLicenseExceptionId());
 	}
 	
+	public void testGetListedExceptionByIdReturnsNull() throws InvalidSPDXAnalysisException {
+		ListedLicenses.resetListedLicenses();
+		String id = "XXXX";
+		assertFalse(ListedLicenses.getListedLicenses().isSpdxListedExceptionId(id));
+		LicenseException result = ListedLicenses.getListedLicenses().getListedExceptionById(id);
+		assertNull(result);
+	}
+
 	public void testGetExceptionbyIdLocal() throws InvalidSPDXAnalysisException {
 		System.setProperty("SPDXParser.OnlyUseLocalLicenses", "true");
 		ListedLicenses.resetListedLicenses();
