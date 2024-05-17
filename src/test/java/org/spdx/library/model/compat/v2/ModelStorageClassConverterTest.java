@@ -127,7 +127,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 	}
 
 	public void testModelObjectToStoredObject() throws InvalidSPDXAnalysisException {
-		// ModelObject
+		// ModelObjectV2
 		Object result = ModelStorageClassConverter.modelObjectToStoredObject(gmo, gmo.getDocumentUri(), gmo.getModelStore(), gmo.getCopyManager());
 		assertTrue(result instanceof TypedValue);
 		assertEquals(gmo.getId(), ((TypedValue)result).getObjectUri());
@@ -178,7 +178,7 @@ public class ModelStorageClassConverterTest extends TestCase {
 	}
 
 	public void testModelClassToStoredClass() {
-		// ModelObject
+		// ModelObjectV2
 		assertEquals(TypedValue.class, ModelStorageClassConverter.modelClassToStoredClass(GenericModelObject.class));
 		// InvidiualUriValue
 		assertEquals(SimpleUriValue.class, ModelStorageClassConverter.modelClassToStoredClass(ChecksumAlgorithm.MD5.getClass()));

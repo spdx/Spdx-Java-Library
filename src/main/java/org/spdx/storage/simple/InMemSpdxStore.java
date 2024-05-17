@@ -344,12 +344,13 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public synchronized String getNextId(IdType idType, @Nullable String nameSpace) throws InvalidSPDXAnalysisException {
+	public synchronized String getNextId(IdType idType) throws InvalidSPDXAnalysisException {
 		switch (idType) {
+			//TODO: Move the compat constants into it's own constants file
 			case Anonymous: return ANON_PREFIX+GENERATED+String.valueOf(nextAnonId++);
-			case LicenseRef: return (nameSpace == null ? "" : nameSpace) + SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
-			case DocumentRef: return (nameSpace == null ? "" : nameSpace) + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
-			case SpdxId: return (nameSpace == null ? "" : nameSpace) + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
+			case LicenseRef: return SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
+			case DocumentRef: return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
+			case SpdxId: return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
 			case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
 			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
 		}

@@ -19,6 +19,7 @@ package org.spdx.library;
 
 import org.spdx.core.ModelRegistry;
 import org.spdx.library.model.v2.SpdxModelInfoV2_X;
+import org.spdx.library.model.v3.SpdxModelInfoV3_0;
 
 /**
  * Main entrypoint for the SPDX Java Library
@@ -40,6 +41,7 @@ public class ModelManager {
 	static {
 		// register the supported spec version models
 		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV2_X());
+		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV3_0());
 	}
 
 	/**

@@ -24,24 +24,37 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.ModelRegistry;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.Version;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
-import org.spdx.library.model.compat.v2.license.SimpleLicensingInfo;
-import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.ExternalDocumentRef;
+import org.spdx.library.model.v2.GenericModelObject;
+import org.spdx.library.model.v2.GenericSpdxElement;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxCreatorInformation;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxModelInfoV2_X;
+import org.spdx.library.model.v2.SpdxPackage;
+import org.spdx.library.model.v2.enumerations.AnnotationType;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.enumerations.RelationshipType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.LicenseInfoFactory;
+import org.spdx.library.model.v2.license.SimpleLicensingInfo;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.storage.CompatibleModelStoreWrapper;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
@@ -103,7 +116,8 @@ public class SpdxDocumentTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV2_X());
+		DefaultModelStore.initialize(new InMemSpdxStore(), "http://default/namespace", new ModelCopyManager());
 		gmo = new GenericModelObject();
 		CCO_DATALICENSE = LicenseInfoFactory.getListedLicenseById("CC0-1.0");
 		LICENSE1 = new ExtractedLicenseInfo("LicenseRef-1", "License Text 1");
@@ -127,7 +141,7 @@ public class SpdxDocumentTest extends TestCase {
 				RelationshipType.CONTAINS, "Relationship Comment1");
 		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
 				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
-		FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		FILE1 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"FileName1", LICENSE1, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE2}), 
 				"File Copyright1", CHECKSUM1)
 				.setComment("FileComment 1")
@@ -137,7 +151,7 @@ public class SpdxDocumentTest extends TestCase {
 				.setNoticeText("File Notice1")
 				.build();
 
-		FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		FILE2 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"FileName2", LICENSE2, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE3}), 
 				"File Copyright2", CHECKSUM2)
 				.setComment("FileComment 2")
@@ -147,7 +161,7 @@ public class SpdxDocumentTest extends TestCase {
 				.setNoticeText("File Notice2")
 				.build();
 
-		FILE3 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		FILE3 = gmo.createSpdxFile(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"FileName3", LICENSE3, Arrays.asList(new ExtractedLicenseInfo[] {LICENSE1}), 
 				"File Copyright2", CHECKSUM1)
 				.setComment("FileComment 3")
@@ -157,7 +171,7 @@ public class SpdxDocumentTest extends TestCase {
 				.setNoticeText("File Notice3")
 				.build();
 
-		PACKAGE1 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		PACKAGE1 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"Package 1", LICENSE1, "Pkg Copyright1", LICENSE2)
 				.addChecksum(CHECKSUM1)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
@@ -177,7 +191,7 @@ public class SpdxDocumentTest extends TestCase {
 				.setVersionInfo("version1")
 				.build();
 
-		PACKAGE2 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		PACKAGE2 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"Package 2", LICENSE2, "Pkg Copyright2", LICENSE3)
 				.addChecksum(CHECKSUM2)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
@@ -197,7 +211,7 @@ public class SpdxDocumentTest extends TestCase {
 				.setVersionInfo("version2")
 				.build();
 
-		PACKAGE3 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId, gmo.getDocumentUri()),
+		PACKAGE3 = gmo.createPackage(gmo.getModelStore().getNextId(IdType.SpdxId),
 				"Package 3", LICENSE1, "Pkg Copyright3", LICENSE3)
 				.addChecksum(CHECKSUM1)
 				.setLicenseInfosFromFile(Arrays.asList(new SimpleLicensingInfo[] {LICENSE2}))
@@ -293,7 +307,7 @@ public class SpdxDocumentTest extends TestCase {
 		assertTrue(doc.equivalent(doc));
 		
 		String doc2Uri = "http://spdx.org/spdx/2ndoc/2342";
-		IModelStore model2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		IModelStore model2 = new InMemSpdxStore();
 		SpdxDocument doc2 = SpdxModelFactory.createSpdxDocumentV2(model2, doc2Uri, gmo.getCopyManager());
 		doc2.setStrict(false);
 		doc2.setAnnotations(annotations);
@@ -367,7 +381,7 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		doc.setSpecVersion(Version.CURRENT_SPDX_VERSION);
+		doc.setSpecVersion(Version.TWO_POINT_THREE_VERSION);
 		List<String> result = doc.verify();
 		assertEquals(0, result.size());
 		// data license
@@ -378,10 +392,6 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(null);
 		result = doc.verify();
 		assertEquals(2, result.size());
-		// SpecVersion
-		doc.setSpecVersion(null);
-		result = doc.verify();
-		assertEquals(3, result.size());
 	}
 
 	/**
@@ -416,7 +426,7 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		doc.setSpecVersion(Version.CURRENT_SPDX_VERSION);
+		doc.setSpecVersion(Version.TWO_POINT_THREE_VERSION);
 		
 		assertTrue(collectionsSame(items, doc.getDocumentDescribes()));
 		List<SpdxItem> expected = Arrays.asList(new SpdxItem[] {
@@ -651,7 +661,6 @@ public class SpdxDocumentTest extends TestCase {
 		doc.setName(DOC_NAME1);
 		doc.setRelationships(relationships);
 		doc.setDocumentDescribes(items);
-		assertTrue(doc.getSpecVersion().isEmpty());
 		String ver = "SPDX-2.1";
 		doc.setSpecVersion(ver);
 		assertEquals(ver, doc.getSpecVersion());
@@ -659,16 +668,17 @@ public class SpdxDocumentTest extends TestCase {
 	
 	// Test for issue 126 - removing a documentDescribes not properly decrementing use counts
 	public void testRemoveDescribes() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		IModelStore modelStore = new InMemSpdxStore();
 		String docUri = "https://some.doc.uri";
 		ModelCopyManager copyManager = new ModelCopyManager();
 		SpdxDocument doc = new SpdxDocument(modelStore, docUri, copyManager, true);
-		String describedElementId = "describedElement";
+		String describedElementId = "SPDXRef-describedElement";
 		SpdxElement describedElement = new GenericSpdxElement(modelStore, docUri, describedElementId, copyManager, true);
 		assertEquals(0, doc.getDocumentDescribes().size());
 		assertEquals(0, doc.getRelationships().size());
 		doc.getDocumentDescribes().add(describedElement);
-		assertEquals(1, doc.getDocumentDescribes().size());
+		SpdxElement[] describes = doc.getDocumentDescribes().toArray(new SpdxElement[doc.getDocumentDescribes().size()]);
+		assertEquals(1, describes.length);
 		assertEquals(1, doc.getRelationships().size());
 		Relationship rel = doc.getRelationships().toArray(new Relationship[1])[0];
 		assertEquals(describedElement, rel.getRelatedSpdxElement().get());

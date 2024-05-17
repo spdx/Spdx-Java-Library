@@ -69,18 +69,18 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	public void testCreateModelObjectV2() throws InvalidSPDXAnalysisException {
-		ModelObject result = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 result = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager);
 		assertTrue(result instanceof Checksum);
 		assertEquals(ID1, result.getId());
 	}
 
 	public void testGetModelObjectIModelStoreStringStringStringModelCopyManagerBooleanV2() throws InvalidSPDXAnalysisException {
-		ModelObject result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, true);
 		assertTrue(result instanceof Checksum);
 		assertEquals(ID1, result.getId());
-		ModelObject result2 = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 result2 = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, false);
 		assertTrue(result2 instanceof Checksum);
 		assertEquals(ID1, result2.getId());
@@ -102,9 +102,9 @@ public class SpdxModelFactoryTest extends TestCase {
 
 	@SuppressWarnings("unchecked")
 	public void testGetElementsV2() throws InvalidSPDXAnalysisException {
-		ModelObject file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
-		ModelObject file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
+		ModelObjectV2 file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
 		try (Stream<SpdxElement> elementStream = (Stream<SpdxElement>)SpdxModelFactory.getElements(modelStore, DOCUMENT_URI, copyManager, SpdxFile.class)) {
 		    elementStream.forEach(element -> {
@@ -129,9 +129,9 @@ public class SpdxModelFactoryTest extends TestCase {
 	
 	@SuppressWarnings("unchecked")
 	public void testGetElementsNamespace() throws InvalidSPDXAnalysisException {
-		ModelObject file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 file1 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
-		ModelObject file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
+		ModelObjectV2 file2 = SpdxModelFactory.createModelObjectV2(modelStore, DOCUMENT_URI, ID2, 
 				SpdxConstantsCompatV2.CLASS_SPDX_FILE, copyManager);
 		try (Stream<SpdxElement> elementStream = (Stream<SpdxElement>)SpdxModelFactory.getElements(modelStore, DOCUMENT_URI + "#", copyManager, SpdxFile.class)) {
 		    elementStream.forEach(element -> {
@@ -161,11 +161,11 @@ public class SpdxModelFactoryTest extends TestCase {
 	}
 
 	public void testGetModelObjectIModelStoreStringStringModelCopyManagerV2() throws InvalidSPDXAnalysisException {
-		ModelObject result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
+		ModelObjectV2 result = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, 
 				SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, copyManager, true);
 		assertTrue(result instanceof Checksum);
 		assertEquals(ID1, result.getId());
-		Optional<ModelObject> result2 = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, copyManager);
+		Optional<ModelObjectV2> result2 = SpdxModelFactory.getModelObjectV2(modelStore, DOCUMENT_URI, ID1, copyManager);
 		assertTrue(result2.isPresent());
 		assertTrue(result2.get() instanceof Checksum);
 		assertEquals(ID1, result2.get().getId());

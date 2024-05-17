@@ -97,7 +97,7 @@ public class ModelObjectTest extends TestCase {
 			new PropertyDescriptor("anylicensListProp2", SpdxConstants.CORE_NAMESPACE), 
 			new PropertyDescriptor("anylicenseListProp3", SpdxConstants.CORE_NAMESPACE)};
 	
-	ModelObject[] TEST_MODEL_OBJECT_PROP_VALUES;
+	ModelObjectV2[] TEST_MODEL_OBJECT_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	AnyLicenseInfo[] TEST_ANYLICENSEINFO_PROP_VALUES;
 	List<?>[] TEST_ANYLICENSEINFO_LIST_PROP_VALUES;
@@ -138,10 +138,10 @@ public class ModelObjectTest extends TestCase {
 		cls.getMembers().add(eli1);
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
-			Arrays.asList(new ModelObject[] {lex, eli1}),
+			Arrays.asList(new ModelObjectV2[] {lex, eli1}),
 			Arrays.asList(new HashAlgorithm[] {HashAlgorithm.SHA256, HashAlgorithm.SHA1}),
 			Arrays.asList(new Integer[] {1, 3, 5})};
-		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObject[] {lex, eli1};
+		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObjectV2[] {lex, eli1};
 		// TODO: Changes these back once we have the individuals implemented
 		/*
 		TEST_ANYLICENSEINFO_PROP_VALUES = new AnyLicenseInfo[] {new ListedLicense(store, "Apache-2.0", copyManager, true),
@@ -205,7 +205,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#ModelObject(org.spdx.storage.IModelStore, java.lang.String, org.spdx.library.ModelCopyManager, boolean)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#ModelObject(org.spdx.storage.IModelStore, java.lang.String, org.spdx.library.ModelCopyManager, boolean)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testModelObjectIModelStoreStringModelCopyManagerBoolean() throws InvalidSPDXAnalysisException {
@@ -223,7 +223,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#ModelObject(org.spdx.library.mobdel.ModelObjectBuilder)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#ModelObject(org.spdx.library.mobdel.ModelObjectBuilder)}.
 	 */
 	public void testModelObjectModelObjectBuilder() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -245,7 +245,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#verify(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#verify(java.lang.String)}.
 	 */
 	public void testVerifyString() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -253,7 +253,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getObjectUri()}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getObjectUri()}.
 	 */
 	public void testGetObjectUri() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -261,7 +261,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getModelStore()}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getModelStore()}.
 	 */
 	public void testGetModelStore() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -269,7 +269,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#setStrict(boolean)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#setStrict(boolean)}.
 	 */
 	public void testSetStrict() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -279,7 +279,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getPropertyValueDescriptors()}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getPropertyValueDescriptors()}.
 	 */
 	public void testGetPropertyValueDescriptors() throws InvalidSPDXAnalysisException {
 		ModelObjectForTesting moft = new ModelObjectForTesting(store, TEST_OBJECT_URI, copyManager, true);
@@ -293,210 +293,210 @@ public class ModelObjectTest extends TestCase {
 		}
 	}
 	
-	protected void addTestValues(ModelObject mo) throws InvalidSPDXAnalysisException {
+	protected void addTestValues(ModelObjectV2 mo) throws InvalidSPDXAnalysisException {
 		for (Entry<PropertyDescriptor, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
 			mo.setPropertyValue(entry.getKey(), entry.getValue());
 		}
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getObjectPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getObjectPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetObjectPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#setPropertyValue(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#setPropertyValue(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testSetPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#updatePropertyValue(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#updatePropertyValue(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testUpdatePropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getStringPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getStringPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetStringPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getIntegerPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getIntegerPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetIntegerPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getEnumPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getEnumPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetEnumPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getBooleanPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getBooleanPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetBooleanPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getAnyLicenseInfoPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getAnyLicenseInfoPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetAnyLicenseInfoPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getElementPropertyValue(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getElementPropertyValue(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetElementPropertyValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#removeProperty(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#removeProperty(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testRemoveProperty() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#updateRemoveProperty(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#updateRemoveProperty(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testUpdateRemoveProperty() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#clearValueCollection(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#clearValueCollection(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testClearValueCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#updateClearValueCollection(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#updateClearValueCollection(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testUpdateClearValueCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#addPropertyValueToCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#addPropertyValueToCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testAddPropertyValueToCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#updateAddPropertyValueToCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#updateAddPropertyValueToCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testUpdateAddPropertyValueToCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#removePropertyValueFromCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#removePropertyValueFromCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testRemovePropertyValueFromCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#updateRemovePropertyValueFromCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#updateRemovePropertyValueFromCollection(org.spdx.storage.PropertyDescriptor, java.lang.Object)}.
 	 */
 	public void testUpdateRemovePropertyValueFromCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getObjectPropertyValueSet(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getObjectPropertyValueSet(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
 	 */
 	public void testGetObjectPropertyValueSet() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getObjectPropertyValueCollection(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getObjectPropertyValueCollection(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
 	 */
 	public void testGetObjectPropertyValueCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getStringCollection(org.spdx.storage.PropertyDescriptor)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getStringCollection(org.spdx.storage.PropertyDescriptor)}.
 	 */
 	public void testGetStringCollection() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#isCollectionMembersAssignableTo(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#isCollectionMembersAssignableTo(org.spdx.storage.PropertyDescriptor, java.lang.Class)}.
 	 */
 	public void testIsCollectionMembersAssignableTo() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#equivalent(org.spdx.library.model.ModelObject)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#equivalent(org.spdx.library.model.ModelObjectV2)}.
 	 */
 	public void testEquivalentModelObject() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#equals(java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#equals(java.lang.Object)}.
 	 */
 	public void testEqualsObject() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#clone(org.spdx.storage.IModelStore)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#clone(org.spdx.storage.IModelStore)}.
 	 */
 	public void testCloneIModelStore() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#copyFrom(org.spdx.library.model.ModelObject)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#copyFrom(org.spdx.library.model.ModelObjectV2)}.
 	 */
 	public void testCopyFrom() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#copyFromV2(org.spdx.library.model.compat.v2.ModelObject)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#copyFromV2(org.spdx.library.model.compat.v2.ModelObjectV2)}.
 	 */
 	public void testCopyFromV2() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#setCopyManager(org.spdx.library.ModelCopyManager)}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#setCopyManager(org.spdx.library.ModelCopyManager)}.
 	 */
 	public void testSetCopyManager() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#getCopyManager()}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#getCopyManager()}.
 	 */
 	public void testGetCopyManager() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.ModelObject#toTypedValue()}.
+	 * Test method for {@link org.spdx.library.model.ModelObjectV2#toTypedValue()}.
 	 */
 	public void testToTypedValue() throws InvalidSPDXAnalysisException {
 		fail("Not yet implemented");

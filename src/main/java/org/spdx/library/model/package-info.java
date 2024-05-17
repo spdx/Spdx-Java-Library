@@ -20,7 +20,7 @@
  * 
  * Sub packages are named by profile
  * 
- * All model objects inherit the <code>ModelObject</code> abstract class which contains useful helper functions
+ * All model objects inherit the <code>ModelObjectV2</code> abstract class which contains useful helper functions
  * 
  * @author Gary O'Neall
  *

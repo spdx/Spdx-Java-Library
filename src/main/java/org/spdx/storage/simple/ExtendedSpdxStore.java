@@ -99,8 +99,8 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#getNextId(org.spdx.storage.IModelStore.IdType, java.lang.String)
 	 */
 	@Override
-	public String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
-		return baseStore.getNextId(idType, documentUri);
+	public String getNextId(IdType idType) throws InvalidSPDXAnalysisException {
+		return baseStore.getNextId(idType);
 	}
 
 	/* (non-Javadoc)

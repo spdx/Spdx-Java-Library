@@ -30,12 +30,12 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
 /**
- * Concrete subclass of ModelObject for testing purposes
+ * Concrete subclass of ModelObjectV2 for testing purposes
  * 
  * @author Gary O'Neall
  *
  */
-public class ModelObjectForTesting extends ModelObject {
+public class ModelObjectForTesting extends ModelObjectV2 {
 
 	public static final String TYPE = "ModelObjectForTesting";
 
@@ -101,7 +101,7 @@ public class ModelObjectForTesting extends ModelObject {
 		 * @param from model object to copy the model store and copyManager from
 		 * @throws InvalidSPDXAnalysisException
 		 */
-		public ModelObjectForTestingBuilder(ModelObject from) throws InvalidSPDXAnalysisException {
+		public ModelObjectForTestingBuilder(ModelObjectV2 from) throws InvalidSPDXAnalysisException {
 			this(from, from.getModelStore().getNextId(IdType.Anonymous, null));
 		}
 	
@@ -111,7 +111,7 @@ public class ModelObjectForTesting extends ModelObject {
 		 * @param objectUri URI for the object
 		 * @param objectUri
 		 */
-		public ModelObjectForTestingBuilder(ModelObject from, String objectUri) {
+		public ModelObjectForTestingBuilder(ModelObjectV2 from, String objectUri) {
 			this(from.getModelStore(), objectUri, from.getCopyManager());
 			setStrict(from.isStrict());
 			setExternalMap(from.externalMap);

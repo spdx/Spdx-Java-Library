@@ -1157,7 +1157,7 @@ public class SpdxComparer {
 	 * @return true of the elements are present and equivalent
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static boolean elementsEquivalent(Optional<? extends ModelObject> elementA, Optional<? extends ModelObject> elementB) throws InvalidSPDXAnalysisException {
+	public static boolean elementsEquivalent(Optional<? extends ModelObjectV2> elementA, Optional<? extends ModelObjectV2> elementB) throws InvalidSPDXAnalysisException {
 		if (elementA.isPresent()) {
 			if (elementB.isPresent()) {
 				return elementA.get().equivalent(elementB.get());
@@ -1175,7 +1175,7 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException 
 	 * @return true if the collections all contain equivalent items
 	 */
-	public static boolean collectionsEquivalent(Collection<? extends ModelObject> collectionA, Collection<? extends ModelObject> collectionB) throws InvalidSPDXAnalysisException {
+	public static boolean collectionsEquivalent(Collection<? extends ModelObjectV2> collectionA, Collection<? extends ModelObjectV2> collectionB) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(collectionA)) {
 			return Objects.isNull(collectionB);
 		}
@@ -1185,12 +1185,12 @@ public class SpdxComparer {
 		if (collectionA.size() != collectionB.size()) {
 			return false;
 		}
-		for (ModelObject elementA:collectionA) {
+		for (ModelObjectV2 elementA:collectionA) {
 			if (Objects.isNull(elementA)) {
 				continue;
 			}
 			boolean found = false;
-			for (ModelObject elementB:collectionB) {
+			for (ModelObjectV2 elementB:collectionB) {
 				if (Objects.isNull(elementB)) {
 					continue;
 				}

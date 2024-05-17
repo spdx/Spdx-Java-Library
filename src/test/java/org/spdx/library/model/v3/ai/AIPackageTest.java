@@ -25,11 +25,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.ModelRegistry;
 import org.spdx.library.ModelCopyManager;
+import org.spdx.library.model.v3.SpdxModelInfoV3_0;
 import org.spdx.library.model.v3.ai.AIPackage.AIPackageBuilder;
+import org.spdx.library.model.v3.core.Agent.AgentBuilder;
+import org.spdx.library.model.v3.core.CreationInfo;
 import org.spdx.library.model.v3.core.PresenceType;
+import org.spdx.library.model.v3.core.ProfileIdentifierType;
+import org.spdx.library.model.v3.core.CreationInfo.CreationInfoBuilder;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -79,23 +86,32 @@ public class AIPackageTest extends TestCase {
 	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST1 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE1, MODEL_DATA_PREPROCESSING_TEST_VALUE2 });
 	static final List<String> MODEL_DATA_PREPROCESSING_TEST_LIST2 = Arrays.asList(new String[] { MODEL_DATA_PREPROCESSING_TEST_VALUE3 });
 	
+	private CreationInfo creationInfo;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
+		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV3_0());
 		modelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
+		creationInfo = new CreationInfoBuilder(modelStore, modelStore.getNextId(IdType.Anonymous), copyManager)
+							.setCreated("2010-01-29T18:30:22Z")
+							.setSpecVersion("3.0.0").build();
+		AgentBuilder agentBuilder = new AgentBuilder(modelStore, "https://unique/id" + modelStore.getNextId(IdType.SpdxId), copyManager);
+		agentBuilder.setCreationInfo(creationInfo);
+		agentBuilder.setName("Creator Name");
+		creationInfo.getCreatedBys().add(agentBuilder.build());
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 	
-	public static AIPackageBuilder builderForAIPackageTests(
+	public AIPackageBuilder builderForAIPackageTests(
 					IModelStore modelStore, String objectUri, @Nullable ModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		AIPackageBuilder retval = new AIPackageBuilder(modelStore, objectUri, copyManager)
 				.setLimitation(LIMITATION_TEST_VALUE)
 				.setInformationAboutApplication(INFORMATION_ABOUT_APPLICATION_TEST_VALUE)
 				.setInformationAboutTraining(INFORMATION_ABOUT_TRAINING_TEST_VALUE)
-				.setEnergyConsumption(ENERGY_CONSUMPTION_TEST_VALUE)
 				.addDomain(DOMAIN_TEST_VALUE1)
 				.addDomain(DOMAIN_TEST_VALUE2)
 				.addStandardCompliance(STANDARD_COMPLIANCE_TEST_VALUE1)
@@ -108,14 +124,16 @@ public class AIPackageTest extends TestCase {
 				.addModelDataPreprocessing(MODEL_DATA_PREPROCESSING_TEST_VALUE2)
 				.setSafetyRiskAssessment(SAFETY_RISK_ASSESSMENT_TEST_VALUE1)
 				.setAutonomyType(AUTONOMY_TYPE_TEST_VALUE1)
-				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
 				//TODO: Add in test values
 				/********************
 				.addMetric(DictionaryEntry)
 				.addMetricDecisionThreshold(DictionaryEntry)
 				.addHyperparameter(DictionaryEntry)
+				.setEnergyConsumption(ENERGY_CONSUMPTION_TEST_VALUE)
+				.setSensitivePersonalInformation(SENSITIVE_PERSONAL_INFORMATION_TEST_VALUE1)
 				***************/
 				;
+		retval.setCreationInfo(creationInfo);
 		return retval;
 	}
 	

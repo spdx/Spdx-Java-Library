@@ -104,7 +104,7 @@ public class ModelObjectTest extends TestCase {
 			new PropertyDescriptor("anylicensListProp2", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
 			new PropertyDescriptor("anylicenseListProp3", SpdxConstantsCompatV2.SPDX_NAMESPACE)};
 	
-	ModelObject[] TEST_MODEL_OBJECT_PROP_VALUES;
+	ModelObjectV2[] TEST_MODEL_OBJECT_PROP_VALUES;
 	List<?>[] TEST_LIST_PROPERTY_VALUES;
 	AnyLicenseInfo[] TEST_ANYLICENSEINFO_PROP_VALUES;
 	List<?>[] TEST_ANYLICENSEINFO_LIST_PROP_VALUES;
@@ -131,10 +131,10 @@ public class ModelObjectTest extends TestCase {
 		cls.addMember(eli1);
 		TEST_LIST_PROPERTY_VALUES = new List<?>[] {Arrays.asList("ListItem1", "listItem2", "listItem3"), 
 			Arrays.asList(true, false, true),
-			Arrays.asList(new ModelObject[] {lex, eli1}),
+			Arrays.asList(new ModelObjectV2[] {lex, eli1}),
 			Arrays.asList(new ChecksumAlgorithm[] {ChecksumAlgorithm.SHA256, ChecksumAlgorithm.SHA1}),
 			Arrays.asList(new Integer[] {1, 3, 5})};
-		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObject[] {lex, eli1};
+		TEST_MODEL_OBJECT_PROP_VALUES = new ModelObjectV2[] {lex, eli1};
 		TEST_ANYLICENSEINFO_PROP_VALUES = new AnyLicenseInfo[] {new SpdxListedLicense("Apache-2.0"), eli1, new SpdxNoneLicense()};
 		TEST_ANYLICENSEINFO_LIST_PROP_VALUES = new List<?>[] {Arrays.asList(new AnyLicenseInfo[] {new SpdxListedLicense("MIT"), eli1, new SpdxListedLicense("GPL-2.0-only")}),
 			Arrays.asList(new AnyLicenseInfo[] {new SpdxNoAssertionLicense()}),
@@ -182,7 +182,7 @@ public class ModelObjectTest extends TestCase {
 		super.tearDown();
 	}
 	
-	protected void addTestValues(ModelObject mo) throws InvalidSPDXAnalysisException {
+	protected void addTestValues(ModelObjectV2 mo) throws InvalidSPDXAnalysisException {
 		for (Entry<PropertyDescriptor, Object> entry:ALL_PROPERTY_VALUES.entrySet()) {
 			mo.setPropertyValue(entry.getKey(), entry.getValue());
 		}
@@ -192,20 +192,20 @@ public class ModelObjectTest extends TestCase {
 	protected boolean compareLists(Object olist1, Object olist2) throws InvalidSPDXAnalysisException {
 		List<Object> list1;
 		if (olist1 instanceof List) {
-			if (((List<Object>)(olist1)).size() > 0 && ((List<Object>)(olist1)).get(0) instanceof ModelObject) {
+			if (((List<Object>)(olist1)).size() > 0 && ((List<Object>)(olist1)).get(0) instanceof ModelObjectV2) {
 				// convert type TypedValue
 				list1 = new ArrayList<Object>();
 				for (Object o:((List<Object>)(olist1))) {
-					list1.add(((ModelObject)o).toTypedValue());
+					list1.add(((ModelObjectV2)o).toTypedValue());
 				}
 			} else {
 				list1 = (List<Object>)(olist1);
 			}
 		} else if (olist1 instanceof Object[]) {
-			if (((Object[])olist1).length > 0 && ((Object[])olist1)[0] instanceof ModelObject) {
+			if (((Object[])olist1).length > 0 && ((Object[])olist1)[0] instanceof ModelObjectV2) {
 				list1 = new ArrayList<Object>();
 				for (Object o:((Object[])olist1)) {
-					list1.add(((ModelObject)o).toTypedValue());
+					list1.add(((ModelObjectV2)o).toTypedValue());
 				}
 			} else {
 				list1 = Arrays.asList(olist1);
@@ -215,20 +215,20 @@ public class ModelObjectTest extends TestCase {
 		}
 		List<Object> list2;
 		if (olist2 instanceof List) {
-			if (((List<Object>)(olist2)).size() > 0 && ((List<Object>)(olist2)).get(0) instanceof ModelObject) {
+			if (((List<Object>)(olist2)).size() > 0 && ((List<Object>)(olist2)).get(0) instanceof ModelObjectV2) {
 				// convert type TypedValue
 				list2 = new ArrayList<Object>();
 				for (Object o:((List<Object>)(olist2))) {
-					list2.add(((ModelObject)o).toTypedValue());
+					list2.add(((ModelObjectV2)o).toTypedValue());
 				}
 			} else {
 				list2 = (List<Object>)(olist2);
 			}
 		} else if (olist2 instanceof Object[]) {
-			if (((Object[])olist2).length > 0 && ((Object[])olist2)[0] instanceof ModelObject) {
+			if (((Object[])olist2).length > 0 && ((Object[])olist2)[0] instanceof ModelObjectV2) {
 				list2 = new ArrayList<Object>();
 				for (Object o:((Object[])olist2)) {
-					list2.add(((ModelObject)o).toTypedValue());
+					list2.add(((ModelObjectV2)o).toTypedValue());
 				}
 			} else {
 				list2 = Arrays.asList(olist2);
@@ -237,7 +237,7 @@ public class ModelObjectTest extends TestCase {
 			return false;
 		}
 		assertEquals(list1.size(), list2.size());
-		if (list1.size() > 0 && list1.get(0) instanceof ModelObject) {
+		if (list1.size() > 0 && list1.get(0) instanceof ModelObjectV2) {
 			// convert to type
 		}
 		for (Object list1item:list1) {
@@ -263,7 +263,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getDocumentUri()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getDocumentUri()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetDocumentUri() throws InvalidSPDXAnalysisException {
@@ -272,7 +272,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getId()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getId()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testGetId() throws InvalidSPDXAnalysisException {
@@ -281,7 +281,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getModelStore()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getModelStore()}.
 	 */
 	public void testGetModelStore() throws InvalidSPDXAnalysisException {
 		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
@@ -290,7 +290,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getPropertyValueDescriptors()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getPropertyValueDescriptors()}.
 	 */
 	public void testGetPropertyValueNames() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -305,7 +305,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getObjectPropertyValue(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getObjectPropertyValue(java.lang.String)}.
 	 */
 	public void testGetObjectPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -316,7 +316,7 @@ public class ModelObjectTest extends TestCase {
 			assertTrue(result.isPresent());
 			if (result.get() instanceof List) {
 				assertTrue(compareLists(entry.getValue(), result.get()));
-			} else if (result.get() instanceof ModelObject) {
+			} else if (result.get() instanceof ModelObjectV2) {
 				assertEquals(entry.getValue(), result.get());
 			} else if (result.get() instanceof ModelCollectionV2) {
 				assertTrue(compareLists(entry.getValue(), ((ModelCollectionV2<?>)result.get()).toImmutableList()));
@@ -328,7 +328,7 @@ public class ModelObjectTest extends TestCase {
 
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#setPropertyValue(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#setPropertyValue(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testSetPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -341,7 +341,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updatePropertyValue(java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updatePropertyValue(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdatePropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -356,7 +356,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getStringPropertyValue(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getStringPropertyValue(java.lang.String)}.
 	 */
 	public void testGetStringPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -387,7 +387,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getBooleanPropertyValue(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getBooleanPropertyValue(java.lang.String)}.
 	 */
 	public void testGetBooleanPropertyValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -404,7 +404,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#removeProperty(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#removeProperty(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testRemovePropertyIModelStoreStringStringString() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -419,7 +419,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updateRemoveProperty(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updateRemoveProperty(java.lang.String)}.
 	 */
 	public void testUpdateRemoveProperty() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -437,7 +437,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#clearValueCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#clearValueCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testClearPropertyValueList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -450,7 +450,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updateClearValueCollection(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updateClearValueCollection(java.lang.String)}.
 	 */
 	public void testUpdateClearPropertyValueList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -467,7 +467,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#addValueToCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#addValueToCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testAddPropertyValueToList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -485,7 +485,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updateAddPropertyValueToCollection(java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updateAddPropertyValueToCollection(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdateAddPropertyValueToList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -505,7 +505,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#replacePropertyValueList(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.util.List)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#replacePropertyValueList(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.util.List)}.
 	 */
 	public void testReplacePropertyValueList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -522,7 +522,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updateReplacePropertyValueList(java.lang.String, java.util.List)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updateReplacePropertyValueList(java.lang.String, java.util.List)}.
 	 */
 	public void testUpdateReplacePropertyValueList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -539,7 +539,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#removePropertyValueFromCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#removePropertyValueFromCollection(org.spdx.storage.IModelStore, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)}.
 	 */
 	public void testRemovePropertyValueFromList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -557,7 +557,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#updateRemovePropertyValueFromCollection(java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#updateRemovePropertyValueFromCollection(java.lang.String, java.lang.Object)}.
 	 */
 	public void testUpdateRemovePropertyValueFromList() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -577,7 +577,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#getStringPropertyValueList(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#getStringPropertyValueList(java.lang.String)}.
 	 */
 	public void testGetStringPropertyValueCollection() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -593,7 +593,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#equivalent(org.spdx.library.model.compat.v2.compat.v2.ModelObject)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#equivalent(org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject)}.
 	 */
 	public void testEquivalent() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -745,7 +745,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#equals(java.lang.Object)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#equals(java.lang.Object)}.
 	 */
 	public void testEqualsObject() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -765,13 +765,13 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#clone()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#clone()}.
 	 */
 	public void testClone() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
 		addTestValues(gmo);
 		InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
-		ModelObject result = gmo.clone(store2);
+		ModelObjectV2 result = gmo.clone(store2);
 		assertTrue(result instanceof GenericModelObject);
 		assertEquals(result, gmo);
 		assertTrue(result.equivalent(gmo));
@@ -779,7 +779,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#copyFrom(org.spdx.library.model.compat.v2.compat.v2.ModelObject)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#copyFrom(org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject)}.
 	 */
 	public void testCopyFrom() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -796,7 +796,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#idToIdType(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#idToIdType(java.lang.String)}.
 	 */
 	public void testIdToIdType() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);
@@ -810,7 +810,7 @@ public class ModelObjectTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.ModelObject#toTypedValue()}.
+	 * Test method for {@link org.spdx.library.model.compat.v2.ModelObjectV2.v2.ModelObject#toTypedValue()}.
 	 */
 	public void testToTypeValue() throws InvalidSPDXAnalysisException {
 		GenericModelObject gmo = new GenericModelObject(store, docUri, TEST_ID, copyManager, true);

@@ -263,13 +263,13 @@ public class ModelCopyManager implements IModelCopyManager {
 				toObjectUri = sourceUri;
 			} else if (Objects.nonNull(toNamespace)) {
 				if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
-					toObjectUri = toStore.getNextId(IdType.DocumentRef, toNamespace);
+					toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef);
 				} else {
 					switch (fromStore.getIdType(sourceUri)) {
-						case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous, toNamespace); break;
-						case LicenseRef: toObjectUri = toStore.getNextId(IdType.LicenseRef, toNamespace); break;
-						case DocumentRef: toObjectUri = toStore.getNextId(IdType.DocumentRef, toNamespace); break;
-						case SpdxId: toObjectUri = toStore.getNextId(IdType.SpdxId, toNamespace); break;
+						case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous); break;
+						case LicenseRef: toObjectUri = toNamespace + toStore.getNextId(IdType.LicenseRef); break;
+						case DocumentRef: toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef); break;
+						case SpdxId: toObjectUri = toNamespace + toStore.getNextId(IdType.SpdxId); break;
 						case ListedLicense:
 						case Unkown:
 						default: toObjectUri = sourceUri;
