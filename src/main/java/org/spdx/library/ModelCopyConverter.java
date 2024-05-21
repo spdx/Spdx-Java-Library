@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019 Source Auditor Inc.
+ * Copyright (c) 2024 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
  * 
@@ -15,10 +15,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
+package org.spdx.library;
+
 /**
  * @author Gary O'Neall
  * 
- * License template are used for matching licenses.
+ * Static class which manages the conversion between different versions of the SPDX specification
  *
  */
-package org.spdx.licenseTemplate;
+public class ModelCopyConverter {
+	
+	private ModelCopyConverter() {
+		// static class
+	}
+
+}

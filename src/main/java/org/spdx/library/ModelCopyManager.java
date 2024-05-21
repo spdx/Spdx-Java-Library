@@ -259,24 +259,24 @@ public class ModelCopyManager implements IModelCopyManager {
 		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
 		if (Objects.isNull(toObjectUri)) {
 			if (toStore.exists(sourceUri)) {
-				logger.warn("Copying to an existing object "+sourceUri);
-				toObjectUri = sourceUri;
-			} else if (Objects.nonNull(toNamespace)) {
-				if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
-					toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef);
-				} else {
-					switch (fromStore.getIdType(sourceUri)) {
-						case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous); break;
-						case LicenseRef: toObjectUri = toNamespace + toStore.getNextId(IdType.LicenseRef); break;
-						case DocumentRef: toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef); break;
-						case SpdxId: toObjectUri = toNamespace + toStore.getNextId(IdType.SpdxId); break;
-						case ListedLicense:
-						case Unkown:
-						default: toObjectUri = sourceUri;
+				if (Objects.nonNull(toNamespace)) {
+					if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
+						toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef);
+					} else {
+						switch (fromStore.getIdType(sourceUri)) {
+							case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous); break;
+							case LicenseRef: toObjectUri = toNamespace + toStore.getNextId(IdType.LicenseRef); break;
+							case DocumentRef: toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef); break;
+							case SpdxId: toObjectUri = toNamespace + toStore.getNextId(IdType.SpdxId); break;
+							case ListedLicense:
+							case Unkown:
+							default: toObjectUri = toStore.getNextId(IdType.Anonymous);
+						}
 					}
+				} else {
+					toObjectUri = toStore.getNextId(IdType.Anonymous);
 				}
-			}
-			if (Objects.isNull(toObjectUri)) {
+			} else {
 				toObjectUri = sourceUri;
 			}
 			copy(toStore, toObjectUri, fromStore, sourceUri, type, toSpecVersion, toNamespace);

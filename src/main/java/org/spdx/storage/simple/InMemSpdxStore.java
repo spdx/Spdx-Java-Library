@@ -420,15 +420,15 @@ public class InMemSpdxStore implements IModelStore {
 			return IdType.Anonymous;
 		}
 		if (id.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM) |
-				id.contains("#" + SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
+				id.contains(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
 		}
 		if (id.startsWith(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM) |
-				id.contains("#" + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
+				id.contains(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		}
 		if (id.startsWith(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM) |
-				id.contains("#" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
+				id.contains(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
 		}
 		if (id.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {

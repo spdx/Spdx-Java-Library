@@ -1,8 +1,9 @@
-package org.spdx.library;
+package org.spdx.library.model.compat.v2;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxConstants.SpdxMajorVersion;
 import org.spdx.library.model.compat.v2.Annotation;
 import org.spdx.library.model.compat.v2.Checksum;

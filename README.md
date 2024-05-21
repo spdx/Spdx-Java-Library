@@ -10,9 +10,12 @@ Java library which implements the Java object model for SPDX and provides useful
 
 ## Library Version Compatibility
 
-Library version 3.0.0 and higher is not compatible with previous versions of the library due to breaking changes introduced in SPDX 3.0.
+Library version 2.0.0 and higher is not compatible with previous versions of the library due to breaking changes introduced in SPDX 3.0.
 
-See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how to upgrade.
+The library does support the spec versions 2.X and 3.X.
+
+See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how to upgrade from earlier versions of the library.
+
 ## Storage Interface
 The Spdx-Java-Library allows for different implementations of SPDX object storage.  The storage facility implements the org.spdx.storage.IModelStore interface.  This is a low level Service Provider Interface (SPI).  The ISerializableModelStore extends the IModelStore and supports serializing and de-serializing the store to an I/O Stream. This interface is currently used to implement JSON, XML, YAML, and RDF/XML formats.  The default storage interface is an in-memory Map which should be sufficient for light weight usage of the library.
 
@@ -29,7 +32,7 @@ If you are using Maven, you can add the following dependency in your POM file:
 <dependency>
   <groupId>org.spdx</groupId>
   <artifactId>java-spdx-library</artifactId>
-  <version>(,1.0]</version>
+  <version>(,2.0]</version>
 </dependency>
 ```
 
@@ -37,16 +40,18 @@ If you are using Maven, you can add the following dependency in your POM file:
 
 There are a couple of static classes that help common usage scenarios:
 
-- org.spdx.library.SPDXModelFactory supports the creation of specific model objects
+- org.spdx.library.SpdxModelFactory supports the creation of specific model objects
 - org.spdx.library.model.license.LicenseInfoFactory supports the parsing of SPDX license expressions, creation, and comparison of SPDX licenses
 
-## Update for new properties or classes
+The first thing that needs to be done in your implementation is call `SpdxModelFactory.init()` - this will load all the supported versions.
+
+## Update for new versions of the spec
 To update Spdx-Java-Library, the following is a very brief checklist:
 
-  1. Update the SpdxContants with any new or changed properties and classes
-  2. Update the Java code representing the model
-  3. Update the SpdxComparer/SpdxFileComparer in the org.spdx.compare package
-  4. Update unit tests
+  1. Create a Java .jar file for the new version which contains an implementation of `ISpdxModelInfo` - typically named SpdxModelInfoVXXX - where XXX is the version of the spec.
+  2. Update the SpdxModelFactory source file to load the model info by adding the line `ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoVXXX());` in the static block at the very beginning of the class.
+  3. If there are any conversions that are needed when copying to or from the new model version, add conversion code to the `ModelCopyConverter` class.
+  4. Update SpdxModelFactory unit test for the highest version check
 
 ## Development Status
-Note: This library is mostly stable, but may contain some defects.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.
+Note: This library is currently unstable, and under development.  Reviews, suggestions are welcome.  Please enter an issue with any suggestions.
