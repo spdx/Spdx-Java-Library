@@ -45,6 +45,12 @@ There are a couple of static classes that help common usage scenarios:
 
 The first thing that needs to be done in your implementation is call `SpdxModelFactory.init()` - this will load all the supported versions.
 
+If you are programatically creating SPDX data, you will start by creating a model store.  The simplest model store is an in-memory model store which can be created with `store = new InMemSpdxStore()`.  A copy manager will be needed if you are working with more than one store (e.g. a serialized format of SPDX data and in memory).  If you're not sure, you should just create one.  This can be done with `copyManager = new ModelCopyManager()`.
+
+The first object you create will depend on the major version:
+- For SPDX 2.X, you would start by creating an SpdxDocument.  The factory method `SpdxDocument document = SpdxModelFactory.createSpdxDocumentV2(IModelStore modelStore, String documentUri, IModelCopyManager copyManager)` will create a new SPDX document.  Once created, you can use the setters to set the specific fields.  You can then use the convenience create methods on the document to create additional SPDX objects (e.g. `document.createSpdxFile(...)`);
+- For SPDX 3.X, you will start with a CreationInfo class.  The factory method `CreationInfo creationInfo = SpdxModelClassFactory.createCreationInfo(IModelStore modelStore, String createdByUri,String createdByName, @Nullable IModelCopyManager copyManager)` will create and initialize a CreationInfo with today's date and the Agent information.  To create any additional objects, you can use the builder convenience methods from the creationInfo (or any Elements created by the creationInfo) (e.g. `creationInfo.createSoftwareSpdxFile(String spdxFileObjectUri)`.  The created objects will copy the creationInfo.
+
 ## Update for new versions of the spec
 To update Spdx-Java-Library, the following is a very brief checklist:
 
