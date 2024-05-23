@@ -332,12 +332,9 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public Optional<Object> getValue(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = getItem(objectUri);
-		Class<?> itemClass = ModelRegistry.getModelRegistry().typeToClass(item.getType(), item.getSpecVersion());
-		if (Objects.isNull(itemClass)) {
-			throw new InvalidSPDXAnalysisException("Unknown type "+item.getType()+" for spec version "+item.getSpecVersion());
-		}
 		if (item.isCollectionProperty(propertyDescriptor)) {
-			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, itemClass, item.getSpecVersion()));
+			logger.warn("Returning a collection for a getValue call for property "+propertyDescriptor.getName());
+			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion()));
 		} else {
 			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}

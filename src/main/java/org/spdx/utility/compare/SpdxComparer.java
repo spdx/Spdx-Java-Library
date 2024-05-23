@@ -33,22 +33,22 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalDocumentRef;
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxCreatorInformation;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxPackage;
-import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
-import org.spdx.library.model.compat.v2.SpdxSnippet;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.ExternalDocumentRef;
+import org.spdx.library.model.v2.ModelObjectV2;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxCreatorInformation;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxPackage;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.v2.SpdxSnippet;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
 /**
  * Performs a comparison between two or more SPDX documents and holds the results of the comparison
  * The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code>

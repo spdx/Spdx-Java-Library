@@ -20,11 +20,11 @@ package org.spdx.utility.compare;
 import java.util.List;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxItem;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 /**
  *  Contains the results of a comparison between two SPDX items with the same name

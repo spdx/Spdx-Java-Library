@@ -37,8 +37,8 @@ import org.spdx.library.model.v3.core.HashAlgorithm;
 import org.spdx.library.model.v3.core.Relationship;
 import org.spdx.library.model.v3.core.RelationshipType;
 import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.software.SpdxFile;
-import org.spdx.library.model.v3.software.SpdxPackage;
+import org.spdx.library.model.v3.software.SoftwareSpdxFile;
+import org.spdx.library.model.v3.software.SoftwareSpdxPackage;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -119,12 +119,12 @@ public class ModelCopyManagerTest {
 				.build();
 		creationInfo.getCreatedBys().add(agent);
 		agent.setCreationInfo(creationInfo);
-		SpdxFile spdxFile = agent.createSpdxFile(fromStore.getNextId(IdType.SpdxId))
+		SoftwareSpdxFile spdxFile = agent.createSoftwareSpdxFile(fromStore.getNextId(IdType.SpdxId))
 				.setName("fileName")
-				.setCopyrightText("copyrightText")
+				.setSoftwareCopyrightText("copyrightText")
 				.addVerifiedUsing(hash)
 				.build();
-		SpdxPackage pkg = spdxFile.createSpdxPackage(fromStore.getNextId(IdType.SpdxId))
+		SoftwareSpdxPackage pkg = spdxFile.createSoftwareSpdxPackage(fromStore.getNextId(IdType.SpdxId))
 				.setName("packageName")
 				.setBuiltTime(date)
 				.build();

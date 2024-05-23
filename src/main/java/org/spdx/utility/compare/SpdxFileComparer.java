@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxItem;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 /**
  * Compares two SPDX files.  The <code>compare(fileA, fileB)</code> method will perform the comparison and

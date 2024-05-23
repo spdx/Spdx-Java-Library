@@ -30,12 +30,12 @@ import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.SpdxIdInUseException;
+import org.spdx.core.TypedValue;
 import org.spdx.library.ModelCopyManager;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxIdInUseException;
-import org.spdx.library.TypedValue;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -96,10 +96,11 @@ public class InMemSpdxStoreTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
+		SpdxModelFactory.init();
 		TEST_LIST_PROPERTY_VALUES = new ArrayList<?>[] {new ArrayList<>(Arrays.asList("ListItem1", "listItem2", "listItem3")), 
 			new ArrayList<>(Arrays.asList(true, false, true)),
-			new ArrayList<>(Arrays.asList(new TypedValue("typeId1", TEST_TYPE1), new TypedValue("typeId2", TEST_TYPE2)))};
-			TEST_VALUE_PROPERTY_VALUES[3] = new TypedValue("typeId3", TEST_TYPE1);
+			new ArrayList<>(Arrays.asList(new TypedValue("typeId1", TEST_TYPE1, "SPDX-2.3"), new TypedValue("typeId2", TEST_TYPE2, "SPDX-2.3")))};
+			TEST_VALUE_PROPERTY_VALUES[3] = new TypedValue("typeId3", TEST_TYPE1, "SPDX-2.3");
 
 	}
 
@@ -113,32 +114,32 @@ public class InMemSpdxStoreTest extends TestCase {
 	public void testUpdateNextIds() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			// License ID's
-			String nextId = store.getNextId(IdType.LicenseRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "LicenseRef-gnrtd0", nextId);
-			store.create(TEST_NAMESPACE1 + "LicenseRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			nextId = store.getNextId(IdType.LicenseRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "LicenseRef-gnrtd34", nextId);
+			String nextId = store.getNextId(IdType.LicenseRef);
+			assertEquals("LicenseRef-gnrtd0", nextId);
+			store.create(new TypedValue(TEST_NAMESPACE1 + "LicenseRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_FILE, "SPDX-2.3"));
+			nextId = store.getNextId(IdType.LicenseRef);
+			assertEquals("LicenseRef-gnrtd34", nextId);
 			
 			// SPDX ID's
-			nextId = store.getNextId(IdType.SpdxId, null);
+			nextId = store.getNextId(IdType.SpdxId);
 			assertEquals("SPDXRef-gnrtd0", nextId);
-			store.create("SPDXRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_FILE);
-			nextId = store.getNextId(IdType.SpdxId, null);
+			store.create(new TypedValue("SPDXRef-gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_FILE, "SPDX-2.3"));
+			nextId = store.getNextId(IdType.SpdxId);
 			assertEquals("SPDXRef-gnrtd34", nextId);
 			
 			// Anonymous ID's
-			nextId = store.getNextId(IdType.Anonymous, TEST_NAMESPACE1);
+			nextId = store.getNextId(IdType.Anonymous);
 			assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd0", nextId);
-			store.create(InMemSpdxStore.ANON_PREFIX + "gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM);
-			nextId = store.getNextId(IdType.Anonymous, TEST_NAMESPACE1);
+			store.create(new TypedValue(InMemSpdxStore.ANON_PREFIX + "gnrtd33", SpdxConstantsCompatV2.CLASS_SPDX_CHECKSUM, "SPDX-2.3"));
+			nextId = store.getNextId(IdType.Anonymous);
 			assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd34", nextId);
 			
 			// Document ID's
-			nextId = store.getNextId(IdType.DocumentRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
-			store.create(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd33", SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF);
-			nextId = store.getNextId(IdType.DocumentRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd34", nextId);
+			nextId = store.getNextId(IdType.DocumentRef);
+			assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
+			store.create(new TypedValue(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd33", SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF, "SPDX-2.3"));
+			nextId = store.getNextId(IdType.DocumentRef);
+			assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd34", nextId);
 		}
 	}
 	
@@ -146,10 +147,10 @@ public class InMemSpdxStoreTest extends TestCase {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			assertFalse(store.exists(TEST_OBJECT_URI1));
 			assertFalse(store.exists(TEST_OBJECT_URI2));
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
 			assertTrue(store.exists(TEST_OBJECT_URI1));
 			assertFalse(store.exists(TEST_OBJECT_URI2));
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
 			assertTrue(store.exists(TEST_OBJECT_URI1));
 			assertTrue(store.exists(TEST_OBJECT_URI2));
 		}
@@ -157,12 +158,12 @@ public class InMemSpdxStoreTest extends TestCase {
 
 	public void testGetPropertyValueNames() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			for (int i = 0; i < TEST_VALUE_PROPERTIES.length; i++) {
 			    if (TEST_VALUE_PROPERTY_VALUES[i] instanceof TypedValue) {
 			        TypedValue tv = (TypedValue)TEST_VALUE_PROPERTY_VALUES[i];
-			        store.create(tv.getObjectUri(), tv.getType());
+			        store.create(tv);
 			    }
 				store.setValue(TEST_OBJECT_URI1, TEST_VALUE_PROPERTIES[i], TEST_VALUE_PROPERTY_VALUES[i]);
 			}
@@ -170,7 +171,7 @@ public class InMemSpdxStoreTest extends TestCase {
 				for (Object value:TEST_LIST_PROPERTY_VALUES[i]) {
 				    if (value instanceof TypedValue) {
 				        TypedValue tv = (TypedValue)value;
-				        store.create(tv.getObjectUri(), tv.getType());
+				        store.create(tv);
 				    }
 					store.addValueToCollection(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[i], value);
 				}
@@ -190,8 +191,8 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testGetSetValue() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_VALUE_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_VALUE_PROPERTIES[0]).isPresent());
 			store.setValue(TEST_OBJECT_URI1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
@@ -203,9 +204,9 @@ public class InMemSpdxStoreTest extends TestCase {
 	}
 	
 	public void testGetAddValueList() throws Exception {
-		try (InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2)) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_LIST_PROPERTIES[0]).isPresent());
 			String value1 = "value1";
@@ -229,35 +230,35 @@ public class InMemSpdxStoreTest extends TestCase {
 	public void testGetNextId() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			// License ID's
-			String nextId = store.getNextId(IdType.LicenseRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "LicenseRef-gnrtd0", nextId);
-			nextId = store.getNextId(IdType.LicenseRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "LicenseRef-gnrtd1", nextId);
+			String nextId = store.getNextId(IdType.LicenseRef);
+			assertEquals("LicenseRef-gnrtd0", nextId);
+			nextId = store.getNextId(IdType.LicenseRef);
+			assertEquals("LicenseRef-gnrtd1", nextId);
 			
 			// SPDX ID's
-			nextId = store.getNextId(IdType.SpdxId, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "SPDXRef-gnrtd0", nextId);
-			nextId = store.getNextId(IdType.SpdxId, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + "SPDXRef-gnrtd1", nextId);
+			nextId = store.getNextId(IdType.SpdxId);
+			assertEquals("SPDXRef-gnrtd0", nextId);
+			nextId = store.getNextId(IdType.SpdxId);
+			assertEquals("SPDXRef-gnrtd1", nextId);
 			
 			// Anonymous ID's
-			nextId = store.getNextId(IdType.Anonymous, TEST_NAMESPACE1);
+			nextId = store.getNextId(IdType.Anonymous);
 			assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd0", nextId);
-			nextId = store.getNextId(IdType.Anonymous, TEST_NAMESPACE1);
+			nextId = store.getNextId(IdType.Anonymous);
 			assertEquals(InMemSpdxStore.ANON_PREFIX + "gnrtd1", nextId);
 			
 			// Document ID's
-			nextId = store.getNextId(IdType.DocumentRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
-			nextId = store.getNextId(IdType.DocumentRef, TEST_NAMESPACE1);
-			assertEquals(TEST_NAMESPACE1 + SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", nextId);
+			nextId = store.getNextId(IdType.DocumentRef);
+			assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd0", nextId);
+			nextId = store.getNextId(IdType.DocumentRef);
+			assertEquals(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "gnrtd1", nextId);
 		}
 	}
 	
 	public void testRemoveProperty() throws Exception {
-		try (InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2)) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_LIST_PROPERTIES[0]).isPresent());
 			for (Object e:TEST_LIST_PROPERTY_VALUES[0]) {
@@ -293,8 +294,8 @@ public class InMemSpdxStoreTest extends TestCase {
 
 	public void testClearList() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_LIST_PROPERTIES[0]).isPresent());
 			String value1 = "value1";
@@ -310,28 +311,9 @@ public class InMemSpdxStoreTest extends TestCase {
 		}
 	}
 	
-	public void testCopyFrom() throws Exception {
-		try (InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2)) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			String value1 = "value1";
-			String value2 = "value2";
-			store.addValueToCollection(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0], value1);
-			store.addValueToCollection(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0], value2);
-			store.setValue(TEST_OBJECT_URI1, TEST_VALUE_PROPERTIES[0], TEST_VALUE_PROPERTY_VALUES[0]);
-			InMemSpdxStore store2 = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
-			ModelCopyManager copyManager = new ModelCopyManager();
-			copyManager.copy(store2, store, TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, TEST_NAMESPACE1, 
-					TEST_NAMESPACE2, TEST_NAMESPACE1, TEST_NAMESPACE2);
-			assertEquals(TEST_VALUE_PROPERTY_VALUES[0], store2.getValue(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_VALUE_PROPERTIES[0]).get());
-			assertEquals(2, toImmutableList(store2.listValues(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).size());
-			assertTrue(toImmutableList(store2.listValues(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value1));
-			assertTrue(toImmutableList(store2.listValues(TEST_NAMESPACE2 + "#" + TEST_ID1, TEST_LIST_PROPERTIES[0])).contains(value2));
-		}
-	}
-	
 	public void testRemoveListItem() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			String value1 = "value1";
 			String value2 = "value2";
 			store.addValueToCollection(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0], value1);
@@ -350,7 +332,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	//TODO: Fix the following test - it is flakey.  Times out about 1 out of 5 times.  Test problem, not a problem with the code under test
 	public void testLock() throws Exception {
 		try (final InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			String value1 = "value1";
 			@SuppressWarnings("unused")
 			String value2 = "value2";
@@ -476,8 +458,8 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testCollectionSize() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_LIST_PROPERTIES[0]).isPresent());
 			String value1 = "value1";
@@ -492,8 +474,8 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testCollectionContains() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertFalse(store.getValue(TEST_OBJECT_URI1, TEST_LIST_PROPERTIES[0]).isPresent());
 			assertFalse(store.getValue(TEST_OBJECT_URI2, TEST_LIST_PROPERTIES[0]).isPresent());
 			String value1 = "value1";
@@ -509,36 +491,36 @@ public class InMemSpdxStoreTest extends TestCase {
 	public void testIsPropertyValueAssignableTo() throws Exception {
 
 		try(InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			// String
 			PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 			store.setValue(TEST_OBJECT_URI1, sProperty, "String 1");
-			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, String.class));
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, Boolean.class));
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, TypedValue.class));
+			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, String.class, "SPDX-2.3"));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, Boolean.class, "SPDX-2.3"));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, sProperty, TypedValue.class, "SPDX-2.3"));
 			// Boolean
 			PropertyDescriptor bProperty = new PropertyDescriptor("boolprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 			store.setValue(TEST_OBJECT_URI1, bProperty, Boolean.valueOf(true));
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, String.class));
-			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, Boolean.class));
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, TypedValue.class));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, String.class, "SPDX-2.3"));
+			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, Boolean.class, "SPDX-2.3"));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, bProperty, TypedValue.class, "SPDX-2.3"));
 			// TypedValue
 			PropertyDescriptor tvProperty = new PropertyDescriptor("tvprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
-			TypedValue tv = new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2);
-			store.create(TEST_OBJECT_URI2, TEST_TYPE2);
+			TypedValue tv = new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2, "SPDX-2.3");
+			store.create(new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2, "SPDX-2.3"));
 			store.setValue(TEST_OBJECT_URI1, tvProperty, tv);
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, String.class));
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, Boolean.class));
-			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, TypedValue.class));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, String.class, "SPDX-2.3"));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, Boolean.class, "SPDX-2.3"));
+			assertTrue(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, tvProperty, TypedValue.class, "SPDX-2.3"));
 			// Empty
 			PropertyDescriptor emptyProperty = new PropertyDescriptor("emptyprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
-			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, emptyProperty, String.class));
+			assertFalse(store.isPropertyValueAssignableTo(TEST_OBJECT_URI1, emptyProperty, String.class, "SPDX-2.3"));
 		}
 	}
 	
 	public void testCollectionMembersAssignableTo() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			// String
 			PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 			store.addValueToCollection(TEST_OBJECT_URI1, sProperty, "String 1");
@@ -555,8 +537,8 @@ public class InMemSpdxStoreTest extends TestCase {
 			assertFalse(store.isCollectionMembersAssignableTo(TEST_OBJECT_URI1, bProperty, TypedValue.class));
 			// TypedValue
 			PropertyDescriptor tvProperty  = new PropertyDescriptor("tvprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
-		    TypedValue tv = new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2);
-		    store.create(TEST_OBJECT_URI2, TEST_TYPE2);
+		    TypedValue tv = new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2, "SPDX-2.3");
+		    store.create(new TypedValue(TEST_OBJECT_URI2, TEST_TYPE2, "SPDX-2.3"));
 			store.addValueToCollection(TEST_OBJECT_URI1, tvProperty, tv);
 			assertFalse(store.isCollectionMembersAssignableTo(TEST_OBJECT_URI1, tvProperty, String.class));
 			assertFalse(store.isCollectionMembersAssignableTo(TEST_OBJECT_URI1, tvProperty, Boolean.class));
@@ -578,7 +560,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testIsCollectionProperty() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			// String
 			PropertyDescriptor sProperty = new PropertyDescriptor("stringprop", SpdxConstantsCompatV2.SPDX_NAMESPACE);
 			store.setValue(TEST_OBJECT_URI1, sProperty, "String 1");
@@ -597,8 +579,6 @@ public class InMemSpdxStoreTest extends TestCase {
 			assertEquals(IdType.ListedLicense, store.getIdType("Apache-2.0"));
 			assertEquals(IdType.ListedLicense, store.getIdType("http://spdx.org/licenses/Apache-2.0"));
 			assertEquals(IdType.ListedLicense, store.getIdType("LLVM-exception"));
-			assertEquals(IdType.Literal, store.getIdType("NONE"));
-			assertEquals(IdType.Literal, store.getIdType("NOASSERTION"));
 			assertEquals(IdType.SpdxId, store.getIdType(TEST_NAMESPACE1 + "#" + SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+"gnrtd123"));
 		}
 	}
@@ -607,11 +587,11 @@ public class InMemSpdxStoreTest extends TestCase {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			String expected = "TestIdOne";
 			String lower = expected.toLowerCase();
-			store.create(TEST_NAMESPACE1 + "#" + expected, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + expected, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertEquals(expected, store.getCaseSensisitiveId(TEST_NAMESPACE1, lower).get());
 			assertFalse(store.getCaseSensisitiveId(TEST_NAMESPACE1, "somethingNotThere").isPresent());
 			try {
-				store.create(TEST_NAMESPACE1 + "#" + lower, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+				store.create(new TypedValue(TEST_NAMESPACE1 + "#" + lower, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 				fail("This should be a duplicate ID failure");
 			} catch (InvalidSPDXAnalysisException e) {
 				// expected
@@ -621,7 +601,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testGetTypedValue() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertEquals(SpdxConstantsCompatV2.CLASS_ANNOTATION, store.getTypedValue(TEST_OBJECT_URI1).get().getType());
 			assertFalse(store.getTypedValue(TEST_OBJECT_URI2).isPresent());
 		}
@@ -631,8 +611,8 @@ public class InMemSpdxStoreTest extends TestCase {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			assertFalse(store.exists(TEST_OBJECT_URI1));
 			assertFalse(store.exists(TEST_OBJECT_URI2));
-			store.create(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			store.create(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			store.create(new TypedValue(TEST_OBJECT_URI1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_OBJECT_URI2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
 			assertTrue(store.exists(TEST_OBJECT_URI1));
 			assertTrue(store.exists(TEST_OBJECT_URI2));
 			
@@ -648,19 +628,19 @@ public class InMemSpdxStoreTest extends TestCase {
 			String id2 = "testId2";
 			String id3 = "testId3";
 			String id4 = "testId4";
-			store.create(TEST_NAMESPACE1 + "#" + id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			store.create(TEST_NAMESPACE1 + "#" + id2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			store.create(TEST_NAMESPACE1 + "#" + id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			store.create(TEST_NAMESPACE1 + "#" + id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
-			TypedValue tv3 = new TypedValue(TEST_NAMESPACE1 + "#" + id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + id2, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
+			TypedValue tv3 = new TypedValue(TEST_NAMESPACE1 + "#" + id3, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3");
 			store.addValueToCollection(TEST_NAMESPACE1 + "#" + id2, 
 					new PropertyDescriptor("listProperty", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv3);
-			TypedValue tv4 = new TypedValue(TEST_NAMESPACE1 + "#" + id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO);
+			TypedValue tv4 = new TypedValue(TEST_NAMESPACE1 + "#" + id4, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3");
 			store.addValueToCollection(TEST_NAMESPACE1 + "#" + id2, 
 					new PropertyDescriptor("listProperty", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv4);
 			store.setValue(TEST_NAMESPACE1 + "#" + id3, 
 					new PropertyDescriptor("property", SpdxConstantsCompatV2.SPDX_NAMESPACE), 
-					new TypedValue(TEST_NAMESPACE1 + "#" + id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO));
+					new TypedValue(TEST_NAMESPACE1 + "#" + id1, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, "SPDX-2.3"));
 			
 			try {
 				store.delete(TEST_NAMESPACE1 + "#" + id3);
@@ -703,11 +683,11 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	public void testReferenceCounts() throws Exception {
 	    try (InMemSpdxStore store = new InMemSpdxStore()) {
-	    	store.create(TEST_OBJECT_URI1, TEST_TYPE1);
-	        store.create(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2);
+	    	store.create(new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3"));
+	        store.create(new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2, "SPDX-2.3"));
 	        StoredTypedItem item = store.getItem(TEST_OBJECT_URI1);
 	        assertEquals(0, item.getReferenceCount());
-	        TypedValue tv = new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1);
+	        TypedValue tv = new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3");
 	        store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2, 
 	        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
 	        assertEquals(1, item.getReferenceCount());
@@ -732,11 +712,11 @@ public class InMemSpdxStoreTest extends TestCase {
 	
 	   public void testReferenceCountsDelete() throws Exception {
 	        try (InMemSpdxStore store = new InMemSpdxStore()) {
-	        	store.create(TEST_OBJECT_URI1, TEST_TYPE1);
-		        store.create(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2);
+	        	store.create(new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3"));
+		        store.create(new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2, "SPDX-2.3"));
 		        StoredTypedItem item = store.getItem(TEST_OBJECT_URI1);
 		        assertEquals(0, item.getReferenceCount());
-		        TypedValue tv = new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID1, TEST_TYPE1);
+		        TypedValue tv = new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID1, TEST_TYPE1, "SPDX-2.3");
 		        store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2, 
 		        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
 		        assertEquals(1, item.getReferenceCount());
