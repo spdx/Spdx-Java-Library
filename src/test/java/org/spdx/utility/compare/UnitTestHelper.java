@@ -30,11 +30,10 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URLConnection;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.compat.v2.ModelObject;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.storage.IModelStore.IdType;
-import org.spdx.storage.compat.v2.CompatibleModelStoreWrapper;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.ModelObjectV2;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.storage.CompatibleModelStoreWrapper;
 
 /**
  * Helper class for unit tests
@@ -193,11 +192,7 @@ public class UnitTestHelper {
 		for (ModelObjectV2 mo:modelObjects) {
 			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
 					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
-					mo.getType(), 
-					CompatibleModelStoreWrapper.documentUriToNamespace(mo.getDocumentUri(), mo.getModelStore().getIdType(mo.getObjectUri()) == IdType.Anonymous), 
-					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false),
-					CompatibleModelStoreWrapper.documentUriToNamespace(mo.getDocumentUri(), false),
-					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
+					mo.getType(), "SPDX-2.3", CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
 		}
 	}
 

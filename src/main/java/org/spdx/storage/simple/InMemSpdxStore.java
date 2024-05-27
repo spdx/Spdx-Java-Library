@@ -40,12 +40,11 @@ import org.spdx.core.DuplicateSpdxIdException;
 import org.spdx.core.IExternalElementInfo;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.ModelCollection;
-import org.spdx.core.ModelRegistry;
 import org.spdx.core.SpdxIdInUseException;
 import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.core.TypedValue;
+import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v2.license.LicenseInfoFactory;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 

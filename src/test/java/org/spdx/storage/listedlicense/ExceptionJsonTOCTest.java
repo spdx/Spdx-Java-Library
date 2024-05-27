@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.license.ListedLicenseException;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -40,6 +40,7 @@ public class ExceptionJsonTOCTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		SpdxModelFactory.init();
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +85,7 @@ public class ExceptionJsonTOCTest extends TestCase {
 	 */
 	public void testAddException() throws Exception {
 		ExceptionJsonTOC ejt = new ExceptionJsonTOC();
-		InMemSpdxStore store = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		InMemSpdxStore store = new InMemSpdxStore();
 		String docUri = "http://temp.doc.uri";
 		String detailsUrl1 = "http://details1";
 		String exceptionId1 = "id1";

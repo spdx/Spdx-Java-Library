@@ -29,19 +29,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
-import org.spdx.library.model.compat.v2.license.ListedLicenseException;
-import org.spdx.library.model.compat.v2.license.ListedLicenses;
-import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
-import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.LicenseInfoFactory;
+import org.spdx.library.model.v2.license.ListedLicenseException;
+import org.spdx.library.model.v2.license.ListedLicenses;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.v2.license.SpdxNoneLicense;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
@@ -82,19 +86,27 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String POLYFORM_NC_TEMPLATE = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.template.txt";
     static final String APL_1_TEXT = "TestFiles" + File.separator + "APL-1.0.txt";
     static final String APL_1_TEMPLATE = "TestFiles" + File.separator + "APL-1.0.template.txt";
+    
+    IModelStore modelStore;
+    IModelCopyManager copyManager;
+    String DEFAULT_DOCUMENT_URI = "http://default/doc";
+    
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		SpdxModelFactory.init();
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(modelStore, DEFAULT_DOCUMENT_URI, copyManager);
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
-	    DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
+		DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
 	}
 
 	/**

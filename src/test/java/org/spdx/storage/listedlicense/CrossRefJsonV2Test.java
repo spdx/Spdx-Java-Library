@@ -7,32 +7,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.InvalidSpdxPropertyException;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.license.CrossRef;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSpdxPropertyException;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.CrossRef;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
-public class CrossRefJsonTest extends TestCase {
+public class CrossRefJsonV2Test extends TestCase {
 	
-	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstantsCompatV2.PROP_CROSS_REF_MATCH.getName(),
-			SpdxConstantsCompatV2.PROP_CROSS_REF_TIMESTAMP.getName(),
-			SpdxConstantsCompatV2.PROP_CROSS_REF_URL.getName());
+	static final List<PropertyDescriptor> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
+			SpdxConstantsCompatV2.PROP_CROSS_REF_MATCH,
+			SpdxConstantsCompatV2.PROP_CROSS_REF_TIMESTAMP,
+			SpdxConstantsCompatV2.PROP_CROSS_REF_URL);
 	
-	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_LIVE.getName(),
-			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_VALID.getName(),
-			SpdxConstantsCompatV2.PROP_CROSS_REF_WAYBACK_LINK.getName()
+	static final List<PropertyDescriptor> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
+			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_LIVE,
+			SpdxConstantsCompatV2.PROP_CROSS_REF_IS_VALID,
+			SpdxConstantsCompatV2.PROP_CROSS_REF_WAYBACK_LINK
 			);
 	
-	static final List<String> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstantsCompatV2.PROP_CROSS_REF_ORDER.getName());
+	static final List<PropertyDescriptor> INTEGER_PROPERTY_VALUE_NAMES = Arrays.asList(SpdxConstantsCompatV2.PROP_CROSS_REF_ORDER);
 	
-	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
+	static final List<PropertyDescriptor> PROPERTY_VALUE_NAMES = new ArrayList<>();
 	
 	static {
 		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
@@ -42,6 +43,7 @@ public class CrossRefJsonTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		SpdxModelFactory.init();
 	}
 
 	protected void tearDown() throws Exception {
@@ -49,7 +51,7 @@ public class CrossRefJsonTest extends TestCase {
 	}
 
 	public void testCrossRefJsonCrossRef() throws InvalidSPDXAnalysisException {
-		IModelStore modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		IModelStore modelStore = new InMemSpdxStore();
 		String docUri = "http://doc/uri";
 		String id = "tempid";
 		String url = "http://url";
@@ -80,21 +82,21 @@ public class CrossRefJsonTest extends TestCase {
 
 	public void testGetPropertyValueNames() throws InvalidSpdxPropertyException {
 		CrossRefJson crj = new CrossRefJson();
-		List<String> result = crj.getPropertyValueNames();
+		List<PropertyDescriptor> result = crj.getPropertyValueDescriptors();
 		assertEquals(0, result.size());
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			crj.setPrimativeValue(valueName, "ValueFor"+valueName);
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			crj.setPrimativeValue(valueName, false);
 		}
 		int i = 1;
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			crj.setPrimativeValue(valueName, i++);
 		}
-		result = crj.getPropertyValueNames();
+		result = crj.getPropertyValueDescriptors();
 		assertEquals(PROPERTY_VALUE_NAMES.size(), result.size());
-		for (String valueName:PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:PROPERTY_VALUE_NAMES) {
 			if (!result.contains(valueName)) {
 				fail("Missing "+valueName);
 			}
@@ -102,30 +104,30 @@ public class CrossRefJsonTest extends TestCase {
 	}
 
 	public void testSetPrimativeValue() throws InvalidSpdxPropertyException {
-		Map<String, String> stringValues = new HashMap<>();
+		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		CrossRefJson crj = new CrossRefJson();
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			crj.setPrimativeValue(valueName, stringValues.get(valueName));
 		}
-		Map<String, Boolean> booleanValues = new HashMap<>();
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			booleanValues.put(valueName, false);
 			crj.setPrimativeValue(valueName, booleanValues.get(valueName));
 		}
-		Map<String, Integer> integerValues = new HashMap<>();
+		Map<PropertyDescriptor, Integer> integerValues = new HashMap<>();
 		int i = 1;
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			integerValues.put(valueName, i++);
 			crj.setPrimativeValue(valueName, integerValues.get(valueName));
 		}
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			assertEquals(stringValues.get(valueName), crj.getValue(valueName));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			assertEquals(booleanValues.get(valueName), crj.getValue(valueName));
 		}
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			assertEquals(integerValues.get(valueName), crj.getValue(valueName));
 		}
 	}
@@ -139,55 +141,55 @@ public class CrossRefJsonTest extends TestCase {
 	}
 
 	public void testRemoveProperty() throws InvalidSpdxPropertyException {
-		Map<String, String> stringValues = new HashMap<>();
+		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		CrossRefJson crj = new CrossRefJson();
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
 			crj.setPrimativeValue(valueName, stringValues.get(valueName));
 		}
-		Map<String, Boolean> booleanValues = new HashMap<>();
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			booleanValues.put(valueName, false);
 			crj.setPrimativeValue(valueName, booleanValues.get(valueName));
 		}
-		Map<String, Integer> integerValues = new HashMap<>();
+		Map<PropertyDescriptor, Integer> integerValues = new HashMap<>();
 		int i = 1;
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			integerValues.put(valueName, i++);
 			crj.setPrimativeValue(valueName, integerValues.get(valueName));
 		}
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			assertEquals(stringValues.get(valueName), crj.getValue(valueName));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			assertEquals(booleanValues.get(valueName), crj.getValue(valueName));
 		}
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			assertEquals(integerValues.get(valueName), crj.getValue(valueName));
 		}
 		
-		for (String valueName:PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:PROPERTY_VALUE_NAMES) {
 			crj.removeProperty(valueName);
 		}
 		
-		for (String valueName:PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:PROPERTY_VALUE_NAMES) {
 			assertTrue(Objects.isNull(crj.getValue(valueName)));
 		}
 	}
 
 	public void testIsPropertyValueAssignableTo() throws InvalidSpdxPropertyException {
 		CrossRefJson crj = new CrossRefJson();
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			assertTrue(crj.isPropertyValueAssignableTo(valueName, String.class));
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, Boolean.class));
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, Integer.class));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, String.class));
 			assertTrue(crj.isPropertyValueAssignableTo(valueName, Boolean.class));
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, Integer.class));
 		}
-		for (String valueName:INTEGER_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, String.class));
 			assertFalse(crj.isPropertyValueAssignableTo(valueName, Boolean.class));
 			assertTrue(crj.isPropertyValueAssignableTo(valueName, Integer.class));
