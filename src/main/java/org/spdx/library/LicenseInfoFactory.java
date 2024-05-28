@@ -102,7 +102,7 @@ public class LicenseInfoFactory {
 			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
 		try {
-			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, documentUri, 
+			return LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri, 
 					copyManager);
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);

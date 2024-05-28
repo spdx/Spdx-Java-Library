@@ -45,6 +45,7 @@ import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.v2.license.SpdxNoneLicense;
 import org.spdx.library.model.v2.license.WithExceptionOperator;
+import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -75,8 +76,9 @@ public class LicenseExpressionParser {
 		OPERATOR_MAP.put("or", Operator.OR);
 		OPERATOR_MAP.put("with", Operator.WITH);
 	}
+	
 	/**
-	 * Parses a license expression into an license for use in the Model
+	 * Parses a license expression into an license for use in the Model using the SPDX Version 3.X model
 	 * @param expression Expression to be parsed
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
@@ -86,7 +88,42 @@ public class LicenseExpressionParser {
 	 * @return the parsed license expression
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
+	public static SimpleLicensingAnyLicenseInfo parseLicenseExpressionCompat(String expression, IModelStore store, 
+			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+		if (expression == null || expression.trim().isEmpty()) {
+			throw new LicenseParserException("Empty license expression");
+		}
+		Objects.requireNonNull(store, "Model store can not be null");
+		Objects.requireNonNull(documentUri, "Document URI can not be null");
+		String[] tokens  = tokenizeExpression(expression);
+		if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NOASSERTION_VALUE)) {
+			return new SpdxNoAssertionLicense();
+		} else if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NONE_VALUE)) {
+			return new SpdxNoneLicense();
+		} else {
+			try {
+				return parseLicenseExpression(tokens, store, documentUri, copyManager);
+			} catch (LicenseParserException ex) {
+				// Add the expression to the error message to provide additional information to the user
+				throw new LicenseParserException(ex.getMessage()+" License expression: '"+expression+"'", ex);
+			} catch (EmptyStackException ex) {
+				throw new LicenseParserException("Invalid license expression: '"+expression+"' - check that every operator (e.g. AND and OR) has operators and that parenthesis are matched");
+			}
+		}
+	}
+	
+	/**
+	 * Parses a license expression into an license for use in the Model using the SPDX Version 2.X model
+	 * @param expression Expression to be parsed
+	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+	 * none exist for an ID, they will be added.  If null, the default model store will be used.
+	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @return the parsed license expression
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	public static AnyLicenseInfo parseLicenseExpressionCompatV2(String expression, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw new LicenseParserException("Empty license expression");
