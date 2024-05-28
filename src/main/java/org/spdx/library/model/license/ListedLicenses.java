@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ import org.spdx.storage.listedlicense.SpdxListedLicenseWebStore;
 public class ListedLicenses {
 	
 	static final Logger logger = LoggerFactory.getLogger(ListedLicenses.class.getName());
+	
+	static final Pattern PATCH_VERSION_PATTERN = Pattern.compile(".+\\..+\\..+");
 
     boolean onlyUseLocalLicenses;
 	private IListedLicenseStore licenseModelStore;
@@ -199,7 +202,11 @@ public class ListedLicenses {
 	 * If no license list is loaded, returns {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#DEFAULT_LICENSE_LIST_VERSION}.
 	 */
 	public String getLicenseListVersion() {
-		return this.licenseModelStore.getLicenseListVersion();
+		String retval = this.licenseModelStore.getLicenseListVersion();
+		if (PATCH_VERSION_PATTERN.matcher(retval).matches()) {
+			retval = retval.substring(0, retval.lastIndexOf('.'));
+		}
+		return retval;
 	}
 
 	/**
