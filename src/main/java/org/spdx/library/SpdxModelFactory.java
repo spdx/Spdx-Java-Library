@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,7 @@ import org.spdx.core.ModelRegistry;
 import org.spdx.core.ModelRegistryException;
 import org.spdx.library.model.v2.SpdxModelInfoV2_X;
 import org.spdx.library.model.v3.SpdxModelInfoV3_0;
+import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -84,7 +86,7 @@ public class SpdxModelFactory {
 	/**
 	 * @return the latest version of the spec supported by the library
 	 */
-	static String getLatestSpecVersion() {
+	public static String getLatestSpecVersion() {
 		List<String> allVersions = ModelRegistry.getModelRegistry().getSupportedVersions();
 		List<String> preVersion2Versions = new ArrayList<>();
 		List<String> post2Versions = new ArrayList<>();
@@ -204,6 +206,42 @@ public class SpdxModelFactory {
 	 */
 	public static @Nullable Enum<?> uriToEnum(String uri) throws ModelRegistryException {
 		return uriToEnum(uri, getLatestSpecVersion());
+	}
+	
+	/**
+	 * @param store model store
+	 * @param copyManager optional copy manager
+	 * @param typeFilter type to filter on
+	 * @param objectUriPrefixFilter only return objects with URI's starting with this string
+	 * @return stream of objects stored in the model store - an object being any non primitive type
+	 * @throws InvalidSPDXAnalysisException
+	 */
+	public static Stream<?> getSpdxObjects(IModelStore store, @Nullable IModelCopyManager copyManager, 
+			String typeFilter, String objectUriPrefixFilter) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(store, "Store must not be null");
+		return store.getAllItems(objectUriPrefixFilter, typeFilter).map(tv -> {
+			//TODO: Change this a null namespace and filtering on anonomous or startswith document URI - this will catch the anon. types
+			try {
+				return inflateModelObject(store, tv.getObjectUri(), tv.getType(), copyManager, tv.getSpecVersion(), false);
+			} catch (InvalidSPDXAnalysisException e) {
+				throw new RuntimeException(e);
+			}
+		});
+	}
+
+	/**
+	 * @param store
+	 * @param string
+	 * @param copyManager
+	 * @param latestSpecVersion
+	 * @return
+	 */
+	public static SimpleLicensingAnyLicenseInfo getExternalAnyLicenseInfo(
+			IModelStore store, String string, IModelCopyManager copyManager,
+			String latestSpecVersion) {
+		// TODO Figure out how to implement
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
