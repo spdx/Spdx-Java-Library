@@ -238,7 +238,7 @@ public class SpdxModelFactory {
 	 */
 	public static SimpleLicensingAnyLicenseInfo getExternalAnyLicenseInfo(
 			IModelStore store, String string, IModelCopyManager copyManager,
-			String latestSpecVersion) {
+			String specVersion) {
 		// TODO Figure out how to implement
 		// TODO Auto-generated method stub
 		return null;

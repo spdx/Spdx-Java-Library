@@ -145,7 +145,7 @@ public class WithExceptionOperatorTest extends TestCase {
 	}
 	
 	public void testClassPathException() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
-		List<String> result = LicenseInfoFactory.parseSPDXLicenseString("GPL-2.0-only WITH Classpath-exception-2.0").verify();
+		List<String> result = LicenseInfoFactory.parseSPDXLicenseV2String("GPL-2.0-only WITH Classpath-exception-2.0").verify();
 		assertTrue(result.isEmpty());
 	}
 }

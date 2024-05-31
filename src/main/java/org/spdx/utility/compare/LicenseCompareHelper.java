@@ -39,9 +39,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ListedLicenses;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingConjunctiveLicenseSet;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingDisjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
 import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
@@ -144,6 +146,15 @@ public class LicenseCompareHelper {
 	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
 	
+	public static String licenseUriToLicenseId(String objectUri) {
+		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX)) {
+			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX.length());
+		} else if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL)) {
+			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_URL.length());
+		} else {
+			return objectUri; // no match - should we throw an exception?
+		}
+	}
 	/**
 	 * Returns true if two sets of license text is considered a match per
 	 * the SPDX License matching guidelines documented at spdx.org (currently http://spdx.org/wiki/spdx-license-list-match-guidelines)
@@ -787,10 +798,10 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static DifferenceDescription isTextStandardLicense(License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String licenseTemplate = license.getStandardLicenseTemplate();
+	public static DifferenceDescription isTextStandardLicense(ExpandedLicensingLicense license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String licenseTemplate = license.getExpandedLicensingStandardLicenseTemplate().orElse("");
 		if (licenseTemplate == null || licenseTemplate.trim().isEmpty()) {
-			licenseTemplate = license.getLicenseText();
+			licenseTemplate = license.getSimpleLicensingLicenseText();
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
@@ -817,10 +828,10 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static DifferenceDescription isTextStandardException(LicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String exceptionTemplate = exception.getLicenseExceptionTemplate();
+	public static DifferenceDescription isTextStandardException(ExpandedLicensingListedLicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String exceptionTemplate = exception.getExpandedLicensingStandardAdditionTemplate().orElse("");
 		if (exceptionTemplate == null || exceptionTemplate.trim().isEmpty()) {
-			exceptionTemplate = exception.getLicenseExceptionText();
+			exceptionTemplate = exception.getExpandedLicensingAdditionText();
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
@@ -975,7 +986,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, license.getExpandedLicensingStandardLicenseTemplate());
+			String completeText = findTemplateWithinText(text, license.getExpandedLicensingStandardLicenseTemplate().orElse(""));
 			if (completeText != null) {
 				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
 			}
@@ -1003,7 +1014,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, exception.getExpandedLicensingStandardAdditionTemplate());
+			String completeText = findTemplateWithinText(text, exception.getExpandedLicensingStandardAdditionTemplate().orElse(""));
 			if (completeText != null) {
 				result = !isTextStandardException(exception, completeText).isDifferenceFound();
 			}
@@ -1031,7 +1042,7 @@ public class LicenseCompareHelper {
 		for (String stdLicId : stdLicenseIds) {
 			ExpandedLicensingListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 			if (!isTextStandardLicense(license, licenseText).isDifferenceFound()) {
-				matchingIds.add(license.getLicenseId());
+				matchingIds.add(licenseUriToLicenseId(license.getObjectUri()));
 			}
 		}
 		return matchingIds.toArray(new String[matchingIds.size()]);
@@ -1052,9 +1063,9 @@ public class LicenseCompareHelper {
 
 		if (text != null && !text.isEmpty() && licenseIds != null && !licenseIds.isEmpty()) {
 			for (String stdLicId : licenseIds) {
-				SpdxListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+				ExpandedLicensingListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 				if (isStandardLicenseWithinText(text, license)) {
-					result.add(license.getLicenseId());
+					result.add(licenseUriToLicenseId(license.getObjectUri()));
 				}
 			}
 		}
@@ -1090,9 +1101,9 @@ public class LicenseCompareHelper {
 
 		if (text != null && !text.isEmpty() && licenseExceptionIds != null && !licenseExceptionIds.isEmpty()) {
 			for (String stdLicExcId : licenseExceptionIds) {
-				ListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
+				ExpandedLicensingListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
 				if (isStandardLicenseExceptionWithinText(text, licenseException)) {
-					result.add(licenseException.getLicenseExceptionId());
+					result.add(licenseUriToLicenseId(licenseException.getObjectUri()));
 				}
 			}
 		}
@@ -1134,7 +1145,7 @@ public class LicenseCompareHelper {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static boolean isLicensePassBlackList(
-			AnyLicenseInfo license,
+			SimpleLicensingAnyLicenseInfo license,
 			String... blackList
 	) throws InvalidSPDXAnalysisException {
 		if (license == null) {
@@ -1143,15 +1154,15 @@ public class LicenseCompareHelper {
 		if (blackList == null || blackList.length == 0) {
 			return true;
 		}
-		if (license instanceof ConjunctiveLicenseSet) {
-			for (AnyLicenseInfo member : ((ConjunctiveLicenseSet) license).getMembers()) {
+		if (license instanceof ExpandedLicensingConjunctiveLicenseSet) {
+			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingConjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
 				if (!isLicensePassBlackList(member, blackList)) {
 					return false;
 				}
 			}
 			return true;
-		} else if (license instanceof DisjunctiveLicenseSet) {
-			for (AnyLicenseInfo member : ((DisjunctiveLicenseSet) license).getMembers()) {
+		} else if (license instanceof ExpandedLicensingDisjunctiveLicenseSet) {
+			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingDisjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
 				if (isLicensePassBlackList(member, blackList)) {
 					return true;
 				}
@@ -1170,7 +1181,7 @@ public class LicenseCompareHelper {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static boolean isLicensePassWhiteList(
-			AnyLicenseInfo license,
+			SimpleLicensingAnyLicenseInfo license,
 			String... whiteList
 	) throws InvalidSPDXAnalysisException {
 		if (license == null) {
@@ -1179,15 +1190,15 @@ public class LicenseCompareHelper {
 		if (whiteList == null || whiteList.length == 0) {
 			return false;
 		}
-		if (license instanceof ConjunctiveLicenseSet) {
-			for (AnyLicenseInfo member : ((ConjunctiveLicenseSet) license).getMembers()) {
+		if (license instanceof ExpandedLicensingConjunctiveLicenseSet) {
+			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingConjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
 				if (!isLicensePassWhiteList(member, whiteList)) {
 					return false;
 				}
 			}
 			return true;
-		} else if (license instanceof DisjunctiveLicenseSet) {
-			for (AnyLicenseInfo member : ((DisjunctiveLicenseSet) license).getMembers()) {
+		} else if (license instanceof ExpandedLicensingDisjunctiveLicenseSet) {
+			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingDisjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
 				if (isLicensePassWhiteList(member, whiteList)) {
 					return true;
 				}

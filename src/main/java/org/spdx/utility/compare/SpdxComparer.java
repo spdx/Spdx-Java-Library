@@ -34,16 +34,17 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.Annotation;
 import org.spdx.library.model.v2.Checksum;
 import org.spdx.library.model.v2.ExternalDocumentRef;
 import org.spdx.library.model.v2.ModelObjectV2;
 import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxCreatorInformation;
 import org.spdx.library.model.v2.SpdxDocument;
 import org.spdx.library.model.v2.SpdxElement;
 import org.spdx.library.model.v2.SpdxFile;
-import org.spdx.library.model.v2.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxPackage;
 import org.spdx.library.model.v2.SpdxPackageVerificationCode;
 import org.spdx.library.model.v2.SpdxSnippet;
@@ -213,8 +214,8 @@ public class SpdxComparer {
 			List<SpdxSnippet> snippetsA;
 			Stream<SpdxSnippet> snippetStreamA = null;
 			try {
-			    snippetStreamA = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
-                        SpdxSnippet.class);
+			    snippetStreamA = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(spdxDocs.get(i).getModelStore(), null, 
+			    				SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, spdxDocs.get(i).getDocumentUri());
 				snippetsA = snippetStreamA.collect(Collectors.toList());
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
@@ -241,8 +242,8 @@ public class SpdxComparer {
 				List<SpdxSnippet> snippetsB;
 				Stream<SpdxSnippet> snippetStreamB = null;
 				try {
-				    snippetStreamB = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
-                            SpdxSnippet.class);
+				    snippetStreamB = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(spdxDocs.get(j).getModelStore(),
+				    		null, SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, spdxDocs.get(j).getDocumentUri());
 					snippetsB = snippetStreamB.collect(Collectors.toList());
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
@@ -444,8 +445,8 @@ public class SpdxComparer {
 		// N x N comparison of all files
 		for (int i = 0; i < spdxDocs.size(); i++) {
 			List<SpdxFile> filesListA;
-			Stream<SpdxFile> fileStreamA = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
-                    null, SpdxFile.class);
+			Stream<SpdxFile> fileStreamA = (Stream<SpdxFile>) SpdxModelFactory.getSpdxObjects(
+					spdxDocs.get(i).getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, spdxDocs.get(i).getDocumentUri());
 			filesListA = fileStreamA.collect(Collectors.toList());
 			fileStreamA.close();
 			// note - the file arrays MUST be sorted for the comparator methods to work
@@ -464,8 +465,8 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;
 				}
-				 Stream<SpdxFile> fileStreamB = (Stream<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
-	                        null, SpdxFile.class);
+				 Stream<SpdxFile> fileStreamB = (Stream<SpdxFile>)SpdxModelFactory.getSpdxObjects(
+						 spdxDocs.get(j).getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, spdxDocs.get(j).getDocumentUri());
 				 List<SpdxFile> filesListB = (List<SpdxFile>)fileStreamB.collect(Collectors.toList());
 				 fileStreamB.close();
 				 //Note that the files arrays must be sorted for the find methods to work
@@ -502,9 +503,8 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<SpdxPackage> collectAllPackages(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>) SpdxModelFactory.getElements(
-                spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-                null, SpdxPackage.class);	
+		Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>) SpdxModelFactory.getSpdxObjects(
+				spdxDocument.getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE, spdxDocument.getDocumentUri());
 	    List<SpdxPackage> retval = packageStream.collect(Collectors.toList());
 	    packageStream.close();
 	    return retval;
@@ -519,8 +519,8 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		Stream<SpdxFile> fileElementStream = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-                null, SpdxFile.class);
+		Stream<SpdxFile> fileElementStream = (Stream<SpdxFile>) SpdxModelFactory.getSpdxObjects(
+				spdxDocument.getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, spdxDocument.getDocumentUri());
 		List<SpdxFile> retval = fileElementStream.collect(Collectors.toList());
 		fileElementStream.close();
 		return retval;

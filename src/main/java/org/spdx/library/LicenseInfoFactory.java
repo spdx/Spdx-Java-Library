@@ -36,6 +36,7 @@ import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
+import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.utility.license.LicenseExpressionParser;
 
@@ -90,7 +91,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
+	public static AnyLicenseInfo parseSPDXLicenseStringV2(String licenseString, @Nullable IModelStore store, 
 			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
@@ -103,6 +104,49 @@ public class LicenseInfoFactory {
 		}
 		try {
 			return LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri, 
+					copyManager);
+		} catch (LicenseParserException e) {
+			throw new InvalidLicenseStringException(e.getMessage(),e);
+		} catch (InvalidSPDXAnalysisException e) {
+			throw new InvalidLicenseStringException("Unexpected SPDX error parsing license string");
+		}
+	}
+	
+	/**
+	 * Parses a license string and converts it into a SPDXLicenseInfo object
+	 * Syntax - A license set must start and end with a parenthesis "("
+	 * 			A conjunctive license set will have and AND after the first
+	 *				licenseInfo term
+	 * 			A disjunctive license set will have an OR after the first 
+	 *				licenseInfo term
+	 *			If there is no And or Or, then it is converted to a simple
+	 *				license type
+	 *			A space or tab must be used between license ID's and the 
+	 *				keywords AND and OR
+	 *			A licenseID must NOT be "AND" or "OR"
+	 * @param licenseString String conforming to the syntax
+	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+	 * none exist for an ID, they will be added.  If null, the default model store will be used.
+	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
+	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @return an SPDXLicenseInfo created from the string
+	 * @throws InvalidLicenseStringException 
+	 * @throws DefaultStoreNotInitialized 
+	 */
+	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
+			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+		if (Objects.isNull(store)) {
+			store = DefaultModelStore.getDefaultModelStore();
+		}
+		if (Objects.isNull(documentUri)) {
+			documentUri = DefaultModelStore.getDefaultDocumentUri();
+		}
+		if (Objects.isNull(copyManager)) {
+			copyManager = DefaultModelStore.getDefaultCopyManager();
+		}
+		try {
+			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, documentUri, 
 					copyManager);
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);
@@ -128,8 +172,29 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		return parseSPDXLicenseString(licenseString, null, null, null);
+	}
+	
+	/**
+	 * Parses a license string and converts it into a SPDXLicenseInfo object
+	 * Syntax - A license set must start and end with a parenthesis "("
+	 * 			A conjunctive license set will have and AND after the first
+	 *				licenseInfo term
+	 * 			A disjunctive license set will have an OR after the first 
+	 *				licenseInfo term
+	 *			If there is no And or Or, then it is converted to a simple
+	 *				license type
+	 *			A space or tab must be used between license ID's and the 
+	 *				keywords AND and OR
+	 *			A licenseID must NOT be "AND" or "OR"
+	 * @param licenseString String conforming to the syntax
+	 * @return an SPDXLicenseInfo created from the string
+	 * @throws InvalidLicenseStringException 
+	 * @throws DefaultStoreNotInitialized 
+	 */
+	public static AnyLicenseInfo parseSPDXLicenseV2String(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+		return parseSPDXLicenseStringV2(licenseString, null, null, null);
 	}
 
 

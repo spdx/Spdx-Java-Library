@@ -15,26 +15,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2.license;
+package org.spdx.utility.license;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.GenericModelObject;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.LicenseException;
+import org.spdx.library.model.v2.license.ListedLicenseException;
+import org.spdx.library.model.v2.license.OrLaterOperator;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.WithExceptionOperator;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
-public class LicenseExpressionParserTest extends TestCase {
+public class LicenseExpressionParserTestV2 extends TestCase {
 
 	static final String[] STD_IDS = new String[] {"AFL-3.0", "CECILL-B", "EUPL-1.0", "Afmparse"};
 	static final String[] NONSTD_IDS = new String[] {SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"1",
@@ -53,11 +66,14 @@ public class LicenseExpressionParserTest extends TestCase {
 	IModelStore modelStore;
 	static final String TEST_DOCUMENT_URI = "https://test.doc.uri";
 	GenericModelObject gmo;
+	ModelCopyManager copyManager;
 	
 	protected void setUp() throws Exception {
+		SpdxModelFactory.init();
 		super.setUp();
-		modelStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(new InMemSpdxStore(), "https://docnamespace", copyManager);
 		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
@@ -82,7 +98,7 @@ public class LicenseExpressionParserTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
+		DefaultModelStore.initialize(new InMemSpdxStore(), "https://docnamespace", new ModelCopyManager());
 	}
 	
 	public void testSingleStdLicense() throws InvalidSPDXAnalysisException {
@@ -211,7 +227,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	}
 
     public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
-        AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString("MIT WITH Autoconf-exception-2.0");
+        AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseV2String("MIT WITH Autoconf-exception-2.0");
         assertEquals("MIT WITH Autoconf-exception-2.0",result.toString());
     }
 }

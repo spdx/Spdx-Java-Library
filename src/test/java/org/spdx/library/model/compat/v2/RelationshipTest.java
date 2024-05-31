@@ -224,7 +224,7 @@ public class RelationshipTest extends TestCase {
         document.setSpecVersion(Version.TWO_POINT_THREE_VERSION);
         document.setName("SPDX-tool-test");
         Checksum sha1Checksum = Checksum.create(modelStore, documentUri, ChecksumAlgorithm.SHA1, "d6a770ba38583ed4bb4525bd96e50461655d2758");
-        AnyLicenseInfo concludedLicense = LicenseInfoFactory.parseSPDXLicenseString("LGPL-2.0-only OR LicenseRef-2");
+        AnyLicenseInfo concludedLicense = LicenseInfoFactory.parseSPDXLicenseV2String("LGPL-2.0-only OR LicenseRef-2");
         SpdxFile fileA = document.createSpdxFile("SPDXRef-fileA", "./package/fileA.c", concludedLicense,
                         Arrays.asList(new AnyLicenseInfo[0]), "Copyright 2008-2010 John Smith", sha1Checksum)
                 .build();
@@ -260,7 +260,7 @@ public class RelationshipTest extends TestCase {
 	public void testVerifyRelatedElement() throws InvalidSPDXAnalysisException {
 		RelationshipType relationshipType1  = RelationshipType.CONTAINED_BY;
 		String comment1 = "Comment1";
-		AnyLicenseInfo badConcludedLicense = LicenseInfoFactory.parseSPDXLicenseString("bad-license-objectUri");
+		AnyLicenseInfo badConcludedLicense = LicenseInfoFactory.parseSPDXLicenseV2String("bad-license-objectUri");
 		assertTrue(badConcludedLicense instanceof ExtractedLicenseInfo);
 		((ExtractedLicenseInfo)badConcludedLicense).setExtractedText("text");
 		assertEquals(1, badConcludedLicense.verify().size());

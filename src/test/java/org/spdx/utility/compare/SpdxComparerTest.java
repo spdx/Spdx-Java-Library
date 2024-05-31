@@ -241,7 +241,7 @@ public class SpdxComparerTest extends TestCase {
 		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
 		GenericModelObject gmo = new GenericModelObject();
 
-		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseString(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
+		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseV2String(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
 		LICENSEA1 = new ExtractedLicenseInfo("LicenseRef-1", "License1");
 		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
 		LICENSEA3 = new ExtractedLicenseInfo("LicenseRef-3", "License3");
@@ -638,7 +638,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(extractedInfos1[1].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo conj1 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
+		AnyLicenseInfo conj1 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
 
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -649,7 +649,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(extractedInfos2[xlateDoc1ToDoc2LicId.get(0)].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo conj2 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo conj2 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -658,7 +658,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo conj3 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo conj3 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		assertTrue(comparer.compareLicense(0, conj1, 1, conj2));
 		assertFalse(comparer.compareLicense(0, conj1, 1, conj3));
@@ -677,7 +677,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(extractedInfos1[1].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo dis1 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
+		AnyLicenseInfo dis1 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
 
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -688,7 +688,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo dis2 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo dis2 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -697,7 +697,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo dis3 = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo dis3 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		assertTrue(comparer.compareLicense(0, dis1, 1, dis2));
 		assertFalse(comparer.compareLicense(0, dis1, 1, dis3));
@@ -1775,7 +1775,7 @@ public class SpdxComparerTest extends TestCase {
 		files[0].setComment("a new and unique comment");
 
 		String file1Name = files[1].getName().get();
-		files[1].setLicenseConcluded(LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0));
+		files[1].setLicenseConcluded(LicenseInfoFactory.parseSPDXLicenseV2String(STD_LIC_ID_CC0));
 		comparer.compare(doc1, doc2);
 		differences = comparer.getFileDifferences(0, 1);
 		assertEquals(2, differences.size());
