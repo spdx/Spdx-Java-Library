@@ -337,7 +337,34 @@ public class LicenseExpressionParserTest extends TestCase {
 	}
 	
 	public void testExternalLicenseAddition() throws InvalidSPDXAnalysisException {
-		fail("Not implemented");
+		String simpleParseString = NONSTD_IDS[0] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[0];
+		SimpleLicensingAnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(simpleParseString, 
+				modelStore, DEFAULT_PREFIX, copyManager, doc);
+		assertTrue(result instanceof ExpandedLicensingWithAdditionOperator);
+		
+		assertEquals(EXTERNAL_CUSTOM_ADDITION_URIS[0], ((ExpandedLicensingWithAdditionOperator)result)
+						.getExpandedLicensingSubjectAddition().getObjectUri());
+		String complexParseString = STD_IDS[0] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[0] + " AND " +
+				STD_IDS[0] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[1] + " AND " +
+				STD_IDS[1] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[2] + " AND " +
+				STD_IDS[2] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[3];
+		result = LicenseExpressionParser.parseLicenseExpression(complexParseString, 
+				modelStore, DEFAULT_PREFIX, copyManager, doc);
+		assertTrue(result instanceof ExpandedLicensingConjunctiveLicenseSet);
+		Boolean[] found = new Boolean[] {false, false, false, false};
+		Collection<SimpleLicensingAnyLicenseInfo> members = ((ExpandedLicensingConjunctiveLicenseSet)result).getExpandedLicensingMembers();
+		assertEquals(4, members.size());
+		for (SimpleLicensingAnyLicenseInfo member:members) {
+			for (int i = 0; i < EXTERNAL_CUSTOM_ADDITION_URIS.length; i++) {
+				assertTrue(member instanceof ExpandedLicensingWithAdditionOperator);
+				if (((ExpandedLicensingWithAdditionOperator)member).getExpandedLicensingSubjectAddition().getObjectUri().equals(EXTERNAL_CUSTOM_ADDITION_URIS[i])) {
+					found[i] = true;
+				}
+			}
+		}
+		for (Boolean foundIt:found) {
+			assertTrue(foundIt);
+		}
 	}
 
     public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
