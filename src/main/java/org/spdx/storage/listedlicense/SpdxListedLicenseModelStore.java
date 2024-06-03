@@ -120,7 +120,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	public static String licenseOrExceptionIdToObjectUri(String id) {
-		return LISTED_LICENSE_NAMESPACE + "/" + id;
+		return LISTED_LICENSE_NAMESPACE + id;
 	}
 	
 	/**
