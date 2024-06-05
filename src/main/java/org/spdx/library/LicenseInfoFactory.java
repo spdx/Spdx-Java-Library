@@ -34,6 +34,7 @@ import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.LicenseParserException;
 import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v3.core.SpdxDocument;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
 import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
@@ -127,27 +128,29 @@ public class LicenseInfoFactory {
 	 * @param licenseString String conforming to the syntax
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
-	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
-	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
+	 * @param customLicensePrefix Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
+	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @param spdxDocument Document containing the namespace map for any prefixes used in external addition or licenses
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
 	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
-			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
+			@Nullable SpdxDocument spdxDocument) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
-		if (Objects.isNull(documentUri)) {
-			documentUri = DefaultModelStore.getDefaultDocumentUri();
+		if (Objects.isNull(customLicensePrefix)) {
+			customLicensePrefix = DefaultModelStore.getDefaultDocumentUri() + "#";
 		}
 		if (Objects.isNull(copyManager)) {
 			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
 		try {
-			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, documentUri, 
-					copyManager);
+			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix, 
+					copyManager, spdxDocument);
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);
 		} catch (InvalidSPDXAnalysisException e) {
@@ -173,7 +176,7 @@ public class LicenseInfoFactory {
 	 * @throws DefaultStoreNotInitialized 
 	 */
 	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
-		return parseSPDXLicenseString(licenseString, null, null, null);
+		return parseSPDXLicenseString(licenseString, null, null, null, null);
 	}
 	
 	/**

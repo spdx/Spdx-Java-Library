@@ -69,8 +69,8 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 	ModelCopyManager copyManager;
 	
 	protected void setUp() throws Exception {
-		SpdxModelFactory.init();
 		super.setUp();
+		SpdxModelFactory.init();
 		modelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
 		DefaultModelStore.initialize(new InMemSpdxStore(), "https://docnamespace", copyManager);

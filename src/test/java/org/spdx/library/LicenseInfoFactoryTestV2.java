@@ -15,16 +15,26 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.library.model.compat.v2.license;
+package org.spdx.library;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.GenericModelObject;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.DefaultStoreNotInitialized;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.GenericModelObject;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.v2.license.SpdxNoneLicense;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -32,7 +42,7 @@ import junit.framework.TestCase;
  * @author gary
  *
  */
-public class LicenseInfoFactoryTest extends TestCase {
+public class LicenseInfoFactoryTestV2 extends TestCase {
 	
 	static final String[] NONSTD_IDS = new String[] {SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"1",
 			SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"2", SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+"3",
@@ -50,13 +60,19 @@ public class LicenseInfoFactoryTest extends TestCase {
 		ConjunctiveLicenseSet COMPLEX_LICENSE;
 		
 		GenericModelObject gmo;
+		ModelCopyManager copyManager;
+		IModelStore modelStore;
+		static final String TEST_DOCUMENT_URI = "https://test.doc.uri";
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		SpdxModelFactory.init();
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(new InMemSpdxStore(), "https://docnamespace", copyManager);
 		gmo = new GenericModelObject();
 		NON_STD_LICENSES = new ExtractedLicenseInfo[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
@@ -99,10 +115,10 @@ public class LicenseInfoFactoryTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
+		DefaultModelStore.initialize(new InMemSpdxStore(), "https://default/prefix", new ModelCopyManager());
 	}
 	
-	public void testParseSPDXLicenseString() throws InvalidLicenseStringException {
+	public void testParseSPDXLicenseString() throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		String parseString = COMPLEX_LICENSE.toString();
 		AnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseV2String(parseString);
 		if (!li.equals(COMPLEX_LICENSE)) {
@@ -128,8 +144,8 @@ public class LicenseInfoFactoryTest extends TestCase {
 	
 	
 	public void testDifferentLicenseOrder() throws InvalidSPDXAnalysisException {
-		AnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-2-Clause-Clear)");
-		AnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-2-Clause-Clear AND LicenseRef-16)");
+		AnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-3-Clause-Clear)");
+		AnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-3-Clause-Clear AND LicenseRef-16)");
 		assertTrue(order1.equals(order2));
 		assertTrue(order1.equivalent(order2));
 	}
