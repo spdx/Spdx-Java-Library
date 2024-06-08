@@ -227,7 +227,7 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 	}
 
     public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
-        AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseV2String("MIT WITH Autoconf-exception-2.0");
+        AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("MIT WITH Autoconf-exception-2.0");
         assertEquals("MIT WITH Autoconf-exception-2.0",result.toString());
     }
 }

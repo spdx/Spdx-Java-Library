@@ -28,45 +28,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstantsCompatV2;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalDocumentRef;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxElement;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxCreatorInformation;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxItem;
-import org.spdx.library.model.compat.v2.SpdxPackage;
-import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
-import org.spdx.library.model.compat.v2.SpdxSnippet;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.compat.v2.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.compat.v2.license.InvalidLicenseStringException;
-import org.spdx.library.model.compat.v2.license.License;
-import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
-import org.spdx.library.model.compat.v2.license.LicenseSet;
-import org.spdx.library.model.compat.v2.license.SpdxListedLicense;
-import org.spdx.library.model.compat.v2.license.SpdxNoAssertionLicense;
-import org.spdx.library.model.compat.v2.license.SpdxNoneLicense;
-import org.spdx.library.model.compat.v2.pointer.ByteOffsetPointer;
-import org.spdx.library.model.compat.v2.pointer.LineCharPointer;
-import org.spdx.library.model.compat.v2.pointer.StartEndPointer;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.ExternalDocumentRef;
+import org.spdx.library.model.v2.GenericModelObject;
+import org.spdx.library.model.v2.GenericSpdxElement;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.SpdxCreatorInformation;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.SpdxPackage;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.v2.SpdxSnippet;
+import org.spdx.library.model.v2.enumerations.AnnotationType;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.enumerations.RelationshipType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.License;
+import org.spdx.library.model.v2.license.LicenseSet;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.v2.license.SpdxNoneLicense;
+import org.spdx.library.model.v2.pointer.ByteOffsetPointer;
+import org.spdx.library.model.v2.pointer.LineCharPointer;
+import org.spdx.library.model.v2.pointer.StartEndPointer;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -231,34 +233,45 @@ public class SpdxComparerTest extends TestCase {
 	ExternalDocumentRef ref3;
 	
 	Collection<ExternalDocumentRef> EXTERNAL_DOC_REFS;
-
+    IModelStore modelStore;
+    IModelCopyManager copyManager;
+    String DEFAULT_DOCUMENT_URI = "http://default/doc";
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
 		super.setUp();
-		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
-		GenericModelObject gmo = new GenericModelObject();
-
-		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseV2String(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
-		LICENSEA1 = new ExtractedLicenseInfo("LicenseRef-1", "License1");
-		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
-		LICENSEA3 = new ExtractedLicenseInfo("LicenseRef-3", "License3");
-		LICENSEB1 = new ExtractedLicenseInfo("LicenseRef-4", "License1");
-		LICENSEB2 = new ExtractedLicenseInfo("LicenseRef-5", "License2");
-		LICENSEB3 = new ExtractedLicenseInfo("LicenseRef-6", "License3");
+		SpdxModelFactory.init();
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(modelStore, DEFAULT_DOCUMENT_URI, copyManager);
+		GenericModelObject gmoA = new GenericModelObject(modelStore, DOC_URIA, modelStore.getNextId(IdType.Anonymous), copyManager, true);
+		GenericModelObject gmoB = new GenericModelObject(modelStore, DOC_URIB, modelStore.getNextId(IdType.Anonymous), copyManager, true);
+		DATALICENSE = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID);
+		LICENSEA1 = new ExtractedLicenseInfo(modelStore, DOC_URIA, "LicenseRef-1", copyManager, true);
+		LICENSEA1.setExtractedText("License1");
+		LICENSEA2 = new ExtractedLicenseInfo(modelStore, DOC_URIA, "LicenseRef-2", copyManager, true);
+		LICENSEA2.setExtractedText("License2");
+		LICENSEA3 = new ExtractedLicenseInfo(modelStore, DOC_URIA, "LicenseRef-3", copyManager, true);
+		LICENSEA3.setExtractedText("License3");
+		LICENSEB1 = new ExtractedLicenseInfo(modelStore, DOC_URIB, "LicenseRef-4", copyManager, true);
+		LICENSEB1.setExtractedText("License1");
+		LICENSEB2 = new ExtractedLicenseInfo(modelStore, DOC_URIB, "LicenseRef-5", copyManager, true);
+		LICENSEB2.setExtractedText("License2");
+		LICENSEB3 =  new ExtractedLicenseInfo(modelStore, DOC_URIB, "LicenseRef-6", copyManager, true);
+		LICENSEB3.setExtractedText("License3");
 		LICENSE_INFO_FROM_FILESA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2, LICENSEA3}));
 		LICENSE_INFO_FROM_FILESB = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2, LICENSEB3}));
 		LICENSE_CONCLUDEDA = LICENSEA1;
 		LICENSE_CONCLUDEDB = LICENSEB1;
 		LICENSE_DECLAREDA = LICENSEA2;
 		LICENSE_DECLAREDB = LICENSEB2;
-		CREATION_INFOA = gmo.createCreationInfo(Arrays.asList(new String[] {"Person: CreatorA"}),
+		CREATION_INFOA = gmoA.createCreationInfo(Arrays.asList(new String[] {"Person: CreatorA"}),
 				"2010-01-29T18:30:22Z");
 		CREATION_INFOA.setComment("Creator CommentA");
 		CREATION_INFOA.setLicenseListVersion("1.15");
-		CREATION_INFOB = gmo.createCreationInfo(Arrays.asList(new String[] {"Person: CreatorB"}), 
+		CREATION_INFOB = gmoB.createCreationInfo(Arrays.asList(new String[] {"Person: CreatorB"}), 
 				"2012-01-29T18:30:22Z");
 		CREATION_INFOB.setComment("Creator CommentB");
 		CREATION_INFOB.setLicenseListVersion("1.17");
@@ -269,99 +282,99 @@ public class SpdxComparerTest extends TestCase {
 				LICENSEB1, LICENSEB2, LICENSEB3
 			};
 		
-		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1", AnnotationType.OTHER, 
+		ANNOTATION1 = gmoA.createAnnotation("Person: Annotator1", AnnotationType.OTHER, 
 				"2010-01-29T18:30:22Z", "AnnotationComment1");
-		ANNOTATION2 = gmo.createAnnotation("Person: Annotator2", AnnotationType.REVIEW, 
+		ANNOTATION2 = gmoA.createAnnotation("Person: Annotator2", AnnotationType.REVIEW, 
 				"2011-01-29T18:30:22Z", "AnnotationComment2");
-		ANNOTATION3 = gmo.createAnnotation("Person: Annotator3", AnnotationType.OTHER, 
+		ANNOTATION3 = gmoB.createAnnotation("Person: Annotator3", AnnotationType.OTHER, 
 				"2012-01-29T18:30:22Z", "AnnotationComment3");
-		ANNOTATION4 = gmo.createAnnotation("Person: Annotator4", AnnotationType.REVIEW, 
+		ANNOTATION4 = gmoB.createAnnotation("Person: Annotator4", AnnotationType.REVIEW, 
 				"2013-01-29T18:30:22Z", "Person: AnnotationComment4");
 		ANNOTATIONSA = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATION1, ANNOTATION2}));
 		ANNOTATIONSB =  new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATION3, ANNOTATION4}));
-		RELATED_ELEMENT1 = new GenericSpdxElement();
+		RELATED_ELEMENT1 = new GenericSpdxElement(modelStore, DOC_URIA, modelStore.getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
-		RELATED_ELEMENT2 = new GenericSpdxElement();
+		RELATED_ELEMENT2 = new GenericSpdxElement(modelStore, DOC_URIA, modelStore.getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT2.setName("relatedElementName2");
 		RELATED_ELEMENT2.setComment("related element comment 2");
-		RELATED_ELEMENT3 = new GenericSpdxElement();
+		RELATED_ELEMENT3 = new GenericSpdxElement(modelStore, DOC_URIB, modelStore.getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT3.setName("relatedElementName3");
 		RELATED_ELEMENT3.setComment("related element comment 3");
-		RELATED_ELEMENT4 = new GenericSpdxElement();
+		RELATED_ELEMENT4 = new GenericSpdxElement(modelStore, DOC_URIB, modelStore.getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT4.setName("relatedElementName4");
 		RELATED_ELEMENT4.setComment("related element comment 4");
-		RELATIONSHIP1 = gmo.createRelationship(RELATED_ELEMENT1, 
+		RELATIONSHIP1 = gmoA.createRelationship(RELATED_ELEMENT1, 
 				RelationshipType.CONTAINS, "Relationship Comment1");
-		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
+		RELATIONSHIP2 = gmoA.createRelationship(RELATED_ELEMENT2, 
 				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
-		RELATIONSHIP3 = gmo.createRelationship(RELATED_ELEMENT3, 
+		RELATIONSHIP3 = gmoB.createRelationship(RELATED_ELEMENT3, 
 				RelationshipType.DATA_FILE_OF, "Relationship Comment3");
-		RELATIONSHIP4 = gmo.createRelationship(RELATED_ELEMENT4, 
+		RELATIONSHIP4 = gmoB.createRelationship(RELATED_ELEMENT4, 
 				RelationshipType.DISTRIBUTION_ARTIFACT, "Relationship Comment4");
 		RELATIONSHIPSA = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIP1, RELATIONSHIP2}));
 		RELATIONSHIPSB = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIP3, RELATIONSHIP4}));
-		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM1 = gmoA.createChecksum(ChecksumAlgorithm.SHA1, 
 				"111bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM2 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM2 = gmoA.createChecksum(ChecksumAlgorithm.SHA1, 
 				"222bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM3 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM3 = gmoB.createChecksum(ChecksumAlgorithm.SHA1, 
 				"333bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM4 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM4 = gmoB.createChecksum(ChecksumAlgorithm.SHA1, 
 				"444bf72bf99b7e471f1a27989667a903658652bb");
 		CHECKSUMSA = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM1, CHECKSUM2}));
 		CHECKSUMSB = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM3, CHECKSUM4}));
 		
-		FILE1A = gmo.createSpdxFile("SPDXRef-FILE1A", FILE1_NAME, LICENSE_CONCLUDEDA, 
+		FILE1A = gmoA.createSpdxFile("SPDXRef-FILE1A", FILE1_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 
-		FILE1B = gmo.createSpdxFile("SPDXRef-FILE1B", FILE1_NAME, LICENSE_CONCLUDEDB, 
+		FILE1B = gmoB.createSpdxFile("SPDXRef-FILE1B", FILE1_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 
-		FILE1B_DIFF_CHECKSUM = gmo.createSpdxFile("SPDXRef-DIFFCHKSUM", FILE1_NAME, LICENSE_CONCLUDEDB, 
+		FILE1B_DIFF_CHECKSUM = gmoB.createSpdxFile("SPDXRef-DIFFCHKSUM", FILE1_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				COPYRIGHTA, CHECKSUM3)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSB)
 				.build();
 
-		FILE2A = gmo.createSpdxFile("SPDXRef-FILE2A", FILE2_NAME, LICENSE_CONCLUDEDA, 
+		FILE2A = gmoA.createSpdxFile("SPDXRef-FILE2A", FILE2_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 		
-		FILE3A = gmo.createSpdxFile("SPDXRef-FILE3A", FILE3_NAME, LICENSE_CONCLUDEDA, 
+		FILE3A = gmoA.createSpdxFile("SPDXRef-FILE3A", FILE3_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 		
-		FILE4A = gmo.createSpdxFile("SPDXRef-FILE4A", FILE4_NAME, LICENSE_CONCLUDEDA, 
+		FILE4A = gmoA.createSpdxFile("SPDXRef-FILE4A", FILE4_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 
-		FILE2B = gmo.createSpdxFile("SPDXRef-FILE2B", FILE2_NAME, LICENSE_CONCLUDEDB, 
+		FILE2B = gmoB.createSpdxFile("SPDXRef-FILE2B", FILE2_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.setChecksums(CHECKSUMSA)
 				.build();
 		
-		FILE3B = gmo.createSpdxFile("SPDXRef-FILE3B", FILE3_NAME, LICENSE_CONCLUDEDB, 
+		FILE3B = gmoB.createSpdxFile("SPDXRef-FILE3B", FILE3_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				COPYRIGHTA, CHECKSUM1)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
@@ -371,23 +384,23 @@ public class SpdxComparerTest extends TestCase {
 		FILESA = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A, FILE2A}));
 		FILESB_SAME = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1B, FILE2B}));
 		FILESB = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1B_DIFF_CHECKSUM, FILE3B}));
-		VERIFICATION_CODEA = gmo.createPackageVerificationCode("aaabf72bf99b7e471f1a27989667a903658652bb",
+		VERIFICATION_CODEA = gmoA.createPackageVerificationCode("aaabf72bf99b7e471f1a27989667a903658652bb",
 				new HashSet<>(Arrays.asList(new String[] {"file2"})));
-		VERIFICATION_CODEB = gmo.createPackageVerificationCode("bbbbf72bf99b7e471f1a27989667a903658652bb",
+		VERIFICATION_CODEB = gmoB.createPackageVerificationCode("bbbbf72bf99b7e471f1a27989667a903658652bb",
 				new HashSet<>(Arrays.asList(new String[] {"file3"})));
-		BOP_POINTER1_1 = gmo.createByteOffsetPointer(FILE1A, OFFSET1_1);
-		BOP_POINTER1_2 = gmo.createByteOffsetPointer(FILE1A, OFFSET1_2);
-		BYTE_RANGE1 = gmo.createStartEndPointer(BOP_POINTER1_1, BOP_POINTER1_2);
-		LCP_POINTER1_1 = gmo.createLineCharPointer(FILE1A, LINE1_1);
-		LCP_POINTER1_2 = gmo.createLineCharPointer(FILE1A, LINE1_2);
-		LINE_RANGE1 = gmo.createStartEndPointer(LCP_POINTER1_1, LCP_POINTER1_2);
-		BOP_POINTER2_1 = gmo.createByteOffsetPointer(FILE2A, OFFSET2_1);
-		BOP_POINTER2_2 = gmo.createByteOffsetPointer(FILE2A, OFFSET2_2);
-		BYTE_RANGE2 = gmo.createStartEndPointer(BOP_POINTER2_1, BOP_POINTER2_2);
-		LCP_POINTER2_1 = gmo.createLineCharPointer(FILE2A, LINE2_1);
-		LCP_POINTER2_2 = gmo.createLineCharPointer(FILE2A, LINE2_2);
-		LINE_RANGE2 = gmo.createStartEndPointer(LCP_POINTER2_1, LCP_POINTER2_2);
-		SNIPPET1 = gmo.createSpdxSnippet("SPDXRef-SnippetName1", "SnippetName1", LICENSE_CONCLUDEDA, 
+		BOP_POINTER1_1 = gmoA.createByteOffsetPointer(FILE1A, OFFSET1_1);
+		BOP_POINTER1_2 = gmoA.createByteOffsetPointer(FILE1A, OFFSET1_2);
+		BYTE_RANGE1 = gmoA.createStartEndPointer(BOP_POINTER1_1, BOP_POINTER1_2);
+		LCP_POINTER1_1 = gmoA.createLineCharPointer(FILE1A, LINE1_1);
+		LCP_POINTER1_2 = gmoA.createLineCharPointer(FILE1A, LINE1_2);
+		LINE_RANGE1 = gmoA.createStartEndPointer(LCP_POINTER1_1, LCP_POINTER1_2);
+		BOP_POINTER2_1 = gmoB.createByteOffsetPointer(FILE2A, OFFSET2_1);
+		BOP_POINTER2_2 = gmoB.createByteOffsetPointer(FILE2A, OFFSET2_2);
+		BYTE_RANGE2 = gmoB.createStartEndPointer(BOP_POINTER2_1, BOP_POINTER2_2);
+		LCP_POINTER2_1 = gmoB.createLineCharPointer(FILE2A, LINE2_1);
+		LCP_POINTER2_2 = gmoB.createLineCharPointer(FILE2A, LINE2_2);
+		LINE_RANGE2 = gmoB.createStartEndPointer(LCP_POINTER2_1, LCP_POINTER2_2);
+		SNIPPET1 = gmoA.createSpdxSnippet("SPDXRef-SnippetName1", "SnippetName1", LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), "Copyright1", 
 						FILE1A, OFFSET1_1, OFFSET1_2)
 				.setComment("SnippetCOmment1")
@@ -397,7 +410,7 @@ public class SpdxComparerTest extends TestCase {
 				.setLineRange(LINE1_1, LINE1_2)
 				.build();
 		
-		SNIPPET2 = gmo.createSpdxSnippet("SPDXRef-SnippetName2", "SnippetName2", LICENSE_CONCLUDEDB, 
+		SNIPPET2 = gmoB.createSpdxSnippet("SPDXRef-SnippetName2", "SnippetName2", LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), "Copyright2", 
 				FILE2A, OFFSET2_1, OFFSET2_2)
 				.setComment("SnippetCOmment2")
@@ -406,7 +419,7 @@ public class SpdxComparerTest extends TestCase {
 				.setLicenseComments("LicenseComment2")
 				.setLineRange(LINE2_1, LINE2_2)
 				.build();
-		pkgA1 = gmo.createPackage("SPDXRef-pkgA1", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+		pkgA1 = gmoA.createPackage("SPDXRef-pkgA1", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
 				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
@@ -426,28 +439,7 @@ public class SpdxComparerTest extends TestCase {
 				.setSupplier(SUPPLIERA)
 				.setVersionInfo(VERSIONINFOA)
 				.build();
-		pkgA2 = gmo.createPackage("SPDXRef-pkgA2", NAMEB, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
-				.addChecksum(CHECKSUM1)
-				.setComment(COMMENTA)
-				.setAnnotations(ANNOTATIONSA)
-				.setRelationships(RELATIONSHIPSA)
-				.setLicenseInfosFromFile(LICENSE_INFO_FROM_FILESA)
-				.setLicenseComments(LICENSE_COMMENTA)
-				.setChecksums(CHECKSUMSA)
-				.setDescription(DESCRIPTIONA)
-				.setDownloadLocation(DOWNLOADA)
-				.setFiles(FILESA)
-				.setHomepage(HOMEPAGEA)
-				.setOriginator(ORIGINATORA)
-				.setPackageFileName(PACKAGE_FILENAMEA)
-				.setPackageVerificationCode(VERIFICATION_CODEA)
-				.setSourceInfo(SOURCEINFOA)
-				.setSummary(SUMMARYA)
-				.setSupplier(SUPPLIERA)
-				.setVersionInfo(VERSIONINFOA)
-				.build();
-		
-		pkgA1_1 = gmo.createPackage("SPDXRef-pkgA11", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+		pkgA2 = gmoA.createPackage("SPDXRef-pkgA2", NAMEB, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
 				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
@@ -468,7 +460,28 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 		
-		pkgA1_2 = gmo.createPackage("SPDXRef-pkgA12", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+		pkgA1_1 = gmoA.createPackage("SPDXRef-pkgA11", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
+				.addChecksum(CHECKSUM1)
+				.setComment(COMMENTA)
+				.setAnnotations(ANNOTATIONSA)
+				.setRelationships(RELATIONSHIPSA)
+				.setLicenseInfosFromFile(LICENSE_INFO_FROM_FILESA)
+				.setLicenseComments(LICENSE_COMMENTA)
+				.setChecksums(CHECKSUMSA)
+				.setDescription(DESCRIPTIONA)
+				.setDownloadLocation(DOWNLOADA)
+				.setFiles(FILESA)
+				.setHomepage(HOMEPAGEA)
+				.setOriginator(ORIGINATORA)
+				.setPackageFileName(PACKAGE_FILENAMEA)
+				.setPackageVerificationCode(VERIFICATION_CODEA)
+				.setSourceInfo(SOURCEINFOA)
+				.setSummary(SUMMARYA)
+				.setSupplier(SUPPLIERA)
+				.setVersionInfo(VERSIONINFOA)
+				.build();
+		
+		pkgA1_2 = gmoA.createPackage("SPDXRef-pkgA12", NAMEA, LICENSE_CONCLUDEDA, COPYRIGHTA, LICENSE_DECLAREDA)
 				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
@@ -489,7 +502,7 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 
-		pkgB1 = gmo.createPackage("SPDXRef-pkgB1", NAMEA, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
+		pkgB1 = gmoB.createPackage("SPDXRef-pkgB1", NAMEA, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
 				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTA)
 				.setAnnotations(ANNOTATIONSA)
@@ -510,7 +523,7 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 
-		pkgB2 = gmo.createPackage("SPDXRef-pkgB2", NAMEB, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
+		pkgB2 = gmoB.createPackage("SPDXRef-pkgB2", NAMEB, LICENSE_CONCLUDEDB, COPYRIGHTA, LICENSE_DECLAREDB)
 				.addChecksum(CHECKSUM1)
 				.setComment(COMMENTB)
 				.setAnnotations(ANNOTATIONSA)
@@ -531,10 +544,10 @@ public class SpdxComparerTest extends TestCase {
 				.setVersionInfo(VERSIONINFOA)
 				.build();
 		
-		new SpdxDocument(DefaultModelStore.getDefaultDocumentUri());	// necessary for creating the external document refs
-		ref1 = gmo.createExternalDocumentRef("DocumentRef-1", "http://namespace/one", CHECKSUM1);
-		ref2 = gmo.createExternalDocumentRef("DocumentRef-2", "http://namespace/two", CHECKSUM2);
-		ref3 = gmo.createExternalDocumentRef("DocumentRef-3", "http://namespace/three", CHECKSUM3);
+		new SpdxDocument(DOC_URIA);	// necessary for creating the external document refs
+		ref1 = gmoA.createExternalDocumentRef("DocumentRef-1", "http://namespace/one", CHECKSUM1);
+		ref2 = gmoA.createExternalDocumentRef("DocumentRef-2", "http://namespace/two", CHECKSUM2);
+		ref3 = gmoA.createExternalDocumentRef("DocumentRef-3", "http://namespace/three", CHECKSUM3);
 		EXTERNAL_DOC_REFS = new HashSet<>(Arrays.asList(ref1, ref2, ref3));
 	}
 
@@ -543,24 +556,93 @@ public class SpdxComparerTest extends TestCase {
 	 */
 	public void tearDown() throws Exception {
 		super.tearDown();
-		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
+		DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
 	}
 	
 	private SpdxDocument createTestSpdxDoc(String docUri) throws InvalidSPDXAnalysisException {
-		IModelStore newStore = new InMemSpdxStore(SpdxMajorVersion.VERSION_2);
+		IModelStore newStore = new InMemSpdxStore();
 		SpdxDocument retval = new SpdxDocument(newStore, docUri, DefaultModelStore.getDefaultCopyManager(), true);
-		Relationship docDescribesPackage = retval.createRelationship(pkgA1, 
+		ExtractedLicenseInfo licenseConcluded = new ExtractedLicenseInfo(newStore, docUri, "LicenseRef-1", copyManager, true);
+		licenseConcluded.setExtractedText("License1");
+		ExtractedLicenseInfo licenseDeclared = new ExtractedLicenseInfo(newStore, docUri, "LicenseRef-2", copyManager, true);
+		licenseDeclared.setExtractedText("License2");
+		GenericSpdxElement relatedElement1 = new GenericSpdxElement(newStore, docUri, newStore.getNextId(IdType.SpdxId), copyManager, true);
+		relatedElement1.setName("relatedElementName1");
+		relatedElement1.setComment("related element comment 1");
+		GenericSpdxElement relatedElement2 = new GenericSpdxElement(newStore, docUri, newStore.getNextId(IdType.SpdxId), copyManager, true);
+		relatedElement2.setName("relatedElementName2");
+		relatedElement2.setComment("related element comment 2");
+		Relationship relationship1 = retval.createRelationship(relatedElement1, 
+				RelationshipType.CONTAINS, "Relationship Comment1");
+		Relationship relationship2= retval.createRelationship(relatedElement2, 
+				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
+		Set<Relationship> relationships = new HashSet<>(Arrays.asList(new Relationship[] {relationship1, relationship2}));
+		ExtractedLicenseInfo license1 = new ExtractedLicenseInfo(newStore, docUri, "LicenseRef-1", copyManager, true);
+		license1.setExtractedText("License1");
+		ExtractedLicenseInfo license2 = new ExtractedLicenseInfo(newStore, docUri, "LicenseRef-2", copyManager, true);
+		license2.setExtractedText("License2");
+		ExtractedLicenseInfo license3 = new ExtractedLicenseInfo(newStore, docUri, "LicenseRef-3", copyManager, true);
+		license3.setExtractedText("License3");
+		Set<AnyLicenseInfo> licenseInfosFromFile = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {license1, license2, license3}));
+		SpdxFile file1 = retval.createSpdxFile("SPDXRef-FILE1A", FILE1_NAME, licenseConcluded, 
+				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {license1, license2})), 
+				COPYRIGHTA, CHECKSUM1)
+				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
+				.setChecksums(CHECKSUMSA)
+				.build();
+
+		SpdxFile file2 = retval.createSpdxFile("SPDXRef-FILE2A", FILE2_NAME, licenseConcluded, 
+				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {license1, license2})), 
+				COPYRIGHTA, CHECKSUM1)
+				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
+				.setChecksums(CHECKSUMSA)
+				.build();
+
+		Set<SpdxFile> files = new HashSet<>(Arrays.asList(new SpdxFile[] {file1, file2}));
+		SpdxPackage pkg = retval.createPackage("SPDXRef-pkg", NAMEA, licenseConcluded, COPYRIGHTA, licenseDeclared)
+				.addChecksum(CHECKSUM1)
+				.setComment(COMMENTA)
+				.setAnnotations(ANNOTATIONSA)
+				.setRelationships(relationships)
+				.setLicenseInfosFromFile(licenseInfosFromFile)
+				.setLicenseComments(LICENSE_COMMENTA)
+				.setChecksums(CHECKSUMSA)
+				.setDescription(DESCRIPTIONA)
+				.setDownloadLocation(DOWNLOADA)
+				.setFiles(files)
+				.setHomepage(HOMEPAGEA)
+				.setOriginator(ORIGINATORA)
+				.setPackageFileName(PACKAGE_FILENAMEA)
+				.setPackageVerificationCode(VERIFICATION_CODEA)
+				.setSourceInfo(SOURCEINFOA)
+				.setSummary(SUMMARYA)
+				.setSupplier(SUPPLIERA)
+				.setVersionInfo(VERSIONINFOA)
+				.build();
+		SpdxFile file = retval.createSpdxFile("SPDXRef-FILE", FILE4_NAME, licenseConcluded, 
+				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {license1, license2})), 
+				COPYRIGHTA, CHECKSUM1)
+				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
+				.setChecksums(CHECKSUMSA)
+				.build();
+		Relationship docDescribesPackage = retval.createRelationship(pkg, 
 				RelationshipType.DESCRIBES, "Package1 describes");
 		retval.addRelationship(docDescribesPackage);
-		Relationship docDescribesFile = retval.createRelationship(FILE4A, 
-				RelationshipType.DESCRIBES, "File4A describes");
+		Relationship docDescribesFile = retval.createRelationship(file, 
+				RelationshipType.DESCRIBES, "File describes");
 		retval.addRelationship(docDescribesFile);
 		retval.setAnnotations(ANNOTATIONSA);
 		retval.setComment(COMMENTA);
 		retval.setCreationInfo(CREATION_INFOA);
 		retval.setDataLicense(DATALICENSE);
-		retval.setExternalDocumentRefs(EXTERNAL_DOC_REFS);
-		retval.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
+		
+		ExternalDocumentRef r1 = retval.createExternalDocumentRef("DocumentRef-1", "http://namespace/one", CHECKSUM1);
+		ExternalDocumentRef r2 = retval.createExternalDocumentRef("DocumentRef-2", "http://namespace/two", CHECKSUM2);
+		ExternalDocumentRef r3 = retval.createExternalDocumentRef("DocumentRef-3", "http://namespace/three", CHECKSUM3);
+		Set<ExternalDocumentRef> externalDocRefs = new HashSet<>(Arrays.asList(r1, r2, r3));
+		
+		retval.setExternalDocumentRefs(externalDocRefs);
+		retval.setExtractedLicenseInfos(Arrays.asList(new ExtractedLicenseInfo[]{license1, license2, license3}));
 		retval.setName("DocumentA");
 		retval.setSpecVersion("SPDX-2.1");
 		return retval;
@@ -611,9 +693,9 @@ public class SpdxComparerTest extends TestCase {
 		Map<Integer, Integer> xlateDoc1ToDoc2LicId = createLicIdXlation(extractedInfos1, extractedInfos2);
 		
 		//Standard License
-		SpdxListedLicense lic1 = LicenseInfoFactory.getListedLicenseById(STD_LIC_ID_CC0);
-		SpdxListedLicense lic1_1 = LicenseInfoFactory.getListedLicenseById(STD_LIC_ID_CC0);
-		SpdxListedLicense lic2 = LicenseInfoFactory.getListedLicenseById(STD_LIC_ID_MPL11);
+		SpdxListedLicense lic1 = LicenseInfoFactory.getListedLicenseByIdCompatV2(STD_LIC_ID_CC0);
+		SpdxListedLicense lic1_1 = LicenseInfoFactory.getListedLicenseByIdCompatV2(STD_LIC_ID_CC0);
+		SpdxListedLicense lic2 = LicenseInfoFactory.getListedLicenseByIdCompatV2(STD_LIC_ID_MPL11);
 		assertTrue(comparer.compareLicense(0, lic1, 1, lic1_1));
 		assertFalse(comparer.compareLicense(0, lic1, 1, lic2));
 		//Extracted License
@@ -638,7 +720,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(extractedInfos1[1].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo conj1 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
+		AnyLicenseInfo conj1 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
 
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -649,7 +731,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(extractedInfos2[xlateDoc1ToDoc2LicId.get(0)].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo conj2 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo conj2 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -658,7 +740,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" AND ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo conj3 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo conj3 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		assertTrue(comparer.compareLicense(0, conj1, 1, conj2));
 		assertFalse(comparer.compareLicense(0, conj1, 1, conj3));
@@ -677,7 +759,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(extractedInfos1[1].getLicenseId());
 		sb.append(")");
-		AnyLicenseInfo dis1 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
+		AnyLicenseInfo dis1 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc1.getModelStore(), doc1.getDocumentUri(), doc1.getCopyManager());
 
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -688,7 +770,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo dis2 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo dis2 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		sb = new StringBuilder("(");
 		sb.append(STD_LIC_ID_MPL11);
@@ -697,7 +779,7 @@ public class SpdxComparerTest extends TestCase {
 		sb.append(" OR ");
 		sb.append(STD_LIC_ID_CC0);
 		sb.append(")");
-		AnyLicenseInfo dis3 = LicenseInfoFactory.parseSPDXLicenseStringV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
+		AnyLicenseInfo dis3 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString(), doc2.getModelStore(), doc2.getDocumentUri(), doc2.getCopyManager());
 		
 		assertTrue(comparer.compareLicense(0, dis1, 1, dis2));
 		assertFalse(comparer.compareLicense(0, dis1, 1, dis3));
@@ -708,28 +790,28 @@ public class SpdxComparerTest extends TestCase {
 		}
 		//Complex License
 		DisjunctiveLicenseSet subcomplex1 = new DisjunctiveLicenseSet(doc1.getModelStore(), 
-				doc1.getDocumentUri(), doc1.getModelStore().getNextId(IdType.Anonymous, doc1.getDocumentUri()),doc1.getCopyManager(), true);
+				doc1.getDocumentUri(), doc1.getModelStore().getNextId(IdType.Anonymous),doc1.getCopyManager(), true);
 		subcomplex1.setMembers(new HashSet<>(Arrays.asList(
 					new AnyLicenseInfo[] {lic1, conj1})));
 		ConjunctiveLicenseSet complex1 = new ConjunctiveLicenseSet(doc1.getModelStore(), 
-				doc1.getDocumentUri(), doc1.getModelStore().getNextId(IdType.Anonymous, doc1.getDocumentUri()),doc1.getCopyManager(), true);
+				doc1.getDocumentUri(), doc1.getModelStore().getNextId(IdType.Anonymous),doc1.getCopyManager(), true);
 		complex1.setMembers(new HashSet<>(Arrays.asList(
 				new AnyLicenseInfo[] {subcomplex1, dis1, extractedInfos1[0]})));
 		DisjunctiveLicenseSet subcomplex2 = new DisjunctiveLicenseSet(doc2.getModelStore(), 
-				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous, doc2.getDocumentUri()),doc2.getCopyManager(), true);
+				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous),doc2.getCopyManager(), true);
 		subcomplex2.setMembers(new HashSet<>(Arrays.asList(
 				new AnyLicenseInfo[] {conj2, lic1_1})));
 		ConjunctiveLicenseSet complex2 = new ConjunctiveLicenseSet(doc2.getModelStore(), 
-				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous, doc2.getDocumentUri()),doc2.getCopyManager(), true);
+				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous),doc2.getCopyManager(), true);
 		complex2.setMembers(new HashSet<>(Arrays.asList(
 			new AnyLicenseInfo[] {dis2, subcomplex2, extractedInfos2[xlateDoc1ToDoc2LicId.get(0)]})));
 		
 		DisjunctiveLicenseSet subcomplex3 = new DisjunctiveLicenseSet(doc2.getModelStore(), 
-				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous, doc2.getDocumentUri()),doc2.getCopyManager(), true);
+				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous),doc2.getCopyManager(), true);
 		subcomplex3.setMembers(new HashSet<>(Arrays.asList(
 				new AnyLicenseInfo[] {conj3, lic1_1})));
 		ConjunctiveLicenseSet complex3 = new ConjunctiveLicenseSet(doc2.getModelStore(), 
-				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous, doc2.getDocumentUri()),doc2.getCopyManager(), true);
+				doc2.getDocumentUri(), doc2.getModelStore().getNextId(IdType.Anonymous),doc2.getCopyManager(), true);
 		complex3.setMembers(new HashSet<>(Arrays.asList(
 			new AnyLicenseInfo[] {dis2, subcomplex3, extractedInfos2[xlateDoc1ToDoc2LicId.get(0)]})));
 		assertTrue(comparer.compareLicense(0, complex1, 1, complex2));
@@ -800,14 +882,14 @@ public class SpdxComparerTest extends TestCase {
 		// fix up all references to the old licenses
 		// files
 		try(@SuppressWarnings("unchecked")
-        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxFile.class)) {
+        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_FILE, doc.getDocumentUri())) {
 		    fileStream.forEach(file -> {
 		        fixExtractedLicenseId(file, oldToNewLicIds);
 		    });
 		}
 		// packages
 	      try(@SuppressWarnings("unchecked")
-	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxPackage.class)) {
+	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE, doc.getDocumentUri())) {
 	          packageStream.forEach(pkg -> {
 	               fixExtractedLicenseIdPackage(pkg, oldToNewLicIds);
 	            });
@@ -815,7 +897,7 @@ public class SpdxComparerTest extends TestCase {
 
 		// snippets
         try(@SuppressWarnings("unchecked")
-          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(doc.getModelStore(), doc.getDocumentUri(), doc.getCopyManager(), SpdxSnippet.class)) {
+          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, doc.getDocumentUri())) {
             snippetStream.forEach(snippet -> {
                 fixExtractedLicenseId(snippet, oldToNewLicIds);
             });
@@ -898,11 +980,11 @@ public class SpdxComparerTest extends TestCase {
 		comparer.compare(doc1, doc2);
 		assertFalse(comparer.isDifferenceFound());
 		assertTrue(comparer.isSpdxVersionEqual());
-		doc2.setSpecVersion("SPDX-1.0");
+		doc2.setSpecVersion("SPDX-2.0");
 		comparer.compare(doc1, doc2);
 		assertTrue(comparer.isDifferenceFound());
 		assertFalse(comparer.isSpdxVersionEqual());
-		doc1.setSpecVersion("SPDX-1.0");
+		doc1.setSpecVersion("SPDX-2.0");
 		comparer.compare(doc1, doc2);
 		assertFalse(comparer.isDifferenceFound());
 	}
@@ -943,8 +1025,7 @@ public class SpdxComparerTest extends TestCase {
 		comparer.compare(doc1, doc2);
 		assertFalse(comparer.isDifferenceFound());
 		assertTrue(comparer.isDataLicenseEqual());
-		doc2.setSpecVersion("SPDX-1.0");
-		doc2.setDataLicense(LicenseInfoFactory.getListedLicenseById(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID_VERSION_1_0));
+		doc2.setDataLicense(LicenseInfoFactory.getListedLicenseByIdCompatV2(SpdxConstantsCompatV2.SPDX_DATA_LICENSE_ID_VERSION_1_0));
 		comparer.compare(doc1, doc2);
 		assertTrue(comparer.isDifferenceFound());
 		assertFalse(comparer.isDataLicenseEqual());
@@ -1775,7 +1856,7 @@ public class SpdxComparerTest extends TestCase {
 		files[0].setComment("a new and unique comment");
 
 		String file1Name = files[1].getName().get();
-		files[1].setLicenseConcluded(LicenseInfoFactory.parseSPDXLicenseV2String(STD_LIC_ID_CC0));
+		files[1].setLicenseConcluded(LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0));
 		comparer.compare(doc1, doc2);
 		differences = comparer.getFileDifferences(0, 1);
 		assertEquals(2, differences.size());
@@ -1839,21 +1920,22 @@ public class SpdxComparerTest extends TestCase {
 	}
 
 	public void testGetUniqueFiles() throws InvalidSPDXAnalysisException, IOException, SpdxCompareException {
-		SpdxDocument docA = new SpdxDocument(DOC_URIA);
-		SpdxDocument docB = new SpdxDocument(DOC_URIB);
-		docA.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
-		docB.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESB));
+		
+		String uri1 = "http://uri1";
+		String uri2 = "http://uri2";
+		
+		SpdxDocument docA = new SpdxDocument(uri1);
+		SpdxDocument docB = new SpdxDocument(uri2);
 		docA.setName(DOC_NAMEA);
 		docB.setName(DOC_NAMEB);
 		docA.setCreationInfo(CREATION_INFOA);
 		docB.setCreationInfo(CREATION_INFOB);
-		
+		UnitTestHelper.copyObjectsToDoc(docA, Arrays.asList(EXTRACTED_LICENSESA));
+		UnitTestHelper.copyObjectsToDoc(docB, Arrays.asList(EXTRACTED_LICENSESB));
 		Collection<SpdxFile> pkgAFiles = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A}));
 		UnitTestHelper.copyObjectsToDoc(docA, pkgAFiles);
-
 		Collection<SpdxFile> pkgBFiles = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE3B}));
 		UnitTestHelper.copyObjectsToDoc(docB, pkgBFiles);
-
 		SpdxComparer comparer = new SpdxComparer();
 		comparer.compare(docA, docB);
 		List<SpdxFile> result = comparer.getUniqueFiles(0, 1);
@@ -1927,10 +2009,12 @@ public class SpdxComparerTest extends TestCase {
 	}
 	
 	public void testGetUniquePackages()throws InvalidSPDXAnalysisException, IOException, SpdxCompareException {
-		SpdxDocument docA = new SpdxDocument(DOC_URIA);
-		SpdxDocument docB = new SpdxDocument(DOC_URIB);
-		docA.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
-		docB.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESB));
+		String uri1 = "http://uri1";
+		String uri2 = "http://uri2";
+		SpdxDocument docA = new SpdxDocument(uri1);
+		SpdxDocument docB = new SpdxDocument(uri2);
+		UnitTestHelper.copyObjectsToDoc(docA, Arrays.asList(EXTRACTED_LICENSESA));
+		UnitTestHelper.copyObjectsToDoc(docB, Arrays.asList(EXTRACTED_LICENSESB));
 		docA.setName(DOC_NAMEA);
 		docB.setName(DOC_NAMEB);
 		docA.setCreationInfo(CREATION_INFOA);
@@ -1939,17 +2023,8 @@ public class SpdxComparerTest extends TestCase {
 		SpdxItem[] itemsA = new SpdxItem[] {pkgA1, pkgA2};
 		SpdxItem[] itemsB = new SpdxItem[] {pkgB1, pkgB2};
 		pkgB2.setName(NAMEC);
-		
-		for (int i = 0; i < itemsA.length; i++) {
-			Relationship rel = docA.createRelationship(itemsA[i], 
-					RelationshipType.DESCRIBES, "");
-			docA.addRelationship(rel);
-		}
-		for (int i = 0; i < itemsB.length; i++) {
-			Relationship rel = docB.createRelationship(itemsB[i], 
-					RelationshipType.DESCRIBES, "");
-			docB.addRelationship(rel);
-		}
+		UnitTestHelper.copyObjectsToDoc(docA, Arrays.asList(itemsA));
+		UnitTestHelper.copyObjectsToDoc(docB, Arrays.asList(itemsB));
 
 		SpdxComparer comparer = new SpdxComparer();
 		comparer.compare(docA, docB);
@@ -2162,11 +2237,11 @@ public class SpdxComparerTest extends TestCase {
 	
 	public void testSpdxDocumentContentsEquals() throws InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxItem[] itemsA = new SpdxItem[] {pkgA1};
-		SpdxItem[] itemsB = new SpdxItem[] {pkgA1_1};
+		SpdxItem[] itemsB = new SpdxItem[] {pkgB1};
 		SpdxDocument docA = new SpdxDocument(DOC_URIA);
 		SpdxDocument docB = new SpdxDocument(DOC_URIB);
 		docA.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
-		docB.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
+		docB.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESB));
 		docA.setName(DOC_NAMEA);
 		docB.setName(DOC_NAMEB);
 		docA.setCreationInfo(CREATION_INFOA);
@@ -2182,10 +2257,9 @@ public class SpdxComparerTest extends TestCase {
 			docB.addRelationship(rel);
 		}
 
-		assertTrue(pkgA1.equivalent(pkgA1_1));
+		assertTrue(pkgA1.equivalent(pkgB1));
 		SpdxComparer comparer = new SpdxComparer();
 		comparer.compare(docA, docB);
-		assertFalse(comparer.isDifferenceFound());
 		assertTrue(comparer.isDocumentContentsEquals());
 
 		assertFalse(pkgA1.equivalent(pkgB2));
@@ -2202,37 +2276,39 @@ public class SpdxComparerTest extends TestCase {
 	
 	public void testCompareSnippets() throws InvalidSPDXAnalysisException, SpdxCompareException {
 
-		SpdxItem[] itemsA = new SpdxItem[] {pkgA1, SNIPPET1};
-		SpdxItem[] itemsB = new SpdxItem[] {pkgA1_1, SNIPPET1};
-		SpdxItem[] itemsC = new SpdxItem[] {pkgA1_2, SNIPPET2};
-		SpdxDocument docA = new SpdxDocument(DOC_URIA);
-		SpdxDocument docB = new SpdxDocument(DOC_URIB);
-		SpdxDocument docC = new SpdxDocument(DOC_URIC);
+		IModelStore newModelStore = new InMemSpdxStore();
+		String uri1 = "http://uri1";
+		String uri2 = "http://uri2";
+		String uri3 = "http://uri3";
+		SpdxDocument docA = new SpdxDocument(newModelStore, uri1, copyManager, true);
+		SpdxDocument docB = new SpdxDocument(newModelStore, uri2, copyManager, true);
+		SpdxDocument docC = new SpdxDocument(newModelStore, uri3, copyManager, true);
 		docA.setName(DOC_NAMEA);
 		docB.setName(DOC_NAMEB);
 		docC.setName(DOC_NAMEC);
-		docA.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
-		docB.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
-		docC.setExtractedLicenseInfos(Arrays.asList(EXTRACTED_LICENSESA));
+		UnitTestHelper.copyObjectsToDoc(docA, Arrays.asList(EXTRACTED_LICENSESA));
+		UnitTestHelper.copyObjectsToDoc(docB, Arrays.asList(EXTRACTED_LICENSESA));
+		UnitTestHelper.copyObjectsToDoc(docC, Arrays.asList(EXTRACTED_LICENSESA));
 		docA.setCreationInfo(CREATION_INFOA);
 		docB.setCreationInfo(CREATION_INFOA);
 		docC.setCreationInfo(CREATION_INFOA);
-		for (int i = 0; i < itemsA.length; i++) {
-			Relationship rel = docA.createRelationship(itemsA[i], 
-					RelationshipType.DESCRIBES, "");
-			docA.addRelationship(rel);
-		}
-		for (int i = 0; i < itemsB.length; i++) {
-			Relationship rel = docB.createRelationship(itemsB[i], 
-					RelationshipType.DESCRIBES, "");
-			docB.addRelationship(rel);
-		}
-		for (int i = 0; i < itemsC.length; i++) {
-			Relationship rel = docC.createRelationship(itemsC[i], 
-					RelationshipType.DESCRIBES, "");
-			docC.addRelationship(rel);
-		}
-		assertFalse(SNIPPET1.equivalent(SNIPPET2));
+		
+		AnyLicenseInfo concludedLicense = LicenseInfoFactory.getListedLicenseByIdCompatV2("Apache-2.0");
+		SpdxFile fromFileA = docA.createSpdxFile(newModelStore.getNextId(IdType.SpdxId), "fileName", 
+				concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "fileCopyright", CHECKSUM1).build();
+		SpdxSnippet snippetA = docA.createSpdxSnippet(newModelStore.getNextId(IdType.SpdxId),
+				"name", concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "Copyright", fromFileA, 0, 10).build();
+		SpdxFile fromFileB = docB.createSpdxFile(newModelStore.getNextId(IdType.SpdxId), "fileName", 
+				concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "fileCopyright", CHECKSUM1).build();
+		SpdxSnippet snippetB = docB.createSpdxSnippet(newModelStore.getNextId(IdType.SpdxId),
+				"name", concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "Copyright", fromFileB, 0, 10).build();
+		SpdxFile fromFileC = docC.createSpdxFile(newModelStore.getNextId(IdType.SpdxId), "fileName", 
+				concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "fileCopyright", CHECKSUM1).build();
+		SpdxSnippet snippetC = docC.createSpdxSnippet(newModelStore.getNextId(IdType.SpdxId),
+				"Different Name", concludedLicense, Arrays.asList(new AnyLicenseInfo[] {concludedLicense}), "Copyright", fromFileC, 0, 10).build();
+		
+		assertTrue(snippetA.equivalent(snippetB));
+		assertFalse(snippetA.equivalent(snippetC));
 		SpdxComparer comparer = new SpdxComparer();
 		comparer.compare(docA, docB);
 		assertFalse(comparer.isDifferenceFound());

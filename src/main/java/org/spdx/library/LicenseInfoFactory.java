@@ -66,8 +66,8 @@ public class LicenseInfoFactory {
 	 * @return SPDX listed license in SPDX spec version 2.X format or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static SpdxListedLicense getListedLicenseV2ByIdCompat(String licenseId)throws InvalidSPDXAnalysisException {
-		return ListedLicenses.getListedLicenses().getListedLicenseV2ById(licenseId);
+	public static SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId)throws InvalidSPDXAnalysisException {
+		return ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2(licenseId);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseStringV2(String licenseString, @Nullable IModelStore store, 
+	public static AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
 			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
@@ -196,8 +196,8 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseV2String(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
-		return parseSPDXLicenseStringV2(licenseString, null, null, null);
+	public static AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+		return parseSPDXLicenseStringCompatV2(licenseString, null, null, null);
 	}
 
 
@@ -247,7 +247,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static ListedLicenseException getListedExceptionV2ById(String id) throws InvalidSPDXAnalysisException {
-		return ListedLicenses.getListedLicenses().getListedExceptionV2ById(id);
+		return ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
 	}
 	
 	/**

@@ -36,17 +36,15 @@ import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.ListedLicenses;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingConjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingDisjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoAssertionLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoneLicense;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.library.model.v2.license.ListedLicenseException;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
+import org.spdx.library.model.v2.license.SpdxNoneLicense;
 import org.spdx.storage.IModelStore;
-import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
@@ -57,7 +55,7 @@ import junit.framework.TestCase;
  * @author Gary O'Neall
  *
  */
-public class LicenseCompareHelperTest extends TestCase {
+public class LicenseCompareHelperTestV2 extends TestCase {
 	
 	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
 	static final String ZPL_2_1_TEXT = "TestFiles" + File.separator + "ZPL-2.1.txt";
@@ -98,6 +96,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
+		super.setUp();
 		SpdxModelFactory.init();
 		modelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
@@ -111,7 +110,6 @@ public class LicenseCompareHelperTest extends TestCase {
 		DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
 	}
 
-
 	public void testLicenseEqualsStdLicense() throws InvalidSPDXAnalysisException, SpdxCompareException {
 		Map<String, String> xlation = new HashMap<>();;
 		String licName = "name";
@@ -119,66 +117,37 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licText = "Text";
 		Collection<String> sourceUrls = new HashSet<String>(Arrays.asList(new String[] {"http://www.sourceauditor.com/licenses"}));
 		String notes = "Notes";
+		String stdLicNotice = "Notice";
 		String template = "Template";
 		boolean osiApproved = false;
 		boolean fsfLibre = true;
+		String licenseTextHtml = "<h1>Text</h1>";
 		boolean isDeprecated = false;
 		String deprecatedVersion = "";
-		ExpandedLicensingListedLicense lic1 = 
-			new ExpandedLicensingListedLicense(modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + licId,
-					copyManager, true)
-				.setName(licName)
-				.setSimpleLicensingLicenseText(licText)
-				.setExpandedLicensingStandardLicenseTemplate(template)
-				.setExpandedLicensingIsOsiApproved(osiApproved)
-				.setExpandedLicensingIsFsfLibre(fsfLibre)
-				.setExpandedLicensingIsDeprecatedLicenseId(isDeprecated)
-				.setExpandedLicensingDeprecatedVersion(deprecatedVersion)
-				.setComment(notes);
-		lic1.getExpandedLicensingSeeAlsos().addAll(sourceUrls);
-		ExpandedLicensingListedLicense lic2 = 
-				new ExpandedLicensingListedLicense(modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + licId,
-						copyManager, true)
-					.setName(licName)
-					.setSimpleLicensingLicenseText(licText)
-					.setExpandedLicensingStandardLicenseTemplate(template)
-					.setExpandedLicensingIsOsiApproved(osiApproved)
-					.setExpandedLicensingIsFsfLibre(fsfLibre)
-					.setExpandedLicensingIsDeprecatedLicenseId(isDeprecated)
-					.setExpandedLicensingDeprecatedVersion(deprecatedVersion)
-					.setComment(notes);
-			lic2.getExpandedLicensingSeeAlsos().addAll(sourceUrls);
+		SpdxListedLicense lic1 = 
+			new SpdxListedLicense(licName, licId, licText, 
+					sourceUrls, notes, stdLicNotice, template, osiApproved, 
+					fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
+		SpdxListedLicense lic2 = 
+			new SpdxListedLicense(licName, licId, licText, 
+					sourceUrls, notes, stdLicNotice, template, osiApproved, 
+					fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic1, lic2, xlation));
 		
 		// try just changing the text - should still equal since the ID's are equal
 		String text2 = "text2";
-		ExpandedLicensingListedLicense lic3 = 
-				new ExpandedLicensingListedLicense(modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + licId,
-						copyManager, true)
-					.setName(licName)
-					.setSimpleLicensingLicenseText(text2)
-					.setExpandedLicensingStandardLicenseTemplate(template)
-					.setExpandedLicensingIsOsiApproved(osiApproved)
-					.setExpandedLicensingIsFsfLibre(fsfLibre)
-					.setExpandedLicensingIsDeprecatedLicenseId(isDeprecated)
-					.setExpandedLicensingDeprecatedVersion(deprecatedVersion)
-					.setComment(notes);
-			lic2.getExpandedLicensingSeeAlsos().addAll(sourceUrls);
+		SpdxListedLicense lic3 = 
+			new SpdxListedLicense(licName, licId, text2, 
+					sourceUrls, notes, stdLicNotice, template, osiApproved
+					, 
+					fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic1, lic3, xlation));
 		// now try a different ID
 		String licId2 = "ID2";
-		ExpandedLicensingListedLicense lic4 = 
-				new ExpandedLicensingListedLicense(modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + licId2,
-						copyManager, true)
-					.setName(licName)
-					.setSimpleLicensingLicenseText(licText)
-					.setExpandedLicensingStandardLicenseTemplate(template)
-					.setExpandedLicensingIsOsiApproved(osiApproved)
-					.setExpandedLicensingIsFsfLibre(fsfLibre)
-					.setExpandedLicensingIsDeprecatedLicenseId(isDeprecated)
-					.setExpandedLicensingDeprecatedVersion(deprecatedVersion)
-					.setComment(notes);
-			lic4.getExpandedLicensingSeeAlsos().addAll(sourceUrls);
+		SpdxListedLicense lic4 = 
+			new SpdxListedLicense(licName, licId2, licText, 
+					sourceUrls, notes, stdLicNotice, template, osiApproved, 
+					fsfLibre, licenseTextHtml, isDeprecated, deprecatedVersion);
 		assertFalse(LicenseCompareHelper.isLicenseEqual(lic1, lic4, xlation));
 	}
 	
@@ -188,27 +157,23 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licText = "Text";
 
 		// same license ID's
-		ExpandedLicensingCustomLicense lic1 = 
-			new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId,
-					copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic2 = 
-			new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId,
-					copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId);
+		ExtractedLicenseInfo lic1 = 
+			new ExtractedLicenseInfo(licId, licText);
+		ExtractedLicenseInfo lic2 = 
+			new ExtractedLicenseInfo(licId, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId, DefaultModelStore.getDefaultDocumentUri() + "#" + licId);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic1, lic2, xlation));
 		// different license ID, same license
 		xlation.clear();
 		String licId2 = "id2";
 		lic2 = 
-			new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId2,
-					copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId2);
+			new ExtractedLicenseInfo(licId2, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId, DefaultModelStore.getDefaultDocumentUri() + "#" + licId2);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic1, lic2, xlation));
 		// different license ID, different license
 		String licId3 = "id3";
 		lic2 = 
-			new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#LicenseRef-" + licId3,
-					copyManager, true).setSimpleLicensingLicenseText(licId2);
+			new ExtractedLicenseInfo(licId3, licId2);
 		assertFalse(LicenseCompareHelper.isLicenseEqual(lic1, lic2, xlation));
 	}
 	
@@ -220,50 +185,43 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licId4 = "LicenseRef-id4";
 		String licId5 = "LicenseRef-id5";
 		String licId6 = "LicenseRef-id6";
-		Map<String, String> xlation = new HashMap<>();;
-		ExpandedLicensingCustomLicense lic1 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId1,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic2 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId2,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic3 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId3,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic4 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId4,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic5 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId5,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic6 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId6,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId1, DEFAULT_DOCUMENT_URI + "#" + licId4);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId2, DEFAULT_DOCUMENT_URI + "#" + licId5);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId3, DEFAULT_DOCUMENT_URI + "#" + licId6);
-		Collection<SimpleLicensingAnyLicenseInfo> set1 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Map<String, String> xlation = new HashMap<>();
+		ExtractedLicenseInfo lic1 = new ExtractedLicenseInfo(licId1, licText);
+		ExtractedLicenseInfo lic2 = new ExtractedLicenseInfo(licId2, licText);
+		ExtractedLicenseInfo lic3 = new ExtractedLicenseInfo(licId3, licText);
+		ExtractedLicenseInfo lic4 = new ExtractedLicenseInfo(licId4, licText);
+		ExtractedLicenseInfo lic5 = new ExtractedLicenseInfo(licId5, licText);
+		ExtractedLicenseInfo lic6 = new ExtractedLicenseInfo(licId6, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId1, DefaultModelStore.getDefaultDocumentUri() + "#" + licId4);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId2, DefaultModelStore.getDefaultDocumentUri() + "#" + licId5);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId3, DefaultModelStore.getDefaultDocumentUri() + "#" + licId6);
+		Collection<AnyLicenseInfo> set1 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic1, lic2, lic3
 		}));
-		Collection<SimpleLicensingAnyLicenseInfo> set2 =  new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set2 =  new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic5, lic6
 		}));
-		ExpandedLicensingConjunctiveLicenseSet conj1 = new ExpandedLicensingConjunctiveLicenseSet(modelStore, modelStore.getNextId(IdType.Anonymous), copyManager, true);
-		conj1.getExpandedLicensingMembers().addAll(set1);
-		ExpandedLicensingConjunctiveLicenseSet conj2 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj2.getExpandedLicensingMembers().addAll(set2);
+		ConjunctiveLicenseSet conj1 = new ConjunctiveLicenseSet();
+		conj1.setMembers(set1);
+		ConjunctiveLicenseSet conj2 = new ConjunctiveLicenseSet();
+		conj2.setMembers(set2);
 		
 		assertTrue(LicenseCompareHelper.isLicenseEqual(conj1, conj2, xlation));
 		// different order
-		set2 =  new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		set2 =  new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic5, lic6, lic4
 		}));
-		conj2 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj2.getExpandedLicensingMembers().addAll(set2);
+		conj2 = new ConjunctiveLicenseSet();
+		conj2.setMembers(set2);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(conj1, conj2, xlation));
 
 		String licId7 = "LicenseRef-id7";
-		ExpandedLicensingCustomLicense lic7 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId7,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		Collection<SimpleLicensingAnyLicenseInfo> set3 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		ExtractedLicenseInfo lic7 = new ExtractedLicenseInfo(licId7, licText);
+		Collection<AnyLicenseInfo> set3 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic5, lic7
 		}));
-		ExpandedLicensingConjunctiveLicenseSet conj3 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj3.getExpandedLicensingMembers().addAll(set3);
+		ConjunctiveLicenseSet conj3 = new ConjunctiveLicenseSet();
+		conj3.setMembers(set3);
 		assertFalse(LicenseCompareHelper.isLicenseEqual(conj1, conj3, xlation));		
 	}		
 	
@@ -276,138 +234,114 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licId5 = "LicenseRef-id5";
 		String licId6 = "LicenseRef-id6";
 		Map<String, String> xlation = new HashMap<>();;
-		ExpandedLicensingCustomLicense lic1 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId1,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic2 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId2,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic3 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId3,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic4 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId4,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic5 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId5,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic6 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId6,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId1, DEFAULT_DOCUMENT_URI + "#" + licId4);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId2, DEFAULT_DOCUMENT_URI + "#" + licId5);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId3, DEFAULT_DOCUMENT_URI + "#" + licId6);
-		Collection<SimpleLicensingAnyLicenseInfo> set1 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		ExtractedLicenseInfo lic1 = new ExtractedLicenseInfo(licId1, licText);
+		ExtractedLicenseInfo lic2 = new ExtractedLicenseInfo(licId2, licText);
+		ExtractedLicenseInfo lic3 = new ExtractedLicenseInfo(licId3, licText);
+		ExtractedLicenseInfo lic4 = new ExtractedLicenseInfo(licId4, licText);
+		ExtractedLicenseInfo lic5 = new ExtractedLicenseInfo(licId5, licText);
+		ExtractedLicenseInfo lic6 = new ExtractedLicenseInfo(licId6, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId1, DefaultModelStore.getDefaultDocumentUri() + "#" + licId4);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId2, DefaultModelStore.getDefaultDocumentUri() + "#" + licId5);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId3, DefaultModelStore.getDefaultDocumentUri() + "#" + licId6);
+		Collection<AnyLicenseInfo> set1 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic1, lic2, lic3
 		}));
-		Collection<SimpleLicensingAnyLicenseInfo> set2 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set2 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic6, lic5
 		}));
-		ExpandedLicensingConjunctiveLicenseSet conj1 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj1.getExpandedLicensingMembers().addAll(set1);
-		ExpandedLicensingConjunctiveLicenseSet conj2 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj2.getExpandedLicensingMembers().addAll(set2);
+		ConjunctiveLicenseSet conj1 = new ConjunctiveLicenseSet();
+		conj1.setMembers(set1);
+		ConjunctiveLicenseSet conj2 = new ConjunctiveLicenseSet();
+		conj2.setMembers(set2);
 		
 		assertTrue(LicenseCompareHelper.isLicenseEqual(conj1, conj2, xlation));
 	
 		// busybox-1.rdf: (LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-2-Clause-Clear)
 		xlation.clear();
 		String licIdRef14 = "LicenseRef-14";
-		ExpandedLicensingCustomLicense licref14 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef14,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef14, DEFAULT_DOCUMENT_URI + "#" + licIdRef14);
+		ExtractedLicenseInfo licref14 = new ExtractedLicenseInfo(licIdRef14, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef14, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef14);
 		String licIdRef5 = "LicenseRef-5";
-		ExpandedLicensingCustomLicense licref5 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef5,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef5, DEFAULT_DOCUMENT_URI + "#" + licIdRef5);
+		ExtractedLicenseInfo licref5 = new ExtractedLicenseInfo(licIdRef5, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef5, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef5);
 		String licIdref6 = "LicenseRef-6";
-		ExpandedLicensingCustomLicense licref6 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdref6,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdref6, DEFAULT_DOCUMENT_URI + "#" + licIdref6);
+		ExtractedLicenseInfo licref6 = new ExtractedLicenseInfo(licIdref6, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdref6, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdref6);
 		String licIdRef15 = "LicenseRef-15";
-		ExpandedLicensingCustomLicense licref15 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef15,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef15, DEFAULT_DOCUMENT_URI + "#" + licIdRef15);
+		ExtractedLicenseInfo licref15 = new ExtractedLicenseInfo(licIdRef15, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef15, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef15);
 		String licIdRef3 = "LicenseRef-3";
-		ExpandedLicensingCustomLicense licref3 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef3,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef3, DEFAULT_DOCUMENT_URI + "#" + licIdRef3);
+		ExtractedLicenseInfo licref3 = new ExtractedLicenseInfo(licIdRef3, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef3, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef3);
 		String licIdRef12 = "LicenseRef-12";
-		ExpandedLicensingCustomLicense licref12 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef12,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef12, DEFAULT_DOCUMENT_URI + "#" + licIdRef12);
+		ExtractedLicenseInfo licref12 = new ExtractedLicenseInfo(licIdRef12, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef12, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef12);
 		String licIdRef4 = "LicenseRef-4";
-		ExpandedLicensingCustomLicense licref4 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef4,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef4, DEFAULT_DOCUMENT_URI + "#" + licIdRef4);
+		ExtractedLicenseInfo licref4 = new ExtractedLicenseInfo(licIdRef4, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef4, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef4);
 		String licIdRef13 = "LicenseRef-13";
-		ExpandedLicensingCustomLicense licref13 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef13,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef13, DEFAULT_DOCUMENT_URI + "#" + licIdRef13);
+		ExtractedLicenseInfo licref13 = new ExtractedLicenseInfo(licIdRef13, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef13, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef13);
 		String licIdref10 = "LicenseRef-10";
-		ExpandedLicensingCustomLicense licref10 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdref10,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdref10, DEFAULT_DOCUMENT_URI + "#" + licIdref10);
+		ExtractedLicenseInfo licref10 = new ExtractedLicenseInfo(licIdref10, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdref10, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdref10);
 		String licIdRef9 = "LicenseRef-9";
-		ExpandedLicensingCustomLicense licref9 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef9,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef9, DEFAULT_DOCUMENT_URI + "#" + licIdRef9);
+		ExtractedLicenseInfo licref9 = new ExtractedLicenseInfo(licIdRef9, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef9, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef9);
 		String licIdRef11 = "LicenseRef-11";
-		ExpandedLicensingCustomLicense licref11 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef11,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef11, DEFAULT_DOCUMENT_URI + "#" + licIdRef11);
+		ExtractedLicenseInfo licref11 = new ExtractedLicenseInfo(licIdRef11, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef11, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef11);
 		String licIdRef7 = "LicenseRef-7";
-		ExpandedLicensingCustomLicense licref7 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef7,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef7, DEFAULT_DOCUMENT_URI + "#" + licIdRef7);
+		ExtractedLicenseInfo licref7 = new ExtractedLicenseInfo(licIdRef7, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef7, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef7);
 		String licIdRef8 = "LicenseRef-8";
-		ExpandedLicensingCustomLicense licref8 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licIdRef8,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licIdRef8, DEFAULT_DOCUMENT_URI + "#" + licIdRef8);
+		ExtractedLicenseInfo licref8 = new ExtractedLicenseInfo(licIdRef8, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef8, DefaultModelStore.getDefaultDocumentUri() + "#" + licIdRef8);
 		String licLGPLPlusId = "LGPL-2.1+";
-		ExpandedLicensingListedLicense licLGPLPlus = LicenseInfoFactory.getListedLicenseById(licLGPLPlusId);
+		SpdxListedLicense licLGPLPlus = LicenseInfoFactory.getListedLicenseByIdCompatV2(licLGPLPlusId);
 		String licRef1 = "LicenseRef-1";
-		ExpandedLicensingCustomLicense licref1 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licRef1,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licRef1, DEFAULT_DOCUMENT_URI + "#" + licRef1);
+		ExtractedLicenseInfo licref1 = new ExtractedLicenseInfo(licRef1, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licRef1, DefaultModelStore.getDefaultDocumentUri() + "#" + licRef1);
 		String licRef2 = "LicenseRef-2";
-		ExpandedLicensingCustomLicense licref2 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licRef2,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licRef2, DEFAULT_DOCUMENT_URI + "#" + licRef2);
+		ExtractedLicenseInfo licref2 = new ExtractedLicenseInfo(licRef2, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licRef2, DefaultModelStore.getDefaultDocumentUri() + "#" + licRef2);
 		String licRef0 = "LicenseRef-0";
-		ExpandedLicensingCustomLicense licref0 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licRef0,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licRef0, DEFAULT_DOCUMENT_URI + "#" + licRef0);
+		ExtractedLicenseInfo licref0 = new ExtractedLicenseInfo(licRef0, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licRef0, DefaultModelStore.getDefaultDocumentUri() + "#" + licRef0);
 		String licGPL20PlusId = "GPL-2.0+";
-		ExpandedLicensingListedLicense licGPL20Plus = LicenseInfoFactory.getListedLicenseById(licGPL20PlusId);
+		SpdxListedLicense licGPL20Plus = LicenseInfoFactory.getListedLicenseByIdCompatV2(licGPL20PlusId);
 		String licGPL20id = "GPL-2.0";
-		ExpandedLicensingListedLicense licGPL20 = LicenseInfoFactory.getListedLicenseById(licGPL20id);
+		SpdxListedLicense licGPL20 = LicenseInfoFactory.getListedLicenseByIdCompatV2(licGPL20id);
 		String licRef17 = "LicenseRef-17";
-		ExpandedLicensingCustomLicense licref17 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licRef17,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licRef17, DEFAULT_DOCUMENT_URI + "#" + licRef17);
+		ExtractedLicenseInfo licref17 = new ExtractedLicenseInfo(licRef17, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licRef17, DefaultModelStore.getDefaultDocumentUri() + "#" + licRef17);
 		String licRef16 = "LicenseRef-16";
-		ExpandedLicensingCustomLicense licref16 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licRef16,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licRef16, DEFAULT_DOCUMENT_URI + "#" + licRef16);
+		ExtractedLicenseInfo licref16 = new ExtractedLicenseInfo(licRef16, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licRef16, DefaultModelStore.getDefaultDocumentUri() + "#" + licRef16);
 		String licRefBSD2Clearid = "BSD-2-Clause";
-		ExpandedLicensingListedLicense licRefBSD2Clear = LicenseInfoFactory.getListedLicenseById(licRefBSD2Clearid);
+		SpdxListedLicense licRefBSD2Clear = LicenseInfoFactory.getListedLicenseByIdCompatV2(licRefBSD2Clearid);
 		// busybox-1.rdf: (LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND 
 		//LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND 
 		//LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND 
 		//GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-2-Clause-Clear)
 
-		Collection<SimpleLicensingAnyLicenseInfo> bbset1 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {licref14, licref5, licref6, licref15, licref3, licref12, licref4, 
+		Collection<AnyLicenseInfo> bbset1 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {licref14, licref5, licref6, licref15, licref3, licref12, licref4, 
 				licref13,licref10, licref9, licref11, licref7, licref8, licLGPLPlus, licref1, licref2, licref0, licGPL20Plus,
 				licGPL20, licref17, licref16, licRefBSD2Clear
 		}));
-		ExpandedLicensingConjunctiveLicenseSet bbconj1 = new ExpandedLicensingConjunctiveLicenseSet();
-		bbconj1.getExpandedLicensingMembers().addAll(bbset1);
+		ConjunctiveLicenseSet bbconj1 = new ConjunctiveLicenseSet();
+		bbconj1.setMembers(bbset1);
 		// busybox-2.rdf: (LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3
 		//AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND 
 		//LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND 
 		//LicenseRef-17 AND BSD-2-Clause-Clear AND LicenseRef-16)
 
-		Collection<SimpleLicensingAnyLicenseInfo> bbset2 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {licref14, licref5, licref6, licref15, licref12, licref3, licref13,
+		Collection<AnyLicenseInfo> bbset2 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {licref14, licref5, licref6, licref15, licref12, licref3, licref13,
 				licref4, licref10, licref9, licref11, licref7, licref8, licLGPLPlus, licref1, licref2, licref0, licGPL20Plus,
 				licGPL20, licref17, licRefBSD2Clear, licref16
 		}));
-		ExpandedLicensingConjunctiveLicenseSet bbconj2 = new ExpandedLicensingConjunctiveLicenseSet();
-		bbconj2.getExpandedLicensingMembers().addAll(bbset2);
+		ConjunctiveLicenseSet bbconj2 = new ConjunctiveLicenseSet();
+		bbconj2.setMembers(bbset2);
 		assertTrue(LicenseCompareHelper.isLicenseEqual(bbconj1, bbconj2, xlation));
 		assertTrue(LicenseCompareHelper.isLicenseEqual(bbconj2, bbconj1, xlation));
 	}	
@@ -421,42 +355,35 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licId5 = "LicenseRef-id5";
 		String licId6 = "LicenseRef-id6";
 		Map<String, String> xlation = new HashMap<>();;
-		ExpandedLicensingCustomLicense lic1 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId1,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic2 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId2,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic3 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId3,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic4 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId4,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic5 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId5,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic6 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId6,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId1, DEFAULT_DOCUMENT_URI + "#" + licId4);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId2, DEFAULT_DOCUMENT_URI + "#" + licId5);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId3, DEFAULT_DOCUMENT_URI + "#" + licId6);
-		Collection<SimpleLicensingAnyLicenseInfo> set1 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		ExtractedLicenseInfo lic1 = new ExtractedLicenseInfo(licId1, licText);
+		ExtractedLicenseInfo lic2 = new ExtractedLicenseInfo(licId2, licText);
+		ExtractedLicenseInfo lic3 = new ExtractedLicenseInfo(licId3, licText);
+		ExtractedLicenseInfo lic4 = new ExtractedLicenseInfo(licId4, licText);
+		ExtractedLicenseInfo lic5 = new ExtractedLicenseInfo(licId5, licText);
+		ExtractedLicenseInfo lic6 = new ExtractedLicenseInfo(licId6, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId1, DefaultModelStore.getDefaultDocumentUri() + "#" + licId4);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId2, DefaultModelStore.getDefaultDocumentUri() + "#" + licId5);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId3, DefaultModelStore.getDefaultDocumentUri() + "#" + licId6);
+		Collection<AnyLicenseInfo> set1 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic1, lic2, lic3
 		}));
-		Collection<SimpleLicensingAnyLicenseInfo> set2 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set2 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic5, lic6
 		}));
-		ExpandedLicensingDisjunctiveLicenseSet conj1 = new ExpandedLicensingDisjunctiveLicenseSet();
-		conj1.getExpandedLicensingMembers().addAll(set1);
-		ExpandedLicensingDisjunctiveLicenseSet conj2 = new ExpandedLicensingDisjunctiveLicenseSet();
-		conj2.getExpandedLicensingMembers().addAll(set2);
+		DisjunctiveLicenseSet conj1 = new DisjunctiveLicenseSet();
+		conj1.setMembers(set1);
+		DisjunctiveLicenseSet conj2 = new DisjunctiveLicenseSet();
+		conj2.setMembers(set2);
 		
 		assertTrue(LicenseCompareHelper.isLicenseEqual(conj1, conj2, xlation));
 		
 		String licId7 = "LicenseRef-id7";
-		ExpandedLicensingCustomLicense lic7 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId7,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		Collection<SimpleLicensingAnyLicenseInfo> set3 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		ExtractedLicenseInfo lic7 = new ExtractedLicenseInfo(licId7, licText);
+		Collection<AnyLicenseInfo> set3 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic5, lic7
 		}));
-		ExpandedLicensingDisjunctiveLicenseSet conj3 = new ExpandedLicensingDisjunctiveLicenseSet();
-		conj3.getExpandedLicensingMembers().addAll(set3);
+		DisjunctiveLicenseSet conj3 = new DisjunctiveLicenseSet();
+		conj3.setMembers(set3);
 		assertFalse(LicenseCompareHelper.isLicenseEqual(conj1, conj3, xlation));
 	}	
 	
@@ -469,64 +396,57 @@ public class LicenseCompareHelperTest extends TestCase {
 		String licId5 = "LicenseRef-id5";
 		String licId6 = "LicenseRef-id6";
 		Map<String, String> xlation = new HashMap<>();;
-		ExpandedLicensingCustomLicense lic1 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId1,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic2 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId2,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic3 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId3,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic4 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId4,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic5 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId5,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		ExpandedLicensingCustomLicense lic6 = new ExpandedLicensingCustomLicense(modelStore, DEFAULT_DOCUMENT_URI + "#" + licId6,
-				copyManager, true).setSimpleLicensingLicenseText(licText);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId1, DEFAULT_DOCUMENT_URI + "#" + licId4);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId2, DEFAULT_DOCUMENT_URI + "#" + licId5);
-		xlation.put(DEFAULT_DOCUMENT_URI + "#" + licId3, DEFAULT_DOCUMENT_URI + "#" + licId6);
-		Collection<SimpleLicensingAnyLicenseInfo> set1 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		ExtractedLicenseInfo lic1 = new ExtractedLicenseInfo(licId1, licText);
+		ExtractedLicenseInfo lic2 = new ExtractedLicenseInfo(licId2, licText);
+		ExtractedLicenseInfo lic3 = new ExtractedLicenseInfo(licId3, licText);
+		ExtractedLicenseInfo lic4 = new ExtractedLicenseInfo(licId4, licText);
+		ExtractedLicenseInfo lic5 = new ExtractedLicenseInfo(licId5, licText);
+		ExtractedLicenseInfo lic6 = new ExtractedLicenseInfo(licId6, licText);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId1, DefaultModelStore.getDefaultDocumentUri() + "#" + licId4);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId2, DefaultModelStore.getDefaultDocumentUri() + "#" + licId5);
+		xlation.put(DefaultModelStore.getDefaultDocumentUri() + "#" + licId3, DefaultModelStore.getDefaultDocumentUri() + "#" + licId6);
+		Collection<AnyLicenseInfo> set1 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic1, lic2
 		}));
-		Collection<SimpleLicensingAnyLicenseInfo> set2 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set2 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic4, lic5
 		}));
-		ExpandedLicensingDisjunctiveLicenseSet conj1 = new ExpandedLicensingDisjunctiveLicenseSet();
-		conj1.getExpandedLicensingMembers().addAll(set1);
-		ExpandedLicensingDisjunctiveLicenseSet conj2 = new ExpandedLicensingDisjunctiveLicenseSet();
-		conj2.getExpandedLicensingMembers().addAll(set2);
+		DisjunctiveLicenseSet conj1 = new DisjunctiveLicenseSet();
+		conj1.setMembers(set1);
+		DisjunctiveLicenseSet conj2 = new DisjunctiveLicenseSet();
+		conj2.setMembers(set2);
 		
-		Collection<SimpleLicensingAnyLicenseInfo> set3 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set3 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				conj1, lic3
 		}));
-		Collection<SimpleLicensingAnyLicenseInfo> set4 = new HashSet<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		Collection<AnyLicenseInfo> set4 = new HashSet<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				lic6, conj2
 		}));
-		ExpandedLicensingConjunctiveLicenseSet conj3 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj3.getExpandedLicensingMembers().addAll(set3);
-		ExpandedLicensingConjunctiveLicenseSet conj4 = new ExpandedLicensingConjunctiveLicenseSet();
-		conj4.getExpandedLicensingMembers().addAll(set4);
+		ConjunctiveLicenseSet conj3 = new ConjunctiveLicenseSet();
+		conj3.setMembers(set3);
+		ConjunctiveLicenseSet conj4 = new ConjunctiveLicenseSet();
+		conj4.setMembers(set4);
 		
 		assertTrue(LicenseCompareHelper.isLicenseEqual(conj3, conj4, xlation));
 	}	
 	
 	public void testLicenseEqualsNoAsserLicense() throws InvalidSPDXAnalysisException, SpdxCompareException {
-		ExpandedLicensingNoAssertionLicense lic1 = new ExpandedLicensingNoAssertionLicense();
-		ExpandedLicensingNoAssertionLicense lic2 = new ExpandedLicensingNoAssertionLicense();
-		ExpandedLicensingNoneLicense lic3 = new ExpandedLicensingNoneLicense();
+		SpdxNoAssertionLicense lic1 = new SpdxNoAssertionLicense();
+		SpdxNoAssertionLicense lic2 = new SpdxNoAssertionLicense();
+		SpdxNoneLicense lic3 = new SpdxNoneLicense();
 		Map<String, String> xlationMap = new HashMap<>();;
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic1, lic2, xlationMap));
 		assertFalse(LicenseCompareHelper.isLicenseEqual(lic1, lic3, xlationMap));
 	}	
 	
 	public void testLicenseEqualsNoneLicense() throws InvalidSPDXAnalysisException, SpdxCompareException {
-		ExpandedLicensingNoAssertionLicense lic2 = new ExpandedLicensingNoAssertionLicense();
-		ExpandedLicensingNoneLicense lic3 = new ExpandedLicensingNoneLicense();
-		ExpandedLicensingNoneLicense lic4 = new ExpandedLicensingNoneLicense();
+		SpdxNoAssertionLicense lic2 = new SpdxNoAssertionLicense();
+		SpdxNoneLicense lic3 = new SpdxNoneLicense();
+		SpdxNoneLicense lic4 = new SpdxNoneLicense();
 		Map<String, String> xlationMap = new HashMap<>();;
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic3, lic4, xlationMap));
 		assertFalse(LicenseCompareHelper.isLicenseEqual(lic4, lic2, xlationMap));
 	}	
-	
 	
 	public void testisSingleTokenString() {
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" token "));
@@ -539,7 +459,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	
 	public void regressionTestMatchingGpl20Only() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
-		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseById("GPL-2.0-only"), compareText);
+		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseByIdCompatV2("GPL-2.0-only"), compareText);
 		assertFalse(result.isDifferenceFound());
 	}
 	
@@ -566,23 +486,23 @@ public class LicenseCompareHelperTest extends TestCase {
 	
 	public void regressionTestZpl21() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		String compareText = UnitTestHelper.fileToText(ZPL_2_1_TEXT);
-		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseById("ZPL-2.1"), compareText);
+		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseByIdCompatV2("ZPL-2.1"), compareText);
 		assertFalse(result.isDifferenceFound());
 	}
-	
+
 	public void testIsTextStandardLicenseGpl3() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		ExpandedLicensingListedLicense gpl3 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
+		SpdxListedLicense gpl3 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-3.0");
 		String compareText = UnitTestHelper.fileToText(GPL_3_TEXT);
 		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(gpl3, compareText);
 		assertFalse(result.isDifferenceFound());
 	}
 	
 	public void testIsTextStandardLicenseComments() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		ExpandedLicensingListedLicense bsd = ListedLicenses.getListedLicenses().getListedLicenseById("0BSD");
+		SpdxListedLicense bsd = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("0BSD");
 		StringBuilder sb = new StringBuilder();
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new StringReader(bsd.getSimpleLicensingLicenseText()));
+			reader = new BufferedReader(new StringReader(bsd.getLicenseText()));
 			String line = reader.readLine();
 			sb.append("/* \n");
 			while (line != null) {
@@ -595,7 +515,7 @@ public class LicenseCompareHelperTest extends TestCase {
 			DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(bsd, sb.toString());
 			assertFalse(result.isDifferenceFound());
 			reader.close();
-			reader = new BufferedReader(new StringReader(bsd.getSimpleLicensingLicenseText()));
+			reader = new BufferedReader(new StringReader(bsd.getLicenseText()));
 			sb.setLength(0);
 			line = reader.readLine();
 			while (line != null) {
@@ -614,12 +534,12 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	public void testIsStandardLicenseWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		ExpandedLicensingListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0");
-		ExpandedLicensingListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-1.0");
-		ExpandedLicensingListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0");
-		ExpandedLicensingListedLicense mplLicense = ListedLicenses.getListedLicenses().getListedLicenseById("MPL-2.0");
-		String multiLicenseText = gpl30.getSimpleLicensingLicenseText() + "\n\n----------\n\n" + apache20.getSimpleLicensingLicenseText();
-		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20.getSimpleLicensingLicenseText() + "\n\nSome random epilogue text.";
+		SpdxListedLicense gpl30 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-3.0");
+		SpdxListedLicense apache10 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("Apache-1.0");
+		SpdxListedLicense apache20 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("Apache-2.0");
+		SpdxListedLicense mplLicense = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("MPL-2.0");
+		String multiLicenseText = gpl30.getLicenseText() + "\n\n----------\n\n" + apache20.getLicenseText();
+		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20.getLicenseText() + "\n\nSome random epilogue text.";
 
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(null, gpl30));
 		assertFalse(LicenseCompareHelper.isStandardLicenseWithinText("", gpl30));
@@ -636,8 +556,8 @@ public class LicenseCompareHelperTest extends TestCase {
 
 /* Currently doesn't work - see https://github.com/spdx/Spdx-Java-Library/issues/141 for details
 		// JavaMail license is "CDDL-1.1 OR GPL-2.0 WITH Classpath-exception-2.0"
-		ExpandedLicensingListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseById("CDDL-1.1");
-		ExpandedLicensingListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0");
+		SpdxListedLicense cddl11 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("CDDL-1.1");
+		SpdxListedLicense gpl20 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-2.0");
 		String javaMailLicense = UnitTestHelper.urlToText("https://raw.githubusercontent.com/javaee/javamail/master/LICENSE.txt");
 
 		assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(javaMailLicense, cddl11));
@@ -647,9 +567,9 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 	
 	public void testIsStandardLicenseExceptionWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		ExpandedLicensingListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionById("Classpath-exception-2.0");
-		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getSimpleLicensingLicenseText();
-		String classpathException20 = classpath20.getExpandedLicensingAdditionText();
+		ListedLicenseException classpath20 = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2("Classpath-exception-2.0");
+		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-2.0").getLicenseText();
+		String classpathException20 = classpath20.getLicenseExceptionText();
 		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + classpathException20 + "\n\nSome random epilogue text.";
 
@@ -679,11 +599,11 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	public void testMatchingStandardLicenseIdsWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		String gpl30 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-3.0").getSimpleLicensingLicenseText();
-		String apache20 = ListedLicenses.getListedLicenses().getListedLicenseById("Apache-2.0").getSimpleLicensingLicenseText();
+		String gpl30 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-3.0").getLicenseText();
+		String apache20 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("Apache-2.0").getLicenseText();
 		String multiLicenseText = gpl30 + "\n\n----------\n\n" + apache20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + apache20 + "\n\nSome random epilogue text.";
-		String aladdin = ListedLicenses.getListedLicenses().getListedLicenseById("Aladdin").getSimpleLicensingLicenseText();
+		String aladdin = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("Aladdin").getLicenseText();
 		List<String> expectedResultEmpty = Arrays.asList();
 		List<String> expectedResultApache20 = Arrays.asList("Apache-2.0");
 		List<String> expectedResultGpl30 = Arrays.asList("GPL-3.0");
@@ -716,7 +636,7 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	public void testMatchingStandardLicenseExceptionIdsWithinText() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
-		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseById("GPL-2.0").getSimpleLicensingLicenseText();
+		String gpl20 = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2("GPL-2.0").getLicenseText();
 		String classpathException20 = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2("Classpath-exception-2.0").getLicenseExceptionText();
 		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + classpathException20 + "\n\nSome random epilogue text.";
@@ -742,11 +662,9 @@ public class LicenseCompareHelperTest extends TestCase {
 	public void testRegressionBSDProtection() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(BSD_PROTECTION_TEXT);
         String templateText = UnitTestHelper.fileToText(BSD_PROTECTION_TEMPLATE);
-        ExpandedLicensingListedLicense bsdp = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "BSD-Protection", copyManager, true)
-        		.setName("BSD Protection")
-        		.setSimpleLicensingLicenseText(licText)
-        		.setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense bsdp = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("BSD-Protection", "BSD Protection", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(bsdp, licText);
         assertFalse(diff.isDifferenceFound());
 	}
@@ -754,11 +672,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionEUPL12() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(EUPL_1_2_TEXT);
         String templateText = UnitTestHelper.fileToText(EUPL_1_2_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "EUPL1.2", copyManager, true)
-        		.setName("EUPL 1.2")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("EUPL1.2", "EUPL 1.2", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
     }
@@ -772,11 +688,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testReplaceComma() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(MULAN_PSL_2_COMMA_TEXT);
         String templateText = UnitTestHelper.fileToText(MULAN_PSL_2_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "MSPL-2.0", copyManager, true)
-        		.setName("MSPL-2.0")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("MSPL-2.0", "MSPL-2.0", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
     }
@@ -784,11 +698,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testGroffComments() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(GROFF_COMMENTED_VERBATIM_TEXT);
         String templateText = UnitTestHelper.fileToText(VERBATIM_MAN_PAGES_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "Verbatim-man-pages", copyManager, true)
-        		.setName("Verbatim-man-pages")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("Verbatim-man-pages", "Verbatim-man-pages", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertFalse(diff.isDifferenceFound());
     }
@@ -796,11 +708,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionPython201() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(PYTHON201_TEXT);
         String templateText = UnitTestHelper.fileToText(PYTHON201_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "PYTHON-2.0.1", copyManager, true)
-        		.setName("Python 2.0.1")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("PYTHON-2.0.1", "Python 2.0.1", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         assertTrue(diff.isDifferenceFound());
         assertTrue(diff.getDifferenceMessage().contains("dditional text found"));
@@ -809,11 +719,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionSGIB10() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(SGIB_1_0_TEXT);
         String templateText = UnitTestHelper.fileToText(SGIB_1_0_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "SGI-B-1.0", copyManager, true)
-        		.setName("SGI-B 1.0")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("SGI-B-1.0", "SGI-B 1.0", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
@@ -823,11 +731,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionXDebug() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(XDEBUG_1_03_TEXT);
         String templateText = UnitTestHelper.fileToText(XDEBUG_1_03_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "XDEBUG-1.03", copyManager, true)
-        		.setName("XDEBUG-1.03")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("XDEBUG-1.03", "XDEBUG-1.03", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
@@ -837,11 +743,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionFTL() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(FTL_TEXT);
         String templateText = UnitTestHelper.fileToText(FTL_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "FTL", copyManager, true)
-        		.setName("FTL")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("FTL", "FTL", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
@@ -851,11 +755,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionPloyformNC() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(POLYFORM_NC_TEXT);
         String templateText = UnitTestHelper.fileToText(POLYFORM_NC_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "pfnc", copyManager, true)
-        		.setName("pfnc")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("pfnc", "pfnc", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
@@ -865,11 +767,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionParity7() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(PARITY7_TEXT);
         String templateText = UnitTestHelper.fileToText(PARITY7_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-        		modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "FTL", copyManager, true)
-        		.setName("FTL")
-        		.setSimpleLicensingLicenseText(licText)
-                .setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("FTL", "FTL", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
@@ -879,11 +779,9 @@ public class LicenseCompareHelperTest extends TestCase {
     public void testRegressionAPL10() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String licText = UnitTestHelper.fileToText(APL_1_TEXT);
         String templateText = UnitTestHelper.fileToText(APL_1_TEMPLATE);
-        ExpandedLicensingListedLicense lic = new ExpandedLicensingListedLicense(
-                modelStore, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE + "APL-1.0", copyManager, true)
-                		.setName("APL 1.0")
-                		.setSimpleLicensingLicenseText(licText)
-                		.setExpandedLicensingStandardLicenseTemplate(templateText);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("APL-1.0", "APL 1.0", licText)
+                .setTemplate(templateText));
         DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());

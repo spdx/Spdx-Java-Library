@@ -561,7 +561,7 @@ public class LicenseExpressionParser {
 		}
 		if (licenseId.isPresent()) {
 			if (!store.exists(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + licenseId.get())) {
-				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseV2ByIdCompat(licenseId.get());
+				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseByIdCompatV2(licenseId.get());
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 

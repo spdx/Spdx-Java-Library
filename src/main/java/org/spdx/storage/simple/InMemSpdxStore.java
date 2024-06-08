@@ -367,7 +367,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, String typeFilter)
+	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		Iterator<StoredTypedItem> valueIter = typedValueMap.values().iterator();
 		List<TypedValue> allItems = new ArrayList<>();

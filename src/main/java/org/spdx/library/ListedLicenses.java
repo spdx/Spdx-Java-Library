@@ -199,7 +199,7 @@ public class ListedLicenses {
 	 * @return an SPDX spec version 2 SPDX listed license or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public SpdxListedLicense getListedLicenseV2ById(String licenseId) throws InvalidSPDXAnalysisException {
+	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
 		return (SpdxListedLicense)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
 	}
 	
@@ -208,7 +208,7 @@ public class ListedLicenses {
 	 * @return an SPDX spec version 2 SPDX listed license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ListedLicenseException getListedExceptionV2ById(String exceptionId) throws InvalidSPDXAnalysisException {
+	public ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
 		return (ListedLicenseException)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 	}
 	
@@ -275,7 +275,7 @@ public class ListedLicenses {
 		return this.licenseStoreV3;
 	}
 	
-	public IModelStore getLicenseModelStoreV2() {
+	public IModelStore getLicenseModelStoreCompatV2() {
 		return this.licenseStoreV2;
 	}
 

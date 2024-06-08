@@ -119,8 +119,8 @@ public class SpdxSnippetComparerTest extends TestCase {
 		GenericModelObject gmo = new GenericModelObject();
 		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
 				"111bf72bf99b7e471f1a27989667a903658652bb");
-		CONCLUDED_LICENSE = LicenseInfoFactory.parseSPDXLicenseV2String(CONCLUDED_LICENSE_STRING);
-		SEEN_LICENSES = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LicenseInfoFactory.parseSPDXLicenseV2String(SEEN_LICENSE_STRING)}));
+		CONCLUDED_LICENSE = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(CONCLUDED_LICENSE_STRING);
+		SEEN_LICENSES = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LicenseInfoFactory.parseSPDXLicenseStringCompatV2(SEEN_LICENSE_STRING)}));
 		FROM_FILE = gmo.createSpdxFile("SPDXRef-"+FILE_NAME, FILE_NAME, CONCLUDED_LICENSE, 
 				SEEN_LICENSES, FILE_COPYRIGHT, CHECKSUM1)
 				.setComment(FILE_COMMENT)

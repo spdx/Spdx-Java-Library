@@ -50,6 +50,7 @@ import org.spdx.library.model.v2.SpdxPackageVerificationCode;
 import org.spdx.library.model.v2.SpdxSnippet;
 import org.spdx.library.model.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.licenseTemplate.LicenseTextHelper;
 /**
  * Performs a comparison between two or more SPDX documents and holds the results of the comparison
  * The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code>
@@ -580,7 +581,7 @@ public class SpdxComparer {
 	static List<SpdxPackage> findUniquePackages(List<SpdxPackage> pkgsA, List<SpdxPackage> pkgsB) {
 		int bIndex = 0;
 		int aIndex = 0;
-		List<SpdxPackage> alRetval = new ArrayList<>();;
+		List<SpdxPackage> alRetval = new ArrayList<>();
 		while (aIndex < pkgsA.size()) {
 			if (bIndex >= pkgsB.size()) {
 				alRetval.add(pkgsA.get(aIndex));
@@ -1033,11 +1034,11 @@ public class SpdxComparer {
 			boolean foundMatch = false;
 			boolean foundTextMatch = false;
 			for (ExtractedLicenseInfo licB:extractedLicensesB) {
-				if (LicenseCompareHelper.isLicenseTextEquivalent(licA.getExtractedText(), 
+				if (LicenseTextHelper.isLicenseTextEquivalent(licA.getExtractedText(), 
 						licB.getExtractedText())) {
 					foundTextMatch = true;
 					if (!foundMatch) {
-						idMap.put(licA.getLicenseId(), licB.getLicenseId());
+						idMap.put(licA.getObjectUri(), licB.getObjectUri());
 						// always add to the map any matching licenses.  If more than one, add
 						// the license matches where the entire license match.  This condition checks
 						// to make sure we are not over-writing an exact match

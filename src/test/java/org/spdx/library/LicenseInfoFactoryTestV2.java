@@ -120,7 +120,7 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 	
 	public void testParseSPDXLicenseString() throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		String parseString = COMPLEX_LICENSE.toString();
-		AnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseV2String(parseString);
+		AnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(parseString);
 		if (!li.equals(COMPLEX_LICENSE)) {
 			fail("Parsed license does not equal");
 		}
@@ -129,13 +129,13 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 	
 	public void testSpecialLicenses() throws InvalidLicenseStringException, InvalidSPDXAnalysisException {
 		// NONE
-		AnyLicenseInfo none = LicenseInfoFactory.parseSPDXLicenseV2String(LicenseInfoFactory.NONE_LICENSE_NAME);
+		AnyLicenseInfo none = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(LicenseInfoFactory.NONE_LICENSE_NAME);
 		AnyLicenseInfo comp = new SpdxNoneLicense(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
 		assertEquals(none, comp);
 		List<String> verify = comp.verify();
 		assertEquals(0, verify.size());
 		// NOASSERTION_NAME
-		AnyLicenseInfo noAssertion = LicenseInfoFactory.parseSPDXLicenseV2String(LicenseInfoFactory.NOASSERTION_LICENSE_NAME);
+		AnyLicenseInfo noAssertion = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(LicenseInfoFactory.NOASSERTION_LICENSE_NAME);
 		comp = new SpdxNoAssertionLicense(DefaultModelStore.getDefaultModelStore(), DefaultModelStore.getDefaultDocumentUri());
 		assertEquals(noAssertion, comp);
 		verify = comp.verify();
@@ -144,8 +144,8 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 	
 	
 	public void testDifferentLicenseOrder() throws InvalidSPDXAnalysisException {
-		AnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-3-Clause-Clear)");
-		AnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseV2String("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-3-Clause-Clear AND LicenseRef-16)");
+		AnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-3-Clause-Clear)");
+		AnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-3-Clause-Clear AND LicenseRef-16)");
 		assertTrue(order1.equals(order2));
 		assertTrue(order1.equivalent(order2));
 	}
@@ -154,10 +154,10 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 		String parseString = COMPLEX_LICENSE.toString();
 		// Local license ID's 
 		String lowerCaseLicenseRef = parseString.replace("LicenseRef-", "licenseref-");
-		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseV2String(lowerCaseLicenseRef);
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(lowerCaseLicenseRef);
 		assertEquals(COMPLEX_LICENSE, result);
 		String lowerCaseCecil = parseString.replace("CECILL-B", "CECILL-B".toLowerCase());
-		result = LicenseInfoFactory.parseSPDXLicenseV2String(lowerCaseCecil);
+		result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(lowerCaseCecil);
 		assertEquals(COMPLEX_LICENSE, result);
 	}
 }

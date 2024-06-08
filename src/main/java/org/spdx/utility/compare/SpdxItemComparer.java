@@ -118,6 +118,13 @@ public class SpdxItemComparer {
 			// Concluded License
 			if (!LicenseCompareHelper.isLicenseEqual(spdxItem.getLicenseConcluded(), 
 					itemB.getLicenseConcluded(), licenseXlationMap)) {
+				
+				// DEBUG
+				AnyLicenseInfo c1 = spdxItem.getLicenseConcluded();
+				AnyLicenseInfo c2 = itemB.getLicenseConcluded();
+				
+				
+				// END DEBUG
 				this.concludedLicenseEquals = false;
 				this.itemDifferenceFound = true;
 			}

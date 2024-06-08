@@ -217,7 +217,7 @@ public class SpdxModelFactory {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Stream<?> getSpdxObjects(IModelStore store, @Nullable IModelCopyManager copyManager, 
-			String typeFilter, String objectUriPrefixFilter) throws InvalidSPDXAnalysisException {
+			@Nullable String typeFilter, @Nullable String objectUriPrefixFilter) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store, "Store must not be null");
 		return store.getAllItems(objectUriPrefixFilter, typeFilter).map(tv -> {
 			//TODO: Change this a null namespace and filtering on anonomous or startswith document URI - this will catch the anon. types

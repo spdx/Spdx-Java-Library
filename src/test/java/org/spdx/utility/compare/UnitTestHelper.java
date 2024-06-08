@@ -192,7 +192,8 @@ public class UnitTestHelper {
 		for (ModelObjectV2 mo:modelObjects) {
 			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
 					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
-					mo.getType(), "SPDX-2.3", CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
+					mo.getType(), "SPDX-2.3", 
+					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
 		}
 	}
 
