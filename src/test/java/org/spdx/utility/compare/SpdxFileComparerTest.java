@@ -25,18 +25,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.InvalidLicenseStringException;
-import org.spdx.library.model.compat.v2.license.License;
-import org.spdx.library.model.compat.v2.license.LicenseInfoFactory;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.License;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -54,12 +58,20 @@ public class SpdxFileComparerTest extends TestCase {
 	File testRDFFile;
 	SpdxDocument DOCA;
 	SpdxDocument DOCB;
+	IModelStore modelStore;
+    IModelCopyManager copyManager;
+    static final String DEFAULT_DOCUMENT_URI = "http://default/doc";
+	
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
+		super.setUp();
+		SpdxModelFactory.init();
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(modelStore, DEFAULT_DOCUMENT_URI, copyManager);
 		this.testRDFFile = new File(TEST_RDF_FILE_PATH); 
 		String uri1 = "http://doc/uri1";
 		DOCA = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), uri1, DefaultModelStore.getDefaultCopyManager(), true);
@@ -77,7 +89,7 @@ public class SpdxFileComparerTest extends TestCase {
 	 */
 	public void tearDown() throws Exception {
 		super.tearDown();
-		 DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
+		DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
 	}
 
 	/**

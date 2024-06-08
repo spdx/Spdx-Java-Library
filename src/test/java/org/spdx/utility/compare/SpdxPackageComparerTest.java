@@ -23,29 +23,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstantsCompatV2;
-import org.spdx.library.SpdxConstants.SpdxMajorVersion;
-import org.spdx.library.model.compat.v2.Annotation;
-import org.spdx.library.model.compat.v2.Checksum;
-import org.spdx.library.model.compat.v2.ExternalRef;
-import org.spdx.library.model.compat.v2.GenericModelObject;
-import org.spdx.library.model.compat.v2.GenericSpdxItem;
-import org.spdx.library.model.compat.v2.ReferenceType;
-import org.spdx.library.model.compat.v2.Relationship;
-import org.spdx.library.model.compat.v2.SpdxDocument;
-import org.spdx.library.model.compat.v2.SpdxElement;
-import org.spdx.library.model.compat.v2.SpdxFile;
-import org.spdx.library.model.compat.v2.SpdxPackage;
-import org.spdx.library.model.compat.v2.SpdxPackageVerificationCode;
-import org.spdx.library.model.compat.v2.enumerations.AnnotationType;
-import org.spdx.library.model.compat.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.compat.v2.enumerations.FileType;
-import org.spdx.library.model.compat.v2.enumerations.ReferenceCategory;
-import org.spdx.library.model.compat.v2.enumerations.RelationshipType;
-import org.spdx.library.model.compat.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.compat.v2.license.ExtractedLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.ExternalRef;
+import org.spdx.library.model.v2.GenericSpdxItem;
+import org.spdx.library.model.v2.ReferenceType;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxPackage;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.v2.enumerations.AnnotationType;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.enumerations.ReferenceCategory;
+import org.spdx.library.model.v2.enumerations.RelationshipType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -56,6 +58,8 @@ import junit.framework.TestCase;
  */
 public class SpdxPackageComparerTest extends TestCase {
 	
+	private static final String DOC_URI_A = "http://doc/uri/A";
+	private static final String DOC_URI_B = "http://doc/uri/B";
 	private static final String COMMENTA = "comment A";
 	@SuppressWarnings("unused")
 	private static final String COMMENTB = "comment B";
@@ -110,17 +114,17 @@ public class SpdxPackageComparerTest extends TestCase {
 	ExternalRef[] TEST_REFERENCES;
 	
 	static {
-		LICENSE_XLATION_MAPAB.put("LicenseRef-1", "LicenseRef-4");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-2", "LicenseRef-5");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-3", "LicenseRef-6");
+		LICENSE_XLATION_MAPAB.put(DOC_URI_A + "#" + "LicenseRef-1", DOC_URI_B + "#" + "LicenseRef-4");
+		LICENSE_XLATION_MAPAB.put(DOC_URI_A + "#" + "LicenseRef-2", DOC_URI_B + "#" + "LicenseRef-5");
+		LICENSE_XLATION_MAPAB.put(DOC_URI_A + "#" + "LicenseRef-3", DOC_URI_B + "#" + "LicenseRef-6");
 	}
 	
 	private static final Map<String, String> LICENSE_XLATION_MAPBA = new HashMap<>();
 	
 	static {
-		LICENSE_XLATION_MAPBA.put("LicenseRef-4", "LicenseRef-1");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-5", "LicenseRef-2");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-6", "LicenseRef-3");
+		LICENSE_XLATION_MAPBA.put(DOC_URI_B + "#" + "LicenseRef-4", DOC_URI_A + "#" + "LicenseRef-1");
+		LICENSE_XLATION_MAPBA.put(DOC_URI_B + "#" + "LicenseRef-5", DOC_URI_A + "#" + "LicenseRef-2");
+		LICENSE_XLATION_MAPBA.put(DOC_URI_B + "#" + "LicenseRef-6", DOC_URI_A + "#" + "LicenseRef-3");
 	}
 	
 	private final Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> LICENSE_XLATION_MAP = new HashMap<>();
@@ -140,25 +144,43 @@ public class SpdxPackageComparerTest extends TestCase {
 
 	private SpdxDocument DOCA;
 	private SpdxDocument DOCB;
-	private Annotation ANNOTATION1;
-	private Annotation ANNOTATION2;
-	private Annotation ANNOTATION3;
-	private Annotation ANNOTATION4;
-	private Collection<Annotation> ANNOTATIONSA;
+	private Annotation ANNOTATIONA1;
+	private Annotation ANNOTATIONA2;
+	private Annotation ANNOTATIONA3;
+	private Annotation ANNOTATIONA4;
+	private Annotation ANNOTATIONB1;
+	private Annotation ANNOTATIONB2;
+	private Annotation ANNOTATIONB3;
+	private Annotation ANNOTATIONB4;
+	private Collection<Annotation> ANNOTATIONSA1;
+	private Collection<Annotation> ANNOTATIONSB1;
 	@SuppressWarnings("unused")
-	private Collection<Annotation> ANNOTATIONSB;
+	private Collection<Annotation> ANNOTATIONSA2;
+	@SuppressWarnings("unused")
+	private Collection<Annotation> ANNOTATIONSB2;
 	
-	private Collection<Relationship> RELATIONSHIPSA;
+	private Collection<Relationship> RELATIONSHIPSA1;
 	@SuppressWarnings("unused")
-	private Collection<Relationship> RELATIONSHIPSB;
-	private SpdxElement RELATED_ELEMENT1;
-	private SpdxElement RELATED_ELEMENT2;
-	private SpdxElement RELATED_ELEMENT3;
-	private SpdxElement RELATED_ELEMENT4;
-	private Relationship RELATIONSHIP1;
-	private Relationship RELATIONSHIP2;
-	private Relationship RELATIONSHIP3;
-	private Relationship RELATIONSHIP4;
+	private Collection<Relationship> RELATIONSHIPSA2;
+	private Collection<Relationship> RELATIONSHIPSB1;
+	@SuppressWarnings("unused")
+	private Collection<Relationship> RELATIONSHIPSB2;
+	private SpdxElement RELATED_ELEMENTA1;
+	private SpdxElement RELATED_ELEMENTA2;
+	private SpdxElement RELATED_ELEMENTA3;
+	private SpdxElement RELATED_ELEMENTA4;
+	private SpdxElement RELATED_ELEMENTB1;
+	private SpdxElement RELATED_ELEMENTB2;
+	private SpdxElement RELATED_ELEMENTB3;
+	private SpdxElement RELATED_ELEMENTB4;
+	private Relationship RELATIONSHIPA1;
+	private Relationship RELATIONSHIPA2;
+	private Relationship RELATIONSHIPA3;
+	private Relationship RELATIONSHIPA4;
+	private Relationship RELATIONSHIPB1;
+	private Relationship RELATIONSHIPB2;
+	private Relationship RELATIONSHIPB3;
+	private Relationship RELATIONSHIPB4;
 	private Checksum CHECKSUM1;
 	private Checksum CHECKSUM2;
 	private Checksum CHECKSUM3;
@@ -181,6 +203,9 @@ public class SpdxPackageComparerTest extends TestCase {
 	private SpdxPackageVerificationCode VERIFICATION_CODEA;
 	private SpdxPackageVerificationCode VERIFICATION_CODEB;
 	
+	private IModelStore modelStoreA;
+	private IModelStore modelStoreB;
+	private ModelCopyManager copyManager;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -199,105 +224,146 @@ public class SpdxPackageComparerTest extends TestCase {
 	 */
 	public void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_2);
-		GenericModelObject gmo = new GenericModelObject();
-		LICENSEA1  = new ExtractedLicenseInfo("LicenseRef-1", "License1");
-		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
-		LICENSEA3 = new ExtractedLicenseInfo("LicenseRef-3", "License3");
-		LICENSEB1 = new ExtractedLicenseInfo("LicenseRef-4", "License1");
-		LICENSEB2 = new ExtractedLicenseInfo("LicenseRef-5", "License2");
-		LICENSEB3 = new ExtractedLicenseInfo("LicenseRef-6", "License3");
+		SpdxModelFactory.init();
+		modelStoreA = new InMemSpdxStore();
+		modelStoreB = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DOCA = new SpdxDocument(modelStoreA, DOC_URI_A, copyManager, true);
+		DOCB = new SpdxDocument(modelStoreB, DOC_URI_B, copyManager, true);
+		LICENSEA1  = new ExtractedLicenseInfo(modelStoreA, DOC_URI_A, "LicenseRef-1", copyManager, true);
+		LICENSEA1.setExtractedText("License1");
+		LICENSEA2 = new ExtractedLicenseInfo(modelStoreA, DOC_URI_A, "LicenseRef-2", copyManager, true);
+		LICENSEA2.setExtractedText("License2");
+		LICENSEA3 = new ExtractedLicenseInfo(modelStoreA, DOC_URI_A, "LicenseRef-3", copyManager, true);
+		LICENSEA3.setExtractedText("License3");
+		LICENSEB1 = new ExtractedLicenseInfo(modelStoreB, DOC_URI_B, "LicenseRef-4", copyManager, true);
+		LICENSEB1.setExtractedText("License1");
+		LICENSEB2 = new ExtractedLicenseInfo(modelStoreB, DOC_URI_B, "LicenseRef-5", copyManager, true);
+		LICENSEB2.setExtractedText("License2");
+		LICENSEB3 = new ExtractedLicenseInfo(modelStoreB, DOC_URI_B, "LicenseRef-6", copyManager, true);
+		LICENSEB3.setExtractedText("License3");
 		LICENSE_INFO_FROM_FILESA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2, LICENSEA3}));
 		LICENSE_INFO_FROM_FILESB = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2, LICENSEB3}));
 		LICENSE_CONCLUDEDA = LICENSEA1;
 		LICENSE_CONCLUDEDB = LICENSEB1;
 		LICENSE_DECLAREDA = LICENSEA2;
 		LICENSE_DECLAREDB = LICENSEB2;
-		ANNOTATION1 = gmo.createAnnotation("Person: Annotator1", AnnotationType.OTHER, 
+		ANNOTATIONA1 = DOCA.createAnnotation("Person: Annotator1", AnnotationType.OTHER, 
 				"2010-01-29T18:30:22Z", "AnnotationComment1");
-		ANNOTATION2 = gmo.createAnnotation("Person: Annotator2", AnnotationType.REVIEW, 
+		ANNOTATIONA2 = DOCA.createAnnotation("Person: Annotator2", AnnotationType.REVIEW, 
 				"2011-01-29T18:30:22Z", "AnnotationComment2");
-		ANNOTATION3 = gmo.createAnnotation("Person: Annotator3", AnnotationType.OTHER, 
+		ANNOTATIONA3 = DOCA.createAnnotation("Person: Annotator3", AnnotationType.OTHER, 
 				"2012-01-29T18:30:22Z", "AnnotationComment3");
-		ANNOTATION4 = gmo.createAnnotation("Person: Annotator4", AnnotationType.REVIEW, 
+		ANNOTATIONA4 = DOCA.createAnnotation("Person: Annotator4", AnnotationType.REVIEW, 
 				"2013-01-29T18:30:22Z", "AnnotationComment4");
-		ANNOTATIONSA = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATION1, ANNOTATION2}));
-		ANNOTATIONSB = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATION3, ANNOTATION4}));
-		RELATED_ELEMENT1 = new GenericSpdxItem();
-		RELATED_ELEMENT1.setName("relatedElementName1");
-		RELATED_ELEMENT1.setComment("related element comment 1");
-
-		RELATED_ELEMENT2 = new GenericSpdxItem();
-		RELATED_ELEMENT2.setName("relatedElementName2");
-		RELATED_ELEMENT2.setComment("related element comment 2");
-		RELATED_ELEMENT3 = new GenericSpdxItem();
-		RELATED_ELEMENT3.setName("relatedElementName3");
-		RELATED_ELEMENT3.setComment("related element comment 3");
-		RELATED_ELEMENT4 = new GenericSpdxItem();
-		RELATED_ELEMENT4.setName("relatedElementName4");
-		RELATED_ELEMENT4.setComment("related element comment 4");
-		RELATIONSHIP1 = gmo.createRelationship(RELATED_ELEMENT1, 
+		ANNOTATIONB1 = DOCB.createAnnotation("Person: Annotator1", AnnotationType.OTHER, 
+				"2010-01-29T18:30:22Z", "AnnotationComment1");
+		ANNOTATIONB2 = DOCB.createAnnotation("Person: Annotator2", AnnotationType.REVIEW, 
+				"2011-01-29T18:30:22Z", "AnnotationComment2");
+		ANNOTATIONB3 = DOCB.createAnnotation("Person: Annotator3", AnnotationType.OTHER, 
+				"2012-01-29T18:30:22Z", "AnnotationComment3");
+		ANNOTATIONB4 = DOCB.createAnnotation("Person: Annotator4", AnnotationType.REVIEW, 
+				"2013-01-29T18:30:22Z", "AnnotationComment4");
+		ANNOTATIONSA1 = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATIONA1, ANNOTATIONA2}));
+		ANNOTATIONSB1 = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATIONB1, ANNOTATIONB2}));
+		ANNOTATIONSA2 = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATIONA3, ANNOTATIONA4}));
+		ANNOTATIONSB2 = new HashSet<>(Arrays.asList(new Annotation[] {ANNOTATIONB3, ANNOTATIONB4}));
+		RELATED_ELEMENTA1 = new GenericSpdxItem(modelStoreA, DOC_URI_A, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTA1.setName("relatedElementName1");
+		RELATED_ELEMENTA1.setComment("related element comment 1");
+		RELATED_ELEMENTA2 = new GenericSpdxItem(modelStoreA, DOC_URI_A, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTA2.setName("relatedElementName2");
+		RELATED_ELEMENTA2.setComment("related element comment 2");
+		RELATED_ELEMENTA3 = new GenericSpdxItem(modelStoreA, DOC_URI_A, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTA3.setName("relatedElementName3");
+		RELATED_ELEMENTA3.setComment("related element comment 3");
+		RELATED_ELEMENTA4 = new GenericSpdxItem(modelStoreA, DOC_URI_A, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTA4.setName("relatedElementName4");
+		RELATED_ELEMENTA4.setComment("related element comment 4");
+		RELATED_ELEMENTB1 = new GenericSpdxItem(modelStoreB, DOC_URI_B, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTB1.setName("relatedElementName1");
+		RELATED_ELEMENTB1.setComment("related element comment 1");
+		RELATED_ELEMENTB2 = new GenericSpdxItem(modelStoreB, DOC_URI_B, modelStoreA.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTB2.setName("relatedElementName2");
+		RELATED_ELEMENTB2.setComment("related element comment 2");
+		RELATED_ELEMENTB3 = new GenericSpdxItem(modelStoreB, DOC_URI_B, modelStoreB.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTB3.setName("relatedElementName3");
+		RELATED_ELEMENTB3.setComment("related element comment 3");
+		RELATED_ELEMENTB4 = new GenericSpdxItem(modelStoreB, DOC_URI_B, modelStoreB.getNextId(IdType.SpdxId), copyManager, true);
+		RELATED_ELEMENTB4.setName("relatedElementName4");
+		RELATED_ELEMENTB4.setComment("related element comment 4");
+		RELATIONSHIPA1 = DOCA.createRelationship(RELATED_ELEMENTA1, 
 				RelationshipType.CONTAINS, "Relationship Comment1");
-		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
+		RELATIONSHIPA2 = DOCA.createRelationship(RELATED_ELEMENTA2, 
 				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
-		RELATIONSHIP3 = gmo.createRelationship(RELATED_ELEMENT3, 
+		RELATIONSHIPA3 = DOCA.createRelationship(RELATED_ELEMENTA3, 
 				RelationshipType.DATA_FILE_OF, "Relationship Comment3");
-		RELATIONSHIP4 = gmo.createRelationship(RELATED_ELEMENT4, 
+		RELATIONSHIPA4 = DOCA.createRelationship(RELATED_ELEMENTA4, 
 				RelationshipType.DISTRIBUTION_ARTIFACT, "Relationship Comment4");
-		RELATIONSHIPSA = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIP1, RELATIONSHIP2}));
-		RELATIONSHIPSB = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIP3, RELATIONSHIP4}));
-		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		RELATIONSHIPB1 = DOCB.createRelationship(RELATED_ELEMENTB1, 
+				RelationshipType.CONTAINS, "Relationship Comment1");
+		RELATIONSHIPB2 = DOCB.createRelationship(RELATED_ELEMENTB2, 
+				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
+		RELATIONSHIPB3 = DOCB.createRelationship(RELATED_ELEMENTB3, 
+				RelationshipType.DATA_FILE_OF, "Relationship Comment3");
+		RELATIONSHIPB4 = DOCB.createRelationship(RELATED_ELEMENTB4, 
+				RelationshipType.DISTRIBUTION_ARTIFACT, "Relationship Comment4");
+		RELATIONSHIPSA1 = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIPA1, RELATIONSHIPA2}));
+		RELATIONSHIPSA2 = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIPA3, RELATIONSHIPA4}));
+		RELATIONSHIPSB1 = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIPB1, RELATIONSHIPB2}));
+		RELATIONSHIPSB2 = new HashSet<>(Arrays.asList(new Relationship[] {RELATIONSHIPB3, RELATIONSHIPB4}));
+		CHECKSUM1 = DOCA.createChecksum(ChecksumAlgorithm.SHA1, 
 				"111bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM2 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM2 = DOCA.createChecksum(ChecksumAlgorithm.SHA1, 
 				"222bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM3 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM3 = DOCB.createChecksum(ChecksumAlgorithm.SHA1, 
 				"333bf72bf99b7e471f1a27989667a903658652bb");
-		CHECKSUM4 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		CHECKSUM4 = DOCB.createChecksum(ChecksumAlgorithm.SHA1, 
 				"444bf72bf99b7e471f1a27989667a903658652bb");
 		CHECKSUMSA = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM1, CHECKSUM2}));
 		CHECKSUMSB = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM3, CHECKSUM4}));
 		
-		FILE1A = gmo.createSpdxFile("SPDXRef-FILEA1A", FILE1_NAME, LICENSE_CONCLUDEDA, 
+		FILE1A = DOCA.createSpdxFile("SPDXRef-FILEA1A", FILE1_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
-		FILE1B = gmo.createSpdxFile("SPDXRef-FILEA1B", FILE1_NAME, LICENSE_CONCLUDEDB, 
+		FILE1B = DOCB.createSpdxFile("SPDXRef-FILEA1B", FILE1_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
-		FILE1B_DIFF_CHECKSUM = gmo.createSpdxFile("SPDXRef-FILEA1BDIFF", FILE1_NAME, LICENSE_CONCLUDEDB, 
+		FILE1B_DIFF_CHECKSUM = DOCB.createSpdxFile("SPDXRef-FILEA1BDIFF", FILE1_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				"copyright", CHECKSUM3)
 				.setChecksums(CHECKSUMSB)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
 
-		FILE2A = gmo.createSpdxFile("SPDXRef-FILE2A", FILE2_NAME, LICENSE_CONCLUDEDA, 
+		FILE2A = DOCA.createSpdxFile("SPDXRef-FILE2A", FILE2_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
 
-		FILE3A = gmo.createSpdxFile("SPDXRef-FILE3A", FILE3_NAME, LICENSE_CONCLUDEDA, 
+		FILE3A = DOCA.createSpdxFile("SPDXRef-FILE3A", FILE3_NAME, LICENSE_CONCLUDEDA, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEA1, LICENSEA2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
 
-		FILE2B = gmo.createSpdxFile("SPDXRef-FILE2B", FILE2_NAME, LICENSE_CONCLUDEDB, 
+		FILE2B = DOCB.createSpdxFile("SPDXRef-FILE2B", FILE2_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
 				.setFileTypes(new HashSet<>(Arrays.asList(new FileType[] {FileType.DOCUMENTATION, FileType.TEXT})))
 				.build();
 
-		FILE3B = gmo.createSpdxFile("SPDXRef-FILE3B", FILE3_NAME, LICENSE_CONCLUDEDB, 
+		FILE3B = DOCB.createSpdxFile("SPDXRef-FILE3B", FILE3_NAME, LICENSE_CONCLUDEDB, 
 				new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LICENSEB1, LICENSEB2})), 
 				"copyright", CHECKSUM1)
 				.setChecksums(CHECKSUMSA)
@@ -307,14 +373,10 @@ public class SpdxPackageComparerTest extends TestCase {
 		FILESA = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A, FILE2A}));
 		FILESB_SAME = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1B, FILE2B}));
 		FILESB = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1B_DIFF_CHECKSUM, FILE3B}));
-		VERIFICATION_CODEA = gmo.createPackageVerificationCode("aaabf72bf99b7e471f1a27989667a903658652bb",
+		VERIFICATION_CODEA = DOCA.createPackageVerificationCode("aaabf72bf99b7e471f1a27989667a903658652bb",
 				new HashSet<>(Arrays.asList(new String[] {"file2"})));
-		VERIFICATION_CODEB = gmo.createPackageVerificationCode("bbbbf72bf99b7e471f1a27989667a903658652bb",
+		VERIFICATION_CODEB = DOCB.createPackageVerificationCode("bbbbf72bf99b7e471f1a27989667a903658652bb",
 				new HashSet<>(Arrays.asList(new String[] {"file3"})));
-		String uri1 = "http://doc/uri1";
-		DOCA = new SpdxDocument(uri1);
-		String uri2 = "http://doc/uri2";
-		DOCB = new SpdxDocument(uri2);
 		Map<SpdxDocument, Map<String, String>> bmap = new HashMap<>();
 		bmap.put(DOCB, LICENSE_XLATION_MAPAB);
 		LICENSE_XLATION_MAP.put(DOCA, bmap);
@@ -324,7 +386,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		
 		TEST_REFERENCES = new ExternalRef[REFERENCE_CATEGORIES.length];
 		for (int i = 0; i < REFERENCE_CATEGORIES.length; i++) {
-			TEST_REFERENCES[i] = gmo.createExternalRef(REFERENCE_CATEGORIES[i], 
+			TEST_REFERENCES[i] = DOCA.createExternalRef(REFERENCE_CATEGORIES[i], 
 					new ReferenceType(SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + REFERENCE_TYPE_NAMES[i]), 
 					REFERENCE_LOCATORS[i], COMMENTS[i]);
 		}
@@ -336,7 +398,6 @@ public class SpdxPackageComparerTest extends TestCase {
 	 */
 	public void tearDown() throws Exception {
 		super.tearDown();
-		DefaultModelStore.reset(SpdxMajorVersion.VERSION_3);
 	}
 
 	/**
@@ -345,14 +406,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testCompareSpdxPackageSpdxPackageHashMapOfStringString() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -441,14 +502,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testIsPackageVersionsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB,NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB,NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -489,14 +550,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testIsPackageSuppliersEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -536,14 +597,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageDownloadLocationsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADB, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -583,14 +644,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageVerificationCodesEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEB, SOURCEINFOA,
@@ -630,14 +691,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageChecksumsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSB,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -677,19 +738,20 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageSourceInfosEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSB1, 
+				RELATIONSHIPSB1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOB,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
 		SpdxPackageComparer pc = new SpdxPackageComparer(LICENSE_XLATION_MAP);
+		
 		pc.addDocumentPackage(DOCA, pkgA);
 		pc.addDocumentPackage(DOCB, pkgB);
 		assertTrue(pc.isDifferenceFound());
@@ -724,14 +786,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testisDeclaredLicensesEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSEB1, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -772,14 +834,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageSummaryEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -819,14 +881,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageDescriptionsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONB, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -866,14 +928,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageOriginatorsEqual() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORB, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -913,14 +975,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageHomePagesEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEB, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -960,14 +1022,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testGetPkg() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEB, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -987,14 +1049,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	public void testGetUniqueChecksumsA() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		Collection<Checksum> checksumsA = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM1, CHECKSUM2}));
 		Collection<Checksum> checksumsB = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3}));
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, checksumsA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, checksumsB,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1017,14 +1079,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	public void testGetUniqueChecksumsB() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		Collection<Checksum> checksumsA = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM1, CHECKSUM2}));
 		Collection<Checksum> checksumsB = new HashSet<>(Arrays.asList(new Checksum[] {CHECKSUM2, CHECKSUM3}));
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, checksumsA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, checksumsB,
 				DESCRIPTIONA, DOWNLOADA, FILESB_SAME, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1045,14 +1107,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	 * @throws SpdxCompareException 
 	 */
 	public void testIsPackageFilesEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESB, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1093,14 +1155,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	public void testGetFileDifferences() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		Collection<SpdxFile> filesA = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A, FILE2A, FILE3A}));
 		Collection<SpdxFile> filesB = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1B_DIFF_CHECKSUM, FILE2B, FILE3B}));
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesB, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1124,14 +1186,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	public void testGetUniqueFilesA() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		Collection<SpdxFile> filesA = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A, FILE2A}));
 		Collection<SpdxFile> filesB = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE2B, FILE3B}));
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesB, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1155,14 +1217,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	public void testGetUniqueFilesB() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		Collection<SpdxFile> filesA = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE1A, FILE2A}));
 		Collection<SpdxFile> filesB = new HashSet<>(Arrays.asList(new SpdxFile[] {FILE2B, FILE3B}));
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, filesB, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1180,14 +1242,14 @@ public class SpdxPackageComparerTest extends TestCase {
 	}
 	
 	public void testIsFilesAnalyzedEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
 				SUMMARYA, SUPPLIERA, VERSIONINFOA, true, new HashSet<ExternalRef>(), CHECKSUM1);
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1201,8 +1263,8 @@ public class SpdxPackageComparerTest extends TestCase {
 	}
 
 	public void testGetExternalRefDifferences() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1214,8 +1276,8 @@ public class SpdxPackageComparerTest extends TestCase {
 					TEST_REFERENCES[i].getReferenceLocator(), TEST_REFERENCES[i].getComment().get());
 		}
 		externalRefB[0].setComment("Different comment");
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1243,8 +1305,8 @@ public class SpdxPackageComparerTest extends TestCase {
 	}
 	
 	public void testGetUniqueExternalRefs() throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
+		SpdxPackage pkgA = createPackage(DOCA, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDA, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
@@ -1256,8 +1318,8 @@ public class SpdxPackageComparerTest extends TestCase {
 			externalRefB[i] = TEST_REFERENCES[i];
 		}
 
-		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, 
-				RELATIONSHIPSA, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
+		SpdxPackage pkgB = createPackage(DOCB, NAMEA, COMMENTA, ANNOTATIONSA1, 
+				RELATIONSHIPSA1, LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB,
 				COPYRIGHTA, LICENSE_COMMENTA, LICENSE_DECLAREDB, CHECKSUMSA,
 				DESCRIPTIONA, DOWNLOADA, FILESA, HOMEPAGEA, ORIGINATORA, 
 				PACKAGE_FILENAMEA, VERIFICATION_CODEA, SOURCEINFOA,
