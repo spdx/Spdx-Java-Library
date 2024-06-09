@@ -75,14 +75,14 @@ public class LicenseInfoFactoryTest extends TestCase {
 		NON_STD_LICENSES = new ExpandedLicensingCustomLicense[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
 			NON_STD_LICENSES[i] = new ExpandedLicensingCustomLicense(modelStore, 
-					TEST_DOCUMENT_URI + "#" + NONSTD_IDS[i], copyManager, true);
+					TEST_DOCUMENT_URI + "#" + NONSTD_IDS[i], copyManager, true, null);
 			NON_STD_LICENSES[i].setSimpleLicensingLicenseText(NONSTD_TEXTS[i]);
 		}
 		
 		STANDARD_LICENSES = new ExpandedLicensingListedLicense[STD_IDS.length];
 		for (int i = 0; i < STD_IDS.length; i++) {
 			STANDARD_LICENSES[i] = new ExpandedLicensingListedLicense(modelStore, 
-					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_IDS[i], copyManager, true);
+					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_IDS[i], copyManager, true, null);
 			STANDARD_LICENSES[i].setName("Name "+String.valueOf(i));
 			STANDARD_LICENSES[i].setSimpleLicensingLicenseText(STD_TEXTS[i]);
 			STANDARD_LICENSES[i].getExpandedLicensingSeeAlsos().add("URL "+String.valueOf(i));
@@ -95,32 +95,32 @@ public class LicenseInfoFactoryTest extends TestCase {
 		CONJUNCTIVE_LICENSES = new ExpandedLicensingConjunctiveLicenseSet[2];
 		
 		DISJUNCTIVE_LICENSES[0] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		DISJUNCTIVE_LICENSES[0].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				NON_STD_LICENSES[0], NON_STD_LICENSES[1], STANDARD_LICENSES[1]
 		})));
 		CONJUNCTIVE_LICENSES[0] = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		CONJUNCTIVE_LICENSES[0].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				STANDARD_LICENSES[0], NON_STD_LICENSES[0], STANDARD_LICENSES[1]
 		})));
 		CONJUNCTIVE_LICENSES[1] = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		CONJUNCTIVE_LICENSES[1].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[0], NON_STD_LICENSES[2]
 		})));
 		DISJUNCTIVE_LICENSES[1] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		DISJUNCTIVE_LICENSES[1].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				CONJUNCTIVE_LICENSES[1], NON_STD_LICENSES[0], STANDARD_LICENSES[0]
 		})));
 		DISJUNCTIVE_LICENSES[2] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		DISJUNCTIVE_LICENSES[2].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[1], CONJUNCTIVE_LICENSES[0], STANDARD_LICENSES[2]
 		})));
 		COMPLEX_LICENSE = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
-				modelStore.getNextId(IdType.Anonymous), copyManager, true);
+				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
 		COMPLEX_LICENSE.getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[2], NON_STD_LICENSES[2], CONJUNCTIVE_LICENSES[1]
 		})));

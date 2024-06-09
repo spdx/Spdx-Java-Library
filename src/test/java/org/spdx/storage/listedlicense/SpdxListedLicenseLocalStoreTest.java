@@ -202,7 +202,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testCreateLicenseV3() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		SpdxV3ListedLicenseModelStore modelStore = new SpdxV3ListedLicenseModelStore(slll);
-		ExpandedLicensingListedLicense result = new ExpandedLicensingListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true);
+		ExpandedLicensingListedLicense result = new ExpandedLicensingListedLicense(modelStore, 
+				LICENSE_LIST_URI + APACHE_ID, null, true, null);
 		assertEquals(LICENSE_LIST_URI + APACHE_ID, result.getObjectUri());
 		assertEquals(APACHE_LICENSE_NAME, result.getName().get());
 		String licenseText = result.getSimpleLicensingLicenseText();
@@ -240,7 +241,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testCreateExceptionV3() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		SpdxV3ListedLicenseModelStore v3store = new SpdxV3ListedLicenseModelStore(slll);
-		ExpandedLicensingListedLicenseException result = new ExpandedLicensingListedLicenseException(v3store, LICENSE_LIST_URI+ECOS_EXCEPTION_ID, null, true);
+		ExpandedLicensingListedLicenseException result = new ExpandedLicensingListedLicenseException(v3store, 
+				LICENSE_LIST_URI+ECOS_EXCEPTION_ID, null, true, null);
 		assertEquals(LICENSE_LIST_URI+ECOS_EXCEPTION_ID, result.getObjectUri());
 		assertTrue(result.getComment().get().length() > 5);
 		assertTrue(result.getExpandedLicensingAdditionText().length() > 100);
@@ -431,7 +433,8 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 	public void testCreationInfo() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		SpdxV3ListedLicenseModelStore modelStore = new SpdxV3ListedLicenseModelStore(slll);
-		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true);
+		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, 
+				true, null);
 		assertTrue(license.verify().isEmpty());
 		CreationInfo creationInfo = license.getCreationInfo();
 		assertFalse(creationInfo.getCreated().isEmpty());

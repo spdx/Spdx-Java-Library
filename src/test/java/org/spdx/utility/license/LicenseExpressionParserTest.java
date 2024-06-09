@@ -124,14 +124,14 @@ public class LicenseExpressionParserTest extends TestCase {
 		NON_STD_LICENSES = new ExpandedLicensingCustomLicense[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
 			NON_STD_LICENSES[i] = new ExpandedLicensingCustomLicense(modelStore, TEST_DOCUMENT_URI + "#" + 
-					NONSTD_IDS[i], copyManager, true);
+					NONSTD_IDS[i], copyManager, true, null);
 			NON_STD_LICENSES[i].setSimpleLicensingLicenseText(NONSTD_TEXTS[i]);
 		}
 
 		STANDARD_LICENSES = new ExpandedLicensingListedLicense[STD_IDS.length];
 		for (int i = 0; i < STD_IDS.length; i++) {
 			STANDARD_LICENSES[i] = new ExpandedLicensingListedLicense(modelStore, 
-					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_IDS[i], copyManager, true);
+					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_IDS[i], copyManager, true, null);
 			STANDARD_LICENSES[i].setName("Name "+String.valueOf(i))
 				.setSimpleLicensingLicenseText(STD_TEXTS[i])
 				.getExpandedLicensingSeeAlsos().addAll(Arrays.asList(new String[] {"URL "+String.valueOf(i)}));
@@ -142,18 +142,19 @@ public class LicenseExpressionParserTest extends TestCase {
 		STD_LICENSE_EXCEPTIONS = new ExpandedLicensingListedLicenseException[STD_EXCEPTION_IDS.length];
 		for (int i = 0; i < STD_EXCEPTION_IDS.length; i++) {
 			STD_LICENSE_EXCEPTIONS[i] = new ExpandedLicensingListedLicenseException(
-					modelStore, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_EXCEPTION_IDS[i], copyManager, true);
+					modelStore, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_EXCEPTION_IDS[i], 
+					copyManager, true, null);
 			STD_LICENSE_EXCEPTIONS[i].setName(STD_EXCEPTION_NAMES[i])
 					.setExpandedLicensingAdditionText(STD_EXCEPTION_TEXTS[i]);
 		}
 		NON_STD_LICENSE_ADDITIONS = new ExpandedLicensingCustomLicenseAddition[NONSTD_ADDITION_IDS.length];
 		for (int i = 0; i < NONSTD_ADDITION_IDS.length; i++) {
 			NON_STD_LICENSE_ADDITIONS[i] = new ExpandedLicensingCustomLicenseAddition(
-					modelStore, TEST_DOCUMENT_URI + "#" + NONSTD_ADDITION_IDS[i], copyManager, true);
+					modelStore, TEST_DOCUMENT_URI + "#" + NONSTD_ADDITION_IDS[i], copyManager, true, null);
 			NON_STD_LICENSE_ADDITIONS[i].setName(NON_STD_ADDITION_NAMES[i])
 					.setExpandedLicensingAdditionText(NON_STD_ADDITION_TEXTS[i]);
 		}
-		doc = new SpdxDocument(modelStore, DOC_URI, copyManager, true);
+		doc = new SpdxDocument(modelStore, DOC_URI, copyManager, true, null);
 		Collection<NamespaceMap> namespaceMap = doc.getNamespaceMaps();
 		for (Entry<String, String> entry:NAMESPACE_MAP.entrySet()) {
 			namespaceMap.add(doc.createNamespaceMap(modelStore.getNextId(IdType.Anonymous))

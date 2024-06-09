@@ -218,11 +218,13 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ExpandedLicensingListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		return new ExpandedLicensingListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, true);
+		return new ExpandedLicensingListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
+				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
 	}
 	
 	public ExpandedLicensingListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return new ExpandedLicensingListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, true);
+		return new ExpandedLicensingListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
+				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
 	}
 	
 	/**

@@ -428,7 +428,7 @@ public class ExceptionJsonTest extends TestCase {
 		String obsoletedBy = "obsoletedBy";
 		String listVersionAdded = "2.3.2";
 		ExpandedLicensingListedLicenseException exception = new ExpandedLicensingListedLicenseException(store,
-					 objectUri, null, true);
+					 objectUri, null, true, null);
 		exception.setComment(comment);
 		exception.setExpandedLicensingIsDeprecatedAdditionId(deprecated);
 		exception.setExpandedLicensingDeprecatedVersion(deprecatedVersion);

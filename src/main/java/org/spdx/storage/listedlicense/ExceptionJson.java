@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
@@ -289,7 +290,8 @@ public class ExceptionJson {
 	}
 	
 	public void copyFrom(ExpandedLicensingListedLicenseException fromException) throws InvalidSPDXAnalysisException {
-		this.comment = fromException.getComment().orElse(null);
+		Optional<String> comment = fromException.getComment(); 
+		this.comment = comment.orElse(null);
 		this.deprecatedVersion = fromException.getExpandedLicensingDeprecatedVersion().orElse(null);
 		this.isDeprecatedLicenseId = fromException.getExpandedLicensingIsDeprecatedAdditionId().orElse(false);
 		this.licenseExceptionId = SpdxListedLicenseModelStore.objectUriToLicenseOrExceptionId(fromException.getObjectUri());

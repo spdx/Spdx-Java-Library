@@ -473,7 +473,7 @@ public class LicenseJsonTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		String objectUri = "http://spdx.org/licenses/test";
 		ModelCopyManager copyManager = new ModelCopyManager();
-		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(store, objectUri, copyManager, true);
+		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(store, objectUri, copyManager, true, null);
 		boolean deprecated = true;
 		String comment = "comment";
 		String deprecatedVersion = "deprecatedVersion";

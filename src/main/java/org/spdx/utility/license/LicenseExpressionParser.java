@@ -264,7 +264,7 @@ public class LicenseExpressionParser {
 						throw new LicenseParserException("License with exception is not of type License or OrLaterOperator");
 					}
 					ExpandedLicensingWithAdditionOperator weo = new ExpandedLicensingWithAdditionOperator(store,
-								store.getNextId(IdType.Anonymous), copyManager, true);
+								store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
 					weo.setExpandedLicensingSubjectExtendableLicense((ExpandedLicensingExtendableLicense)operand);
 					weo.setExpandedLicensingSubjectAddition(licenseAddition);
 					operandStack.push(weo);			
@@ -442,15 +442,16 @@ public class LicenseExpressionParser {
 					// copy to the local store
 				}
 			}
-			return new ExpandedLicensingListedLicenseException(store, listedException.getObjectUri(), copyManager, true);
+			return new ExpandedLicensingListedLicenseException(store, listedException.getObjectUri(), copyManager,
+					true, customLicenseUriPrefix);
 		} else {
 			// custom addition
 			String objectUri = customLicenseUriPrefix + token;
 			ExpandedLicensingCustomLicenseAddition localAddition = null;
 			if (store.exists(objectUri)) {
-				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, false);
+				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
-				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, true);
+				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, true, customLicenseUriPrefix);
 				localAddition.setExpandedLicensingAdditionText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localAddition;
@@ -494,15 +495,15 @@ public class LicenseExpressionParser {
 					// copy to the local store
 				}
 			}
-			return new ExpandedLicensingListedLicense(store, listedLicense.getObjectUri(), copyManager, true);
+			return new ExpandedLicensingListedLicense(store, listedLicense.getObjectUri(), copyManager, true, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE);
 		} else {
 			// LicenseRef
 			String objectUri = customLicenseUriPrefix + token;
 			ExpandedLicensingCustomLicense localLicense = null;
 			if (store.exists(objectUri)) {
-				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, false);
+				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
-				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, true);
+				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, true, customLicenseUriPrefix);
 				localLicense.setSimpleLicensingLicenseText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localLicense;
@@ -603,7 +604,7 @@ public class LicenseExpressionParser {
 			if (!(license instanceof ExpandedLicensingLicense)) {
 				throw new LicenseParserException("Missing license for the '+' or later operator");
 			}
-			ExpandedLicensingOrLaterOperator olo = new ExpandedLicensingOrLaterOperator(store, store.getNextId(IdType.Anonymous), copyManager, true);
+			ExpandedLicensingOrLaterOperator olo = new ExpandedLicensingOrLaterOperator(store, store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
 			olo.setExpandedLicensingSubjectLicense((ExpandedLicensingLicense)license);
 			operandStack.push(olo);
 		} else {
@@ -666,7 +667,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				ExpandedLicensingConjunctiveLicenseSet retval = new ExpandedLicensingConjunctiveLicenseSet(store,
-						store.getNextId(IdType.Anonymous), copyManager, true);
+						store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
 				retval.getExpandedLicensingMembers().add(operand1);
 				retval.getExpandedLicensingMembers().add(operand2);
 				return retval;
@@ -678,7 +679,7 @@ public class LicenseExpressionParser {
 				return operand1;
 			} else {
 				ExpandedLicensingDisjunctiveLicenseSet retval = new ExpandedLicensingDisjunctiveLicenseSet(store, 
-						store.getNextId(IdType.Anonymous), copyManager, true);
+						store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
 				retval.getExpandedLicensingMembers().add(operand1);
 				retval.getExpandedLicensingMembers().add(operand2);
 				return retval;
