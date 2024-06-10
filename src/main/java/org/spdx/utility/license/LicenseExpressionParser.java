@@ -553,7 +553,7 @@ public class LicenseExpressionParser {
 		Objects.requireNonNull(documentUri, "URI prefix can not be null");
 		if (token.contains(":")) {
 			// External License Ref
-			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager, true);
+			return new ExternalExtractedLicenseInfo(store, documentUri, token, copyManager);
 		} 
 		Optional<String> licenseId = Optional.empty();
 		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	

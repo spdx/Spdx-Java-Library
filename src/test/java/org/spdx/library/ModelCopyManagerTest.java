@@ -32,6 +32,7 @@ import org.spdx.core.TypedValue;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v3.core.Agent;
 import org.spdx.library.model.v3.core.CreationInfo;
+import org.spdx.library.model.v3.core.Element;
 import org.spdx.library.model.v3.core.Hash;
 import org.spdx.library.model.v3.core.HashAlgorithm;
 import org.spdx.library.model.v3.core.Relationship;
@@ -39,6 +40,7 @@ import org.spdx.library.model.v3.core.RelationshipType;
 import org.spdx.library.model.v3.core.SpdxDocument;
 import org.spdx.library.model.v3.software.SoftwareSpdxFile;
 import org.spdx.library.model.v3.software.SoftwareSpdxPackage;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -59,6 +61,7 @@ public class ModelCopyManagerTest {
 	private InMemSpdxStore toStore;
 	private Hash hash;
 	String date;
+	private Object SpdxConstantsV2Compat;
 
 	/**
 	 * @throws java.lang.Exception
@@ -193,5 +196,4 @@ public class ModelCopyManagerTest {
 		Hash differentCopiedHash = (Hash)SpdxModelFactory.inflateModelObject(toStore, result.getObjectUri(), HASH_TYPE, modelCopyManager, "3.0.0", true);
 		assertTrue(differentHash.equivalent(differentCopiedHash));
 	}
-
 }

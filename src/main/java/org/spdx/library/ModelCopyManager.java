@@ -259,6 +259,7 @@ public class ModelCopyManager implements IModelCopyManager {
 		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
 		if (Objects.isNull(toObjectUri)) {
 			if (toStore.exists(sourceUri) || IdType.Anonymous.equals(fromStore.getIdType(sourceUri))) {
+				// TODO - the toNamspace will never be used - we need to add a from namespace
 				if (Objects.nonNull(toNamespace)) {
 					if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
 						toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef);
