@@ -32,7 +32,6 @@ import org.spdx.core.ModelRegistry;
 import org.spdx.core.ModelRegistryException;
 import org.spdx.library.model.v2.SpdxModelInfoV2_X;
 import org.spdx.library.model.v3.SpdxModelInfoV3_0;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -228,20 +227,4 @@ public class SpdxModelFactory {
 			}
 		});
 	}
-
-	/**
-	 * @param store
-	 * @param string
-	 * @param copyManager
-	 * @param latestSpecVersion
-	 * @return
-	 */
-	public static SimpleLicensingAnyLicenseInfo getExternalAnyLicenseInfo(
-			IModelStore store, String string, IModelCopyManager copyManager,
-			String specVersion) {
-		// TODO Figure out how to implement
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

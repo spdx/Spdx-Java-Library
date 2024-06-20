@@ -31,10 +31,9 @@ import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxModelFactory;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.listedlicense.IListedLicenseStore;
 import org.spdx.storage.listedlicense.SpdxListedLicenseLocalStore;
@@ -208,8 +207,8 @@ public class ListedLicenses {
 	 * @return an SPDX spec version 2 SPDX listed license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (ListedLicenseException)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
+		return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 	}
 	
 	/**
@@ -217,13 +216,13 @@ public class ListedLicenses {
 	 * @return SPDX listed license or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public ExpandedLicensingListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		return new ExpandedLicensingListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
+	public ListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
+		return new ListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
 				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
 	}
 	
-	public ExpandedLicensingListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return new ExpandedLicensingListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
+	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
+		return new ListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
 				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
 	}
 	

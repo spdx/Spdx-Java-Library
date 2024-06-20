@@ -355,9 +355,9 @@ public class SpdxV2ListedLicenseModelStore implements IModelStore {
 			return baseTypedValue;
 		}
 		switch (baseTypedValue.get().getType()) {
-			case SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE:
+			case SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE:
 				return Optional.of(new TypedValue(objectUri, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, ModelObjectV2.LATEST_SPDX_2_VERSION));
-			case SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION:
+			case SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION:
 				return Optional.of(new TypedValue(objectUri, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, ModelObjectV2.LATEST_SPDX_2_VERSION));
 			case SpdxConstantsV3.CORE_CREATION_INFO:
 			case SpdxConstantsV3.CORE_AGENT:

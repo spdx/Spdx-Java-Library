@@ -32,15 +32,13 @@ import org.spdx.core.TypedValue;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v3.core.Agent;
 import org.spdx.library.model.v3.core.CreationInfo;
-import org.spdx.library.model.v3.core.Element;
 import org.spdx.library.model.v3.core.Hash;
 import org.spdx.library.model.v3.core.HashAlgorithm;
 import org.spdx.library.model.v3.core.Relationship;
 import org.spdx.library.model.v3.core.RelationshipType;
 import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.software.SoftwareSpdxFile;
-import org.spdx.library.model.v3.software.SoftwareSpdxPackage;
-import org.spdx.storage.IModelStore;
+import org.spdx.library.model.v3.software.SpdxFile;
+import org.spdx.library.model.v3.software.SpdxPackage;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -61,7 +59,6 @@ public class ModelCopyManagerTest {
 	private InMemSpdxStore toStore;
 	private Hash hash;
 	String date;
-	private Object SpdxConstantsV2Compat;
 
 	/**
 	 * @throws java.lang.Exception
@@ -122,12 +119,12 @@ public class ModelCopyManagerTest {
 				.build();
 		creationInfo.getCreatedBys().add(agent);
 		agent.setCreationInfo(creationInfo);
-		SoftwareSpdxFile spdxFile = agent.createSoftwareSpdxFile(fromStore.getNextId(IdType.SpdxId))
+		SpdxFile spdxFile = agent.createSpdxFile(fromStore.getNextId(IdType.SpdxId))
 				.setName("fileName")
-				.setSoftwareCopyrightText("copyrightText")
+				.setCopyrightText("copyrightText")
 				.addVerifiedUsing(hash)
 				.build();
-		SoftwareSpdxPackage pkg = spdxFile.createSoftwareSpdxPackage(fromStore.getNextId(IdType.SpdxId))
+		SpdxPackage pkg = spdxFile.createSpdxPackage(fromStore.getNextId(IdType.SpdxId))
 				.setName("packageName")
 				.setBuiltTime(date)
 				.build();

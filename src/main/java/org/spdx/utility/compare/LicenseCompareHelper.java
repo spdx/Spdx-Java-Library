@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ListedLicenses;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingConjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingDisjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
+import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.License;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.LicenseTextHelper;
@@ -235,28 +235,28 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException 
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static boolean isLicenseEqual(SimpleLicensingAnyLicenseInfo license1,
-			SimpleLicensingAnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		if (license1 instanceof ExpandedLicensingConjunctiveLicenseSet) {
-			if (!(license2 instanceof ExpandedLicensingConjunctiveLicenseSet)) {
+	public static boolean isLicenseEqual(AnyLicenseInfo license1,
+			AnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		if (license1 instanceof ConjunctiveLicenseSet) {
+			if (!(license2 instanceof ConjunctiveLicenseSet)) {
 				return false;
 			} else {
-				return isLicenseSetsEqual(((ExpandedLicensingConjunctiveLicenseSet)license1).getExpandedLicensingMembers(),
-						((ExpandedLicensingConjunctiveLicenseSet)license2).getExpandedLicensingMembers(), xlationMap);
+				return isLicenseSetsEqual(((ConjunctiveLicenseSet)license1).getMembers(),
+						((ConjunctiveLicenseSet)license2).getMembers(), xlationMap);
 			}
-		} else if (license1 instanceof ExpandedLicensingDisjunctiveLicenseSet) {
-			if (!(license2 instanceof ExpandedLicensingDisjunctiveLicenseSet)) {
+		} else if (license1 instanceof DisjunctiveLicenseSet) {
+			if (!(license2 instanceof DisjunctiveLicenseSet)) {
 				return false;
 			} else {
-				return isLicenseSetsEqual(((ExpandedLicensingDisjunctiveLicenseSet)license1).getExpandedLicensingMembers(),
-						((ExpandedLicensingDisjunctiveLicenseSet)license2).getExpandedLicensingMembers(), xlationMap);
+				return isLicenseSetsEqual(((DisjunctiveLicenseSet)license1).getMembers(),
+						((DisjunctiveLicenseSet)license2).getMembers(), xlationMap);
 			}
-		} else if (license1 instanceof ExpandedLicensingCustomLicense) {
-			if (!(license2 instanceof ExpandedLicensingCustomLicense)) {
+		} else if (license1 instanceof CustomLicense) {
+			if (!(license2 instanceof CustomLicense)) {
 				return false;
 			} else {
-				String licenseid1 = ((ExpandedLicensingCustomLicense)license1).getObjectUri();
-				String licenseid2 = ((ExpandedLicensingCustomLicense)license2).getObjectUri();
+				String licenseid1 = ((CustomLicense)license1).getObjectUri();
+				String licenseid2 = ((CustomLicense)license2).getObjectUri();
 				String xlatedLicenseId = xlationMap.get(licenseid1);
 				if (xlatedLicenseId == null) {
 					return false;	// no equivalent license was found
@@ -276,8 +276,8 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException 
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static boolean isLicenseSetsEqual(Collection<SimpleLicensingAnyLicenseInfo> licenseInfos1, 
-			Collection<SimpleLicensingAnyLicenseInfo> licenseInfos2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
+	private static boolean isLicenseSetsEqual(Collection<AnyLicenseInfo> licenseInfos1, 
+			Collection<AnyLicenseInfo> licenseInfos2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		// note - order does not matter
 		if (licenseInfos1 == null) {
 			return licenseInfos2 == null;
@@ -288,9 +288,9 @@ public class LicenseCompareHelper {
 		if (licenseInfos1.size() != licenseInfos2.size()) {
 			return false;
 		}
-		for (SimpleLicensingAnyLicenseInfo ali1:licenseInfos1) {
+		for (AnyLicenseInfo ali1:licenseInfos1) {
 			boolean found = false;
-			for (SimpleLicensingAnyLicenseInfo ali2:licenseInfos2) {
+			for (AnyLicenseInfo ali2:licenseInfos2) {
 				if (isLicenseEqual(ali1, ali2, xlationMap)) {
 					found = true;
 					break;
@@ -458,10 +458,10 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static DifferenceDescription isTextStandardLicense(ExpandedLicensingLicense license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String licenseTemplate = license.getExpandedLicensingStandardLicenseTemplate().orElse("");
+	public static DifferenceDescription isTextStandardLicense(License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String licenseTemplate = license.getStandardLicenseTemplate().orElse("");
 		if (licenseTemplate == null || licenseTemplate.trim().isEmpty()) {
-			licenseTemplate = license.getSimpleLicensingLicenseText();
+			licenseTemplate = license.getLicenseText();
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
@@ -488,10 +488,10 @@ public class LicenseCompareHelper {
 	 * @throws SpdxCompareException
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static DifferenceDescription isTextStandardException(ExpandedLicensingListedLicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String exceptionTemplate = exception.getExpandedLicensingStandardAdditionTemplate().orElse("");
+	public static DifferenceDescription isTextStandardException(ListedLicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String exceptionTemplate = exception.getStandardAdditionTemplate().orElse("");
 		if (exceptionTemplate == null || exceptionTemplate.trim().isEmpty()) {
-			exceptionTemplate = exception.getExpandedLicensingAdditionText();
+			exceptionTemplate = exception.getAdditionText();
 		}
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
@@ -638,7 +638,7 @@ public class LicenseCompareHelper {
 	 * @param license The standard SPDX license to search for (should not be null)
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
-	public static boolean isStandardLicenseWithinText(String text, ExpandedLicensingListedLicense license) {
+	public static boolean isStandardLicenseWithinText(String text, ListedLicense license) {
 		boolean result = false;
 
 		if (text == null || text.isEmpty() || license == null) {
@@ -646,7 +646,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, license.getExpandedLicensingStandardLicenseTemplate().orElse(""));
+			String completeText = findTemplateWithinText(text, license.getStandardLicenseTemplate().orElse(""));
 			if (completeText != null) {
 				result = !isTextStandardLicense(license, completeText).isDifferenceFound();
 			}
@@ -666,7 +666,7 @@ public class LicenseCompareHelper {
 	 * @param exception The standard SPDX license exception to search for (should not be null)
 	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
 	 */
-	public static boolean isStandardLicenseExceptionWithinText(String text, ExpandedLicensingListedLicenseException exception) {
+	public static boolean isStandardLicenseExceptionWithinText(String text, ListedLicenseException exception) {
 		boolean result = false;
 
 		if (text == null || text.isEmpty() || exception == null) {
@@ -674,7 +674,7 @@ public class LicenseCompareHelper {
 		}
 
 		try {
-			String completeText = findTemplateWithinText(text, exception.getExpandedLicensingStandardAdditionTemplate().orElse(""));
+			String completeText = findTemplateWithinText(text, exception.getStandardAdditionTemplate().orElse(""));
 			if (completeText != null) {
 				result = !isTextStandardException(exception, completeText).isDifferenceFound();
 			}
@@ -700,7 +700,7 @@ public class LicenseCompareHelper {
 		List<String> stdLicenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
 		List<String> matchingIds  = new ArrayList<>();
 		for (String stdLicId : stdLicenseIds) {
-			ExpandedLicensingListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+			ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 			if (!isTextStandardLicense(license, licenseText).isDifferenceFound()) {
 				matchingIds.add(licenseUriToLicenseId(license.getObjectUri()));
 			}
@@ -723,7 +723,7 @@ public class LicenseCompareHelper {
 
 		if (text != null && !text.isEmpty() && licenseIds != null && !licenseIds.isEmpty()) {
 			for (String stdLicId : licenseIds) {
-				ExpandedLicensingListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+				ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 				if (isStandardLicenseWithinText(text, license)) {
 					result.add(licenseUriToLicenseId(license.getObjectUri()));
 				}
@@ -761,7 +761,7 @@ public class LicenseCompareHelper {
 
 		if (text != null && !text.isEmpty() && licenseExceptionIds != null && !licenseExceptionIds.isEmpty()) {
 			for (String stdLicExcId : licenseExceptionIds) {
-				ExpandedLicensingListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
+				ListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
 				if (isStandardLicenseExceptionWithinText(text, licenseException)) {
 					result.add(licenseUriToLicenseId(licenseException.getObjectUri()));
 				}
@@ -805,7 +805,7 @@ public class LicenseCompareHelper {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static boolean isLicensePassBlackList(
-			SimpleLicensingAnyLicenseInfo license,
+			AnyLicenseInfo license,
 			String... blackList
 	) throws InvalidSPDXAnalysisException {
 		if (license == null) {
@@ -814,15 +814,15 @@ public class LicenseCompareHelper {
 		if (blackList == null || blackList.length == 0) {
 			return true;
 		}
-		if (license instanceof ExpandedLicensingConjunctiveLicenseSet) {
-			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingConjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
+		if (license instanceof ConjunctiveLicenseSet) {
+			for (AnyLicenseInfo member : ((ConjunctiveLicenseSet) license).getMembers()) {
 				if (!isLicensePassBlackList(member, blackList)) {
 					return false;
 				}
 			}
 			return true;
-		} else if (license instanceof ExpandedLicensingDisjunctiveLicenseSet) {
-			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingDisjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
+		} else if (license instanceof DisjunctiveLicenseSet) {
+			for (AnyLicenseInfo member : ((DisjunctiveLicenseSet) license).getMembers()) {
 				if (isLicensePassBlackList(member, blackList)) {
 					return true;
 				}
@@ -841,7 +841,7 @@ public class LicenseCompareHelper {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static boolean isLicensePassWhiteList(
-			SimpleLicensingAnyLicenseInfo license,
+			AnyLicenseInfo license,
 			String... whiteList
 	) throws InvalidSPDXAnalysisException {
 		if (license == null) {
@@ -850,15 +850,15 @@ public class LicenseCompareHelper {
 		if (whiteList == null || whiteList.length == 0) {
 			return false;
 		}
-		if (license instanceof ExpandedLicensingConjunctiveLicenseSet) {
-			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingConjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
+		if (license instanceof ConjunctiveLicenseSet) {
+			for (AnyLicenseInfo member : ((ConjunctiveLicenseSet) license).getMembers()) {
 				if (!isLicensePassWhiteList(member, whiteList)) {
 					return false;
 				}
 			}
 			return true;
-		} else if (license instanceof ExpandedLicensingDisjunctiveLicenseSet) {
-			for (SimpleLicensingAnyLicenseInfo member : ((ExpandedLicensingDisjunctiveLicenseSet) license).getExpandedLicensingMembers()) {
+		} else if (license instanceof DisjunctiveLicenseSet) {
+			for (AnyLicenseInfo member : ((DisjunctiveLicenseSet) license).getMembers()) {
 				if (isLicensePassWhiteList(member, whiteList)) {
 					return true;
 				}

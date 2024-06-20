@@ -32,7 +32,7 @@ import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.CrossRef;
 import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -54,24 +54,24 @@ public class LicenseJsonTest extends TestCase {
 			SpdxConstantsCompatV2.PROP_STD_LICENSE_NOTICE, SpdxConstantsCompatV2.PROP_STD_LICENSE_HEADER_TEMPLATE,
 			SpdxConstantsCompatV2.PROP_LICENSE_HEADER_HTML, SpdxConstantsCompatV2.PROP_STD_LICENSE_TEMPLATE,
 			SpdxConstantsCompatV2.PROP_EXAMPLE, SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_LICENSE_XML, SpdxConstantsV3.PROP_EXPANDED_LICENSING_OBSOLETED_BY,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_LIST_VERSION_ADDED, SpdxConstantsV3.PROP_SIMPLE_LICENSING_LICENSE_TEXT,
-			SpdxConstantsV3.PROP_NAME, SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_LICENSE_HEADER,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_LICENSE_TEMPLATE,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_DEPRECATED_VERSION, SpdxConstantsV3.PROP_COMMENT
+			SpdxConstantsV3.PROP_LICENSE_XML, SpdxConstantsV3.PROP_OBSOLETED_BY,
+			SpdxConstantsV3.PROP_LIST_VERSION_ADDED, SpdxConstantsV3.PROP_LICENSE_TEXT,
+			SpdxConstantsV3.PROP_NAME, SpdxConstantsV3.PROP_STANDARD_LICENSE_HEADER,
+			SpdxConstantsV3.PROP_STANDARD_LICENSE_TEMPLATE,
+			SpdxConstantsV3.PROP_DEPRECATED_VERSION, SpdxConstantsV3.PROP_COMMENT
 			);
 	
 	static final List<PropertyDescriptor> BOOLEAN_PROPERTIES = Arrays.asList(
 			SpdxConstantsCompatV2.PROP_STD_LICENSE_OSI_APPROVED, SpdxConstantsCompatV2.PROP_STD_LICENSE_FSF_LIBRE,
-			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_OSI_APPROVED,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_FSF_LIBRE,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_DEPRECATED_LICENSE_ID
+			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, SpdxConstantsV3.PROP_IS_OSI_APPROVED,
+			SpdxConstantsV3.PROP_IS_FSF_LIBRE,
+			SpdxConstantsV3.PROP_IS_DEPRECATED_LICENSE_ID
 			);
 	
 	static final List<PropertyDescriptor> ALL_PROPERTIES = new ArrayList<>();
 	static final Set<String> ALL_PROPERTY_NAMES = new HashSet<>();
 	static final List<PropertyDescriptor> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO,
+			SpdxConstantsV3.PROP_SEE_ALSO, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO,
 			SpdxConstantsCompatV2.PROP_CROSS_REF);
 	static {
 		ALL_PROPERTIES.addAll(STRING_PROPERTIES);
@@ -203,21 +203,21 @@ public class LicenseJsonTest extends TestCase {
 	public void testAddClearGetPropertyValueListSeeAlsoV3() throws InvalidSPDXAnalysisException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		List<String> result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		List<String> result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 		String firstItem = "first";
 		String secondItem = "second";
-		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, firstItem);
-		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, firstItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(1, result.size());
 		assertEquals(firstItem, result.get(0));
-		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, secondItem);
-		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, secondItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(2, result.size());
 		assertEquals(firstItem, result.get(0));
 		assertEquals(secondItem, result.get(1));
-		lj.clearPropertyValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
-		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		lj.clearPropertyValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 	}
 	
@@ -343,7 +343,7 @@ public class LicenseJsonTest extends TestCase {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
-		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
@@ -428,7 +428,7 @@ public class LicenseJsonTest extends TestCase {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
-		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
@@ -451,7 +451,7 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, String.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsV3.PROP_SEE_ALSO, String.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, Boolean.class));
 		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT, String.class));
 		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_CROSS_REF, CrossRef.class));
@@ -473,7 +473,7 @@ public class LicenseJsonTest extends TestCase {
 		InMemSpdxStore store = new InMemSpdxStore();
 		String objectUri = "http://spdx.org/licenses/test";
 		ModelCopyManager copyManager = new ModelCopyManager();
-		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(store, objectUri, copyManager, true, null);
+		ListedLicense license = new ListedLicense(store, objectUri, copyManager, true, null);
 		boolean deprecated = true;
 		String comment = "comment";
 		String deprecatedVersion = "deprecatedVersion";
@@ -489,18 +489,18 @@ public class LicenseJsonTest extends TestCase {
 		String obsoletedBy = "something";
 		
 		license.setComment(comment);
-		license.setExpandedLicensingDeprecatedVersion(deprecatedVersion);
-		license.setSimpleLicensingLicenseText(licenseText);
+		license.setDeprecatedVersion(deprecatedVersion);
+		license.setLicenseText(licenseText);
 		license.setName(name);
-		license.setExpandedLicensingStandardLicenseHeader(standardLicenseHeader);
-		license.setExpandedLicensingStandardLicenseTemplate(standardLicenseTemplate);
-		license.setExpandedLicensingIsFsfLibre(fsfLibre);
-		license.setExpandedLicensingIsOsiApproved(osiApproved);
-		license.getExpandedLicensingSeeAlsos().addAll(seeAlsoUrl);
-		license.setExpandedLicensingIsDeprecatedLicenseId(deprecated);
-		license.setExpandedLicensingLicenseXml(licenseXml);
-		license.setExpandedLicensingListVersionAdded(listVersionAdded);
-		license.setExpandedLicensingObsoletedBy(obsoletedBy);
+		license.setStandardLicenseHeader(standardLicenseHeader);
+		license.setStandardLicenseTemplate(standardLicenseTemplate);
+		license.setIsFsfLibre(fsfLibre);
+		license.setIsOsiApproved(osiApproved);
+		license.getSeeAlsos().addAll(seeAlsoUrl);
+		license.setIsDeprecatedLicenseId(deprecated);
+		license.setLicenseXml(licenseXml);
+		license.setListVersionAdded(listVersionAdded);
+		license.setObsoletedBy(obsoletedBy);
 		
 		lj.copyFrom(license);
 		assertEquals(fsfLibre, lj.isFsfLibre);

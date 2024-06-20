@@ -29,13 +29,12 @@ import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.CrossRef;
 import org.spdx.library.model.v2.license.LicenseException;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.SpdxConstantsV3;
 import org.spdx.library.model.v3.core.Agent;
 import org.spdx.library.model.v3.core.CreationInfo;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
@@ -226,20 +225,20 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	public void testCreateLicenseV3() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV3ListedLicenseModelStore modelStore = new SpdxV3ListedLicenseModelStore(sllw);
-		ExpandedLicensingListedLicense result = new ExpandedLicensingListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true, null);
+		ListedLicense result = new ListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true, null);
 		assertEquals(LICENSE_LIST_URI + APACHE_ID, result.getObjectUri());
 		assertEquals(APACHE_LICENSE_NAME, result.getName().get());
-		String licenseText = result.getSimpleLicensingLicenseText();
+		String licenseText = result.getLicenseText();
 		assertTrue(licenseText.length() > 100);
 		assertTrue(result.getComment().get().length() > 5);
-		assertTrue(result.getExpandedLicensingIsFsfLibre().get());
-		assertFalse(result.getExpandedLicensingIsDeprecatedLicenseId().get());
-		assertTrue(result.getExpandedLicensingIsOsiApproved().get());
-		List<String> lResult = new ArrayList<String>(result.getExpandedLicensingSeeAlsos());
+		assertTrue(result.getIsFsfLibre().get());
+		assertFalse(result.getIsDeprecatedLicenseId().get());
+		assertTrue(result.getIsOsiApproved().get());
+		List<String> lResult = new ArrayList<String>(result.getSeeAlsos());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
-		assertTrue(result.getExpandedLicensingStandardLicenseHeader().get().length() > 100);
-		assertEquals(SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE, (result.getType()));
+		assertTrue(result.getStandardLicenseHeader().get().length() > 100);
+		assertEquals(SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, (result.getType()));
 		assertTrue(result.verify().isEmpty());
 	}
 	
@@ -264,16 +263,16 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	public void testCreateExceptionV3() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV3ListedLicenseModelStore v3store = new SpdxV3ListedLicenseModelStore(sllw);
-		ExpandedLicensingListedLicenseException result = new ExpandedLicensingListedLicenseException(v3store, LICENSE_LIST_URI+ECOS_EXCEPTION_ID, null, true, null);
+		ListedLicenseException result = new ListedLicenseException(v3store, LICENSE_LIST_URI+ECOS_EXCEPTION_ID, null, true, null);
 		assertEquals(LICENSE_LIST_URI+ECOS_EXCEPTION_ID, result.getObjectUri());
 		assertTrue(result.getComment().get().length() > 5);
-		assertTrue(result.getExpandedLicensingAdditionText().length() > 100);
+		assertTrue(result.getAdditionText().length() > 100);
 		assertEquals(ECOS_LICENSE_NAME, result.getName().get());
-		List<String> lResult = new ArrayList<String>(result.getExpandedLicensingSeeAlsos());
+		List<String> lResult = new ArrayList<String>(result.getSeeAlsos());
 		assertTrue(lResult.size() > 0);
 		assertTrue(lResult.get(0).length() > 10);
-		assertEquals(SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, (result.getType()));
-		assertFalse(result.getExpandedLicensingIsDeprecatedAdditionId().get());
+		assertEquals(SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, (result.getType()));
+		assertFalse(result.getIsDeprecatedAdditionId().get());
 		assertTrue(result.verify().isEmpty());
 	}
 	
@@ -282,7 +281,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV2ListedLicenseModelStore v2store = new SpdxV2ListedLicenseModelStore(sllw);
 		// Exception
-		ListedLicenseException exception = (ListedLicenseException)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		org.spdx.library.model.v2.license.ListedLicenseException exception = (org.spdx.library.model.v2.license.ListedLicenseException)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		String seeAlso1 = "seeAlso1";
 		String seeAlso2 = "seeAlso2";
 		List<String> seeAlsos = Arrays.asList(new String[]{seeAlso1, seeAlso2});
@@ -437,7 +436,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	public void testCreationInfo() throws Exception {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV3ListedLicenseModelStore modelStore = new SpdxV3ListedLicenseModelStore(sllw);
-		ExpandedLicensingListedLicense license = new ExpandedLicensingListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true, null);
+		ListedLicense license = new ListedLicense(modelStore, LICENSE_LIST_URI + APACHE_ID, null, true, null);
 		assertTrue(license.verify().isEmpty());
 		CreationInfo creationInfo = license.getCreationInfo();
 		assertFalse(creationInfo.getCreated().isEmpty());

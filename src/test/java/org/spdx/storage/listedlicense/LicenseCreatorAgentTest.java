@@ -111,7 +111,7 @@ public class LicenseCreatorAgentTest {
 		result = lca.getValue(SpdxConstantsV3.PROP_DESCRIPTION);
 		assertTrue(result instanceof String);
 		assertFalse(((String)result).isEmpty());
-		result = lca.getValue(SpdxConstantsV3.PROP_A_I_DOMAIN);
+		result = lca.getValue(SpdxConstantsV3.PROP_DOMAIN);
 		assertTrue(Objects.isNull(result));
 	}
 

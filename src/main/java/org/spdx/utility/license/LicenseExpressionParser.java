@@ -36,13 +36,8 @@ import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.ModelObjectV2;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
 import org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo;
 import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.v2.license.ListedLicenseException;
-import org.spdx.library.model.v2.license.OrLaterOperator;
 import org.spdx.library.model.v2.license.SimpleLicensingInfo;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
@@ -53,20 +48,20 @@ import org.spdx.library.model.v3.ExternalCustomLicenseAddition;
 import org.spdx.library.model.v3.SpdxConstantsV3;
 import org.spdx.library.model.v3.core.NamespaceMap;
 import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingConjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicenseAddition;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingDisjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingExtendableLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingLicenseAddition;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoAssertionLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoneLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingOrLaterOperator;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingWithAdditionOperator;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
+import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3.expandedlicensing.CustomLicenseAddition;
+import org.spdx.library.model.v3.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.ExtendableLicense;
+import org.spdx.library.model.v3.expandedlicensing.License;
+import org.spdx.library.model.v3.expandedlicensing.LicenseAddition;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.NoAssertionLicense;
+import org.spdx.library.model.v3.expandedlicensing.NoneLicense;
+import org.spdx.library.model.v3.expandedlicensing.OrLaterOperator;
+import org.spdx.library.model.v3.expandedlicensing.WithAdditionOperator;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -110,7 +105,7 @@ public class LicenseExpressionParser {
 	 * @return the parsed license expression
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static SimpleLicensingAnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
+	public static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
 			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw new LicenseParserException("Empty license expression");
@@ -121,9 +116,9 @@ public class LicenseExpressionParser {
 		}
 		String[] tokens  = tokenizeExpression(expression);
 		if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NOASSERTION_VALUE)) {
-			return new ExpandedLicensingNoAssertionLicense();
+			return new NoAssertionLicense();
 		} else if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NONE_VALUE)) {
-			return new ExpandedLicensingNoneLicense();
+			return new NoneLicense();
 		} else {
 			try {
 				return parseLicenseExpression(tokens, store, customLicenseUriPrefix, copyManager, spdxDocument);
@@ -147,7 +142,7 @@ public class LicenseExpressionParser {
 	 * @return the parsed license expression
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static AnyLicenseInfo parseLicenseExpressionCompatV2(String expression, IModelStore store, 
+	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseLicenseExpressionCompatV2(String expression, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw new LicenseParserException("Empty license expression");
@@ -218,13 +213,13 @@ public class LicenseExpressionParser {
 	 * @return a license info representing the fully parsed list of tokens
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static SimpleLicensingAnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
+	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
 			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager,
 			@Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		if (tokens == null || tokens.length == 0) {
 			throw new LicenseParserException("Expected license expression");
 		}
-		Stack<SimpleLicensingAnyLicenseInfo> operandStack = new Stack<SimpleLicensingAnyLicenseInfo>();
+		Stack<AnyLicenseInfo> operandStack = new Stack<AnyLicenseInfo>();
 		Stack<Operator> operatorStack = new Stack<Operator>(); 
 		int tokenIndex = 0;
 		String token;
@@ -254,19 +249,19 @@ public class LicenseExpressionParser {
 						throw new LicenseParserException("Missing exception clause");
 					}
 					token = tokens[tokenIndex++];
-					ExpandedLicensingLicenseAddition licenseAddition = parseSimpleLicenseAdditionToken(token, 
+					LicenseAddition licenseAddition = parseSimpleLicenseAdditionToken(token, 
 							store, customLicenseUriPrefix, copyManager, spdxDocument);
-					SimpleLicensingAnyLicenseInfo operand = operandStack.pop();
+					AnyLicenseInfo operand = operandStack.pop();
 					if (operand == null) {
 						throw new LicenseParserException("Missing license for with clause");
 					}
-					if (!(operand instanceof ExpandedLicensingExtendableLicense)) {
+					if (!(operand instanceof ExtendableLicense)) {
 						throw new LicenseParserException("License with exception is not of type License or OrLaterOperator");
 					}
-					ExpandedLicensingWithAdditionOperator weo = new ExpandedLicensingWithAdditionOperator(store,
+					WithAdditionOperator weo = new WithAdditionOperator(store,
 								store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
-					weo.setExpandedLicensingSubjectExtendableLicense((ExpandedLicensingExtendableLicense)operand);
-					weo.setExpandedLicensingSubjectAddition(licenseAddition);
+					weo.setSubjectExtendableLicense((ExtendableLicense)operand);
+					weo.setSubjectAddition(licenseAddition);
 					operandStack.push(weo);			
 				} else {
 					// process in order of precedence using the shunting yard algorithm
@@ -284,7 +279,7 @@ public class LicenseExpressionParser {
 			Operator tosOperator = operatorStack.pop();
 			evaluateExpression(tosOperator, operandStack, store, customLicenseUriPrefix, copyManager);
 		}
-		SimpleLicensingAnyLicenseInfo retval = operandStack.pop();
+		AnyLicenseInfo retval = operandStack.pop();
 		if (!operandStack.isEmpty()) {
 			throw new LicenseParserException("Invalid license expression.  Expecting more operands.");
 		}
@@ -300,12 +295,12 @@ public class LicenseExpressionParser {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo parseLicenseExpressionCompatV2(String[] tokens, IModelStore store, 
+	private static org.spdx.library.model.v2.license.AnyLicenseInfo parseLicenseExpressionCompatV2(String[] tokens, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (tokens == null || tokens.length == 0) {
 			throw new LicenseParserException("Expected license expression");
 		}
-		Stack<AnyLicenseInfo> operandStack = new Stack<AnyLicenseInfo>();
+		Stack<org.spdx.library.model.v2.license.AnyLicenseInfo> operandStack = new Stack<org.spdx.library.model.v2.license.AnyLicenseInfo>();
 		Stack<Operator> operatorStack = new Stack<Operator>(); 
 		int tokenIndex = 0;
 		String token;
@@ -334,7 +329,7 @@ public class LicenseExpressionParser {
 						throw new LicenseParserException("Missing exception clause");
 					}
 					token = tokens[tokenIndex++];
-					ListedLicenseException licenseException = null;
+					org.spdx.library.model.v2.license.ListedLicenseException licenseException = null;
 					Optional<String> exceptionId = Optional.empty();
 					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
 						exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
@@ -344,14 +339,14 @@ public class LicenseExpressionParser {
 					} else if (token.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 						throw new LicenseParserException("WITH must be followed by a license exception. "+token+" is a Listed License type.");
 					} else {
-						licenseException = (ListedLicenseException) org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(store, 
+						licenseException = (org.spdx.library.model.v2.license.ListedLicenseException) org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(store, 
 								documentUri, token, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, copyManager);
 					}
-					AnyLicenseInfo operand = operandStack.pop();
+					org.spdx.library.model.v2.license.AnyLicenseInfo operand = operandStack.pop();
 					if (operand == null) {
 						throw new LicenseParserException("Missing license for with clause");
 					}
-					if (!((operand instanceof SimpleLicensingInfo) || (operand instanceof OrLaterOperator))) {
+					if (!((operand instanceof SimpleLicensingInfo) || (operand instanceof org.spdx.library.model.v2.license.OrLaterOperator))) {
 						throw new LicenseParserException("License with exception is not of type SimpleLicensingInfo or OrLaterOperator");
 					}
 					WithExceptionOperator weo = new WithExceptionOperator(store, documentUri, store.getNextId(IdType.Anonymous), copyManager, true);
@@ -374,7 +369,7 @@ public class LicenseExpressionParser {
 			Operator tosOperator = operatorStack.pop();
 			evaluateExpressionCompatV2(tosOperator, operandStack, store, documentUri, copyManager);
 		}
-		AnyLicenseInfo retval = operandStack.pop();
+		org.spdx.library.model.v2.license.AnyLicenseInfo retval = operandStack.pop();
 		if (!operandStack.isEmpty()) {
 			throw new LicenseParserException("Invalid license expression.  Expecting more operands.");
 		}
@@ -416,7 +411,7 @@ public class LicenseExpressionParser {
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static ExpandedLicensingLicenseAddition parseSimpleLicenseAdditionToken(String token, IModelStore store, String customLicenseUriPrefix,
+	private static LicenseAddition parseSimpleLicenseAdditionToken(String token, IModelStore store, String customLicenseUriPrefix,
 			@Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
@@ -432,27 +427,27 @@ public class LicenseExpressionParser {
 			exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
 		}
 		if (exceptionId.isPresent()) {
-			ExpandedLicensingListedLicenseException listedException = LicenseInfoFactory.getListedExceptionById(exceptionId.get());
+			ListedLicenseException listedException = LicenseInfoFactory.getListedExceptionById(exceptionId.get());
 			if (!store.exists(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + exceptionId.get())) {
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedException.getObjectUri(), listedException.getModelStore(), 
-							listedException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE,
+							listedException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE,
 							SpdxModelFactory.getLatestSpecVersion(), null);
 					// copy to the local store
 				}
 			}
-			return new ExpandedLicensingListedLicenseException(store, listedException.getObjectUri(), copyManager,
+			return new ListedLicenseException(store, listedException.getObjectUri(), copyManager,
 					true, customLicenseUriPrefix);
 		} else {
 			// custom addition
 			String objectUri = customLicenseUriPrefix + token;
-			ExpandedLicensingCustomLicenseAddition localAddition = null;
+			CustomLicenseAddition localAddition = null;
 			if (store.exists(objectUri)) {
-				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, false, customLicenseUriPrefix);
+				localAddition = new CustomLicenseAddition(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
-				localAddition = new ExpandedLicensingCustomLicenseAddition(store, objectUri, copyManager, true, customLicenseUriPrefix);
-				localAddition.setExpandedLicensingAdditionText(UNINITIALIZED_LICENSE_TEXT);
+				localAddition = new CustomLicenseAddition(store, objectUri, copyManager, true, customLicenseUriPrefix);
+				localAddition.setAdditionText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localAddition;
 		}
@@ -469,7 +464,7 @@ public class LicenseExpressionParser {
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static SimpleLicensingAnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String customLicenseUriPrefix,
+	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String customLicenseUriPrefix,
 			@Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
@@ -485,26 +480,26 @@ public class LicenseExpressionParser {
 			licenseId = LicenseInfoFactory.listedLicenseIdCaseSensitive(token);
 		}
 		if (licenseId.isPresent()) {
-			ExpandedLicensingListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId.get());
+			ListedLicense listedLicense = LicenseInfoFactory.getListedLicenseById(licenseId.get());
 			if (!store.exists(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + licenseId.get())) {
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
-							listedLicense.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE,
+							listedLicense.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE,
 							SpdxModelFactory.getLatestSpecVersion(), null);
 					// copy to the local store
 				}
 			}
-			return new ExpandedLicensingListedLicense(store, listedLicense.getObjectUri(), copyManager, true, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE);
+			return new ListedLicense(store, listedLicense.getObjectUri(), copyManager, true, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE);
 		} else {
 			// LicenseRef
 			String objectUri = customLicenseUriPrefix + token;
-			ExpandedLicensingCustomLicense localLicense = null;
+			CustomLicense localLicense = null;
 			if (store.exists(objectUri)) {
-				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, false, customLicenseUriPrefix);
+				localLicense = new CustomLicense(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
-				localLicense = new ExpandedLicensingCustomLicense(store, objectUri, copyManager, true, customLicenseUriPrefix);
-				localLicense.setSimpleLicensingLicenseText(UNINITIALIZED_LICENSE_TEXT);
+				localLicense = new CustomLicense(store, objectUri, copyManager, true, customLicenseUriPrefix);
+				localLicense.setLicenseText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localLicense;
 		}
@@ -546,7 +541,7 @@ public class LicenseExpressionParser {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo parseSimpleLicenseTokenCompatV2(String token, IModelStore store, String documentUri,
+	private static org.spdx.library.model.v2.license.AnyLicenseInfo parseSimpleLicenseTokenCompatV2(String token, IModelStore store, String documentUri,
 			IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
@@ -570,7 +565,7 @@ public class LicenseExpressionParser {
 							ModelObjectV2.LATEST_SPDX_2_VERSION, listedLicense.getDocumentUri());
 				}
 			}
-			return (AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactory.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
+			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactory.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
 					licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager, true);
 		} else {
 			// LicenseRef
@@ -596,21 +591,21 @@ public class LicenseExpressionParser {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static void evaluateExpression(Operator operator,
-			Stack<SimpleLicensingAnyLicenseInfo> operandStack, IModelStore store, 
+			Stack<AnyLicenseInfo> operandStack, IModelStore store, 
 			String customLicenseUriPrefix, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (operator == Operator.OR_LATER) {
 			// unary operator
-			SimpleLicensingAnyLicenseInfo license = operandStack.pop();
-			if (!(license instanceof ExpandedLicensingLicense)) {
+			AnyLicenseInfo license = operandStack.pop();
+			if (!(license instanceof License)) {
 				throw new LicenseParserException("Missing license for the '+' or later operator");
 			}
-			ExpandedLicensingOrLaterOperator olo = new ExpandedLicensingOrLaterOperator(store, store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
-			olo.setExpandedLicensingSubjectLicense((ExpandedLicensingLicense)license);
+			OrLaterOperator olo = new OrLaterOperator(store, store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
+			olo.setSubjectLicense((License)license);
 			operandStack.push(olo);
 		} else {
 			// binary operator
-			SimpleLicensingAnyLicenseInfo operand2 = operandStack.pop();
-			SimpleLicensingAnyLicenseInfo operand1 = operandStack.pop();
+			AnyLicenseInfo operand2 = operandStack.pop();
+			AnyLicenseInfo operand1 = operandStack.pop();
 			if (operand1 == null || operand2 == null) {
 				throw new LicenseParserException("Missing operands for the "+operator.toString()+" operator");
 			}
@@ -626,21 +621,21 @@ public class LicenseExpressionParser {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static void evaluateExpressionCompatV2(Operator operator,
-			Stack<AnyLicenseInfo> operandStack, IModelStore store, 
+			Stack<org.spdx.library.model.v2.license.AnyLicenseInfo> operandStack, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (operator == Operator.OR_LATER) {
 			// unary operator
-			AnyLicenseInfo license = operandStack.pop();
+			org.spdx.library.model.v2.license.AnyLicenseInfo license = operandStack.pop();
 			if (!(license instanceof SimpleLicensingInfo)) {
 				throw new LicenseParserException("Missing license for the '+' or later operator");
 			}
-			OrLaterOperator olo = new OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonymous), copyManager, true);
+			org.spdx.library.model.v2.license.OrLaterOperator olo = new org.spdx.library.model.v2.license.OrLaterOperator(store, documentUri, store.getNextId(IdType.Anonymous), copyManager, true);
 			olo.setLicense((SimpleLicensingInfo)license);
 			operandStack.push(olo);
 		} else {
 			// binary operator
-			AnyLicenseInfo operand2 = operandStack.pop();
-			AnyLicenseInfo operand1 = operandStack.pop();
+			org.spdx.library.model.v2.license.AnyLicenseInfo operand2 = operandStack.pop();
+			org.spdx.library.model.v2.license.AnyLicenseInfo operand1 = operandStack.pop();
 			if (operand1 == null || operand2 == null) {
 				throw new LicenseParserException("Missing operands for the "+operator.toString()+" operator");
 			}
@@ -657,31 +652,31 @@ public class LicenseExpressionParser {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static SimpleLicensingAnyLicenseInfo evaluateBinary(Operator tosOperator,
-			SimpleLicensingAnyLicenseInfo operand1, SimpleLicensingAnyLicenseInfo operand2, IModelStore store, 
+	private static AnyLicenseInfo evaluateBinary(Operator tosOperator,
+			AnyLicenseInfo operand1, AnyLicenseInfo operand2, IModelStore store, 
 			String customLicenseUriPrefix, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (tosOperator == Operator.AND) {
-			if (operand1 instanceof ExpandedLicensingConjunctiveLicenseSet) {
+			if (operand1 instanceof ConjunctiveLicenseSet) {
 				// just merge into operand1
-				((ExpandedLicensingConjunctiveLicenseSet) operand1).getExpandedLicensingMembers().add(operand2);
+				((ConjunctiveLicenseSet) operand1).getMembers().add(operand2);
 				return operand1;
 			} else {
-				ExpandedLicensingConjunctiveLicenseSet retval = new ExpandedLicensingConjunctiveLicenseSet(store,
+				ConjunctiveLicenseSet retval = new ConjunctiveLicenseSet(store,
 						store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
-				retval.getExpandedLicensingMembers().add(operand1);
-				retval.getExpandedLicensingMembers().add(operand2);
+				retval.getMembers().add(operand1);
+				retval.getMembers().add(operand2);
 				return retval;
 			}
 		} else if (tosOperator == Operator.OR) {
-			if (operand1 instanceof ExpandedLicensingDisjunctiveLicenseSet) {
+			if (operand1 instanceof DisjunctiveLicenseSet) {
 				// just merge into operand1
-				((ExpandedLicensingDisjunctiveLicenseSet) operand1).getExpandedLicensingMembers().add(operand2);
+				((DisjunctiveLicenseSet) operand1).getMembers().add(operand2);
 				return operand1;
 			} else {
-				ExpandedLicensingDisjunctiveLicenseSet retval = new ExpandedLicensingDisjunctiveLicenseSet(store, 
+				DisjunctiveLicenseSet retval = new DisjunctiveLicenseSet(store, 
 						store.getNextId(IdType.Anonymous), copyManager, true, customLicenseUriPrefix);
-				retval.getExpandedLicensingMembers().add(operand1);
-				retval.getExpandedLicensingMembers().add(operand2);
+				retval.getMembers().add(operand1);
+				retval.getMembers().add(operand2);
 				return retval;
 			}
 		} else {
@@ -698,28 +693,28 @@ public class LicenseExpressionParser {
 	 * @return
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static AnyLicenseInfo evaluateBinaryCompatV2(Operator tosOperator,
-			AnyLicenseInfo operand1, AnyLicenseInfo operand2, IModelStore store, 
+	private static org.spdx.library.model.v2.license.AnyLicenseInfo evaluateBinaryCompatV2(Operator tosOperator,
+			org.spdx.library.model.v2.license.AnyLicenseInfo operand1, org.spdx.library.model.v2.license.AnyLicenseInfo operand2, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (tosOperator == Operator.AND) {
-			if (operand1 instanceof ConjunctiveLicenseSet) {
+			if (operand1 instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
 				// just merge into operand1
-				((ConjunctiveLicenseSet) operand1).addMember(operand2);
+				((org.spdx.library.model.v2.license.ConjunctiveLicenseSet) operand1).addMember(operand2);
 				return operand1;
 			} else {
-				ConjunctiveLicenseSet retval = new ConjunctiveLicenseSet(store, documentUri, 
+				org.spdx.library.model.v2.license.ConjunctiveLicenseSet retval = new org.spdx.library.model.v2.license.ConjunctiveLicenseSet(store, documentUri, 
 						store.getNextId(IdType.Anonymous), copyManager, true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);
 				return retval;
 			}
 		} else if (tosOperator == Operator.OR) {
-			if (operand1 instanceof DisjunctiveLicenseSet) {
+			if (operand1 instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet) {
 				// just merge into operand1
-				((DisjunctiveLicenseSet) operand1).addMember(operand2);
+				((org.spdx.library.model.v2.license.DisjunctiveLicenseSet) operand1).addMember(operand2);
 				return operand1;
 			} else {
-				DisjunctiveLicenseSet retval = new DisjunctiveLicenseSet(store, documentUri, 
+				org.spdx.library.model.v2.license.DisjunctiveLicenseSet retval = new org.spdx.library.model.v2.license.DisjunctiveLicenseSet(store, documentUri, 
 						store.getNextId(IdType.Anonymous), copyManager, true);
 				retval.addMember(operand1);
 				retval.addMember(operand2);

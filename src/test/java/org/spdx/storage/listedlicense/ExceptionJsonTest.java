@@ -29,9 +29,8 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -56,19 +55,19 @@ public class ExceptionJsonTest extends TestCase {
 			SpdxConstantsCompatV2.PROP_EXCEPTION_TEMPLATE, 
 			SpdxConstantsCompatV2.PROP_EXAMPLE, SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION,
 			SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT_HTML,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_ADDITION_TEXT,
-			SpdxConstantsV3.PROP_NAME, SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_ADDITION_TEMPLATE,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_DEPRECATED_VERSION, SpdxConstantsV3.PROP_COMMENT,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_LICENSE_XML, SpdxConstantsV3.PROP_EXPANDED_LICENSING_OBSOLETED_BY,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_LIST_VERSION_ADDED);
+			SpdxConstantsV3.PROP_ADDITION_TEXT,
+			SpdxConstantsV3.PROP_NAME, SpdxConstantsV3.PROP_STANDARD_ADDITION_TEMPLATE,
+			SpdxConstantsV3.PROP_DEPRECATED_VERSION, SpdxConstantsV3.PROP_COMMENT,
+			SpdxConstantsV3.PROP_LICENSE_XML, SpdxConstantsV3.PROP_OBSOLETED_BY,
+			SpdxConstantsV3.PROP_LIST_VERSION_ADDED);
 	
 	static final List<PropertyDescriptor> BOOLEAN_PROPERTIES = Arrays.asList(
 			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED,
-			SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_DEPRECATED_ADDITION_ID
+			SpdxConstantsV3.PROP_IS_DEPRECATED_ADDITION_ID
 			);
 
 	static final List<PropertyDescriptor> LIST_PROPERTIES = Arrays.asList(
-			SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+			SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, SpdxConstantsV3.PROP_SEE_ALSO);
 	static final List<PropertyDescriptor> ALL_PROPERTIES = new ArrayList<>();
 	static final Set<String> ALL_PROPERTY_NAMES = new HashSet<>();
 	static {
@@ -199,21 +198,21 @@ public class ExceptionJsonTest extends TestCase {
 	public void testAddClearGetPropertyValueListV3() throws InvalidSpdxPropertyException {
 		String exceptionId = "SpdxexceptionId1";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
-		List<String> result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		List<String> result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 		String firstItem = "first";
 		String secondItem = "second";
-		ej.addPrimitiveValueToList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, firstItem);
-		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		ej.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, firstItem);
+		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(1, result.size());
 		assertEquals(firstItem, result.get(0));
-		ej.addPrimitiveValueToList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, secondItem);
-		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		ej.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, secondItem);
+		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(2, result.size());
 		assertEquals(firstItem, result.get(0));
 		assertEquals(secondItem, result.get(1));
-		ej.clearPropertyValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
-		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		ej.clearPropertyValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		result = (List<String>) ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 	}
 	
@@ -271,7 +270,7 @@ public class ExceptionJsonTest extends TestCase {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
-		seeAlsoResult = (List<String>)ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		seeAlsoResult = (List<String>)ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
@@ -338,7 +337,7 @@ public class ExceptionJsonTest extends TestCase {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
-		seeAlsoResult = (List<String>)ej.getValueList(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		seeAlsoResult = (List<String>)ej.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
@@ -351,7 +350,7 @@ public class ExceptionJsonTest extends TestCase {
 		String exceptionId = "excId";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
 		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
-		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, String.class));
+		assertTrue(ej.isCollectionMembersAssignableTo(SpdxConstantsV3.PROP_SEE_ALSO, String.class));
 		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, Boolean.class));
 		assertFalse(ej.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT, String.class));
 	}
@@ -383,7 +382,7 @@ public class ExceptionJsonTest extends TestCase {
 		List<String> seeAlso = Arrays.asList(seeAlsoArray);
 		String template = "template";
 		
-		ListedLicenseException exception = new ListedLicenseException(store, docUri, exceptionId, null, true);
+		org.spdx.library.model.v2.license.ListedLicenseException exception = new org.spdx.library.model.v2.license.ListedLicenseException(store, docUri, exceptionId, null, true);
 		exception.setComment(comment);
 		exception.setDeprecated(deprecated);
 		exception.setDeprecatedVersion(deprecatedVersion);
@@ -427,20 +426,20 @@ public class ExceptionJsonTest extends TestCase {
 		String licenseXml = "licenseXml";
 		String obsoletedBy = "obsoletedBy";
 		String listVersionAdded = "2.3.2";
-		ExpandedLicensingListedLicenseException exception = new ExpandedLicensingListedLicenseException(store,
+		ListedLicenseException exception = new ListedLicenseException(store,
 					 objectUri, null, true, null);
 		exception.setComment(comment);
-		exception.setExpandedLicensingIsDeprecatedAdditionId(deprecated);
-		exception.setExpandedLicensingDeprecatedVersion(deprecatedVersion);
-		exception.setExpandedLicensingStandardAdditionTemplate(template);
-		exception.setExpandedLicensingAdditionText(text);
+		exception.setIsDeprecatedAdditionId(deprecated);
+		exception.setDeprecatedVersion(deprecatedVersion);
+		exception.setStandardAdditionTemplate(template);
+		exception.setAdditionText(text);
 		exception.setName(name);
-		exception.getExpandedLicensingSeeAlsos().addAll(seeAlso);
-		exception.setExpandedLicensingIsDeprecatedAdditionId(deprecated);
-		exception.setExpandedLicensingObsoletedBy(obsoletedBy);
+		exception.getSeeAlsos().addAll(seeAlso);
+		exception.setIsDeprecatedAdditionId(deprecated);
+		exception.setObsoletedBy(obsoletedBy);
 		exception.setComment(comment);
-		exception.setExpandedLicensingLicenseXml(licenseXml);
-		exception.setExpandedLicensingListVersionAdded(listVersionAdded);
+		exception.setLicenseXml(licenseXml);
+		exception.setListVersionAdded(listVersionAdded);
 		ExceptionJson ej = new ExceptionJson();
 		ej.copyFrom(exception);
 		

@@ -131,7 +131,7 @@ public class LicenseCreationInfo {
 		} else if (SpdxConstantsV3.PROP_VERIFIED_USING.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.IntegrityMethod.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTENSION.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.extension.ExtensionExtension.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3.extension.Extension.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_IDENTIFIER.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.ExternalIdentifier.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_USING.equals(propertyDescriptor)) {

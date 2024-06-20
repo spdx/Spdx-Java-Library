@@ -30,9 +30,8 @@ import java.util.Set;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.InvalidSpdxPropertyException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;
 
 
@@ -53,30 +52,30 @@ public class ExceptionJson {
 	static {
 		Map<PropertyDescriptor, String> descriptorsToValue = new HashMap<>();
 		Set<PropertyDescriptor> collectionProperties = new HashSet<>();
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_ADDITION_TEXT, "licenseExceptionText");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_ADDITION_TEXT, "licenseExceptionText");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT, "licenseExceptionText");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT_HTML, "exceptionTextHtml");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_NAME, "name");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_NAME, "name");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID, "licenseExceptionId");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_ADDITION_TEMPLATE, "licenseExceptionTemplate");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_STANDARD_ADDITION_TEMPLATE, "licenseExceptionTemplate");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_EXCEPTION_TEMPLATE, "licenseExceptionTemplate");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_EXAMPLE, "example");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_DEPRECATED_ADDITION_ID, "isDeprecatedLicenseId");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_IS_DEPRECATED_ADDITION_ID, "isDeprecatedLicenseId");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, "isDeprecatedLicenseId");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_DEPRECATED_VERSION, "deprecatedVersion");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_DEPRECATED_VERSION, "deprecatedVersion");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION, "deprecatedVersion");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_COMMENT, "comment");
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_COMMENT, "comment");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID, "licenseExceptionId");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, "seeAlso");
-		collectionProperties.add(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		descriptorsToValue.put(SpdxConstantsV3.PROP_SEE_ALSO, "seeAlso");
+		collectionProperties.add(SpdxConstantsV3.PROP_SEE_ALSO);
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, "seeAlso");
 		collectionProperties.add(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_LICENSE_XML, "licenseXml");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_OBSOLETED_BY, "obsoletedBy");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_LIST_VERSION_ADDED, "listVersionAdded");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_LICENSE_XML, "licenseXml");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_OBSOLETED_BY, "obsoletedBy");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_LIST_VERSION_ADDED, "listVersionAdded");
 		
 		// The following are not implemented in the JSON - they are added so there is no errors when creating V3 object classes
 		descriptorsToValue.put(SpdxConstantsV3.PROP_EXTERNAL_REF, "externalRef");
@@ -289,23 +288,23 @@ public class ExceptionJson {
 
 	}
 	
-	public void copyFrom(ExpandedLicensingListedLicenseException fromException) throws InvalidSPDXAnalysisException {
+	public void copyFrom(ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		Optional<String> comment = fromException.getComment(); 
 		this.comment = comment.orElse(null);
-		this.deprecatedVersion = fromException.getExpandedLicensingDeprecatedVersion().orElse(null);
-		this.isDeprecatedLicenseId = fromException.getExpandedLicensingIsDeprecatedAdditionId().orElse(false);
+		this.deprecatedVersion = fromException.getDeprecatedVersion().orElse(null);
+		this.isDeprecatedLicenseId = fromException.getIsDeprecatedAdditionId().orElse(false);
 		this.licenseExceptionId = SpdxListedLicenseModelStore.objectUriToLicenseOrExceptionId(fromException.getObjectUri());
-		this.licenseExceptionTemplate = fromException.getExpandedLicensingStandardAdditionTemplate().orElse(null);
-		this.licenseExceptionText = fromException.getExpandedLicensingAdditionText();
+		this.licenseExceptionTemplate = fromException.getStandardAdditionTemplate().orElse(null);
+		this.licenseExceptionText = fromException.getAdditionText();
 		this.name = fromException.getName().orElse(null);
-		this.seeAlso = new ArrayList<String>(fromException.getExpandedLicensingSeeAlsos());
-		this.obsoletedBy = fromException.getExpandedLicensingObsoletedBy().orElse(null);
-		this.listVersionAdded = fromException.getExpandedLicensingListVersionAdded().orElse(null);
-		this.licenseXml = fromException.getExpandedLicensingLicenseXml().orElse(null);
+		this.seeAlso = new ArrayList<String>(fromException.getSeeAlsos());
+		this.obsoletedBy = fromException.getObsoletedBy().orElse(null);
+		this.listVersionAdded = fromException.getListVersionAdded().orElse(null);
+		this.licenseXml = fromException.getLicenseXml().orElse(null);
 	}
 
 	@SuppressWarnings("deprecation")
-	public void copyFrom(ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
+	public void copyFrom(org.spdx.library.model.v2.license.ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		this.comment = null;
 		this.licenseComments = fromException.getComment();
 		if (Objects.nonNull(this.licenseComments) && this.licenseComments.isEmpty()) {
@@ -372,14 +371,14 @@ public class ExceptionJson {
 
 	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
 		if (SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.equals(propertyDescriptor) ||
-				SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO.equals(propertyDescriptor)) {
+				SpdxConstantsV3.PROP_SEE_ALSO.equals(propertyDescriptor)) {
 			return String.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_REF.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.ExternalRef.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_VERIFIED_USING.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.IntegrityMethod.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTENSION.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.extension.ExtensionExtension.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3.extension.Extension.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_IDENTIFIER.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.ExternalIdentifier.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_USING.equals(propertyDescriptor)) {

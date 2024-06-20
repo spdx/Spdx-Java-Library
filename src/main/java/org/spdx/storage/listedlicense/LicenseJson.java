@@ -32,7 +32,7 @@ import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.CrossRef;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
 import org.spdx.licenseTemplate.InvalidLicenseTemplateException;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -53,39 +53,39 @@ public class LicenseJson {
 	static {
 		Map<PropertyDescriptor, String> descriptorsToValue = new HashMap<>();
 		Set<PropertyDescriptor> collectionProperties = new HashSet<>();
-		descriptorsToValue.put(SpdxConstantsV3.PROP_SIMPLE_LICENSING_LICENSE_TEXT, "licenseText");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_LICENSE_TEXT, "licenseText");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_TEXT, "licenseText");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_TEXT_HTML, "licenseTextHtml");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_NAME, "name");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_NAME, "name");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_NAME, "name");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_LICENSE_HEADER, "standardLicenseHeader");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_STANDARD_LICENSE_HEADER, "standardLicenseHeader");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_STD_LICENSE_NOTICE, "standardLicenseHeader");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_STD_LICENSE_HEADER_TEMPLATE, "standardLicenseHeaderTemplate");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_HEADER_HTML, "standardLicenseHeaderHtml");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_STANDARD_LICENSE_TEMPLATE, "standardLicenseTemplate");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_STANDARD_LICENSE_TEMPLATE, "standardLicenseTemplate");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_STD_LICENSE_TEMPLATE, "standardLicenseTemplate");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_OSI_APPROVED, "isOsiApproved");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_IS_OSI_APPROVED, "isOsiApproved");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_STD_LICENSE_OSI_APPROVED, "isOsiApproved");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_FSF_LIBRE, "isFsfLibre");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_IS_FSF_LIBRE, "isFsfLibre");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_STD_LICENSE_FSF_LIBRE, "isFsfLibre");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_EXAMPLE, "example");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_IS_DEPRECATED_LICENSE_ID, "isDeprecatedLicenseId");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_IS_DEPRECATED_LICENSE_ID, "isDeprecatedLicenseId");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, "isDeprecatedLicenseId");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_DEPRECATED_VERSION, "deprecatedVersion");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_DEPRECATED_VERSION, "deprecatedVersion");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION, "deprecatedVersion");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_COMMENT, "comment");
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_COMMENT, "comment");
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_ID, "licenseId");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO, "seeAlso");
-		collectionProperties.add(SpdxConstantsV3.PROP_EXPANDED_LICENSING_SEE_ALSO);
+		descriptorsToValue.put(SpdxConstantsV3.PROP_SEE_ALSO, "seeAlso");
+		collectionProperties.add(SpdxConstantsV3.PROP_SEE_ALSO);
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, "seeAlso");
 		collectionProperties.add(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_CROSS_REF, "crossRef");
 		collectionProperties.add(SpdxConstantsCompatV2.PROP_CROSS_REF);
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_LICENSE_XML, "licenseXml");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_OBSOLETED_BY, "obsoletedBy");
-		descriptorsToValue.put(SpdxConstantsV3.PROP_EXPANDED_LICENSING_LIST_VERSION_ADDED, "listVersionAdded");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_LICENSE_XML, "licenseXml");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_OBSOLETED_BY, "obsoletedBy");
+		descriptorsToValue.put(SpdxConstantsV3.PROP_LIST_VERSION_ADDED, "listVersionAdded");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_CREATION_INFO, "creationInfo");
 		
 		// The following are not implemented in the JSON - they are added so there is no errors when creating V3 object classes
@@ -405,24 +405,24 @@ public class LicenseJson {
 	 * @param license
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void copyFrom(ExpandedLicensingListedLicense fromLicense) throws InvalidSPDXAnalysisException {
+	public void copyFrom(ListedLicense fromLicense) throws InvalidSPDXAnalysisException {
 		this.comment = fromLicense.getComment().orElse(null);
-		this.deprecatedVersion = fromLicense.getExpandedLicensingDeprecatedVersion().orElse(null);
+		this.deprecatedVersion = fromLicense.getDeprecatedVersion().orElse(null);
 		this.example = null;
-		this.isDeprecatedLicenseId = fromLicense.getExpandedLicensingIsDeprecatedLicenseId().orElse(false);
-		this.isFsfLibre = fromLicense.getExpandedLicensingIsFsfLibre().orElse(null);
-		this.licenseText = fromLicense.getSimpleLicensingLicenseText();
+		this.isDeprecatedLicenseId = fromLicense.getIsDeprecatedLicenseId().orElse(false);
+		this.isFsfLibre = fromLicense.getIsFsfLibre().orElse(null);
+		this.licenseText = fromLicense.getLicenseText();
 		this.licenseTextHtml = null;
 		this.name = fromLicense.getName().orElse(null);
-		this.isOsiApproved = fromLicense.getExpandedLicensingIsOsiApproved().orElse(false);
-		this.seeAlso = new ArrayList<>(fromLicense.getExpandedLicensingSeeAlsos());
-		this.standardLicenseHeader = fromLicense.getExpandedLicensingStandardLicenseHeader().orElse(null);
+		this.isOsiApproved = fromLicense.getIsOsiApproved().orElse(false);
+		this.seeAlso = new ArrayList<>(fromLicense.getSeeAlsos());
+		this.standardLicenseHeader = fromLicense.getStandardLicenseHeader().orElse(null);
 		this.standardLicenseHeaderHtml = null;
-		this.standardLicenseTemplate = fromLicense.getExpandedLicensingStandardLicenseTemplate().orElse(null);
+		this.standardLicenseTemplate = fromLicense.getStandardLicenseTemplate().orElse(null);
 		this.crossRef.clear();
-		this.obsoletedBy = fromLicense.getExpandedLicensingObsoletedBy().orElse(null);
-		this.licenseXml = fromLicense.getExpandedLicensingLicenseXml().orElse(null);
-		this.listVersionAdded = fromLicense.getExpandedLicensingListVersionAdded().orElse(null);
+		this.obsoletedBy = fromLicense.getObsoletedBy().orElse(null);
+		this.licenseXml = fromLicense.getLicenseXml().orElse(null);
+		this.listVersionAdded = fromLicense.getListVersionAdded().orElse(null);
 	}
 
 	public void copyFrom(SpdxListedLicense fromLicense) throws InvalidLicenseTemplateException, InvalidSPDXAnalysisException {
@@ -523,7 +523,7 @@ public class LicenseJson {
 		} else if (SpdxConstantsV3.PROP_VERIFIED_USING.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.IntegrityMethod.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTENSION.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.extension.ExtensionExtension.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3.extension.Extension.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_IDENTIFIER.equals(propertyDescriptor)) {
 			return org.spdx.library.model.v3.core.ExternalIdentifier.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_USING.equals(propertyDescriptor)) {

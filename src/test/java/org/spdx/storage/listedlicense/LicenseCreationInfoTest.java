@@ -118,7 +118,7 @@ public class LicenseCreationInfoTest {
 		result = lci.getValue(SpdxConstantsV3.PROP_SPEC_VERSION);
 		assertTrue(result instanceof String);
 		assertEquals(SpdxConstantsV3.MODEL_SPEC_VERSION, result);
-		assertTrue(Objects.isNull(lci.getValue(SpdxConstantsV3.PROP_A_I_DOMAIN)));
+		assertTrue(Objects.isNull(lci.getValue(SpdxConstantsV3.PROP_DOMAIN)));
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class LicenseCreationInfoTest {
 		assertTrue(lci.isPropertyValueAssignableTo(SpdxConstantsV3.PROP_CREATED, String.class));
 		assertTrue(lci.isPropertyValueAssignableTo(SpdxConstantsV3.PROP_SPEC_VERSION, String.class));
 		assertFalse(lci.isPropertyValueAssignableTo(SpdxConstantsV3.PROP_CREATED_BY, String.class));
-		assertFalse(lci.isPropertyValueAssignableTo(SpdxConstantsV3.PROP_SOFTWARE_DOWNLOAD_LOCATION, String.class));
+		assertFalse(lci.isPropertyValueAssignableTo(SpdxConstantsV3.PROP_DOWNLOAD_LOCATION, String.class));
 	}
 
 }

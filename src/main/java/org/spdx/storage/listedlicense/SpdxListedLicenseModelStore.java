@@ -275,7 +275,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				CrossRefJson crossRef = new CrossRefJson();
 				crossRef.setId(id);
 				this.crossRefs.put(id, crossRef);
-			} else if ((isSpdx3 && SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE.equals(typedValue.getType())) || 
+			} else if ((isSpdx3 && SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE.equals(typedValue.getType())) || 
 					(!isSpdx3 && SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(typedValue.getType()))) {
 				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 					logger.error("Duplicate SPDX ID on create: "+id);
@@ -283,7 +283,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				}
 				this.licenseIds.put(id.toLowerCase(), id);
 				this.listedLicenseCache.put(id, new LicenseJson(id));
-			} else if ((isSpdx3 && SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION.equals(typedValue.getType())) || 
+			} else if ((isSpdx3 && SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION.equals(typedValue.getType())) || 
 					(!isSpdx3 && SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typedValue.getType()))) {
 				if (this.licenseIds.containsKey(id.toLowerCase()) || this.exceptionIds.containsKey(id.toLowerCase())) {
 					logger.error("Duplicate SPDX ID on create: "+id);
@@ -896,9 +896,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
+				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
+				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
 			} else if (crossRefs.containsKey(id)) {
 				// Cross refs are only supported in SPDX version 2.X
 				return Optional.of(new TypedValue(id, SpdxConstantsCompatV2.CLASS_CROSS_REF, ModelObjectV2.LATEST_SPDX_2_VERSION));
@@ -962,9 +962,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 					allItems.add(new TypedValue(licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, ModelObjectV2.LATEST_SPDX_2_VERSION));
 				}
 			}
-			if (Objects.isNull(typeFilter) || SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE.equals(typeFilter)) {
+			if (Objects.isNull(typeFilter) || SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE.equals(typeFilter)) {
 				for (String licenseId:this.licenseIds.values()) {
-					allItems.add(new TypedValue(licenseId, SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
+					allItems.add(new TypedValue(licenseId, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
 				}
 			}
 			if (SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typeFilter)) {
@@ -974,7 +974,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			}
 			if (Objects.isNull(typeFilter) || SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION.equals(typeFilter)) {
 				for (String exceptionId:this.exceptionIds.values()) {
-					allItems.add(new TypedValue(exceptionId, SpdxConstantsV3.EXPANDED_LICENSING_EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
+					allItems.add(new TypedValue(exceptionId, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
 				}
 			}
 			if (Objects.isNull(typeFilter) || SpdxConstantsCompatV2.CLASS_CROSS_REF.equals(typeFilter)) {

@@ -29,15 +29,13 @@ import org.spdx.core.DefaultModelStore;
 import org.spdx.core.DefaultStoreNotInitialized;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.library.model.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.LicenseParserException;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicenseException;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.utility.license.LicenseExpressionParser;
 
@@ -57,7 +55,7 @@ public class LicenseInfoFactory {
 	 * @return SPDX listed license or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	public static ExpandedLicensingListedLicense getListedLicenseById(String licenseId)throws InvalidSPDXAnalysisException {
+	public static ListedLicense getListedLicenseById(String licenseId)throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedLicenseById(licenseId);
 	}
 	
@@ -92,7 +90,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
+	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
 			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
@@ -136,7 +134,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
 			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
 			@Nullable SpdxDocument spdxDocument) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
@@ -175,7 +173,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static SimpleLicensingAnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		return parseSPDXLicenseString(licenseString, null, null, null, null);
 	}
 	
@@ -196,7 +194,7 @@ public class LicenseInfoFactory {
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		return parseSPDXLicenseStringCompatV2(licenseString, null, null, null);
 	}
 
@@ -237,7 +235,7 @@ public class LicenseInfoFactory {
 	 * @return the standard SPDX license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static ExpandedLicensingListedLicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
+	public static ListedLicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionById(id);
 	}
 
@@ -246,7 +244,7 @@ public class LicenseInfoFactory {
 	 * @return the standard SPDX license exception in SPDX Spec V2.X format or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static ListedLicenseException getListedExceptionV2ById(String id) throws InvalidSPDXAnalysisException {
+	public static org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionV2ById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
 	}
 	

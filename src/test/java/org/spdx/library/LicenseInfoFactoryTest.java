@@ -25,13 +25,13 @@ import org.spdx.core.DefaultStoreNotInitialized;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingConjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingCustomLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingDisjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoAssertionLicense;
-import org.spdx.library.model.v3.expandedlicensing.ExpandedLicensingNoneLicense;
-import org.spdx.library.model.v3.simplelicensing.SimpleLicensingAnyLicenseInfo;
+import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.NoAssertionLicense;
+import org.spdx.library.model.v3.expandedlicensing.NoneLicense;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -52,12 +52,12 @@ public class LicenseInfoFactoryTest extends TestCase {
 		static final String[] STD_TEXTS = new String[] {"Academic Free License (", "CONTRAT DE LICENCE DE LOGICIEL LIBRE CeCILL-B",
 			"European Union Public Licence"};
 
-		ExpandedLicensingCustomLicense[] NON_STD_LICENSES;
-		ExpandedLicensingListedLicense[] STANDARD_LICENSES;
-		ExpandedLicensingDisjunctiveLicenseSet[] DISJUNCTIVE_LICENSES;
-		ExpandedLicensingConjunctiveLicenseSet[] CONJUNCTIVE_LICENSES;
+		CustomLicense[] NON_STD_LICENSES;
+		ListedLicense[] STANDARD_LICENSES;
+		DisjunctiveLicenseSet[] DISJUNCTIVE_LICENSES;
+		ConjunctiveLicenseSet[] CONJUNCTIVE_LICENSES;
 		
-		ExpandedLicensingConjunctiveLicenseSet COMPLEX_LICENSE;
+		ConjunctiveLicenseSet COMPLEX_LICENSE;
 		
 		ModelCopyManager copyManager;
 		IModelStore modelStore;
@@ -72,56 +72,56 @@ public class LicenseInfoFactoryTest extends TestCase {
 		modelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
 		DefaultModelStore.initialize(new InMemSpdxStore(), TEST_DOCUMENT_URI, copyManager);
-		NON_STD_LICENSES = new ExpandedLicensingCustomLicense[NONSTD_IDS.length];
+		NON_STD_LICENSES = new CustomLicense[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
-			NON_STD_LICENSES[i] = new ExpandedLicensingCustomLicense(modelStore, 
+			NON_STD_LICENSES[i] = new CustomLicense(modelStore, 
 					TEST_DOCUMENT_URI + "#" + NONSTD_IDS[i], copyManager, true, null);
-			NON_STD_LICENSES[i].setSimpleLicensingLicenseText(NONSTD_TEXTS[i]);
+			NON_STD_LICENSES[i].setLicenseText(NONSTD_TEXTS[i]);
 		}
 		
-		STANDARD_LICENSES = new ExpandedLicensingListedLicense[STD_IDS.length];
+		STANDARD_LICENSES = new ListedLicense[STD_IDS.length];
 		for (int i = 0; i < STD_IDS.length; i++) {
-			STANDARD_LICENSES[i] = new ExpandedLicensingListedLicense(modelStore, 
+			STANDARD_LICENSES[i] = new ListedLicense(modelStore, 
 					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX + STD_IDS[i], copyManager, true, null);
 			STANDARD_LICENSES[i].setName("Name "+String.valueOf(i));
-			STANDARD_LICENSES[i].setSimpleLicensingLicenseText(STD_TEXTS[i]);
-			STANDARD_LICENSES[i].getExpandedLicensingSeeAlsos().add("URL "+String.valueOf(i));
+			STANDARD_LICENSES[i].setLicenseText(STD_TEXTS[i]);
+			STANDARD_LICENSES[i].getSeeAlsos().add("URL "+String.valueOf(i));
 			STANDARD_LICENSES[i].setComment("Notes "+String.valueOf(i));
-			STANDARD_LICENSES[i].setExpandedLicensingStandardLicenseHeader("LicHeader "+String.valueOf(i));
-			STANDARD_LICENSES[i].setExpandedLicensingStandardLicenseTemplate("Template "+String.valueOf(i));
+			STANDARD_LICENSES[i].setStandardLicenseHeader("LicHeader "+String.valueOf(i));
+			STANDARD_LICENSES[i].setStandardLicenseTemplate("Template "+String.valueOf(i));
 		}
 		
-		DISJUNCTIVE_LICENSES = new ExpandedLicensingDisjunctiveLicenseSet[3];
-		CONJUNCTIVE_LICENSES = new ExpandedLicensingConjunctiveLicenseSet[2];
+		DISJUNCTIVE_LICENSES = new DisjunctiveLicenseSet[3];
+		CONJUNCTIVE_LICENSES = new ConjunctiveLicenseSet[2];
 		
-		DISJUNCTIVE_LICENSES[0] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
+		DISJUNCTIVE_LICENSES[0] = new DisjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		DISJUNCTIVE_LICENSES[0].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[0].getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				NON_STD_LICENSES[0], NON_STD_LICENSES[1], STANDARD_LICENSES[1]
 		})));
-		CONJUNCTIVE_LICENSES[0] = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
+		CONJUNCTIVE_LICENSES[0] = new ConjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		CONJUNCTIVE_LICENSES[0].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[0].getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				STANDARD_LICENSES[0], NON_STD_LICENSES[0], STANDARD_LICENSES[1]
 		})));
-		CONJUNCTIVE_LICENSES[1] = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
+		CONJUNCTIVE_LICENSES[1] = new ConjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		CONJUNCTIVE_LICENSES[1].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		CONJUNCTIVE_LICENSES[1].getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[0], NON_STD_LICENSES[2]
 		})));
-		DISJUNCTIVE_LICENSES[1] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
+		DISJUNCTIVE_LICENSES[1] = new DisjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		DISJUNCTIVE_LICENSES[1].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[1].getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				CONJUNCTIVE_LICENSES[1], NON_STD_LICENSES[0], STANDARD_LICENSES[0]
 		})));
-		DISJUNCTIVE_LICENSES[2] = new ExpandedLicensingDisjunctiveLicenseSet(modelStore, 
+		DISJUNCTIVE_LICENSES[2] = new DisjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		DISJUNCTIVE_LICENSES[2].getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		DISJUNCTIVE_LICENSES[2].getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[1], CONJUNCTIVE_LICENSES[0], STANDARD_LICENSES[2]
 		})));
-		COMPLEX_LICENSE = new ExpandedLicensingConjunctiveLicenseSet(modelStore, 
+		COMPLEX_LICENSE = new ConjunctiveLicenseSet(modelStore, 
 				modelStore.getNextId(IdType.Anonymous), copyManager, true, null);
-		COMPLEX_LICENSE.getExpandedLicensingMembers().addAll(new ArrayList<SimpleLicensingAnyLicenseInfo>(Arrays.asList(new SimpleLicensingAnyLicenseInfo[] {
+		COMPLEX_LICENSE.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {
 				DISJUNCTIVE_LICENSES[2], NON_STD_LICENSES[2], CONJUNCTIVE_LICENSES[1]
 		})));
 	}
@@ -136,7 +136,7 @@ public class LicenseInfoFactoryTest extends TestCase {
 	
 	public void testParseSPDXLicenseString() throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		String parseString = COMPLEX_LICENSE.toString();
-		SimpleLicensingAnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseString(parseString);
+		AnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseString(parseString);
 		if (!li.equals(COMPLEX_LICENSE)) {
 			fail("Parsed license does not equal");
 		}
@@ -145,14 +145,14 @@ public class LicenseInfoFactoryTest extends TestCase {
 	
 	public void testSpecialLicenses() throws InvalidLicenseStringException, InvalidSPDXAnalysisException {
 		// NONE
-		SimpleLicensingAnyLicenseInfo none = LicenseInfoFactory.parseSPDXLicenseString(LicenseInfoFactory.NONE_LICENSE_NAME);
-		SimpleLicensingAnyLicenseInfo comp = new ExpandedLicensingNoneLicense();
+		AnyLicenseInfo none = LicenseInfoFactory.parseSPDXLicenseString(LicenseInfoFactory.NONE_LICENSE_NAME);
+		AnyLicenseInfo comp = new NoneLicense();
 		assertEquals(none, comp);
 		List<String> verify = comp.verify();
 		assertEquals(0, verify.size());
 		// NOASSERTION_NAME
-		SimpleLicensingAnyLicenseInfo noAssertion = LicenseInfoFactory.parseSPDXLicenseString(LicenseInfoFactory.NOASSERTION_LICENSE_NAME);
-		comp = new ExpandedLicensingNoAssertionLicense();
+		AnyLicenseInfo noAssertion = LicenseInfoFactory.parseSPDXLicenseString(LicenseInfoFactory.NOASSERTION_LICENSE_NAME);
+		comp = new NoAssertionLicense();
 		assertEquals(noAssertion, comp);
 		verify = comp.verify();
 		assertEquals(0, verify.size());
@@ -160,8 +160,8 @@ public class LicenseInfoFactoryTest extends TestCase {
 	
 	
 	public void testDifferentLicenseOrder() throws InvalidSPDXAnalysisException {
-		SimpleLicensingAnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseString("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-3-Clause-Clear)");
-		SimpleLicensingAnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseString("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-3-Clause-Clear AND LicenseRef-16)");
+		AnyLicenseInfo order1 = LicenseInfoFactory.parseSPDXLicenseString("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-3 AND LicenseRef-12 AND LicenseRef-4 AND LicenseRef-13 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND LicenseRef-16 AND BSD-3-Clause-Clear)");
+		AnyLicenseInfo order2 = LicenseInfoFactory.parseSPDXLicenseString("(LicenseRef-14 AND LicenseRef-5 AND LicenseRef-6 AND LicenseRef-15 AND LicenseRef-12 AND LicenseRef-3 AND LicenseRef-13 AND LicenseRef-4 AND LicenseRef-10 AND LicenseRef-9 AND LicenseRef-11 AND LicenseRef-7 AND LicenseRef-8 AND LGPL-2.1+ AND LicenseRef-1 AND LicenseRef-2 AND LicenseRef-0 AND GPL-2.0+ AND GPL-2.0 AND LicenseRef-17 AND BSD-3-Clause-Clear AND LicenseRef-16)");
 		assertTrue(order1.equals(order2));
 		assertTrue(order1.equivalent(order2));
 	}
@@ -169,7 +169,7 @@ public class LicenseInfoFactoryTest extends TestCase {
 	public void testParseSPDXLicenseStringMixedCase() throws InvalidSPDXAnalysisException {
 		String parseString = COMPLEX_LICENSE.toString();
 		String lowerCaseCecil = parseString.replace("CECILL-B", "CECILL-B".toLowerCase());
-		SimpleLicensingAnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString(lowerCaseCecil);
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString(lowerCaseCecil);
 		assertEquals(COMPLEX_LICENSE, result);
 	}
 }
