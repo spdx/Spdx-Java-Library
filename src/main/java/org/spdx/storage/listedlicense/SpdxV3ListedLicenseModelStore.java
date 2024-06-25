@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.spdx.core.IExternalElementInfo;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
@@ -380,30 +378,10 @@ public class SpdxV3ListedLicenseModelStore implements IModelStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#addExternalReference(java.lang.String, java.lang.String, org.spdx.core.IExternalElementInfo)
+	 * @see org.spdx.storage.IModelStore#isAnon(java.lang.String)
 	 */
 	@Override
-	public IExternalElementInfo addExternalReference(String externalObjectUri,
-			String collectionUri, IExternalElementInfo externalElementInfo) {
-		return baseStore.addExternalReference(externalObjectUri, collectionUri, externalElementInfo);
+	public boolean isAnon(String objectUri) {
+		return baseStore.isAnon(objectUri);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getExternalReferenceMap(java.lang.String)
-	 */
-	@Override
-	public Map<String, IExternalElementInfo> getExternalReferenceMap(
-			String externalObjectUri) {
-		return baseStore.getExternalReferenceMap(externalObjectUri);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getExternalElementInfo(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public IExternalElementInfo getExternalElementInfo(String externalObjectUri,
-			String collectionUri) {
-		return baseStore.getExternalElementInfo(externalObjectUri, collectionUri);
-	}
-
 }

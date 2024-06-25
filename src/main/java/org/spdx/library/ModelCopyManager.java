@@ -244,7 +244,7 @@ public class ModelCopyManager implements IModelCopyManager {
 	 * @param sourceUri URI for the Source object
 	 * @param type Type to copy
 	 * @param toSpecVersion Version of the SPDX spec the to value complies with
-	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
+	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object - must be a unique prefix to the store
 	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
@@ -258,30 +258,95 @@ public class ModelCopyManager implements IModelCopyManager {
 
 		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
 		if (Objects.isNull(toObjectUri)) {
-			if (toStore.exists(sourceUri) || IdType.Anonymous.equals(fromStore.getIdType(sourceUri))) {
-				// TODO - the toNamspace will never be used - we need to add a from namespace
-				if (Objects.nonNull(toNamespace)) {
-					if (SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) {
-						toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef);
-					} else {
-						switch (fromStore.getIdType(sourceUri)) {
-							case Anonymous: toObjectUri = toStore.getNextId(IdType.Anonymous); break;
-							case LicenseRef: toObjectUri = toNamespace + toStore.getNextId(IdType.LicenseRef); break;
-							case DocumentRef: toObjectUri = toNamespace + toStore.getNextId(IdType.DocumentRef); break;
-							case SpdxId: toObjectUri = toNamespace + toStore.getNextId(IdType.SpdxId); break;
-							case ListedLicense:
-							case Unkown:
-							default: toObjectUri = toStore.getNextId(IdType.Anonymous);
-						}
-					}
-				} else {
-					toObjectUri = toStore.getNextId(IdType.Anonymous);
-				}
-			} else {
-				toObjectUri = sourceUri;
-			}
+			toObjectUri = toSpecVersion.startsWith("SPDX-2") ? sourceUriToObjectUriV2Compat(sourceUri, 
+					fromStore.getIdType(sourceUri), toStore, toNamespace, SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) :
+				sourceUriToObjectUri(sourceUri, fromStore.getIdType(sourceUri), toStore, toNamespace);
 			copy(toStore, toObjectUri, fromStore, sourceUri, type, toSpecVersion, toNamespace);
 		}
 		return new TypedValue(toObjectUri, type, toSpecVersion);
+	}
+
+	/**
+	 * @param sourceUri source URI copied from
+	 * @param idType idType from the sourceUri
+	 * @param toStore model store to store the copied item
+	 * @param toNamespace namespace for the generated elements for "to"
+	 * @return an object URI suitable for SPDX V3 and later
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	private String sourceUriToObjectUri(String sourceUri, IdType idType, IModelStore toStore, 
+			String toNamespace) throws InvalidSPDXAnalysisException {
+		if (IdType.Anonymous.equals(idType)) {
+			return toStore.getNextId(IdType.Anonymous);
+		}
+		if (!toStore.exists(sourceUri)) {
+			return sourceUri;
+		}
+		if (Objects.isNull(toNamespace) || toNamespace.isEmpty() || 
+				sourceUri.startsWith(toNamespace)) {
+			logger.warn(sourceUri + " already exists - possibly overwriting properties due to a copy from a different model store.");
+			return sourceUri;
+		}
+		switch (idType) {
+			case LicenseRef: return toNamespace + toStore.getNextId(IdType.LicenseRef);
+			case DocumentRef: return toNamespace + toStore.getNextId(IdType.DocumentRef);
+			case SpdxId: return toNamespace + toStore.getNextId(IdType.SpdxId);
+			case ListedLicense: return sourceUri;
+			case Anonymous:
+			case Unkown:
+			default: return toStore.getNextId(IdType.Anonymous);
+		}
+	}
+
+	/**
+	 * @param sourceUri source URI copied from
+	 * @param idType idType from the sourceUri
+	 * @param toStore model store to store the copied item
+	 * @param toNamespace namespace for the generated elements for "to"
+	 * @param isExternalDocRef true if the type of the value to be copied is an ExternalDocRef
+	 * @return an object URI suitable for SPDX V2
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	private String sourceUriToObjectUriV2Compat(String sourceUri, IdType idType, 
+			IModelStore toStore, String toNamespace, boolean isExternalDocRef) throws InvalidSPDXAnalysisException {
+		if ((isExternalDocRef || !(IdType.Anonymous.equals(idType) ||
+				IdType.ListedLicense.equals(idType) || IdType.Unkown.equals(idType)))
+				&& (Objects.isNull(toNamespace) || toNamespace.isEmpty())) {
+			throw new InvalidSPDXAnalysisException("A to namespace or document URI must be provided to copy SPDX element for SPDX spec version 2");
+		}
+		if (sourceUri.startsWith(toNamespace) && !toStore.exists(sourceUri)) {
+			return sourceUri;
+		}
+		if (IdType.ListedLicense.equals(idType)) {
+			return sourceUri;
+		}
+		String toUri = null;
+		if (Objects.nonNull(toNamespace)) {
+			int poundIndex = sourceUri.lastIndexOf('#');
+			if (poundIndex > 0) {
+				toUri = toNamespace + sourceUri.substring(poundIndex + 1);
+			}
+		}
+		
+		boolean notNullAndNotExists = Objects.nonNull(toUri) && !toStore.exists(toUri); // notExists and nonNull
+		if (isExternalDocRef) {
+			if (!toStore.exists(toUri) && IdType.DocumentRef.equals(toStore.getIdType(toUri))) {
+				return toUri;
+			} else {
+				return toNamespace + toStore.getNextId(IdType.DocumentRef);
+			}
+		}
+		switch (idType) {
+			case LicenseRef: return notNullAndNotExists && IdType.LicenseRef.equals(toStore.getIdType(toUri)) ? toUri : 
+				toNamespace + toStore.getNextId(IdType.LicenseRef);
+			case DocumentRef: return notNullAndNotExists && IdType.DocumentRef.equals(toStore.getIdType(toUri)) ? toUri : 
+				toNamespace + toStore.getNextId(IdType.DocumentRef);
+			case SpdxId: return notNullAndNotExists && IdType.SpdxId.equals(toStore.getIdType(toUri)) ? toUri : 
+				toNamespace + toStore.getNextId(IdType.SpdxId);
+			case ListedLicense: return sourceUri;
+			case Anonymous:
+			case Unkown:
+			default: return toStore.getNextId(IdType.Anonymous);
+		}
 	}
 }

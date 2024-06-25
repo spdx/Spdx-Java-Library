@@ -420,7 +420,7 @@ public class StoredTypedItem extends TypedValue {
 							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
 								return false;
 							}
-						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, getSpecVersion()))) {
+						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, getSpecVersion(), clazz))) {
 							return false;
 							//TODO: Test for type of individual
 						}

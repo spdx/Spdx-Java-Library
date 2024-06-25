@@ -41,11 +41,9 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.DuplicateSpdxIdException;
-import org.spdx.core.IExternalElementInfo;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.core.TypedValue;
-import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.model.v2.ModelObjectV2;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicenseException;
@@ -156,12 +154,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @throws IOException
 	 */
 	abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
-	
-	/**
-	 * Map of an objectUri to a map of documentUri's to external element information
-	 */
-	protected Map<String, Map<String, IExternalElementInfo>> objectUriExternalMap = new HashMap<>();
-
 	/**
 	 * Loads all license and exception ID's from the appropriate JSON files
 	 * @throws InvalidSPDXAnalysisException
@@ -249,6 +241,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		String id;
 		if (objectUri.startsWith(LISTED_LICENSE_NAMESPACE)) {
 			id = objectUri.substring(LISTED_LICENSE_NAMESPACE.length());
+		} else if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL)) {
+			logger.warn("SPDX listed license URL was used instead of the required namespace ('https:' rather than 'http:'");
+			id = objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_URL.length());
 		} else if (getIdType(objectUri) == IdType.Anonymous || 
 				licenseCreator.getObjectUri().equals(objectUri) ||
 				LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
@@ -1194,17 +1189,22 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public IdType getIdType(String id) {
-		Objects.requireNonNull(id, "ID must not be null");
-		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
+	public IdType getIdType(String objectUri) {
+		Objects.requireNonNull(objectUri, "Object URI must not be null");
+		if (objectUri.startsWith(LISTED_LICENSE_NAMESPACE)) {
 			return IdType.ListedLicense;
-		} else if (id.startsWith(ANONYMOUS_ID_PREFIX) || LicenseCreationInfo.CREATION_INFO_URI.equals(id)) {
+		} else if (objectUri.startsWith(ANONYMOUS_ID_PREFIX) || LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
 			return IdType.Anonymous;
-		} else if (id.startsWith(LicenseCreatorAgent.OBJECT_URI_PREFIX)) {
+		} else if (objectUri.startsWith(LicenseCreatorAgent.OBJECT_URI_PREFIX)) {
 			return IdType.SpdxId;
 		} else {
 			return IdType.Unkown;
 		}
+	}
+	
+	@Override
+	public boolean isAnon(String objectUri) {
+		return objectUri.startsWith(ANONYMOUS_ID_PREFIX);
 	}
 	
 
@@ -1283,45 +1283,5 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public void close() throws Exception {
 		// Nothing to do for the either the in-memory or the web store
-	}
-	
-	/**
-	 * Adds an external reference for a given collection
-	 * @param externalObjectUri URI of the external SPDX Element or License
-	 * @param collectionUri URI of the SPDX document or collection
-	 * @param externalElementInfo info about the external element
-	 * @return the previous external mapping for the collection, null if no previous value is present
-	 */
-	@Override
-	public synchronized @Nullable IExternalElementInfo addExternalReference(String externalObjectUri, String collectionUri, IExternalElementInfo externalElementInfo) {
-		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
-		if (Objects.isNull(externalObjectToCollectionMap)) {
-			externalObjectToCollectionMap = new HashMap<>();
-		}
-		return externalObjectToCollectionMap.put(collectionUri, externalElementInfo);
-	}
-	
-	/**
-	 * @param externalObjectUri object URI for an element external to a collection
-	 * @return a map of collection (or document) URI's mapped to their external element info for the given object URI
-	 */
-	@Override
-	public synchronized @Nullable Map<String, IExternalElementInfo> getExternalReferenceMap(String externalObjectUri) {
-		return objectUriExternalMap.get(externalObjectUri);
-	}
-	
-	/**
-	 * @param externalObjectUri URI of the external SPDX Element or License
-	 * @param collectionUri URI of the SPDX document or collection
-	 * @return the externalElementInfo associated with the collection for a given external element
-	 */
-	@Override
-	public synchronized @Nullable IExternalElementInfo getExternalElementInfo(String externalObjectUri, String collectionUri) {
-		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
-		if (Objects.isNull(externalObjectToCollectionMap)) {
-			return null;
-		} else {
-			return externalObjectToCollectionMap.get(collectionUri);
-		}
 	}
 }

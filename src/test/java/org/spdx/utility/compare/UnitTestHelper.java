@@ -193,7 +193,7 @@ public class UnitTestHelper {
 			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
 					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
 					mo.getType(), "SPDX-2.3", 
-					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri(), false));
+					CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri()));
 		}
 	}
 

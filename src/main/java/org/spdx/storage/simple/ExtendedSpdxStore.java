@@ -19,14 +19,10 @@ package org.spdx.storage.simple;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
-import org.spdx.core.IExternalElementInfo;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
 import org.spdx.storage.IModelStore;
@@ -223,6 +219,14 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	public IdType getIdType(String id) {
 		return baseStore.getIdType(id);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.spdx.storage.IModelStore#isAnon(java.lang.String)
+	 */
+	@Override
+	public boolean isAnon(String objectUri) {
+		return baseStore.isAnon(objectUri);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.spdx.storage.IModelStore#getCaseSensisitiveId(java.lang.String, java.lang.String)
@@ -268,20 +272,4 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	public void close() throws Exception {
 		baseStore.close();
 	}
-	
-	@Override
-	public synchronized @Nullable IExternalElementInfo getExternalElementInfo(String externalObjectUri, String collectionUri) {
-		return baseStore.getExternalElementInfo(externalObjectUri, collectionUri);
-	}
-	
-	@Override
-	public synchronized @Nullable Map<String, IExternalElementInfo> getExternalReferenceMap(String externalObjectUri) {
-		return baseStore.getExternalReferenceMap(externalObjectUri);
-	}
-	
-	@Override
-	public synchronized @Nullable IExternalElementInfo addExternalReference(String externalObjectUri, String collectionUri, IExternalElementInfo externalElementInfo) {
-		return baseStore.addExternalReference(externalObjectUri, collectionUri, externalElementInfo);
-	}
-
 }

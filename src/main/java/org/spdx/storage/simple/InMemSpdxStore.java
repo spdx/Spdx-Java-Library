@@ -19,7 +19,6 @@ package org.spdx.storage.simple;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +36,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.DuplicateSpdxIdException;
-import org.spdx.core.IExternalElementInfo;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.ModelCollection;
 import org.spdx.core.SpdxIdInUseException;
@@ -76,11 +74,7 @@ public class InMemSpdxStore implements IModelStore {
 	 * Map of property object URI's to typed value items
 	 */
 	protected Map<String, StoredTypedItem> typedValueMap = Collections.synchronizedMap(new LinkedHashMap<>());
-	
-	/**
-	 * Map of an objectUri to a map of documentUri's to external element information
-	 */
-	protected Map<String, Map<String, IExternalElementInfo>> objectUriExternalMap = new HashMap<>();
+
 	private int nextNextLicenseId = 0;
 	private int nextNextDocumentId = 0;
 	private int nextNextSpdxId = 0;
@@ -110,46 +104,6 @@ public class InMemSpdxStore implements IModelStore {
 	
 	public InMemSpdxStore() {
 
-	}
-
-	/**
-	 * Adds an external reference for a given collection
-	 * @param externalObjectUri URI of the external SPDX Element or License
-	 * @param collectionUri URI of the SPDX document or collection
-	 * @param externalElementInfo info about the external element
-	 * @return the previous external mapping for the collection, null if no previous value is present
-	 */
-	@Override
-	public synchronized @Nullable IExternalElementInfo addExternalReference(String externalObjectUri, String collectionUri, IExternalElementInfo externalElementInfo) {
-		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
-		if (Objects.isNull(externalObjectToCollectionMap)) {
-			externalObjectToCollectionMap = new HashMap<>();
-		}
-		return externalObjectToCollectionMap.put(collectionUri, externalElementInfo);
-	}
-	
-	/**
-	 * @param externalObjectUri object URI for an element external to a collection
-	 * @return a map of collection (or document) URI's mapped to their external element info for the given object URI
-	 */
-	@Override
-	public synchronized @Nullable Map<String, IExternalElementInfo> getExternalReferenceMap(String externalObjectUri) {
-		return objectUriExternalMap.get(externalObjectUri);
-	}
-	
-	/**
-	 * @param externalObjectUri URI of the external SPDX Element or License
-	 * @param collectionUri URI of the SPDX document or collection
-	 * @return the externalElementInfo associated with the collection for a given external element
-	 */
-	@Override
-	public synchronized @Nullable IExternalElementInfo getExternalElementInfo(String externalObjectUri, String collectionUri) {
-		Map<String, IExternalElementInfo> externalObjectToCollectionMap = objectUriExternalMap.get(externalObjectUri);
-		if (Objects.isNull(externalObjectToCollectionMap)) {
-			return null;
-		} else {
-			return externalObjectToCollectionMap.get(collectionUri);
-		}
 	}
 	
 	@Override
@@ -333,7 +287,7 @@ public class InMemSpdxStore implements IModelStore {
 		StoredTypedItem item = getItem(objectUri);
 		if (item.isCollectionProperty(propertyDescriptor)) {
 			logger.warn("Returning a collection for a getValue call for property "+propertyDescriptor.getName());
-			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion()));
+			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion(), null));
 		} else {
 			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}
@@ -409,22 +363,27 @@ public class InMemSpdxStore implements IModelStore {
 			throws InvalidSPDXAnalysisException {
 		return getItem(objectUri).isCollectionProperty(propertyDescriptor);
 	}
+	
+	@Override
+	public boolean isAnon(String objectUri) {
+		return objectUri.startsWith(ANON_PREFIX+GENERATED);
+	}
 
 	@Override
-	public IdType getIdType(String id) {
-		if (id.startsWith(ANON_PREFIX+GENERATED)) {
+	public IdType getIdType(String objectUri) {
+		if (isAnon(objectUri)) {
 			return IdType.Anonymous;
 		}
-		if (id.contains(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
 		}
-		if (id.contains(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		}
-		if (id.contains(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
 		}
-		if (id.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
+		if (objectUri.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(objectUri) || LicenseInfoFactory.isSpdxListedExceptionId(objectUri)) {
 			return IdType.ListedLicense;
 		} else {
 			return IdType.Unkown;
