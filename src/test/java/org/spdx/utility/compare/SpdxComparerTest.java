@@ -881,14 +881,16 @@ public class SpdxComparerTest extends TestCase {
 		// fix up all references to the old licenses
 		// files
 		try(@SuppressWarnings("unchecked")
-        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_FILE, doc.getDocumentUri())) {
+        Stream<SpdxFile> fileStream = (Stream<SpdxFile>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), 
+        		doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_FILE, doc.getDocumentUri(), null)) {
 		    fileStream.forEach(file -> {
 		        fixExtractedLicenseId(file, oldToNewLicIds);
 		    });
 		}
 		// packages
 	      try(@SuppressWarnings("unchecked")
-	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE, doc.getDocumentUri())) {
+	        Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), 
+	        		doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE, doc.getDocumentUri(), null)) {
 	          packageStream.forEach(pkg -> {
 	               fixExtractedLicenseIdPackage(pkg, oldToNewLicIds);
 	            });
@@ -896,7 +898,8 @@ public class SpdxComparerTest extends TestCase {
 
 		// snippets
         try(@SuppressWarnings("unchecked")
-          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, doc.getDocumentUri())) {
+          Stream<SpdxSnippet> snippetStream = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(doc.getModelStore(), 
+        		  doc.getCopyManager(), SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, doc.getDocumentUri(), null)) {
             snippetStream.forEach(snippet -> {
                 fixExtractedLicenseId(snippet, oldToNewLicIds);
             });

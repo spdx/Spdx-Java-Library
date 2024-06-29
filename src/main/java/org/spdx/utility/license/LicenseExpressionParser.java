@@ -151,9 +151,9 @@ public class LicenseExpressionParser {
 		Objects.requireNonNull(documentUri, "Document URI can not be null");
 		String[] tokens  = tokenizeExpression(expression);
 		if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NOASSERTION_VALUE)) {
-			return new SpdxNoAssertionLicense();
+			return new SpdxNoAssertionLicense(store, documentUri);
 		} else if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NONE_VALUE)) {
-			return new SpdxNoneLicense();
+			return new SpdxNoneLicense(store, documentUri);
 		} else {
 			try {
 				return parseLicenseExpressionCompatV2(tokens, store, documentUri, copyManager);
@@ -339,7 +339,7 @@ public class LicenseExpressionParser {
 					} else if (token.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 						throw new LicenseParserException("WITH must be followed by a license exception. "+token+" is a Listed License type.");
 					} else {
-						licenseException = (org.spdx.library.model.v2.license.ListedLicenseException) org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(store, 
+						licenseException = (org.spdx.library.model.v2.license.ListedLicenseException) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(store, 
 								documentUri, token, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, copyManager);
 					}
 					org.spdx.library.model.v2.license.AnyLicenseInfo operand = operandStack.pop();
@@ -565,7 +565,7 @@ public class LicenseExpressionParser {
 							ModelObjectV2.LATEST_SPDX_2_VERSION, listedLicense.getDocumentUri());
 				}
 			}
-			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactory.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
+			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
 					licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager, true);
 		} else {
 			// LicenseRef
@@ -575,7 +575,7 @@ public class LicenseExpressionParser {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
 				
 			} else {
-				localLicense = (ExtractedLicenseInfo) org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(
+				localLicense = (ExtractedLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(
 						store, documentUri, token, SpdxConstantsCompatV2.CLASS_SPDX_EXTRACTED_LICENSING_INFO, copyManager);
 				localLicense.setExtractedText(UNINITIALIZED_LICENSE_TEXT);
 			}

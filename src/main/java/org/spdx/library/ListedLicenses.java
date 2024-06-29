@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v2.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxModelFactoryCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
@@ -199,7 +199,7 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
-		return (SpdxListedLicense)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
+		return (SpdxListedLicense)SpdxModelFactoryCompatV2.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
 	}
 	
 	/**
@@ -208,7 +208,7 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactory.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactoryCompatV2.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 	}
 	
 	/**

@@ -199,7 +199,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	public void testCreateLicenseV2() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV2ListedLicenseModelStore modelStore = new SpdxV2ListedLicenseModelStore(sllw);
-		SpdxListedLicense result = (SpdxListedLicense)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(modelStore, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
+		SpdxListedLicense result = (SpdxListedLicense)org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(modelStore, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
 		assertEquals(APACHE_ID, result.getLicenseId());
 		assertEquals(APACHE_LICENSE_NAME, result.getName());
 		String licenseText = result.getLicenseText();
@@ -245,7 +245,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 	public void testCreateExceptionV2() throws InvalidSPDXAnalysisException, InvalidLicenseTemplateException {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV2ListedLicenseModelStore v2store = new SpdxV2ListedLicenseModelStore(sllw);
-		LicenseException result = (LicenseException)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		LicenseException result = (LicenseException)org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		assertEquals(ECOS_EXCEPTION_ID, result.getLicenseExceptionId());
 		assertEquals(ECOS_EXCEPTION_ID, result.getId());
 		assertTrue(result.getComment().length() > 5);
@@ -281,7 +281,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		SpdxListedLicenseWebStore sllw = new SpdxListedLicenseWebStore();
 		SpdxV2ListedLicenseModelStore v2store = new SpdxV2ListedLicenseModelStore(sllw);
 		// Exception
-		org.spdx.library.model.v2.license.ListedLicenseException exception = (org.spdx.library.model.v2.license.ListedLicenseException)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		org.spdx.library.model.v2.license.ListedLicenseException exception = (org.spdx.library.model.v2.license.ListedLicenseException)org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(v2store, LICENSE_LIST_URI, ECOS_EXCEPTION_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
 		String seeAlso1 = "seeAlso1";
 		String seeAlso2 = "seeAlso2";
 		List<String> seeAlsos = Arrays.asList(new String[]{seeAlso1, seeAlso2});
@@ -314,7 +314,7 @@ public class SpdxListedLicenseWebStoreTest extends TestCase {
 		
 		// License
 		ModelCopyManager copyManager = new ModelCopyManager();
-		SpdxListedLicense license = (SpdxListedLicense)org.spdx.library.model.v2.SpdxModelFactory.createModelObjectV2(v2store, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager);
+		SpdxListedLicense license = (SpdxListedLicense)org.spdx.library.model.v2.SpdxModelFactoryCompatV2.createModelObjectV2(v2store, LICENSE_LIST_URI, APACHE_ID, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager);
 		license.setSeeAlso(seeAlsos);
 		// getValueList
 		result.clear();

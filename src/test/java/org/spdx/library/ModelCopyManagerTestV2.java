@@ -71,8 +71,8 @@ public class ModelCopyManagerTestV2 {
 		modelCopyManager = new ModelCopyManager();
 		fromStore = new InMemSpdxStore();
 		toStore = new InMemSpdxStore();
-		checksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, modelCopyManager, 
-						CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true);
+		checksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE,
+				modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		checksum.setAlgorithm(CHECKSUM_ALGORITHM);
 		checksum.setValue(CHECKSUM_VALUE);
 		DateFormat format = new SimpleDateFormat(SpdxConstantsCompatV2.SPDX_DATE_FORMAT);
@@ -104,7 +104,8 @@ public class ModelCopyManagerTestV2 {
 	public void testCopyIModelStoreIModelStoreStringStringStringString() throws InvalidSPDXAnalysisException {
 		modelCopyManager.copy(toStore, OBJECT_URI2, fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(OBJECT_URI2, (modelCopyManager.getCopiedObjectUri(fromStore, CHECKSUM_OBJECT_URI, toStore)));
-		Checksum copiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, OBJECT_URI2, CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false);
+		Checksum copiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, OBJECT_URI2,
+				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false, null);
 		assertTrue(checksum.equivalent(copiedChecksum));
 		assertEquals(CHECKSUM_ALGORITHM, copiedChecksum.getAlgorithm());
 		assertEquals(CHECKSUM_VALUE, copiedChecksum.getValue());
@@ -133,7 +134,8 @@ public class ModelCopyManagerTestV2 {
 		assertEquals(NAMESPACE + "SPDXRef-DOCUMENT", result.getObjectUri());
 		assertEquals(doc.getType(), result.getType());
 		assertEquals(CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, result.getSpecVersion());
-		SpdxDocument copiedDoc = (SpdxDocument)SpdxModelFactory.inflateModelObject(toStore, result.getObjectUri(), result.getType(), modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false);
+		SpdxDocument copiedDoc = (SpdxDocument)SpdxModelFactory.inflateModelObject(toStore, result.getObjectUri(), 
+				result.getType(), modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false, null);
 		assertTrue(copiedDoc.equivalent(doc));
 		
 	}
@@ -149,7 +151,8 @@ public class ModelCopyManagerTestV2 {
 		String expectedUri = NAMESPACE + CHECKSUM_OBJECT_URI.substring(ORIGINAL_NAMESPACE.length());
 		assertEquals(expectedUri, result.getObjectUri());
 		assertEquals(CHECKSUM_TYPE, result.getType());
-		Checksum copiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, expectedUri, CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false);
+		Checksum copiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, expectedUri, CHECKSUM_TYPE, modelCopyManager, 
+				CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false, null);
 		assertTrue(checksum.equivalent(copiedChecksum));
 		assertEquals(CHECKSUM_ALGORITHM, copiedChecksum.getAlgorithm());
 		assertEquals(CHECKSUM_VALUE, copiedChecksum.getValue());
@@ -158,14 +161,17 @@ public class ModelCopyManagerTestV2 {
 		assertEquals(CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, result.getSpecVersion());
 		// Anonymous fromUri 
 		String differentUri = fromStore.getNextId(IdType.Anonymous);
-		Checksum differentChecksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, differentUri, CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true);
+		Checksum differentChecksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, differentUri, 
+				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		differentChecksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		differentChecksum.setValue("3da541559918a808c2402bba5012f6c60b27661c");
 		result = modelCopyManager.copy(toStore, fromStore, differentUri, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(IdType.Anonymous, toStore.getIdType(result.getObjectUri()));
 		assertEquals(CHECKSUM_TYPE, result.getType());
 		assertEquals(CHECKSUM_TYPE, result.getType());assertEquals(CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, result.getSpecVersion());
-		Checksum differentCopiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, result.getObjectUri(), CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true);
+		Checksum differentCopiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, 
+				result.getObjectUri(), CHECKSUM_TYPE, modelCopyManager, 
+				CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		assertTrue(differentChecksum.equivalent(differentCopiedChecksum));
 	}
 	
@@ -173,15 +179,19 @@ public class ModelCopyManagerTestV2 {
 	public void testCopyToExistingUri() throws InvalidSPDXAnalysisException {
 		String differentUri = "http://prefix/something#"+fromStore.getNextId(IdType.SpdxId);
 		modelCopyManager.copy(toStore, differentUri, fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
-		Checksum differentChecksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, differentUri, CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true);
+		Checksum differentChecksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, differentUri, 
+				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		differentChecksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		differentChecksum.setValue("3da541559918a808c2402bba5012f6c60b27661c");
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, CHECKSUM_TYPE, 
+				CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(IdType.SpdxId, toStore.getIdType(result.getObjectUri()));
 		assertTrue(result.getObjectUri().startsWith(NAMESPACE));
 		assertEquals(CHECKSUM_TYPE, result.getType());
 		assertEquals(CHECKSUM_TYPE, result.getType());assertEquals(CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, result.getSpecVersion());
-		Checksum differentCopiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, result.getObjectUri(), CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true);
+		Checksum differentCopiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, 
+				result.getObjectUri(), CHECKSUM_TYPE, modelCopyManager, 
+				CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		assertTrue(differentChecksum.equivalent(differentCopiedChecksum));
 	}
 }

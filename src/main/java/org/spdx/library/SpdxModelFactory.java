@@ -127,13 +127,15 @@ public class SpdxModelFactory {
 	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @param specVersion version of the SPDX spec the object complies with
 	 * @param create if true, create the model object ONLY if it does not already exist
+	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static CoreModelObject inflateModelObject(IModelStore modelStore, String objectUri, 
 			String type, IModelCopyManager copyManager,
-			String specVersion, boolean create) throws InvalidSPDXAnalysisException {
-		return ModelRegistry.getModelRegistry().inflateModelObject(modelStore, objectUri, type, copyManager, specVersion, create);
+			String specVersion, boolean create, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {
+		return ModelRegistry.getModelRegistry().inflateModelObject(modelStore, objectUri, type, 
+				copyManager, specVersion, create, idPrefix);
 	}
 	
 	/**
@@ -148,12 +150,13 @@ public class SpdxModelFactory {
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
 	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @param create if true, create the model object ONLY if it does not already exist
+	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static CoreModelObject inflateModelObject(IModelStore modelStore, String objectUri, 
-			String type, IModelCopyManager copyManager, boolean create) throws InvalidSPDXAnalysisException {
-		return inflateModelObject(modelStore, objectUri, type, copyManager, getLatestSpecVersion(), create);
+			String type, IModelCopyManager copyManager, boolean create, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {
+		return inflateModelObject(modelStore, objectUri, type, copyManager, getLatestSpecVersion(), create, idPrefix);
 	}
 	
 	/**
@@ -212,16 +215,17 @@ public class SpdxModelFactory {
 	 * @param copyManager optional copy manager
 	 * @param typeFilter type to filter on
 	 * @param objectUriPrefixFilter only return objects with URI's starting with this string
+	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return stream of objects stored in the model store - an object being any non primitive type
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public static Stream<?> getSpdxObjects(IModelStore store, @Nullable IModelCopyManager copyManager, 
-			@Nullable String typeFilter, @Nullable String objectUriPrefixFilter) throws InvalidSPDXAnalysisException {
+			@Nullable String typeFilter, @Nullable String objectUriPrefixFilter, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store, "Store must not be null");
 		return store.getAllItems(objectUriPrefixFilter, typeFilter).map(tv -> {
 			//TODO: Change this a null namespace and filtering on anonomous or startswith document URI - this will catch the anon. types
 			try {
-				return inflateModelObject(store, tv.getObjectUri(), tv.getType(), copyManager, tv.getSpecVersion(), false);
+				return inflateModelObject(store, tv.getObjectUri(), tv.getType(), copyManager, tv.getSpecVersion(), false, idPrefix);
 			} catch (InvalidSPDXAnalysisException e) {
 				throw new RuntimeException(e);
 			}
