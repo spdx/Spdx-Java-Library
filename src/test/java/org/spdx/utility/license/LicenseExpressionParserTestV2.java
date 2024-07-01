@@ -223,7 +223,7 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpressionCompatV2(externalExtractedId, 
 				modelStore, TEST_DOCUMENT_URI, null);
 		assertTrue(result instanceof ExternalExtractedLicenseInfo);
-		assertEquals(externalExtractedId, ((ExternalExtractedLicenseInfo)result).getId());
+		assertEquals(externalExtractedId, ((ExternalExtractedLicenseInfo)result).toString());
 	}
 
     public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {

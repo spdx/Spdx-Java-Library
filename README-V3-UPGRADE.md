@@ -4,6 +4,14 @@ With the support of SPDX 3.0, several changes have been made to the library code
 Although we tried to keep breaking changes to a minimum, some of the changes were necessary due to breaking changes in the spec. itself.
 We also took advantage of the changes to fix some annoying design flaws in the previous implementation of the library.
 
+## Changes to ExternalElement and ExternalExtractedLicenseInfo (SPDX Version 2.X classes)
+
+- Constructors changed to take the document URI for the document containing the external element or license.  This is different from the previous constructor which took the document URI of the document containing the reference and an ID of the form `DocumentRef-XX:[ID]`  To accomodate compatibility, the constructors
+will check for the old DocumentRef format and attempt a conversion.
+- Added a method `referenceElementId(SpdxDocument documentReferencingExternal)` which will convert return the `DocumentRef-XX:[ID]`.  This should be used in place of the getId which previously returned this format.
+
+Note that this incompatibility was introduced due to using a common mode store API which in some cases will not have the documentUri as a required parameter
+
 ## Changes to the SPI for the Model Store
 
 ### Change propertyName to propertyDescriptor
