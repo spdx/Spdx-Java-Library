@@ -59,7 +59,7 @@ public class SpdxModelFactory {
 		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV3_0());
 	}
 	
-	static final String IMPLEMENTATION_VERSION = "2.0.0";
+	public static final String IMPLEMENTATION_VERSION = "2.0.0";
 
 	/**
 	 * Static class private constructor
