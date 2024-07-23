@@ -5,8 +5,9 @@ import java.util.Optional;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.LicenseException;
-import org.spdx.library.model.v2.license.ListedLicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;
@@ -72,6 +73,12 @@ public class ListedLicensesTest extends TestCase {
 		assertEquals(id, result.getLicenseId());
 	}
 
+	public void testGetListedLicenseByIdReturnsNull() throws InvalidSPDXAnalysisException {
+		String id = "XXXX";
+		ListedLicense result = ListedLicenses.getListedLicenses().getListedLicenseById(id);
+		assertNull(result);
+	}
+
 	public void testGetLicenseIbyIdLocal() throws InvalidSPDXAnalysisException {
 		System.setProperty("SPDXParser.OnlyUseLocalLicenses", "true");
 		ListedLicenses.resetListedLicenses();
@@ -101,6 +108,14 @@ public class ListedLicensesTest extends TestCase {
 		assertEquals(id, result.getLicenseExceptionId());
 	}
 	
+	public void testGetListedExceptionByIdReturnsNull() throws InvalidSPDXAnalysisException {
+		ListedLicenses.resetListedLicenses();
+		String id = "XXXX";
+		assertFalse(ListedLicenses.getListedLicenses().isSpdxListedExceptionId(id));
+		ListedLicenseException result = ListedLicenses.getListedLicenses().getListedExceptionById(id);
+		assertNull(result);
+	}
+
 	public void testGetExceptionbyIdLocal() throws InvalidSPDXAnalysisException {
 		System.setProperty("SPDXParser.OnlyUseLocalLicenses", "true");
 		ListedLicenses.resetListedLicenses();
@@ -145,7 +160,7 @@ public class ListedLicensesTest extends TestCase {
 	
 	   public void testGetExceptionIdProperty() throws InvalidSPDXAnalysisException {
 	        String id = "Classpath-exception-2.0";
-	        ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
+	        org.spdx.library.model.v2.license.ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
 	        Optional<Object> idProp = ex.getModelStore().getValue(
 	        		CompatibleModelStoreWrapper.documentUriIdToUri(ex.getDocumentUri(), id, false), SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
 	        assertTrue(idProp.isPresent());

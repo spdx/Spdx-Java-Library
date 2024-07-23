@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxModelFactoryCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
@@ -199,7 +200,13 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
-		return (SpdxListedLicense)SpdxModelFactoryCompatV2.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null);
+		try {
+			return (SpdxListedLicense)SpdxModelFactoryCompatV2.getModelObjectV2(this.licenseStoreV2, 
+					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, 
+					SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null, false);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
 	}
 	
 	/**
@@ -208,7 +215,13 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
-		return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactoryCompatV2.createModelObjectV2(this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null);
+		try {
+			return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactoryCompatV2.getModelObjectV2(
+					this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
+					exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null, false);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
 	}
 	
 	/**
@@ -217,13 +230,23 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public ListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		return new ListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
-				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
+		try {
+			return new ListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
+					false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
+		
 	}
 	
 	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		return new ListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
-				true, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
+		try {
+			return new ListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
+					false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
+		} catch (SpdxIdNotFoundException ex) {
+			return null;
+		}
+		
 	}
 	
 	/**
