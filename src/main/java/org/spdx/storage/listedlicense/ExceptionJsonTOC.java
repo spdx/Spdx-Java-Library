@@ -195,9 +195,9 @@ public class ExceptionJsonTOC {
 		ExceptionJson ej = new ExceptionJson();
 		ej.setLicenseExceptionId(exception.getId());
 		ej.setDeprecatedLicenseId(deprecated);
-		ej.setDetailsUrl(exceptionHTMLReference);
+		ej.setDetailsUrl(LicenseJsonTOC.toAbsoluteURL(exceptionJSONReference));
 		ej.setName(exception.getName());
-		ej.setReference(exceptionJSONReference);
+		ej.setReference(LicenseJsonTOC.toAbsoluteURL(exceptionHTMLReference));
 		int referenceNumber = 0;
 		for (ExceptionJson existing:this.exceptions) {
 			if (existing.getReferenceNumber() > referenceNumber) {

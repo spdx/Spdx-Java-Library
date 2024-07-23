@@ -55,6 +55,7 @@ import junit.framework.TestCase;
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings("deprecation")
 public class LicenseCompareHelperTestV2 extends TestCase {
 	
 	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
@@ -681,7 +682,7 @@ public class LicenseCompareHelperTestV2 extends TestCase {
     
     public void testRegressionGD() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
         String templateText = UnitTestHelper.fileToText(GD_TEMPLATE);
-        List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, VarTextHandling.ORIGINAL);
+		List<String> result = LicenseCompareHelper.getNonOptionalLicenseText(templateText, VarTextHandling.ORIGINAL);
         assertEquals(1, result.size());
     }
     
@@ -786,23 +787,5 @@ public class LicenseCompareHelperTestV2 extends TestCase {
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
         }
-    }
-   
-    public void testNonOptionalTextToStartPattern() throws InvalidSPDXAnalysisException, SpdxCompareException {
-    	String expectedMatch = "This is line 1\nThis is line 2";
-    	List<String> noRegexes = Arrays.asList(new String[] {"This is line 1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(noRegexes, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexMiddle = Arrays.asList(new String[] {"This is~~~.+~~~1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexMiddle, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexStart = Arrays.asList(new String[] {"~~~.+~~~is line 1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexStart, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexEnd = Arrays.asList(new String[] {"This is line~~~.+~~~", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexEnd, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> multipleRegex = Arrays.asList(new String[] {"~~~.+~~~is line~~~.+~~~", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(multipleRegex, 100).matcher(expectedMatch).matches());
     }
 }

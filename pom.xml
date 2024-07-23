@@ -1,14 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
     <groupId>org.spdx</groupId>
     <artifactId>java-spdx-library</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <name>java-spdx-library</name>
-    <url>https://github.com/spdx/Spdx-Java-Library</url>
+	<name>java-spdx-library</name>
+	<url>https://github.com/spdx/Spdx-Java-Library</url>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -31,25 +29,27 @@
 	</organization>
 	<scm>
 		<url>https://github.com/spdx/Spdx-Java-Library</url>
-		<connection>scm:git:git://github.com/spdx/Spdx-Java-Library.git</connection>
-		<developerConnection>scm:git:git@github.com:/spdx/Spdx-Java-Library.git</developerConnection>
+		<connection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</connection>
+		<developerConnection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</developerConnection>
+		<tag>master</tag>
 	</scm>
-    <distributionManagement>
-      <repository>
-        <id>ossrh</id>
-        <name>spdx-spdx-tools</name>
-        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-      </repository>
+	<distributionManagement>
+		<repository>
+			<id>ossrh</id>
+			<name>spdx-spdx-tools</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
-    <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <project.build.outputTimestamp>1675930644</project.build.outputTimestamp>
-      <maven.compiler.source>8</maven.compiler.source>
-      <maven.compiler.target>8</maven.compiler.target>
-      <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-	  <sonar.organization>spdx</sonar.organization>
-	  <sonar.projectKey>java-spdx-library</sonar.projectKey>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.outputTimestamp>1709777895</project.build.outputTimestamp>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.organization>spdx</sonar.organization>
+		<sonar.projectKey>java-spdx-library</sonar.projectKey>
+		<dependency-check-maven.version>8.0.1</dependency-check-maven.version>
+	</properties>
 	<profiles>
 		<profile>
 			<id>test</id>
@@ -78,46 +78,41 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>gpg-signing</id>
+			<id>release</id>
 			<build>
 				<plugins>
-		           <plugin>
-		                <groupId>org.codehaus.mojo</groupId>
-		                <artifactId>build-helper-maven-plugin</artifactId>
-		                <version>3.2.0</version>
-		                <executions>
-		                    <execution>
-		                        <id>add-source</id>
-		                        <phase>generate-sources</phase>
-		                        <goals>
-		                            <goal>add-source</goal>
-		                        </goals>
-		                        <configuration>
-		                            <sources>
-		                                <source>generated/src/main/java</source>
-		                            </sources>
-		                        </configuration>
-		                    </execution>
-		                </executions>
+		          <plugin>
+		              <groupId>org.apache.maven.plugins</groupId>
+		              <artifactId>maven-source-plugin</artifactId>
+		              <version>3.2.1</version>
+		              <executions>
+		                <execution>
+		                  <id>attach-sources</id>
+		                  <phase>verify</phase>
+		                  <goals>
+		                    <goal>jar-no-fork</goal>
+		                  </goals>
+		                </execution>
+		              </executions>
 		            </plugin>
 					<plugin>
-		      			<groupId>org.apache.maven.plugins</groupId>
-		      			<artifactId>maven-gpg-plugin</artifactId>
-		      			<version>3.1.0</version>
-		      			<executions>
-		        			<execution>
-		          				<id>sign-artifacts</id>
-		          				<phase>verify</phase>
-		          				<goals>
-		            				<goal>sign</goal>
-		          				</goals>
-		          				<configuration>
-		              				<keyname>${gpg.keyname}</keyname>
-		              				<passphraseServerId>${gpg.keyname}</passphraseServerId>
-		            			</configuration>
-		        			</execution>
-		      			</executions>
-	    			</plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<keyname>${gpg.keyname}</keyname>
+									<passphraseServerId>${gpg.keyname}</passphraseServerId>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -211,6 +206,12 @@
 				</excludes>
 			</testResource>
 			<testResource>
+				<directory>src/test/resources</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
 				<filtering>false</filtering>
 				<directory>TestFiles</directory>
 				<includes>
@@ -218,85 +219,59 @@
 				</includes>
 			</testResource>
 		</testResources>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<version>3.11.0</version>
-			<configuration>
-				<encoding>${project.build.sourceEncoding}</encoding>
-				<showDeprecation>true</showDeprecation>
-				<showWarnings>true</showWarnings>
-				<optimize>true</optimize>
-			</configuration>
-		</plugin>
-		<plugin>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>build-helper-maven-plugin</artifactId>
-			<version>3.5.0</version>
-			<executions>
-				<execution>
-					<id>add-source</id>
-					<phase>generate-sources</phase>
-					<goals>
-						<goal>add-source</goal>
-					</goals>
-					<configuration>
-						<sources>
-							<source>generated/src/main/java</source>
-						</sources>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-javadoc-plugin</artifactId>
-			<version>3.5.0</version>
-			<configuration>
-				<quiet>true</quiet>
-                <notimestamp>true</notimestamp>
-				<additionalOptions>-Xdoclint:none</additionalOptions>
-			</configuration>
-			<executions>
-				<execution>
-					<id>attach-javadocs</id>
-					<configuration>
-						<additionalparam>${javadoc.opts}</additionalparam>
-					</configuration>
-					<goals>
-						<goal>jar</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
-	   	<plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-jar-plugin</artifactId>
-	      <version>3.3.0</version>
-		</plugin>
-	   	<plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-source-plugin</artifactId>
-	      <version>3.3.0</version>
-	      <executions>
-	        <execution>
-	          <id>attach-sources</id>
-	          <phase>verify</phase>
-	          <goals>
-	            <goal>jar-no-fork</goal>
-	          </goals>
-	        </execution>
-	      </executions>
-	    </plugin>
-		<plugin>
-			<groupId>org.spdx</groupId>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<quiet>true</quiet>
+					<notimestamp>true</notimestamp>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<configuration>
+							<additionalparam>${javadoc.opts}</additionalparam>
+						</configuration>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.spdx.library</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.spdx</groupId>
 				<artifactId>spdx-maven-plugin</artifactId>
-				<version>0.6.4</version>
+				<version>0.7.3</version>
 				<executions>
 					<execution>
 						<id>build-spdx</id>
-						<phase>prepare-package</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>createSPDX</goal>
 						</goals>
@@ -304,50 +279,67 @@
 				</executions>
 				<configuration>
 					<spdxDocumentNamespace>http://spdx.org/documents/java-spdx-library-${project.version}</spdxDocumentNamespace>
-					
-				<defaultFileCopyright>Copyright (c) 2020 Source Auditor Inc.</defaultFileCopyright>
-				<defaultFileContributors>
-					<param>Gary O'Neall</param>
-				</defaultFileContributors>
-				<defaultLicenseInformationInFile>Apache-2.0</defaultLicenseInformationInFile>
-				<defaultFileConcludedLicense>Apache-2.0</defaultFileConcludedLicense>
-				<defaultFileNotice>Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+					<defaultFileCopyright>Copyright (c) 2020 Source Auditor Inc.</defaultFileCopyright>
+					<defaultFileContributors>
+						<param>Gary O'Neall</param>
+					</defaultFileContributors>
+					<defaultLicenseInformationInFile>Apache-2.0</defaultLicenseInformationInFile>
+					<defaultFileConcludedLicense>Apache-2.0</defaultFileConcludedLicense>
+					<defaultFileNotice>Licensed under the Apache License, Version 2.0
+						(the "License");
+						you may not use this file except in compliance with the License.
+						You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.</defaultFileNotice>
-				<licenseDeclared>Apache-2.0</licenseDeclared>
-				<licenseConcluded>Apache-2.0</licenseConcluded>
-				<creators>
-					<param>Person: Gary O'Neall</param>
-				</creators>
-				<originator>Organization: Linux Foundation</originator>
-			</configuration>
-          </plugin>
-	</plugins>
-  </build>
-  <reporting>
-   	<plugins>
-     		<plugin>
-       		<groupId>org.codehaus.mojo</groupId>
-       		<artifactId>findbugs-maven-plugin</artifactId>
-       		<version>3.0.1</version>
-     		</plugin>
-   	</plugins>
-  </reporting>
-  <issueManagement>
-  	<system>Github</system>
-  	<url>https://github.com/spdx/Spdx-Java-Library/issues</url>
-  </issueManagement>
-  <description>Java library which implements the Java object model for SPDX and provides useful helper functions.</description>
-  <ciManagement>
-  	<system>Github Actions</system>
-  	<url>https://github.com/spdx/Spdx-Java-Library/actions</url>
-  </ciManagement>
+						http://www.apache.org/licenses/LICENSE-2.0
+
+						Unless required by applicable law or agreed to in writing, software
+						distributed under the License is distributed on an "AS IS" BASIS,
+						WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+						implied.
+						See the License for the specific language governing permissions and
+						limitations under the License.</defaultFileNotice>
+					<licenseDeclared>Apache-2.0</licenseDeclared>
+					<licenseConcluded>Apache-2.0</licenseConcluded>
+					<creators>
+						<param>Person: Gary O'Neall</param>
+					</creators>
+					<originator>Organization: Linux Foundation</originator>
+				</configuration>
+			</plugin>
+	        <plugin>
+	          <groupId>org.apache.maven.plugins</groupId>
+	          <artifactId>maven-release-plugin</artifactId>
+	          <version>3.0.1</version>
+	          <configuration>
+	            <tagNameFormat>v@{project.version}</tagNameFormat>
+	            <releaseProfiles>release</releaseProfiles>
+	            <goals>deploy</goals>
+	          </configuration>
+	        </plugin>
+	        <plugin>
+	          <groupId>org.owasp</groupId>
+	          <artifactId>dependency-check-maven</artifactId>
+	          <version>${dependency-check-maven.version}</version>
+	        </plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/spdx/Spdx-Java-Library/issues</url>
+	</issueManagement>
+	<description>Java library which implements the Java object model for SPDX and provides useful helper functions.</description>
+	<ciManagement>
+		<system>Github Actions</system>
+		<url>https://github.com/spdx/Spdx-Java-Library/actions</url>
+	</ciManagement>
 </project>

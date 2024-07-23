@@ -28,7 +28,7 @@ The methods enterCriticalSection and leaveCritialSection are available to suppor
 The library is available in [Maven Central org.spdx:java-spdx-library](https://search.maven.org/artifact/org.spdx/java-spdx-library).
 
 If you are using Maven, you can add the following dependency in your POM file:
-```
+```xml
 <dependency>
   <groupId>org.spdx</groupId>
   <artifactId>java-spdx-library</artifactId>
@@ -36,12 +36,24 @@ If you are using Maven, you can add the following dependency in your POM file:
 </dependency>
 ```
 
-[API JavaDocs are available here.](https://spdx.github.io/Spdx-Java-Library/)
+[API JavaDocs are available here](https://spdx.github.io/Spdx-Java-Library/).
 
 There are a couple of static classes that help common usage scenarios:
 
 - org.spdx.library.SpdxModelFactory supports the creation of specific model objects
 - org.spdx.library.model.license.LicenseInfoFactory supports the parsing of SPDX license expressions, creation, and comparison of SPDX licenses
+
+
+## Configuration options
+
+`Spdx-Java-Library` can be configured using either Java system properties or a Java properties file located in the runtime CLASSPATH at `/resources/spdx-java-library.properties`.
+
+The library has these configuration options:
+1. `org.spdx.useJARLicenseInfoOnly` - a boolean that controls whether the (potentially out of date) listed license information bundled inside the JAR is used (true), vs the library downloading the latest files from the SPDX website (false). Default is false (always download the latest files from the SPDX website).
+2. `org.spdx.downloadCacheEnabled` - a boolean that enables or disables the download cache. Defaults to `false` (the cache is disabled). The cache location is determined as per the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) (i.e. `${XDG_CACHE_HOME}/Spdx-Java-Library` or `${HOME}/.cache/Spdx-Java-Library`).
+3. `org.spdx.downloadCacheCheckIntervalSecs` - a long that controls how often each cache entry is rechecked for staleness, in units of seconds. Defaults to 86,400 seconds (24 hours). Set to 0 (zero) to have each cache entry checked every time (note: this will result in a lot more network I/O and negatively impact performance, albeit there is still a substantial performance saving vs not using the cache at all).
+
+Note that these configuration options can only be modified prior to first use of Spdx-Java-Library. Once the library is initialized, subsequent changes will have no effect.
 
 The first thing that needs to be done in your implementation is call `SpdxModelFactory.init()` - this will load all the supported versions.
 

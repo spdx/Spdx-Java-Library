@@ -906,7 +906,7 @@ public class SpdxComparer {
 				}
 			}
 		} catch(InvalidSPDXAnalysisException ex) {
-			throw new SpdxCompareException("Error getting SPDX document items: "+ex.getMessage());
+			throw new SpdxCompareException("Error getting SPDX document items: "+ex.getMessage(), ex);
 		}
 	}
 

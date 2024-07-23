@@ -36,6 +36,7 @@ import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.ListedLicenses;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3.SpdxConstantsV3;
 import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
 import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
@@ -57,6 +58,7 @@ import junit.framework.TestCase;
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings("deprecation")
 public class LicenseCompareHelperTest extends TestCase {
 	
 	static final String GPL_2_TEXT = "TestFiles" + File.separator + "GPL-2.0.txt";
@@ -88,12 +90,21 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String POLYFORM_NC_TEMPLATE = "TestFiles" + File.separator + "PolyForm-Noncommercial-1.0.0.template.txt";
     static final String APL_1_TEXT = "TestFiles" + File.separator + "APL-1.0.txt";
     static final String APL_1_TEMPLATE = "TestFiles" + File.separator + "APL-1.0.template.txt";
-    
-    IModelStore modelStore;
-    IModelCopyManager copyManager;
-    String DEFAULT_DOCUMENT_URI = "http://default/doc";
-    
+    static final String MIT_2_SPACES = "TestFiles" + File.separator + "MIT2Spaces.txt";
+    static final String MIT_TEMPLATE = "TestFiles" + File.separator + "MIT.template.txt";
+    static final String BSD_3_CLAUSE_NL = "TestFiles" + File.separator + "BSD-3-Clause-newline.txt";
+    static final String BSD_3_CLAUSE_TEMPLATE = "TestFiles" + File.separator + "BSD-3-Clause.template.txt";
+    static final String BSD_2_CLAUSE_NL = "TestFiles" + File.separator + "BSD-2-Clause-nl.txt";
+    static final String BSD_2_CLAUSE_TEMPLATE = "TestFiles" + File.separator + "BSD-2-Clause.template.txt";
+    static final String EPL_2 = "TestFiles" + File.separator + "EPL-2.0.txt";
+    static final String EPL_2_TEMPLATE = "TestFiles" + File.separator + "EPL-2.0.template.txt";
+    static final String GPL_2_NL = "TestFiles" + File.separator + "GPL-2.0-NL.txt";
+    static final String GPL_2_TEMPLATE = "TestFiles" + File.separator + "GPL-2.0-only.template.txt";
+    static final String IMAGE_MAGIK_TEMPLATE = "TestFiles" + File.separator + "ImageMagick.template.txt";
 
+	IModelStore modelStore;
+	IModelCopyManager copyManager;
+	String DEFAULT_DOCUMENT_URI = "http://default/doc";
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -889,22 +900,77 @@ public class LicenseCompareHelperTest extends TestCase {
         	fail(diff.getDifferenceMessage());
         }
     }
-   
-    public void testNonOptionalTextToStartPattern() throws InvalidSPDXAnalysisException, SpdxCompareException {
-    	String expectedMatch = "This is line 1\nThis is line 2";
-    	List<String> noRegexes = Arrays.asList(new String[] {"This is line 1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(noRegexes, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexMiddle = Arrays.asList(new String[] {"This is~~~.+~~~1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexMiddle, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexStart = Arrays.asList(new String[] {"~~~.+~~~is line 1", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexStart, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> regexEnd = Arrays.asList(new String[] {"This is line~~~.+~~~", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(regexEnd, 100).matcher(expectedMatch).matches());
-    	
-    	List<String> multipleRegex = Arrays.asList(new String[] {"~~~.+~~~is line~~~.+~~~", "This is line 2"});
-    	assertTrue(LicenseCompareHelper.nonOptionalTextToStartPattern(multipleRegex, 100).matcher(expectedMatch).matches());
+    
+    public void test2Spaces() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(MIT_2_SPACES);
+        String templateText = UnitTestHelper.fileToText(MIT_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("MIT", "MIT", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
     }
+
+    public void testBsdNewLine() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(BSD_3_CLAUSE_NL);
+        String templateText = UnitTestHelper.fileToText(BSD_3_CLAUSE_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("BSD-3-Clause", "BSD-3-Clause", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+    }
+    
+    public void testConsistentMatch() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(BSD_2_CLAUSE_NL);
+        String templateText = UnitTestHelper.fileToText(BSD_2_CLAUSE_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("BSD-2-Clause", "BSD-2-Clause", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
+    public void testEpl20ConsistentMatch() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(EPL_2);
+        String templateText = UnitTestHelper.fileToText(EPL_2_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("EPL-2.0", "EPL-2.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
+    public void testGpl20ConsistentMatch() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(GPL_2_TEXT);
+        String templateText = UnitTestHelper.fileToText(GPL_2_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("GPL-2.0", "GPL-2.0", licText)
+                .setTemplate(templateText));
+        DifferenceDescription diff = LicenseCompareHelper.isTextStandardLicense(lic, licText);
+        if (diff.isDifferenceFound()) {
+        	fail(diff.getDifferenceMessage());
+        }
+        assertTrue(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
+    public void testImageMagikTextWithin() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+        String licText = UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE);
+        String templateText = UnitTestHelper.fileToText(IMAGE_MAGIK_TEMPLATE);
+        SpdxListedLicense lic = new SpdxListedLicense(
+                new SpdxListedLicense.Builder("imageMagik", "imageMagik", licText)
+                .setTemplate(templateText));
+        assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
+    }
+    
 }

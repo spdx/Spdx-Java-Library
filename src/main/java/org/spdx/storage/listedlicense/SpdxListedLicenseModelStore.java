@@ -135,25 +135,26 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 * @return InputStream for the Table of Contents of the licenses formated in JSON SPDX
 	 * @throws IOException
 	 */
-	abstract InputStream getTocInputStream() throws IOException;
+	public abstract InputStream getTocInputStream() throws IOException;
 	
 	/**
 	 * @return InputStream for the Table of Contents of the exceptions formated in JSON SPDX
 	 * @throws IOException
 	 */
-	abstract InputStream getExceptionTocInputStream() throws IOException;
+	public abstract InputStream getExceptionTocInputStream() throws IOException;
 	
 	/**
 	 * @return InputStream for a license formated in SPDX JSON
 	 * @throws IOException
 	 */
-	abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
+	public abstract InputStream getLicenseInputStream(String licenseId) throws IOException;
 	
 	/**
 	 * @return InputStream for an exception formated in SPDX JSON
 	 * @throws IOException
 	 */
-	abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
+	public abstract InputStream getExceptionInputStream(String exceptionId) throws IOException;
+
 	/**
 	 * Loads all license and exception ID's from the appropriate JSON files
 	 * @throws InvalidSPDXAnalysisException
@@ -191,15 +192,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
                 ExceptionJsonTOC exceptionToc = gson.fromJson(tocJsonStr.toString(), ExceptionJsonTOC.class);
                 exceptionIds = exceptionToc.getExceptionIds();
             } catch (MalformedURLException e) {
-				throw new SpdxListedLicenseException("License TOC URL invalid") ;
+				throw new SpdxListedLicenseException("License TOC URL invalid", e) ;
 			} catch (IOException e) {
-				throw new SpdxListedLicenseException("I/O error reading license TOC");
+				throw new SpdxListedLicenseException("I/O error reading license TOC", e);
 			} finally {
             	if (reader != null) {
             		try {
 						reader.close();
 					} catch (IOException e) {
-						logger.warn("Unable to close JSON TOC reader");
+						logger.warn("Unable to close JSON TOC reader", e);
 					}
             	}
             }
@@ -371,23 +372,23 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	                LicenseJson license = gson.fromJson(licenseJsonStr.toString(), LicenseJson.class);
 	                this.listedLicenseCache.put(id, license);
 	            } catch (MalformedURLException e) {
-					logger.error("Json license invalid for ID "+id);
-					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id);
+					logger.error("Json license invalid for ID "+id, e);
+					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id, e);
 				} catch (IOException e) {
-					logger.error("I/O error opening Json license URL");
-					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id);
+					logger.error("I/O error opening Json license URL", e);
+					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id, e);
 				} finally {
 	            	if (reader != null) {
 	            		try {
 							reader.close();
 						} catch (IOException e) {
-							logger.warn("Unable to close JSON TOC reader");
+							logger.warn("Unable to close JSON TOC reader", e);
 						}
 	            	} else if (jsonStream != null) {
 	            		try {
 							jsonStream.close();
 						} catch (IOException e) {
-							logger.warn("Unable to close JSON TOC input stream");
+							logger.warn("Unable to close JSON TOC input stream", e);
 						}
 	            	}
 				}
@@ -443,22 +444,22 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	                this.listedExceptionCache.put(id, exc);
 	            } catch (MalformedURLException e) {
 					logger.error("Json license invalid for ID "+id);
-					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id);
+					throw new SpdxListedLicenseException("JSON license URL invalid for ID "+id, e);
 				} catch (IOException e) {
 					logger.error("I/O error opening Json license URL");
-					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id);
+					throw new SpdxListedLicenseException("I/O Error reading license data for ID "+id, e);
 				} finally {
 	            	if (reader != null) {
 	            		try {
 							reader.close();
 						} catch (IOException e) {
-							logger.warn("Unable to close JSON TOC reader");
+							logger.warn("Unable to close JSON TOC reader", e);
 						}
 	            	} else if (jsonStream != null) {
 	            		try {
 							jsonStream.close();
 						} catch (IOException e) {
-							logger.warn("Unable to close JSON TOC input stream");
+							logger.warn("Unable to close JSON TOC input stream", e);
 						}
 	            	}
 				}

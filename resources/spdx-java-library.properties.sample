@@ -1,0 +1,9 @@
+# if true, only use license information stored within the JAR file at release time, rather than downloading the latest
+# versions from the SPDX website
+org.spdx.useJARLicenseInfoOnly=false
+
+# if true, enable the download cache
+org.spdx.downloadCacheEnabled=false
+
+# local download cache re-check interval, in seconds
+org.spdx.downloadCacheCheckIntervalSecs=86400
