@@ -412,31 +412,8 @@ public class StoredTypedItem extends TypedValue {
 		ConcurrentHashMap<String, List<Object>> idValueMap = (ConcurrentHashMap<String, List<Object>>)map;
 		for (List<Object> valueList:idValueMap.values()) {
 			for (Object value:valueList) {
-				if (!clazz.isAssignableFrom(value.getClass())) {
-					if (value instanceof IndividualUriValue) {
-						String uri = ((IndividualUriValue)value).getIndividualURI();
-						Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, getSpecVersion());
-						if (Objects.nonNull(spdxEnum)) {
-							if (!clazz.isAssignableFrom(spdxEnum.getClass())) {
-								return false;
-							}
-						} else if (Objects.isNull(ModelRegistry.getModelRegistry().uriToIndividual(uri, getSpecVersion(), clazz))) {
-							return false;
-							//TODO: Test for type of individual
-						}
-					} else if (value instanceof TypedValue) {
-						TypedValue typedValue = (TypedValue)value;
-						try {
-							if (clazz != TypedValue.class && !clazz.isAssignableFrom(ModelRegistry.getModelRegistry().typeToClass(typedValue.getType(), typedValue.getSpecVersion()))) {
-								return false;
-							}
-						} catch (InvalidSPDXAnalysisException e) {
-							logger.error("Error converting typed value to class",e);
-							return false;
-						}
-					} else {
-						return false;
-					}
+				if (!isAssignableTo(value, clazz, getSpecVersion())) {
+					return false;
 				}
 			}
 		}
@@ -444,19 +421,13 @@ public class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param clazz class to test against
-	 * @param specVersion Version of the spec to test for
-	 * @return true if the property can be assigned to type clazz for the latest SPDX spec version
-	 * @throws ModelRegistryException 
+	 * @param value value to test
+	 * @param clazz class to see if the value can be assigned to
+	 * @param specVersion version of the spec
+	 * @return true if value can be assigned to clazz
+	 * @throws ModelRegistryException if the model registry is not property initialized
 	 */
-	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion) throws ModelRegistryException {
-		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
-		Objects.requireNonNull(clazz, "Class can not be null");
-		Object value = properties.get(propertyDescriptor);
-		if (value == null) {
-			return false;
-		}
+	private boolean isAssignableTo(Object value, Class<?> clazz, String specVersion) throws ModelRegistryException {
 		if (clazz.isAssignableFrom(value.getClass())) {
 			return true;
 		}
@@ -471,18 +442,39 @@ public class StoredTypedItem extends TypedValue {
 		}
 		if (value instanceof IndividualUriValue) {
 			String uri = ((IndividualUriValue)value).getIndividualURI();
-			if (Objects.nonNull(ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion))) {
-				return true;
-			}
-			//TODO: Check for individual URI types
-			Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, specVersion);
+			
+			Enum<?> spdxEnum = ModelRegistry.getModelRegistry().uriToEnum(uri, getSpecVersion());
 			if (Objects.nonNull(spdxEnum)) {
 				return clazz.isAssignableFrom(spdxEnum.getClass());
 			} else {
-				return false;
+				Object individual = ModelRegistry.getModelRegistry().uriToIndividual(uri, getSpecVersion(), clazz);
+				if (Objects.nonNull(individual)) {
+					return clazz.isAssignableFrom(individual.getClass());
+				} else {
+					// Assume this is external
+					return ModelRegistry.getModelRegistry().canBeExternal(clazz, specVersion);
+				}
 			}
+		} else {
+			return false;
 		}
-		return false;
+	}
+	
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test against
+	 * @param specVersion Version of the spec to test for
+	 * @return true if the property can be assigned to type clazz for the latest SPDX spec version
+	 * @throws ModelRegistryException if the registry is not property initialized
+	 */
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion) throws ModelRegistryException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
+		Objects.requireNonNull(clazz, "Class can not be null");
+		Object value = properties.get(propertyDescriptor);
+		if (value == null) {
+			return false;
+		}
+		return isAssignableTo(value, clazz, specVersion);
 	}
 
 	/**

@@ -120,12 +120,10 @@ public class SpdxModelFactory {
 	 * If the object does not exist AND the create parameter is true, a new object will be created and
 	 * its inflated form will be returned
 	 * @param modelStore store to use for the inflated object
-	 * @param objectUri URI of the external element
-	 * @param documentUri URI for the SPDX document to store the external element reference - used for compatibility with SPDX 2.X model stores
+	 * @param objectUri URI of the element or SPDX object
 	 * @param type Type of the object to create
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
-	 * @param externalMap map of URI's to ExternalMaps for any external elements
-	 * @param specVersion version of the SPDX spec the object complies with
+	 *@param specVersion version of the SPDX spec the object complies with
 	 * @param create if true, create the model object ONLY if it does not already exist
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
@@ -145,10 +143,8 @@ public class SpdxModelFactory {
 	 * its inflated form will be returned
 	 * @param modelStore store to use for the inflated object
 	 * @param objectUri URI of the external element
-	 * @param documentUri URI for the SPDX document to store the external element reference - used for compatibility with SPDX 2.X model stores
 	 * @param type Type of the object to create
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
-	 * @param externalMap map of URI's to ExternalMaps for any external elements
 	 * @param create if true, create the model object ONLY if it does not already exist
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
@@ -163,30 +159,28 @@ public class SpdxModelFactory {
 	 * @param store store to use for the inflated object
 	 * @param uri URI of the external element
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
-	 * @param documentUri URI for the SPDX document to store the external element reference - used for compatibility with SPDX 2.X model stores
-	 * @param externalMap Map of URI's of elements referenced but not present in the store
+	 * @param type type hint for creating the correct external element
 	 * @param specVersion version of the SPDX spec the object complies with
 	 * @return a java object representing an SPDX element external to model store, collection or document
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static Object getExternalElement(IModelStore store, String uri,
-			@Nullable IModelCopyManager copyManager,
+			@Nullable IModelCopyManager copyManager, Class<?> type,
 			String specVersion) throws InvalidSPDXAnalysisException {
-		return ModelRegistry.getModelRegistry().getExternalElement(store, uri, copyManager, specVersion);
+		return ModelRegistry.getModelRegistry().getExternalElement(store, uri, copyManager, type, specVersion);
 	}
 	
 	/**
 	 * @param store store to use for the inflated object
 	 * @param uri URI of the external element
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
-	 * @param documentUri URI for the SPDX document to store the external element reference - used for compatibility with SPDX 2.X model stores
-	 * @param externalMap Map of URI's of elements referenced but not present in the store
+	 * @param type type hint for creating the correct external element
 	 * @return a java object representing an SPDX element external to model store, collection or document for the most recent version of the spec supported
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static Object getExternalElement(IModelStore store, String uri,
-			@Nullable IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
-		return getExternalElement(store, uri, copyManager, getLatestSpecVersion());
+			@Nullable IModelCopyManager copyManager, Class<?> type) throws InvalidSPDXAnalysisException {
+		return getExternalElement(store, uri, copyManager, type, getLatestSpecVersion());
 	}
 	
 	/**
