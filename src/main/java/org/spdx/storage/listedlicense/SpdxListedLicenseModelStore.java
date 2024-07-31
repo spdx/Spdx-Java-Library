@@ -892,12 +892,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
+				return Optional.of(new TypedValue(objectUri, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
 			} else if (exceptionIds.containsKey(id.toLowerCase())) {
-				return Optional.of(new TypedValue(id, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
+				return Optional.of(new TypedValue(objectUri, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, SpdxConstantsV3.MODEL_SPEC_VERSION));
 			} else if (crossRefs.containsKey(id)) {
 				// Cross refs are only supported in SPDX version 2.X
-				return Optional.of(new TypedValue(id, SpdxConstantsCompatV2.CLASS_CROSS_REF, ModelObjectV2.LATEST_SPDX_2_VERSION));
+				return Optional.of(new TypedValue(objectUri, SpdxConstantsCompatV2.CLASS_CROSS_REF, ModelObjectV2.LATEST_SPDX_2_VERSION));
 			} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
 				return Optional.of(licenseCreationInfo.getTypedValue());
 			} else if (licenseCreator.getObjectUri().equals(objectUri)) {

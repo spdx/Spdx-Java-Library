@@ -61,7 +61,7 @@ public class ModelCopyManager implements IModelCopyManager {
 			new ConcurrentHashMap<>();
 
 	/**
-	 * Create a CompatV2ModelCopyManager with default options
+	 * Create a ModelCopyManager with default options
 	 */
 	public ModelCopyManager() {
 		// Required empty constructor
@@ -118,34 +118,44 @@ public class ModelCopyManager implements IModelCopyManager {
 	 * @param fromStore Model Store containing the source item
 	 * @param fromDocumentUri Document URI for the source item
 	 * @param fromId ID source ID
-	 * @param type Type to copy
 	 * @param toSpecVersion version of the spec the to value should comply with
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public void copy(IModelStore toStore, String toObjectUri, 
-			IModelStore fromStore, String fromObjectUri, 
-			String type, String toSpecVersion,
+			IModelStore fromStore, String fromObjectUri, String toSpecVersion,
 			@Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "ToStore can not be null");
 		Objects.requireNonNull(toObjectUri, "To Object URI can not be null");
 		Objects.requireNonNull(fromStore, "FromStore can not be null");
 		Objects.requireNonNull(fromObjectUri, "From ObjectUri can not be null");
-		Objects.requireNonNull(type, "Type can not be null");
 		Objects.requireNonNull(toSpecVersion, "To spec version can not be null");
 		if (fromStore.equals(toStore) && fromObjectUri.equals(toObjectUri)) {
 			return;	// trying to copy the same thing!
 		}
-		if (!toStore.exists(toObjectUri)) {
-			toStore.create(new TypedValue(toObjectUri, type, toSpecVersion));
+		Optional<TypedValue> fromTv = fromStore.getTypedValue(fromObjectUri);
+		if (!fromTv.isPresent()) {
+			throw new InvalidSPDXAnalysisException("Missing from object URI "+fromObjectUri);
+		}
+		String toType = ModelCopyConverter.convertType(fromTv.get(), toSpecVersion);
+		Optional<TypedValue> toTv = toStore.getTypedValue(toObjectUri);
+		if (toTv.isPresent()) {
+			if (!toType.equals(toTv.get().getType())) {
+				throw new InvalidSPDXAnalysisException("Incompatible type for copy.  Stored type is " +
+								toTv.get().getType() + " and requested type is "+toType);
+			}
+		} else {
+			toTv = Optional.of(new TypedValue(toObjectUri, toType, toSpecVersion));
+			toStore.create(toTv.get());
 		}
 		putCopiedId(fromStore, fromObjectUri, toStore, toObjectUri);
-		List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromObjectUri);
-		for (PropertyDescriptor propDesc:propertyDescriptors) {
+		
+		List<PropertyDescriptor> fromPropertyDescriptors = fromStore.getPropertyValueDescriptors(fromObjectUri);
+		for (PropertyDescriptor propDesc:fromPropertyDescriptors) {
 			if (fromStore.isCollectionProperty(fromObjectUri, propDesc)) {
-			    copyCollectionProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, toSpecVersion, toNamespace);
+			    copyCollectionProperty(toStore, toTv.get(), fromStore, fromTv.get(), propDesc, toNamespace);
 			} else {
-			    copyIndividualProperty(toStore, toObjectUri, fromStore, fromObjectUri, propDesc, toSpecVersion, toNamespace);
+			    copyIndividualProperty(toStore, toTv.get(), fromStore, fromTv.get(), propDesc, toNamespace);
 			}
 		}
 	}
@@ -153,87 +163,59 @@ public class ModelCopyManager implements IModelCopyManager {
 	/**
 	 * Copies an individual property value (non-collection property value)
      * @param toStore Model Store to copy to
-     * @param toObjectUri to object URI to copy to
+     * @param toTV to typedValue to copy the property to
      * @param fromStore Model Store containing the source item
-     * @param fromObjectUri object to copy from
-     * @param propDescriptor Descriptor for the property
-     * @param toSpecVersion Version of the SPDX spec the to value complies with
+     * @param fromTV typedValue to copy the property from
+     * @param fromPropDescriptor Descriptor for the property to be copied from
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	private void copyIndividualProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
-            String fromObjectUri, PropertyDescriptor propDescriptor,
-			String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+	private void copyIndividualProperty(IModelStore toStore, TypedValue toTv, IModelStore fromStore,
+            TypedValue fromTv, PropertyDescriptor fromPropDescriptor,
+			@Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Optional<Object> result = Optional.empty();
 		try {
-			if (fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
-	            throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is a collection type");
+			if (fromStore.isCollectionProperty(fromTv.getObjectUri(), fromPropDescriptor)) {
+	            throw new InvalidSPDXAnalysisException("Property "+fromPropDescriptor+" is a collection type");
 	        }
-			result =  fromStore.getValue(fromObjectUri, propDescriptor);
+			result = fromStore.getValue(fromTv.getObjectUri(), fromPropDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
-        if (result.isPresent()) {
-            if (result.get() instanceof IndividualUriValue) {
-                toStore.setValue(toObjectUri, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
-            } else if (result.get() instanceof TypedValue) {
-                TypedValue tv = (TypedValue)result.get();
-                if (fromStore.equals(toStore)) {
-                    toStore.setValue(toObjectUri, propDescriptor, tv);
-                } else {
-                    toStore.setValue(toObjectUri, propDescriptor, 
-                            copy(toStore, fromStore, tv.getObjectUri(), tv.getType(), toSpecVersion, toNamespace));
-                }
-            } else {
-                toStore.setValue(toObjectUri, propDescriptor, result.get());
-            }
-        }
+		if (result.isPresent()) {
+			ModelCopyConverter.copyConvertedPropertyValue(toStore, toTv, fromStore, fromTv, fromPropDescriptor, result.get(), toNamespace, this);
+		}
     }
 
     /**
 	 * Copies a property which is is a collection
      * @param toStore Model Store to copy to
-     * @param toObjectUri URI to copy to
+     * @param toTv typed value to copy to
      * @param fromStore Model Store containing the source item
-     * @param fromDocumentUri Object URI to copy from
-	 * @param propDescriptor Descriptor for the property
-	 * @param toSpecVersion Version of the SPDX spec the to value complies with
+     * @param fromTv typed value to copy from
+	 * @param fromPropDescriptor Descriptor for the property to be copied from
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on conversion or store error
 	 */
-	private void copyCollectionProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
-            String fromObjectUri, PropertyDescriptor propDescriptor, 
-			String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+	private void copyCollectionProperty(IModelStore toStore, TypedValue toTv, IModelStore fromStore,
+            TypedValue fromTv, PropertyDescriptor fromPropDescriptor, 
+			@Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Iterator<Object> fromListIter = null;
 		try {
-			if (!fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
-		        throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is not a collection type");
+			if (!fromStore.isCollectionProperty(fromTv.getObjectUri(), fromPropDescriptor)) {
+		        throw new InvalidSPDXAnalysisException("Property "+fromPropDescriptor+" is not a collection type");
 		    }
-		    fromListIter = fromStore.listValues(fromObjectUri, propDescriptor);
+		    fromListIter = fromStore.listValues(fromTv.getObjectUri(), fromPropDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
         while (fromListIter.hasNext()) {
             Object listItem = fromListIter.next();
-            Object toStoreItem;
-            if (listItem instanceof IndividualUriValue) {
-                toStoreItem = new SimpleUriValue((IndividualUriValue)listItem);
-            } else if (listItem instanceof TypedValue) {
-                TypedValue listItemTv = (TypedValue)listItem;
-                if (toStore.equals(fromStore)) {
-                    toStoreItem = listItemTv;
-                } else {
-                    toStoreItem = copy(toStore, fromStore, listItemTv.getObjectUri(), 
-                    		listItemTv.getType(), toSpecVersion, toNamespace);
-                }
-            } else {
-                toStoreItem = listItem;
-            }
-            toStore.addValueToCollection(toObjectUri, propDescriptor, toStoreItem);
+            ModelCopyConverter.addConvertedPropertyValue(toStore, toTv, fromStore, fromTv, fromPropDescriptor, listItem, toNamespace, this);
         }
     }
 
@@ -242,28 +224,30 @@ public class ModelCopyManager implements IModelCopyManager {
 	 * @param toStore Model Store to copy to
 	 * @param fromStore Model Store containing the source item
 	 * @param sourceUri URI for the Source object
-	 * @param type Type to copy
 	 * @param toSpecVersion Version of the SPDX spec the to value complies with
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object - must be a unique prefix to the store
 	 * @return Object URI for the copied object
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	public TypedValue copy(IModelStore toStore, IModelStore fromStore, 
-			String sourceUri, String type, String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+			String sourceUri, String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(toStore, "To Store can not be null");
 		Objects.requireNonNull(fromStore, "From Store can not be null");
 		Objects.requireNonNull(sourceUri, "Source URI can not be null");
-		Objects.requireNonNull(type, "Type can not be null");
 		Objects.requireNonNull(toSpecVersion, "To specVersion can not be null");
 
 		String toObjectUri = getCopiedObjectUri(fromStore, sourceUri, toStore);
 		if (Objects.isNull(toObjectUri)) {
+			Optional<TypedValue> fromTv = fromStore.getTypedValue(sourceUri);
+			if (!fromTv.isPresent()) {
+				throw new InvalidSPDXAnalysisException(sourceUri + " does not exist in the from Store");
+			}
 			toObjectUri = toSpecVersion.startsWith("SPDX-2") ? sourceUriToObjectUriV2Compat(sourceUri, 
-					fromStore.getIdType(sourceUri), toStore, toNamespace, SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(type)) :
+					fromStore.getIdType(sourceUri), toStore, toNamespace, SpdxConstantsCompatV2.CLASS_EXTERNAL_DOC_REF.equals(fromTv.get().getType())) :
 				sourceUriToObjectUri(sourceUri, fromStore.getIdType(sourceUri), toStore, toNamespace);
-			copy(toStore, toObjectUri, fromStore, sourceUri, type, toSpecVersion, toNamespace);
+			copy(toStore, toObjectUri, fromStore, sourceUri, toSpecVersion, toNamespace);
 		}
-		return new TypedValue(toObjectUri, type, toSpecVersion);
+		return toStore.getTypedValue(toObjectUri).get();
 	}
 
 	/**

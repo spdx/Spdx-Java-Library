@@ -102,7 +102,7 @@ public class ModelCopyManagerTestV2 {
 	 */
 	@Test
 	public void testCopyIModelStoreIModelStoreStringStringStringString() throws InvalidSPDXAnalysisException {
-		modelCopyManager.copy(toStore, OBJECT_URI2, fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		modelCopyManager.copy(toStore, OBJECT_URI2, fromStore, CHECKSUM_OBJECT_URI, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(OBJECT_URI2, (modelCopyManager.getCopiedObjectUri(fromStore, CHECKSUM_OBJECT_URI, toStore)));
 		Checksum copiedChecksum = (Checksum)SpdxModelFactory.inflateModelObject(toStore, OBJECT_URI2,
 				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, false, null);
@@ -129,7 +129,7 @@ public class ModelCopyManagerTestV2 {
 		Relationship rel = pkg.createRelationship(spdxFile, RelationshipType.CONTAINS, "comment");
 		pkg.addRelationship(rel);
 		doc.addRelationship(doc.createRelationship(pkg, RelationshipType.DESCRIBES, null));
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, doc.getObjectUri(), doc.getType(), CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, doc.getObjectUri(), CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		
 		assertEquals(NAMESPACE + "SPDXRef-DOCUMENT", result.getObjectUri());
 		assertEquals(doc.getType(), result.getType());
@@ -147,7 +147,7 @@ public class ModelCopyManagerTestV2 {
 	@Test
 	public void testCopyIModelStoreStringIModelStoreStringStringStringString() throws InvalidSPDXAnalysisException {
 		// URI does not exist
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, CHECKSUM_OBJECT_URI, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		String expectedUri = NAMESPACE + CHECKSUM_OBJECT_URI.substring(ORIGINAL_NAMESPACE.length());
 		assertEquals(expectedUri, result.getObjectUri());
 		assertEquals(CHECKSUM_TYPE, result.getType());
@@ -165,7 +165,7 @@ public class ModelCopyManagerTestV2 {
 				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		differentChecksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		differentChecksum.setValue("3da541559918a808c2402bba5012f6c60b27661c");
-		result = modelCopyManager.copy(toStore, fromStore, differentUri, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		result = modelCopyManager.copy(toStore, fromStore, differentUri, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(IdType.Anonymous, toStore.getIdType(result.getObjectUri()));
 		assertEquals(CHECKSUM_TYPE, result.getType());
 		assertEquals(CHECKSUM_TYPE, result.getType());assertEquals(CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, result.getSpecVersion());
@@ -178,12 +178,12 @@ public class ModelCopyManagerTestV2 {
 	@Test
 	public void testCopyToExistingUri() throws InvalidSPDXAnalysisException {
 		String differentUri = "http://prefix/something#"+fromStore.getNextId(IdType.SpdxId);
-		modelCopyManager.copy(toStore, differentUri, fromStore, CHECKSUM_OBJECT_URI, CHECKSUM_TYPE, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
+		modelCopyManager.copy(toStore, differentUri, fromStore, CHECKSUM_OBJECT_URI, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		Checksum differentChecksum = (Checksum)SpdxModelFactory.inflateModelObject(fromStore, differentUri, 
 				CHECKSUM_TYPE, modelCopyManager, CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, true, null);
 		differentChecksum.setAlgorithm(ChecksumAlgorithm.SHA1);
 		differentChecksum.setValue("3da541559918a808c2402bba5012f6c60b27661c");
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, CHECKSUM_TYPE, 
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, 
 				CompatibleModelStoreWrapper.LATEST_SPDX_2X_VERSION, NAMESPACE);
 		assertEquals(IdType.SpdxId, toStore.getIdType(result.getObjectUri()));
 		assertTrue(result.getObjectUri().startsWith(NAMESPACE));

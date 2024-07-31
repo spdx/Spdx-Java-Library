@@ -99,7 +99,7 @@ public class ModelCopyManagerTest {
 	 */
 	@Test
 	public void testCopyIModelStoreIModelStoreStringStringStringString() throws InvalidSPDXAnalysisException {
-		modelCopyManager.copy(toStore, OBJECT_URI2, fromStore, HASH_OBJECT_URI, HASH_TYPE, "3.0.0", NAMESPACE);
+		modelCopyManager.copy(toStore, OBJECT_URI2, fromStore, HASH_OBJECT_URI, "3.0.0", NAMESPACE);
 		assertEquals(OBJECT_URI2, (modelCopyManager.getCopiedObjectUri(fromStore, HASH_OBJECT_URI, toStore)));
 		Hash copiedHash = (Hash)SpdxModelFactory.inflateModelObject(toStore, OBJECT_URI2, HASH_TYPE, modelCopyManager, "3.0.0", false, null);
 		assertTrue(hash.equivalent(copiedHash));
@@ -141,7 +141,7 @@ public class ModelCopyManagerTest {
 				.addElement(pkg)
 				.addElement(rel)
 				.build();
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, doc.getObjectUri(), doc.getType(), "3.0.0", NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, doc.getObjectUri(), "3.0.0", NAMESPACE);
 		assertEquals(doc.getObjectUri(), result.getObjectUri());
 		assertEquals(doc.getType(), result.getType());
 		assertEquals("3.0.0", result.getSpecVersion());
@@ -158,7 +158,7 @@ public class ModelCopyManagerTest {
 	@Test
 	public void testCopyIModelStoreStringIModelStoreStringStringStringString() throws InvalidSPDXAnalysisException {
 		// URI does not exist
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, HASH_OBJECT_URI, HASH_TYPE, "3.0.0", NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, HASH_OBJECT_URI, "3.0.0", NAMESPACE);
 		Hash copiedHash = (Hash)SpdxModelFactory.inflateModelObject(toStore, HASH_OBJECT_URI, HASH_TYPE, modelCopyManager, 
 				"3.0.0", false, null);
 		assertTrue(hash.equivalent(copiedHash));
@@ -173,7 +173,7 @@ public class ModelCopyManagerTest {
 				"3.0.0", true, null);
 		differentHash.setAlgorithm(HashAlgorithm.BLAKE2B256);
 		differentHash.setHashValue("asasdf1309u93u");
-		result = modelCopyManager.copy(toStore, fromStore, differentUri, HASH_TYPE, "3.0.0", NAMESPACE);
+		result = modelCopyManager.copy(toStore, fromStore, differentUri, "3.0.0", NAMESPACE);
 		assertEquals(IdType.Anonymous, toStore.getIdType(result.getObjectUri()));
 		assertEquals(HASH_TYPE, result.getType());
 		assertEquals(HASH_TYPE, result.getType());assertEquals("3.0.0", result.getSpecVersion());
@@ -185,12 +185,12 @@ public class ModelCopyManagerTest {
 	@Test
 	public void testCopyToExistingUri() throws InvalidSPDXAnalysisException {
 		String differentUri = "http://prefix/something#"+fromStore.getNextId(IdType.SpdxId);
-		modelCopyManager.copy(toStore, differentUri, fromStore, HASH_OBJECT_URI, HASH_TYPE, "3.0.0", NAMESPACE);
+		modelCopyManager.copy(toStore, differentUri, fromStore, HASH_OBJECT_URI, "3.0.0", NAMESPACE);
 		Hash differentHash = (Hash)SpdxModelFactory.inflateModelObject(fromStore, differentUri, HASH_TYPE, modelCopyManager, 
 				"3.0.0", true, null);
 		differentHash.setAlgorithm(HashAlgorithm.BLAKE2B256);
 		differentHash.setHashValue("asasdf1309u93u");
-		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, HASH_TYPE, "3.0.0", NAMESPACE);
+		TypedValue result = modelCopyManager.copy(toStore, fromStore, differentUri, "3.0.0", NAMESPACE);
 		assertEquals(IdType.SpdxId, toStore.getIdType(result.getObjectUri()));
 		assertTrue(result.getObjectUri().startsWith(NAMESPACE));
 		assertEquals(HASH_TYPE, result.getType());

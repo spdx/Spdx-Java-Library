@@ -432,8 +432,7 @@ public class LicenseExpressionParser {
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedException.getObjectUri(), listedException.getModelStore(), 
-							listedException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE,
-							SpdxModelFactory.getLatestSpecVersion(), null);
+							listedException.getObjectUri(), SpdxModelFactory.getLatestSpecVersion(), null);
 					// copy to the local store
 				}
 			}
@@ -485,8 +484,7 @@ public class LicenseExpressionParser {
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
-							listedLicense.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE,
-							SpdxModelFactory.getLatestSpecVersion(), null);
+							listedLicense.getObjectUri(), SpdxModelFactory.getLatestSpecVersion(), null);
 					// copy to the local store
 				}
 			}
@@ -561,8 +559,7 @@ public class LicenseExpressionParser {
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
 					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
-							listedLicense.getObjectUri(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, 
-							ModelObjectV2.LATEST_SPDX_2_VERSION, listedLicense.getDocumentUri());
+							listedLicense.getObjectUri(), ModelObjectV2.LATEST_SPDX_2_VERSION, listedLicense.getDocumentUri());
 				}
 			}
 			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 

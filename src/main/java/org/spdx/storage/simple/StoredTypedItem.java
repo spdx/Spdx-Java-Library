@@ -116,11 +116,11 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
 		} else if (value instanceof List || value instanceof Collection) {
 			throw new SpdxInvalidTypeException("Can not store list values directly.  Use addValueToCollection.");
-		} else if (!value.getClass().isPrimitive() && 
-				!value.getClass().isAssignableFrom(String.class) &&
-				!value.getClass().isAssignableFrom(Boolean.class) &&
-				!value.getClass().isAssignableFrom(Integer.class) &&
-				!value.getClass().isAssignableFrom(TypedValue.class) &&
+		} else if (!value.getClass().isPrimitive() &&
+				!String.class.isAssignableFrom(value.getClass()) &&
+				!Boolean.class.isAssignableFrom(value.getClass()) &&
+				!Integer.class.isAssignableFrom(value.getClass()) &&
+				!TypedValue.class.isAssignableFrom(value.getClass()) &&
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
@@ -157,11 +157,11 @@ public class StoredTypedItem extends TypedValue {
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof CoreModelObject) {
 			throw new SpdxInvalidTypeException("Can not store Model Object in store.  Convert to TypedValue first");
-		} else if (!value.getClass().isPrimitive() && 
-				!value.getClass().isAssignableFrom(String.class) &&
-				!value.getClass().isAssignableFrom(Boolean.class) &&
-				!value.getClass().isAssignableFrom(Integer.class) &&
-				!value.getClass().isAssignableFrom(TypedValue.class) &&
+		} else if (!value.getClass().isPrimitive() &&
+				!String.class.isAssignableFrom(value.getClass()) &&
+				!Boolean.class.isAssignableFrom(value.getClass()) &&
+				!Integer.class.isAssignableFrom(value.getClass()) &&
+				!TypedValue.class.isAssignableFrom(value.getClass()) &&
 				!(value instanceof IndividualUriValue)) {
 			throw new SpdxInvalidTypeException(value.getClass().toString()+" is not a supported class to be stored.");
 		}
@@ -406,6 +406,7 @@ public class StoredTypedItem extends TypedValue {
 			return true; // It is still assignable to since it is unassigned
 		}
 		if (!(map instanceof ConcurrentHashMap<?,?>)) {
+			logger.warn("Checking collection properites on a non-collection stored item");
 			return false;
 		}
 		@SuppressWarnings("unchecked")
