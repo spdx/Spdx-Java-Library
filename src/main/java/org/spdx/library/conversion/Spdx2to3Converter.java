@@ -15,14 +15,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.conversion;
+package org.spdx.library.conversion;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,13 +29,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ListedLicenses;
-import org.spdx.library.ModelCopyManager;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxCreatorInformation;
 import org.spdx.library.model.v3.ExternalElement;
@@ -50,12 +46,14 @@ import org.spdx.library.model.v3.core.AnnotationType;
 import org.spdx.library.model.v3.core.CreationInfo;
 import org.spdx.library.model.v3.core.Element;
 import org.spdx.library.model.v3.core.ExternalIdentifierType;
+import org.spdx.library.model.v3.core.ExternalMap;
 import org.spdx.library.model.v3.core.ExternalRefType;
 import org.spdx.library.model.v3.core.Hash;
 import org.spdx.library.model.v3.core.HashAlgorithm;
 import org.spdx.library.model.v3.core.IntegrityMethod;
 import org.spdx.library.model.v3.core.LifecycleScopeType;
 import org.spdx.library.model.v3.core.LifecycleScopedRelationship;
+import org.spdx.library.model.v3.core.NamespaceMap;
 import org.spdx.library.model.v3.core.NoAssertionElement;
 import org.spdx.library.model.v3.core.NoneElement;
 import org.spdx.library.model.v3.core.Organization;
@@ -102,7 +100,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	
 	static final Logger logger = LoggerFactory.getLogger(Spdx2to3Converter.class);
 	
-	static final Pattern SPDX_2_CREATOR_PATTERN = Pattern.compile("(Person|Organization):\\s*([^(]+)\\s*(\\(.+\\))?");
+	static final Pattern SPDX_2_CREATOR_PATTERN = Pattern.compile("(Person|Organization):\\s*([^(]+)\\s*(\\(([^)]+)\\))?");
 
 	private static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, RelationshipType> RELATIONSHIP_TYPE_MAP;
 	
@@ -264,8 +262,12 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	Map<String, String> alreadyConverted = Collections.synchronizedMap(new HashMap<>());
 	CreationInfo defaultCreationInfo;
 	String defaultUriPrefix;
+	/**
+	 * Map of the documentUri to information captured from the ExternalDocumentRef from the document
+	 */
+	Map<String, Map<Collection<ExternalMap>, ExternalMapInfo>> docUriToExternalMap = Collections.synchronizedMap(new HashMap<>());
 
-	private ModelCopyManager copyManager;
+	private IModelCopyManager copyManager;
 
 	private int documentIndex = 0;
 
@@ -281,48 +283,94 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			IModelStore modelStore,
 			String uriPrefix
 			) throws InvalidSPDXAnalysisException {
-		List<String> toolCreators = new ArrayList<>();
-		List<String> agentCreators = new ArrayList<>();
+		CreationInfo retval = new CreationInfo.CreationInfoBuilder(modelStore, modelStore.getNextId(IdType.Anonymous), null)
+				.setCreated(creationInfoV2.getCreated())
+				.setSpecVersion(SpdxConstantsV3.MODEL_SPEC_VERSION)
+				.build();
 		for (String docCreator:creationInfoV2.getCreators()) {
 			if (docCreator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL)) {
-				toolCreators.add(docCreator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL.length()).trim());
-			} else if (docCreator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON)) {
-				agentCreators.add(docCreator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON.length()).trim());
-			} else if (docCreator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION)) {
-				agentCreators.add(docCreator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION.length()).trim());
+				Tool tool = (Tool)SpdxModelClassFactory.getModelObject(modelStore, 
+						uriPrefix + "additionalTool" + modelStore.getNextId(IdType.SpdxId),
+						SpdxConstantsV3.CORE_TOOL, null, true, uriPrefix);
+				tool.setCreationInfo(retval)
+					.setName(docCreator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL.length()).trim())
+					.setIdPrefix(uriPrefix);
+				retval.getCreatedUsings().add(tool);
 			} else {
-				logger.warn("Invalid creator string in from document: "+docCreator);
-				agentCreators.add(docCreator.trim());
+				retval.getCreatedBys().add(stringToAgent(docCreator, retval));
 			}
 		}
-		
-		if (agentCreators.isEmpty()) {
-			logger.warn("Missing person or organization creator from SPDX 2.X version");
-		}
-		CreationInfo retval = SpdxModelClassFactory.createCreationInfo(modelStore, 
-						uriPrefix + "createdBy",
-						agentCreators.isEmpty() ? "[MISSING SPDX V2 CREATOR]" : agentCreators.get(0),
-						null);
-		for (int i = 1; i < agentCreators.size(); i++) {
-			Agent agent = (Agent) SpdxModelClassFactory.getModelObject(modelStore, 
-					uriPrefix + "additionalCreator" + i,
-					SpdxConstantsV3.CORE_AGENT, null, true, uriPrefix);
-			agent.setCreationInfo(retval)
-				.setName(agentCreators.get(i))
-				.setIdPrefix(uriPrefix);
-			retval.getCreatedBys().add(agent);
-		}
-		int toolIndex = 0;
-		for (String toolName : toolCreators) {
-			Tool tool = (Tool)SpdxModelClassFactory.getModelObject(modelStore, 
-					uriPrefix + "additionalTool" + toolIndex++,
-					SpdxConstantsV3.CORE_TOOL, null, true, uriPrefix);
-			tool.setCreationInfo(retval)
-				.setName(toolName)
-				.setIdPrefix(uriPrefix);
-			retval.getCreatedUsings().add(tool);
-		}
 		return retval;
+	}
+	
+	/**
+	 * @param spdx2personOrgString String formatted in the SPDX 2 typical format for person/org/tool
+	 * @param creationInfo creationInfo to add to the Agent
+	 * @return Agent based on parsing the spdx2personOrgString - if NONE or NOASSERTION is the string value, the null is returned
+	 * @throws InvalidSPDXAnalysisException on any error in conversion
+	 */
+	public static Agent stringToAgent(String spdx2personOrgString, CreationInfo creationInfo) throws InvalidSPDXAnalysisException {
+		Matcher matcher = SPDX_2_CREATOR_PATTERN.matcher(spdx2personOrgString);
+		if (!matcher.matches()) {
+			// return a generic Agent
+			Agent agent = (Agent)SpdxModelClassFactory.getModelObject(creationInfo.getModelStore(), 
+					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
+					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+			agent.setCreationInfo(creationInfo);
+			agent.setName(spdx2personOrgString);
+			return agent;
+		} else if (matcher.group(1).trim().equals("Person")) {
+			Person person = (Person)SpdxModelClassFactory.getModelObject(creationInfo.getModelStore(), 
+					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
+					SpdxConstantsV3.CORE_PERSON, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+			person.setCreationInfo(creationInfo);
+			if (matcher.groupCount() > 1) {
+				person.setName(matcher.group(2).trim());
+			} else {
+				logger.warn("Missing person name in createdBy");
+				person.setName("[MISSING]");
+			}
+			if (matcher.groupCount() > 3) {
+				String email = matcher.group(4);
+				if (Objects.nonNull(email)) {
+					person.getExternalIdentifiers().add(person.createExternalIdentifier(creationInfo.getModelStore().getNextId(IdType.Anonymous))
+							.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
+							.setIdentifier(email)
+							.build());
+				}
+			}
+			return person;
+		} else if (matcher.group(1).trim().equals("Organization"))  {
+			Organization organization = (Organization)SpdxModelClassFactory.getModelObject(creationInfo.getModelStore(), 
+					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
+					SpdxConstantsV3.CORE_ORGANIZATION, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+			organization.setCreationInfo(creationInfo);
+			if (matcher.groupCount() > 1) {
+				organization.setName(matcher.group(2).trim());
+			} else {
+				logger.warn("Missing organization name");
+				organization.setName("[MISSING]");
+			}
+			if (matcher.groupCount() > 3) {
+				String email = matcher.group(4);
+				if (Objects.nonNull(email)) {
+					organization.getExternalIdentifiers().add(organization.createExternalIdentifier(creationInfo.getModelStore().getNextId(IdType.Anonymous))
+							.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
+							.setIdentifier(email)
+							.build());
+				}
+			}
+			return organization;
+		} else {
+			logger.warn("Incorrect person or organization format: " + spdx2personOrgString);
+			// return a generic Agent
+			Agent agent = (Agent)SpdxModelClassFactory.getModelObject(creationInfo.getModelStore(), 
+					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
+					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+			agent.setCreationInfo(creationInfo);
+			agent.setName(spdx2personOrgString);
+			return agent;
+		}
 	}
 	
 	/**
@@ -332,7 +380,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param toSpecVersion specific spec version to convert to
 	 * @param defaultUriPrefix URI prefix to use when creating new elements
 	 */
-	public Spdx2to3Converter(IModelStore toModelStore, ModelCopyManager copyManager, CreationInfo defaultCreationInfo,
+	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
 			String toSpecVersion, String defaultUriPrefix) {
 		this.toModelStore = toModelStore;
 		this.defaultCreationInfo = defaultCreationInfo;
@@ -355,7 +403,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param toElement SPDX spec version 3 element
 	 * @throws InvalidSPDXAnalysisException on any errors converting element properties
 	 */
-	public void convertElementProperties(org.spdx.library.model.v2.SpdxElement fromElement, Element toElement) throws InvalidSPDXAnalysisException {
+	private void convertElementProperties(org.spdx.library.model.v2.SpdxElement fromElement, Element toElement) throws InvalidSPDXAnalysisException {
 		toElement.setCreationInfo(defaultCreationInfo);
 		for (org.spdx.library.model.v2.Annotation fromAnnotation:fromElement.getAnnotations()) {
 			convertAndStore(fromAnnotation, toElement);
@@ -373,7 +421,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @return optional of the existing object - if it exists
 	 * @throws InvalidSPDXAnalysisException if there is an error creating the existing model object
 	 */
-	Optional<ModelObjectV3> getExistingObject(String fromObjectUri, String toType) throws InvalidSPDXAnalysisException {
+	protected Optional<ModelObjectV3> getExistingObject(String fromObjectUri, String toType) throws InvalidSPDXAnalysisException {
 		String toObjectUri = alreadyConverted.get(fromObjectUri);
 		if (Objects.isNull(toObjectUri)) {
 			return Optional.empty();
@@ -389,7 +437,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param containingElement Element which contains the property referring to the fromRelationship
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
-	private Relationship convertAndStore(org.spdx.library.model.v2.Relationship fromRelationship,
+	public Relationship convertAndStore(org.spdx.library.model.v2.Relationship fromRelationship,
 			Element containingElement) throws InvalidSPDXAnalysisException {
 		org.spdx.library.model.v2.enumerations.RelationshipType fromRelationshipType = fromRelationship.getRelationshipType();
 		LifecycleScopeType scope = LIFECYCLE_SCOPE_MAP.get(fromRelationshipType);
@@ -449,7 +497,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param containingElement Element which contains the property referring to the fromAnnotation
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
-	private Annotation convertAndStore(org.spdx.library.model.v2.Annotation fromAnnotation, Element toElement) throws InvalidSPDXAnalysisException {
+	public Annotation convertAndStore(org.spdx.library.model.v2.Annotation fromAnnotation, Element toElement) throws InvalidSPDXAnalysisException {
 		String fromUri = fromAnnotation.getObjectUri();
 		Optional<ModelObjectV3> existing = getExistingObject(fromUri, SpdxConstantsV3.CORE_ANNOTATION);
 		if (existing.isPresent()) {
@@ -513,11 +561,48 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			}
 		}
 						).collect(Collectors.toList()));
-		//NOTE: We're not converting the getExternalDocumentRefs since they reference SPDX version 2 objects
-		//TODO: Look into converting to the namespace map and external maps
+		for (org.spdx.library.model.v2.ExternalDocumentRef externalDocRef:fromDoc.getExternalDocumentRefs()) {
+			toDoc.getNamespaceMaps().add(convertAndStore(externalDocRef, toDoc.getImportss()));
+		}
 		return toDoc;
 	}
 	
+	/**
+	 * Converts the externalDocRef to a NamespaceMap and store the NamespaceMap.
+	 * The document information is also retained in the externalDocRefMap such that any subsequent 
+	 * references to the external documents can be captured in the ExternalMap for the document
+	 * @param externalDocRef SPDX Model V2 external document reference
+	 * @param docImports SPDX document imports to track any added external references
+	 * @return the namespace map correlating the documentRef ID to the document URI
+	 * @throws InvalidSPDXAnalysisException on any errors converting 
+	 */
+	public NamespaceMap convertAndStore(org.spdx.library.model.v2.ExternalDocumentRef externalDocRef,
+			Collection<ExternalMap> docImports) throws InvalidSPDXAnalysisException {
+		// Add information to the docUriToExternalMap - this will be used if we run across any references
+		// to the external document namespaces
+		Optional<org.spdx.library.model.v2.Checksum> docChecksum = externalDocRef.getChecksum();
+		Optional<Hash> externalDocumentHash = docChecksum.isPresent() ? Optional.of(convertAndStore(docChecksum.get())) : Optional.empty();
+		docUriToExternalMap.putIfAbsent(externalDocRef.getSpdxDocumentNamespace(), Collections.synchronizedMap(new HashMap<>()));
+		Map<Collection<ExternalMap>, ExternalMapInfo> externalMapInfoMap = docUriToExternalMap.get(externalDocRef.getSpdxDocumentNamespace());
+		externalMapInfoMap.put(docImports, new ExternalMapInfo(externalDocRef.getId(), externalDocRef.getSpdxDocumentNamespace(),
+				externalDocumentHash, docImports));
+		Optional<ModelObjectV3> existing = getExistingObject(externalDocRef.getObjectUri(), SpdxConstantsV3.CORE_NAMESPACE_MAP);
+		if (existing.isPresent()) {
+			return (NamespaceMap)existing.get();
+		}
+		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String existingUri = this.alreadyConverted.putIfAbsent(externalDocRef.getObjectUri(), toObjectUri);
+		if (Objects.nonNull(existingUri)) {
+			// small window if conversion occurred since the last check already converted
+			return (NamespaceMap)getExistingObject(externalDocRef.getObjectUri(), SpdxConstantsV3.CORE_NAMESPACE_MAP).get();
+		} 
+		NamespaceMap toNamespaceMap = (NamespaceMap)SpdxModelClassFactory.getModelObject(toModelStore, 
+				toObjectUri, SpdxConstantsV3.CORE_NAMESPACE_MAP, copyManager, true, defaultUriPrefix);
+		toNamespaceMap.setIdPrefix(externalDocRef.getId());
+		toNamespaceMap.setNamespace(externalDocRef.getSpdxDocumentNamespace());
+		return toNamespaceMap;
+	}
+
 	/**
 	 * Converts an SPDX spec version 2 SPDX ConjunctiveLicenseSet to an SPDX spec version 3 SPDX ConjunctiveLicenseSet and store the result
 	 * in the toStore
@@ -596,6 +681,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		toCustomLicense.setLicenseText(fromExtractedLicenseInfo.getExtractedText());
 		toCustomLicense.setName(fromExtractedLicenseInfo.getName());
 		toCustomLicense.getSeeAlsos().addAll(fromExtractedLicenseInfo.getSeeAlso());
+		toCustomLicense.setComment(fromExtractedLicenseInfo.getComment());
 		return toCustomLicense;
 	}
 	
@@ -700,7 +786,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @return an SPDX spec version 3 LicenseAddition
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
-	private LicenseAddition convertAndStore(org.spdx.library.model.v2.license.LicenseException fromException) throws InvalidSPDXAnalysisException {
+	public LicenseAddition convertAndStore(org.spdx.library.model.v2.license.LicenseException fromException) throws InvalidSPDXAnalysisException {
 		if (fromException instanceof org.spdx.library.model.v2.license.ListedLicenseException) {
 			return convertAndStore((org.spdx.library.model.v2.license.ListedLicenseException)fromException);
 		}
@@ -744,7 +830,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @return an SPDX spec version 3 ListedLicenseException
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
-	private ListedLicenseException convertAndStore(org.spdx.library.model.v2.license.ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
+	public ListedLicenseException convertAndStore(org.spdx.library.model.v2.license.ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		Optional<ModelObjectV3> existing = getExistingObject(fromException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION);
 		if (existing.isPresent()) {
 			return (ListedLicenseException)existing.get();
@@ -785,6 +871,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			String externalUri = ((org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo)fromLicense).getIndividualURI();
 			logger.warn("Referencing an external SPDX 2 element with URI " + externalUri +
 					" while converting from SPDX 2 to 3");
+			addExternalMapInfo(externalUri);
 			return new ExternalLicense(externalUri);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ExtractedLicenseInfo) {
 			return convertAndStore((org.spdx.library.model.v2.license.ExtractedLicenseInfo)fromLicense);
@@ -808,7 +895,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param fromElement element to convert from
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
-	private Element convertAndStore(org.spdx.library.model.v2.SpdxElement fromElement) throws InvalidSPDXAnalysisException {
+	public Element convertAndStore(org.spdx.library.model.v2.SpdxElement fromElement) throws InvalidSPDXAnalysisException {
 		if (fromElement instanceof org.spdx.library.model.v2.SpdxFile) {
 			return convertAndStore((org.spdx.library.model.v2.SpdxFile)fromElement);
 		} else if (fromElement instanceof org.spdx.library.model.v2.SpdxPackage) {
@@ -823,12 +910,38 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			String externalUri = ((org.spdx.library.model.v2.ExternalSpdxElement)fromElement).getIndividualURI();
 			logger.warn("Referencing an external SPDX 2 element with URI " + externalUri +
 					" while converting from SPDX 2 to 3");
+			addExternalMapInfo(externalUri);
 			return new ExternalElement(toModelStore, externalUri, copyManager);
 		} else if (fromElement instanceof org.spdx.library.model.v2.SpdxDocument) {
 			return convertAndStore((org.spdx.library.model.v2.SpdxDocument)fromElement);
 		} else {
 			throw new InvalidSPDXAnalysisException("Conversion of SPDX 2 type" + fromElement.getType()+" is not currently supported");
 		}
+	}
+
+	/**
+	 * Creates ExternalMaps for a reference to an external SPDX element or license
+	 * @param externalUri URI of the external element
+	 * @throws InvalidSPDXAnalysisException on error creating ExternalMap
+	 */
+	private void addExternalMapInfo(String externalUri) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(externalUri, "External URI can not be null");
+		String[] parts = externalUri.split("#");
+		if (parts.length != 2) {
+			logger.warn(externalUri + " is not a valid SPDX Spec version 2 external referenced - should have a document uri + '#' + ID");
+			return;
+		}
+		Map<Collection<ExternalMap>, ExternalMapInfo> externalMapMap = docUriToExternalMap.get(parts[0]);
+		if (Objects.isNull(externalMapMap)) {
+			logger.warn("No corresponding ExternalDocumentRefs for "+externalUri);
+			return;
+		}
+		synchronized(externalMapMap) {
+			for (ExternalMapInfo mapInfo:externalMapMap.values()) {
+				mapInfo.addExternalMap(externalUri, toModelStore);
+			}
+		}
+		
 	}
 
 	/**
@@ -879,7 +992,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @return SPDX spec version 3 Hash
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
-	private Hash convertAndStore(org.spdx.library.model.v2.Checksum checksum) throws InvalidSPDXAnalysisException {
+	public Hash convertAndStore(org.spdx.library.model.v2.Checksum checksum) throws InvalidSPDXAnalysisException {
 		Optional<ModelObjectV3> existing = getExistingObject(checksum.getObjectUri(), SpdxConstantsV3.CORE_HASH);
 		if (existing.isPresent()) {
 			return (Hash)existing.get();
@@ -1056,7 +1169,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @return the package verification code integrity method
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
-	private IntegrityMethod convertAndStore(
+	public IntegrityMethod convertAndStore(
 			org.spdx.library.model.v2.SpdxPackageVerificationCode spdxPackageVerificationCode) throws InvalidSPDXAnalysisException {
 		PackageVerificationCode pkgVerificationCode = (PackageVerificationCode)SpdxModelClassFactory.getModelObject(toModelStore, 
 				toModelStore.getNextId(IdType.Anonymous), SpdxConstantsV3.CORE_PACKAGE_VERIFICATION_CODE,
@@ -1089,53 +1202,6 @@ public class Spdx2to3Converter implements ISpdxConverter {
 				.addTo(file)
 				.setCompleteness(RelationshipCompleteness.COMPLETE)
 				.build();
-	}
-
-	/**
-	 * @param spdx2personOrgString String formatted in the SPDX 2 typical format for person/org/tool
-	 * @param creationInfo creationInfo to add to the Agent
-	 * @return Agent based on parsing the spdx2personOrgString - if NONE or NOASSERTION is the string value, the null is returned
-	 * @throws InvalidSPDXAnalysisException on any error in conversion
-	 */
-	public @Nullable Agent stringToAgent(String spdx2personOrgString, CreationInfo creationInfo) throws InvalidSPDXAnalysisException {
-		Matcher matcher = SPDX_2_CREATOR_PATTERN.matcher(spdx2personOrgString);
-		if (!matcher.matches()) {
-			// return a generic Agent
-			Agent agent = (Agent)SpdxModelClassFactory.getModelObject(toModelStore, 
-					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_AGENT, copyManager, true, defaultUriPrefix);
-			agent.setCreationInfo(creationInfo);
-			agent.setName(spdx2personOrgString);
-			return agent;
-		} else if (matcher.group(1).trim().equals("Person")) {
-			Person person = (Person)SpdxModelClassFactory.getModelObject(toModelStore, 
-					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_PERSON, copyManager, true, defaultUriPrefix);
-			person.setCreationInfo(creationInfo);
-			person.setName(matcher.group(2).trim());
-			String email = matcher.group(4);
-			if (Objects.nonNull(email)) {
-				person.getExternalIdentifiers().add(person.createExternalIdentifier(toModelStore.getNextId(IdType.Anonymous))
-						.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
-						.setIdentifier(email)
-						.build());
-			}
-			return person;
-		} else {
-			Organization organization = (Organization)SpdxModelClassFactory.getModelObject(toModelStore, 
-					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_ORGANIZATION, copyManager, true, defaultUriPrefix);
-			organization.setCreationInfo(creationInfo);
-			organization.setName(matcher.group(2).trim());
-			String email = matcher.group(4);
-			if (Objects.nonNull(email)) {
-				organization.getExternalIdentifiers().add(organization.createExternalIdentifier(toModelStore.getNextId(IdType.Anonymous))
-						.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
-						.setIdentifier(email)
-						.build());
-			}
-			return organization;
-		}
 	}
 
 	/**

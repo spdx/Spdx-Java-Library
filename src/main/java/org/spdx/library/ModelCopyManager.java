@@ -27,13 +27,13 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.conversion.ISpdxConverter;
-import org.spdx.conversion.Spdx2to3Converter;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.IndividualUriValue;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.SimpleUriValue;
 import org.spdx.core.TypedValue;
+import org.spdx.library.conversion.ISpdxConverter;
+import org.spdx.library.conversion.Spdx2to3Converter;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v3.SpdxConstantsV3;
 import org.spdx.storage.IModelStore;

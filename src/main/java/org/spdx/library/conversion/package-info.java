@@ -15,14 +15,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.spdx.conversion;
-
 /**
  * @author Gary O'Neall
  * 
- * Interface for classes that can convert from one SPDX spec version to another
+ * This package contains classes that convert between major versions of SPDX
+ * 
+ * These classes can be used directly (e.g. from a web application or CLI) or 
+ * from the <code>CopyManager</code>.
  *
  */
-public interface ISpdxConverter {
-
-}
+package org.spdx.library.conversion;
