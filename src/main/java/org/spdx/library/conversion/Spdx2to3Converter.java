@@ -447,7 +447,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (Relationship)existing.get();
 		}
-		String toObjectUri = defaultUriPrefix = toModelStore.getNextId(IdType.SpdxId);
+		String toObjectUri = defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId);
 		String exitingUri = alreadyConverted.putIfAbsent(fromUri, toObjectUri);
 		if (Objects.nonNull(exitingUri)) {
 			return (Relationship)getExistingObject(fromUri, 
@@ -503,7 +503,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (Annotation)existing.get();
 		}
-		String toObjectUri = defaultUriPrefix = toModelStore.getNextId(IdType.SpdxId);
+		String toObjectUri = defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId);
 		String exitingUri = alreadyConverted.putIfAbsent(fromUri, toObjectUri);
 		if (Objects.nonNull(exitingUri)) {
 			return (Annotation)getExistingObject(fromUri, SpdxConstantsV3.CORE_ANNOTATION).get();
@@ -564,6 +564,9 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		for (org.spdx.library.model.v2.ExternalDocumentRef externalDocRef:fromDoc.getExternalDocumentRefs()) {
 			toDoc.getNamespaceMaps().add(convertAndStore(externalDocRef, toDoc.getImportss()));
 		}
+		for (org.spdx.library.model.v2.license.ExtractedLicenseInfo extractedLicense:fromDoc.getExtractedLicenseInfos()) {
+			convertAndStore(extractedLicense);
+		}
 		return toDoc;
 	}
 	
@@ -598,7 +601,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		} 
 		NamespaceMap toNamespaceMap = (NamespaceMap)SpdxModelClassFactory.getModelObject(toModelStore, 
 				toObjectUri, SpdxConstantsV3.CORE_NAMESPACE_MAP, copyManager, true, defaultUriPrefix);
-		toNamespaceMap.setIdPrefix(externalDocRef.getId());
+		toNamespaceMap.setPrefix(externalDocRef.getId());
 		toNamespaceMap.setNamespace(externalDocRef.getSpdxDocumentNamespace());
 		return toNamespaceMap;
 	}
@@ -974,15 +977,16 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		for (org.spdx.library.model.v2.enumerations.FileType fileType : spdxFile.getFileTypes()) {
 			convertAndAddFileType(fileType, toFile);
 		}
-		toFile.setCopyrightText(spdxFile.getNoticeText().orElseGet(null));
-		String sha1 = spdxFile.getSha1();
-		if (Objects.nonNull(sha1)) {
-			Hash hash = toFile.createHash(toModelStore.getNextId(IdType.Anonymous))
-					.setAlgorithm(HashAlgorithm.SHA1)
-					.setHashValue(sha1)
-					.build();
-			toFile.getVerifiedUsings().add(hash);
+		Optional<String> noticeText = spdxFile.getNoticeText();
+		if (noticeText.isPresent()) {
+			Optional<String> existingCopyrightText = toFile.getCopyrightText();
+			if (existingCopyrightText.isPresent()) {
+				toFile.setCopyrightText(existingCopyrightText.get() + "; " + noticeText.get());
+			} else {
+				toFile.setCopyrightText(noticeText.get());
+			}
 		}
+		// - this is already captured in the checksums - String sha1 = spdxFile.getSha1();
 		return toFile;
 	}
 	

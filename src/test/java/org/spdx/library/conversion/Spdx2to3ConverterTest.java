@@ -57,6 +57,7 @@ import org.spdx.library.model.v3.core.RelationshipType;
 import org.spdx.library.model.v3.core.SpdxDocument;
 import org.spdx.library.model.v3.core.Tool;
 import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
 import org.spdx.library.model.v3.software.SpdxFile;
 import org.spdx.library.model.v3.software.SpdxPackage;
 import org.spdx.storage.IModelStore;
@@ -73,7 +74,8 @@ public class Spdx2to3ConverterTest {
 	static final String DEFAULT_PREFIX = "https://default.prefix/";
 	static final String DEFAULT_CREATOR_NAME = "Gary O'Neall";
 	
-	IModelStore modelStore;
+	IModelStore fromModelStore;
+	IModelStore toModelStore;
 	IModelCopyManager copyManager;
 	CreationInfo defaultCreationInfo;
 
@@ -83,9 +85,10 @@ public class Spdx2to3ConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		SpdxModelFactory.init();
-		modelStore = new InMemSpdxStore();
+		fromModelStore = new InMemSpdxStore();
+		toModelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
-		defaultCreationInfo = SpdxModelClassFactory.createCreationInfo(modelStore, DEFAULT_PREFIX + "createdBy", DEFAULT_CREATOR_NAME, copyManager);
+		defaultCreationInfo = SpdxModelClassFactory.createCreationInfo(toModelStore, DEFAULT_PREFIX + "createdBy", DEFAULT_CREATOR_NAME, copyManager);
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class Spdx2to3ConverterTest {
 	 */
 	@Test
 	public void testConvertCreationInfo() throws InvalidSPDXAnalysisException {
-		String creatorId = modelStore.getNextId(IdType.Anonymous);
+		String creatorId = fromModelStore.getNextId(IdType.Anonymous);
 		String personCreatorName = "Gary O'Neall";
 		String personCreatorEmail = "gary@sourceauditor.com";
 		String personCreator = SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON + personCreatorName + " (" + personCreatorEmail + ")";
@@ -111,7 +114,7 @@ public class Spdx2to3ConverterTest {
 		String organizationCreator = SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION + organizationCreatorName;
 		String created = "2010-01-29T18:30:22Z";
 		String licenseListVersion = "3.21";
-		SpdxCreatorInformation creatorInfo = new SpdxCreatorInformation(modelStore, DOCUMENT_URI, creatorId, copyManager, true);
+		SpdxCreatorInformation creatorInfo = new SpdxCreatorInformation(fromModelStore, DOCUMENT_URI, creatorId, copyManager, true);
 		creatorInfo.getCreators().add(personCreator);
 		creatorInfo.getCreators().add(toolCreator);
 		creatorInfo.getCreators().add(organizationCreator);
@@ -120,7 +123,7 @@ public class Spdx2to3ConverterTest {
 		List<String> verify = creatorInfo.verify();
 		assertTrue(verify.isEmpty());
 		
-		CreationInfo result = Spdx2to3Converter.convertCreationInfo(creatorInfo, modelStore, DEFAULT_PREFIX);
+		CreationInfo result = Spdx2to3Converter.convertCreationInfo(creatorInfo, toModelStore, DEFAULT_PREFIX);
 		assertEquals(2, result.getCreatedBys().size());
 		Person creatorPerson = null;
 		Organization creatorOrganization= null;
@@ -146,7 +149,7 @@ public class Spdx2to3ConverterTest {
 		assertEquals(1, tools.length);
 		assertEquals(toolCreatorName, tools[0].getName().get());
 		assertEquals(created, result.getCreated());
-		assertEquals(IdType.Anonymous, modelStore.getIdType(result.getObjectUri()));
+		assertEquals(IdType.Anonymous, toModelStore.getIdType(result.getObjectUri()));
 		verify = result.verify();
 		assertTrue(verify.isEmpty());
 	}
@@ -156,7 +159,7 @@ public class Spdx2to3ConverterTest {
 	 */
 	@Test
 	public void testSpdx2to3Converter() {
-		Spdx2to3Converter result = new Spdx2to3Converter(modelStore, copyManager, defaultCreationInfo, 
+		Spdx2to3Converter result = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
 				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX);
 		assertFalse(result.alreadyCopied(DOCUMENT_URI));
 	}
@@ -167,13 +170,13 @@ public class Spdx2to3ConverterTest {
 	 */
 	@Test
 	public void testAlreadyCopied() throws InvalidSPDXAnalysisException {
-		String licenseId = modelStore.getNextId(IdType.LicenseRef);
+		String licenseId = fromModelStore.getNextId(IdType.LicenseRef);
 		org.spdx.library.model.v2.license.ExtractedLicenseInfo licV2 = 
-				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(modelStore, DOCUMENT_URI, licenseId,
+				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(fromModelStore, DOCUMENT_URI, licenseId,
 						copyManager, true);
 		licV2.setExtractedText("Extracted Text");
 		
-		Spdx2to3Converter converter = new Spdx2to3Converter(modelStore, copyManager, defaultCreationInfo, 
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
 				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX);
 		assertFalse(converter.alreadyCopied(DOCUMENT_URI + "#" + licenseId));
 		converter.convertAndStore(licV2);
@@ -211,13 +214,13 @@ public class Spdx2to3ConverterTest {
 	 */
 	@Test
 	public void testGetExistingObject() throws InvalidSPDXAnalysisException {
-		String licenseId = modelStore.getNextId(IdType.LicenseRef);
+		String licenseId = fromModelStore.getNextId(IdType.LicenseRef);
 		org.spdx.library.model.v2.license.ExtractedLicenseInfo licV2 = 
-				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(modelStore, DOCUMENT_URI, licenseId,
+				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(fromModelStore, DOCUMENT_URI, licenseId,
 						copyManager, true);
 		licV2.setExtractedText("Extracted Text");
 		
-		Spdx2to3Converter converter = new Spdx2to3Converter(modelStore, copyManager, defaultCreationInfo, 
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
 				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX);
 		assertFalse(converter.getExistingObject(DOCUMENT_URI + "#" + licenseId, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE).isPresent());
 		
@@ -241,6 +244,7 @@ public class Spdx2to3ConverterTest {
 		String personCreator = SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON + personCreatorName + " (" + personCreatorEmail + ")";
 		
 		String created = "2010-01-29T18:30:22Z";
+		String dataLicenseStr = "CC0-1.0";
 		String docComment = "Doc comment";
 		
 		org.spdx.library.model.v2.enumerations.AnnotationType annotationType = AnnotationType.REVIEW;
@@ -250,6 +254,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
+		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		String externalDocumentId = SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "external";
 		String externalDocumentUri = "https://external/document";
@@ -274,26 +279,30 @@ public class Spdx2to3ConverterTest {
 				org.spdx.library.model.v2.enumerations.RelationshipType.CONTAINS;
 		String relationshipComment = "Relationship comment";
 		
-		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(modelStore, DOCUMENT_URI, copyManager, true);
+		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
 		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {personCreator}), created));
+		org.spdx.library.model.v2.license.AnyLicenseInfo dataLicense = 
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(dataLicenseStr, fromModelStore, DOCUMENT_URI, copyManager);
+		doc.setDataLicense(dataLicense);
 		doc.setComment(docComment);
 		org.spdx.library.model.v2.Annotation annotation = doc.createAnnotation(personCreator, annotationType, 
 				created, annotationComment);
 		doc.addAnnotation(annotation);
-		String pkgId = modelStore.getNextId(IdType.SpdxId);
+		String pkgId = fromModelStore.getNextId(IdType.SpdxId);
 		org.spdx.library.model.v2.license.AnyLicenseInfo pkgConcludedLicense = 
-				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgConcludedLicenseStr, modelStore, DOCUMENT_URI, copyManager);
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgConcludedLicenseStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.license.AnyLicenseInfo pkgLicenseDeclared = 
-				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, modelStore, DOCUMENT_URI, copyManager);
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
+				.setDownloadLocation(pkgDownloadLoctation)
 				.build();		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
 		org.spdx.library.model.v2.Checksum externalDocChecksum = doc.createChecksum(sha1Algorithm, externalDocChecksumValue);
 		org.spdx.library.model.v2.ExternalDocumentRef externalDocRef = doc.createExternalDocumentRef(externalDocumentId, externalDocumentUri, externalDocChecksum);
 		doc.setExternalDocumentRefs(Arrays.asList(new org.spdx.library.model.v2.ExternalDocumentRef[] {externalDocRef}));
 		org.spdx.library.model.v2.license.ExtractedLicenseInfo extractedLicense = 
-				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.LicenseRef),
+				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(fromModelStore, DOCUMENT_URI, fromModelStore.getNextId(IdType.LicenseRef),
 						copyManager, true);
 		extractedLicense.setComment(extractedLicComment);
 		extractedLicense.setExtractedText(extractedText);
@@ -301,11 +310,11 @@ public class Spdx2to3ConverterTest {
 		extractedLicense.getSeeAlso().add(extractedLicSeeAlso1);
 		doc.setExtractedLicenseInfos(Arrays.asList(new org.spdx.library.model.v2.license.ExtractedLicenseInfo[] {extractedLicense}));
 		doc.setName(docName);
-		String fileId = modelStore.getNextId(IdType.SpdxId);
+		String fileId = fromModelStore.getNextId(IdType.SpdxId);
 		org.spdx.library.model.v2.license.AnyLicenseInfo fileConcludedLicense = 
-				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(fileConcludedLicenseStr, modelStore, DOCUMENT_URI, copyManager);
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(fileConcludedLicenseStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.license.AnyLicenseInfo fileSeenLicense = 
-				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(fileSeenLicenseStr, modelStore, DOCUMENT_URI, copyManager);
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(fileSeenLicenseStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.Checksum fileSha1 = doc.createChecksum(sha1Algorithm, fileChecksumValue);
 		org.spdx.library.model.v2.SpdxFile spdxFile = doc.createSpdxFile(fileId, fileName, fileConcludedLicense, 
 				Arrays.asList(new org.spdx.library.model.v2.license.AnyLicenseInfo[] {fileSeenLicense}), fileCopyright, fileSha1)
@@ -315,43 +324,52 @@ public class Spdx2to3ConverterTest {
 		List<String> verify = doc.verify();
 		assertTrue(verify.isEmpty());
 		
-		Spdx2to3Converter converter = new Spdx2to3Converter(modelStore, copyManager, defaultCreationInfo, 
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
 				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX);
 		SpdxDocument result = converter.convertAndStore(doc);
-		assertEquals(docComment, result.getComment());
+		assertEquals(docComment, result.getComment().get());
+		assertEquals(dataLicenseStr, result.getDataLicense().get().toString());
 		
-		Relationship[] resultRelationships = (Relationship[])(SpdxModelFactory.getSpdxObjects(modelStore, copyManager, SpdxConstantsV3.CORE_RELATIONSHIP, DEFAULT_PREFIX, DEFAULT_PREFIX).toArray());
-		Object[] resultAnnotations = SpdxModelFactory.getSpdxObjects(modelStore, copyManager, SpdxConstantsV3.CORE_ANNOTATION, DEFAULT_PREFIX, DEFAULT_PREFIX).toArray();
+		List<Relationship> resultRelationships = new ArrayList<>();
+		SpdxModelFactory.getSpdxObjects(toModelStore, copyManager, SpdxConstantsV3.CORE_RELATIONSHIP, DEFAULT_PREFIX, DEFAULT_PREFIX).forEach(rel -> resultRelationships.add((Relationship)rel));
+		Object[] resultAnnotations = SpdxModelFactory.getSpdxObjects(toModelStore, copyManager, SpdxConstantsV3.CORE_ANNOTATION, DEFAULT_PREFIX, DEFAULT_PREFIX).toArray();
 		assertEquals(1, resultAnnotations.length);
 		assertTrue(resultAnnotations[0] instanceof Annotation);
 		Annotation resultAnnotation = (Annotation)resultAnnotations[0];
-		assertEquals(annotationType, resultAnnotation.getAnnotationType());
-		assertEquals(annotationComment, resultAnnotation.getComment().get());
+		assertEquals(annotationType.toString(), resultAnnotation.getAnnotationType().toString());
+		assertEquals(annotationComment, resultAnnotation.getStatement().get());
 		
 		Element[] rootElements = result.getRootElements().toArray(new Element[result.getRootElements().size()]);
 		assertEquals(1, rootElements.length);
 		assertTrue(rootElements[0] instanceof SpdxPackage);
 		SpdxPackage resultPkg = (SpdxPackage)rootElements[0];
 		assertEquals(pkgName, resultPkg.getName().get());
+		assertEquals(pkgDownloadLoctation, resultPkg.getDownloadLocation().get());
 		assertEquals(pkgCopyright, resultPkg.getCopyrightText().get());
-		List<Relationship> pkgConcludedLicRelationships = findRelationship(resultRelationships, RelationshipType.HAS_CONCLUDED_LICENSE, pkg.getObjectUri(), null);
+		List<Relationship> pkgConcludedLicRelationships = findRelationship(resultRelationships, RelationshipType.HAS_CONCLUDED_LICENSE, resultPkg.getObjectUri(), null);
 		assertEquals(1, pkgConcludedLicRelationships.size());
-		assertEquals(pkgConcludedLicenseStr, pkgConcludedLicRelationships.get(0).toString());
-		List<Relationship> pkgDeclaredLicRelationships = findRelationship(resultRelationships, RelationshipType.HAS_DECLARED_LICENSE, pkg.getObjectUri(), null);
+		AnyLicenseInfo[] pkgConcludedLicResults = pkgConcludedLicRelationships.get(0).getTos().toArray(new AnyLicenseInfo[pkgConcludedLicRelationships.get(0).getTos().size()]);
+		assertEquals(1, pkgConcludedLicResults.length);
+		assertEquals(pkgConcludedLicenseStr, pkgConcludedLicResults[0].toString());
+		List<Relationship> pkgDeclaredLicRelationships = findRelationship(resultRelationships, RelationshipType.HAS_DECLARED_LICENSE, resultPkg.getObjectUri(), null);
 		assertEquals(1, pkgDeclaredLicRelationships.size());
-		assertEquals(pkgLicenseDeclaredStr, pkgDeclaredLicRelationships.get(0).toString());
+		AnyLicenseInfo[] pkgDeclaredLicResults = pkgDeclaredLicRelationships.get(0).getTos().toArray(new AnyLicenseInfo[pkgDeclaredLicRelationships.get(0).getTos().size()]);
+		assertEquals(1, pkgDeclaredLicResults.length);
+		assertEquals(pkgLicenseDeclaredStr, pkgDeclaredLicResults[0].toString());
 		
 		NamespaceMap[] namespaceMaps = result.getNamespaceMaps().toArray(new NamespaceMap[result.getNamespaceMaps().size()]);
 		assertEquals(1, namespaceMaps.length);
 		assertEquals(externalDocumentUri, namespaceMaps[0].getNamespace());
 		assertEquals(externalDocumentId, namespaceMaps[0].getPrefix());
 		
-		CustomLicense[] customLicenses = (CustomLicense[])(SpdxModelFactory.getSpdxObjects(modelStore, copyManager, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE, DEFAULT_PREFIX, DEFAULT_PREFIX).toArray());
-		assertEquals(1, customLicenses.length);
-		assertEquals(extractedLicComment, customLicenses[0].getComment());
-		assertEquals(extractedText, customLicenses[0].getLicenseText());
-		assertEquals(extractedLicName, customLicenses[0].getName().get());
-		String[] seeAlsos = customLicenses[0].getSeeAlsos().toArray(new String[customLicenses[0].getSeeAlsos().size()]);
+		List<CustomLicense> customLicenses = new ArrayList<>();
+		SpdxModelFactory.getSpdxObjects(toModelStore, copyManager, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE, DEFAULT_PREFIX, DEFAULT_PREFIX)
+							.forEach(cli -> customLicenses.add((CustomLicense)cli));
+		assertEquals(1, customLicenses.size());
+		assertEquals(extractedLicComment, customLicenses.get(0).getComment().get());
+		assertEquals(extractedText, customLicenses.get(0).getLicenseText());
+		assertEquals(extractedLicName, customLicenses.get(0).getName().get());
+		String[] seeAlsos = customLicenses.get(0).getSeeAlsos().toArray(new String[customLicenses.get(0).getSeeAlsos().size()]);
 		assertEquals(1, seeAlsos.length);
 		assertEquals(extractedLicSeeAlso1, seeAlsos[0]);
 		
@@ -368,16 +386,20 @@ public class Spdx2to3ConverterTest {
 		assertEquals(fileName, containedFile.getName().get());
 		List<Relationship> fileConcludedRel = findRelationship(resultRelationships, RelationshipType.HAS_CONCLUDED_LICENSE, containedFile.getObjectUri(), null);
 		assertEquals(1, fileConcludedRel.size());
-		assertEquals(fileConcludedLicenseStr, fileConcludedRel.get(0).toString());
+		AnyLicenseInfo[] fileConcludedLicResults = fileConcludedRel.get(0).getTos().toArray(new AnyLicenseInfo[fileConcludedRel.get(0).getTos().size()]);
+		assertEquals(1, fileConcludedLicResults.length);
+		assertEquals(fileConcludedLicenseStr, fileConcludedLicResults[0].toString());
 		List<Relationship> fileSeenRel = findRelationship(resultRelationships, RelationshipType.HAS_DECLARED_LICENSE, containedFile.getObjectUri(), null);
 		assertEquals(1, fileSeenRel.size());
-		assertEquals(fileSeenLicenseStr, fileSeenRel.get(0).toString());
-		assertEquals(fileCopyright, containedFile.getCopyrightText());
+		AnyLicenseInfo[] fileDeclaredLicResults = fileSeenRel.get(0).getTos().toArray(new AnyLicenseInfo[fileSeenRel.get(0).getTos().size()]);
+		assertEquals(1, fileDeclaredLicResults.length);
+		assertEquals(fileSeenLicenseStr, fileDeclaredLicResults[0].toString());
+		assertEquals(fileCopyright, containedFile.getCopyrightText().get());
 		IntegrityMethod[] fileIntegrityMethods = containedFile.getVerifiedUsings().toArray(new IntegrityMethod[containedFile.getVerifiedUsings().size()]);
 		assertEquals(1, fileIntegrityMethods.length);
 		assertTrue(fileIntegrityMethods[0] instanceof Hash);
 		Hash containedFileHash = (Hash)fileIntegrityMethods[0];
-		assertEquals(sha1Algorithm, containedFileHash.getAlgorithm());
+		assertEquals(sha1Algorithm.toString(), containedFileHash.getAlgorithm().toString());
 		assertEquals(fileChecksumValue, containedFileHash.getHashValue());
 	}
 	
@@ -394,12 +416,14 @@ public class Spdx2to3ConverterTest {
 		 */
 	}
 	
-	List<Relationship> findRelationship(Relationship[] relationships, @Nullable RelationshipType relationshipType,
+	List<Relationship> findRelationship(List<Relationship> relationships, @Nullable RelationshipType relationshipType,
 			@Nullable String fromObjectUri, @Nullable String toObjectUri) throws InvalidSPDXAnalysisException {
 		List<Relationship> result = new ArrayList<>();
 		for (Relationship relationship:relationships) {
-			if ((Objects.nonNull(relationshipType) && Objects.equals(relationship.getRelationshipType(), relationshipType)) &&
-					(Objects.nonNull(fromObjectUri) && Objects.equals(relationship.getFrom().getObjectUri(), fromObjectUri))) {
+			RelationshipType relType = relationship.getRelationshipType();
+			String fromObject = relationship.getFrom().getObjectUri();
+			if ((Objects.nonNull(relationshipType) && Objects.equals(relType, relationshipType)) &&
+					(Objects.nonNull(fromObjectUri) && Objects.equals(fromObject, fromObjectUri))) {
 				if (Objects.isNull(toObjectUri)) {
 					result.add(relationship);
 				} else {
@@ -470,7 +494,7 @@ public class Spdx2to3ConverterTest {
 		String extractedLicSeeAlso1 = "https://seealso1";
 		String extractedLicSeeAlso2 = "https://seealso2";
 		org.spdx.library.model.v2.license.ExtractedLicenseInfo licV2 = 
-				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.LicenseRef),
+				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(fromModelStore, DOCUMENT_URI, fromModelStore.getNextId(IdType.LicenseRef),
 						copyManager, true);
 		licV2.setComment(extractedLicComment);
 		licV2.setExtractedText(extractedText);
@@ -480,7 +504,7 @@ public class Spdx2to3ConverterTest {
 		List<String> verify = licV2.verify();
 		assertTrue(verify.isEmpty());
 		
-		Spdx2to3Converter converter = new Spdx2to3Converter(modelStore, copyManager, defaultCreationInfo, 
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
 				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX);
 		CustomLicense result = converter.convertAndStore(licV2);
 		assertEquals(extractedLicComment, result.getComment().get());
