@@ -25,10 +25,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.SpdxModelClassFactory;
-import org.spdx.library.model.v3.core.ExternalMap;
-import org.spdx.library.model.v3.core.Hash;
+import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_0.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3_0_0.core.ExternalMap;
+import org.spdx.library.model.v3_0_0.core.Hash;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -72,7 +72,7 @@ public class ExternalMapInfo {
 		synchronized(existingExternalMap) {
 			ExternalMap retval = existingExternalMap.get(externalUri);
 			if (Objects.isNull(retval)) {
-				retval = (ExternalMap)SpdxModelClassFactory.getModelObject(modelStore, 
+				retval = (ExternalMap)SpdxModelClassFactoryV3.getModelObject(modelStore, 
 						modelStore.getNextId(IdType.Anonymous), SpdxConstantsV3.CORE_EXTERNAL_MAP, null, true, null);
 				retval.setExternalSpdxId(externalUri);
 				retval.setLocationHint(this.externalDocumentUri);

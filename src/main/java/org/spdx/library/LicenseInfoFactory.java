@@ -32,10 +32,10 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.LicenseParserException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
-import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_0.core.DictionaryEntry;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_0.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.utility.license.LicenseExpressionParser;
 
@@ -129,14 +129,14 @@ public class LicenseInfoFactory {
 	 * @param customLicensePrefix Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
 	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
-	 * @param spdxDocument Document containing the namespace map for any prefixes used in external addition or licenses
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException 
 	 * @throws DefaultStoreNotInitialized 
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
 			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
-			@Nullable SpdxDocument spdxDocument) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -148,7 +148,7 @@ public class LicenseInfoFactory {
 		}
 		try {
 			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix, 
-					copyManager, spdxDocument);
+					copyManager, customIdToUri);
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);
 		} catch (InvalidSPDXAnalysisException e) {

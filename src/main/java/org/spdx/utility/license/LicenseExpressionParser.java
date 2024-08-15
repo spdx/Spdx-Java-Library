@@ -43,25 +43,24 @@ import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
 import org.spdx.library.model.v2.license.SpdxNoneLicense;
 import org.spdx.library.model.v2.license.WithExceptionOperator;
-import org.spdx.library.model.v3.ExternalCustomLicense;
-import org.spdx.library.model.v3.ExternalCustomLicenseAddition;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.core.NamespaceMap;
-import org.spdx.library.model.v3.core.SpdxDocument;
-import org.spdx.library.model.v3.expandedlicensing.ConjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.CustomLicense;
-import org.spdx.library.model.v3.expandedlicensing.CustomLicenseAddition;
-import org.spdx.library.model.v3.expandedlicensing.DisjunctiveLicenseSet;
-import org.spdx.library.model.v3.expandedlicensing.ExtendableLicense;
-import org.spdx.library.model.v3.expandedlicensing.License;
-import org.spdx.library.model.v3.expandedlicensing.LicenseAddition;
-import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
-import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
-import org.spdx.library.model.v3.expandedlicensing.NoAssertionLicense;
-import org.spdx.library.model.v3.expandedlicensing.NoneLicense;
-import org.spdx.library.model.v3.expandedlicensing.OrLaterOperator;
-import org.spdx.library.model.v3.expandedlicensing.WithAdditionOperator;
-import org.spdx.library.model.v3.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_0.core.DictionaryEntry;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_0.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.CustomLicenseAddition;
+import org.spdx.library.model.v3_0_0.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ExtendableLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ExternalCustomLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ExternalCustomLicenseAddition;
+import org.spdx.library.model.v3_0_0.expandedlicensing.License;
+import org.spdx.library.model.v3_0_0.expandedlicensing.LicenseAddition;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_0.expandedlicensing.NoAssertionLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.NoneLicense;
+import org.spdx.library.model.v3_0_0.expandedlicensing.OrLaterOperator;
+import org.spdx.library.model.v3_0_0.expandedlicensing.WithAdditionOperator;
+import org.spdx.library.model.v3_0_0.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -101,12 +100,13 @@ public class LicenseExpressionParser {
 	 * @param customLicenseUriPrefix Prefix for Object URI's created when appending custom license ID's or custom license additions. If any custom licenses or additions already exist, they will be used.
 	 * If none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
-	 * @param spdxDocument enclosing SPDX document - required if there are any external custom licenses or additions
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the parsed license expression
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
-			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager, 
+			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
 		if (expression == null || expression.trim().isEmpty()) {
 			throw new LicenseParserException("Empty license expression");
 		}
@@ -121,7 +121,7 @@ public class LicenseExpressionParser {
 			return new NoneLicense();
 		} else {
 			try {
-				return parseLicenseExpression(tokens, store, customLicenseUriPrefix, copyManager, spdxDocument);
+				return parseLicenseExpression(tokens, store, customLicenseUriPrefix, copyManager, customIdToUri);
 			} catch (LicenseParserException ex) {
 				// Add the expression to the error message to provide additional information to the user
 				throw new LicenseParserException(ex.getMessage()+" License expression: '"+expression+"'", ex);
@@ -209,13 +209,13 @@ public class LicenseExpressionParser {
 	 * @param customLicenseUriPrefix Prefix for Object URI's created when appending custom license ID's or custom license additions. If any custom licenses or additions already exist, they will be used.
 	 * If none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
-	 * @param spdxDocument enclosing SPDX document - required if there are any external custom licenses or additions
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID - required for any external additions or licenses
 	 * @return a license info representing the fully parsed list of tokens
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
 			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager,
-			@Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
 		if (tokens == null || tokens.length == 0) {
 			throw new LicenseParserException("Expected license expression");
 		}
@@ -233,10 +233,10 @@ public class LicenseExpressionParser {
 				}
 				String[] nestedTokens = Arrays.copyOfRange(tokens, tokenIndex, rightParenIndex);
 				operandStack.push(parseLicenseExpression(nestedTokens, store, customLicenseUriPrefix, 
-						copyManager, spdxDocument));
+						copyManager, customIdToUri));
 				tokenIndex = rightParenIndex + 1;		
 			} else if (OPERATOR_MAP.get(token) == null) {	// assumed to be a simple licensing type
-				operandStack.push(parseSimpleLicenseToken(token, store, customLicenseUriPrefix, copyManager, spdxDocument));
+				operandStack.push(parseSimpleLicenseToken(token, store, customLicenseUriPrefix, copyManager, customIdToUri));
 			} else {
 				Operator operator = OPERATOR_MAP.get(token);
 				if (operator == Operator.WITH) {
@@ -250,7 +250,7 @@ public class LicenseExpressionParser {
 					}
 					token = tokens[tokenIndex++];
 					LicenseAddition licenseAddition = parseSimpleLicenseAdditionToken(token, 
-							store, customLicenseUriPrefix, copyManager, spdxDocument);
+							store, customLicenseUriPrefix, copyManager, customIdToUri);
 					AnyLicenseInfo operand = operandStack.pop();
 					if (operand == null) {
 						throw new LicenseParserException("Missing license for with clause");
@@ -407,19 +407,18 @@ public class LicenseExpressionParser {
 	 * @param store Store for the licenses
 	 * @param customLicenseUriPrefix Prefix to use for any created local licenses or additions
 	 * @param copyManager to use when copying from the listed license store
-	 * @param spdxDocument enclosing SPDX document - required if there are any external custom licenses or additions
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID - required for any external additions or licenses
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static LicenseAddition parseSimpleLicenseAdditionToken(String token, IModelStore store, String customLicenseUriPrefix,
-			@Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+			@Nullable IModelCopyManager copyManager, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(customLicenseUriPrefix, "URI Prefix can not be null");
 		if (token.contains(":")) {
 			// External License Ref
-			return new ExternalCustomLicenseAddition(store, 
-					convertToExternalObjectUri(token, spdxDocument), copyManager);
+			return new ExternalCustomLicenseAddition(convertToExternalObjectUri(token, customIdToUri));
 		}
 		Optional<String> exceptionId = Optional.empty();
 		if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {	
@@ -459,19 +458,18 @@ public class LicenseExpressionParser {
 	 * @param store Store for the licenses
 	 * @param customLicenseUriPrefix Prefix to use for any created local licenses or additions
 	 * @param copyManager to use when copying from the listed license store
-	 * @param spdxDocument enclosing SPDX document - required if there are any external custom licenses or additions
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String customLicenseUriPrefix,
-			@Nullable IModelCopyManager copyManager, @Nullable SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
+			@Nullable IModelCopyManager copyManager, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(customLicenseUriPrefix, "URI Prefix can not be null");
 		if (token.contains(":")) {
 			// External Custom License
-			return new ExternalCustomLicense(store, 
-					convertToExternalObjectUri(token, spdxDocument), copyManager);
+			return new ExternalCustomLicense(convertToExternalObjectUri(token, customIdToUri));
 		}
 		Optional<String> licenseId = Optional.empty();
 		if (LicenseInfoFactory.isSpdxListedLicenseId(token)) {	
@@ -504,27 +502,31 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * @param externalReference String of the form [prefix]:[id] where [prefix] is a prefix in the spdxDocument and ID is the suffix of the object URI
-	 * @param spdxDocument document containing the license expression string and (importantly) the namespace map for any external URIs
+	 * @param externalReference String of the form [prefix]:[id] where [prefix] is a prefix in the customIdToUri and ID is the suffix of the object URI
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the full object URI with the [prefix] replaced by the associated namespace
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	private static String convertToExternalObjectUri(String externalReference, SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		if (Objects.isNull(spdxDocument)) {
-			throw new LicenseParserException("References to external custom additions or external custom licenses must include the spdxDocument parameter");
+	private static String convertToExternalObjectUri(String externalReference, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
+		if (Objects.isNull(customIdToUri)) {
+			throw new LicenseParserException("References to external custom additions or external custom licenses must include the customIdToUri parameter");
 		}
 		String[] refParts = externalReference.split(":");
 		if (refParts.length != 2 || refParts[0].isEmpty() || refParts[1].isEmpty()) {
 			throw new LicenseParserException("Invalid external ID: "+externalReference);
 		}
 		String namespace = null;
-		for (NamespaceMap nm:spdxDocument.getNamespaceMaps()) {
-			if (refParts[0].equals(nm.getPrefix())) {
-				namespace = nm.getNamespace();
+		for (DictionaryEntry entry:customIdToUri) {
+			if (refParts[0].equals(entry.getIdPrefix())) {
+				Optional<String> entryValue = entry.getValue();
+				if (!entryValue.isPresent()) {
+					throw new LicenseParserException("No associated namespace for license ID prefix "+entry.getIdPrefix());
+				}
+				namespace = entryValue.get();
 			}
 		}
 		if (Objects.isNull(namespace)) {
-			throw new InvalidSPDXAnalysisException("Prefix "+refParts[0]+" not found in SPDX document "+spdxDocument.toString());
+			throw new LicenseParserException("No ID Prefix "+refParts[0]+" found in the customIdToUri map");
 		}
 		return namespace + refParts[1];
 	}

@@ -30,8 +30,8 @@ import java.util.Set;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.InvalidSpdxPropertyException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;
 
 
@@ -374,15 +374,15 @@ public class ExceptionJson {
 				SpdxConstantsV3.PROP_SEE_ALSO.equals(propertyDescriptor)) {
 			return String.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_REF.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.core.ExternalRef.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_0.core.ExternalRef.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_VERIFIED_USING.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.core.IntegrityMethod.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_0.core.IntegrityMethod.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTENSION.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.extension.Extension.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_0.extension.Extension.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_IDENTIFIER.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.core.ExternalIdentifier.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_0.core.ExternalIdentifier.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_USING.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3.core.Tool.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_0.core.Tool.class.isAssignableFrom(clazz);
 		} else {
 			return false;
 		}

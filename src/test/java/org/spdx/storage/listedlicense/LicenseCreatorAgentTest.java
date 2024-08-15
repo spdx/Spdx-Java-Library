@@ -30,8 +30,8 @@ import org.spdx.core.SpdxInvalidIdException;
 import org.spdx.core.SpdxInvalidTypeException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.core.CreationInfo;
+import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_0.core.CreationInfo;
 
 /**
  * @author gary

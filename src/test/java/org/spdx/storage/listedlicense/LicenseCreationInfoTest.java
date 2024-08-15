@@ -31,8 +31,8 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3.SpdxConstantsV3;
-import org.spdx.library.model.v3.core.Agent;
+import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_0.core.Agent;
 
 /**
  * @author gary
