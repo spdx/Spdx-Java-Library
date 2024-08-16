@@ -80,6 +80,7 @@ public class ExternalMapInfo {
 					retval.getVerifiedUsings().add(externalDocumentHash.get());
 				}
 				docImports.add(retval);
+				existingExternalMap.put(externalUri, retval);
 			}
 			return retval;
 		}

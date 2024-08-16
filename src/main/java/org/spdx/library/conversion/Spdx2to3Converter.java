@@ -504,7 +504,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		}
 		toRelationship.setCompleteness(completeness);
 		if (relatedSpdxElement.isPresent() && 
-				!(relatedSpdxElement.get() instanceof org.spdx.library.model.v2.SpdxNoneElement)) {
+				!((relatedSpdxElement.get() instanceof org.spdx.library.model.v2.SpdxNoneElement) ||
+				(relatedSpdxElement.get() instanceof org.spdx.library.model.v2.SpdxNoAssertionElement))) {
 			if (SWAP_TO_FROM_REL_TYPES.contains(fromRelationshipType)) {
 			toRelationship.setFrom(convertAndStore(relatedSpdxElement.get()));
 			} else {
@@ -541,17 +542,12 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		toAnnotation.setAnnotationType(ANNOTATION_TYPE_MAP.get(fromAnnotation.getAnnotationType()));
 		toAnnotation.setStatement(fromAnnotation.getComment());
 		toAnnotation.setSubject(toElement);
-		String fromAnnotationDate = fromAnnotation.getAnnotationDate();
-		CreationInfo creationInfo = defaultCreationInfo;
-		if (Objects.nonNull(fromAnnotationDate) &&
-				!Objects.equals(fromAnnotationDate, defaultCreationInfo.getCreated())) {
-			// Create a new creation info with the annotation date
-			creationInfo = toAnnotation.createCreationInfo(toModelStore.getNextId(IdType.Anonymous))
-					.setCreated(fromAnnotationDate)
-					.addAllCreatedBy(defaultCreationInfo.getCreatedBys())
-					.addAllCreatedUsing(defaultCreationInfo.getCreatedUsings())
-					.build();
-		}
+		CreationInfo creationInfo = new CreationInfo.CreationInfoBuilder(toModelStore, toModelStore.getNextId(IdType.Anonymous), null)
+				.setCreated(fromAnnotation.getAnnotationDate())
+				.setSpecVersion(SpdxConstantsV3.MODEL_SPEC_VERSION)
+				.addAllCreatedUsing(defaultCreationInfo.getCreatedUsings())
+				.build();
+		creationInfo.getCreatedBys().add(stringToAgent(fromAnnotation.getAnnotator(), creationInfo));
 		toAnnotation.setCreationInfo(creationInfo);
 		return toAnnotation;
 	}
@@ -780,6 +776,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		toListedLicense.setStandardLicenseHeader(fromSpdxListedLicense.getStandardLicenseHeader());
 		// fromSpdxListedLicense.getStandardLicenseHeaderTemplate(); - no equivalent in SPDX version 3.X
 		toListedLicense.setStandardLicenseTemplate(fromSpdxListedLicense.getStandardLicenseTemplate());
+		toListedLicense.setIsDeprecatedLicenseId(fromSpdxListedLicense.isDeprecated());
+		toListedLicense.setIsOsiApproved(fromSpdxListedLicense.isOsiApproved());
 		return toListedLicense;
 	}
 	
@@ -881,7 +879,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		ListedLicenseException toListedException = (ListedLicenseException)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
 				fromException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, copyManager, true, defaultUriPrefix);
 		convertLicenseAdditionProperties(fromException, toListedException);
-		toListedException.setDeprecatedVersion(fromException.getDeprecatedVersion());		
+		toListedException.setDeprecatedVersion(fromException.getDeprecatedVersion());
+		toListedException.setIsDeprecatedAdditionId(fromException.isDeprecated());
 		// fromException.getExample(); - no SPDX spec version 3 equivalent
 		// fromException.getExceptionTextHtml(); - no SPDX spec version 3 equivalent
 		return toListedException;
@@ -1163,13 +1162,6 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			toPackage.setPrimaryPurpose(PURPOSE_MAP.get(primaryPurpose.get()));
 		}
 		toPackage.setReleaseTime(spdxPackage.getReleaseDate().orElse(null));
-		String sha1 = spdxPackage.getSha1();
-		if (Objects.nonNull(sha1)) {
-			toPackage.getVerifiedUsings().add(toPackage.createHash(toModelStore.getNextId(IdType.Anonymous))
-					.setAlgorithm(HashAlgorithm.SHA1)
-					.setHashValue(sha1)
-					.build());
-		}
 		toPackage.setSourceInfo(spdxPackage.getSourceInfo().orElse(null));
 		toPackage.setSummary(spdxPackage.getSummary().orElse(null));
 		Optional<String> supplier = spdxPackage.getSupplier();
@@ -1316,6 +1308,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 					.setEndIntegerRange(((org.spdx.library.model.v2.pointer.LineCharPointer)fromLineRange.get().getEndPointer()).getLineNumber())
 					.build());
 		}
+		toSnippet.setSnippetFromFile(convertAndStore(fromSnippet.getSnippetFromFile()));
 		return toSnippet;
 	}
 }
