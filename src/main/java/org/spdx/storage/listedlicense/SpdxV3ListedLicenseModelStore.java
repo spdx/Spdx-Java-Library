@@ -45,6 +45,7 @@ public class SpdxV3ListedLicenseModelStore implements IModelStore {
 		// Licenses
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_LICENSE_TEXT);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_NAME);
+		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_CREATION_INFO);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_STANDARD_LICENSE_HEADER);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_IS_OSI_APPROVED);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_IS_FSF_LIBRE);
@@ -139,6 +140,7 @@ public class SpdxV3ListedLicenseModelStore implements IModelStore {
 				retval.add(pd);
 			}
 		});
+		retval.add(SpdxConstantsV3.PROP_CREATION_INFO);
 		return retval;
 	}
 

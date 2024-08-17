@@ -114,7 +114,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	Gson gson = new Gson();	// we should be able to reuse since all access is within write locks
 	
 	public static String objectUriToLicenseOrExceptionId(String objectUri) {
-		return objectUri.substring(LISTED_LICENSE_NAMESPACE.length()+1);
+		return objectUri.substring(LISTED_LICENSE_NAMESPACE.length());
 	}
 	
 	public static String licenseOrExceptionIdToObjectUri(String id) {
