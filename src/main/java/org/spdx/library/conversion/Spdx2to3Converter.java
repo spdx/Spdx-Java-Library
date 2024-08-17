@@ -100,7 +100,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	
 	static final Logger logger = LoggerFactory.getLogger(Spdx2to3Converter.class);
 	
-	static final Pattern SPDX_2_CREATOR_PATTERN = Pattern.compile("(Person|Organization):\\s*([^(]+)\\s*(\\(([^)]+)\\))?");
+	static final Pattern SPDX_2_CREATOR_PATTERN = Pattern.compile("(Person|Organization):\\s*([^(]+)\\s*(\\(([^)]*)\\))?");
 
 	private static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, RelationshipType> RELATIONSHIP_TYPE_MAP;
 	
@@ -314,6 +314,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 				.setCreated(creationInfoV2.getCreated())
 				.setSpecVersion(SpdxConstantsV3.MODEL_SPEC_VERSION)
 				.build();
+		retval.setIdPrefix(uriPrefix);
 		for (String docCreator:creationInfoV2.getCreators()) {
 			if (docCreator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL)) {
 				Tool tool = (Tool)SpdxModelClassFactoryV3.getModelObject(modelStore, 
@@ -337,6 +338,10 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
 	public static Agent stringToAgent(String spdx2personOrgString, CreationInfo creationInfo) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(spdx2personOrgString, "Person/org string can not be null");
+		Objects.requireNonNull(creationInfo, "Creation info required for stringToAgent");
+		String idPrefix = creationInfo.getIdPrefix();
+		Objects.requireNonNull(idPrefix, "Creation info must have an idPrefix to accurately generate SPDX IDs");
 		Matcher matcher = SPDX_2_CREATOR_PATTERN.matcher(spdx2personOrgString);
 		if (!matcher.matches()) {
 			// return a generic Agent
@@ -348,18 +353,19 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return agent;
 		} else if (matcher.group(1).trim().equals("Person")) {
 			Person person = (Person)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
-					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
+					idPrefix + creationInfo.getModelStore().getNextId(IdType.SpdxId),
 					SpdxConstantsV3.CORE_PERSON, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
 			person.setCreationInfo(creationInfo);
 			if (matcher.groupCount() > 1) {
-				person.setName(matcher.group(2).trim());
+				String personName = matcher.group(2).trim();
+				person.setName(personName);
 			} else {
 				logger.warn("Missing person name in createdBy");
 				person.setName("[MISSING]");
 			}
 			if (matcher.groupCount() > 3) {
 				String email = matcher.group(4);
-				if (Objects.nonNull(email)) {
+				if (Objects.nonNull(email) && !email.isEmpty()) {
 					person.getExternalIdentifiers().add(person.createExternalIdentifier(creationInfo.getModelStore().getNextId(IdType.Anonymous))
 							.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
 							.setIdentifier(email)
@@ -373,14 +379,15 @@ public class Spdx2to3Converter implements ISpdxConverter {
 					SpdxConstantsV3.CORE_ORGANIZATION, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
 			organization.setCreationInfo(creationInfo);
 			if (matcher.groupCount() > 1) {
-				organization.setName(matcher.group(2).trim());
+				String origanizationName = matcher.group(2).trim();
+				organization.setName(origanizationName);
 			} else {
 				logger.warn("Missing organization name");
 				organization.setName("[MISSING]");
 			}
 			if (matcher.groupCount() > 3) {
 				String email = matcher.group(4);
-				if (Objects.nonNull(email)) {
+				if (Objects.nonNull(email) && !email.isEmpty()) {
 					organization.getExternalIdentifiers().add(organization.createExternalIdentifier(creationInfo.getModelStore().getNextId(IdType.Anonymous))
 							.setExternalIdentifierType(ExternalIdentifierType.EMAIL)
 							.setIdentifier(email)
@@ -547,6 +554,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 				.setSpecVersion(SpdxConstantsV3.MODEL_SPEC_VERSION)
 				.addAllCreatedUsing(defaultCreationInfo.getCreatedUsings())
 				.build();
+		creationInfo.setIdPrefix(defaultUriPrefix);
 		creationInfo.getCreatedBys().add(stringToAgent(fromAnnotation.getAnnotator(), creationInfo));
 		toAnnotation.setCreationInfo(creationInfo);
 		return toAnnotation;
@@ -642,7 +650,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (ConjunctiveLicenseSet)existing.get();
 		}
-		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String toObjectUri = defaultUriPrefix +  toModelStore.getNextId(IdType.SpdxId);
 		String existingUri = this.alreadyConverted.putIfAbsent(fromConjunctiveLicenseSet.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
@@ -669,7 +677,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (DisjunctiveLicenseSet)existing.get();
 		}
-		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String toObjectUri = defaultUriPrefix +  toModelStore.getNextId(IdType.SpdxId);
 		String existingUri = this.alreadyConverted.putIfAbsent(fromDisjunctiveLicenseSet.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
@@ -724,7 +732,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (OrLaterOperator)existing.get();
 		}
-		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String toObjectUri = defaultUriPrefix +  toModelStore.getNextId(IdType.SpdxId);
 		String existingUri = this.alreadyConverted.putIfAbsent(fromOrLaterOperator.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
@@ -793,7 +801,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (WithAdditionOperator)existing.get();
 		}
-		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String toObjectUri = defaultUriPrefix +  toModelStore.getNextId(IdType.SpdxId);
 		String existingUri = this.alreadyConverted.putIfAbsent(fromWithExceptionOperator.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
@@ -823,7 +831,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (existing.isPresent()) {
 			return (CustomLicenseAddition)existing.get();
 		}
-		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String toObjectUri = defaultUriPrefix +  toModelStore.getNextId(IdType.SpdxId);
 		String existingUri = this.alreadyConverted.putIfAbsent(fromException.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
