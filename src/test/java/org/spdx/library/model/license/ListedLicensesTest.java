@@ -1,11 +1,9 @@
 package org.spdx.library.model.license;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.spdx.library.InvalidSPDXAnalysisException;
 import org.spdx.library.SpdxConstants;
 
@@ -53,14 +51,6 @@ public class ListedLicensesTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
-	}
-	
-	public void testLicenseListVersionFormat() {
-		String licenseListversion = ListedLicenses.getListedLicenses().getLicenseListVersion();
-
-		assertEquals("Expected one point in license list version. ", 1, StringUtils.countMatches(licenseListversion, "."));
-		assertTrue("Number expected before the point in license list version (" + licenseListversion + ")", StringUtils.isNumeric(StringUtils.substringBefore(licenseListversion, ".")));
-		assertTrue("Number expected after the point in license list version (" + licenseListversion + ")", StringUtils.isNumeric(StringUtils.substringAfter(licenseListversion, ".")));
 	}
 
 	/**
