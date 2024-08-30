@@ -32,8 +32,8 @@ import org.spdx.core.SpdxInvalidIdException;
 import org.spdx.core.SpdxInvalidTypeException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
-import org.spdx.library.model.v3_0_0.core.Agent;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.core.Agent;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
@@ -127,15 +127,15 @@ public class LicenseCreationInfo {
 	public boolean isCollectionMembersAssignableTo(
 			PropertyDescriptor propertyDescriptor, Class<?> clazz) {
 		if (SpdxConstantsV3.PROP_EXTERNAL_REF.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3_0_0.core.ExternalRef.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_1.core.ExternalRef.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_VERIFIED_USING.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3_0_0.core.IntegrityMethod.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_1.core.IntegrityMethod.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTENSION.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3_0_0.extension.Extension.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_1.extension.Extension.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_EXTERNAL_IDENTIFIER.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3_0_0.core.ExternalIdentifier.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_1.core.ExternalIdentifier.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_USING.equals(propertyDescriptor)) {
-			return org.spdx.library.model.v3_0_0.core.Tool.class.isAssignableFrom(clazz);
+			return org.spdx.library.model.v3_0_1.core.Tool.class.isAssignableFrom(clazz);
 		} else if (SpdxConstantsV3.PROP_CREATED_BY.equals(propertyDescriptor)) {
 			return (Agent.class.equals(clazz) || LicenseCreatorAgent.class.equals(clazz));
 		} else {

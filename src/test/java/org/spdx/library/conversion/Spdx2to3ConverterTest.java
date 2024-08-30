@@ -39,48 +39,48 @@ import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxCreatorInformation;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v3_0_0.ModelObjectV3;
-import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
-import org.spdx.library.model.v3_0_0.SpdxModelClassFactoryV3;
-import org.spdx.library.model.v3_0_0.core.Agent;
-import org.spdx.library.model.v3_0_0.core.Annotation;
-import org.spdx.library.model.v3_0_0.core.CreationInfo;
-import org.spdx.library.model.v3_0_0.core.Element;
-import org.spdx.library.model.v3_0_0.core.ExternalElement;
-import org.spdx.library.model.v3_0_0.core.ExternalIdentifier;
-import org.spdx.library.model.v3_0_0.core.ExternalIdentifierType;
-import org.spdx.library.model.v3_0_0.core.ExternalMap;
-import org.spdx.library.model.v3_0_0.core.Hash;
-import org.spdx.library.model.v3_0_0.core.HashAlgorithm;
-import org.spdx.library.model.v3_0_0.core.IntegrityMethod;
-import org.spdx.library.model.v3_0_0.core.LifecycleScopeType;
-import org.spdx.library.model.v3_0_0.core.LifecycleScopedRelationship;
-import org.spdx.library.model.v3_0_0.core.NamespaceMap;
-import org.spdx.library.model.v3_0_0.core.NoAssertionElement;
-import org.spdx.library.model.v3_0_0.core.NoneElement;
-import org.spdx.library.model.v3_0_0.core.Organization;
-import org.spdx.library.model.v3_0_0.core.PackageVerificationCode;
-import org.spdx.library.model.v3_0_0.core.Person;
-import org.spdx.library.model.v3_0_0.core.Relationship;
-import org.spdx.library.model.v3_0_0.core.RelationshipCompleteness;
-import org.spdx.library.model.v3_0_0.core.RelationshipType;
-import org.spdx.library.model.v3_0_0.core.SpdxDocument;
-import org.spdx.library.model.v3_0_0.core.Tool;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ConjunctiveLicenseSet;
-import org.spdx.library.model.v3_0_0.expandedlicensing.CustomLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.DisjunctiveLicenseSet;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ExternalCustomLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.LicenseAddition;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
-import org.spdx.library.model.v3_0_0.expandedlicensing.NoAssertionLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.NoneLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.OrLaterOperator;
-import org.spdx.library.model.v3_0_0.expandedlicensing.WithAdditionOperator;
-import org.spdx.library.model.v3_0_0.simplelicensing.AnyLicenseInfo;
-import org.spdx.library.model.v3_0_0.software.Snippet;
-import org.spdx.library.model.v3_0_0.software.SpdxFile;
-import org.spdx.library.model.v3_0_0.software.SpdxPackage;
+import org.spdx.library.model.v3_0_1.ModelObjectV3;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3_0_1.core.Agent;
+import org.spdx.library.model.v3_0_1.core.Annotation;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
+import org.spdx.library.model.v3_0_1.core.Element;
+import org.spdx.library.model.v3_0_1.core.ExternalElement;
+import org.spdx.library.model.v3_0_1.core.ExternalIdentifier;
+import org.spdx.library.model.v3_0_1.core.ExternalIdentifierType;
+import org.spdx.library.model.v3_0_1.core.ExternalMap;
+import org.spdx.library.model.v3_0_1.core.Hash;
+import org.spdx.library.model.v3_0_1.core.HashAlgorithm;
+import org.spdx.library.model.v3_0_1.core.IntegrityMethod;
+import org.spdx.library.model.v3_0_1.core.LifecycleScopeType;
+import org.spdx.library.model.v3_0_1.core.LifecycleScopedRelationship;
+import org.spdx.library.model.v3_0_1.core.NamespaceMap;
+import org.spdx.library.model.v3_0_1.core.NoAssertionElement;
+import org.spdx.library.model.v3_0_1.core.NoneElement;
+import org.spdx.library.model.v3_0_1.core.Organization;
+import org.spdx.library.model.v3_0_1.core.PackageVerificationCode;
+import org.spdx.library.model.v3_0_1.core.Person;
+import org.spdx.library.model.v3_0_1.core.Relationship;
+import org.spdx.library.model.v3_0_1.core.RelationshipCompleteness;
+import org.spdx.library.model.v3_0_1.core.RelationshipType;
+import org.spdx.library.model.v3_0_1.core.SpdxDocument;
+import org.spdx.library.model.v3_0_1.core.Tool;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_1.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ExternalCustomLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.LicenseAddition;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_1.expandedlicensing.NoAssertionLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.NoneLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.OrLaterOperator;
+import org.spdx.library.model.v3_0_1.expandedlicensing.WithAdditionOperator;
+import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_1.software.Snippet;
+import org.spdx.library.model.v3_0_1.software.SpdxFile;
+import org.spdx.library.model.v3_0_1.software.SpdxPackage;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -176,7 +176,7 @@ public class Spdx2to3ConverterTest {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#Spdx2to3Converter(org.spdx.storage.IModelStore, org.spdx.library.ModelCopyManager, org.spdx.library.model.v3_0_0.core.CreationInfo, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#Spdx2to3Converter(org.spdx.storage.IModelStore, org.spdx.library.ModelCopyManager, org.spdx.library.model.v3_0_1.core.CreationInfo, java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	public void testSpdx2to3Converter() {
@@ -275,7 +275,7 @@ public class Spdx2to3ConverterTest {
 		assertEquals(1, dependOnRelTos.length);
 		assertTrue(dependOnRelTos[0] instanceof ExternalElement);
 		assertEquals(externalDocumentUri + "#" + externalId, dependOnRelTos[0].getObjectUri());
-		ExternalMap[] externalMaps = result.getImportss().toArray(new ExternalMap[result.getImportss().size()]);
+		ExternalMap[] externalMaps = result.getSpdxImports().toArray(new ExternalMap[result.getSpdxImports().size()]);
 		assertEquals(1, externalMaps.length);
 		assertEquals(externalDocumentUri + "#" + externalId,externalMaps[0].getExternalSpdxId());
 		IntegrityMethod[] integrityMethods = externalMaps[0].getVerifiedUsings().toArray(new IntegrityMethod[externalMaps[0].getVerifiedUsings().size()]);
@@ -352,7 +352,7 @@ public class Spdx2to3ConverterTest {
 		assertTrue(tos[0] instanceof ExternalElement);
 		assertEquals(externalDocumentUri + "#" + externalLicenseId, ((ExternalElement)tos[0]).getIndividualURI());
 		
-		ExternalMap[] externalMaps = result.getImportss().toArray(new ExternalMap[result.getImportss().size()]);
+		ExternalMap[] externalMaps = result.getSpdxImports().toArray(new ExternalMap[result.getSpdxImports().size()]);
 		assertEquals(1, externalMaps.length);
 		assertEquals(externalDocumentUri + "#" + externalLicenseId,externalMaps[0].getExternalSpdxId());
 		IntegrityMethod[] integrityMethods = externalMaps[0].getVerifiedUsings().toArray(new IntegrityMethod[externalMaps[0].getVerifiedUsings().size()]);
@@ -1733,7 +1733,7 @@ public class Spdx2to3ConverterTest {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#stringToAgent(java.lang.String, org.spdx.library.model.v3_0_0.core.CreationInfo)}.
+	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#stringToAgent(java.lang.String, org.spdx.library.model.v3_0_1.core.CreationInfo)}.
 	 */
 	@Test
 	public void testStringToAgent() {

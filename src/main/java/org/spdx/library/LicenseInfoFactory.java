@@ -32,10 +32,10 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.LicenseParserException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v3_0_0.core.DictionaryEntry;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicense;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
-import org.spdx.library.model.v3_0_0.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.utility.license.LicenseExpressionParser;
 

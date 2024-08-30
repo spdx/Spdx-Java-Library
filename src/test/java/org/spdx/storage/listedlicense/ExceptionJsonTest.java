@@ -29,8 +29,8 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.InvalidSpdxPropertyException;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
-import org.spdx.library.model.v3_0_0.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
@@ -414,7 +414,7 @@ public class ExceptionJsonTest extends TestCase {
 	public void testCopyFromV3() throws Exception {
 		InMemSpdxStore store = new InMemSpdxStore();
 		String exceptionId = "exceptionId";
-		String objectUri = "https://spdx.org/licenses/" + exceptionId;
+		String objectUri = "http://spdx.org/licenses/" + exceptionId;
 		String comment = "comment";
 		Boolean deprecated = true;
 		String deprecatedVersion = "v1";

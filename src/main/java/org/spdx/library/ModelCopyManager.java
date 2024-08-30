@@ -35,7 +35,7 @@ import org.spdx.core.TypedValue;
 import org.spdx.library.conversion.ISpdxConverter;
 import org.spdx.library.conversion.Spdx2to3Converter;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;

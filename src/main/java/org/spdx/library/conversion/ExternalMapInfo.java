@@ -25,10 +25,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.library.model.v3_0_0.SpdxConstantsV3;
-import org.spdx.library.model.v3_0_0.SpdxModelClassFactoryV3;
-import org.spdx.library.model.v3_0_0.core.ExternalMap;
-import org.spdx.library.model.v3_0_0.core.Hash;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3_0_1.core.ExternalMap;
+import org.spdx.library.model.v3_0_1.core.Hash;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
