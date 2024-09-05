@@ -62,11 +62,17 @@ public class InMemSpdxStore implements IModelStore {
 	static final Logger logger = LoggerFactory.getLogger(InMemSpdxStore.class.getName());
 
 	static final String GENERATED = "gnrtd";
+	/**
+	 * Pattern for the generated license ID
+	 */
 	public static Pattern LICENSE_ID_PATTERN_GENERATED =
 			Pattern.compile(".*"+SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
 
 	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
 	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
+	/**
+	 * Prefix for anonymous ids
+	 */
 	public static final String ANON_PREFIX = "__anon__";
 	static Pattern ANON_ID_PATTERN_GENERATED = Pattern.compile(ANON_PREFIX+GENERATED+"(\\d+)$");
 
@@ -122,7 +128,7 @@ public class InMemSpdxStore implements IModelStore {
 
 	/**
 	 * Check to see if the next ID indexes need to be updated based on the name provided
-	 * @param objectUri
+	 * @param objectUri Anonymous or URI ID
 	 */
 	void updateNextIds(String objectUri) {
 		if (objectUri == null) {
@@ -150,6 +156,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated anon ID needs to be updated and update if needed
+	 * @param anonRefMatcher Matcher for generated anon IDs
+	 */
 	private synchronized void checkUpdateNextAnonId(Matcher anonRefMatcher) {
 		String strNum = anonRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -158,6 +168,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated SPDX ID needs to be updated and update if needed
+	 * @param spdxRefMatcher Matcher for generated  SPDX IDs
+	 */
 	private synchronized void checkUpdateNextSpdxId(Matcher spdxRefMatcher) {
 		String strNum = spdxRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -166,6 +180,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated document ID needs to be updated and update if needed
+	 * @param documentRefMatcher Matcher for generated document IDs
+	 */
 	private synchronized void checkUpdateNextDocumentId(Matcher documentRefMatcher) {
 		String strNum = documentRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -174,6 +192,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated license ID needs to be updated and update if needed
+	 * @param licenseRefMatcher Matcher for generated license IDs
+	 */
 	private synchronized void checkUpdateNextLicenseId(Matcher licenseRefMatcher) {
 		String strNum = licenseRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -184,8 +206,8 @@ public class InMemSpdxStore implements IModelStore {
 
 	/**
 	 * Gets the item from the hashmap
-	 * @param objectUri
-	 * @return
+	 * @param objectUri Anonymous or URI ID
+	 * @return the item from the hash map
 	 * @throws InvalidSPDXAnalysisException
 	 */
 	protected StoredTypedItem getItem(String objectUri) throws InvalidSPDXAnalysisException {
@@ -429,7 +451,6 @@ public class InMemSpdxStore implements IModelStore {
 
 	/**
 	 * Remove all existing elements, properties, and values
-	 * @param documentUri
 	 */
 	public void clear() {
 		this.typedValueMap.clear();;

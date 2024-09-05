@@ -67,11 +67,11 @@ public class LicenseCreationInfo {
 	TypedValue typedValue;
 
 	/**
-	 * @param licenseListCreator
-	 * @param licenseListReleaseDate
-	 * @throws ModelRegistryException 
-	 * @throws SpdxInvalidTypeException 
-	 * @throws SpdxInvalidIdException 
+	 * @param licenseListCreator creator of the license
+	 * @param licenseListReleaseDate release date of the license list
+	 * @throws ModelRegistryException if there is support for the model version
+	 * @throws SpdxInvalidTypeException if the license type is invalid
+	 * @throws SpdxInvalidIdException if the license ID is invalid
 	 */
 	public LicenseCreationInfo(LicenseCreatorAgent licenseListCreator,
 			String licenseListReleaseDate) throws SpdxInvalidIdException, SpdxInvalidTypeException, ModelRegistryException {
@@ -81,6 +81,9 @@ public class LicenseCreationInfo {
 		this.typedValue = new TypedValue(LicenseCreationInfo.CREATION_INFO_URI, SpdxConstantsV3.CORE_CREATION_INFO, SpdxConstantsV3.MODEL_SPEC_VERSION);
 	}
 	
+	/**
+	 * @return the typed value
+	 */
 	public TypedValue getTypedValue() {
 		return this.typedValue;
 	}
@@ -94,7 +97,7 @@ public class LicenseCreationInfo {
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor property descriptor for the collection
 	 * @return list of values for a collection
 	 */
 	public List<?> getValueList(PropertyDescriptor propertyDescriptor) {
@@ -106,7 +109,7 @@ public class LicenseCreationInfo {
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor property descriptor for the collection
 	 * @return value if present, otherwise null
 	 */
 	public Object getValue(PropertyDescriptor propertyDescriptor) {
@@ -120,9 +123,9 @@ public class LicenseCreationInfo {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
-	 * @return
+	 * @param propertyDescriptor property descriptor for the collection
+	 * @param clazz class to check
+	 * @return true if the property is a collection and a value of type clazz can be assigned
 	 */
 	public boolean isCollectionMembersAssignableTo(
 			PropertyDescriptor propertyDescriptor, Class<?> clazz) {
@@ -144,9 +147,9 @@ public class LicenseCreationInfo {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
-	 * @return
+	 * @param propertyDescriptor property descriptor for the collection
+	 * @param clazz class to check
+	 * @return true if a value of type clazz can be assigned to the property
 	 */
 	public boolean isPropertyValueAssignableTo(
 			PropertyDescriptor propertyDescriptor, Class<?> clazz) {

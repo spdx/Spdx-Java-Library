@@ -41,15 +41,15 @@ public interface IListedLicenseStore extends IModelStore {
 	String getLicenseListVersion();
 
 	/**
-	 * @param listedLicenseDocumentUri
-	 * @param licenseId
+	 * @param listedLicenseDocumentUri Document URI for the listed license
+	 * @param licenseId ID for the license
 	 * @return true if the licenseId belongs to an SPDX listed license
 	 */
 	boolean isSpdxListedLicenseId(String listedLicenseDocumentUri, String licenseId);
 
 	/**
-	 * @param listedLicenseDocumentUri
-	 * @param exceptionId
+	 * @param listedLicenseDocumentUri Document URI for the listed exception
+	 * @param exceptionId ID for the exception
 	 * @return true if the exceptionId belongs to an SPDX listed exception
 	 */
 	boolean isSpdxListedExceptionId(String listedLicenseDocumentUri, String exceptionId);

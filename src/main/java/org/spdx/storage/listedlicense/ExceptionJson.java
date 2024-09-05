@@ -45,8 +45,19 @@ import org.spdx.storage.PropertyDescriptor;
  */
 public class ExceptionJson {
 
+	/**
+	 * All property descriptors for Exceptions
+	 */
 	public static final List<PropertyDescriptor> ALL_PROPERTY_DESCRIPTORS;
+	
+	/**
+	 * Map of property descriptors to the value name
+	 */
 	public static final Map<PropertyDescriptor, String> PROPERTY_DESCRIPTOR_TO_VALUE_NAME;
+	
+	/**
+	 * Properties which are collections
+	 */
 	static final Set<PropertyDescriptor> COLLECTION_PROPERTIES;
 	
 	static {
@@ -110,18 +121,36 @@ public class ExceptionJson {
 	String obsoletedBy;
 	String listVersionAdded;
 	
+	/**
+	 * Create an ExceptionJson
+	 * @param id license exception ID
+	 */
 	public ExceptionJson(String id) {
 		this.licenseExceptionId = id;
 	}
 	
+	/**
+	 * Create an ExceptionJson
+	 */
 	public ExceptionJson() {
 		
 	}
 
+	/**
+	 * @param propertyName property name
+	 * @param valueId ID for the value
+	 * @param type SPDX type
+	 * @throws InvalidSpdxPropertyException on invalid type for the SPDX property
+	 */
 	public void setTypedProperty(String propertyName, String valueId, String type) throws InvalidSpdxPropertyException {
 		throw new InvalidSpdxPropertyException("Invalid type for Listed License SPDX Property: "+type);
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property to be set
+	 * @param value value to set
+	 * @throws InvalidSpdxPropertyException on invalid property
+	 */
 	public void setPrimativeValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
@@ -206,6 +235,11 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * Clears a list of values for a property
+	 * @param propertyDescriptor descriptor for the property
+	 * @throws InvalidSpdxPropertyException if it is not a list type
+	 */
 	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
 			throw new InvalidSpdxPropertyException(propertyDescriptor + "is not a list type");
@@ -213,10 +247,22 @@ public class ExceptionJson {
 		seeAlso.clear();
 	}
 
+	/**
+	 * @param propertyName Name of the property
+	 * @param valueId ID for the value
+	 * @param type SPDX type
+	 * @throws InvalidSpdxPropertyException on invalid type to add a value
+	 */
 	public void addValueToList(String propertyName, String valueId, String type) throws InvalidSpdxPropertyException {
 		throw new InvalidSpdxPropertyException("Invalid type for Listed License SPDX Property: "+type);
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param value Value to set
+	 * @return true if the value was added
+	 * @throws InvalidSpdxPropertyException
+	 */
 	public boolean addPrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
 			throw new InvalidSpdxPropertyException(propertyDescriptor + "is not a list type");
@@ -227,6 +273,11 @@ public class ExceptionJson {
 		return seeAlso.add((String)value);
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @return list of values associated with the property
+	 * @throws InvalidSpdxPropertyException if the propertyDescriptor is not for a list type
+	 */
 	public List<?> getValueList(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		if ("seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
 			return seeAlso;
@@ -237,6 +288,11 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @return Value associated with the property or null if no value was set
+	 * @throws InvalidSpdxPropertyException if the property descriptor is not valid
+	 */
 	public Object getValue(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
@@ -262,6 +318,11 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * Removes the property
+	 * @param propertyDescriptor descriptor for the property
+	 * @throws InvalidSpdxPropertyException if the property descriptor is not valid
+	 */
 	public void removeProperty(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException  {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
@@ -288,6 +349,11 @@ public class ExceptionJson {
 
 	}
 	
+	/**
+	 * Copies all properties from an exception
+	 * @param fromException exception to copy from
+	 * @throws InvalidSPDXAnalysisException on error getting values from the exception
+	 */
 	public void copyFrom(ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		Optional<String> comment = fromException.getComment(); 
 		this.comment = comment.orElse(null);
@@ -303,6 +369,11 @@ public class ExceptionJson {
 		this.licenseXml = fromException.getLicenseXml().orElse(null);
 	}
 
+	/**
+	 * Copies from an SPDX version 2 exception
+	 * @param fromException exception to copy from
+	 * @throws InvalidSPDXAnalysisException on error getting values from the exception
+	 */
 	@SuppressWarnings("deprecation")
 	public void copyFrom(org.spdx.library.model.v2.license.ListedLicenseException fromException) throws InvalidSPDXAnalysisException {
 		this.comment = null;
@@ -339,6 +410,12 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param value value to remove
+	 * @return true if the collection was modified
+	 * @throws InvalidSpdxPropertyException if the propertyDescriptor is not valid
+	 */
 	public boolean removePrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
 			throw new InvalidSpdxPropertyException(propertyDescriptor + "is not a list type");
@@ -346,6 +423,12 @@ public class ExceptionJson {
 		return seeAlso.remove(value);
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test assignability
+	 * @return true if the propertyDescriptor can be assigned a value of type clazz
+	 * @throws InvalidSpdxPropertyException if the propertyDescriptor is not valid
+	 */
 	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
@@ -369,6 +452,11 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz class to test assignability
+	 * @return true if the list associated with the propertyDescriptor have a value added of type clazz
+	 */
 	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
 		if (SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.equals(propertyDescriptor) ||
 				SpdxConstantsV3.PROP_SEE_ALSO.equals(propertyDescriptor)) {
@@ -388,6 +476,10 @@ public class ExceptionJson {
 		}
 	}
 
+	/**
+	 * @param propertyDescriptor descriptor for the property
+	 * @return true if the property represents a collection
+	 */
 	public boolean isCollectionProperty(PropertyDescriptor propertyDescriptor) {
 		return COLLECTION_PROPERTIES.contains(propertyDescriptor);
 	}

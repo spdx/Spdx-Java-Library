@@ -135,12 +135,20 @@ public class ExceptionJsonTOC {
 	private List<ExceptionJson> exceptions;
 	private String releaseDate;
 
+	/**
+	 * Create an ExceptionJsonTOC
+	 * @param version license list version
+	 * @param releaseDate release date of the license list
+	 */
 	public ExceptionJsonTOC(String version, String releaseDate) {
 		this.licenseListVersion = version;
 		this.releaseDate = releaseDate;
 		exceptions = new ArrayList<>();
 	}
 
+	/**
+	 * Create an ExceptionJsonTOC
+	 */
 	public ExceptionJsonTOC() {
 		licenseListVersion = null;
 		exceptions = new ArrayList<>();
@@ -184,11 +192,11 @@ public class ExceptionJsonTOC {
 
 	/**
 	 * Add a new exception to the list of exceptions
-	 * @param exception
-	 * @param exceptionHTMLReference
-	 * @param exceptionJSONReference
-	 * @param deprecated
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param exception exception to be added
+	 * @param exceptionHTMLReference URL of the exception HTML
+	 * @param exceptionJSONReference URL of the JSON
+	 * @param deprecated true if deprecated
+	 * @throws InvalidSPDXAnalysisException on error accessing Exception properties 
 	 */
 	public void addException(ListedLicenseException exception, String exceptionHTMLReference,
 			String exceptionJSONReference, boolean deprecated) throws InvalidSPDXAnalysisException {

@@ -402,8 +402,8 @@ public class LicenseJson {
 	}
 	
 	/**
-	 * @param license
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param fromLicense license to copy from
+	 * @throws InvalidSPDXAnalysisException on error accessing license properties 
 	 */
 	public void copyFrom(ListedLicense fromLicense) throws InvalidSPDXAnalysisException {
 		this.comment = fromLicense.getComment().orElse(null);

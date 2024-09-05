@@ -32,6 +32,10 @@ public class JavaSha1ChecksumGenerator implements IFileChecksumGenerator {
 	static final String PACKAGE_VERIFICATION_CHARSET = "UTF-8";
 	private MessageDigest digest = null;
 
+	/**
+	 * Create a SHA1 based checksum generator
+	 * @throws NoSuchAlgorithmException if the SHA1 algorithm does not exist
+	 */
 	public JavaSha1ChecksumGenerator() throws NoSuchAlgorithmException {
 		this.digest = MessageDigest.getInstance(SHA1_ALGORITHM);
 	}

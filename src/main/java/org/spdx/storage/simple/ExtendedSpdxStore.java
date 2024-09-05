@@ -246,7 +246,7 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	
 	/**
 	 * Clear all values for the document
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on errors accessing the store
 	 */
 	protected void clear() throws InvalidSPDXAnalysisException {
 		IModelStoreLock lock = this.enterCriticalSection(false);

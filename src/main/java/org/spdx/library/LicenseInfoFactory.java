@@ -53,7 +53,7 @@ public class LicenseInfoFactory {
 	/**
 	 * @param licenseId SPDX Listed License ID
 	 * @return SPDX listed license or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on errors getting license data
 	 */
 	public static ListedLicense getListedLicenseById(String licenseId)throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedLicenseById(licenseId);
@@ -62,7 +62,7 @@ public class LicenseInfoFactory {
 	/**
 	 * @param licenseId SPDX Listed License ID
 	 * @return SPDX listed license in SPDX spec version 2.X format or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on errors getting license data
 	 */
 	public static SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId)throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2(licenseId);
@@ -87,8 +87,8 @@ public class LicenseInfoFactory {
 	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException 
-	 * @throws DefaultStoreNotInitialized 
+	 * @throws InvalidLicenseStringException if the license string is not valid
+	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
 			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
@@ -131,8 +131,8 @@ public class LicenseInfoFactory {
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException 
-	 * @throws DefaultStoreNotInitialized 
+	 * @throws InvalidLicenseStringException if the license string is not valid
+	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
 			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
@@ -170,8 +170,8 @@ public class LicenseInfoFactory {
 	 *			A licenseID must NOT be "AND" or "OR"
 	 * @param licenseString String conforming to the syntax
 	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException 
-	 * @throws DefaultStoreNotInitialized 
+	 * @throws InvalidLicenseStringException if the license string is not valid
+	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		return parseSPDXLicenseString(licenseString, null, null, null, null);
@@ -223,7 +223,7 @@ public class LicenseInfoFactory {
 	}
 
 	/**
-	 * @param objectUri exception ID
+	 * @param id exception ID
 	 * @return true if the exception ID is a supported SPDX listed exception
 	 */
 	public static boolean isSpdxListedExceptionId(String id) {
@@ -231,7 +231,7 @@ public class LicenseInfoFactory {
 	}
 
 	/**
-	 * @param objectUri
+	 * @param id ID for the listed exception
 	 * @return the standard SPDX license exception or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */
@@ -240,7 +240,7 @@ public class LicenseInfoFactory {
 	}
 
 	/**
-	 * @param objectUri
+	 * @param id ID for the listed exception
 	 * @return the standard SPDX license exception in SPDX Spec V2.X format or null if the ID is not in the SPDX license list
 	 * @throws InvalidSPDXAnalysisException 
 	 */

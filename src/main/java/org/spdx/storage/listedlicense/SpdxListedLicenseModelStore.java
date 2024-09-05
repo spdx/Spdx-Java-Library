@@ -122,7 +122,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	/**
-	 * @param majorSpecVersion Major spec version - the store will work with either SPDX 3 or SPDX 2 major version of the spec
 	 * @throws InvalidSPDXAnalysisException on error loading ids
 	 */
 	public SpdxListedLicenseModelStore() throws InvalidSPDXAnalysisException {

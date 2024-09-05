@@ -36,17 +36,38 @@ import org.spdx.licenseTemplate.LicenseTextHelper;
 @Deprecated
 public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandler {
 	
+	/**
+	 * String used to escape
+	 */
 	public static final String REGEX_ESCAPE = "~~~";
 	public enum VarTextHandling {
-		OMIT,		// Omit the var text all together
-		ORIGINAL,	// Include the original text for the regex
-		REGEX,		// Include the regex itself included by the REGEX_ESCAPE strings
+		/**
+		 * Omit the var text all together
+		 */
+		OMIT,
+		/**
+		 * Include the original text for the regex
+		 */
+		ORIGINAL,
+		/**
+		 * Include the regex itself included by the REGEX_ESCAPE strings
+		 */
+		REGEX
 	}
 	
 	public enum OptionalTextHandling {
-		OMIT,		// Omit the optional text
-		ORIGINAL,	// Retain the optional text
-		REGEX_USING_TOKENS		// Create a regex for the optional text with the REGEX_ESCAPE string tokenizing the words
+		/**
+		 * Omit the optional text
+		 */
+		OMIT,
+		/**
+		 * Retain the optional text
+		 */
+		ORIGINAL,
+		/**
+		 * Create a regex for the optional text with the REGEX_ESCAPE string tokenizing the words
+		 */
+		REGEX_USING_TOKENS
 	}
 	
 	private VarTextHandling varTextHandling;

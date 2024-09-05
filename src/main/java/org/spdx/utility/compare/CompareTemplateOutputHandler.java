@@ -646,44 +646,74 @@ public class CompareTemplateOutputHandler implements
 		}
 	}
 	
+	/**
+	 * Information obout any difference found
+	 */
 	public class DifferenceDescription {
 		private static final int MAX_DIFF_TEXT_LENGTH = 100;
 		private boolean differenceFound;
 		private String differenceMessage;
 		private List<LineColumn> differences;
 		
+		/**
+		 * Creates a difference description
+		 * @param differenceFound if true, a difference was found
+		 * @param differenceMessage Message describing the differences
+		 * @param differences list of lines where the difference was found
+		 */
 		public DifferenceDescription(boolean differenceFound, String differenceMessage, List<LineColumn> differences) {
 			this.differenceFound = differenceFound;
 			this.differenceMessage = differenceMessage;
 			this.differences = differences;
 		}
 
+		/**
+		 * Creates a different description
+		 */
 		public DifferenceDescription() {
 			this.differenceFound = false;
 			this.differenceMessage = "No difference found";
 			this.differences = new ArrayList<>();
 		}
 
+		/**
+		 * @return true if a difference is found
+		 */
 		public boolean isDifferenceFound() {
 			return differenceFound;
 		}
 
+		/**
+		 * @param differenceFound if true, a difference was found
+		 */
 		public void setDifferenceFound(boolean differenceFound) {
 			this.differenceFound = differenceFound;
 		}
 
+		/**
+		 * @return Message describing the differences
+		 */
 		public String getDifferenceMessage() {
 			return differenceMessage;
 		}
 
+		/**
+		 * @param differenceMessage Message describing the differences
+		 */
 		public void setDifferenceMessage(String differenceMessage) {
 			this.differenceMessage = differenceMessage;
 		}
 
+		/**
+		 * @return list of lines where the difference was found
+		 */
 		public List<LineColumn> getDifferences() {
 			return differences;
 		}
 
+		/**
+		 * @param differences list of lines where the difference was found
+		 */
 		public void setDifferences(List<LineColumn> differences) {
 			this.differences = differences;
 		}
@@ -888,7 +918,7 @@ public class CompareTemplateOutputHandler implements
 	/**
 	 * Performs the actual parsing if it has not been completed.  NOTE: This should only be called after all text has been added.
 	 * @return true if no differences were found
-	 * @throws LicenseParserException 
+	 * @throws LicenseParserException on license parsing error
 	 */
 	public boolean matches() throws LicenseParserException {
 		if (!parsingComplete) {

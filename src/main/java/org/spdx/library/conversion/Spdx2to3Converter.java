@@ -529,7 +529,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	/**
 	 * Converts an SPDX spec version 2 annotation to an SPDX spec version 3 annotation
 	 * @param fromAnnotation annotation to convert from
-	 * @param containingElement Element which contains the property referring to the fromAnnotation
+	 * @param toElement Element which contains the property referring to the fromAnnotation
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
 	 */
 	public Annotation convertAndStore(org.spdx.library.model.v2.Annotation fromAnnotation, Element toElement) throws InvalidSPDXAnalysisException {

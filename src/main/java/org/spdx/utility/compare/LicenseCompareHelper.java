@@ -64,6 +64,10 @@ public class LicenseCompareHelper {
 	protected static final Pattern REGEX_QUANTIFIER_PATTERN = Pattern.compile(".*\\.\\{(\\d+),(\\d+)\\}$");
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
 	
+	/**
+	 * @param objectUri URI of the license
+	 * @return license ID
+	 */
 	public static String licenseUriToLicenseId(String objectUri) {
 		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX)) {
 			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX.length());
@@ -77,7 +81,7 @@ public class LicenseCompareHelper {
 	/**
 	 * Remove common comment characters from either a template or license text strings
 	 * @param s
-	 * @return
+	 * @return string without comment characters
 	 */
 	public static String removeCommentChars(String s) {
 	       StringBuilder sb = new StringBuilder();
@@ -110,11 +114,11 @@ public class LicenseCompareHelper {
 	
 	/**
 	 * Locate the original text starting with the start token and ending with the end token
-	 * @param fullLicenseText
-	 * @param startToken
-	 * @param endToken
-	 * @param tokenToLocation
-	 * @return
+	 * @param fullLicenseText entire license text
+	 * @param startToken starting token
+	 * @param endToken ending token
+	 * @param tokenToLocation token location
+	 * @return original text starting with the start token and ending with the end token
 	 */
 	public static String locateOriginalText(String fullLicenseText, int startToken, int endToken,  
 			Map<Integer, LineColumn> tokenToLocation, String[] tokens) {
@@ -188,7 +192,7 @@ public class LicenseCompareHelper {
 	}
 	
 	/*
-	 * @param text
+	 * @param text text to test
 	 * @return the first token in the license text
 	 */
 	public static String getFirstLicenseToken(String text) {
@@ -204,7 +208,7 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @param text
+	 * @param text text to test
 	 * @return true if the text contains a single token
 	 */
 	public static boolean isSingleTokenString(String text) {
@@ -228,12 +232,12 @@ public class LicenseCompareHelper {
 	/**
 	 * Compares two licenses from potentially two different documents which may have
 	 * different license ID's for the same license
-	 * @param license1
-	 * @param license2
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
 	 * @param xlationMap Mapping the license ID's from license 1 to license 2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @return true if the licenses equal
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static boolean isLicenseEqual(AnyLicenseInfo license1,
 			AnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -270,11 +274,12 @@ public class LicenseCompareHelper {
 
 	/**
 	 * Compares two license sets using the xlationMap for the non-standard license IDs
-	 * @param license1
-	 * @param license2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param licenseInfos1 first set of licenses to compare
+	 * @param licenseInfos2 second set of licenses to compare
+	 * @param xlationMap Mapping the license ID's from license 1 to license 2
+	 * @return true if the two sets of licenses are equal - invariant of order in the collections
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	private static boolean isLicenseSetsEqual(Collection<AnyLicenseInfo> licenseInfos1, 
 			Collection<AnyLicenseInfo> licenseInfos2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -308,7 +313,7 @@ public class LicenseCompareHelper {
 	 * @param licenseTemplate license template containing optional and var tags
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @return list of strings for all non-optional license text.  
-	 * @throws SpdxCompareException
+	 * @throws SpdxCompareException on comparison errors
 	 */
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
 			VarTextHandling varTextHandling) throws SpdxCompareException {
@@ -321,7 +326,7 @@ public class LicenseCompareHelper {
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @param optionalTextHandling include optional text, exclude, or include a regex for the optional text
 	 * @return list of strings for all non-optional license text.  
-	 * @throws SpdxCompareException
+	 * @throws SpdxCompareException on comparison errors
 	 */
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
 			VarTextHandling varTextHandling, OptionalTextHandling optionalTextHandling) throws SpdxCompareException {
@@ -340,8 +345,8 @@ public class LicenseCompareHelper {
 	 * @param template Template in the standard template format used for comparison
 	 * @param compareText Text to compare using the template
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static DifferenceDescription isTextMatchingTemplate(String template, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
@@ -366,8 +371,8 @@ public class LicenseCompareHelper {
 	 * @param license SPDX Standard License to compare
 	 * @param compareText Text to compare to the standard license
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static DifferenceDescription isTextStandardLicense(License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		String licenseTemplate = license.getStandardLicenseTemplate().orElse("");
@@ -382,8 +387,8 @@ public class LicenseCompareHelper {
 	 * @param exception SPDX Standard exception to compare
 	 * @param compareText Text to compare to the standard exceptions
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static DifferenceDescription isTextStandardException(ListedLicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		String exceptionTemplate = exception.getStandardAdditionTemplate().orElse("");
@@ -548,7 +553,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param blackList license black list
 	 * @return if the license pass black lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassBlackList(
 			AnyLicenseInfo license,
@@ -584,7 +589,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param whiteList license white list
 	 * @return if the license pass white lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassWhiteList(
 			AnyLicenseInfo license,
@@ -623,12 +628,12 @@ public class LicenseCompareHelper {
 	/**
 	 * Compares two licenses from potentially two different documents which may have
 	 * different license ID's for the same license
-	 * @param license1
-	 * @param license2
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
 	 * @param xlationMap Mapping the license URIs from license 1 to license 2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @return true if the 2 licenses are equal
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
 	public static boolean isLicenseEqual(org.spdx.library.model.v2.license.AnyLicenseInfo license1,
 			org.spdx.library.model.v2.license.AnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -665,11 +670,11 @@ public class LicenseCompareHelper {
 
 	/**
 	 * Compares two license sets using the xlationMap for the non-standard license IDs
-	 * @param license1
-	 * @param license2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
+	 * @return true if the 2 licenses are equal
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
 	private static boolean isLicenseSetsEqual(org.spdx.library.model.v2.license.LicenseSet license1, 
 			org.spdx.library.model.v2.license.LicenseSet license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -705,8 +710,8 @@ public class LicenseCompareHelper {
 	 * @param license SPDX Standard License to compare
 	 * @param compareText Text to compare to the standard license
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
 	public static DifferenceDescription isTextStandardLicense(org.spdx.library.model.v2.license.License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		String licenseTemplate = license.getStandardLicenseTemplate();
@@ -735,8 +740,8 @@ public class LicenseCompareHelper {
 	 * @param exception SPDX Standard exception to compare
 	 * @param compareText Text to compare to the standard exceptions
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
 	public static DifferenceDescription isTextStandardException(org.spdx.library.model.v2.license.LicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		String exceptionTemplate = exception.getLicenseExceptionTemplate();
@@ -806,7 +811,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param blackList license black list
 	 * @return if the license pass black lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassBlackList(
 			org.spdx.library.model.v2.license.AnyLicenseInfo license,
@@ -842,7 +847,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param whiteList license white list
 	 * @return if the license pass white lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassWhiteList(
 			org.spdx.library.model.v2.license.AnyLicenseInfo license,

@@ -308,8 +308,7 @@ public class StoredTypedItem extends TypedValue {
 
 	/**
 	 * Copy all values for this item from another store
-	 * @param fromDocumentUri 
-	 * @param store
+	 * @param store model store to copy from
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void copyValuesFrom(IModelStore store) throws InvalidSPDXAnalysisException {
