@@ -33,7 +33,7 @@ import java.net.URLConnection;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.ModelObjectV2;
 import org.spdx.library.model.v2.SpdxDocument;
-import org.spdx.storage.CompatibleModelStoreWrapper;
+import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 /**
  * Helper class for unit tests
