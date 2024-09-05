@@ -25,5 +25,10 @@ import java.io.IOException;
  *
  */
 public interface IFileChecksumGenerator {
+	/**
+	 * @param file File to generate the checksum for
+	 * @return the checksum for the file
+	 * @throws IOException on errors reading the file
+	 */
 	public String getFileChecksum(File file) throws IOException;
 }

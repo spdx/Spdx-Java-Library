@@ -27,11 +27,12 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.licenseTemplate.ILicenseTemplateOutputHandler;
 import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRule;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
+import org.spdx.licenseTemplate.LicenseTextHelper;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 
 /**
@@ -107,7 +108,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		@Override
 		public String toString() {
 			return Pattern.quote(
-					LicenseCompareHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token)) + 
+					LicenseTextHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token)) + 
 					"\\s*";
 		}
 	}
@@ -300,10 +301,10 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		
 		StringBuilder normalizedText = new StringBuilder();
 		
-		for (String token:LicenseCompareHelper.tokenizeLicenseText(LicenseCompareHelper.removeLineSeparators(
+		for (String token:LicenseTextHelper.tokenizeLicenseText(LicenseTextHelper.removeLineSeparators(
 				LicenseCompareHelper.removeCommentChars(text)), new HashMap<>())) {
 			normalizedText.append(
-					LicenseCompareHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase()));
+					LicenseTextHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase()));
 			normalizedText.append(' ');
 		}
 		
@@ -336,9 +337,9 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	@Override
 	public void text(String text) {
 		RegexList currentList = getCurrentList();
-		for (String token:LicenseCompareHelper.tokenizeLicenseText(text, new HashMap<>())) {
+		for (String token:LicenseTextHelper.tokenizeLicenseText(text, new HashMap<>())) {
 			currentList.addElement(new RegexToken(
-					LicenseCompareHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase())));
+					LicenseTextHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase())));
 		}
 	}
 

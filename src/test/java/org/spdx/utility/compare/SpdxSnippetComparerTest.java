@@ -22,22 +22,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.GenericModelObject;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxSnippet;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.LicenseInfoFactory;
-import org.spdx.library.model.pointer.ByteOffsetPointer;
-import org.spdx.library.model.pointer.LineCharPointer;
-import org.spdx.library.model.pointer.StartEndPointer;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxSnippet;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.enumerations.RelationshipType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.pointer.ByteOffsetPointer;
+import org.spdx.library.model.v2.pointer.LineCharPointer;
+import org.spdx.library.model.v2.pointer.StartEndPointer;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -82,11 +84,14 @@ public class SpdxSnippetComparerTest extends TestCase {
 	StartEndPointer BYTE_RANGE2;
 	StartEndPointer LINE_RANGE1;
 	StartEndPointer LINE_RANGE2;
+	
+	private static final String DOC_URI1 = "http://uri/one";
+	private static final String DOC_URI2 = "http://uri/two";
 	private static final Map<String, String> LICENSE_XLATION_MAPAB = new HashMap<>();
 	static {
-		LICENSE_XLATION_MAPAB.put("LicenseRef-1", "LicenseRef-4");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-2", "LicenseRef-5");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-3", "LicenseRef-6");
+		LICENSE_XLATION_MAPAB.put(DOC_URI1 + "#" + "LicenseRef-1", DOC_URI2 + "#" + "LicenseRef-4");
+		LICENSE_XLATION_MAPAB.put(DOC_URI1 + "#" + "LicenseRef-2", DOC_URI2 + "#" + "LicenseRef-5");
+		LICENSE_XLATION_MAPAB.put(DOC_URI1 + "#" + "LicenseRef-3", DOC_URI2 + "#" + "LicenseRef-6");
 	}
 	
 	private static final Map<String, String> LICENSE_XLATION_MAPBA = new HashMap<>();
@@ -98,9 +103,9 @@ public class SpdxSnippetComparerTest extends TestCase {
 	private static final String FILE_NOTICE = "File Notice";
 	
 	static {
-		LICENSE_XLATION_MAPBA.put("LicenseRef-4", "LicenseRef-1");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-5", "LicenseRef-2");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-6", "LicenseRef-3");
+		LICENSE_XLATION_MAPBA.put(DOC_URI2 + "#" + "LicenseRef-4", DOC_URI1 + "#" + "LicenseRef-1");
+		LICENSE_XLATION_MAPBA.put(DOC_URI2 + "#" + "LicenseRef-5", DOC_URI1 + "#" + "LicenseRef-2");
+		LICENSE_XLATION_MAPBA.put(DOC_URI2 + "#" + "LicenseRef-6", DOC_URI1 + "#" + "LicenseRef-3");
 	}
 	
 	Checksum CHECKSUM1;
@@ -109,47 +114,54 @@ public class SpdxSnippetComparerTest extends TestCase {
 	private SpdxDocument DOCA;
 	private SpdxDocument DOCB;
 
+	private IModelStore modelStoreA;
+	private IModelStore modelStoreB;
+	private ModelCopyManager copyManager;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		DefaultModelStore.reset();
-		GenericModelObject gmo = new GenericModelObject();
-		CHECKSUM1 = gmo.createChecksum(ChecksumAlgorithm.SHA1, 
+		super.setUp();
+		SpdxModelFactory.init();
+		modelStoreA = new InMemSpdxStore();
+		modelStoreB = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		
+		DOCA = new SpdxDocument(modelStoreA, DOC_URI1, copyManager, true);
+		DOCB = new SpdxDocument(modelStoreB, DOC_URI2, copyManager, true);
+		CHECKSUM1 = DOCA.createChecksum(ChecksumAlgorithm.SHA1, 
 				"111bf72bf99b7e471f1a27989667a903658652bb");
-		CONCLUDED_LICENSE = LicenseInfoFactory.parseSPDXLicenseString(CONCLUDED_LICENSE_STRING);
-		SEEN_LICENSES = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {LicenseInfoFactory.parseSPDXLicenseString(SEEN_LICENSE_STRING)}));
-		FROM_FILE = gmo.createSpdxFile("SPDXRef-"+FILE_NAME, FILE_NAME, CONCLUDED_LICENSE, 
+		CONCLUDED_LICENSE = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(CONCLUDED_LICENSE_STRING,
+				DOCA.getModelStore(), DOCA.getDocumentUri(), DOCA.getCopyManager());
+		SEEN_LICENSES = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(SEEN_LICENSE_STRING, DOCA.getModelStore(), DOCA.getDocumentUri(), DOCA.getCopyManager())}));
+		FROM_FILE = DOCA.createSpdxFile("SPDXRef-"+FILE_NAME, FILE_NAME, CONCLUDED_LICENSE, 
 				SEEN_LICENSES, FILE_COPYRIGHT, CHECKSUM1)
 				.setComment(FILE_COMMENT)
 				.setLicenseComments(FILE_LICENSE_COMMENT)
 				.setFileTypes(FILE_TYPES)
 				.setNoticeText(FILE_NOTICE)
 				.build();
-		BOP_POINTER1_1 = gmo.createByteOffsetPointer(FROM_FILE, OFFSET1_1);
-		BOP_POINTER1_2 = gmo.createByteOffsetPointer(FROM_FILE, OFFSET1_2);
-		BYTE_RANGE1 = gmo.createStartEndPointer(BOP_POINTER1_1, BOP_POINTER1_2);
-		LCP_POINTER1_1 = gmo.createLineCharPointer(FROM_FILE, LINE1_1);
-		LCP_POINTER1_2 = gmo.createLineCharPointer(FROM_FILE, LINE1_2);
-		LINE_RANGE1 = gmo.createStartEndPointer(LCP_POINTER1_1, LCP_POINTER1_2);
-		BOP_POINTER2_1 = gmo.createByteOffsetPointer(FROM_FILE, OFFSET2_1);
-		BOP_POINTER2_2 = gmo.createByteOffsetPointer(FROM_FILE, OFFSET2_2);
-		BYTE_RANGE2 = gmo.createStartEndPointer(BOP_POINTER2_1, BOP_POINTER2_2);
-		LCP_POINTER2_1 = gmo.createLineCharPointer(FROM_FILE, LINE2_1);
-		LCP_POINTER2_2 = gmo.createLineCharPointer(FROM_FILE, LINE2_2);
-		LINE_RANGE2 = gmo.createStartEndPointer(LCP_POINTER2_1, LCP_POINTER2_2);
-		SNIPPET1 = gmo.createSpdxSnippet("SPDXRef-"+SNIPPET_NAME1, SNIPPET_NAME1, CONCLUDED_LICENSE, 
+		BOP_POINTER1_1 = DOCA.createByteOffsetPointer(FROM_FILE, OFFSET1_1);
+		BOP_POINTER1_2 = DOCA.createByteOffsetPointer(FROM_FILE, OFFSET1_2);
+		BYTE_RANGE1 = DOCA.createStartEndPointer(BOP_POINTER1_1, BOP_POINTER1_2);
+		LCP_POINTER1_1 = DOCA.createLineCharPointer(FROM_FILE, LINE1_1);
+		LCP_POINTER1_2 = DOCA.createLineCharPointer(FROM_FILE, LINE1_2);
+		LINE_RANGE1 = DOCA.createStartEndPointer(LCP_POINTER1_1, LCP_POINTER1_2);
+		BOP_POINTER2_1 = DOCA.createByteOffsetPointer(FROM_FILE, OFFSET2_1);
+		BOP_POINTER2_2 = DOCA.createByteOffsetPointer(FROM_FILE, OFFSET2_2);
+		BYTE_RANGE2 = DOCA.createStartEndPointer(BOP_POINTER2_1, BOP_POINTER2_2);
+		LCP_POINTER2_1 = DOCA.createLineCharPointer(FROM_FILE, LINE2_1);
+		LCP_POINTER2_2 = DOCA.createLineCharPointer(FROM_FILE, LINE2_2);
+		LINE_RANGE2 = DOCA.createStartEndPointer(LCP_POINTER2_1, LCP_POINTER2_2);
+		SNIPPET1 = DOCA.createSpdxSnippet("SPDXRef-"+SNIPPET_NAME1, SNIPPET_NAME1, CONCLUDED_LICENSE, 
 				SEEN_LICENSES, COPYRIGHT_TEXT, FROM_FILE, OFFSET1_1, OFFSET1_2)
 				.setComment(COMMENT1)
 				.setLicenseComments(LICENSE_COMMENT)
 				.setLineRange(LCP_POINTER1_1.getLineNumber(), LCP_POINTER1_2.getLineNumber())
 				.build();
 		
-		String uri1 = "http://doc/uri1";
-		DOCA = new SpdxDocument(uri1);
-		String uri2 = "http://doc/uri2";
-		DOCB = new SpdxDocument(uri2);
 		Map<SpdxDocument, Map<String, String>> bmap = new HashMap<>();
 		bmap.put(DOCB, LICENSE_XLATION_MAPAB);
 		LICENSE_XLATION_MAP.put(DOCA, bmap);
@@ -162,6 +174,7 @@ public class SpdxSnippetComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+		super.tearDown();
 	}
 	
 	public void testNoDifference() throws InvalidSPDXAnalysisException, SpdxCompareException {

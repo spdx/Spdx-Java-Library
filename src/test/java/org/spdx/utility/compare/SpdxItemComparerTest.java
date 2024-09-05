@@ -21,21 +21,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.GenericModelObject;
-import org.spdx.library.model.GenericSpdxElement;
-import org.spdx.library.model.GenericSpdxItem;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxElement;
-import org.spdx.library.model.SpdxItem;
-import org.spdx.library.model.enumerations.AnnotationType;
-import org.spdx.library.model.enumerations.RelationshipType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.GenericSpdxElement;
+import org.spdx.library.model.v2.GenericSpdxItem;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.enumerations.AnnotationType;
+import org.spdx.library.model.v2.enumerations.RelationshipType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -56,21 +59,6 @@ public class SpdxItemComparerTest extends TestCase {
 	private static final String ATT_TEXTB = "Attribution B";
 	private static final String[] ATTRIBUTION_TEXTA = new String[] {ATT_TEXTA};
 	private static final String[] ATTRIBUTION_TEXTB = new String[] {ATT_TEXTB};
-	private static final Map<String, String> LICENSE_XLATION_MAPAB = new HashMap<>();
-	
-	static {
-		LICENSE_XLATION_MAPAB.put("LicenseRef-1", "LicenseRef-4");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-2", "LicenseRef-5");
-		LICENSE_XLATION_MAPAB.put("LicenseRef-3", "LicenseRef-6");
-	}
-	
-	private static final Map<String, String> LICENSE_XLATION_MAPBA = new HashMap<>();
-	
-	static {
-		LICENSE_XLATION_MAPBA.put("LicenseRef-4", "LicenseRef-1");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-5", "LicenseRef-2");
-		LICENSE_XLATION_MAPBA.put("LicenseRef-6", "LicenseRef-3");
-	}
 	
 	private final Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> LICENSE_XLATION_MAP = new HashMap<>();
 
@@ -107,66 +95,93 @@ public class SpdxItemComparerTest extends TestCase {
 	private Relationship RELATIONSHIP2;
 	private Relationship RELATIONSHIP3;
 	private Relationship RELATIONSHIP4;
+	
+	IModelStore modelStoreA;
+	IModelStore modelStoreB;
+    IModelCopyManager copyManager;
+    String DEFAULT_DOCUMENT_URI = "http://default/doc";
+	
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		DefaultModelStore.reset();
-		GenericModelObject gmo = new GenericModelObject();
-		LICENSEA1 = new ExtractedLicenseInfo("LicenseRef-1", "License1");
-		LICENSEA2 = new ExtractedLicenseInfo("LicenseRef-2", "License2");
-		LICENSEA3 = new ExtractedLicenseInfo("LicenseRef-3", "License3");
-		LICENSEB1 = new ExtractedLicenseInfo("LicenseRef-4", "License1");
-		LICENSEB2 = new ExtractedLicenseInfo("LicenseRef-5", "License2");
-		LICENSEB3 = new ExtractedLicenseInfo("LicenseRef-6", "License3");
+		SpdxModelFactory.init();
+		modelStoreA = new InMemSpdxStore();
+		modelStoreB = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		String uri1 = "http://doc/uri1";
+		DOCA = new SpdxDocument(modelStoreA, uri1, copyManager, true);
+		String uri2 = "http://doc/uri2";
+		DOCB = new SpdxDocument(modelStoreB, uri2, copyManager, true);
+		LICENSEA1 = new ExtractedLicenseInfo(DOCA.getModelStore(), DOCA.getDocumentUri(), "LicenseRef-1", copyManager, true);
+		LICENSEA1.setExtractedText("License1");
+		LICENSEA2 = new ExtractedLicenseInfo(DOCA.getModelStore(), DOCA.getDocumentUri(), "LicenseRef-2", copyManager, true);
+		LICENSEA1.setExtractedText("License2");
+		LICENSEA3 = new ExtractedLicenseInfo(DOCA.getModelStore(), DOCA.getDocumentUri(), "LicenseRef-3", copyManager, true);
+		LICENSEA1.setExtractedText("License3");
+		LICENSEB1 = new ExtractedLicenseInfo(DOCB.getModelStore(), DOCB.getDocumentUri(), "LicenseRef-4", copyManager, true);
+		LICENSEA1.setExtractedText("License1");
+		LICENSEB2 = new ExtractedLicenseInfo(DOCB.getModelStore(), DOCB.getDocumentUri(), "LicenseRef-5", copyManager, true);
+		LICENSEA1.setExtractedText("License2");
+		LICENSEB3 = new ExtractedLicenseInfo(DOCB.getModelStore(), DOCB.getDocumentUri(), "LicenseRef-6", copyManager, true);
+		LICENSEA1.setExtractedText("License3");
 		LICENSE_INFO_FROM_FILESA = new AnyLicenseInfo[] {LICENSEA1, LICENSEA2, LICENSEA3};
 		LICENSE_INFO_FROM_FILESB = new AnyLicenseInfo[] {LICENSEB1, LICENSEB2, LICENSEB3};
 
 		LICENSE_CONCLUDEDA = LICENSEA1;
 		LICENSE_CONCLUDEDB = LICENSEB1;
-		ANNOTATION1 = gmo.createAnnotation("Person:Annotator1", AnnotationType.OTHER, 
+		ANNOTATION1 = DOCA.createAnnotation("Person:Annotator1", AnnotationType.OTHER, 
 				"2010-01-29T18:30:22Z", "AnnotationComment1");
-		ANNOTATION2 = gmo.createAnnotation("Person:Annotator2", AnnotationType.REVIEW, 
+		ANNOTATION2 = DOCA.createAnnotation("Person:Annotator2", AnnotationType.REVIEW, 
 				"2011-01-29T18:30:22Z", "AnnotationComment2");
-		ANNOTATION3 = gmo.createAnnotation("Person:Annotator3", AnnotationType.OTHER, 
+		ANNOTATION3 = DOCA.createAnnotation("Person:Annotator3", AnnotationType.OTHER, 
 				"2012-01-29T18:30:22Z", "AnnotationComment3");
-		ANNOTATION4 = gmo.createAnnotation("Person:Annotator4", AnnotationType.REVIEW, 
+		ANNOTATION4 = DOCA.createAnnotation("Person:Annotator4", AnnotationType.REVIEW, 
 				"2013-01-29T18:30:22Z", "AnnotationComment4");
 		ANNOTATIONSA = new Annotation[] {ANNOTATION1, ANNOTATION2};
 		ANNOTATIONSB = new Annotation[] {ANNOTATION3, ANNOTATION4};
-		RELATED_ELEMENT1 = new GenericSpdxElement();
+		RELATED_ELEMENT1 = new GenericSpdxElement(DOCA.getModelStore(), DOCA.getDocumentUri(), 
+				DOCA.getModelStore().getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT1.setName("relatedElementName1");
 		RELATED_ELEMENT1.setComment("related element comment 1");
-		RELATED_ELEMENT2 = new GenericSpdxElement();
+		RELATED_ELEMENT2 = new GenericSpdxElement(DOCA.getModelStore(), DOCA.getDocumentUri(), 
+				DOCA.getModelStore().getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT2.setName("relatedElementName2");
 		RELATED_ELEMENT2.setComment("related element comment 2");
-		RELATED_ELEMENT3 = new GenericSpdxElement();
+		RELATED_ELEMENT3 = new GenericSpdxElement(DOCB.getModelStore(), DOCB.getDocumentUri(), 
+				DOCB.getModelStore().getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT3.setName("relatedElementName3");
 		RELATED_ELEMENT3.setComment("related element comment 3");
-		RELATED_ELEMENT4 = new GenericSpdxElement();
+		RELATED_ELEMENT4 = new GenericSpdxElement(DOCB.getModelStore(), DOCB.getDocumentUri(), 
+				DOCB.getModelStore().getNextId(IdType.SpdxId), copyManager, true);
 		RELATED_ELEMENT4.setName("relatedElementName4");
 		RELATED_ELEMENT4.setComment("related element comment 4");
-		RELATIONSHIP1 = gmo.createRelationship(RELATED_ELEMENT1, 
+		RELATIONSHIP1 = DOCA.createRelationship(RELATED_ELEMENT1, 
 				RelationshipType.CONTAINS, "Relationship Comment1");
-		RELATIONSHIP2 = gmo.createRelationship(RELATED_ELEMENT2, 
+		RELATIONSHIP2 = DOCA.createRelationship(RELATED_ELEMENT2, 
 				RelationshipType.DYNAMIC_LINK, "Relationship Comment2");
-		RELATIONSHIP3 = gmo.createRelationship(RELATED_ELEMENT3, 
+		RELATIONSHIP3 = DOCB.createRelationship(RELATED_ELEMENT3, 
 				RelationshipType.DATA_FILE_OF, "Relationship Comment3");
-		RELATIONSHIP4 = gmo.createRelationship(RELATED_ELEMENT4, 
+		RELATIONSHIP4 = DOCB.createRelationship(RELATED_ELEMENT4, 
 				RelationshipType.DISTRIBUTION_ARTIFACT, "Relationship Comment4");
 		RELATIONSHIPSA = new Relationship[] {RELATIONSHIP1, RELATIONSHIP2};
 		RELATIONSHIPSB = new Relationship[] {RELATIONSHIP3, RELATIONSHIP4};
-		String uri1 = "http://doc/uri1";
-		DOCA = new SpdxDocument(uri1);
-		String uri2 = "http://doc/uri2";
-		DOCB = new SpdxDocument(uri2);
+		
 		Map<SpdxDocument, Map<String, String>> bmap = new HashMap<>();
-		bmap.put(DOCB, LICENSE_XLATION_MAPAB);
+		Map<String, String> mapAB = new HashMap<>();
+		mapAB.put(DOCA.getDocumentUri() + "#" + "LicenseRef-1", DOCB.getDocumentUri() + "#" + "LicenseRef-4");
+		mapAB.put(DOCA.getDocumentUri() + "#" + "LicenseRef-2", DOCB.getDocumentUri() + "#" + "LicenseRef-5");
+		mapAB.put(DOCA.getDocumentUri() + "#" + "LicenseRef-3", DOCB.getDocumentUri() + "#" + "LicenseRef-6");
+		bmap.put(DOCB, mapAB);
 		LICENSE_XLATION_MAP.put(DOCA, bmap);
 		Map<SpdxDocument, Map<String, String>> amap = new HashMap<>();
-		amap.put(DOCA, LICENSE_XLATION_MAPBA);
+		Map<String, String> mapBA = new HashMap<>();
+		mapBA.put(DOCB.getDocumentUri() + "#" + "LicenseRef-4", DOCA.getDocumentUri() + "#" + "LicenseRef-1");
+		mapBA.put(DOCB.getDocumentUri() + "#" + "LicenseRef-5", DOCA.getDocumentUri() + "#" + "LicenseRef-2");
+		mapBA.put(DOCB.getDocumentUri() + "#" + "LicenseRef-6", DOCA.getDocumentUri() + "#" + "LicenseRef-3");
+		amap.put(DOCA, mapBA);
 		LICENSE_XLATION_MAP.put(DOCB, amap);
 	}
 
@@ -204,8 +219,8 @@ public class SpdxItemComparerTest extends TestCase {
 			AnyLicenseInfo[] licenseInfosFromFiles, String copyright, String licenseComments,
 			String[] attributionText) throws InvalidSPDXAnalysisException {
 		
-		SpdxItem retval = new GenericSpdxItem(DefaultModelStore.getDefaultModelStore(), DOCA.getDocumentUri(),
-				DefaultModelStore.getDefaultModelStore().getNextId(IdType.Anonymous, DOCA.getDocumentUri()), DefaultModelStore.getDefaultCopyManager(), true);
+		GenericSpdxItem retval = new GenericSpdxItem(doc.getModelStore(), doc.getDocumentUri(),
+				doc.getModelStore().getNextId(IdType.Anonymous), doc.getCopyManager(), true);
 		retval.setName(name);
 		retval.setComment(comment);
 		for (Annotation annotation:annotations) {

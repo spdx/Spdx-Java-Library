@@ -20,10 +20,10 @@ package org.spdx.utility.compare;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.ExternalRef;
-import org.spdx.library.model.ReferenceType;
-import org.spdx.library.model.enumerations.ReferenceCategory;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.ExternalRef;
+import org.spdx.library.model.v2.ReferenceType;
+import org.spdx.library.model.v2.enumerations.ReferenceCategory;
 
 /**
  * Contains information on differences between two different External Refs.

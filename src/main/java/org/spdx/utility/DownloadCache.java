@@ -134,7 +134,7 @@ public final class DownloadCache {
      * Recursively removes a directory. USE WITH CAUTION!
      *
      * @param dir The directory to delete.
-     * @throws IOException 
+     * @throws IOException on IO error
      */
     private static void rmdir(final File dir) throws IOException {
     	if (Objects.isNull(dir) || !dir.exists()) {
@@ -150,7 +150,8 @@ public final class DownloadCache {
     }
 
     /**
-     * Resets (deletes) the local cache.
+     * Resets (deletes) the local cache
+     * @throws IOException on IO error
      */
     public void resetCache() throws IOException {
         final File cacheDirectory = new File(cacheDir);

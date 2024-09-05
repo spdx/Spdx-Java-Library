@@ -21,35 +21,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
-import org.spdx.library.model.license.License;
-import org.spdx.library.model.license.LicenseException;
-import org.spdx.library.model.license.LicenseSet;
-import org.spdx.library.model.license.ListedLicenseException;
-import org.spdx.library.model.license.ListedLicenses;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.ListedLicenses;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_1.expandedlicensing.CustomLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.DisjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_1.expandedlicensing.License;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
 import org.spdx.licenseTemplate.LicenseParserException;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
+import org.spdx.licenseTemplate.LicenseTextHelper;
+import org.spdx.licenseTemplate.LineColumn;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.utility.compare.CompareTemplateOutputHandler.DifferenceDescription;
 import org.spdx.utility.compare.FilterTemplateOutputHandler.OptionalTextHandling;
@@ -64,171 +58,30 @@ import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 public class LicenseCompareHelper {
 	
 	static final Logger logger = LoggerFactory.getLogger(LicenseCompareHelper.class);
-	
-	protected static final String TOKEN_SPLIT_REGEX = "(^|[^\\s\\.,?'();:\"/\\[\\]]{1,100})((\\s|\\.|,|\\?|'|\"|\\(|\\)|;|:|/|\\[|\\]|$){1,100})";
-	protected static final Pattern TOKEN_SPLIT_PATTERN = Pattern.compile(TOKEN_SPLIT_REGEX);
-
-	protected static final Set<String> PUNCTUATION = Collections.unmodifiableSet(new HashSet<String>(
-			Arrays.asList(".",",","?","\"","'","(",")",";",":","/","[", "]")));
-	
-	// most of these are comments for common programming languages (C style, Java, Ruby, Python)
-	protected static final Set<String> SKIPPABLE_TOKENS = Collections.unmodifiableSet(new HashSet<String>(
-		Arrays.asList("//","/*","*/","/**","#","##","*","**","\"\"\"","/","=begin","=end")));
-	
-	protected static final Map<String, String> NORMALIZE_TOKENS = new HashMap<>();
 
 	protected static final Integer CROSS_REF_NUM_WORDS_MATCH = 80;
 	
 	protected static final Pattern REGEX_QUANTIFIER_PATTERN = Pattern.compile(".*\\.\\{(\\d+),(\\d+)\\}$");
-	
-	static {
-		//TODO: These should be moved to a property file
-		NORMALIZE_TOKENS.put("&","and");
-		NORMALIZE_TOKENS.put("acknowledgment","acknowledgement");   
-		NORMALIZE_TOKENS.put("analogue","analog");   
-		NORMALIZE_TOKENS.put("analyse","analyze");   
-		NORMALIZE_TOKENS.put("artefact","artifact");   
-		NORMALIZE_TOKENS.put("authorisation","authorization");   
-		NORMALIZE_TOKENS.put("authorised","authorized");   
-		NORMALIZE_TOKENS.put("calibre","caliber");   
-		NORMALIZE_TOKENS.put("cancelled","canceled");   
-		NORMALIZE_TOKENS.put("apitalisations","apitalizations");   
-		NORMALIZE_TOKENS.put("catalogue","catalog");   
-		NORMALIZE_TOKENS.put("categorise","categorize");   
-		NORMALIZE_TOKENS.put("centre","center");   
-		NORMALIZE_TOKENS.put("emphasised","emphasized");   
-		NORMALIZE_TOKENS.put("favour","favor");   
-		NORMALIZE_TOKENS.put("favourite","favorite");   
-		NORMALIZE_TOKENS.put("fulfil","fulfill");   
-		NORMALIZE_TOKENS.put("fulfilment","fulfillment");   
-		NORMALIZE_TOKENS.put("initialise","initialize");   
-		NORMALIZE_TOKENS.put("judgment","judgement");   
-		NORMALIZE_TOKENS.put("labelling","labeling");   
-		NORMALIZE_TOKENS.put("labour","labor");   
-		NORMALIZE_TOKENS.put("licence","license");   
-		NORMALIZE_TOKENS.put("maximise","maximize");   
-		NORMALIZE_TOKENS.put("modelled","modeled");   
-		NORMALIZE_TOKENS.put("modelling","modeling");   
-		NORMALIZE_TOKENS.put("offence","offense");   
-		NORMALIZE_TOKENS.put("optimise","optimize");   
-		NORMALIZE_TOKENS.put("organisation","organization");   
-		NORMALIZE_TOKENS.put("organise","organize");   
-		NORMALIZE_TOKENS.put("practise","practice");   
-		NORMALIZE_TOKENS.put("programme","program");   
-		NORMALIZE_TOKENS.put("realise","realize");   
-		NORMALIZE_TOKENS.put("recognise","recognize");   
-		NORMALIZE_TOKENS.put("signalling","signaling");   
-		NORMALIZE_TOKENS.put("utilisation","utilization");   
-		NORMALIZE_TOKENS.put("whilst","while");   
-		NORMALIZE_TOKENS.put("wilful","wilfull");   
-		NORMALIZE_TOKENS.put("non-commercial","noncommercial");    
-		NORMALIZE_TOKENS.put("copyright-owner", "copyright-holder");
-		NORMALIZE_TOKENS.put("sublicense", "sub-license");
-		NORMALIZE_TOKENS.put("non-infringement", "noninfringement");
-		NORMALIZE_TOKENS.put("(c)", "-c-");
-		NORMALIZE_TOKENS.put("©", "-c-");
-		NORMALIZE_TOKENS.put("copyright", "-c-");
-		NORMALIZE_TOKENS.put("\"", "'");
-		NORMALIZE_TOKENS.put("merchantability", "merchantability");
-	}
-	
-	
-	static final String DASHES_REGEX = "[\\u2012\\u2013\\u2014\\u2015]";
-	static final Pattern SPACE_PATTERN = Pattern.compile("[\\u202F\\u2007\\u2060\\u2009]");
-	static final Pattern COMMA_PATTERN = Pattern.compile("[\\uFF0C\\uFE10\\uFE50]");
-	static final Pattern PER_CENT_PATTERN = Pattern.compile("per cent", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDER_PATTERN = Pattern.compile("copyright holder", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDERS_PATTERN = Pattern.compile("copyright holders", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNERS_PATTERN = Pattern.compile("copyright owners", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNER_PATTERN = Pattern.compile("copyright owner", Pattern.CASE_INSENSITIVE);
-	static final Pattern PER_CENT_PATTERN_LF = Pattern.compile("per\\s{0,100}\\n{1,10}\\s{0,100}cent", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDERS_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}holders", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_HOLDER_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}holder", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNERS_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owners", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_OWNER_PATTERN_LF = Pattern.compile("copyright\\s{0,100}\\n{1,10}\\s{0,100}owner", Pattern.CASE_INSENSITIVE);
-	static final Pattern COPYRIGHT_SYMBOL_PATTERN = Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE);
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
 	
 	/**
-	 * Returns true if two sets of license text is considered a match per
-	 * the SPDX License matching guidelines documented at spdx.org (currently http://spdx.org/wiki/spdx-license-list-match-guidelines)
-	 * There are 2 unimplemented features - bullets/numbering is not considered and comments with no whitespace between text is not skipped
-	 * @param licenseTextA
-	 * @param licenseTextB
-	 * @return
+	 * @param objectUri URI of the license
+	 * @return license ID
 	 */
-	public static boolean isLicenseTextEquivalent(String licenseTextA, String licenseTextB) {
-		//TODO: Handle comment characters without white space before text
-		//TODO: Handle bullets and numbering
-		// Need to take care of multi-word equivalent words - convert to single words with hypens
-		
-		// tokenize each of the strings
-		if (licenseTextA == null) {
-			return (licenseTextB == null || licenseTextB.isEmpty());
+	public static String licenseUriToLicenseId(String objectUri) {
+		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX)) {
+			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX.length());
+		} else if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL)) {
+			return objectUri.substring(SpdxConstantsCompatV2.LISTED_LICENSE_URL.length());
+		} else {
+			return objectUri; // no match - should we throw an exception?
 		}
-		if (licenseTextB == null) {
-			return licenseTextA.isEmpty();
-		}
-		if (licenseTextA.equals(licenseTextB)) {
-			return true;
-		}
-		Map<Integer, LineColumn> tokenToLocationA = new HashMap<Integer, LineColumn>();
-		Map<Integer, LineColumn> tokenToLocationB = new HashMap<Integer, LineColumn>();
-		String[] licenseATokens = tokenizeLicenseText(licenseTextA,tokenToLocationA);
-		String[] licenseBTokens = tokenizeLicenseText(licenseTextB,tokenToLocationB);
-		int bTokenCounter = 0;
-		int aTokenCounter = 0;
-		String nextAToken = getTokenAt(licenseATokens, aTokenCounter++);
-		String nextBToken = getTokenAt(licenseBTokens, bTokenCounter++);
-		while (nextAToken != null) {
-			if (nextBToken == null) {
-				// end of b stream
-				while (nextAToken != null && canSkip(nextAToken)) {
-					nextAToken = getTokenAt(licenseATokens, aTokenCounter++);
-				}
-				if (nextAToken != null) {
-					return false;	// there is more stuff in the license text B, so not equal
-				}
-			} else if (tokensEquivalent(nextAToken, nextBToken)) { 
-				// just move onto the next set of tokens
-				nextAToken = getTokenAt(licenseATokens, aTokenCounter++);
-				nextBToken = getTokenAt(licenseBTokens, bTokenCounter++);
-			} else {
-				// see if we can skip through some B tokens to find a match
-				while (nextBToken != null && canSkip(nextBToken)) {
-					nextBToken = getTokenAt(licenseBTokens, bTokenCounter++);
-				}
-				// just to be sure, skip forward on the A license
-				while (nextAToken != null && canSkip(nextAToken)) {
-					nextAToken = getTokenAt(licenseATokens, aTokenCounter++);
-				}
-				if (!tokensEquivalent(nextAToken, nextBToken)) {
-					return false;
-				} else {
-					nextAToken = getTokenAt(licenseATokens, aTokenCounter++);
-					nextBToken = getTokenAt(licenseBTokens, bTokenCounter++);
-				}
-			}
-		}
-		// need to make sure B is at the end
-		while (nextBToken != null && canSkip(nextBToken)) {
-			nextBToken = getTokenAt(licenseBTokens, bTokenCounter++);
-		}
-		return (nextBToken == null);
-	}
-	
-	/**
-	 * @param s Input string
-	 * @return s without any line separators (---, ***, ===)
-	 */
-	public static String removeLineSeparators(String s) {
-		return s.replaceAll("(-|=|\\*){3,}\\s*$", "");  // Remove ----, ***,  and ====
 	}
 	
 	/**
 	 * Remove common comment characters from either a template or license text strings
 	 * @param s
-	 * @return
+	 * @return string without comment characters
 	 */
 	public static String removeCommentChars(String s) {
 	       StringBuilder sb = new StringBuilder();
@@ -258,30 +111,14 @@ public class LicenseCompareHelper {
                 }
 	        }
 	}
-	/**
-	 * Normalize quotes and no-break spaces
-	 * @param s String to normalize
-	 * @return String normalized for comparison
-	 */
-	public static String normalizeText(String s) {
-		// First normalize single quotes, then normalize two single quotes to a double quote, normalize double quotes 
-		// then normalize non-breaking spaces to spaces
-		return s.replaceAll("‘|’|‛|‚|`", "'")	// Take care of single quotes first
-				.replaceAll("http://", "https://") // Normalize the http protocol scheme
- 				.replaceAll("''","\"")			// This way, we can change doulbe single quotes to a single double cquote
-				.replaceAll("“|”|‟|„", "\"")	// Now we can normalize the double quotes
-				.replaceAll("\\u00A0", " ")		// replace non-breaking spaces with spaces since Java does not handle the former well
-				.replaceAll("—|–","-")			// replace em dash, en dash with simple dash
-				.replaceAll("\\u2028", "\n");	// replace line separator with newline since Java does not handle the former well
-	}
 	
 	/**
 	 * Locate the original text starting with the start token and ending with the end token
-	 * @param fullLicenseText
-	 * @param startToken
-	 * @param endToken
-	 * @param tokenToLocation
-	 * @return
+	 * @param fullLicenseText entire license text
+	 * @param startToken starting token
+	 * @param endToken ending token
+	 * @param tokenToLocation token location
+	 * @return original text starting with the start token and ending with the end token
 	 */
 	public static String locateOriginalText(String fullLicenseText, int startToken, int endToken,  
 			Map<Integer, LineColumn> tokenToLocation, String[] tokens) {
@@ -354,76 +191,14 @@ public class LicenseCompareHelper {
 		}
 	}
 	
-	/**
-	 * Tokenizes the license text, normalizes quotes, lowercases and converts
-	 * multi-words for better equiv. comparisons
-	 * 
-	 * @param tokenToLocation location for all of the tokens by line and column
-	 * @param licenseText
-	 * @return tokens
-	 */
-	public static String[] tokenizeLicenseText(String licenseText, Map<Integer, LineColumn> tokenToLocation) {
-		String textToTokenize = normalizeText(replaceMultWord(replaceSpaceComma(licenseText))).toLowerCase();
-		List<String> tokens = new ArrayList<String>();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new StringReader(textToTokenize));
-			int currentLine = 1;
-			int currentToken = 0;
-			String line = reader.readLine();
-			while (line != null) {
-				line = removeLineSeparators(line);
-				Matcher lineMatcher = TOKEN_SPLIT_PATTERN.matcher(line);
-				while (lineMatcher.find()) {
-					String token = lineMatcher.group(1).trim();
-					if (!token.isEmpty()) {
-						tokens.add(token);
-						tokenToLocation.put(currentToken, new LineColumn(currentLine, lineMatcher.start(), token.length()));
-						currentToken++;
-					}
-					String fullMatch = lineMatcher.group(0);
-					for (int i = lineMatcher.group(1).length(); i < fullMatch.length(); i++) {
-						String possiblePunctuation = fullMatch.substring(i, i+1);
-						if (PUNCTUATION.contains(possiblePunctuation)) {
-							tokens.add(possiblePunctuation);
-							tokenToLocation.put(currentToken, new LineColumn(currentLine, lineMatcher.start()+i, 1));
-							currentToken++;
-						}
-					}
-				}
-				currentLine++;
-				line = reader.readLine();
-			}
-		} catch (IOException e) {
-			// Don't fill in the lines, take a simpler approach
-			Matcher m = TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
-			while (m.find()) {
-				String word = m.group(1).trim();
-				String seperator = m.group(2).trim();
-				tokens.add(word);
-				if (PUNCTUATION.contains(seperator)) {
-					tokens.add(seperator);
-				}
-			}
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return tokens.toArray(new String[tokens.size()]);
-	}
-	
-	/**
-	 * @param text
+	/*
+	 * @param text text to test
 	 * @return the first token in the license text
 	 */
 	public static String getFirstLicenseToken(String text) {
-		String textToTokenize = normalizeText(replaceMultWord(replaceSpaceComma(removeLineSeparators(removeCommentChars(text))))).toLowerCase();
-		Matcher m = TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
+		String textToTokenize = LicenseTextHelper.normalizeText(LicenseTextHelper.replaceMultWord(LicenseTextHelper.replaceSpaceComma(
+				LicenseTextHelper.removeLineSeparators(removeCommentChars(text))))).toLowerCase();
+		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
 				return m.group(1).trim();
@@ -433,14 +208,14 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @param text
+	 * @param text text to test
 	 * @return true if the text contains a single token
 	 */
 	public static boolean isSingleTokenString(String text) {
 		if (text.contains("\n")) {
 			return false;
 		}
-		Matcher m = TOKEN_SPLIT_PATTERN.matcher(text);
+		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(text);
 		boolean found = false;
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
@@ -453,121 +228,16 @@ public class LicenseCompareHelper {
 		}
 		return true;
 	}
-	
-	/**
-	 * Replace different forms of space with a normalized space and different forms of commas with a normalized comma
-	 * @param s
-	 * @return
-	 */
-	static String replaceSpaceComma(String s) {
-		Matcher spaceMatcher = SPACE_PATTERN.matcher(s);
-		Matcher commaMatcher = COMMA_PATTERN.matcher(spaceMatcher.replaceAll(" "));
-		return commaMatcher.replaceAll(",");
-	}
-
-	/**
-	 * replaces all mult-words with a single token using a dash to separate
-	 * @param s
-	 * @return
-	 */
-	static String replaceMultWord(String s) {
-		//TODO: There is certainly some room for optimization - perhaps a single regex in a find loop
-		Matcher m = COPYRIGHT_HOLDERS_PATTERN.matcher(s);
-		String retval = m.replaceAll("copyright-holders");
-		m = COPYRIGHT_HOLDERS_PATTERN_LF.matcher(retval);
-		retval = m.replaceAll("copyright-holders\n");
-		m = COPYRIGHT_OWNERS_PATTERN.matcher(retval);
-		retval = m.replaceAll("copyright-owners");
-		m = COPYRIGHT_OWNERS_PATTERN_LF.matcher(retval);
-		retval = m.replaceAll("copyright-owners\n");
-		m = COPYRIGHT_HOLDER_PATTERN.matcher(retval);
-		retval = m.replaceAll("copyright-holder");
-		m = COPYRIGHT_HOLDER_PATTERN_LF.matcher(retval);
-		retval = m.replaceAll("copyright-holder\n");
-		m = COPYRIGHT_OWNER_PATTERN.matcher(retval);
-		retval = m.replaceAll("copyright-owner");
-		m = COPYRIGHT_OWNER_PATTERN_LF.matcher(retval);
-		retval = m.replaceAll("copyright-owner\n");
-		m = PER_CENT_PATTERN.matcher(retval);
-		retval = m.replaceAll("percent");
-		m = PER_CENT_PATTERN.matcher(retval);
-		retval = m.replaceAll("percent\n");
-		m = COPYRIGHT_SYMBOL_PATTERN.matcher(retval);
-		retval = m.replaceAll("-c-");	// replace the parenthesis with a dash so that it results in a single token rather than 3
-		return retval;
-	}
-	
-	/**
-	 * Just fetches the string at the index checking for range.  Returns null if index is out of range.
-	 * @param tokens
-	 * @param tokenIndex
-	 * @return
-	 */
-	static String getTokenAt(String[] tokens, int tokenIndex) {
-		if (tokenIndex >= tokens.length) {
-			return null;
-		} else {
-			return tokens[tokenIndex];
-		}
-	}
-	/**
-	 * Returns true if the two tokens can be considered equlivalent per the SPDX license matching rules
-	 * @param tokenA
-	 * @param tokenB
-	 * @return
-	 */
-	static boolean tokensEquivalent(String tokenA, String tokenB) {
-		if (tokenA == null) {
-			if (tokenB == null) {
-				return true;
-			} else {
-				return false;
-			}
-		} else if (tokenB == null) {
-			return false;
-		} else {
-			String s1 = tokenA.trim().toLowerCase().replaceAll(DASHES_REGEX, "-");
-			String s2 = tokenB.trim().toLowerCase().replaceAll(DASHES_REGEX, "-");
-			if (s1.equals(s2)) {
-				return true;
-			} else {
-				// check for equivalent tokens by normalizing the tokens
-				String ns1 = NORMALIZE_TOKENS.get(s1);
-				if (ns1 == null) {
-					ns1 = s1;
-				}
-				String ns2 = NORMALIZE_TOKENS.get(s2);
-				if (ns2 == null) {
-					ns2 = s2;
-				}
-				return ns1.equals(ns2);
-			}
-		}
-	}
-	/**
-	 * Returns true if the token can be ignored per the rules
-	 * @param token
-	 * @return
-	 */
-	static boolean canSkip(String token) {
-		if (token == null) {
-			return false;
-		}
-		if (token.trim().isEmpty()) {
-			return true;
-		}
-		return SKIPPABLE_TOKENS.contains(token.trim().toLowerCase());
-	}
 
 	/**
 	 * Compares two licenses from potentially two different documents which may have
 	 * different license ID's for the same license
-	 * @param license1
-	 * @param license2
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
 	 * @param xlationMap Mapping the license ID's from license 1 to license 2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @return true if the licenses equal
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static boolean isLicenseEqual(AnyLicenseInfo license1,
 			AnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -575,22 +245,22 @@ public class LicenseCompareHelper {
 			if (!(license2 instanceof ConjunctiveLicenseSet)) {
 				return false;
 			} else {
-				return isLicenseSetsEqual((ConjunctiveLicenseSet)license1,
-						(ConjunctiveLicenseSet)license2, xlationMap);
+				return isLicenseSetsEqual(((ConjunctiveLicenseSet)license1).getMembers(),
+						((ConjunctiveLicenseSet)license2).getMembers(), xlationMap);
 			}
 		} else if (license1 instanceof DisjunctiveLicenseSet) {
 			if (!(license2 instanceof DisjunctiveLicenseSet)) {
 				return false;
 			} else {
-				return isLicenseSetsEqual((DisjunctiveLicenseSet)license1,
-						(DisjunctiveLicenseSet)license2, xlationMap);
+				return isLicenseSetsEqual(((DisjunctiveLicenseSet)license1).getMembers(),
+						((DisjunctiveLicenseSet)license2).getMembers(), xlationMap);
 			}
-		} else if (license1 instanceof ExtractedLicenseInfo) {
-			if (!(license2 instanceof ExtractedLicenseInfo)) {
+		} else if (license1 instanceof CustomLicense) {
+			if (!(license2 instanceof CustomLicense)) {
 				return false;
 			} else {
-				String licenseid1 = ((ExtractedLicenseInfo)license1).getLicenseId();
-				String licenseid2 = ((ExtractedLicenseInfo)license2).getLicenseId();
+				String licenseid1 = ((CustomLicense)license1).getObjectUri();
+				String licenseid2 = ((CustomLicense)license2).getObjectUri();
 				String xlatedLicenseId = xlationMap.get(licenseid1);
 				if (xlatedLicenseId == null) {
 					return false;	// no equivalent license was found
@@ -604,16 +274,16 @@ public class LicenseCompareHelper {
 
 	/**
 	 * Compares two license sets using the xlationMap for the non-standard license IDs
-	 * @param license1
-	 * @param license2
-	 * @return
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param licenseInfos1 first set of licenses to compare
+	 * @param licenseInfos2 second set of licenses to compare
+	 * @param xlationMap Mapping the license ID's from license 1 to license 2
+	 * @return true if the two sets of licenses are equal - invariant of order in the collections
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
-	private static boolean isLicenseSetsEqual(LicenseSet license1, LicenseSet license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
+	private static boolean isLicenseSetsEqual(Collection<AnyLicenseInfo> licenseInfos1, 
+			Collection<AnyLicenseInfo> licenseInfos2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		// note - order does not matter
-		Collection<AnyLicenseInfo> licenseInfos1 = license1.getMembers();
-		Collection<AnyLicenseInfo> licenseInfos2 = license2.getMembers();
 		if (licenseInfos1 == null) {
 			return licenseInfos2 == null;
 		}
@@ -639,26 +309,11 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
 	 * Get the text of a license minus any optional text - note: this include the default variable text
-	 * @param licenseTemplate license template containing optional and var tags
-	 * @param includeVarText if true, include the default variable text; if false remove the variable text
-	 * @return list of strings for all non-optional license text.  
-	 * @throws SpdxCompareException
-	 */
-	@Deprecated
-	public static List<String> getNonOptionalLicenseText(String licenseTemplate, boolean includeVarText) throws SpdxCompareException {
-		return getNonOptionalLicenseText(licenseTemplate,
-				includeVarText ? VarTextHandling.ORIGINAL : VarTextHandling.OMIT,
-						OptionalTextHandling.OMIT);
-	}
-	
-	/**
-	 * Get the text of a license minus any optional text
 	 * @param licenseTemplate license template containing optional and var tags
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @return list of strings for all non-optional license text.  
-	 * @throws SpdxCompareException
+	 * @throws SpdxCompareException on comparison errors
 	 */
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
 			VarTextHandling varTextHandling) throws SpdxCompareException {
@@ -671,7 +326,7 @@ public class LicenseCompareHelper {
 	 * @param varTextHandling include original, exclude, or include the regex (enclosed with "~~~") for "var" text
 	 * @param optionalTextHandling include optional text, exclude, or include a regex for the optional text
 	 * @return list of strings for all non-optional license text.  
-	 * @throws SpdxCompareException
+	 * @throws SpdxCompareException on comparison errors
 	 */
 	public static List<String> getNonOptionalLicenseText(String licenseTemplate, 
 			VarTextHandling varTextHandling, OptionalTextHandling optionalTextHandling) throws SpdxCompareException {
@@ -687,150 +342,16 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this method. This method will be removed in the next major release.
-	 * Creates a regular expression pattern to match the start of a license text
-	 * This method should be replaced by the <code>TemplateRegexMatcher</code> class and methods
-	 * @param nonOptionalText List of strings of non-optional text from the license template (see {@literal List<String> getNonOptionalLicenseText})
-	 * @param numberOfWords Number of words to use in the match
-	 * @return A pair of Patterns the first of which will match the start of the license text the second of which will match the end of the license
-	 */
-	@Deprecated
-	public static Pair<Pattern, Pattern> nonOptionalTextToPatterns(List<String> nonOptionalText, int numberOfWords) {
-		if (Objects.isNull(nonOptionalText) || nonOptionalText.size() == 0 || numberOfWords < 1) {
-			return new ImmutablePair<>(Pattern.compile(""), Pattern.compile(""));
-		}
-		int startWordCount = 0;
-		int startTextIndex = 0;
-		int wordsInLastLine = 0;	// keep track of the number of words processed in the last start line to make sure we don't overlap words in the end lines
-		StringBuilder startPatternBuilder = new StringBuilder();
-		String regexLimit = "," + Integer.toString(numberOfWords * 10) + "}";
-		String lastRegex = "";
-		while (startWordCount < numberOfWords && startTextIndex < nonOptionalText.size()) {
-			String line = nonOptionalText.get(startTextIndex++);
-			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
-			boolean inRegex = false; // if it starts with a regex, it will start with a blank line
-			for (String regexSplit:regexSplits) {
-				if (inRegex && startWordCount < numberOfWords) {
-					String regexToAppend;
-					if (regexSplit.endsWith(".+")) {
-						regexToAppend = regexSplit.substring(0, regexSplit.length()-1) +"{1" + regexLimit;
-					} else if (regexSplit.endsWith(".*")) {
-						regexToAppend = regexSplit.substring(0, regexSplit.length()-1) +"{0" + regexLimit;
-					} else {
-						regexToAppend = regexSplit;
-					}
-					if (startPatternBuilder.toString().endsWith("}") && regexToAppend.endsWith("}")) {
-						// collapse consecutive match anything
-						Matcher lastRegexMatch = REGEX_QUANTIFIER_PATTERN.matcher(lastRegex);
-						Matcher regexToAppendMatch = REGEX_QUANTIFIER_PATTERN.matcher(regexToAppend);
-						if (lastRegexMatch.matches() && regexToAppendMatch.matches()) {
-							int lastRegexMax = Integer.parseInt(lastRegexMatch.group(2));
-							int thisRegexMax = Integer.parseInt(regexToAppendMatch.group(2));
-							if (lastRegexMax >= thisRegexMax) {
-								regexToAppend = ""; // already covered by previous regex
-							} else {
-								// remove the last max
-								startPatternBuilder.setLength(startPatternBuilder.length()-(lastRegexMatch.group(2).length()+1));
-								regexToAppend = regexToAppend.substring(regexToAppend.indexOf(',')+1);
-							}
-						}
-					}
-					startPatternBuilder.append(regexToAppend);
-					lastRegex = regexToAppend;
-					startWordCount++;
-					inRegex = false;
-				} else {
-					String[] tokens = normalizeText(regexSplit.trim()).split("\\s");
-					int tokenIndex = 0;
-					wordsInLastLine = 0;
-					while (tokenIndex < tokens.length && startWordCount < numberOfWords) {
-						String token = tokens[tokenIndex++].trim();
-						if (token.length() > 0) {
-							if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
-								token = NORMALIZE_TOKENS.get(token.toLowerCase());
-							}
-							startPatternBuilder.append(Pattern.quote(token));
-							startPatternBuilder.append("\\s*");
-							startWordCount++;
-							wordsInLastLine++;
-						}
-					}
-					inRegex = true;
-				}
-			}
-		}
-		
-		// End words
-		StringBuilder endPatternBuilder = new StringBuilder();
-		List<String> endTextReversePattern = new ArrayList<>();
-		int endTextIndex = nonOptionalText.size()-1;
-		int endWordCount = 0;
-		int lastProcessedStartLine = startTextIndex - 1;
-		while (endWordCount < numberOfWords && 
-				(endTextIndex > lastProcessedStartLine || 
-						(endTextIndex == lastProcessedStartLine && (numberOfWords - endWordCount) < (nonOptionalText.get(endTextIndex).length() - wordsInLastLine)))) {	// Check to make sure we're not overlapping the start words
-			List<String> nonEmptyTokens = new ArrayList<>();
-			String line = nonOptionalText.get(endTextIndex);
-			String[] regexSplits = line.trim().split(FilterTemplateOutputHandler.REGEX_ESCAPE);
-			boolean inRegex = false;
-			for (String regexSplit:regexSplits) {
-				if (inRegex) {
-					if (!regexSplit.isEmpty()) {
-						nonEmptyTokens.add(FilterTemplateOutputHandler.REGEX_ESCAPE + regexSplit);
-					}
-					inRegex = false;
-				} else {
-					String[] tokens = normalizeText(regexSplit.trim()).split("\\s");
-					
-					for (String token:tokens) {
-						String trimmedToken = token.trim();
-						if (!trimmedToken.isEmpty()) {
-							nonEmptyTokens.add(trimmedToken);
-						}
-					}
-					inRegex = true;
-				}
-			}
-			int remainingTokens = (endTextIndex == lastProcessedStartLine && nonEmptyTokens.size() - wordsInLastLine > numberOfWords - endWordCount) ? 
-										numberOfWords - endWordCount : nonEmptyTokens.size() - wordsInLastLine;
-			endTextIndex--;
-			int tokenIndex = nonEmptyTokens.size() - 1;
-			while (tokenIndex >= 0 && remainingTokens > 0) {
-				String token = nonEmptyTokens.get(tokenIndex--);
-				if (token.startsWith(FilterTemplateOutputHandler.REGEX_ESCAPE)) {
-					endTextReversePattern.add(token.substring(FilterTemplateOutputHandler.REGEX_ESCAPE.length()));
-				} else {
-					endTextReversePattern.add("\\s*");
-					if (NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
-						token = NORMALIZE_TOKENS.get(token.toLowerCase());
-					}
-					endTextReversePattern.add(Pattern.quote(token));
-				}
-				remainingTokens--;
-				endWordCount++;
-			}
-		}
-		
-		int revPatternIndex = endTextReversePattern.size()-1;
-		while (revPatternIndex >= 0) {
-			endPatternBuilder.append(endTextReversePattern.get(revPatternIndex--));
-		}
-		return new ImmutablePair<>(
-				Pattern.compile(startPatternBuilder.toString(), Pattern.DOTALL|Pattern.CASE_INSENSITIVE),
-				Pattern.compile(endPatternBuilder.toString(), Pattern.DOTALL|Pattern.CASE_INSENSITIVE));
-	}
-	
-	/**
 	 * @param template Template in the standard template format used for comparison
 	 * @param compareText Text to compare using the template
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static DifferenceDescription isTextMatchingTemplate(String template, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
 		try {
-			compareTemplateOutputHandler = new CompareTemplateOutputHandler(removeLineSeparators(removeCommentChars(compareText)));
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(LicenseTextHelper.removeLineSeparators(removeCommentChars(compareText)));
 		} catch (IOException e1) {
 			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
 		}
@@ -844,19 +365,17 @@ public class LicenseCompareHelper {
 		}
 		return compareTemplateOutputHandler.getDifferences();
 	}
-		
-		
-	
+
 	/**
 	 * Compares license text to the license text of an SPDX Standard License
 	 * @param license SPDX Standard License to compare
 	 * @param compareText Text to compare to the standard license
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
 	public static DifferenceDescription isTextStandardLicense(License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String licenseTemplate = license.getStandardLicenseTemplate();
+		String licenseTemplate = license.getStandardLicenseTemplate().orElse("");
 		if (licenseTemplate == null || licenseTemplate.trim().isEmpty()) {
 			licenseTemplate = license.getLicenseText();
 		}
@@ -868,13 +387,13 @@ public class LicenseCompareHelper {
 	 * @param exception SPDX Standard exception to compare
 	 * @param compareText Text to compare to the standard exceptions
 	 * @return any differences found
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws SpdxCompareException on comparison errors
+	 * @throws InvalidSPDXAnalysisException on errors reading reading properties from the SPDX model
 	 */
-	public static DifferenceDescription isTextStandardException(LicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		String exceptionTemplate = exception.getLicenseExceptionTemplate();
+	public static DifferenceDescription isTextStandardException(ListedLicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String exceptionTemplate = exception.getStandardAdditionTemplate().orElse("");
 		if (exceptionTemplate == null || exceptionTemplate.trim().isEmpty()) {
-			exceptionTemplate = exception.getLicenseExceptionText();
+			exceptionTemplate = exception.getAdditionText();
 		}
 		return isTextMatchingTemplate(exceptionTemplate, compareText);
 	}
@@ -885,14 +404,14 @@ public class LicenseCompareHelper {
 	 * @param license The standard SPDX license to search for (should not be null)
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
-	public static boolean isStandardLicenseWithinText(String text, SpdxListedLicense license) {
+	public static boolean isStandardLicenseWithinText(String text, ListedLicense license) {
 		try {
-			return new TemplateRegexMatcher(license.getStandardLicenseTemplate()).isTemplateMatchWithinText(text);
+			return new TemplateRegexMatcher(license.getStandardLicenseTemplate().orElse(license.getLicenseText())).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
-			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			logger.warn("Error getting optional text for license " + license.getObjectUri(), e);
 			return false;
 		} catch (InvalidSPDXAnalysisException e) {
-			logger.warn("Error getting optional text for license ID " + license.getLicenseId(), e);
+			logger.warn("Error getting optional text for license " + license.getObjectUri(), e);
 			return false;
 		}
 	}
@@ -910,11 +429,11 @@ public class LicenseCompareHelper {
 			return false;
 		}
 		try {
-			return new TemplateRegexMatcher(exception.getLicenseExceptionTemplate()).isTemplateMatchWithinText(text);
+			return new TemplateRegexMatcher(exception.getStandardAdditionTemplate().orElse(exception.getAdditionText())).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
-			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
+			logger.warn("Error getting optional text for license exception ID " + exception.getObjectUri(), e);
 		} catch (InvalidSPDXAnalysisException e) {
-			logger.warn("Error getting optional text for license exception ID " + exception.getLicenseExceptionId(), e);
+			logger.warn("Error getting optional text for license exception ID " + exception.getObjectUri(), e);
 		}
 		return result;
 	}
@@ -932,9 +451,9 @@ public class LicenseCompareHelper {
 		List<String> stdLicenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
 		List<String> matchingIds  = new ArrayList<>();
 		for (String stdLicId : stdLicenseIds) {
-			SpdxListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+			ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 			if (!isTextStandardLicense(license, licenseText).isDifferenceFound()) {
-				matchingIds.add(license.getLicenseId());
+				matchingIds.add(licenseUriToLicenseId(license.getObjectUri()));
 			}
 		}
 		return matchingIds.toArray(new String[matchingIds.size()]);
@@ -955,9 +474,9 @@ public class LicenseCompareHelper {
 
 		if (text != null && !text.isEmpty() && licenseIds != null && !licenseIds.isEmpty()) {
 			for (String stdLicId : licenseIds) {
-				SpdxListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+				ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
 				if (isStandardLicenseWithinText(text, license)) {
-					result.add(license.getLicenseId());
+					result.add(licenseUriToLicenseId(license.getObjectUri()));
 				}
 			}
 		}
@@ -995,7 +514,7 @@ public class LicenseCompareHelper {
 			for (String stdLicExcId : licenseExceptionIds) {
 				ListedLicenseException licenseException = ListedLicenses.getListedLicenses().getListedExceptionById(stdLicExcId);
 				if (isStandardLicenseExceptionWithinText(text, licenseException)) {
-					result.add(licenseException.getLicenseExceptionId());
+					result.add(licenseUriToLicenseId(licenseException.getObjectUri()));
 				}
 			}
 		}
@@ -1034,7 +553,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param blackList license black list
 	 * @return if the license pass black lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassBlackList(
 			AnyLicenseInfo license,
@@ -1070,7 +589,7 @@ public class LicenseCompareHelper {
 	 * @param license license
 	 * @param whiteList license white list
 	 * @return if the license pass white lists
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
 	 */
 	public static boolean isLicensePassWhiteList(
 			AnyLicenseInfo license,
@@ -1091,6 +610,264 @@ public class LicenseCompareHelper {
 			return true;
 		} else if (license instanceof DisjunctiveLicenseSet) {
 			for (AnyLicenseInfo member : ((DisjunctiveLicenseSet) license).getMembers()) {
+				if (isLicensePassWhiteList(member, whiteList)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return contains(whiteList, license.toString());
+		}
+	}
+	
+	/**
+	 * The following methods are provided for compatibility with the SPDX 2.X versions of the 
+	 * library
+	 */
+	
+	/**
+	 * Compares two licenses from potentially two different documents which may have
+	 * different license ID's for the same license
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
+	 * @param xlationMap Mapping the license URIs from license 1 to license 2
+	 * @return true if the 2 licenses are equal
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static boolean isLicenseEqual(org.spdx.library.model.v2.license.AnyLicenseInfo license1,
+			org.spdx.library.model.v2.license.AnyLicenseInfo license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		if (license1 instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
+			if (!(license2 instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet)) {
+				return false;
+			} else {
+				return isLicenseSetsEqual((org.spdx.library.model.v2.license.ConjunctiveLicenseSet)license1,
+						(org.spdx.library.model.v2.license.ConjunctiveLicenseSet)license2, xlationMap);
+			}
+		} else if (license1 instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet) {
+			if (!(license2 instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet)) {
+				return false;
+			} else {
+				return isLicenseSetsEqual((org.spdx.library.model.v2.license.DisjunctiveLicenseSet)license1,
+						(org.spdx.library.model.v2.license.DisjunctiveLicenseSet)license2, xlationMap);
+			}
+		} else if (license1 instanceof org.spdx.library.model.v2.license.ExtractedLicenseInfo) {
+			if (!(license2 instanceof org.spdx.library.model.v2.license.ExtractedLicenseInfo)) {
+				return false;
+			} else {
+				String licenseUri1 = ((org.spdx.library.model.v2.license.ExtractedLicenseInfo)license1).getObjectUri();
+				String licenseUri2 = ((org.spdx.library.model.v2.license.ExtractedLicenseInfo)license2).getObjectUri();
+				String xlatedLicenseId = xlationMap.get(licenseUri1);
+				if (xlatedLicenseId == null) {
+					return false;	// no equivalent license was found
+				}
+				return xlatedLicenseId.equals(licenseUri2);
+			}
+		} else {
+            return license1.equals(license2);
+        }
+	}
+
+	/**
+	 * Compares two license sets using the xlationMap for the non-standard license IDs
+	 * @param license1 first license to compare
+	 * @param license2 second license to compare
+	 * @return true if the 2 licenses are equal
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	private static boolean isLicenseSetsEqual(org.spdx.library.model.v2.license.LicenseSet license1, 
+			org.spdx.library.model.v2.license.LicenseSet license2, Map<String, String> xlationMap) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		// note - order does not matter
+		Collection<org.spdx.library.model.v2.license.AnyLicenseInfo> licenseInfos1 = license1.getMembers();
+		Collection<org.spdx.library.model.v2.license.AnyLicenseInfo> licenseInfos2 = license2.getMembers();
+		if (licenseInfos1 == null) {
+			return licenseInfos2 == null;
+		}
+		if (licenseInfos2 == null) {
+			return false;
+		}
+		if (licenseInfos1.size() != licenseInfos2.size()) {
+			return false;
+		}
+		for (org.spdx.library.model.v2.license.AnyLicenseInfo ali1:licenseInfos1) {
+			boolean found = false;
+			for (org.spdx.library.model.v2.license.AnyLicenseInfo ali2:licenseInfos2) {
+				if (isLicenseEqual(ali1, ali2, xlationMap)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Compares license text to the license text of an SPDX Standard License
+	 * @param license SPDX Standard License to compare
+	 * @param compareText Text to compare to the standard license
+	 * @return any differences found
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static DifferenceDescription isTextStandardLicense(org.spdx.library.model.v2.license.License license, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String licenseTemplate = license.getStandardLicenseTemplate();
+		if (licenseTemplate == null || licenseTemplate.trim().isEmpty()) {
+			licenseTemplate = license.getLicenseText();
+		}
+		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
+		try {
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(LicenseTextHelper.removeLineSeparators(removeCommentChars(compareText)));
+		} catch (IOException e1) {
+			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
+		}
+		try {
+		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
+			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(licenseTemplate), compareTemplateOutputHandler);
+		} catch (LicenseTemplateRuleException e) {
+			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
+		} catch (LicenseParserException e) {
+			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
+		}
+		return compareTemplateOutputHandler.getDifferences();
+	}
+	
+	/**
+	 * Compares exception text to the exception text of an SPDX Standard exception
+	 * @param exception SPDX Standard exception to compare
+	 * @param compareText Text to compare to the standard exceptions
+	 * @return any differences found
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static DifferenceDescription isTextStandardException(org.spdx.library.model.v2.license.LicenseException exception, String compareText) throws SpdxCompareException, InvalidSPDXAnalysisException {
+		String exceptionTemplate = exception.getLicenseExceptionTemplate();
+		if (exceptionTemplate == null || exceptionTemplate.trim().isEmpty()) {
+			exceptionTemplate = exception.getLicenseExceptionText();
+		}
+		CompareTemplateOutputHandler compareTemplateOutputHandler = null;
+		try {
+			compareTemplateOutputHandler = new CompareTemplateOutputHandler(LicenseTextHelper.removeLineSeparators(removeCommentChars(compareText)));
+		} catch (IOException e1) {
+			throw new SpdxCompareException("IO Error reading the compare text: "+e1.getMessage(),e1);
+		}
+		try {
+		    //TODO: The remove comment chars will not be removed for lines beginning with a template << or ending with >>
+			SpdxLicenseTemplateHelper.parseTemplate(removeCommentChars(exceptionTemplate), compareTemplateOutputHandler);
+		} catch (LicenseTemplateRuleException e) {
+			throw new SpdxCompareException("Invalid template rule found during compare: "+e.getMessage(),e);
+		} catch (LicenseParserException e) {
+			throw new SpdxCompareException("Invalid template found during compare: "+e.getMessage(),e);
+		}
+		return compareTemplateOutputHandler.getDifferences();
+	}
+	
+	/**
+	 * Detect if a text contains the standard license (perhaps along with other text before and/or after)
+	 * @param text    The text to search within (should not be null)
+	 * @param license The standard SPDX license to search for (should not be null)
+	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
+	 */
+	public static boolean isStandardLicenseWithinText(String text, org.spdx.library.model.v2.license.SpdxListedLicense license) {
+		
+		try {
+			return new TemplateRegexMatcher(license.getStandardLicenseTemplate()).isTemplateMatchWithinText(text);
+		} catch (SpdxCompareException e) {
+			logger.warn("Error getting optional text for license " + license.getObjectUri(), e);
+			return false;
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting optional text for license " + license.getObjectUri(), e);
+			return false;
+		}
+	}
+
+
+	/**
+	 * Detect if a text contains the standard license exception (perhaps along with other text before and/or after)
+	 * @param text    The text to search within (should not be null)
+	 * @param exception The standard SPDX license exception to search for (should not be null)
+	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
+	 */
+	public static boolean isStandardLicenseExceptionWithinText(String text, org.spdx.library.model.v2.license.ListedLicenseException exception) {
+		boolean result = false;
+		if (text == null || text.isEmpty() || exception == null) {
+			return false;
+		}
+		try {
+			return new TemplateRegexMatcher(exception.getLicenseExceptionTemplate()).isTemplateMatchWithinText(text);
+		} catch (SpdxCompareException e) {
+			logger.warn("Error getting optional text for license exception ID " + exception.getObjectUri(), e);
+		} catch (InvalidSPDXAnalysisException e) {
+			logger.warn("Error getting optional text for license exception ID " + exception.getObjectUri(), e);
+		}
+		return result;
+	}
+	
+	/**
+	 * Detect if a license pass black lists
+	 * @param license license
+	 * @param blackList license black list
+	 * @return if the license pass black lists
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 */
+	public static boolean isLicensePassBlackList(
+			org.spdx.library.model.v2.license.AnyLicenseInfo license,
+			String... blackList
+	) throws InvalidSPDXAnalysisException {
+		if (license == null) {
+			return true;
+		}
+		if (blackList == null || blackList.length == 0) {
+			return true;
+		}
+		if (license instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
+			for (org.spdx.library.model.v2.license.AnyLicenseInfo member : ((org.spdx.library.model.v2.license.ConjunctiveLicenseSet) license).getMembers()) {
+				if (!isLicensePassBlackList(member, blackList)) {
+					return false;
+				}
+			}
+			return true;
+		} else if (license instanceof org.spdx.library.model.v2.license. DisjunctiveLicenseSet) {
+			for (org.spdx.library.model.v2.license.AnyLicenseInfo member : ((org.spdx.library.model.v2.license.DisjunctiveLicenseSet) license).getMembers()) {
+				if (isLicensePassBlackList(member, blackList)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return !contains(blackList, license.toString());
+		}
+	}
+
+	/**
+	 * Detect if a license pass white lists
+	 * @param license license
+	 * @param whiteList license white list
+	 * @return if the license pass white lists
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard license exceptions
+	 */
+	public static boolean isLicensePassWhiteList(
+			org.spdx.library.model.v2.license.AnyLicenseInfo license,
+			String... whiteList
+	) throws InvalidSPDXAnalysisException {
+		if (license == null) {
+			return false;
+		}
+		if (whiteList == null || whiteList.length == 0) {
+			return false;
+		}
+		if (license instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
+			for (org.spdx.library.model.v2.license.AnyLicenseInfo member : ((org.spdx.library.model.v2.license.ConjunctiveLicenseSet) license).getMembers()) {
+				if (!isLicensePassWhiteList(member, whiteList)) {
+					return false;
+				}
+			}
+			return true;
+		} else if (license instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet) {
+			for (org.spdx.library.model.v2.license.AnyLicenseInfo member : ((org.spdx.library.model.v2.license.DisjunctiveLicenseSet) license).getMembers()) {
 				if (isLicensePassWhiteList(member, whiteList)) {
 					return true;
 				}

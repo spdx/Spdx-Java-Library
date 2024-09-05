@@ -29,9 +29,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxPackageVerificationCode;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
@@ -140,7 +140,7 @@ public class VerificationCodeGenerator {
 			verificationCodeDigest.update(hashInput);
 		}
 		String value = convertChecksumToString(verificationCodeDigest.digest());
-		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(modelStore, documentUri, modelStore.getNextId(IdType.Anonymous, documentUri), null, true);
+		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(modelStore, documentUri, modelStore.getNextId(IdType.Anonymous), null, true);
 		retval.setValue(value);
 		for (String skippedPath:skippedFilePaths) {
 			retval.getExcludedFileNames().add(skippedPath);

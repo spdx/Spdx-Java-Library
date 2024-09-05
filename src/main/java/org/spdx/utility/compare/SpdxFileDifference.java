@@ -23,13 +23,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+
 
 /**
  * Contains the results of a comparison between two SPDX files with the same name

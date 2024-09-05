@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.spdx.licenseTemplate.ILicenseTemplateOutputHandler;
 import org.spdx.licenseTemplate.LicenseTemplateRule;
+import org.spdx.licenseTemplate.LicenseTextHelper;
 
 /**
  * @deprecated The <code>TemplateRegexMatcher</code> class should be used in place of this class.  This class will be removed in the next major release.
@@ -35,17 +36,38 @@ import org.spdx.licenseTemplate.LicenseTemplateRule;
 @Deprecated
 public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandler {
 	
+	/**
+	 * String used to escape
+	 */
 	public static final String REGEX_ESCAPE = "~~~";
 	public enum VarTextHandling {
-		OMIT,		// Omit the var text all together
-		ORIGINAL,	// Include the original text for the regex
-		REGEX,		// Include the regex itself included by the REGEX_ESCAPE strings
+		/**
+		 * Omit the var text all together
+		 */
+		OMIT,
+		/**
+		 * Include the original text for the regex
+		 */
+		ORIGINAL,
+		/**
+		 * Include the regex itself included by the REGEX_ESCAPE strings
+		 */
+		REGEX
 	}
 	
 	public enum OptionalTextHandling {
-		OMIT,		// Omit the optional text
-		ORIGINAL,	// Retain the optional text
-		REGEX_USING_TOKENS		// Create a regex for the optional text with the REGEX_ESCAPE string tokenizing the words
+		/**
+		 * Omit the optional text
+		 */
+		OMIT,
+		/**
+		 * Retain the optional text
+		 */
+		ORIGINAL,
+		/**
+		 * Create a regex for the optional text with the REGEX_ESCAPE string tokenizing the words
+		 */
+		REGEX_USING_TOKENS
 	}
 	
 	private VarTextHandling varTextHandling;
@@ -88,7 +110,7 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 			currentString.append(text);
 		} else if (OptionalTextHandling.REGEX_USING_TOKENS.equals(optionalTextHandling)) {
 			optionalTokens.get(optionalDepth).addAll(Arrays.asList(
-					LicenseCompareHelper.tokenizeLicenseText(text, new HashMap<>())));
+					LicenseTextHelper.tokenizeLicenseText(text, new HashMap<>())));
 		}
 	}
 
@@ -149,8 +171,8 @@ public class FilterTemplateOutputHandler implements ILicenseTemplateOutputHandle
 		StringBuilder sb = new StringBuilder();
 		for (String token:tokens) {
 			token = token.trim();
-			if (LicenseCompareHelper.NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
-				token = LicenseCompareHelper.NORMALIZE_TOKENS.get(token.toLowerCase());
+			if (LicenseTextHelper.NORMALIZE_TOKENS.containsKey(token.toLowerCase())) {
+				token = LicenseTextHelper.NORMALIZE_TOKENS.get(token.toLowerCase());
 			}
 			sb.append(Pattern.quote(token));
 			sb.append("\\s*");

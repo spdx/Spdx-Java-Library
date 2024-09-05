@@ -25,9 +25,11 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.CrossRef;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSpdxPropertyException;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.CrossRef;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * JSON Representation of a CrossRef
@@ -87,91 +89,91 @@ class CrossRefJson {
 	}
 	
 	/**
-	 * @return all valid property names
+	 * @return all valid property descriptors
 	 */
-	public List<String> getPropertyValueNames() {
-		List<String> retval = new ArrayList<String>();
+	public List<PropertyDescriptor> getPropertyValueDescriptors() {
+		List<PropertyDescriptor> retval = new ArrayList<PropertyDescriptor>();
 		if (Objects.nonNull(match)) {
-			retval.add("match");
+			retval.add(new PropertyDescriptor("match", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(url)) {
-			retval.add("url");
+			retval.add(new PropertyDescriptor("url", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(isValid)) {
-			retval.add("isValid");
+			retval.add(new PropertyDescriptor("isValid", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(isLive)) {
-			retval.add("isLive");
+			retval.add(new PropertyDescriptor("isLive", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(timestamp)) {
-			retval.add("timestamp");
+			retval.add(new PropertyDescriptor("timestamp", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(isWayBackLink)) {
-			retval.add("isWayBackLink");
+			retval.add(new PropertyDescriptor("isWayBackLink", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		if (Objects.nonNull(order)) {
-			retval.add("order");
+			retval.add(new PropertyDescriptor("order", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
 		return retval;
 	}
 
 	/**
 	 * Sets the value to the property name
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @param value
 	 * @throws InvalidSpdxPropertyException
 	 */
-	public void setPrimativeValue(String propertyName, Object value) throws InvalidSpdxPropertyException {
-		switch (propertyName) {
+	public void setPrimativeValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+		switch (propertyDescriptor.getName()) {
 			case "match": if (!(value instanceof String)) {
-					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected string type for "+propertyDescriptor);
 				}
 				this.match = (String)value;
 			break;
 			case "url": if (!(value instanceof String)) {
-						throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
+						throw new InvalidSpdxPropertyException("Expected string type for "+propertyDescriptor);
 					}
 				this.url = (String)value;
 				break;
 			case "timestamp": if (!(value instanceof String)) {
-					throw new InvalidSpdxPropertyException("Expected string type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected string type for "+propertyDescriptor);
 				}
 				this.timestamp = (String)value;
 				break;
 			case "isValid": if (!(value instanceof Boolean)) {
-					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyDescriptor);
 				}
 				this.isValid = (Boolean)value;
 				break;
 			case "isLive": if (!(value instanceof Boolean)) {
-					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyDescriptor);
 				}
 				this.isLive = (Boolean)value;
 				break;
 			case "isWayBackLink": if (!(value instanceof Boolean)) {
-					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected boolean type for "+propertyDescriptor);
 				}
 				this.isWayBackLink = (Boolean)value;
 				break;
 			case "order": if (!(value instanceof Integer)) {
-					throw new InvalidSpdxPropertyException("Expected integer type for "+propertyName);
+					throw new InvalidSpdxPropertyException("Expected integer type for "+propertyDescriptor);
 				}
 				this.order = (Integer)value;
 				break;
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyName);
+			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
 		}
 	}
 
-	public void clearPropertyValueList(String propertyName) throws InvalidSpdxPropertyException {
-		throw new InvalidSpdxPropertyException(propertyName + " is not a list type.");
+	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
+		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
-	public boolean addPrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
-		throw new InvalidSpdxPropertyException(propertyName + " is not a list type.");
+	public boolean addPrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
-	public boolean removePrimitiveValueToList(String propertyName, Object value) throws InvalidSpdxPropertyException {
-		throw new InvalidSpdxPropertyException(propertyName + " is not a list type.");
+	public boolean removePrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
 	public @Nullable String getId() {
@@ -183,21 +185,21 @@ class CrossRefJson {
 	}
 
 	/**
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @return the list associated with the property
 	 * @throws InvalidSpdxPropertyException
 	 */
-	public List<?> getValueList(String propertyName) throws InvalidSpdxPropertyException {
-		throw new InvalidSpdxPropertyException(propertyName + " is not a list type.");
+	public List<?> getValueList(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
+		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
 	/**
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @return the value associated with the property - null if not assigned or not present
 	 * @throws InvalidSpdxPropertyException
 	 */
-	public @Nullable Object getValue(String propertyName) throws InvalidSpdxPropertyException {
-		switch (propertyName) {
+	public @Nullable Object getValue(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
+		switch (propertyDescriptor.getName()) {
 			case "match": return this.match;
 			case "url": return this.url;
 			case "isValid": return this.isValid;
@@ -205,17 +207,17 @@ class CrossRefJson {
 			case "timestamp": return this.timestamp;
 			case "isWayBackLink": return this.isWayBackLink;
 			case "order": return this.order;
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyName);
+			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
 		}
 	}
 
 	/**
 	 * sets the property to null (no way to remove in this store)
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @throws InvalidSpdxPropertyException
 	 */
-	public void removeProperty(String propertyName) throws InvalidSpdxPropertyException {
-		switch (propertyName) {
+	public void removeProperty(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
+		switch (propertyDescriptor.getName()) {
 			case "match": this.match = null; break;
 			case "url": this.url = null; break;
 			case "isValid": this.isValid = null; break;
@@ -223,27 +225,27 @@ class CrossRefJson {
 			case "timestamp": this.timestamp = null; break;
 			case "isWayBackLink": this.isWayBackLink = null; break;
 			case "order": this.order = null; break;
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyName);
+			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
 		}
 	}
 
 	/**
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @param clazz
 	 * @return true if the members can be assigned from clazz
 	 */
-	public boolean isCollectionMembersAssignableTo(String propertyName, Class<?> clazz) {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
 		return false;
 	}
 
 	/**
-	 * @param propertyName
+	 * @param propertyDescriptor
 	 * @param clazz
 	 * @return true if the property can be assigned from clazz
 	 * @throws InvalidSpdxPropertyException
 	 */
-	public boolean isPropertyValueAssignableTo(String propertyName, Class<?> clazz) throws InvalidSpdxPropertyException {
-		switch (propertyName) {
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSpdxPropertyException {
+		switch (propertyDescriptor.getName()) {
 			case "match":
 			case "url":
 			case "timestamp": return String.class.isAssignableFrom(clazz);
@@ -251,7 +253,7 @@ class CrossRefJson {
 			case "isLive":
 			case "isWayBackLink": return Boolean.class.isAssignableFrom(clazz);
 			case "order": return Integer.class.isAssignableFrom(clazz);
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyName);
+			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
 	}
 
 	}

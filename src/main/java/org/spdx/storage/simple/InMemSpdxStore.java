@@ -18,34 +18,33 @@
 package org.spdx.storage.simple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.DuplicateSpdxIdException;
-import org.spdx.library.model.ModelCollection;
-import org.spdx.library.model.SpdxIdInUseException;
-import org.spdx.library.model.SpdxIdNotFoundException;
-import org.spdx.library.model.TypedValue;
-import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.core.DuplicateSpdxIdException;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.ModelCollection;
+import org.spdx.core.SpdxIdInUseException;
+import org.spdx.core.SpdxIdNotFoundException;
+import org.spdx.core.TypedValue;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.PropertyDescriptor;
 
 /**
  * @author Gary O'Neall
@@ -63,19 +62,25 @@ public class InMemSpdxStore implements IModelStore {
 	static final Logger logger = LoggerFactory.getLogger(InMemSpdxStore.class.getName());
 
 	static final String GENERATED = "gnrtd";
+	/**
+	 * Pattern for the generated license ID
+	 */
 	public static Pattern LICENSE_ID_PATTERN_GENERATED =
-			Pattern.compile(SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
+			Pattern.compile(".*"+SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
 
-	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
-	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
-	static final String ANON_PREFIX = "__anon__";
+	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
+	static Pattern SPDX_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+"(\\d+)$");
+	/**
+	 * Prefix for anonymous ids
+	 */
+	public static final String ANON_PREFIX = "__anon__";
 	static Pattern ANON_ID_PATTERN_GENERATED = Pattern.compile(ANON_PREFIX+GENERATED+"(\\d+)$");
-	private static final Set<String> LITERAL_VALUE_SET = new HashSet<String>(Arrays.asList(SpdxConstants.LITERAL_VALUES));
 
 	/**
-	 * Map of Document URI to items stored in the document.  The key for the items map is the lowercase of the item ID.
+	 * Map of property object URI's to typed value items
 	 */
-	protected Map<String, Map<String, StoredTypedItem>> documentValues = Collections.synchronizedMap(new LinkedHashMap<>());
+	protected Map<String, StoredTypedItem> typedValueMap = Collections.synchronizedMap(new LinkedHashMap<>());
+
 	private int nextNextLicenseId = 0;
 	private int nextNextDocumentId = 0;
 	private int nextNextSpdxId = 0;
@@ -101,59 +106,60 @@ public class InMemSpdxStore implements IModelStore {
 		}
 
 	};
+	
+	
+	public InMemSpdxStore() {
 
+	}
+	
 	@Override
-	public boolean exists(String documentUri, String id) {
-		Map<String, StoredTypedItem> idMap = documentValues.get(documentUri);
-		if (idMap == null) {
-			return false;
-		}
-		return idMap.containsKey(id.toLowerCase());
+	public boolean exists(String objectUri) {
+		return typedValueMap.containsKey(objectUri.toLowerCase());
 	}
 
 	@Override
-	public void create(String documentUri, String id, String type) throws InvalidSPDXAnalysisException {
-		StoredTypedItem value = new StoredTypedItem(documentUri, id, type);
-		Map<String, StoredTypedItem> idMap = documentValues.get(documentUri);
-		while (idMap == null) {
-			idMap = documentValues.putIfAbsent(documentUri, Collections.synchronizedMap(new LinkedHashMap<String, StoredTypedItem>()));
-		}
-		updateNextIds(id);
-		if (Objects.nonNull(idMap.putIfAbsent(id.toLowerCase(), value))) {
-			throw new DuplicateSpdxIdException("ID "+id+" already exists.");
+	public void create(TypedValue typedValue) throws InvalidSPDXAnalysisException {
+		StoredTypedItem value = new StoredTypedItem(typedValue.getObjectUri(), typedValue.getType(), typedValue.getSpecVersion());
+		updateNextIds(typedValue.getObjectUri());
+		if (Objects.nonNull(this.typedValueMap.putIfAbsent(typedValue.getObjectUri().toLowerCase(), value))) {
+			throw new DuplicateSpdxIdException("Object URI "+typedValue.getObjectUri()+" already exists.");
 		}
 	}
 
 	/**
 	 * Check to see if the next ID indexes need to be updated based on the name provided
-	 * @param id
+	 * @param objectUri Anonymous or URI ID
 	 */
-	void updateNextIds(String id) {
-		if (id == null) {
+	void updateNextIds(String objectUri) {
+		if (objectUri == null) {
 			return;
 		}
-		Matcher licenseRefMatcher = LICENSE_ID_PATTERN_GENERATED.matcher(id);
+		Matcher licenseRefMatcher = LICENSE_ID_PATTERN_GENERATED.matcher(objectUri);
 		if (licenseRefMatcher.matches()) {
 			checkUpdateNextLicenseId(licenseRefMatcher);
 			return;
 		}
-		Matcher documentRefMatcher = DOCUMENT_ID_PATTERN_GENERATED.matcher(id);
+		Matcher documentRefMatcher = DOCUMENT_ID_PATTERN_GENERATED.matcher(objectUri);
 		if (documentRefMatcher.matches()) {
 			checkUpdateNextDocumentId(documentRefMatcher);
 			return;
 		}
-		Matcher spdxRefMatcher = SPDX_ID_PATTERN_GENERATED.matcher(id);
+		Matcher spdxRefMatcher = SPDX_ID_PATTERN_GENERATED.matcher(objectUri);
 		if (spdxRefMatcher.matches()) {
 			checkUpdateNextSpdxId(spdxRefMatcher);
 			return;
 		}
-		Matcher anonRefMatcher = ANON_ID_PATTERN_GENERATED.matcher(id);
+		Matcher anonRefMatcher = ANON_ID_PATTERN_GENERATED.matcher(objectUri);
 		if (anonRefMatcher.matches()) {
 			checkUpdateNextAnonId(anonRefMatcher);
 			return;
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated anon ID needs to be updated and update if needed
+	 * @param anonRefMatcher Matcher for generated anon IDs
+	 */
 	private synchronized void checkUpdateNextAnonId(Matcher anonRefMatcher) {
 		String strNum = anonRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -162,6 +168,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated SPDX ID needs to be updated and update if needed
+	 * @param spdxRefMatcher Matcher for generated  SPDX IDs
+	 */
 	private synchronized void checkUpdateNextSpdxId(Matcher spdxRefMatcher) {
 		String strNum = spdxRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -170,6 +180,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated document ID needs to be updated and update if needed
+	 * @param documentRefMatcher Matcher for generated document IDs
+	 */
 	private synchronized void checkUpdateNextDocumentId(Matcher documentRefMatcher) {
 		String strNum = documentRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -178,6 +192,10 @@ public class InMemSpdxStore implements IModelStore {
 		}
 	}
 
+	/**
+	 * Checks to see if the next generated license ID needs to be updated and update if needed
+	 * @param licenseRefMatcher Matcher for generated license IDs
+	 */
 	private synchronized void checkUpdateNextLicenseId(Matcher licenseRefMatcher) {
 		String strNum = licenseRefMatcher.group(1);
 		int num = Integer.parseInt(strNum);
@@ -188,219 +206,206 @@ public class InMemSpdxStore implements IModelStore {
 
 	/**
 	 * Gets the item from the hashmap
-	 * @param documentUri
-	 * @param id
-	 * @return
+	 * @param objectUri Anonymous or URI ID
+	 * @return the item from the hash map
 	 * @throws InvalidSPDXAnalysisException
 	 */
-	protected StoredTypedItem getItem(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		Map<String, StoredTypedItem> idMap = documentValues.get(documentUri);
-		if (idMap == null) {
-			throw new SpdxIdNotFoundException("Document URI "+documentUri+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
-		}
-		StoredTypedItem item = idMap.get(id.toLowerCase());
+	protected StoredTypedItem getItem(String objectUri) throws InvalidSPDXAnalysisException {
+		StoredTypedItem item = this.typedValueMap.get(objectUri.toLowerCase());
 		if (item == null) {
-			throw new SpdxIdNotFoundException("ID "+id+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
+			throw new SpdxIdNotFoundException("Object URI "+objectUri+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
 		return item;
 	}
 
 	@Override
-	public List<String> getPropertyValueNames(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getPropertyValueNames();
+	public List<PropertyDescriptor> getPropertyValueDescriptors(String objectUri) throws InvalidSPDXAnalysisException {
+		return getItem(objectUri).getPropertyValueDescriptors();
 	}
 
 	@Override
-	public void setValue(String documentUri, String id, String propertyName, Object value)
+	public void setValue(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				getItem(documentUri, id).setValue(propertyName, value);
-				itemToBeStored.incReferenceCount();
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+            try {
+                StoredTypedItem itemToBeStored = getItem(((TypedValue)value).getObjectUri());
+                getItem(objectUri).setValue(propertyDescriptor, value);
+                itemToBeStored.incReferenceCount();
+            } finally {
+                referenceCountLock.writeLock().unlock();
+            }
+	    } else {
+	        getItem(objectUri).setValue(propertyDescriptor, value);
+	    }
+	}
+
+	@Override
+	public void clearValueCollection(String objectUri, PropertyDescriptor propertyDescriptor)
+			throws InvalidSPDXAnalysisException {
+	    referenceCountLock.writeLock().lock();
+        try {
+            List<StoredTypedItem> removedItems = new ArrayList<>();
+            Iterator<Object> iter = getItem(objectUri).getValueList(propertyDescriptor);
+            while (iter.hasNext()) {
+                Object nextItem = iter.next();
+                if (nextItem instanceof TypedValue) {
+                    removedItems.add(getItem(((TypedValue)nextItem).getObjectUri()));
+                }
+            }
+            getItem(objectUri).clearPropertyValueList(propertyDescriptor);
+            for (StoredTypedItem item:removedItems) {
+                item.decReferenceCount();
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
+	}
+
+	@Override
+	public boolean addValueToCollection(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
+			throws InvalidSPDXAnalysisException {
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+	        try {
+	            StoredTypedItem itemToBeStored = getItem(((TypedValue)value).getObjectUri());
+	            boolean result = getItem(objectUri).addValueToList(propertyDescriptor, value);
+	            itemToBeStored.incReferenceCount();
+	            return result;
+	        } finally {
+	            referenceCountLock.writeLock().unlock();
+	        }
+	    } else {
+	        return getItem(objectUri).addValueToList(propertyDescriptor, value);
+	    }
+	}
+
+	@Override
+	public boolean removeValueFromCollection(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
+			throws InvalidSPDXAnalysisException {
+	    if (value instanceof TypedValue) {
+	        referenceCountLock.writeLock().lock();
+            try {
+                StoredTypedItem itemToBeStored = getItem(((TypedValue)value).getObjectUri());
+                boolean result = getItem(objectUri).removeValueFromList(propertyDescriptor, value);
+                itemToBeStored.decReferenceCount();
+                return result;
+            } finally {
+                referenceCountLock.writeLock().unlock();
+            }
+        } else {
+            return getItem(objectUri).removeValueFromList(propertyDescriptor, value);
+        }
+	}
+
+	@Override
+	public Iterator<Object> listValues(String objectUri, PropertyDescriptor propertyDescriptor)
+			throws InvalidSPDXAnalysisException {
+		return getItem(objectUri).getValueList(propertyDescriptor);
+	}
+
+	@Override
+	public Optional<Object> getValue(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		StoredTypedItem item = getItem(objectUri);
+		if (item.isCollectionProperty(propertyDescriptor)) {
+			logger.warn("Returning a collection for a getValue call for property "+propertyDescriptor.getName());
+			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion(), null));
 		} else {
-			getItem(documentUri, id).setValue(propertyName, value);
+			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}
 	}
 
 	@Override
-	public void clearValueCollection(String documentUri, String id, String propertyName)
-			throws InvalidSPDXAnalysisException {
-		referenceCountLock.writeLock().lock();
-		try {
-			List<StoredTypedItem> removedItems = new ArrayList<>();
-			Iterator<Object> iter = getItem(documentUri, id).getValueList(propertyName);
-			while (iter.hasNext()) {
-				Object nextItem = iter.next();
-				if (nextItem instanceof TypedValue) {
-					removedItems.add(getItem(documentUri, ((TypedValue)nextItem).getId()));
-				}
-			}
-			getItem(documentUri, id).clearPropertyValueList(propertyName);
-			for (StoredTypedItem item:removedItems) {
-				item.decReferenceCount();
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
-
-	}
-
-	@Override
-	public boolean addValueToCollection(String documentUri, String id, String propertyName, Object value)
-			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				boolean result = getItem(documentUri, id).addValueToList(propertyName, value);
-				itemToBeStored.incReferenceCount();
-				return result;
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
-		} else {
-			return getItem(documentUri, id).addValueToList(propertyName, value);
-		}
-	}
-
-
-	@Override
-	public boolean removeValueFromCollection(String documentUri, String id, String propertyName, Object value)
-			throws InvalidSPDXAnalysisException {
-		if (value instanceof TypedValue) {
-			referenceCountLock.writeLock().lock();
-			try {
-				StoredTypedItem itemToBeStored = getItem(documentUri, ((TypedValue)value).getId());
-				boolean result = getItem(documentUri, id).removeValueFromList(propertyName, value);
-				itemToBeStored.decReferenceCount();
-				return result;
-			} finally {
-				referenceCountLock.writeLock().unlock();
-			}
-		} else {
-			return getItem(documentUri, id).removeValueFromList(propertyName, value);
-		}
-	}
-
-	@Override
-	public Iterator<Object> listValues(String documentUri, String id, String propertyName)
-			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).getValueList(propertyName);
-	}
-
-	@Override
-	public Optional<Object> getValue(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		StoredTypedItem item = getItem(documentUri, id);
-		if (item.isCollectionProperty(propertyName)) {
-			logger.warn("Returning a collection for a getValue call for property "+propertyName);
-			return Optional.of(new ModelCollection<>(this, documentUri, id, propertyName, null ,null));
-		} else {
-			return Optional.ofNullable(item.getValue(propertyName));
-		}
-	}
-
-	@Override
-	public synchronized String getNextId(IdType idType, String documentUri) throws InvalidSPDXAnalysisException {
+	public synchronized String getNextId(IdType idType) throws InvalidSPDXAnalysisException {
 		switch (idType) {
+			//TODO: Move the compat constants into it's own constants file
 			case Anonymous: return ANON_PREFIX+GENERATED+String.valueOf(nextAnonId++);
-			case LicenseRef: return SpdxConstants.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
-			case DocumentRef: return SpdxConstants.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
-			case SpdxId: return SpdxConstants.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
+			case LicenseRef: return SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
+			case DocumentRef: return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
+			case SpdxId: return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
 			case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
-			case Literal: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Literal");
 			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
 		}
 	}
 
 	@Override
-	public void removeProperty(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		referenceCountLock.writeLock().lock();
-		try {
-			Object itemToBeRemoved = getItem(documentUri, id).getValue(propertyName);
-			getItem(documentUri, id).removeProperty(propertyName);
-			if (itemToBeRemoved instanceof TypedValue) {
-				getItem(documentUri, ((TypedValue)itemToBeRemoved).getId()).decReferenceCount();
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
+	public void removeProperty(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+	    referenceCountLock.writeLock().lock();
+        try {
+            Object itemToBeRemoved = getItem(objectUri).getValue(propertyDescriptor);
+            getItem(objectUri).removeProperty(propertyDescriptor);
+            if (itemToBeRemoved instanceof TypedValue) {
+                getItem(((TypedValue)itemToBeRemoved).getObjectUri()).decReferenceCount();
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
 	}
 
 	@Override
-	public List<String> getDocumentUris() {
-		return Collections.unmodifiableList(new ArrayList<String>(this.documentValues.keySet()));
-	}
-
-	@Override
-	public Stream<TypedValue> getAllItems(String documentUri, String typeFilter)
+	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(documentUri, "Document URi can not be null");
+		Iterator<StoredTypedItem> valueIter = typedValueMap.values().iterator();
 		List<TypedValue> allItems = new ArrayList<>();
-		Map<String, StoredTypedItem> itemMap = this.documentValues.get(documentUri);
-		if (Objects.nonNull(itemMap)) {
-			Iterator<StoredTypedItem> valueIter = itemMap.values().iterator();
-			while (valueIter.hasNext()) {
-				StoredTypedItem item = valueIter.next();
-				if (Objects.isNull(typeFilter) || typeFilter.equals(item.getType())) {
-					allItems.add(item);
-				}
+		while (valueIter.hasNext()) {
+			StoredTypedItem item = valueIter.next();
+			if ((Objects.isNull(typeFilter) || typeFilter.equals(item.getType())) && 
+					(Objects.isNull(nameSpace) || item.getObjectUri().startsWith(nameSpace))) {
+				allItems.add(item);
 			}
 		}
 		return Collections.unmodifiableList(allItems).stream();
 	}
 
 	@Override
-	public int collectionSize(String documentUri, String id, String propertyName) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).collectionSize(propertyName);
+	public int collectionSize(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		return getItem(objectUri).collectionSize(propertyDescriptor);
 	}
 
 	@Override
-	public boolean collectionContains(String documentUri, String id, String propertyName, Object value)
+	public boolean collectionContains(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).collectionContains(propertyName, value);
+		return getItem(objectUri).collectionContains(propertyDescriptor, value);
 	}
 
 	@Override
-	public boolean isCollectionMembersAssignableTo(String documentUri, String id, String propertyName,
+	public boolean isCollectionMembersAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor,
 			Class<?> clazz) throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isCollectionMembersAssignableTo(propertyName, clazz);
+		return getItem(objectUri).isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 	}
 
 	@Override
-	public boolean isPropertyValueAssignableTo(String documentUri, String id, String propertyName, Class<?> clazz)
+	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isPropertyValueAssignableTo(propertyName, clazz);
+		return getItem(objectUri).isPropertyValueAssignableTo(propertyDescriptor, clazz, specVersion);
 	}
 
 	@Override
-	public boolean isCollectionProperty(String documentUri, String id, String propertyName)
+	public boolean isCollectionProperty(String objectUri, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
-		return getItem(documentUri, id).isCollectionProperty(propertyName);
+		return getItem(objectUri).isCollectionProperty(propertyDescriptor);
+	}
+	
+	@Override
+	public boolean isAnon(String objectUri) {
+		return objectUri.startsWith(ANON_PREFIX+GENERATED);
 	}
 
 	@Override
-	public IdType getIdType(String id) {
-		if (id.startsWith(ANON_PREFIX+GENERATED)) {
+	public IdType getIdType(String objectUri) {
+		if (isAnon(objectUri)) {
 			return IdType.Anonymous;
 		}
-		if (id.startsWith(SpdxConstants.NON_STD_LICENSE_ID_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
 			return IdType.LicenseRef;
 		}
-		if (id.startsWith(SpdxConstants.EXTERNAL_DOC_REF_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM)) {
 			return IdType.DocumentRef;
 		}
-		if (id.startsWith(SpdxConstants.SPDX_ELEMENT_REF_PRENUM)) {
+		if (objectUri.contains(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
 			return IdType.SpdxId;
 		}
-		if (LITERAL_VALUE_SET.contains(id)) {
-			return IdType.Literal;
-		}
-		if (LicenseInfoFactory.isSpdxListedLicenseId(id) || LicenseInfoFactory.isSpdxListedExceptionId(id)) {
+		if (objectUri.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(objectUri) || LicenseInfoFactory.isSpdxListedExceptionId(objectUri)) {
 			return IdType.ListedLicense;
 		} else {
 			return IdType.Unkown;
@@ -408,7 +413,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public IModelStoreLock enterCriticalSection(String documentUri, boolean readLockRequested) {
+	public IModelStoreLock enterCriticalSection(boolean readLockRequested) {
 		if (readLockRequested) {
 			this.transactionLock.readLock().lock();
 			return readLock;
@@ -424,80 +429,77 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
-		Map<String, StoredTypedItem> idMap = documentValues.get(documentUri);
-		if (Objects.isNull(idMap)) {
-			return Optional.empty();
-		}
-		StoredTypedItem item = idMap.get(caseInsensisitiveId.toLowerCase());
+	public Optional<String> getCaseSensisitiveId(String nameSpace, String caseInsensisitiveId) {
+		Objects.requireNonNull(nameSpace, "Namespace can not be null");
+		Objects.requireNonNull(caseInsensisitiveId, "CaseInsensisitiveId can not be null");
+		String objectUri = nameSpace + "#" + caseInsensisitiveId;
+		StoredTypedItem item = typedValueMap.get(objectUri.toLowerCase());
 		if (Objects.isNull(item)) {
 			return Optional.empty();
 		}
-		return Optional.of(item.getId());
+		return Optional.of(item.getObjectUri().substring(nameSpace.length() + 1));
 	}
 
 	@Override
-	public Optional<TypedValue> getTypedValue(String documentUri, String id) throws InvalidSPDXAnalysisException {
+	public Optional<TypedValue> getTypedValue(String objectUri) throws InvalidSPDXAnalysisException {
 		try {
-			return Optional.of(getItem(documentUri, id));
+			return Optional.of(getItem(objectUri));
 		} catch(SpdxIdNotFoundException ex) {
 			return Optional.empty();
 		}
 	}
 
 	/**
-	 * Remove all existing elements, properties, and values for a document including the document itself
-	 * @param documentUri
+	 * Remove all existing elements, properties, and values
 	 */
-	public void clear(String documentUri) {
-		Objects.requireNonNull(documentUri, "Document uri can not be null");
-		this.documentValues.put(documentUri, new ConcurrentHashMap<String, StoredTypedItem>());
+	public void clear() {
+		this.typedValueMap.clear();;
 	}
 
 	@Override
-	public void delete(String documentUri, String id) throws InvalidSPDXAnalysisException {
-		Objects.requireNonNull(documentUri, "Missing Document URI");
-		Objects.requireNonNull(id, "Missing ID");
-		Map<String, StoredTypedItem> idMap = documentValues.get(documentUri);
-		if (Objects.isNull(idMap)) {
-			logger.error("Error deleting - documentUri "+documentUri+" does not exits.");
-			throw new SpdxIdNotFoundException("Error deleting - documentUri "+documentUri+" does not exits.");
+	public void delete(String objectUri) throws InvalidSPDXAnalysisException {
+		Objects.requireNonNull(objectUri, "Missing object URI");
+		if (!this.typedValueMap.containsKey(objectUri.toLowerCase())) {
+			return;
 		}
 		referenceCountLock.writeLock().lock();
-		try {
-			if (getItem(documentUri, id).getReferenceCount() > 0) {
-				// find the element it is used by
-				logger.error("Can not delete ID "+id+".  It is in use");
-				throw new SpdxIdInUseException("Can not delete ID "+id+".  It is in use.");
-			}
-			List<String> propertyNames = this.getPropertyValueNames(documentUri, id);
-			for (String property:propertyNames) {
-				if (this.isCollectionProperty(documentUri, id, property)) {
-					Iterator<Object> iter = this.listValues(documentUri, id, property);
-					while (iter.hasNext()) {
-						Object val = iter.next();
-						if (val instanceof TypedValue) {
-							getItem(documentUri, ((TypedValue)val).getId()).decReferenceCount();
-						}
-					}
-				} else {
-					Optional<Object> val = getValue(documentUri, id, property);
-					if (val.isPresent()) {
-						if (val.get() instanceof TypedValue) {
-							getItem(documentUri, ((TypedValue)val.get()).getId()).decReferenceCount();
-						}
-					}
-				}
-			}
-			if (Objects.isNull(idMap.remove(id.toLowerCase()))) {
-				logger.error("Error deleting - ID "+id+" does not exist.");
-				throw new SpdxIdNotFoundException("Error deleting - ID "+id+" does not exist.");
-			}
-		} finally {
-			referenceCountLock.writeLock().unlock();
-		}
+        try {
+            if (getItem(objectUri).getReferenceCount() > 0) {
+                // find the element it is used by
+                logger.error("Can not object URI "+objectUri+".  It is in use");
+                throw new SpdxIdInUseException("Can not object URI "+objectUri+".  It is in use");
+            }
+            List<PropertyDescriptor> propertyDescriptors = this.getPropertyValueDescriptors(objectUri);
+            for (PropertyDescriptor property:propertyDescriptors) {
+                if (this.isCollectionProperty(objectUri, property)) {
+                    Iterator<Object> iter = this.listValues(objectUri, property);
+                    while (iter.hasNext()) {
+                        Object val = iter.next();
+                        if (val instanceof TypedValue) {
+                            getItem(((TypedValue)val).getObjectUri()).decReferenceCount();
+                        }
+                    }
+                } else {
+                    Optional<Object> val = getValue(objectUri, property);
+                    if (val.isPresent()) {
+                        if (val.get() instanceof TypedValue) {
+                            getItem(((TypedValue)val.get()).getObjectUri()).decReferenceCount();
+                        }
+                    }
+                }
+            }
+            if (Objects.isNull(typedValueMap.remove(objectUri.toLowerCase()))) {
+                logger.error("Error deleting - object URI "+objectUri+" does not exist.");
+                throw new SpdxIdNotFoundException("Error deleting - object URI "+objectUri+" does not exist.");
+            }
+        } finally {
+            referenceCountLock.writeLock().unlock();
+        }
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.AutoCloseable#close()
+	 */
 	@Override
 	public void close() throws Exception {
 		// Nothing to do for the in-memory store

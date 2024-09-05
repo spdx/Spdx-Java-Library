@@ -26,12 +26,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxItem;
-import org.spdx.library.model.license.AnyLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+
 
 /**
  * Compares two SPDX items.  The <code>compare(itemA, itemB)</code> method will perform the comparison and

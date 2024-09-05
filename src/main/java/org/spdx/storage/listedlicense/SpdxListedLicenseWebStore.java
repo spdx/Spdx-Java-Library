@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.utility.DownloadCache;
 
 /**
@@ -45,26 +45,21 @@ public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 
 	@Override
 	public InputStream getTocInputStream() throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + LICENSE_TOC_FILENAME));
 	}
 
 	@Override
 	public InputStream getLicenseInputStream(String licenseId) throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + licenseId + JSON_SUFFIX));
 	}
 
 	@Override
 	public InputStream getExceptionTocInputStream() throws IOException {
-		return getUrlInputStream(new URL(SpdxConstants.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME));
+		return getUrlInputStream(new URL(SpdxConstantsCompatV2.LISTED_LICENSE_URL + EXCEPTION_TOC_FILENAME));
 	}
 
 	@Override
 	public InputStream getExceptionInputStream(String exceptionId) throws IOException {
 		return getLicenseInputStream(exceptionId);	// Same URL using exception ID rather than license ID
-	}
-	
-	@Override
-	public void close() throws Exception {
-		// Nothing to do for the either the in-memory or the web store
 	}
 }

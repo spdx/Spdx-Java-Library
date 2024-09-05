@@ -22,9 +22,10 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
+
 
 
 /**
@@ -258,6 +259,6 @@ public class LicenseJsonTOC {
 
 	protected static String toAbsoluteURL(String relURL) {
 		String retval = relURL.startsWith("./") ? relURL.substring(2) : relURL;
-		return SpdxConstants.LISTED_LICENSE_URL + retval;
+		return SpdxConstantsCompatV2.LISTED_LICENSE_URL + retval;
 	}
 }

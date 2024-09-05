@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>org.spdx</groupId>
-	<artifactId>java-spdx-library</artifactId>
-	<version>1.1.13-SNAPSHOT</version>
-	<packaging>jar</packaging>
-
+    <groupId>org.spdx</groupId>
+    <artifactId>java-spdx-library</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 	<name>java-spdx-library</name>
 	<url>https://github.com/spdx/Spdx-Java-Library</url>
 	<licenses>
@@ -70,15 +68,6 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>doclint-java8-disable</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
-			</properties>
-		</profile>
-		<profile>
 			<id>release</id>
 			<build>
 				<plugins>
@@ -118,48 +107,63 @@
 			</build>
 		</profile>
 	</profiles>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.15.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.9</version>
-		</dependency>
-		<dependency>
-			<groupId>net.jodah</groupId>
-			<artifactId>concurrentunit</artifactId>
-			<version>0.4.6</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<resources>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>2.0.7</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.commons</groupId>
+    	<artifactId>commons-lang3</artifactId>
+    	<version>3.5</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    	<version>1.15.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.code.gson</groupId>
+    	<artifactId>gson</artifactId>
+    	<version>2.8.9</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.jodah</groupId>
+    	<artifactId>concurrentunit</artifactId>
+    	<version>0.4.6</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.code.findbugs</groupId>
+    	<artifactId>jsr305</artifactId>
+    	<version>3.0.2</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.spdx</groupId>
+    	<artifactId>spdx-java-model-2_X</artifactId>
+    	<version>0.1.0-Alpha</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.spdx</groupId>
+    	<artifactId>spdx-java-core</artifactId>
+    	<version>0.1.0-Alpha</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.spdx</groupId>
+    	<artifactId>spdx-java-model-3_0</artifactId>
+    	<version>0.1.0-Alpha</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+  		<resources>
 			<resource>
 				<targetPath>resources</targetPath>
 				<filtering>false</filtering>
@@ -183,6 +187,7 @@
 				</excludes>
 			</resource>
 		</resources>
+		<sourceDirectory>src/main/java</sourceDirectory>
 		<testResources>
 			<testResource>
 				<directory>src/test</directory>
@@ -223,7 +228,7 @@
 				<configuration>
 					<quiet>true</quiet>
 					<notimestamp>true</notimestamp>
-					<additionalparam>-Xdoclint:none</additionalparam>
+					<doclint>all,-missing</doclint>
 				</configuration>
 				<executions>
 					<execution>

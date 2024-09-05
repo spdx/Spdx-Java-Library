@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxPackageVerificationCode;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.license.SpdxNoAssertionLicense;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.license.SpdxNoAssertionLicense;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
@@ -48,10 +49,11 @@ public class VerificationCodeGeneratorTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		SpdxModelFactory.init();
 		modelStore = new InMemSpdxStore();
         SPDX_FILES = new SpdxFile[SPDX_FILE_NAMES.length];
         for (int i = 0; i < SPDX_FILES.length; i++) {
-        	SPDX_FILES[i] = new SpdxFile(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.Anonymous, DOCUMENT_URI), null, true);
+        	SPDX_FILES[i] = new SpdxFile(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.Anonymous), null, true);
         	SPDX_FILES[i].setName(SPDX_FILE_NAMES[i]);
         	SPDX_FILES[i].getFileTypes().add(FileType.SOURCE);
         	SPDX_FILES[i].getChecksums().add(SPDX_FILES[i].createChecksum(ChecksumAlgorithm.SHA1, SPDX_FILE_SHA1S[i]));

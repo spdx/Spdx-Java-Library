@@ -33,22 +33,24 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Annotation;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.ExternalDocumentRef;
-import org.spdx.library.model.ModelObject;
-import org.spdx.library.model.Relationship;
-import org.spdx.library.model.SpdxCreatorInformation;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxElement;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxModelFactory;
-import org.spdx.library.model.SpdxPackage;
-import org.spdx.library.model.SpdxPackageVerificationCode;
-import org.spdx.library.model.SpdxSnippet;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.ExtractedLicenseInfo;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Annotation;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.ExternalDocumentRef;
+import org.spdx.library.model.v2.ModelObjectV2;
+import org.spdx.library.model.v2.Relationship;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.SpdxCreatorInformation;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxElement;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxPackage;
+import org.spdx.library.model.v2.SpdxPackageVerificationCode;
+import org.spdx.library.model.v2.SpdxSnippet;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
+import org.spdx.licenseTemplate.LicenseTextHelper;
 /**
  * Performs a comparison between two or more SPDX documents and holds the results of the comparison
  * The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code>
@@ -92,7 +94,7 @@ public class SpdxComparer {
 	 */
 	private Map<SpdxDocument, Map<SpdxDocument, List<ExtractedLicenseInfo>>> uniqueExtractedLicenses = new HashMap<>();
 	/**
-	 * Map of any SPDX documents that have extraced license infos with equivalent text but different comments, id's or other fields
+	 * Map of any SPDX documents that have extraced license infos with equivalent text but different comments, objectUri's or other fields
 	 */
 	private Map<SpdxDocument, Map<SpdxDocument, List<SpdxLicenseDifference>>> licenseDifferences = new HashMap<>();
 	/**
@@ -213,8 +215,8 @@ public class SpdxComparer {
 			List<SpdxSnippet> snippetsA;
 			Stream<SpdxSnippet> snippetStreamA = null;
 			try {
-			    snippetStreamA = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(), null, 
-                        SpdxSnippet.class);
+			    snippetStreamA = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(spdxDocs.get(i).getModelStore(), null, 
+			    				SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, spdxDocs.get(i).getDocumentUri(), null);
 				snippetsA = snippetStreamA.collect(Collectors.toList());
 			} catch (InvalidSPDXAnalysisException e) {
 				try {
@@ -241,8 +243,8 @@ public class SpdxComparer {
 				List<SpdxSnippet> snippetsB;
 				Stream<SpdxSnippet> snippetStreamB = null;
 				try {
-				    snippetStreamB = (Stream<SpdxSnippet>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(), null, 
-                            SpdxSnippet.class);
+				    snippetStreamB = (Stream<SpdxSnippet>)SpdxModelFactory.getSpdxObjects(spdxDocs.get(j).getModelStore(),
+				    		null, SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET, spdxDocs.get(j).getDocumentUri(), null);
 					snippetsB = snippetStreamB.collect(Collectors.toList());
 				} catch (InvalidSPDXAnalysisException e) {
 					try {
@@ -444,8 +446,9 @@ public class SpdxComparer {
 		// N x N comparison of all files
 		for (int i = 0; i < spdxDocs.size(); i++) {
 			List<SpdxFile> filesListA;
-			Stream<SpdxFile> fileStreamA = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocs.get(i).getModelStore(), spdxDocs.get(i).getDocumentUri(),
-                    null, SpdxFile.class);
+			Stream<SpdxFile> fileStreamA = (Stream<SpdxFile>) SpdxModelFactory.getSpdxObjects(
+					spdxDocs.get(i).getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, 
+					spdxDocs.get(i).getDocumentUri(), null);
 			filesListA = fileStreamA.collect(Collectors.toList());
 			fileStreamA.close();
 			// note - the file arrays MUST be sorted for the comparator methods to work
@@ -464,8 +467,9 @@ public class SpdxComparer {
 				if (j == i) {
 					continue;
 				}
-				 Stream<SpdxFile> fileStreamB = (Stream<SpdxFile>)SpdxModelFactory.getElements(spdxDocs.get(j).getModelStore(), spdxDocs.get(j).getDocumentUri(),
-	                        null, SpdxFile.class);
+				 Stream<SpdxFile> fileStreamB = (Stream<SpdxFile>)SpdxModelFactory.getSpdxObjects(
+						 spdxDocs.get(j).getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, 
+						 spdxDocs.get(j).getDocumentUri(), null);
 				 List<SpdxFile> filesListB = (List<SpdxFile>)fileStreamB.collect(Collectors.toList());
 				 fileStreamB.close();
 				 //Note that the files arrays must be sorted for the find methods to work
@@ -502,9 +506,9 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<SpdxPackage> collectAllPackages(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>) SpdxModelFactory.getElements(
-                spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-                null, SpdxPackage.class);	
+		Stream<SpdxPackage> packageStream = (Stream<SpdxPackage>) SpdxModelFactory.getSpdxObjects(
+				spdxDocument.getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE, 
+				spdxDocument.getDocumentUri(), null);
 	    List<SpdxPackage> retval = packageStream.collect(Collectors.toList());
 	    packageStream.close();
 	    return retval;
@@ -519,8 +523,9 @@ public class SpdxComparer {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<SpdxFile> collectAllFiles(SpdxDocument spdxDocument) throws InvalidSPDXAnalysisException {
-		Stream<SpdxFile> fileElementStream = (Stream<SpdxFile>) SpdxModelFactory.getElements(spdxDocument.getModelStore(), spdxDocument.getDocumentUri(), 
-                null, SpdxFile.class);
+		Stream<SpdxFile> fileElementStream = (Stream<SpdxFile>) SpdxModelFactory.getSpdxObjects(
+				spdxDocument.getModelStore(), null, SpdxConstantsCompatV2.CLASS_SPDX_FILE, 
+				spdxDocument.getDocumentUri(), null);
 		List<SpdxFile> retval = fileElementStream.collect(Collectors.toList());
 		fileElementStream.close();
 		return retval;
@@ -580,7 +585,7 @@ public class SpdxComparer {
 	static List<SpdxPackage> findUniquePackages(List<SpdxPackage> pkgsA, List<SpdxPackage> pkgsB) {
 		int bIndex = 0;
 		int aIndex = 0;
-		List<SpdxPackage> alRetval = new ArrayList<>();;
+		List<SpdxPackage> alRetval = new ArrayList<>();
 		while (aIndex < pkgsA.size()) {
 			if (bIndex >= pkgsB.size()) {
 				alRetval.add(pkgsA.get(aIndex));
@@ -834,11 +839,11 @@ public class SpdxComparer {
 		this.checkDocsIndex(doc2);
 		Map<SpdxDocument, Map<String, String>> hm = this.extractedLicenseIdMap.get(this.spdxDocs.get(doc1));
 		if (hm == null) {
-			throw new SpdxCompareException("Compare License Error - Extracted license id map has not been initialized.");
+			throw new SpdxCompareException("Compare License Error - Extracted license objectUri map has not been initialized.");
 		}
 		Map<String, String> xlationMap = hm.get(this.spdxDocs.get(doc2));
 		if (xlationMap == null) {
-			throw new SpdxCompareException("Compare License Exception - Extracted license id map has not been initialized.");
+			throw new SpdxCompareException("Compare License Exception - Extracted license objectUri map has not been initialized.");
 		}
 		try {
 			return LicenseCompareHelper.isLicenseEqual(license1, license2, xlationMap);
@@ -1033,11 +1038,11 @@ public class SpdxComparer {
 			boolean foundMatch = false;
 			boolean foundTextMatch = false;
 			for (ExtractedLicenseInfo licB:extractedLicensesB) {
-				if (LicenseCompareHelper.isLicenseTextEquivalent(licA.getExtractedText(), 
+				if (LicenseTextHelper.isLicenseTextEquivalent(licA.getExtractedText(), 
 						licB.getExtractedText())) {
 					foundTextMatch = true;
 					if (!foundMatch) {
-						idMap.put(licA.getLicenseId(), licB.getLicenseId());
+						idMap.put(licA.getObjectUri(), licB.getObjectUri());
 						// always add to the map any matching licenses.  If more than one, add
 						// the license matches where the entire license match.  This condition checks
 						// to make sure we are not over-writing an exact match
@@ -1056,7 +1061,7 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * Compares the non-license text and non-id fields and returns true
+	 * Compares the non-license text and non-objectUri fields and returns true
 	 * if all relevant fields are equal
 	 * @param spdxNonStandardLicenseA
 	 * @param spdxNonStandardLicenseB
@@ -1157,7 +1162,7 @@ public class SpdxComparer {
 	 * @return true of the elements are present and equivalent
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public static boolean elementsEquivalent(Optional<? extends ModelObject> elementA, Optional<? extends ModelObject> elementB) throws InvalidSPDXAnalysisException {
+	public static boolean elementsEquivalent(Optional<? extends ModelObjectV2> elementA, Optional<? extends ModelObjectV2> elementB) throws InvalidSPDXAnalysisException {
 		if (elementA.isPresent()) {
 			if (elementB.isPresent()) {
 				return elementA.get().equivalent(elementB.get());
@@ -1175,7 +1180,7 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException 
 	 * @return true if the collections all contain equivalent items
 	 */
-	public static boolean collectionsEquivalent(Collection<? extends ModelObject> collectionA, Collection<? extends ModelObject> collectionB) throws InvalidSPDXAnalysisException {
+	public static boolean collectionsEquivalent(Collection<? extends ModelObjectV2> collectionA, Collection<? extends ModelObjectV2> collectionB) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(collectionA)) {
 			return Objects.isNull(collectionB);
 		}
@@ -1185,12 +1190,12 @@ public class SpdxComparer {
 		if (collectionA.size() != collectionB.size()) {
 			return false;
 		}
-		for (ModelObject elementA:collectionA) {
+		for (ModelObjectV2 elementA:collectionA) {
 			if (Objects.isNull(elementA)) {
 				continue;
 			}
 			boolean found = false;
-			for (ModelObject elementB:collectionB) {
+			for (ModelObjectV2 elementB:collectionB) {
 				if (Objects.isNull(elementB)) {
 					continue;
 				}

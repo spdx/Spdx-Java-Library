@@ -20,7 +20,8 @@ package org.spdx.storage.listedlicense;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSPDXAnalysisException;
+
 
 /**
  * @author Gary O'Neall
@@ -71,10 +72,5 @@ public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	@Override
 	public InputStream getExceptionInputStream(String exceptionId) throws IOException {
 		return getLicenseInputStream(exceptionId);
-	}
-	
-	@Override
-	public void close() throws Exception {
-		// Nothing to do for the either the in-memory or the web store
 	}
 }

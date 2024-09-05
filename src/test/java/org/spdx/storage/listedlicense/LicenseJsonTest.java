@@ -20,14 +20,20 @@ package org.spdx.storage.listedlicense;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.InvalidSpdxPropertyException;
-import org.spdx.library.model.license.CrossRef;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.core.InvalidSpdxPropertyException;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.CrossRef;
+import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
+import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -41,22 +47,39 @@ import junit.framework.TestCase;
  */
 public class LicenseJsonTest extends TestCase {
 	
-	static final List<String> STRING_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_LICENSE_ID, SpdxConstants.PROP_LICENSE_TEXT, SpdxConstants.PROP_LICENSE_TEXT_HTML, 
-			SpdxConstants.PROP_STD_LICENSE_NAME, SpdxConstants.RDFS_PROP_COMMENT, SpdxConstants.PROP_STD_LICENSE_NOTICE,SpdxConstants.PROP_STD_LICENSE_HEADER_TEMPLATE,
-			SpdxConstants.PROP_LICENSE_HEADER_HTML, SpdxConstants.PROP_STD_LICENSE_TEMPLATE, SpdxConstants.PROP_EXAMPLE, SpdxConstants.PROP_LIC_DEPRECATED_VERSION
+	static final List<PropertyDescriptor> STRING_PROPERTIES = Arrays.asList(
+			SpdxConstantsCompatV2.PROP_LICENSE_ID, SpdxConstantsCompatV2.PROP_LICENSE_TEXT,
+			SpdxConstantsCompatV2.PROP_LICENSE_TEXT_HTML, 
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_NAME, SpdxConstantsCompatV2.RDFS_PROP_COMMENT,
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_NOTICE, SpdxConstantsCompatV2.PROP_STD_LICENSE_HEADER_TEMPLATE,
+			SpdxConstantsCompatV2.PROP_LICENSE_HEADER_HTML, SpdxConstantsCompatV2.PROP_STD_LICENSE_TEMPLATE,
+			SpdxConstantsCompatV2.PROP_EXAMPLE, SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION,
+			SpdxConstantsV3.PROP_LICENSE_XML, SpdxConstantsV3.PROP_OBSOLETED_BY,
+			SpdxConstantsV3.PROP_LIST_VERSION_ADDED, SpdxConstantsV3.PROP_LICENSE_TEXT,
+			SpdxConstantsV3.PROP_NAME, SpdxConstantsV3.PROP_STANDARD_LICENSE_HEADER,
+			SpdxConstantsV3.PROP_STANDARD_LICENSE_TEMPLATE,
+			SpdxConstantsV3.PROP_DEPRECATED_VERSION, SpdxConstantsV3.PROP_COMMENT
 			);
 	
-	static final List<String> BOOLEAN_PROPERTY_VALUE_NAMES = Arrays.asList(
-			SpdxConstants.PROP_STD_LICENSE_OSI_APPROVED, SpdxConstants.PROP_STD_LICENSE_FSF_LIBRE, SpdxConstants.PROP_LIC_ID_DEPRECATED
+	static final List<PropertyDescriptor> BOOLEAN_PROPERTIES = Arrays.asList(
+			SpdxConstantsCompatV2.PROP_STD_LICENSE_OSI_APPROVED, SpdxConstantsCompatV2.PROP_STD_LICENSE_FSF_LIBRE,
+			SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, SpdxConstantsV3.PROP_IS_OSI_APPROVED,
+			SpdxConstantsV3.PROP_IS_FSF_LIBRE,
+			SpdxConstantsV3.PROP_IS_DEPRECATED_LICENSE_ID
 			);
 	
-	static final List<String> PROPERTY_VALUE_NAMES = new ArrayList<>();
-	static final List<String> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(SpdxConstants.RDFS_PROP_SEE_ALSO, SpdxConstants.PROP_CROSS_REF);
+	static final List<PropertyDescriptor> ALL_PROPERTIES = new ArrayList<>();
+	static final Set<String> ALL_PROPERTY_NAMES = new HashSet<>();
+	static final List<PropertyDescriptor> PROPERTY_VALUE_LIST_NAMES = Arrays.asList(
+			SpdxConstantsV3.PROP_SEE_ALSO, SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO,
+			SpdxConstantsCompatV2.PROP_CROSS_REF);
 	static {
-		PROPERTY_VALUE_NAMES.addAll(STRING_PROPERTY_VALUE_NAMES);
-		PROPERTY_VALUE_NAMES.addAll(BOOLEAN_PROPERTY_VALUE_NAMES);
-		PROPERTY_VALUE_NAMES.addAll(PROPERTY_VALUE_LIST_NAMES);
+		ALL_PROPERTIES.addAll(STRING_PROPERTIES);
+		ALL_PROPERTIES.addAll(BOOLEAN_PROPERTIES);
+		ALL_PROPERTIES.addAll(PROPERTY_VALUE_LIST_NAMES);
+		for (PropertyDescriptor pd:ALL_PROPERTIES) {
+			ALL_PROPERTY_NAMES.add(LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(pd));
+		}
 	}
 	
 
@@ -65,6 +88,7 @@ public class LicenseJsonTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		SpdxModelFactory.init();
 	}
 
 	/* (non-Javadoc)
@@ -85,13 +109,25 @@ public class LicenseJsonTest extends TestCase {
 
 	/**
 	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJson#getPropertyValueNames()}.
+	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void testGetPropertyValueNames() {
+	public void testGetPropertyValueNames() throws InvalidSPDXAnalysisException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		List<String> result = lj.getPropertyValueNames();
-		assertEquals(PROPERTY_VALUE_NAMES.size(), result.size());
-		for (String valueName:PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor desc:STRING_PROPERTIES) {
+			lj.setPrimativeValue(desc, "s");
+		}
+		for (PropertyDescriptor desc:BOOLEAN_PROPERTIES) {
+			lj.setPrimativeValue(desc, true);
+		}
+		CrossRefJson firstItem = new CrossRefJson();
+		firstItem.url = "http://first";
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.PROP_CROSS_REF, firstItem);
+		String secondItem = "second";
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, secondItem);
+		List<PropertyDescriptor> result = lj.getPropertyValueDescriptors();
+		assertTrue(ALL_PROPERTIES.size() < result.size());
+		for (PropertyDescriptor valueName:ALL_PROPERTIES) {
 			if (!result.contains(valueName)) {
 				fail("Missing "+valueName);
 			}
@@ -105,7 +141,7 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		try {
-			lj.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstants.CLASS_SPDX_ELEMENT);
+			lj.setTypedProperty("TestPropertyName", "SpdxId22", SpdxConstantsCompatV2.CLASS_SPDX_ELEMENT);
 			fail("This shouldn't work");
 		} catch (InvalidSPDXAnalysisException e) {
 			// Expected
@@ -117,22 +153,22 @@ public class LicenseJsonTest extends TestCase {
 	 * @throws InvalidSpdxPropertyException 
 	 */
 	public void testGetSetPrimativeValue() throws InvalidSpdxPropertyException {
-		Map<String, String> stringValues = new HashMap<>();
+		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
-			stringValues.put(valueName, "ValueFor"+valueName);
+		for (PropertyDescriptor valueName:STRING_PROPERTIES) {
+			stringValues.put(valueName, "ValueFor"+LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(valueName));
 			lj.setPrimativeValue(valueName, stringValues.get(valueName));
 		}
-		Map<String, Boolean> booleanValues = new HashMap<>();
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTIES) {
 			booleanValues.put(valueName, false);
 			lj.setPrimativeValue(valueName, booleanValues.get(valueName));
 		}
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:STRING_PROPERTIES) {
 			assertEquals(stringValues.get(valueName), lj.getValue(valueName));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
+		for (PropertyDescriptor valueName:BOOLEAN_PROPERTIES) {
 			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
 		}
 	}
@@ -142,24 +178,46 @@ public class LicenseJsonTest extends TestCase {
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	@SuppressWarnings("unchecked")
-	public void testAddClearGetPropertyValueListSeeAlso() throws InvalidSPDXAnalysisException {
+	public void testAddClearGetPropertyValueListSeeAlsoV2() throws InvalidSPDXAnalysisException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		List<String> result = (List<String>) lj.getValueList("seeAlso");
+		List<String> result = (List<String>) lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 		String firstItem = "first";
 		String secondItem = "second";
-		lj.addPrimitiveValueToList("seeAlso", firstItem);
-		result = (List<String>) lj.getValueList("seeAlso");
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, firstItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		assertEquals(1, result.size());
 		assertEquals(firstItem, result.get(0));
-		lj.addPrimitiveValueToList("seeAlso", secondItem);
-		result = (List<String>) lj.getValueList("seeAlso");
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, secondItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		assertEquals(2, result.size());
 		assertEquals(firstItem, result.get(0));
 		assertEquals(secondItem, result.get(1));
-		lj.clearPropertyValueList("seeAlso");
-		result = (List<String>) lj.getValueList("seeAlso");
+		lj.clearPropertyValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
+		result = (List<String>) lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
+		assertEquals(0, result.size());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void testAddClearGetPropertyValueListSeeAlsoV3() throws InvalidSPDXAnalysisException {
+		String licenseId = "SpdxLicenseId1";
+		LicenseJson lj = new LicenseJson(licenseId);
+		List<String> result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		assertEquals(0, result.size());
+		String firstItem = "first";
+		String secondItem = "second";
+		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, firstItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		assertEquals(1, result.size());
+		assertEquals(firstItem, result.get(0));
+		lj.addPrimitiveValueToList(SpdxConstantsV3.PROP_SEE_ALSO, secondItem);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		assertEquals(2, result.size());
+		assertEquals(firstItem, result.get(0));
+		assertEquals(secondItem, result.get(1));
+		lj.clearPropertyValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		result = (List<String>) lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(0, result.size());
 	}
 	
@@ -167,46 +225,55 @@ public class LicenseJsonTest extends TestCase {
 	public void testAddClearGetPropertyValueListCrossRef() throws InvalidSPDXAnalysisException {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		List<CrossRef> result = (List<CrossRef>) lj.getValueList("crossRef");
+		List<CrossRef> result = (List<CrossRef>) lj.getValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
 		assertEquals(0, result.size());
 		CrossRefJson firstItem = new CrossRefJson();
 		firstItem.url = "http://first";
 		CrossRefJson secondItem = new CrossRefJson();
 		secondItem.url = "http://second";
-		lj.addPrimitiveValueToList("crossRef", firstItem);
-		result = (List<CrossRef>) lj.getValueList("crossRef");
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.PROP_CROSS_REF, firstItem);
+		result = (List<CrossRef>) lj.getValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
 		assertEquals(1, result.size());
 		assertEquals(firstItem, result.get(0));
-		lj.addPrimitiveValueToList("crossRef", secondItem);
-		result = (List<CrossRef>) lj.getValueList("crossRef");
+		lj.addPrimitiveValueToList(SpdxConstantsCompatV2.PROP_CROSS_REF, secondItem);
+		result = (List<CrossRef>) lj.getValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
 		assertEquals(2, result.size());
 		assertEquals(firstItem, result.get(0));
 		assertEquals(secondItem, result.get(1));
-		lj.clearPropertyValueList("crossRef");
-		result = (List<CrossRef>) lj.getValueList("crossRef");
+		lj.clearPropertyValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
+		result = (List<CrossRef>) lj.getValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
 		assertEquals(0, result.size());
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void testJson() throws Exception {
 		StringBuilder json = new StringBuilder("{\n");
-		Map<String, String> stringValues = new HashMap<>();
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
-			stringValues.put(valueName, "ValueFor"+valueName);
-			json.append("\t\"");
-			json.append(valueName);
-			json.append("\":\"");
-			json.append(stringValues.get(valueName));
-			json.append("\",\n");
+		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
+		Set<String> addedPropertyNames = new HashSet<>();
+		for (PropertyDescriptor properties:STRING_PROPERTIES) {
+			String propertyName = LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(properties);
+			stringValues.put(properties, "ValueFor"+propertyName);
+			if (!addedPropertyNames.contains(propertyName)) {
+				json.append("\t\"");
+				json.append(propertyName);
+				json.append("\":\"");
+				json.append(stringValues.get(properties));
+				json.append("\",\n");
+				addedPropertyNames.add(propertyName);
+			}
 		}
-		Map<String, Boolean> booleanValues = new HashMap<>();
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
-			booleanValues.put(valueName, false);
-			json.append("\t\"");
-			json.append(valueName);
-			json.append("\":\"");
-			json.append(booleanValues.get(valueName));
-			json.append("\",\n");
+		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
+		for (PropertyDescriptor properties:BOOLEAN_PROPERTIES) {
+			String propertyName = LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(properties);
+			booleanValues.put(properties, false);
+			if (!addedPropertyNames.contains(propertyName)) {
+				json.append("\t\"");
+				json.append(LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(properties));
+				json.append("\":\"");
+				json.append(booleanValues.get(properties));
+				json.append("\",\n");
+				addedPropertyNames.add(propertyName);
+			}
 		}
 		List<String> seeAlsoValues = Arrays.asList("seeAlso1", "seeAlso2");
 		json.append("\t\"seeAlso\": [\n\t\t\"");
@@ -263,20 +330,27 @@ public class LicenseJsonTest extends TestCase {
 		json.append("\"\n\t\t}\n\t]\n}");
 		Gson gson = new Gson();
 		LicenseJson lj = gson.fromJson(json.toString(), LicenseJson.class);
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
-			assertEquals(stringValues.get(valueName), lj.getValue(valueName));
+		for (PropertyDescriptor properties:STRING_PROPERTIES) {
+			assertEquals(stringValues.get(properties), lj.getValue(properties));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
-			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
+		for (PropertyDescriptor properties:BOOLEAN_PROPERTIES) {
+			assertEquals(booleanValues.get(properties), lj.getValue(properties));
 		}
-		List<String> seeAlsoResult = (List<String>)lj.getValueList("seeAlso");
+		List<String> seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
 				fail("Missing "+seeAlsoValue);
 			}
 		}
-		List<CrossRefJson> crossRefResult = (List<CrossRefJson>)lj.getValueList("crossRef");
+		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
+		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
+		for (String seeAlsoValue:seeAlsoValues) {
+			if (!seeAlsoResult.contains(seeAlsoValue)) {
+				fail("Missing "+seeAlsoValue);
+			}
+		}
+		List<CrossRefJson> crossRefResult = (List<CrossRefJson>)lj.getValueList(SpdxConstantsCompatV2.PROP_CROSS_REF);
 		assertEquals(2, crossRefResult.size());
 		assertEquals(crossRef1.match, crossRefResult.get(0).match);
 		assertEquals(crossRef1.timestamp, crossRefResult.get(0).timestamp);
@@ -298,27 +372,38 @@ public class LicenseJsonTest extends TestCase {
 	public void testLegacyJson() throws Exception {
 		//TODO: In SPDX 3.0 this test should be removed once Spec issue #158 is resolved (https://github.com/spdx/spdx-spec/issues/158)
 		StringBuilder json = new StringBuilder("{\n");
-		Map<String, String> stringValues = new HashMap<>();
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
-			stringValues.put(valueName, "ValueFor"+valueName);
-			json.append("\t\"");
-			if (SpdxConstants.RDFS_PROP_COMMENT.equals(valueName)) {
-				json.append("licenseComments");	// Legacy value
-			} else {
-				json.append(valueName);
+		Set<String> addedPropertyNames = new HashSet<>();
+		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
+		for (PropertyDescriptor property:STRING_PROPERTIES) {
+			String propertyName = LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(property);
+			stringValues.put(property, "ValueFor"+propertyName);
+			if (!addedPropertyNames.contains(propertyName)) {
+				stringValues.put(property, "ValueFor"+propertyName);
+				json.append("\t\"");
+				if (SpdxConstantsCompatV2.RDFS_PROP_COMMENT.equals(property)) {
+					json.append("licenseComments");	// Legacy value
+				} else {
+					json.append(LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(property));
+				}
+				json.append("\":\"");
+				json.append(stringValues.get(property));
+				json.append("\",\n");
+				addedPropertyNames.add(propertyName);
 			}
-			json.append("\":\"");
-			json.append(stringValues.get(valueName));
-			json.append("\",\n");
+			
 		}
-		Map<String, Boolean> booleanValues = new HashMap<>();
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
-			booleanValues.put(valueName, false);
-			json.append("\t\"");
-			json.append(valueName);
-			json.append("\":\"");
-			json.append(booleanValues.get(valueName));
-			json.append("\",\n");
+		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
+		for (PropertyDescriptor property:BOOLEAN_PROPERTIES) {
+			String propertyName = LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(property);
+			booleanValues.put(property, false);
+			if (!addedPropertyNames.contains(propertyName)) {
+				json.append("\t\"");
+				json.append(LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(property));
+				json.append("\":\"");
+				json.append(booleanValues.get(property));
+				json.append("\",\n");
+				addedPropertyNames.add(propertyName);
+			}
 		}
 		List<String> seeAlsoValues = Arrays.asList("seeAlso1", "seeAlso2");
 		json.append("\t\"seeAlso\": [\n\t\t\"");
@@ -330,13 +415,20 @@ public class LicenseJsonTest extends TestCase {
 		json.append("\"\n\t]\n}");
 		Gson gson = new Gson();
 		LicenseJson lj = gson.fromJson(json.toString(), LicenseJson.class);
-		for (String valueName:STRING_PROPERTY_VALUE_NAMES) {
-			assertEquals(stringValues.get(valueName), lj.getValue(valueName));
+		for (PropertyDescriptor property:STRING_PROPERTIES) {
+			assertEquals(stringValues.get(property), lj.getValue(property));
 		}
-		for (String valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
-			assertEquals(booleanValues.get(valueName), lj.getValue(valueName));
+		for (PropertyDescriptor property:BOOLEAN_PROPERTIES) {
+			assertEquals(booleanValues.get(property), lj.getValue(property));
 		}
-		List<String> seeAlsoResult = (List<String>)lj.getValueList("seeAlso");
+		List<String> seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
+		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
+		for (String seeAlsoValue:seeAlsoValues) {
+			if (!seeAlsoResult.contains(seeAlsoValue)) {
+				fail("Missing "+seeAlsoValue);
+			}
+		}
+		seeAlsoResult = (List<String>)lj.getValueList(SpdxConstantsV3.PROP_SEE_ALSO);
 		assertEquals(seeAlsoValues.size(), seeAlsoResult.size());
 		for (String seeAlsoValue:seeAlsoValues) {
 			if (!seeAlsoResult.contains(seeAlsoValue)) {
@@ -349,33 +441,83 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		String value = "value";
-		lj.setPrimativeValue(STRING_PROPERTY_VALUE_NAMES.get(0), value);
-		assertEquals("value", lj.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)));
-		lj.removeProperty(STRING_PROPERTY_VALUE_NAMES.get(0));
-		assertTrue(lj.getValue(STRING_PROPERTY_VALUE_NAMES.get(0)) == null);
+		lj.setPrimativeValue(STRING_PROPERTIES.get(0), value);
+		assertEquals("value", lj.getValue(STRING_PROPERTIES.get(0)));
+		lj.removeProperty(STRING_PROPERTIES.get(0));
+		assertTrue(lj.getValue(STRING_PROPERTIES.get(0)) == null);
 	}
 	
 	public void testIsCollectionMembersAssignableTo() throws Exception {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
-		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, Boolean.class));
-		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstants.PROP_CROSS_REF, CrossRef.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsV3.PROP_SEE_ALSO, String.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, Boolean.class));
+		assertFalse(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT, String.class));
+		assertTrue(lj.isCollectionMembersAssignableTo(SpdxConstantsCompatV2.PROP_CROSS_REF, CrossRef.class));
 	}
 	
 	public void testIsPropertyValueAssignableTo() throws Exception {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.RDFS_PROP_SEE_ALSO, String.class));
-		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, String.class));
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LICENSE_TEXT, Boolean.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT, String.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LICENSE_TEXT, Boolean.class));
 
-		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, String.class));
-		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstants.PROP_LIC_ID_DEPRECATED, Boolean.class));
+		assertFalse(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, String.class));
+		assertTrue(lj.isPropertyValueAssignableTo(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED, Boolean.class));
 	}
 	
-	public void testCopyFromLicense() throws Exception {
+	public void testFromListedLicenseV3() throws InvalidSPDXAnalysisException {
+		LicenseJson lj = new LicenseJson();
+		InMemSpdxStore store = new InMemSpdxStore();
+		String objectUri = "http://spdx.org/licenses/test";
+		ModelCopyManager copyManager = new ModelCopyManager();
+		ListedLicense license = new ListedLicense(store, objectUri, copyManager, true, null);
+		boolean deprecated = true;
+		String comment = "comment";
+		String deprecatedVersion = "deprecatedVersion";
+		String licenseText = "licenseText";
+		String name = "name";
+		String standardLicenseHeader = "standardLicenseHeader";
+		String standardLicenseTemplate = "standardLicenseTemplate";
+		Boolean fsfLibre = true;
+		Boolean osiApproved = true;
+		List<String> seeAlsoUrl = Arrays.asList(new String[]{"http://url1", "http://url2"});
+		String licenseXml = "licenseXml";
+		String listVersionAdded = "12.1.1";
+		String obsoletedBy = "something";
+		
+		license.setComment(comment);
+		license.setDeprecatedVersion(deprecatedVersion);
+		license.setLicenseText(licenseText);
+		license.setName(name);
+		license.setStandardLicenseHeader(standardLicenseHeader);
+		license.setStandardLicenseTemplate(standardLicenseTemplate);
+		license.setIsFsfLibre(fsfLibre);
+		license.setIsOsiApproved(osiApproved);
+		license.getSeeAlsos().addAll(seeAlsoUrl);
+		license.setIsDeprecatedLicenseId(deprecated);
+		license.setLicenseXml(licenseXml);
+		license.setListVersionAdded(listVersionAdded);
+		license.setObsoletedBy(obsoletedBy);
+		
+		lj.copyFrom(license);
+		assertEquals(fsfLibre, lj.isFsfLibre);
+		assertEquals(osiApproved, lj.isOsiApproved);
+		assertEquals(comment, lj.comment);
+		assertEquals(deprecatedVersion, lj.deprecatedVersion);
+		assertEquals(licenseText, lj.licenseText);
+		assertEquals(name, lj.name);
+		assertEquals(standardLicenseHeader, lj.standardLicenseHeader);
+		assertEquals(standardLicenseTemplate, lj.standardLicenseTemplate);
+		assertTrue(UnitTestHelper.isListsEqual(seeAlsoUrl, lj.seeAlso));
+		assertEquals(obsoletedBy, lj.obsoletedBy);
+		assertEquals(licenseXml, lj.licenseXml);
+		assertEquals(listVersionAdded, lj.listVersionAdded);
+	}
+	
+	public void testCopyFromLicenseV2() throws Exception {
 		LicenseJson lj = new LicenseJson();
 		InMemSpdxStore store = new InMemSpdxStore();
 		String docUri = "http://doc.uri";
@@ -393,8 +535,9 @@ public class LicenseJsonTest extends TestCase {
 		Boolean fsfLibre = true;
 		Boolean osiApproved = true;
 		List<String> seeAlsoUrl = Arrays.asList(new String[]{"http://url1", "http://url2"});
+		ModelCopyManager copyManager = new ModelCopyManager();
 		
-		SpdxListedLicense license = new SpdxListedLicense(store, docUri, id, null, true);
+		org.spdx.library.model.v2.license.SpdxListedLicense license = new org.spdx.library.model.v2.license.SpdxListedLicense(store, docUri, id, copyManager, true);
 		List<CrossRef> crossRefs = new ArrayList<>();
 		List<String> crossRefUrls = Arrays.asList(new String[]{"http://crossref1", "http://crossref2"});
 		for (String crossRefUrl:crossRefUrls) {
@@ -419,8 +562,7 @@ public class LicenseJsonTest extends TestCase {
 		assertEquals(fsfLibre, lj.isFsfLibre);
 		assertEquals(standardLicenseHeaderHtml, lj.standardLicenseHeaderHtml);
 		assertEquals(osiApproved, lj.isOsiApproved);
-		//TODO: Uncomment out the following line in SPDX 3.0
-		//assertEquals(comment, lj.comment);
+		assertEquals(comment, lj.comment);
 		assertEquals(comment, lj.licenseComments);
 		assertEquals(deprecatedVersion, lj.deprecatedVersion);
 		assertEquals(id, lj.licenseId);

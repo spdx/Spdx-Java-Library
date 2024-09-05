@@ -24,12 +24,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.SpdxItem;
-import org.spdx.library.model.SpdxSnippet;
-import org.spdx.library.model.pointer.StartEndPointer;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.SpdxItem;
+import org.spdx.library.model.v2.SpdxSnippet;
+import org.spdx.library.model.v2.pointer.StartEndPointer;
 
 /**
  * Compares two SPDX snippets.  The <code>compare(snippetA, snippetB)</code> method will perform the comparison and

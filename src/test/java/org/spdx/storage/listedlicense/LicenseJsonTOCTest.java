@@ -21,9 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.SpdxConstants;
-import org.spdx.library.model.license.SpdxListedLicense;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.storage.simple.InMemSpdxStore;
 import org.spdx.utility.compare.UnitTestHelper;
 
@@ -40,6 +41,7 @@ public class LicenseJsonTOCTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		SpdxModelFactory.init();
 	}
 
 	/* (non-Javadoc)
@@ -81,7 +83,7 @@ public class LicenseJsonTOCTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJsonTOC#addLicense(org.spdx.library.model.license.SpdxListedLicense, java.lang.String, java.lang.String, boolean)}.
+	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJsonTOC#addLicense(org.spdx.library.model.compat.v2.compat.v2.license.SpdxListedLicense, java.lang.String, java.lang.String, boolean)}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
 	public void testAddLicense() throws InvalidSPDXAnalysisException {
@@ -112,22 +114,22 @@ public class LicenseJsonTOCTest extends TestCase {
 		assertEquals(2, ljt.getLicenses().size());
 
 		LicenseJsonTOC.LicenseJson l1 = ljt.getLicenses().get(0);
-		assertTrue(l1.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_URL));
+		assertTrue(l1.getDetailsUrl().startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL));
 		assertEquals(licJSONReference1.substring(2), l1.getDetailsUrl().substring(l1.getDetailsUrl().lastIndexOf('/') + 1));
 		assertEquals(licenseId1, l1.getLicenseId());
 		assertEquals(name1, l1.getName());
 		assertEquals(licHTMLReference1.substring(2), l1.getReference().substring(l1.getDetailsUrl().lastIndexOf('/') + 1));
-		assertTrue(l1.getReference().startsWith(SpdxConstants.LISTED_LICENSE_URL));
+		assertTrue(l1.getReference().startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL));
 		assertEquals(0, l1.getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso1, l1.getSeeAlso()));
 		
 		LicenseJsonTOC.LicenseJson l2 = ljt.getLicenses().get(1);
 		assertEquals(licJSONReference2.substring(2), l2.getDetailsUrl().substring(l2.getDetailsUrl().lastIndexOf('/') + 1));
-		assertTrue(l2.getDetailsUrl().startsWith(SpdxConstants.LISTED_LICENSE_URL));
+		assertTrue(l2.getDetailsUrl().startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL));
 		assertEquals(licenseId2, l2.getLicenseId());
 		assertEquals(name2, l2.getName());
 		assertEquals(licHTMLReference2.substring(2), l2.getReference().substring(l2.getDetailsUrl().lastIndexOf('/') + 1));
-		assertTrue(l2.getReference().startsWith(SpdxConstants.LISTED_LICENSE_URL));
+		assertTrue(l2.getReference().startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_URL));
 		assertEquals(1, l2.getReferenceNumber());
 		assertTrue(UnitTestHelper.isListsEqual(seeAlso2, l2.getSeeAlso()));
 	}

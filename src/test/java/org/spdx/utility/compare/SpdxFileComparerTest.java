@@ -25,17 +25,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.spdx.library.DefaultModelStore;
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.Checksum;
-import org.spdx.library.model.SpdxDocument;
-import org.spdx.library.model.SpdxFile;
-import org.spdx.library.model.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.enumerations.FileType;
-import org.spdx.library.model.license.AnyLicenseInfo;
-import org.spdx.library.model.license.InvalidLicenseStringException;
-import org.spdx.library.model.license.License;
-import org.spdx.library.model.license.LicenseInfoFactory;
+import org.spdx.core.DefaultModelStore;
+import org.spdx.core.IModelCopyManager;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.LicenseInfoFactory;
+import org.spdx.library.ModelCopyManager;
+import org.spdx.library.SpdxModelFactory;
+import org.spdx.library.model.v2.Checksum;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.library.model.v2.SpdxFile;
+import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
+import org.spdx.library.model.v2.enumerations.FileType;
+import org.spdx.library.model.v2.license.AnyLicenseInfo;
+import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.License;
+import org.spdx.storage.IModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
@@ -53,12 +58,20 @@ public class SpdxFileComparerTest extends TestCase {
 	File testRDFFile;
 	SpdxDocument DOCA;
 	SpdxDocument DOCB;
+	IModelStore modelStore;
+    IModelCopyManager copyManager;
+    static final String DEFAULT_DOCUMENT_URI = "http://default/doc";
+	
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	public void setUp() throws Exception {
-		DefaultModelStore.reset();
+		super.setUp();
+		SpdxModelFactory.init();
+		modelStore = new InMemSpdxStore();
+		copyManager = new ModelCopyManager();
+		DefaultModelStore.initialize(modelStore, DEFAULT_DOCUMENT_URI, copyManager);
 		this.testRDFFile = new File(TEST_RDF_FILE_PATH); 
 		String uri1 = "http://doc/uri1";
 		DOCA = new SpdxDocument(DefaultModelStore.getDefaultModelStore(), uri1, DefaultModelStore.getDefaultCopyManager(), true);
@@ -75,6 +88,8 @@ public class SpdxFileComparerTest extends TestCase {
 	 * @throws java.lang.Exception
 	 */
 	public void tearDown() throws Exception {
+		super.tearDown();
+		DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
 	}
 
 	/**
@@ -103,10 +118,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -151,10 +166,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
-		AnyLicenseInfo concludedLicenseB = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseB = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11);
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -200,14 +215,14 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11),
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0)}));
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11),
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0)}));
 		String licenseCommentsA = "License Comments";
 		String licenseCommentsB = licenseCommentsA;
 		String copyrightA = "Copyright";
@@ -251,14 +266,14 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11),
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0)}));
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11),
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0)}));
 		String licenseCommentsA = "License Comments";
 		String licenseCommentsB = licenseCommentsA;
 		String copyrightA = "Copyright";
@@ -321,13 +336,13 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11),
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0)}));
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11),
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0)}));
 		Collection<AnyLicenseInfo> seenLicenseB = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		String licenseCommentsA = "License Comments";
 		String licenseCommentsB = licenseCommentsA;
@@ -391,10 +406,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -447,10 +462,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -503,10 +518,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -560,10 +575,10 @@ public class SpdxFileComparerTest extends TestCase {
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = "cccbf72bf99b7e471f1a27989667a903658652bb";
 		String sha1C = "dddbf72bf99b7e471f1a27989667a903658652bb";
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -631,10 +646,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = new HashSet<>(Arrays.asList(new FileType[] {FileType.SOURCE, FileType.BINARY}));
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -687,10 +702,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -751,10 +766,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -810,10 +825,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = fileTypeA;
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";
@@ -862,10 +877,10 @@ public class SpdxFileComparerTest extends TestCase {
 		Collection<FileType> fileTypeB = new HashSet<>(Arrays.asList(new FileType[]{FileType.BINARY}));
 		String sha1A = "027bf72bf99b7e471f1a27989667a903658652bb";
 		String sha1B = sha1A;
-		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_CC0);
+		AnyLicenseInfo concludedLicenseA = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_CC0);
 		AnyLicenseInfo concludedLicenseB = concludedLicenseA;
 		Collection<AnyLicenseInfo> seenLicenseA = new HashSet<>(Arrays.asList(new AnyLicenseInfo[] {
-				LicenseInfoFactory.parseSPDXLicenseString(STD_LIC_ID_MPL11)
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(STD_LIC_ID_MPL11)
 				}));
 		Collection<AnyLicenseInfo> seenLicenseB = seenLicenseA;
 		String licenseCommentsA = "License Comments";

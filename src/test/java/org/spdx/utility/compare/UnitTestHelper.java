@@ -30,9 +30,10 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URLConnection;
 
-import org.spdx.library.InvalidSPDXAnalysisException;
-import org.spdx.library.model.ModelObject;
-import org.spdx.library.model.SpdxDocument;
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v2.ModelObjectV2;
+import org.spdx.library.model.v2.SpdxDocument;
+import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 /**
  * Helper class for unit tests
@@ -162,7 +163,7 @@ public class UnitTestHelper {
 		return expected.containsAll(result);
 	}
 	
-	public static boolean isListsEquivalent(List<? extends ModelObject> expected, List<? extends ModelObject> result) throws InvalidSPDXAnalysisException {
+	public static boolean isListsEquivalent(List<? extends ModelObjectV2> expected, List<? extends ModelObjectV2> result) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(expected)) {
 			return Objects.isNull(result);
 		}
@@ -172,9 +173,9 @@ public class UnitTestHelper {
 		if (expected.size() != result.size()) {
 			return false;
 		}
-		for (ModelObject o1:expected) {
+		for (ModelObjectV2 o1:expected) {
 			boolean found = false;
-			for (ModelObject o2:result) {
+			for (ModelObjectV2 o2:result) {
 				if (o1.equivalent(o2)) {
 					found = true;
 					break;
@@ -187,10 +188,11 @@ public class UnitTestHelper {
 		return true;
 	}
 
-	public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObject> modelObjects) throws InvalidSPDXAnalysisException {
-		for (ModelObject mo:modelObjects) {
-			doc.getCopyManager().copy(doc.getModelStore(), doc.getDocumentUri(), mo.getModelStore(), 
-					mo.getDocumentUri(), mo.getId(), mo.getType());
+	public static void copyObjectsToDoc(SpdxDocument doc, Collection<? extends ModelObjectV2> modelObjects) throws InvalidSPDXAnalysisException {
+		for (ModelObjectV2 mo:modelObjects) {
+			doc.getCopyManager().copy(doc.getModelStore(), mo.getModelStore(), 
+					CompatibleModelStoreWrapper.documentUriIdToUri(mo.getDocumentUri(), mo.getId(), mo.getModelStore()),
+					"SPDX-2.3", CompatibleModelStoreWrapper.documentUriToNamespace(doc.getDocumentUri()));
 		}
 	}
 
