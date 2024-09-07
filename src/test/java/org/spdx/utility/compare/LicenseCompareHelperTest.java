@@ -911,6 +911,8 @@ public class LicenseCompareHelperTest extends TestCase {
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
         }
+        boolean result = LicenseCompareHelper.isStandardLicenseWithinText(licText, lic);
+        assertTrue(result);
     }
 
     public void testBsdNewLine() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {

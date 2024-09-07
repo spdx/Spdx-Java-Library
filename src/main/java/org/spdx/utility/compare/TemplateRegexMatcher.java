@@ -126,7 +126,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		
 		@Override
 		public String toString() {
-			return "(" + pattern + ")"; // We always treat the pattern as a group
+			return "(" + pattern + ")" + "\\s*"; // We always treat the pattern as a group
 		}
 
 		/**
