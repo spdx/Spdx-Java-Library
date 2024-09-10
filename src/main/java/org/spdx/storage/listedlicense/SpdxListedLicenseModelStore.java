@@ -302,7 +302,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public List<PropertyDescriptor> getPropertyValueDescriptors(String objectUri) throws InvalidSPDXAnalysisException  {
 		String id = objectUriToId(objectUri);
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				LicenseJson license = fetchLicenseJson(licenseIds.get(id.toLowerCase()));
@@ -323,7 +323,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 	}
 
@@ -479,7 +479,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -489,7 +489,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -518,7 +518,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -528,7 +528,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -557,7 +557,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -567,7 +567,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -614,7 +614,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -624,7 +624,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -674,7 +674,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -684,7 +684,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -760,7 +760,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -770,7 +770,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (SpdxConstantsV3.PROP_CREATION_INFO.equals(propertyDescriptor) && (isLicenseId || isExceptionId)) {
 			return Optional.of(licenseCreationInfo.getTypedValue());
@@ -888,7 +888,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		//NOTE: We only return the SPDX 3.0 version of the typed value, SPDX 2.X versions are also supported
 		// but there is no API to specify the version of the typedValue
 		String id = objectUriToId(objectUri);
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				return Optional.of(new TypedValue(objectUri, SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, SpdxConstantsV3.MODEL_SPEC_VERSION));
@@ -905,7 +905,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				return Optional.empty();
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 	}
 	
@@ -915,7 +915,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -925,7 +925,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -949,7 +949,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(typeFilter, "Type filter can not be null");
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			List<TypedValue> allItems = new ArrayList<TypedValue>();
 			if (SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE.equals(typeFilter)) {
@@ -985,7 +985,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			}
 			return Collections.unmodifiableList(allItems).stream();
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 	}
 	
@@ -998,7 +998,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -1008,7 +1008,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -1036,7 +1036,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -1046,7 +1046,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -1083,7 +1083,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -1093,7 +1093,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -1121,7 +1121,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -1131,7 +1131,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
@@ -1158,7 +1158,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
 		CrossRefJson crossRef = null;
-		listedLicenseModificationLock.readLock().lock();
+		listedLicenseModificationLock.writeLock().lock();
 		try {
 			if (licenseIds.containsKey(id.toLowerCase())) {
 				isLicenseId = true;
@@ -1168,7 +1168,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				crossRef = crossRefs.get(id);
 			}
 		} finally {
-			listedLicenseModificationLock.readLock().unlock();
+			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
