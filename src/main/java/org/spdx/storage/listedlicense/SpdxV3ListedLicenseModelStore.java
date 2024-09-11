@@ -29,6 +29,7 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
@@ -385,5 +386,13 @@ public class SpdxV3ListedLicenseModelStore implements IModelStore {
 	@Override
 	public boolean isAnon(String objectUri) {
 		return baseStore.isAnon(objectUri);
+	}
+
+	/**
+	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
+	 * @throws InvalidSPDXAnalysisException on error inflating the creation info
+	 */
+	public CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException {
+		return baseStore.getListedLicenseCreationInfo();
 	}
 }

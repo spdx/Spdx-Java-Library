@@ -158,5 +158,4 @@ public class LicenseCreationInfo {
 						SpdxConstantsV3.PROP_SPEC_VERSION.equals(propertyDescriptor) ||
 						SpdxConstantsV3.PROP_CREATED.equals(propertyDescriptor));
 	}
-
 }

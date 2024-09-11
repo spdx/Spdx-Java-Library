@@ -20,6 +20,8 @@ package org.spdx.storage.listedlicense;
 import java.util.List;
 import java.util.Optional;
 
+import org.spdx.core.InvalidSPDXAnalysisException;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.IModelStore;
 
 /**
@@ -70,5 +72,11 @@ public interface IListedLicenseStore extends IModelStore {
 	 * @return case sensitive ID
 	 */
 	Optional<String> listedExceptionIdCaseSensitive(String exceptionId);
+
+	/**
+	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
+	 * @throws InvalidSPDXAnalysisException on error inflating the creation info
+	 */
+	CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException;
 
 }

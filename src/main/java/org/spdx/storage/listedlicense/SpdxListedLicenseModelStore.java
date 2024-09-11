@@ -44,10 +44,12 @@ import org.spdx.core.DuplicateSpdxIdException;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.core.TypedValue;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.ModelObjectV2;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicenseException;
 import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.PropertyDescriptor;
 
 import com.google.gson.Gson;
@@ -887,6 +889,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	public Optional<TypedValue> getTypedValue(String objectUri) throws InvalidSPDXAnalysisException {
 		//NOTE: We only return the SPDX 3.0 version of the typed value, SPDX 2.X versions are also supported
 		// but there is no API to specify the version of the typedValue
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return Optional.of(licenseCreationInfo.getTypedValue());
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return Optional.of(licenseCreator.getTypedValue());
+		}
 		String id = objectUriToId(objectUri);
 		listedLicenseModificationLock.readLock().lock();
 		try {
@@ -897,11 +904,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			} else if (crossRefs.containsKey(id)) {
 				// Cross refs are only supported in SPDX version 2.X
 				return Optional.of(new TypedValue(objectUri, SpdxConstantsCompatV2.CLASS_CROSS_REF, ModelObjectV2.LATEST_SPDX_2_VERSION));
-			} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-				return Optional.of(licenseCreationInfo.getTypedValue());
-			} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-				return Optional.of(licenseCreator.getTypedValue());
-			} else {
+			}  else {
 				return Optional.empty();
 			}
 		} finally {
@@ -1079,6 +1082,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean isCollectionMembersAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, Class<?> clazz)
 			throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return licenseCreationInfo.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return licenseCreator.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1103,10 +1111,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return exc.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return licenseCreationInfo.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return licenseCreator.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1278,6 +1282,15 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} finally {
 			listedLicenseModificationLock.writeLock().unlock();
 		}
+	}
+	
+	/**
+	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
+	 * @throws InvalidSPDXAnalysisException on error inflating the CreationInfo
+	 */
+	public CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException {
+		return (CreationInfo) SpdxModelFactory.inflateModelObject(this, LicenseCreationInfo.CREATION_INFO_URI, 
+				SpdxConstantsV3.CORE_CREATION_INFO, null, SpdxConstantsV3.MODEL_SPEC_VERSION, false, null);
 	}
 	
 	@Override

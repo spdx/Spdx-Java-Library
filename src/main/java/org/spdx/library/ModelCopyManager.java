@@ -196,7 +196,7 @@ public class ModelCopyManager implements IModelCopyManager {
 			}
 			if (SpdxConstantsV3.SpdxMajorVersion.VERSION_2.equals(fromMajorVersion) &&
 					SpdxConstantsV3.SpdxMajorVersion.VERSION_3.equals(toMajorVersion)) {
-				retval = new Spdx2to3Converter(toStore, this, null, toSpecVersion, null);
+				retval = new Spdx2to3Converter(toStore, this, null, toSpecVersion, null, true);
 				//TODO: Add a creation info and uri prefix
 				ISpdxConverter previous = toVersionMap.putIfAbsent(toMajorVersion, retval);
 				if (Objects.nonNull(previous)) {

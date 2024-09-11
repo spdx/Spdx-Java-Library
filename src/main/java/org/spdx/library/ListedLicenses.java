@@ -33,6 +33,7 @@ import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxModelFactoryCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.IModelStore;
@@ -301,6 +302,14 @@ public class ListedLicenses {
 	
 	public IModelStore getLicenseModelStoreCompatV2() {
 		return this.licenseStoreV2;
+	}
+
+	/**
+	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
+	 * @throws InvalidSPDXAnalysisException on error inflating the creation info
+	 */
+	public CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException {
+		return licenseStoreV3.getListedLicenseCreationInfo();
 	}
 
 }

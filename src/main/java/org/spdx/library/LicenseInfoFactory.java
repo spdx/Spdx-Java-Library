@@ -32,6 +32,7 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.LicenseParserException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
@@ -262,6 +263,14 @@ public class LicenseInfoFactory {
 	 */
 	public static Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
 		return ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive(exceptionId);
+	}
+	
+	/**
+	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
+	 * @throws InvalidSPDXAnalysisException on error inflating the creation info
+	 */
+	public static CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException {
+		return ListedLicenses.getListedLicenses().getListedLicenseCreationInfo();
 	}
 
 }
