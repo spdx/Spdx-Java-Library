@@ -911,6 +911,8 @@ public class LicenseCompareHelperTest extends TestCase {
         if (diff.isDifferenceFound()) {
         	fail(diff.getDifferenceMessage());
         }
+        boolean result = LicenseCompareHelper.isStandardLicenseWithinText(licText, lic);
+        assertTrue(result);
     }
 
     public void testBsdNewLine() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
@@ -973,4 +975,18 @@ public class LicenseCompareHelperTest extends TestCase {
         assertFalse(LicenseCompareHelper.isStandardLicenseWithinText(licText, lic));
     }
     
+	private void assertAPIConsistency(final String licenseId, final String text) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		final String inconsistencies = CompareConsistencyHelper.explainCompareInconsistencies(licenseId, text);
+		assertNull(inconsistencies, inconsistencies);
+	}
+
+	public void testAPIConsistency() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		assertAPIConsistency("MIT",          UnitTestHelper.fileToText(MIT_2_SPACES));
+		assertAPIConsistency("BSD-2-Clause", UnitTestHelper.fileToText(BSD_2_CLAUSE_NL));
+
+		if (UnitTestHelper.runSlowTests()) {
+			assertAPIConsistency("GPL-2.0-only", UnitTestHelper.fileToText(GPL_2_TEXT));
+			assertAPIConsistency("MPL-2.0",      UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE));
+		}
+	}
 }
