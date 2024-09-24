@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":9};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -171,6 +171,15 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
                  org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;defaultCreationInfo,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;toSpecVersion,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;defaultUriPrefix)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(org.spdx.storage.IModelStore,org.spdx.core.IModelCopyManager,org.spdx.library.model.v3_0_1.core.CreationInfo,java.lang.String,java.lang.String,boolean)">Spdx2to3Converter</a></span>&#8203;(org.spdx.storage.IModelStore&nbsp;toModelStore,
+                 org.spdx.core.IModelCopyManager&nbsp;copyManager,
+                 org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;defaultCreationInfo,
+                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;toSpecVersion,
+                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;defaultUriPrefix,
+                 boolean&nbsp;complexLicenses)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -349,12 +358,19 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i21" class="rowColor">
+<td class="colFirst"><code>org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertToLicenseExpression</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)</code></th>
+<td class="colLast">
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
+</td>
+</tr>
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>protected <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;org.spdx.library.model.v3_0_1.ModelObjectV3&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getExistingObject(java.lang.String,java.lang.String)">getExistingObject</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;fromObjectUri,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;toType)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>static org.spdx.library.model.v3_0_1.core.Agent</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stringToAgent(java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo)">stringToAgent</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;spdx2personOrgString,
              org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;creationInfo)</code></th>
@@ -387,7 +403,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <a id="&lt;init&gt;(org.spdx.storage.IModelStore,org.spdx.core.IModelCopyManager,org.spdx.library.model.v3_0_1.core.CreationInfo,java.lang.String,java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>Spdx2to3Converter</h4>
 <pre>public&nbsp;Spdx2to3Converter&#8203;(org.spdx.storage.IModelStore&nbsp;toModelStore,
@@ -402,6 +418,29 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <dd><code>defaultCreationInfo</code> - creationInfo to use for created SPDX elements</dd>
 <dd><code>toSpecVersion</code> - specific spec version to convert to</dd>
 <dd><code>defaultUriPrefix</code> - URI prefix to use when creating new elements</dd>
+</dl>
+</li>
+</ul>
+<a id="&lt;init&gt;(org.spdx.storage.IModelStore,org.spdx.core.IModelCopyManager,org.spdx.library.model.v3_0_1.core.CreationInfo,java.lang.String,java.lang.String,boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Spdx2to3Converter</h4>
+<pre>public&nbsp;Spdx2to3Converter&#8203;(org.spdx.storage.IModelStore&nbsp;toModelStore,
+                         org.spdx.core.IModelCopyManager&nbsp;copyManager,
+                         org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;defaultCreationInfo,
+                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;toSpecVersion,
+                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;defaultUriPrefix,
+                         boolean&nbsp;complexLicenses)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>toModelStore</code> - modelStore to store any converted elements to</dd>
+<dd><code>copyManager</code> - Copy manager to use for the conversion</dd>
+<dd><code>defaultCreationInfo</code> - creationInfo to use for created SPDX elements</dd>
+<dd><code>toSpecVersion</code> - specific spec version to convert to</dd>
+<dd><code>defaultUriPrefix</code> - URI prefix to use when creating new elements</dd>
+<dd><code>complexLicenses</code> - if true, copy listed license information into the toModelStore and use the ExpandedLicenses otherwise use license expression strings</dd>
 </dl>
 </li>
 </ul>
@@ -733,6 +772,25 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 </dl>
 </li>
 </ul>
+<a id="convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertToLicenseExpression</h4>
+<pre class="methodSignature">public&nbsp;org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression&nbsp;convertToLicenseExpression&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)
+                                                                                           throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>fromLicense</code> - an SPDX spec version 2 AnyLicenseInfo</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an SPDX spec version 3 LicenseExpression</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on any errors converting</dd>
+</dl>
+</li>
+</ul>
 <a id="convertAndStore(org.spdx.library.model.v2.license.AnyLicenseInfo)">
 <!--   -->
 </a>
@@ -744,7 +802,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>fromLicense</code> - an SPDX spec version 2 AnyLicenseIfno</dd>
+<dd><code>fromLicense</code> - an SPDX spec version 2 AnyLicenseInfo</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an SPDX spec version 3 AnyLicenseIfno</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>

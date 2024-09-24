@@ -420,6 +420,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/conversion/Spdx2to3Converter.html#convertCreationInfo(org.spdx.library.model.v2.SpdxCreatorInformation,org.spdx.storage.IModelStore,java.lang.String)">convertCreationInfo(SpdxCreatorInformation, IModelStore, String)</a></span> - Static method in class org.spdx.library.conversion.<a href="org/spdx/library/conversion/Spdx2to3Converter.html" title="class in org.spdx.library.conversion">Spdx2to3Converter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/conversion/Spdx2to3Converter.html#convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertToLicenseExpression(AnyLicenseInfo)</a></span> - Method in class org.spdx.library.conversion.<a href="org/spdx/library/conversion/Spdx2to3Converter.html" title="class in org.spdx.library.conversion">Spdx2to3Converter</a></dt>
+<dd>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/ModelCopyManager.html#copy(org.spdx.storage.IModelStore,java.lang.String,org.spdx.storage.IModelStore,java.lang.String,java.lang.String,java.lang.String)">copy(IModelStore, String, IModelStore, String, String, String)</a></span> - Method in class org.spdx.library.<a href="org/spdx/library/ModelCopyManager.html" title="class in org.spdx.library">ModelCopyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/ModelCopyManager.html#copy(org.spdx.storage.IModelStore,org.spdx.storage.IModelStore,java.lang.String,java.lang.String,java.lang.String)">copy(IModelStore, IModelStore, String, String, String)</a></span> - Method in class org.spdx.library.<a href="org/spdx/library/ModelCopyManager.html" title="class in org.spdx.library">ModelCopyManager</a></dt>
@@ -869,6 +873,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="org/spdx/library/LicenseInfoFactory.html#getListedLicenseByIdCompatV2(java.lang.String)">getListedLicenseByIdCompatV2(String)</a></span> - Static method in class org.spdx.library.<a href="org/spdx/library/LicenseInfoFactory.html" title="class in org.spdx.library">LicenseInfoFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/ListedLicenses.html#getListedLicenseByIdCompatV2(java.lang.String)">getListedLicenseByIdCompatV2(String)</a></span> - Method in class org.spdx.library.<a href="org/spdx/library/ListedLicenses.html" title="class in org.spdx.library">ListedLicenses</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/LicenseInfoFactory.html#getListedLicenseCreationInfo()">getListedLicenseCreationInfo()</a></span> - Static method in class org.spdx.library.<a href="org/spdx/library/LicenseInfoFactory.html" title="class in org.spdx.library">LicenseInfoFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/ListedLicenses.html#getListedLicenseCreationInfo()">getListedLicenseCreationInfo()</a></span> - Method in class org.spdx.library.<a href="org/spdx/library/ListedLicenses.html" title="class in org.spdx.library">ListedLicenses</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/IListedLicenseStore.html#getListedLicenseCreationInfo()">getListedLicenseCreationInfo()</a></span> - Method in interface org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/SpdxListedLicenseModelStore.html#getListedLicenseCreationInfo()">getListedLicenseCreationInfo()</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/SpdxV3ListedLicenseModelStore.html#getListedLicenseCreationInfo()">getListedLicenseCreationInfo()</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/SpdxV3ListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxV3ListedLicenseModelStore</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/ListedLicenses.html#getListedLicenses()">getListedLicenses()</a></span> - Static method in class org.spdx.library.<a href="org/spdx/library/ListedLicenses.html" title="class in org.spdx.library">ListedLicenses</a></dt>
 <dd>&nbsp;</dd>
@@ -1929,6 +1943,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="org/spdx/library/conversion/Spdx2to3Converter.html" title="class in org.spdx.library.conversion"><span class="typeNameLink">Spdx2to3Converter</span></a> - Class in <a href="org/spdx/library/conversion/package-summary.html">org.spdx.library.conversion</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/conversion/Spdx2to3Converter.html#%3Cinit%3E(org.spdx.storage.IModelStore,org.spdx.core.IModelCopyManager,org.spdx.library.model.v3_0_1.core.CreationInfo,java.lang.String,java.lang.String)">Spdx2to3Converter(IModelStore, IModelCopyManager, CreationInfo, String, String)</a></span> - Constructor for class org.spdx.library.conversion.<a href="org/spdx/library/conversion/Spdx2to3Converter.html" title="class in org.spdx.library.conversion">Spdx2to3Converter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/conversion/Spdx2to3Converter.html#%3Cinit%3E(org.spdx.storage.IModelStore,org.spdx.core.IModelCopyManager,org.spdx.library.model.v3_0_1.core.CreationInfo,java.lang.String,java.lang.String,boolean)">Spdx2to3Converter(IModelStore, IModelCopyManager, CreationInfo, String, String, boolean)</a></span> - Constructor for class org.spdx.library.conversion.<a href="org/spdx/library/conversion/Spdx2to3Converter.html" title="class in org.spdx.library.conversion">Spdx2to3Converter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/spdx/utility/compare/SpdxCompareException.html" title="class in org.spdx.utility.compare"><span class="typeNameLink">SpdxCompareException</span></a> - Exception in <a href="org/spdx/utility/compare/package-summary.html">org.spdx.utility.compare</a></dt>
 <dd>&nbsp;</dd>
