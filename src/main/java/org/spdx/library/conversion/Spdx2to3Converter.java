@@ -419,6 +419,18 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param defaultCreationInfo creationInfo to use for created SPDX elements
 	 * @param toSpecVersion specific spec version to convert to
 	 * @param defaultUriPrefix URI prefix to use when creating new elements
+	 */
+	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
+			String toSpecVersion, String defaultUriPrefix) {
+		this(toModelStore, copyManager, defaultCreationInfo, toSpecVersion, defaultUriPrefix, true);
+	}
+	
+	/**
+	 * @param toModelStore modelStore to store any converted elements to
+	 * @param copyManager Copy manager to use for the conversion
+	 * @param defaultCreationInfo creationInfo to use for created SPDX elements
+	 * @param toSpecVersion specific spec version to convert to
+	 * @param defaultUriPrefix URI prefix to use when creating new elements
 	 * @param complexLicenses if true, copy listed license information into the toModelStore and use the ExpandedLicenses otherwise use license expression strings
 	 */
 	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,

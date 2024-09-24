@@ -303,6 +303,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public List<PropertyDescriptor> getPropertyValueDescriptors(String objectUri) throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return LicenseCreationInfo.ALL_PROPERTY_DESCRIPTORS;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return LicenseCreatorAgent.ALL_PROPERTY_DESCRIPTORS;
+		}
 		String id = objectUriToId(objectUri);
 		listedLicenseModificationLock.readLock().lock();
 		try {
@@ -316,10 +321,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			} else if (crossRefs.containsKey(id)) {
 				return crossRefs.get(id).getPropertyValueDescriptors();
 				// Currently, there is no SPDX 3 support for cross refs
-			} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-				return LicenseCreationInfo.ALL_PROPERTY_DESCRIPTORS;
-			} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-				return LicenseCreatorAgent.ALL_PROPERTY_DESCRIPTORS;
 			} else {
 				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID. crossRef ID nor a listed exception ID");
@@ -477,6 +478,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public void setValue(String objectUri, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring the setting of "+propertyDescriptor.getName()+" for license list creation info");
+			return;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring the setting of "+propertyDescriptor.getName()+" for license list creator info");
+			return;
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -501,10 +509,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			exc.setPrimativeValue(propertyDescriptor, value);
 		} else if (Objects.nonNull(crossRef)) {
 			crossRef.setPrimativeValue(propertyDescriptor, value);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			logger.warn("Ignoring the setting of "+propertyDescriptor.getName()+" for license list creation info");
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			logger.warn("Ignoring the setting of "+propertyDescriptor.getName()+" for license list creator info");
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -516,6 +520,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public void clearValueCollection(String objectUri, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring the clearing of collection for license list creation info");
+			return;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring the clearing of collection for license list creator");
+			return;
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -540,10 +551,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			exc.clearPropertyValueList(propertyDescriptor);
 		} else if (Objects.nonNull(crossRef)) {
 			crossRef.clearPropertyValueList(propertyDescriptor);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			logger.warn("Ignoring the clearing of collection for license list creation info");
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			logger.warn("Ignoring the clearing of collection for license list creator");
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -555,6 +562,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public boolean addValueToCollection(String objectUri, PropertyDescriptor propertyDescriptor, Object value)  throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring the adding to collection for license list creation info");
+			return false;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring the adding to collection for license list creator");
+			return false;
+		} 
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -597,12 +611,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return exc.addPrimitiveValueToList(propertyDescriptor, value);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.addPrimitiveValueToList(propertyDescriptor, value);
-		}  else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			logger.warn("Ignoring the adding to collection for license list creation info");
-			return false;
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			logger.warn("Ignoring the adding to collection for license list creator");
-			return false;
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -612,6 +620,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean removeValueFromCollection(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring the removing from collection for license list creation info");
+			return false;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring the removing from collection for license list creator");
+			return false;
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -654,12 +669,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return exc.removePrimitiveValueToList(propertyDescriptor, value);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.removePrimitiveValueToList(propertyDescriptor, value);
-		}  else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			logger.warn("Ignoring the removing from collection for license list creation info");
-			return false;
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			logger.warn("Ignoring the removing from collection for license list creator");
-			return false;
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -672,6 +681,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<Object> listValues(String objectUri, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).iterator();
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).iterator();
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -743,10 +757,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor)).iterator();
 		} else if (Objects.nonNull(crossRef)) {
 			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor)).iterator();
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).iterator();
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).iterator();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -758,6 +768,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	 */
 	@Override
 	public Optional<Object> getValue(String objectUri, PropertyDescriptor propertyDescriptor)  throws InvalidSPDXAnalysisException  {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return Optional.ofNullable(licenseCreationInfo.getValue(propertyDescriptor));
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return Optional.ofNullable(licenseCreator.getValue(propertyDescriptor));
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -784,10 +799,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return Optional.ofNullable(exc.getValue(propertyDescriptor));
 		} else if (Objects.nonNull(crossRef)) {
 			return Optional.ofNullable(crossRef.getValue(propertyDescriptor));
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return Optional.ofNullable(licenseCreationInfo.getValue(propertyDescriptor));
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return Optional.ofNullable(licenseCreator.getValue(propertyDescriptor));
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -914,6 +925,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public void removeProperty(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring remove property "+propertyDescriptor.getName()+" for license list creation info");
+			return;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring remove property "+propertyDescriptor.getName()+" for license list creator");
+			return;
+		} 
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -938,10 +956,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			exc.removeProperty(propertyDescriptor);
 		} else if (Objects.nonNull(crossRef)) {
 			crossRef.removeProperty(propertyDescriptor);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			logger.warn("Ignoring remove property "+propertyDescriptor.getName()+" for license list creation info");
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			logger.warn("Ignoring remove property "+propertyDescriptor.getName()+" for license list creator");
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -997,6 +1011,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@SuppressWarnings("unchecked")
 	@Override
 	public int collectionSize(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).size();
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).size();
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1021,10 +1040,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor)).size();
 		} else if (Objects.nonNull(crossRef)) {
 			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor)).size();
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).size();
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).size();
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1035,6 +1050,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean collectionContains(String objectUri, PropertyDescriptor propertyDescriptor, Object value)
 			throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).contains(value);
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).contains(value);
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1069,10 +1089,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return ((List<Object>)(List<?>)exc.getValueList(propertyDescriptor)).contains(value);
 		} else if (Objects.nonNull(crossRef)) {
 			return ((List<Object>)(List<?>)crossRef.getValueList(propertyDescriptor)).contains(value);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreationInfo.getValueList(propertyDescriptor)).contains(value);
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return ((List<Object>)(List<?>)licenseCreator.getValueList(propertyDescriptor)).contains(value);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1121,6 +1137,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	public boolean isPropertyValueAssignableTo(String objectUri, PropertyDescriptor propertyDescriptor, 
 			Class<?> clazz, String specVersion)
 			throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return licenseCreationInfo.isPropertyValueAssignableTo(propertyDescriptor, clazz);
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return licenseCreator.isPropertyValueAssignableTo(propertyDescriptor, clazz);
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1145,10 +1166,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return exc.isPropertyValueAssignableTo(propertyDescriptor, clazz);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.isPropertyValueAssignableTo(propertyDescriptor, clazz);
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return licenseCreationInfo.isPropertyValueAssignableTo(propertyDescriptor, clazz);
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return licenseCreator.isPropertyValueAssignableTo(propertyDescriptor, clazz);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, CrossRef ID nor a listed exception ID");
@@ -1158,6 +1175,11 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	@Override
 	public boolean isCollectionProperty(String objectUri, PropertyDescriptor propertyDescriptor)
 			throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			return this.licenseCreationInfo.isCollectionProperty(propertyDescriptor);
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			return licenseCreator.isCollectionProperty(propertyDescriptor);
+		}
 		String id = objectUriToId(objectUri);
 		boolean isLicenseId = false;
 		boolean isExceptionId = false;
@@ -1182,10 +1204,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			return exc.isCollectionProperty(propertyDescriptor);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.isCollectionProperty(propertyDescriptor.getName());
-		} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-			return this.licenseCreationInfo.isCollectionProperty(propertyDescriptor);
-		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-			return licenseCreator.isCollectionProperty(propertyDescriptor);
 		} else {
 			logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
@@ -1260,6 +1278,13 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	
 	@Override
 	public void delete(String objectUri) throws InvalidSPDXAnalysisException {
+		if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
+			logger.warn("Ignoring the removal of the creation info for the license list");
+			return;
+		} else if (licenseCreator.getObjectUri().equals(objectUri)) {
+			logger.warn("Ignoring the removal of the creator for the license list");
+			return;
+		}
 		String id = objectUriToId(objectUri);
 		listedLicenseModificationLock.writeLock().lock();
 		try {
@@ -1271,10 +1296,6 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 				this.exceptionIds.remove(id.toLowerCase());
 			} else if (crossRefs.containsKey(id)) {
 				this.crossRefs.remove(id);
-			} else if (LicenseCreationInfo.CREATION_INFO_URI.equals(objectUri)) {
-				logger.warn("Ignoring the removal of the creation info for the license list");
-			} else if (licenseCreator.getObjectUri().equals(objectUri)) {
-				logger.warn("Ignoring the removal of the creator for the license list");
 			} else {
 				logger.error("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
 				throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");
