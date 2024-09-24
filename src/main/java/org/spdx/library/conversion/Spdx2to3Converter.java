@@ -21,10 +21,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,6 +47,7 @@ import org.spdx.library.model.v3_0_1.core.AnnotationType;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.Element;
 import org.spdx.library.model.v3_0_1.core.ExternalElement;
+import org.spdx.library.model.v3_0_1.core.ExternalIdentifier;
 import org.spdx.library.model.v3_0_1.core.ExternalIdentifierType;
 import org.spdx.library.model.v3_0_1.core.ExternalMap;
 import org.spdx.library.model.v3_0_1.core.ExternalRefType;
@@ -79,6 +82,7 @@ import org.spdx.library.model.v3_0_1.expandedlicensing.NoneLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.OrLaterOperator;
 import org.spdx.library.model.v3_0_1.expandedlicensing.WithAdditionOperator;
 import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression;
 import org.spdx.library.model.v3_0_1.software.ContentIdentifierType;
 import org.spdx.library.model.v3_0_1.software.Snippet;
 import org.spdx.library.model.v3_0_1.software.SoftwareArtifact;
@@ -298,6 +302,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 
 	private int documentIndex = 0;
 
+	private boolean complexLicenses = false;
+
 	/**
 	 * @param creationInfoV2 SPDX Spec version 2 creation info
 	 * @param modelStore modelStore to store the CreationInfo
@@ -416,11 +422,25 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 */
 	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
 			String toSpecVersion, String defaultUriPrefix) {
+		this(toModelStore, copyManager, defaultCreationInfo, toSpecVersion, defaultUriPrefix, true);
+	}
+	
+	/**
+	 * @param toModelStore modelStore to store any converted elements to
+	 * @param copyManager Copy manager to use for the conversion
+	 * @param defaultCreationInfo creationInfo to use for created SPDX elements
+	 * @param toSpecVersion specific spec version to convert to
+	 * @param defaultUriPrefix URI prefix to use when creating new elements
+	 * @param complexLicenses if true, copy listed license information into the toModelStore and use the ExpandedLicenses otherwise use license expression strings
+	 */
+	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
+			String toSpecVersion, String defaultUriPrefix, boolean complexLicenses) {
 		this.toModelStore = toModelStore;
 		this.defaultCreationInfo = defaultCreationInfo;
 		this.toSpecVersion = toSpecVersion;
 		this.defaultUriPrefix = defaultUriPrefix;
 		this.copyManager = copyManager;
+		this.complexLicenses  = complexLicenses;
 	}
 	
 	/**
@@ -429,6 +449,81 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 */
 	public boolean alreadyCopied(String fromObjectUri) {
 		return this.alreadyConverted.containsKey(fromObjectUri);
+	}
+	
+	/**
+	 * @param spdx2CreatorInfo SPDX 2 creation information
+	 * @param spdx3CreationInfo SPDX 3 creation information
+	 * @return true of the values of the SPDX 2 creation information are equivalent to the SPDX 3 creation information
+	 * @throws InvalidSPDXAnalysisException on error fetching model data
+	 */
+	private boolean equivalentCreationInfo(SpdxCreatorInformation spdx2CreatorInfo,
+			CreationInfo spdx3CreationInfo) throws InvalidSPDXAnalysisException {
+		if (!Objects.equals(spdx2CreatorInfo.getCreated(), spdx3CreationInfo.getCreated())) {
+			return false;
+		}
+		List<Tool> tools = spdx3CreationInfo.getCreatedUsings().stream().collect(Collectors.toList());
+		List<Agent> agents = spdx3CreationInfo.getCreatedBys().stream().collect(Collectors.toList());
+		for (String creator:spdx2CreatorInfo.getCreators()) {
+			if (creator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL)) {
+				String toolName = creator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL.length()).trim();
+				boolean found = false;
+				for (Tool tool:tools) {
+					if (tool.getName().isPresent() && tool.getName().get().equals(toolName)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					return false;
+				}
+			} else {
+				// look for matching agents
+				String name = creator;
+				String type = SpdxConstantsV3.CORE_AGENT;
+				String email = null;
+				Matcher matcher = SPDX_2_CREATOR_PATTERN.matcher(creator);
+				if (matcher.matches()) {
+					if (matcher.group(1).trim().equals("Person")) {
+						type = SpdxConstantsV3.CORE_PERSON;
+					} else if (matcher.group(1).trim().equals("Organization"))  {
+						type = SpdxConstantsV3.CORE_ORGANIZATION;
+					} // otherwise it is just the default AGENT
+					if (matcher.groupCount() > 1) {
+						name = matcher.group(2).trim();
+					} else {
+						name = "[MISSING]";
+					}
+					if (matcher.groupCount() > 3) {
+						email = matcher.group(4);
+					}
+				}
+				boolean found = false;
+				for (Agent agent:agents) {
+					if (agent.getType().equals(type) &&
+							agent.getName().isPresent() && agent.getName().get().equals(name)) {
+						if (Objects.nonNull(email)) {
+							boolean foundEmail = false;
+							for (ExternalIdentifier ei:agent.getExternalIdentifiers()) {
+								if (ExternalIdentifierType.EMAIL.equals(ei.getExternalIdentifierType()) &&
+										email.equals(ei.getIdentifier())) {
+									foundEmail = true;
+									break;
+								}
+							}
+							if (foundEmail) {
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!found) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -585,7 +680,9 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			toDoc.getNamespaceMaps().add(convertAndStore(externalDocRef, toDoc.getSpdxImports()));
 		}
 		convertElementProperties(fromDoc, toDoc);
-		toDoc.setCreationInfo(convertCreationInfo(fromDoc.getCreationInfo(), this.toModelStore, this.defaultUriPrefix));
+		if (!equivalentCreationInfo(fromDoc.getCreationInfo(), defaultCreationInfo)) {
+			toDoc.setCreationInfo(convertCreationInfo(fromDoc.getCreationInfo(), this.toModelStore, this.defaultUriPrefix));
+		}
 		toDoc.setDataLicense(convertAndStore(fromDoc.getDataLicense()));
 		toDoc.getRootElements().addAll(fromDoc.getDocumentDescribes().stream().map(spdxElement -> {
 			try {
@@ -601,7 +698,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		}
 		return toDoc;
 	}
-	
+
 	/**
 	 * Converts the externalDocRef to a NamespaceMap and store the NamespaceMap.
 	 * The document information is also retained in the externalDocRefMap such that any subsequent 
@@ -765,8 +862,10 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		String licenseId = SpdxListedLicenseModelStore.objectUriToLicenseOrExceptionId(fromSpdxListedLicense.getObjectUri());
 		if (ListedLicenses.getListedLicenses().isSpdxListedLicenseId(licenseId)) {
 			ListedLicense retval = ListedLicenses.getListedLicenses().getListedLicenseById(licenseId);
-			copyManager.copy(toModelStore, fromSpdxListedLicense.getObjectUri(), retval.getModelStore(),
-					fromSpdxListedLicense.getObjectUri(), toSpecVersion, null);
+			if (complexLicenses) {
+				copyManager.copy(toModelStore, fromSpdxListedLicense.getObjectUri(), retval.getModelStore(),
+						fromSpdxListedLicense.getObjectUri(), toSpecVersion, null);
+			}
 			return retval;
 		}
 		ListedLicense toListedLicense = (ListedLicense)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
@@ -880,8 +979,10 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		String exceptionId = SpdxListedLicenseModelStore.objectUriToLicenseOrExceptionId(fromException.getObjectUri());
 		if (ListedLicenses.getListedLicenses().isSpdxListedExceptionId(exceptionId)) {
 			ListedLicenseException retval = ListedLicenses.getListedLicenses().getListedExceptionById(exceptionId);
-			copyManager.copy(toModelStore, fromException.getObjectUri(), retval.getModelStore(),
-					fromException.getObjectUri(), toSpecVersion, null);
+			if (complexLicenses) {
+				copyManager.copy(toModelStore, fromException.getObjectUri(), retval.getModelStore(),
+						fromException.getObjectUri(), toSpecVersion, null);
+			}
 			return retval;
 		}
 		ListedLicenseException toListedException = (ListedLicenseException)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
@@ -895,13 +996,50 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	}
 
 	/**
+	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression
+	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
+	 * @return an SPDX spec version 3 LicenseExpression
+	 * @throws InvalidSPDXAnalysisException on any errors converting
+	 */
+	public LicenseExpression convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo fromLicense) throws InvalidSPDXAnalysisException {
+		Optional<ModelObjectV3> existing = getExistingObject(fromLicense.getObjectUri(), SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION);
+		if (existing.isPresent()) {
+			return (LicenseExpression)existing.get();
+		}
+		String toObjectUri = defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId);
+		String existingUri = this.alreadyConverted.putIfAbsent(fromLicense.getObjectUri(), toObjectUri);
+		if (Objects.nonNull(existingUri)) {
+			// small window if conversion occurred since the last check already converted
+			return (LicenseExpression)getExistingObject(fromLicense.getObjectUri(), SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION).get();
+		}
+		LicenseExpression licenseExpression = (LicenseExpression)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
+				toObjectUri, SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION, copyManager, true, defaultUriPrefix);
+		licenseExpression.setCreationInfo(defaultCreationInfo);
+		String expression = fromLicense.toString();
+		licenseExpression.setLicenseExpression(expression);
+		StringTokenizer tokenizer = new StringTokenizer(expression, "() ");
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken().trim();
+			if (token.startsWith(SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM)) {
+				licenseExpression.getCustomIdToUris().add(licenseExpression.createDictionaryEntry(toModelStore.getNextId(IdType.Anonymous))
+						.setKey(token)
+						.setValue(defaultUriPrefix + token)
+						.build());
+			}
+		}
+		return licenseExpression;
+	}
+
+	/**
 	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result
-	 * @param fromLicense an SPDX spec version 2 AnyLicenseIfno
+	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
 	 * @return an SPDX spec version 3 AnyLicenseIfno
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
 	public AnyLicenseInfo convertAndStore(org.spdx.library.model.v2.license.AnyLicenseInfo fromLicense) throws InvalidSPDXAnalysisException {
-		if (fromLicense instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
+		if (!complexLicenses) {
+			return convertToLicenseExpression(fromLicense);
+		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
 			return convertAndStore((org.spdx.library.model.v2.license.ConjunctiveLicenseSet)fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet) {
 			return convertAndStore((org.spdx.library.model.v2.license.DisjunctiveLicenseSet)fromLicense);
