@@ -997,7 +997,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 
 	/**
 	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression
-	 * @param fromLicense an SPDX spec version 2 AnyLicenseIfno
+	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
 	 * @return an SPDX spec version 3 LicenseExpression
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
@@ -1032,7 +1032,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 
 	/**
 	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result
-	 * @param fromLicense an SPDX spec version 2 AnyLicenseIfno
+	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
 	 * @return an SPDX spec version 3 AnyLicenseIfno
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
