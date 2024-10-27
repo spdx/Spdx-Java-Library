@@ -101,6 +101,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String GPL_2_NL = "TestFiles" + File.separator + "GPL-2.0-NL.txt";
     static final String GPL_2_TEMPLATE = "TestFiles" + File.separator + "GPL-2.0-only.template.txt";
     static final String IMAGE_MAGIK_TEMPLATE = "TestFiles" + File.separator + "ImageMagick.template.txt";
+    static final String X_11_PTHREADS = "TestFiles" + File.separator + "x-11-pthreads.txt";
 
 	IModelStore modelStore;
 	IModelCopyManager copyManager;
@@ -988,5 +989,13 @@ public class LicenseCompareHelperTest extends TestCase {
 			assertAPIConsistency("GPL-2.0-only", UnitTestHelper.fileToText(GPL_2_TEXT));
 			assertAPIConsistency("MPL-2.0",      UnitTestHelper.fileToText(MPL_2_FROM_MOZILLA_FILE));
 		}
+	}
+	
+	public void testX11Pthreads() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
+		String licText = UnitTestHelper.fileToText(X_11_PTHREADS);
+		String[] result = LicenseCompareHelper.matchingStandardLicenseIds(licText);
+		assertEquals(0, result.length);
+		ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById("X11-distribute-modifications-variant");
+		assertTrue(LicenseCompareHelper.isTextStandardLicense(license, licText).isDifferenceFound());
 	}
 }
