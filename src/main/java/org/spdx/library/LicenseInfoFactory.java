@@ -86,7 +86,7 @@ public class LicenseInfoFactory {
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
 	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
-	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException if the license string is not valid
 	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
@@ -129,7 +129,7 @@ public class LicenseInfoFactory {
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
 	 * @param customLicensePrefix Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
 	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
-	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
+	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException if the license string is not valid
