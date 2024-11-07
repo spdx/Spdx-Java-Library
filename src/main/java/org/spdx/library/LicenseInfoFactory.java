@@ -99,9 +99,6 @@ public class LicenseInfoFactory {
 		if (Objects.isNull(documentUri)) {
 			documentUri = DefaultModelStore.getDefaultDocumentUri();
 		}
-		if (Objects.isNull(copyManager)) {
-			copyManager = DefaultModelStore.getDefaultCopyManager();
-		}
 		try {
 			return LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri, 
 					copyManager);
@@ -143,9 +140,6 @@ public class LicenseInfoFactory {
 		}
 		if (Objects.isNull(customLicensePrefix)) {
 			customLicensePrefix = DefaultModelStore.getDefaultDocumentUri() + "#";
-		}
-		if (Objects.isNull(copyManager)) {
-			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
 		try {
 			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix, 
