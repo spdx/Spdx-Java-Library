@@ -25,7 +25,7 @@ Most common use of the library would de-serialize an existing SPDX document usin
 
 ## Multi-Threaded Considerations
 
-The methods enterCriticalSection and leaveCritialSection are available to support multi-threaded applications.  These methods serialize access to the model store for the specific SPDX document used for the SPDX model object.
+The methods enterCriticalSection and leaveCriticalSection are available to support multi-threaded applications.  These methods serialize access to the model store for the specific SPDX document used for the SPDX model object.
 
 ## Getting Started
 
