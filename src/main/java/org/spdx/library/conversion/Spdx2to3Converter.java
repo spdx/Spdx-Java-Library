@@ -31,6 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.IModelCopyManager;
@@ -106,23 +108,23 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	
 	static final Pattern SPDX_2_CREATOR_PATTERN = Pattern.compile("(Person|Organization):\\s*([^(]+)\\s*(\\(([^)]*)\\))?");
 
-	private static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, RelationshipType> RELATIONSHIP_TYPE_MAP;
+	public static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, RelationshipType> RELATIONSHIP_TYPE_MAP;
 	
-	private static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, LifecycleScopeType> LIFECYCLE_SCOPE_MAP;
+	public static final Map<org.spdx.library.model.v2.enumerations.RelationshipType, LifecycleScopeType> LIFECYCLE_SCOPE_MAP;
 
-	private static final Set<org.spdx.library.model.v2.enumerations.RelationshipType> SWAP_TO_FROM_REL_TYPES;
+	public static final Set<org.spdx.library.model.v2.enumerations.RelationshipType> SWAP_TO_FROM_REL_TYPES;
 	
-	private static final Map<org.spdx.library.model.v2.enumerations.AnnotationType, AnnotationType> ANNOTATION_TYPE_MAP;
+	public static final Map<org.spdx.library.model.v2.enumerations.AnnotationType, AnnotationType> ANNOTATION_TYPE_MAP;
 	
-	private static final Map<org.spdx.library.model.v2.enumerations.ChecksumAlgorithm, HashAlgorithm> HASH_ALGORITH_MAP;
+	public static final Map<org.spdx.library.model.v2.enumerations.ChecksumAlgorithm, HashAlgorithm> HASH_ALGORITH_MAP;
 	
-	private static final Map<String, ContentIdentifierType> CONTENT_IDENTIFIER_TYPE_MAP;
+	public static final Map<String, ContentIdentifierType> CONTENT_IDENTIFIER_TYPE_MAP;
 	
-	private static final Map<String, ExternalIdentifierType> EXTERNAL_IDENTIFIER_TYPE_MAP;
+	public static final Map<String, ExternalIdentifierType> EXTERNAL_IDENTIFIER_TYPE_MAP;
 	
-	private static final Map<String, ExternalRefType> EXTERNAL_REF_TYPE_MAP;
+	public static final Map<String, ExternalRefType> EXTERNAL_REF_TYPE_MAP;
 	
-	private static final Map<org.spdx.library.model.v2.enumerations.Purpose, SoftwarePurpose> PURPOSE_MAP;
+	public static final Map<org.spdx.library.model.v2.enumerations.Purpose, SoftwarePurpose> PURPOSE_MAP;
 	
 	static {
 		Map<org.spdx.library.model.v2.enumerations.RelationshipType, RelationshipType> relationshipTypeMap = new HashMap<>();
@@ -1377,44 +1379,74 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 */
 	private void addExternalRefToArtifact(org.spdx.library.model.v2.ExternalRef externalRef,
 			SoftwareArtifact artifact) throws InvalidSPDXAnalysisException {
-		org.spdx.library.model.v2.ReferenceType referenceType = externalRef.getReferenceType();
+		addExternalRefToArtifact(externalRef, artifact, toModelStore);
+	}
+	
+	/**
+	 * @param externalRef SPDX Spec version 2 External Ref to add to the package
+	 * @param artifact SPDX Spec version 3 Artifact to add either an ExternalRef or ExternalId depending on the externalRef type
+	 * @param modelStore modelStore to use for creating any SPDX objects
+	 * @throws InvalidSPDXAnalysisException on any error in conversion
+	 */
+	public static void addExternalRefToArtifact(org.spdx.library.model.v2.ExternalRef externalRef,
+			SoftwareArtifact artifact, IModelStore modelStore) throws InvalidSPDXAnalysisException {
+		addExternalRefToArtifact(externalRef.getReferenceCategory(), externalRef.getReferenceType(), 
+				externalRef.getReferenceLocator(), externalRef.getComment().orElse(null), artifact, modelStore);
+	}
+	
+	/**
+	 * @param referenceCategory Reference category for external ref
+	 * @param referenceType Reference type for external ref
+	 * @param referenceLocator Locator for external ref
+	 * @param comment External reference comment
+	 * @param artifact Artifact which contains the external ref
+	 * @param modelStore modelStore to use for creating any SPDX objects
+	 * @throws InvalidSPDXAnalysisException on any error in conversion
+	 */
+	public static void addExternalRefToArtifact(org.spdx.library.model.v2.enumerations.ReferenceCategory referenceCategory, 
+			org.spdx.library.model.v2.ReferenceType referenceType, String referenceLocator, @Nullable String comment, 
+			SoftwareArtifact artifact, IModelStore modelStore) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(referenceType);
 		switch (referenceType.getIndividualURI()) {
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "cpe22Type":
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "cpe23Type":
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "swid":
-				artifact.getExternalIdentifiers().add(artifact.createExternalIdentifier(toModelStore.getNextId(IdType.Anonymous))
+				artifact.getExternalIdentifiers().add(artifact.createExternalIdentifier(modelStore.getNextId(IdType.Anonymous))
 						.setExternalIdentifierType(EXTERNAL_IDENTIFIER_TYPE_MAP.get(referenceType.getIndividualURI()))
-						.setIdentifier(externalRef.getReferenceLocator())
+						.setIdentifier(referenceLocator)
+						.setComment(comment)
 						.build()); break;
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "purl": {
 				if (artifact instanceof SpdxPackage) {
-					((SpdxPackage)artifact).setPackageUrl(externalRef.getReferenceLocator());
+					((SpdxPackage)artifact).setPackageUrl(referenceLocator);
 				} else {
-					artifact.getExternalIdentifiers().add(artifact.createExternalIdentifier(toModelStore.getNextId(IdType.Anonymous))
+					artifact.getExternalIdentifiers().add(artifact.createExternalIdentifier(modelStore.getNextId(IdType.Anonymous))
 							.setExternalIdentifierType(EXTERNAL_IDENTIFIER_TYPE_MAP.get(referenceType.getIndividualURI()))
-							.setIdentifier(externalRef.getReferenceLocator())
+							.setIdentifier(referenceLocator)
+							.setComment(comment)
 							.build()); break;
 				}
 			} break;
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "swh":
 			case SpdxConstantsCompatV2.SPDX_LISTED_REFERENCE_TYPES_PREFIX + "gitoid":
-				artifact.getContentIdentifiers().add(artifact.createContentIdentifier(toModelStore.getNextId(IdType.Anonymous))
+				artifact.getContentIdentifiers().add(artifact.createContentIdentifier(modelStore.getNextId(IdType.Anonymous))
 						.setContentIdentifierType(CONTENT_IDENTIFIER_TYPE_MAP.get(referenceType.getIndividualURI()))
-						.setContentIdentifierValue(externalRef.getReferenceLocator())
+						.setContentIdentifierValue(referenceLocator)
+						.setComment(comment)
 						.build()); break;
 			default: {
 				ExternalRefType externalRefType = EXTERNAL_REF_TYPE_MAP.get(referenceType.getIndividualURI());
 				if (Objects.isNull(externalRefType)) {
-					switch (externalRef.getReferenceCategory()) {
+					switch (referenceCategory) {
 						case PACKAGE_MANAGER: externalRefType = ExternalRefType.BUILD_SYSTEM; break;
 						case SECURITY: externalRefType = ExternalRefType.SECURITY_OTHER; break;
 						default: externalRefType = ExternalRefType.OTHER;
 					}
 				}
-				artifact.getExternalRefs().add(artifact.createExternalRef(toModelStore.getNextId(IdType.Anonymous))
+				artifact.getExternalRefs().add(artifact.createExternalRef(modelStore.getNextId(IdType.Anonymous))
 						.setExternalRefType(externalRefType)
-						.addLocator(externalRef.getReferenceLocator())
+						.addLocator(referenceLocator)
+						.setComment(comment)
 						.build());
 			}
 		}
