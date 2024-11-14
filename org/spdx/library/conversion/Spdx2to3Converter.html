@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":9};
+var data = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":9,"i23":10,"i24":10,"i25":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,13 +90,13 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -152,6 +152,69 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<section>
+<ul class="blockList">
+<li class="blockList"><a id="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Field</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.AnnotationType,&#8203;org.spdx.library.model.v3_0_1.core.AnnotationType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ANNOTATION_TYPE_MAP">ANNOTATION_TYPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.software.ContentIdentifierType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_IDENTIFIER_TYPE_MAP">CONTENT_IDENTIFIER_TYPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.core.ExternalIdentifierType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#EXTERNAL_IDENTIFIER_TYPE_MAP">EXTERNAL_IDENTIFIER_TYPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.core.ExternalRefType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#EXTERNAL_REF_TYPE_MAP">EXTERNAL_REF_TYPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.ChecksumAlgorithm,&#8203;org.spdx.library.model.v3_0_1.core.HashAlgorithm&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#HASH_ALGORITH_MAP">HASH_ALGORITH_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType,&#8203;org.spdx.library.model.v3_0_1.core.LifecycleScopeType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#LIFECYCLE_SCOPE_MAP">LIFECYCLE_SCOPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.Purpose,&#8203;org.spdx.library.model.v3_0_1.software.SoftwarePurpose&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PURPOSE_MAP">PURPOSE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType,&#8203;org.spdx.library.model.v3_0_1.core.RelationshipType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RELATIONSHIP_TYPE_MAP">RELATIONSHIP_TYPE_MAP</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util" class="externalLink">Set</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SWAP_TO_FROM_REL_TYPES">SWAP_TO_FROM_REL_TYPES</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <section>
 <ul class="blockList">
@@ -201,11 +264,28 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addExternalRefToArtifact(org.spdx.library.model.v2.enumerations.ReferenceCategory,org.spdx.library.model.v2.ReferenceType,java.lang.String,java.lang.String,org.spdx.library.model.v3_0_1.software.SoftwareArtifact,org.spdx.storage.IModelStore)">addExternalRefToArtifact</a></span>&#8203;(org.spdx.library.model.v2.enumerations.ReferenceCategory&nbsp;referenceCategory,
+                        org.spdx.library.model.v2.ReferenceType&nbsp;referenceType,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;referenceLocator,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;comment,
+                        org.spdx.library.model.v3_0_1.software.SoftwareArtifact&nbsp;artifact,
+                        org.spdx.storage.IModelStore&nbsp;modelStore)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addExternalRefToArtifact(org.spdx.library.model.v2.ExternalRef,org.spdx.library.model.v3_0_1.software.SoftwareArtifact,org.spdx.storage.IModelStore)">addExternalRefToArtifact</a></span>&#8203;(org.spdx.library.model.v2.ExternalRef&nbsp;externalRef,
+                        org.spdx.library.model.v3_0_1.software.SoftwareArtifact&nbsp;artifact,
+                        org.spdx.storage.IModelStore&nbsp;modelStore)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#alreadyCopied(java.lang.String)">alreadyCopied</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;fromObjectUri)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.Annotation</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.Annotation,org.spdx.library.model.v3_0_1.core.Element)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.Annotation&nbsp;fromAnnotation,
                org.spdx.library.model.v3_0_1.core.Element&nbsp;toElement)</code></th>
@@ -213,14 +293,14 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="block">Converts an SPDX spec version 2 annotation to an SPDX spec version 3 annotation</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.Hash</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.Checksum)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.Checksum&nbsp;checksum)</code></th>
 <td class="colLast">
 <div class="block">Converts the SPDX spec version 2 Checksum to an SPDX spec version 3 Hash and store the result</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.NamespaceMap</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.ExternalDocumentRef,java.util.Collection)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.ExternalDocumentRef&nbsp;externalDocRef,
                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util" class="externalLink">Collection</a>&lt;org.spdx.library.model.v3_0_1.core.ExternalMap&gt;&nbsp;docImports)</code></th>
@@ -228,14 +308,14 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="block">Converts the externalDocRef to a NamespaceMap and store the NamespaceMap.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)</code></th>
 <td class="colLast">
 <div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.ConjunctiveLicenseSet</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.ConjunctiveLicenseSet)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.ConjunctiveLicenseSet&nbsp;fromConjunctiveLicenseSet)</code></th>
 <td class="colLast">
@@ -243,7 +323,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.DisjunctiveLicenseSet</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.DisjunctiveLicenseSet)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.DisjunctiveLicenseSet&nbsp;fromDisjunctiveLicenseSet)</code></th>
 <td class="colLast">
@@ -251,7 +331,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.CustomLicense</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.ExtractedLicenseInfo)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.ExtractedLicenseInfo&nbsp;fromExtractedLicenseInfo)</code></th>
 <td class="colLast">
@@ -259,7 +339,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.LicenseAddition</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.LicenseException)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.LicenseException&nbsp;fromException)</code></th>
 <td class="colLast">
@@ -267,7 +347,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.ListedLicenseException)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.ListedLicenseException&nbsp;fromException)</code></th>
 <td class="colLast">
@@ -275,7 +355,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.OrLaterOperator</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.OrLaterOperator)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.OrLaterOperator&nbsp;fromOrLaterOperator)</code></th>
 <td class="colLast">
@@ -283,7 +363,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.SpdxListedLicense)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.SpdxListedLicense&nbsp;fromSpdxListedLicense)</code></th>
 <td class="colLast">
@@ -291,7 +371,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.expandedlicensing.WithAdditionOperator</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.WithExceptionOperator)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.WithExceptionOperator&nbsp;fromWithExceptionOperator)</code></th>
 <td class="colLast">
@@ -299,7 +379,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.Relationship</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.Relationship,org.spdx.library.model.v3_0_1.core.Element)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.Relationship&nbsp;fromRelationship,
                org.spdx.library.model.v3_0_1.core.Element&nbsp;containingElement)</code></th>
@@ -307,7 +387,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="block">Converts an SPDX spec version 2 relationship to an SPDX spec version 3 relationship</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.SpdxDocument</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxDocument)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxDocument&nbsp;fromDoc)</code></th>
 <td class="colLast">
@@ -315,62 +395,62 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
  in the toStore</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.Element</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxElement)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxElement&nbsp;fromElement)</code></th>
 <td class="colLast">
 <div class="block">Converts the Element and stores all properties in the toStore</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.software.SpdxFile</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxFile)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxFile&nbsp;spdxFile)</code></th>
 <td class="colLast">
 <div class="block">Converts the SPDX 2 SpdxFile to an SPDX 3 SpdxFile and returns the converted file</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.software.SpdxPackage</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxPackage)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxPackage&nbsp;spdxPackage)</code></th>
 <td class="colLast">
 <div class="block">Converts the SPDX 2 SpdxPackage to an SPDX 3 SpdxPackage and returns the converted package</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.core.IntegrityMethod</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxPackageVerificationCode)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxPackageVerificationCode&nbsp;spdxPackageVerificationCode)</code></th>
 <td class="colLast">
 <div class="block">Converts the spdxPackageVerificationCode to an IntegrityMethod and store the result in the toModelStore</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.software.Snippet</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.SpdxSnippet)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.SpdxSnippet&nbsp;fromSnippet)</code></th>
 <td class="colLast">
 <div class="block">Converts the SPDX 2 SpdxSnippet to an SPDX 3 Snippet and returns the converted snippet</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>static org.spdx.library.model.v3_0_1.core.CreationInfo</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertCreationInfo(org.spdx.library.model.v2.SpdxCreatorInformation,org.spdx.storage.IModelStore,java.lang.String)">convertCreationInfo</a></span>&#8203;(org.spdx.library.model.v2.SpdxCreatorInformation&nbsp;creationInfoV2,
                    org.spdx.storage.IModelStore&nbsp;modelStore,
                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;uriPrefix)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertToLicenseExpression</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)</code></th>
 <td class="colLast">
 <div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>protected <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;org.spdx.library.model.v3_0_1.ModelObjectV3&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getExistingObject(java.lang.String,java.lang.String)">getExistingObject</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;fromObjectUri,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;toType)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>static org.spdx.library.model.v3_0_1.core.Agent</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stringToAgent(java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo)">stringToAgent</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;spdx2personOrgString,
              org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;creationInfo)</code></th>
@@ -393,6 +473,97 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<section>
+<ul class="blockList">
+<li class="blockList"><a id="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a id="RELATIONSHIP_TYPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>RELATIONSHIP_TYPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType,&#8203;org.spdx.library.model.v3_0_1.core.RelationshipType&gt; RELATIONSHIP_TYPE_MAP</pre>
+</li>
+</ul>
+<a id="LIFECYCLE_SCOPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LIFECYCLE_SCOPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType,&#8203;org.spdx.library.model.v3_0_1.core.LifecycleScopeType&gt; LIFECYCLE_SCOPE_MAP</pre>
+</li>
+</ul>
+<a id="SWAP_TO_FROM_REL_TYPES">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SWAP_TO_FROM_REL_TYPES</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util" class="externalLink">Set</a>&lt;org.spdx.library.model.v2.enumerations.RelationshipType&gt; SWAP_TO_FROM_REL_TYPES</pre>
+</li>
+</ul>
+<a id="ANNOTATION_TYPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ANNOTATION_TYPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.AnnotationType,&#8203;org.spdx.library.model.v3_0_1.core.AnnotationType&gt; ANNOTATION_TYPE_MAP</pre>
+</li>
+</ul>
+<a id="HASH_ALGORITH_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>HASH_ALGORITH_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.ChecksumAlgorithm,&#8203;org.spdx.library.model.v3_0_1.core.HashAlgorithm&gt; HASH_ALGORITH_MAP</pre>
+</li>
+</ul>
+<a id="CONTENT_IDENTIFIER_TYPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CONTENT_IDENTIFIER_TYPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.software.ContentIdentifierType&gt; CONTENT_IDENTIFIER_TYPE_MAP</pre>
+</li>
+</ul>
+<a id="EXTERNAL_IDENTIFIER_TYPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXTERNAL_IDENTIFIER_TYPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.core.ExternalIdentifierType&gt; EXTERNAL_IDENTIFIER_TYPE_MAP</pre>
+</li>
+</ul>
+<a id="EXTERNAL_REF_TYPE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXTERNAL_REF_TYPE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;org.spdx.library.model.v3_0_1.core.ExternalRefType&gt; EXTERNAL_REF_TYPE_MAP</pre>
+</li>
+</ul>
+<a id="PURPOSE_MAP">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>PURPOSE_MAP</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;org.spdx.library.model.v2.enumerations.Purpose,&#8203;org.spdx.library.model.v3_0_1.software.SoftwarePurpose&gt; PURPOSE_MAP</pre>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <section>
 <ul class="blockList">
@@ -903,6 +1074,53 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 </dl>
 </li>
 </ul>
+<a id="addExternalRefToArtifact(org.spdx.library.model.v2.ExternalRef,org.spdx.library.model.v3_0_1.software.SoftwareArtifact,org.spdx.storage.IModelStore)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addExternalRefToArtifact</h4>
+<pre class="methodSignature">public static&nbsp;void&nbsp;addExternalRefToArtifact&#8203;(org.spdx.library.model.v2.ExternalRef&nbsp;externalRef,
+                                            org.spdx.library.model.v3_0_1.software.SoftwareArtifact&nbsp;artifact,
+                                            org.spdx.storage.IModelStore&nbsp;modelStore)
+                                     throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>externalRef</code> - SPDX Spec version 2 External Ref to add to the package</dd>
+<dd><code>artifact</code> - SPDX Spec version 3 Artifact to add either an ExternalRef or ExternalId depending on the externalRef type</dd>
+<dd><code>modelStore</code> - modelStore to use for creating any SPDX objects</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on any error in conversion</dd>
+</dl>
+</li>
+</ul>
+<a id="addExternalRefToArtifact(org.spdx.library.model.v2.enumerations.ReferenceCategory,org.spdx.library.model.v2.ReferenceType,java.lang.String,java.lang.String,org.spdx.library.model.v3_0_1.software.SoftwareArtifact,org.spdx.storage.IModelStore)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addExternalRefToArtifact</h4>
+<pre class="methodSignature">public static&nbsp;void&nbsp;addExternalRefToArtifact&#8203;(org.spdx.library.model.v2.enumerations.ReferenceCategory&nbsp;referenceCategory,
+                                            org.spdx.library.model.v2.ReferenceType&nbsp;referenceType,
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;referenceLocator,
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;comment,
+                                            org.spdx.library.model.v3_0_1.software.SoftwareArtifact&nbsp;artifact,
+                                            org.spdx.storage.IModelStore&nbsp;modelStore)
+                                     throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>referenceCategory</code> - Reference category for external ref</dd>
+<dd><code>referenceType</code> - Reference type for external ref</dd>
+<dd><code>referenceLocator</code> - Locator for external ref</dd>
+<dd><code>comment</code> - External reference comment</dd>
+<dd><code>artifact</code> - Artifact which contains the external ref</dd>
+<dd><code>modelStore</code> - modelStore to use for creating any SPDX objects</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on any error in conversion</dd>
+</dl>
+</li>
+</ul>
 <a id="convertAndStore(org.spdx.library.model.v2.SpdxSnippet)">
 <!--   -->
 </a>
@@ -975,13 +1193,13 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
