@@ -118,7 +118,8 @@ public class ListedLicenses {
         		try {
         			baseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage());
+        			logger.warn("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage()+
+        					" Note: you can set the org.spdx.useJARLicenseInfoOnly property to true to avoid this warning.");
         			baseModelStore = null;
         		}
         	}
