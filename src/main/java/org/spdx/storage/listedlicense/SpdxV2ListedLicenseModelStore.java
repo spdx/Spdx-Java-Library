@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,15 +66,14 @@ public class SpdxV2ListedLicenseModelStore implements IModelStore {
 		// Exceptions
 		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT);
 		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_EXCEPTION_TEXT_HTML);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_NAME);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_NAME);
 		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
 		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_EXCEPTION_TEMPLATE);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_EXAMPLE);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.RDFS_PROP_COMMENT);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
-		SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_EXAMPLE);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LIC_ID_DEPRECATED);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.RDFS_PROP_COMMENT);
+		// SUPPORTED_V2_DESCRIPTORS.add(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO);
 		// Crossrefs
 		SUPPORTED_V2_DESCRIPTORS.add(new PropertyDescriptor("match", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		SUPPORTED_V2_DESCRIPTORS.add(new PropertyDescriptor("url", SpdxConstantsCompatV2.SPDX_NAMESPACE));

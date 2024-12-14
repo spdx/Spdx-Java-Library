@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2023 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- *
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The configuration class for the Spdx-Java-Library. When a caller attempts to retrieve a configuration property, it
  * will first be checked in the Java system properties (i.e. set via `-D` command line options to the JVM, or by
- * programmatic calls to `System.setProperty()` in code), and will then fallback on a properties file in the classpath.
+ * programmatic calls to `System.setProperty()` in code), and will then fall back on a properties file in the classpath.
  * That file must be called `/resources/spdx-java-library.properties`.
- *
+ * <p>
  * Please see the documentation for specifics on what configuration options Spdx-Java-Library supports, and how they
  * impact the library's behavior.
  */
@@ -100,7 +100,7 @@ public final class Configuration {
                 }
             } catch (IOException e) {
                 // Ignore it and fall through
-                logger.warn("IO Exception reading configuration properties file '" + propertiesFileName + "': " + e.getMessage(), e);
+                logger.warn("IO Exception reading configuration properties file '{}': {}", propertiesFileName, e.getMessage(), e);
                 result = null;
             } finally {
                 if (in != null) {
@@ -108,7 +108,7 @@ public final class Configuration {
                         in.close();
                     } catch (IOException e) {
                         // Ignore it and fall through
-                        logger.warn("Unable to close configuration properties file '" + propertiesFileName + "': " + e.getMessage(), e);
+                        logger.warn("Unable to close configuration properties file '{}': {}", propertiesFileName, e.getMessage(), e);
                     }
                 }
             }

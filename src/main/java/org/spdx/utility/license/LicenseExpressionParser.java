@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,7 +66,7 @@ import org.spdx.storage.IModelStore.IdType;
 
 /**
  * A parser for the SPDX License Expressions as documented in the SPDX appendix.
- * 
+ * <p>
  * This is a static help class.  The primary method is parseLicenseExpression which 
  * returns an AnyLicenseInfo.
  * @author Gary O'Neall
@@ -76,8 +76,9 @@ public class LicenseExpressionParser {
 
 	enum Operator {
 		OR_LATER, WITH, AND, OR	//NOTE: These must be in precedence order 
-	};
-	static final String LEFT_PAREN = "(";
+	}
+
+    static final String LEFT_PAREN = "(";
 	static final String RIGHT_PAREN = ")";
 	static final Map<String, Operator> OPERATOR_MAP = new HashMap<>();
 	public static final String UNINITIALIZED_LICENSE_TEXT = "[Initialized with license Parser.  The actual license text is not available]";
@@ -93,7 +94,7 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * Parses a license expression into an license for use in the Model using the SPDX Version 3.X model
+	 * Parses a license expression into n license for use in the Model using the SPDX Version 3.X model
 	 * @param expression Expression to be parsed
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
@@ -102,7 +103,7 @@ public class LicenseExpressionParser {
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the parsed license expression
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static AnyLicenseInfo parseLicenseExpression(String expression, IModelStore store, 
 			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager, 
@@ -132,7 +133,7 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * Parses a license expression into an license for use in the Model using the SPDX Version 2.X model
+	 * Parses a license expression into n license for use in the Model using the SPDX Version 2.X model
 	 * @param expression Expression to be parsed
 	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
@@ -140,7 +141,7 @@ public class LicenseExpressionParser {
 	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @return the parsed license expression
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseLicenseExpressionCompatV2(String expression, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
@@ -167,9 +168,9 @@ public class LicenseExpressionParser {
 	}
 
 	/**
-	 * A custom tokenizer since there is not white space between parents and pluses
-	 * @param expression
-	 * @return
+	 * A custom tokenizer since there is not a white space between parents and pluses
+	 * @param expression license expression string
+	 * @return array of string tokens
 	 */
 	private static String[] tokenizeExpression(String expression) {
 		String[] startTokens = expression.split("\\s");
@@ -177,17 +178,18 @@ public class LicenseExpressionParser {
 		for (String token : startTokens) {
 			processPreToken(token, endTokens);
 		}
-		return endTokens.toArray(new String[endTokens.size()]);
+		return endTokens.toArray(new String[0]);
 	}
 
 	/**
-	 * @param preToken
-	 * @param tokenList
+	 * @param preToken previous token
+	 * @param tokenList resultant list of tokens - modified by this methods
 	 */
 	private static void processPreToken(String preToken,
 			List<String> tokenList) {
 		if (preToken.isEmpty()) {
-			return;
+            //noinspection UnnecessaryReturnStatement
+            return;
 		} else if (preToken.startsWith("(")) {
 			tokenList.add("(");
 			processPreToken(preToken.substring(1), tokenList);
@@ -204,14 +206,14 @@ public class LicenseExpressionParser {
 
 	/**
 	 * Parses a tokenized license expression into a license for use in the RDF Parser
-	 * @param tokens
-	 * @param store
+	 * @param tokens array of tokens
+	 * @param store model store for non-listed licenses
 	 * @param customLicenseUriPrefix Prefix for Object URI's created when appending custom license ID's or custom license additions. If any custom licenses or additions already exist, they will be used.
 	 * If none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID - required for any external additions or licenses
 	 * @return a license info representing the fully parsed list of tokens
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static AnyLicenseInfo parseLicenseExpression(String[] tokens, IModelStore store, 
 			String customLicenseUriPrefix, @Nullable IModelCopyManager copyManager,
@@ -219,8 +221,8 @@ public class LicenseExpressionParser {
 		if (tokens == null || tokens.length == 0) {
 			throw new LicenseParserException("Expected license expression");
 		}
-		Stack<AnyLicenseInfo> operandStack = new Stack<AnyLicenseInfo>();
-		Stack<Operator> operatorStack = new Stack<Operator>(); 
+		Stack<AnyLicenseInfo> operandStack = new Stack<>();
+		Stack<Operator> operatorStack = new Stack<>();
 		int tokenIndex = 0;
 		String token;
 		while (tokenIndex < tokens.length) {
@@ -287,21 +289,21 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * Parses a tokenized license expression into a license for use in the RDF Parser
-	 * @param tokens
-	 * @param store
-	 * @param documentUri
+	 * Parses a tokenized license expression into a license
+	 * @param tokens array of tokens
+	 * @param store model store for non-listed licenses
+	 * @param documentUri document URI for non-listed licenses
 	 * @param copyManager if non-null, allows for copying of any properties set which use other model stores or document URI's
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
+	 * @return a license represented by the license expression
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static org.spdx.library.model.v2.license.AnyLicenseInfo parseLicenseExpressionCompatV2(String[] tokens, IModelStore store, 
 			String documentUri, IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		if (tokens == null || tokens.length == 0) {
 			throw new LicenseParserException("Expected license expression");
 		}
-		Stack<org.spdx.library.model.v2.license.AnyLicenseInfo> operandStack = new Stack<org.spdx.library.model.v2.license.AnyLicenseInfo>();
-		Stack<Operator> operatorStack = new Stack<Operator>(); 
+		Stack<org.spdx.library.model.v2.license.AnyLicenseInfo> operandStack = new Stack<>();
+		Stack<Operator> operatorStack = new Stack<>();
 		int tokenIndex = 0;
 		String token;
 		while (tokenIndex < tokens.length) {
@@ -329,7 +331,7 @@ public class LicenseExpressionParser {
 						throw new LicenseParserException("Missing exception clause");
 					}
 					token = tokens[tokenIndex++];
-					org.spdx.library.model.v2.license.ListedLicenseException licenseException = null;
+					org.spdx.library.model.v2.license.ListedLicenseException licenseException;
 					Optional<String> exceptionId = Optional.empty();
 					if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
 						exceptionId = LicenseInfoFactory.listedExceptionIdCaseSensitive(token);
@@ -378,8 +380,9 @@ public class LicenseExpressionParser {
 
 	/**
 	 * Returns the index of the rightmost parenthesis or -1 if not found
-	 * @param tokens
-	 * @return
+	 * @param tokens array of tokens
+	 * @param startToken index of the token to start the search
+	 * @return index of the matching end parenthesis
 	 */
 	private static int findMatchingParen(String[] tokens, int startToken) {
 		if (tokens == null) {
@@ -409,7 +412,7 @@ public class LicenseExpressionParser {
 	 * @param copyManager to use when copying from the listed license store
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID - required for any external additions or licenses
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static LicenseAddition parseSimpleLicenseAdditionToken(String token, IModelStore store, String customLicenseUriPrefix,
 			@Nullable IModelCopyManager copyManager, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
@@ -440,7 +443,7 @@ public class LicenseExpressionParser {
 		} else {
 			// custom addition
 			String objectUri = customLicenseUriPrefix + token;
-			CustomLicenseAddition localAddition = null;
+			CustomLicenseAddition localAddition;
 			if (store.exists(objectUri)) {
 				localAddition = new CustomLicenseAddition(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
@@ -460,7 +463,7 @@ public class LicenseExpressionParser {
 	 * @param copyManager to use when copying from the listed license store
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return a CustomLicenseAddition, ListedLicense, ListedLicenseException or CustomLicense depending on what is in the store
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static AnyLicenseInfo parseSimpleLicenseToken(String token, IModelStore store, String customLicenseUriPrefix,
 			@Nullable IModelCopyManager copyManager, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
@@ -490,7 +493,7 @@ public class LicenseExpressionParser {
 		} else {
 			// LicenseRef
 			String objectUri = customLicenseUriPrefix + token;
-			CustomLicense localLicense = null;
+			CustomLicense localLicense;
 			if (store.exists(objectUri)) {
 				localLicense = new CustomLicense(store, objectUri, copyManager, false, customLicenseUriPrefix);
 			} else {
@@ -505,7 +508,7 @@ public class LicenseExpressionParser {
 	 * @param externalReference String of the form [prefix]:[id] where [prefix] is a prefix in the customIdToUri and ID is the suffix of the object URI
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the full object URI with the [prefix] replaced by the associated namespace
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static String convertToExternalObjectUri(String externalReference, @Nullable List<DictionaryEntry> customIdToUri) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(customIdToUri)) {
@@ -534,15 +537,17 @@ public class LicenseExpressionParser {
 	/**
 	 * Converts a string token into its equivalent license
 	 * checking for a listed license
-	 * @param token
-	 * @param baseStore
-	 * @param documentUri 
-	 * @param copyManager
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param token license ID token
+	 * @param store model store for non-listed licenses
+	 * @param documentUri document URI for non-listed licenses
+	 * @param copyManager copy manager to copy listed licenses to local store
+	 * @return license equivalent to the token
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
-	private static org.spdx.library.model.v2.license.AnyLicenseInfo parseSimpleLicenseTokenCompatV2(String token, IModelStore store, String documentUri,
-			IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
+	private static org.spdx.library.model.v2.license.AnyLicenseInfo parseSimpleLicenseTokenCompatV2(String token,
+																									IModelStore store,
+																									String documentUri,
+																									IModelCopyManager copyManager) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(token, "Token can not be null");
 		Objects.requireNonNull(store, "Model store can not be null");
 		Objects.requireNonNull(documentUri, "URI prefix can not be null");
@@ -569,7 +574,7 @@ public class LicenseExpressionParser {
 		} else {
 			// LicenseRef
 			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(documentUri, token);
-			ExtractedLicenseInfo localLicense = null;
+			ExtractedLicenseInfo localLicense;
 			if (caseSensitiveId.isPresent()) {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
 				
@@ -583,11 +588,13 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * Evaluate the given operator using paramaeters in the parameter stack
-	 * @param operator
-	 * @param operandStack
-	 * @param copyManager
-	 * @throws InvalidSPDXAnalysisException 
+	 * Evaluate the given operator using parameters in the parameter stack
+	 * @param operator operator
+	 * @param operandStack operands for the operator
+	 * @param copyManager copy manager to use when copying listed licenses to local store
+	 * @param store model store to store non-listed licenses
+	 * @param customLicenseUriPrefix prefix to use for non-listed licenses
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static void evaluateExpression(Operator operator,
 			Stack<AnyLicenseInfo> operandStack, IModelStore store, 
@@ -613,11 +620,13 @@ public class LicenseExpressionParser {
 	}
 
 	/**
-	 * Evaluate the given operator using paramaeters in the parameter stack
-	 * @param operator
-	 * @param operandStack
-	 * @param copyManager
-	 * @throws InvalidSPDXAnalysisException 
+	 * Evaluate the given operator using parameters in the parameter stack
+	 * @param operator operator
+	 * @param operandStack operands for the operator
+	 * @param copyManager copy manager to use when copying listed licenses to local store
+	 * @param store model store to store non-listed licenses
+	 * @param documentUri prefix to use for non-listed licenses
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static void evaluateExpressionCompatV2(Operator operator,
 			Stack<org.spdx.library.model.v2.license.AnyLicenseInfo> operandStack, IModelStore store, 
@@ -643,13 +652,15 @@ public class LicenseExpressionParser {
 	}
 
 	/**
-	 * Evaluates a binary expression and merges conjuctive and disjunctive licenses
-	 * @param tosOperator
-	 * @param operand1
-	 * @param operand2
-	 * @param copyManager
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
+	 * Evaluates a binary expression and merges conjunctive and disjunctive licenses
+	 * @param tosOperator binary operator
+	 * @param operand1 first operand
+	 * @param operand2 second operand
+	 * @param copyManager copy manager to use when copying listed licenses to local store
+	 * @param store model store to store non-listed licenses
+	 * @param customLicenseUriPrefix prefix to use for non-listed licenses
+	 * @return resultant license representing the binary operation
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static AnyLicenseInfo evaluateBinary(Operator tosOperator,
 			AnyLicenseInfo operand1, AnyLicenseInfo operand2, IModelStore store, 
@@ -684,13 +695,15 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
-	 * Evaluates a binary expression and merges conjuctive and disjunctive licenses
-	 * @param tosOperator
-	 * @param operand1
-	 * @param operand2
-	 * @param copyManager
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
+	 * Evaluates a binary expression and merges conjunctive and disjunctive licenses
+	 * @param tosOperator binary operator
+	 * @param operand1 first operand
+	 * @param operand2 second operand
+	 * @param copyManager copy manager to use when copying listed licenses to local store
+	 * @param store model store to store non-listed licenses
+	 * @param documentUri prefix to use for non-listed licenses
+	 * @return resultant license representing the binary operation
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private static org.spdx.library.model.v2.license.AnyLicenseInfo evaluateBinaryCompatV2(Operator tosOperator,
 			org.spdx.library.model.v2.license.AnyLicenseInfo operand1, org.spdx.library.model.v2.license.AnyLicenseInfo operand2, IModelStore store, 

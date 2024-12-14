@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,8 +31,8 @@ import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
  */
 public class SpdxLicenseDifference {
 
-	private String licenseText;
-	private String licenseNameA;
+	private final String licenseText;
+	private final String licenseNameA;
 	/**
 	 * @return the licenseText
 	 */
@@ -117,21 +117,21 @@ public class SpdxLicenseDifference {
 		return sourceUrlsEqual;
 	}
 
-	private String licenseNameB;
-	private boolean licenseNamesEqual;
-	private String IdA;
-	private String IdB;
-	private String commentA;
-	private String commentB;
-	private boolean commentsEqual;
-	private Collection<String> sourceUrlsA;
-	private Collection<String> sourceUrlsB;
-	private boolean sourceUrlsEqual;
+	private final String licenseNameB;
+	private final boolean licenseNamesEqual;
+	private final String IdA;
+	private final String IdB;
+	private final String commentA;
+	private final String commentB;
+	private final boolean commentsEqual;
+	private final Collection<String> sourceUrlsA;
+	private final Collection<String> sourceUrlsB;
+	private final boolean sourceUrlsEqual;
 
 	/**
-	 * @param licenseA
-	 * @param licenseB
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param licenseA A license to compare
+	 * @param licenseB B license to compare
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public SpdxLicenseDifference(
 			ExtractedLicenseInfo licenseA,

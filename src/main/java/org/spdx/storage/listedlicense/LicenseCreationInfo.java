@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ package org.spdx.storage.listedlicense;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,12 +56,12 @@ public class LicenseCreationInfo {
 		ptosv.put(SpdxConstantsV3.PROP_SPEC_VERSION, SpdxConstantsV3.MODEL_SPEC_VERSION);
 		PROPERTY_TO_STATIC_VALUE = Collections.unmodifiableMap(ptosv);
 		ALL_PROPERTY_DESCRIPTORS = Collections.unmodifiableList(new ArrayList<>(ptosv.keySet()));
-	};
+	}
+
+    private static final List<String> EMPTY = Collections.unmodifiableList(new ArrayList<>());
 	
-	private static List<String> EMPTY = Collections.unmodifiableList(new ArrayList<>());
-	
-	private String created;
-	private List<TypedValue> creators;
+	private final String created;
+	private final List<TypedValue> creators;
 	
 	TypedValue typedValue;
 
@@ -77,7 +76,7 @@ public class LicenseCreationInfo {
 			String licenseListReleaseDate) throws SpdxInvalidIdException, SpdxInvalidTypeException, ModelRegistryException {
 		this.created = Pattern.matches("^\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\dZ$", licenseListReleaseDate)  ? 
 				licenseListReleaseDate : new SimpleDateFormat(SpdxConstantsCompatV2.SPDX_DATE_FORMAT).format(new Date());
-		this.creators = Collections.unmodifiableList(Arrays.asList(licenseListCreator.getTypedValue()));
+		this.creators = Collections.singletonList(licenseListCreator.getTypedValue());
 		this.typedValue = new TypedValue(LicenseCreationInfo.CREATION_INFO_URI, SpdxConstantsV3.CORE_CREATION_INFO, SpdxConstantsV3.MODEL_SPEC_VERSION);
 	}
 	
@@ -89,7 +88,7 @@ public class LicenseCreationInfo {
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor descriptor for the property
 	 * @return true if it is a collection property
 	 */
 	public boolean isCollectionProperty(PropertyDescriptor propertyDescriptor) {

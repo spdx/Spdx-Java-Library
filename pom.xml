@@ -148,17 +148,17 @@
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-model-2_X</artifactId>
-    	<version>0.1.0-Alpha</version>
+    	<version>1.0.0-RC1</version>
     </dependency>
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-core</artifactId>
-    	<version>0.1.0-Alpha</version>
+    	<version>1.0.0-RC1</version>
     </dependency>
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-model-3_0</artifactId>
-    	<version>0.1.0-Alpha</version>
+    	<version>1.0.0-RC1</version>
     </dependency>
   </dependencies>
   

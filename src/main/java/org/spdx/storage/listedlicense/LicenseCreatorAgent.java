@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,7 @@ import org.spdx.storage.PropertyDescriptor;
  * Storage for the creator agent of the license list
  *
  */
+@SuppressWarnings("unused")
 public class LicenseCreatorAgent {
 	
 	static final String OBJECT_URI_PREFIX = "https://spdx.org/licenses/creatoragent/";
@@ -46,9 +47,9 @@ public class LicenseCreatorAgent {
 	static final List<String> EMPTY = Collections.unmodifiableList(new ArrayList<>());
 	static final String NAME = "SPDX Legal Team";
 	static final String DESCRIPTION = "This object is created and maintained by the SPDX legal team (https://spdx.dev/engage/participate/legal-team/)";
-	private String objectUri;
-	private TypedValue typedValue;
-	private TypedValue creationInfoTV;
+	private final String objectUri;
+	private final TypedValue typedValue;
+	private final TypedValue creationInfoTV;
 	
 	public LicenseCreatorAgent(String licenseListVersion) throws SpdxInvalidIdException, SpdxInvalidTypeException, ModelRegistryException {
 		this.objectUri = OBJECT_URI_PREFIX + licenseListVersion.replace('.','_');
@@ -61,24 +62,24 @@ public class LicenseCreatorAgent {
 	}
 
 	/**
-	 * @return
+	 * @return the TypedValue
 	 */
 	public TypedValue getTypedValue() {
 		return this.typedValue;
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @return
+	 * @param propertyDescriptor descriptor for the property
+	 * @return all values for the property
 	 */
 	public List<?> getValueList(PropertyDescriptor propertyDescriptor) {
 		return EMPTY;
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor descriptor for the property
 	 * @return value if present, otherwise null
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public Object getValue(PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		if (SpdxConstantsV3.PROP_CREATION_INFO.equals(propertyDescriptor)) {
@@ -93,9 +94,9 @@ public class LicenseCreatorAgent {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
-	 * @return
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz target class
+	 * @return true if the collection members can be assigned to the class
 	 */
 	public boolean isCollectionMembersAssignableTo(
 			PropertyDescriptor propertyDescriptor, Class<?> clazz) {
@@ -117,9 +118,9 @@ public class LicenseCreatorAgent {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
-	 * @return
+	 * @param propertyDescriptor descriptor for the property
+	 * @param clazz target class
+	 * @return true if the property can be assigned to the class
 	 */
 	public boolean isPropertyValueAssignableTo(
 			PropertyDescriptor propertyDescriptor, Class<?> clazz) {
@@ -131,8 +132,8 @@ public class LicenseCreatorAgent {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @return
+	 * @param propertyDescriptor descriptor for the property
+	 * @return true if the property is a collection
 	 */
 	public boolean isCollectionProperty(PropertyDescriptor propertyDescriptor) {
 		return false;

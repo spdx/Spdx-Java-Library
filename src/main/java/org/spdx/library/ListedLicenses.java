@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,6 +50,7 @@ import org.spdx.storage.listedlicense.SpdxV3ListedLicenseModelStore;
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class ListedLicenses {
 	
 	static final Logger logger = LoggerFactory.getLogger(ListedLicenses.class.getName());
@@ -95,13 +96,13 @@ public class ListedLicenses {
                 }
             } catch (IOException e) {
                 // Ignore it and fall through
-                logger.warn("IO Exception reading listed license properties file: " + e.getMessage());
+                logger.warn("IO Exception reading listed license properties file: {}", e.getMessage());
             } finally {
                 if (in != null) {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        logger.warn("Unable to close listed license properties file: " + e.getMessage());
+                        logger.warn("Unable to close listed license properties file: {}", e.getMessage());
                     }
                 }
             }
@@ -118,8 +119,7 @@ public class ListedLicenses {
         		try {
         			baseModelStore = new SpdxListedLicenseWebStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.warn("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: "+ex.getMessage()+
-        					" Note: you can set the org.spdx.useJARLicenseInfoOnly property to true to avoid this warning.");
+                    logger.warn("Unable to access the most current listed licenses from https://spdx.org/licenses - using locally cached licenses: {} Note: you can set the org.spdx.useJARLicenseInfoOnly property to true to avoid this warning.", ex.getMessage());
         			baseModelStore = null;
         		}
         	}
@@ -142,7 +142,7 @@ public class ListedLicenses {
 
 	public static ListedLicenses getListedLicenses() {
 	    
-	    ListedLicenses retval = null;
+	    ListedLicenses retval;
 	    listedLicenseModificationLock.readLock().lock();
 	    try {
 	        retval = listedLicenses;
@@ -167,7 +167,7 @@ public class ListedLicenses {
 	 * Resets all of the cached license information and reloads the license IDs
 	 * NOTE: This method should be used with caution, it will negatively impact
 	 * performance.
-	 * @return
+	 * @return a new instance of this class
 	 */
     public static ListedLicenses resetListedLicenses() {
         listedLicenseModificationLock.writeLock().lock();
@@ -199,7 +199,7 @@ public class ListedLicenses {
 	/**
 	 * @param licenseId SPDX Listed License ID
 	 * @return an SPDX spec version 2 SPDX listed license or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
 		try {
@@ -214,7 +214,7 @@ public class ListedLicenses {
 	/**
 	 * @param exceptionId SPDX Listed License Exception ID
 	 * @return an SPDX spec version 2 SPDX listed license exception or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
 	 */
 	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
 		try {
@@ -229,7 +229,7 @@ public class ListedLicenses {
 	/**
 	 * @param licenseId SPDX Listed License ID
 	 * @return SPDX listed license or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
 	 */
 	public ListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
 		try {
@@ -265,7 +265,7 @@ public class ListedLicenses {
     
 	/**
 	 * @return The version of the loaded license list in the form M.N, where M is the major release and N is the minor release.
-	 * If no license list is loaded, returns {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#DEFAULT_LICENSE_LIST_VERSION}.
+	 * If no license list is loaded, returns the default license list version.
 	 */
 	public String getLicenseListVersion() {
 		return this.baseModelStore.getLicenseListVersion();

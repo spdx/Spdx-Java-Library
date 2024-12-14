@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2011 Source Auditor Inc.
- *
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package org.spdx.utility.verificationcode;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import org.spdx.storage.IModelStore.IdType;
 
 /**
  * Generates a package verification code from a directory of source code or an array of <code>SPDXFile</code>s.
- *
+ * <p>
  * A class implementing the IFileChecksumGenerator is supplied as a parameter to the constructor.
  * The method <code>getFileChecksum</code> is called for each file in the directory.  This can
  * be used as a hook to capture all files in the directory and capture the checksum values at
@@ -49,7 +49,7 @@ import org.spdx.storage.IModelStore.IdType;
  */
 public class VerificationCodeGenerator {
 
-	private IFileChecksumGenerator fileChecksumGenerator;
+	private final IFileChecksumGenerator fileChecksumGenerator;
 
 	public VerificationCodeGenerator(IFileChecksumGenerator fileChecksumGenerator) {
 		this.fileChecksumGenerator = fileChecksumGenerator;
@@ -62,8 +62,8 @@ public class VerificationCodeGenerator {
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
 	 * @return VerificationCode based on all files in spdxFiles minus the skippedFilePaths
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws NoSuchAlgorithmException unexpected checksum calculation error
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public SpdxPackageVerificationCode generatePackageVerificationCode(SpdxFile[] spdxFiles, 
 			String[] skippedFilePaths, IModelStore modelStore, String documentUri) throws NoSuchAlgorithmException, InvalidSPDXAnalysisException {
@@ -72,34 +72,34 @@ public class VerificationCodeGenerator {
 		}
 		Set<String> skippedFilePathSet = new TreeSet<>();
 		if (skippedFilePaths != null) {
-			for (int i = 0; i < skippedFilePaths.length; i++) {
-				if (skippedFilePaths[i] != null) {
-					skippedFilePathSet.add(skippedFilePaths[i]);
-				}
-			}
+            for (String skippedFilePath : skippedFilePaths) {
+                if (skippedFilePath != null) {
+                    skippedFilePathSet.add(skippedFilePath);
+                }
+            }
 		}
 		List<String> fileChecksums = new ArrayList<>();
-		for (int i = 0; i < spdxFiles.length; i++) {
-		    if (spdxFiles[i] != null) {
-		        Optional<String> name = spdxFiles[i].getName();
-	            if (name.isPresent() && !skippedFilePathSet.contains(name.get())) {
-	                fileChecksums.add(spdxFiles[i].getSha1());
-	            }
-		    }
-		}
-		return generatePackageVerificationCode(fileChecksums, skippedFilePathSet.toArray(new String[skippedFilePathSet.size()]), modelStore, documentUri);
+        for (SpdxFile spdxFile : spdxFiles) {
+            if (spdxFile != null) {
+                Optional<String> name = spdxFile.getName();
+                if (name.isPresent() && !skippedFilePathSet.contains(name.get())) {
+                    fileChecksums.add(spdxFile.getSha1());
+                }
+            }
+        }
+		return generatePackageVerificationCode(fileChecksums, skippedFilePathSet.toArray(new String[0]), modelStore, documentUri);
 	}
 
 
 	/**
 	 * Generate the SPDX Package Verification Code from a directory of files included in the archive
-	 * @param sourceDirectory
+	 * @param sourceDirectory source directory for the package verification code
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
 	 * @return PackageVerificationCode based on the files in the sourceDirectory
-	 * @throws NoSuchAlgorithmException
-	 * @throws IOException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws NoSuchAlgorithmException unexpected error creating checksums
+	 * @throws IOException on file or directory read errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public SpdxPackageVerificationCode generatePackageVerificationCode(File sourceDirectory, 
 			File[] skippedFiles, IModelStore modelStore, String documentUri) throws NoSuchAlgorithmException, IOException, InvalidSPDXAnalysisException {
@@ -107,10 +107,10 @@ public class VerificationCodeGenerator {
 		Set<String> skippedFilesPath = new TreeSet<>();
 		String rootOfDirectory = sourceDirectory.getAbsolutePath();
 		int rootLen = rootOfDirectory.length()+1;
-		for (int i = 0; i < skippedFiles.length; i++) {
-			String skippedPath = normalizeFilePath(skippedFiles[i].getAbsolutePath().substring(rootLen));
-			skippedFilesPath.add(skippedPath);
-		}
+        for (File skippedFile : skippedFiles) {
+            String skippedPath = normalizeFilePath(skippedFile.getAbsolutePath().substring(rootLen));
+            skippedFilesPath.add(skippedPath);
+        }
 		List<String> fileChecksums = new ArrayList<>();
 		collectFileData(rootOfDirectory, sourceDirectory, fileChecksums, skippedFilesPath);
 		String[] skippedFileNames = new String[skippedFilesPath.size()];
@@ -128,17 +128,17 @@ public class VerificationCodeGenerator {
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
 	 * @return a PackageVerificationCode with the value created from the fileChecksums
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws NoSuchAlgorithmException unexpected error creating checksums
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	protected SpdxPackageVerificationCode generatePackageVerificationCode(List<String> fileChecksums,
 			String[] skippedFilePaths, IModelStore modelStore, String documentUri) throws NoSuchAlgorithmException, InvalidSPDXAnalysisException {
 		Collections.sort(fileChecksums);
 		MessageDigest verificationCodeDigest = MessageDigest.getInstance("SHA-1");
-		for (int i = 0;i < fileChecksums.size(); i++) {
-			byte[] hashInput = fileChecksums.get(i).getBytes(Charset.forName("UTF-8"));
-			verificationCodeDigest.update(hashInput);
-		}
+        for (String fileChecksum : fileChecksums) {
+            byte[] hashInput = fileChecksum.getBytes(StandardCharsets.UTF_8);
+            verificationCodeDigest.update(hashInput);
+        }
 		String value = convertChecksumToString(verificationCodeDigest.digest());
 		SpdxPackageVerificationCode retval = new SpdxPackageVerificationCode(modelStore, documentUri, modelStore.getNextId(IdType.Anonymous), null, true);
 		retval.setValue(value);
@@ -150,10 +150,11 @@ public class VerificationCodeGenerator {
 
 	/**
 	 * Collect the file level checksums and filenames
-	 * @param prefixForRelative The portion of the filepath which preceeds the relative file path for the archive
-	 * @param sourceDirectory
-	 * @param fileNameAndChecksums
-	 * @throws IOException
+	 * @param prefixForRelative The portion of the filepath which precedes the relative file path for the archive
+	 * @param sourceDirectory directory to collectd the file data from
+	 * @param fileNameAndChecksums resultant list of file names and checksums - added to in this method
+	 * @param skippedFiles files to be ignored in the package verification result
+	 * @throws IOException on IO error reading the directory of file
 	 */
 	private void collectFileData(String prefixForRelative, File sourceDirectory,
 			List<String> fileNameAndChecksums, Set<String> skippedFiles) throws IOException {
@@ -164,26 +165,27 @@ public class VerificationCodeGenerator {
 		if (filesAndDirs == null) {
 			return;
 		}
-		for (int i = 0; i < filesAndDirs.length; i++) {
-			if (filesAndDirs[i].isDirectory()) {
-				collectFileData(prefixForRelative, filesAndDirs[i], fileNameAndChecksums, skippedFiles);
-			} else {
-				String filePath = normalizeFilePath(filesAndDirs[i].getAbsolutePath()
-						.substring(prefixForRelative.length()+1));
-				if (!skippedFiles.contains(filePath)) {
-					String checksumValue = this.fileChecksumGenerator.getFileChecksum(filesAndDirs[i]).toLowerCase();
-					fileNameAndChecksums.add(checksumValue);
-				}
-			}
-		}
+        for (File filesAndDir : filesAndDirs) {
+            if (filesAndDir.isDirectory()) {
+                collectFileData(prefixForRelative, filesAndDir, fileNameAndChecksums, skippedFiles);
+            } else {
+                String filePath = normalizeFilePath(filesAndDir.getAbsolutePath()
+                        .substring(prefixForRelative.length() + 1));
+                if (!skippedFiles.contains(filePath)) {
+                    String checksumValue = this.fileChecksumGenerator.getFileChecksum(filesAndDir).toLowerCase();
+                    fileNameAndChecksums.add(checksumValue);
+                }
+            }
+        }
 	}
 
 	/**
 	 * Normalizes a file path per the SPDX spec
-	 * @param nonNormalizedFilePath
-	 * @return
+	 * @param nonNormalizedFilePath original file path - may be unix or DOS format
+	 * @return file path normalized per SPDX spec
 	 */
-	public static String normalizeFilePath(String nonNormalizedFilePath) {
+	@SuppressWarnings("StatementWithEmptyBody")
+    public static String normalizeFilePath(String nonNormalizedFilePath) {
 		String filePath = nonNormalizedFilePath.replace('\\', '/').trim();
 		if (filePath.contains("../")) {
 			// need to remove these references
@@ -213,28 +215,28 @@ public class VerificationCodeGenerator {
 	}
 	/**
 	 * Convert a byte array SHA-1 digest into a 40 character hex string
-	 * @param digest
-	 * @return
+	 * @param digest message digest from checksum calculation
+	 * @return string representation of the checksum
 	 */
 	private static String convertChecksumToString(byte[] digest) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < digest.length; i++) {
-			String hex = Integer.toHexString(0xff & digest[i]);
-			if (hex.length() < 2) {
-				sb.append('0');
-			}
-			sb.append(hex);
-		}
+        for (byte b : digest) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() < 2) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
 		return sb.toString();
 	}
 	/**
-	 * @param sourceDirectory
+	 * @param sourceDirectory directory to create the verification code for
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws IOException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @return SPDX package verification code
+	 * @throws NoSuchAlgorithmException unexpected error creating checksums
+	 * @throws IOException on IO error reading files or directories
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public SpdxPackageVerificationCode generatePackageVerificationCode(
 			File sourceDirectory, IModelStore modelStore, String documentUri) throws NoSuchAlgorithmException, IOException, InvalidSPDXAnalysisException {

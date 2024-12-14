@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- *
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,11 +48,11 @@ import org.spdx.storage.PropertyDescriptor;
 
 /**
  * @author Gary O'Neall
- *
+ * <p>
  * In memory implementation of an SPDX store.
- *
+ * <p>
  * This implementation primarily uses <code>ConcurrentHashMaps</code>.
- *
+ * <p>
  * It is designed to be thread-safe and low CPU utilization.  It may use significant amounts of memory
  * for larger SPDX documents.
  *
@@ -89,23 +89,9 @@ public class InMemSpdxStore implements IModelStore {
 	private final ReadWriteLock transactionLock = new ReentrantReadWriteLock();
 	private final ReadWriteLock referenceCountLock = new ReentrantReadWriteLock();
 
-	private final IModelStoreLock readLock = new IModelStoreLock() {
+	private final IModelStoreLock readLock = () -> transactionLock.readLock().unlock();
 
-		@Override
-		public void unlock() {
-			transactionLock.readLock().unlock();
-		}
-
-	};
-
-	private final IModelStoreLock writeLock = new IModelStoreLock() {
-
-		@Override
-		public void unlock() {
-			transactionLock.writeLock().unlock();
-		}
-
-	};
+	private final IModelStoreLock writeLock = () -> transactionLock.writeLock().unlock();
 	
 	
 	public InMemSpdxStore() {
@@ -152,7 +138,8 @@ public class InMemSpdxStore implements IModelStore {
 		Matcher anonRefMatcher = ANON_ID_PATTERN_GENERATED.matcher(objectUri);
 		if (anonRefMatcher.matches()) {
 			checkUpdateNextAnonId(anonRefMatcher);
-			return;
+            //noinspection UnnecessaryReturnStatement
+            return;
 		}
 	}
 
@@ -208,7 +195,7 @@ public class InMemSpdxStore implements IModelStore {
 	 * Gets the item from the hashmap
 	 * @param objectUri Anonymous or URI ID
 	 * @return the item from the hash map
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	protected StoredTypedItem getItem(String objectUri) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = this.typedValueMap.get(objectUri.toLowerCase());
@@ -308,8 +295,8 @@ public class InMemSpdxStore implements IModelStore {
 	public Optional<Object> getValue(String objectUri, PropertyDescriptor propertyDescriptor) throws InvalidSPDXAnalysisException {
 		StoredTypedItem item = getItem(objectUri);
 		if (item.isCollectionProperty(propertyDescriptor)) {
-			logger.warn("Returning a collection for a getValue call for property "+propertyDescriptor.getName());
-			return  Optional.of(new ModelCollection<Object>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion(), null));
+            logger.warn("Returning a collection for a getValue call for property {}", propertyDescriptor.getName());
+			return  Optional.of(new ModelCollection<>(this, objectUri, propertyDescriptor, null, null, item.getSpecVersion(), null));
 		} else {
 			return Optional.ofNullable(item.getValue(propertyDescriptor));
 		}
@@ -319,12 +306,12 @@ public class InMemSpdxStore implements IModelStore {
 	public synchronized String getNextId(IdType idType) throws InvalidSPDXAnalysisException {
 		switch (idType) {
 			//TODO: Move the compat constants into it's own constants file
-			case Anonymous: return ANON_PREFIX+GENERATED+String.valueOf(nextAnonId++);
-			case LicenseRef: return SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+String.valueOf(nextNextLicenseId++);
-			case DocumentRef: return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+String.valueOf(nextNextDocumentId++);
-			case SpdxId: return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+String.valueOf(nextNextSpdxId++);
+			case Anonymous: return ANON_PREFIX+GENERATED+nextAnonId++;
+			case LicenseRef: return SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+nextNextLicenseId++;
+			case DocumentRef: return SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+nextNextDocumentId++;
+			case SpdxId: return SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM+GENERATED+nextNextSpdxId++;
 			case ListedLicense: throw new InvalidSPDXAnalysisException("Can not generate a license ID for a Listed License");
-			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+idType.toString());
+			default: throw new InvalidSPDXAnalysisException("Unknown ID type for next ID: "+ idType);
 		}
 	}
 
@@ -343,8 +330,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, @Nullable String typeFilter)
-			throws InvalidSPDXAnalysisException {
+	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, @Nullable String typeFilter) {
 		Iterator<StoredTypedItem> valueIter = typedValueMap.values().iterator();
 		List<TypedValue> allItems = new ArrayList<>();
 		while (valueIter.hasNext()) {
@@ -453,7 +439,7 @@ public class InMemSpdxStore implements IModelStore {
 	 * Remove all existing elements, properties, and values
 	 */
 	public void clear() {
-		this.typedValueMap.clear();;
+		this.typedValueMap.clear();
 	}
 
 	@Override
@@ -466,7 +452,7 @@ public class InMemSpdxStore implements IModelStore {
         try {
             if (getItem(objectUri).getReferenceCount() > 0) {
                 // find the element it is used by
-                logger.error("Can not object URI "+objectUri+".  It is in use");
+                logger.error("Can not object URI {}.  It is in use", objectUri);
                 throw new SpdxIdInUseException("Can not object URI "+objectUri+".  It is in use");
             }
             List<PropertyDescriptor> propertyDescriptors = this.getPropertyValueDescriptors(objectUri);
@@ -489,7 +475,7 @@ public class InMemSpdxStore implements IModelStore {
                 }
             }
             if (Objects.isNull(typedValueMap.remove(objectUri.toLowerCase()))) {
-                logger.error("Error deleting - object URI "+objectUri+" does not exist.");
+                logger.error("Error deleting - object URI {} does not exist.", objectUri);
                 throw new SpdxIdNotFoundException("Error deleting - object URI "+objectUri+" does not exist.");
             }
         } finally {

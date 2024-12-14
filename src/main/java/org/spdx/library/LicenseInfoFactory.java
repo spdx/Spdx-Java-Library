@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,9 +44,11 @@ import org.spdx.utility.license.LicenseExpressionParser;
  * Factory for creating SPDXLicenseInfo objects from a Jena model
  * @author Gary O'Neall
  */
+@SuppressWarnings("unused")
 public class LicenseInfoFactory {
 	
-	static final Logger logger = LoggerFactory.getLogger(LicenseInfoFactory.class.getName());
+	@SuppressWarnings("unused")
+    static final Logger logger = LoggerFactory.getLogger(LicenseInfoFactory.class.getName());
 	
 	public static final String NOASSERTION_LICENSE_NAME = "NOASSERTION";
 	public static final String NONE_LICENSE_NAME = "NONE";
@@ -192,8 +194,8 @@ public class LicenseInfoFactory {
 	 *			A licenseID must NOT be "AND" or "OR"
 	 * @param licenseString String conforming to the syntax
 	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException 
-	 * @throws DefaultStoreNotInitialized 
+	 * @throws InvalidLicenseStringException On invalid license expression
+	 * @throws DefaultStoreNotInitialized On the model store not being initialized - see DefaultModelStore in SPDX core package
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
 		return parseSPDXLicenseStringCompatV2(licenseString, null, null, null);
@@ -210,7 +212,7 @@ public class LicenseInfoFactory {
 	}
 	
 	/**
-	 * @return Array of all SPDX listed license IDs
+	 * @return List of all SPDX listed license IDs
 	 */
 	public static List<String> getSpdxListedLicenseIds() {
 		return ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
@@ -234,7 +236,7 @@ public class LicenseInfoFactory {
 	/**
 	 * @param id ID for the listed exception
 	 * @return the standard SPDX license exception or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException On SPDX parsing errors
 	 */
 	public static ListedLicenseException getListedExceptionById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionById(id);
@@ -243,7 +245,7 @@ public class LicenseInfoFactory {
 	/**
 	 * @param id ID for the listed exception
 	 * @return the standard SPDX license exception in SPDX Spec V2.X format or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException On SPDX parsing errors
 	 */
 	public static org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionV2ById(String id) throws InvalidSPDXAnalysisException {
 		return ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);

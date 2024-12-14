@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class SpdxFileComparer extends SpdxItemComparer {
 	/**
 	 *  Map of checksums found in one document but not another
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<Checksum>>> uniqueChecksums = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<Checksum>>> uniqueChecksums = new HashMap<>();
 
 	private boolean checksumsEquals = true;
 	private boolean typesEquals = true;
@@ -63,9 +63,9 @@ public class SpdxFileComparer extends SpdxItemComparer {
 	/**
 	 * Add a file to the comparer and compare to the existing files
 	 * @param spdxDocument document containing the file
-	 * @param spdxFile
-	 * @throws SpdxCompareException
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param spdxFile file to add
+	 * @throws SpdxCompareException on compare errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public void addDocumentFile(SpdxDocument spdxDocument,
 			SpdxFile spdxFile) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -107,40 +107,33 @@ public class SpdxFileComparer extends SpdxItemComparer {
 	/**
 	 * Compare the checks for a new file being added to the existing
 	 * package checksums filling in the unique checksums map
-	 * @param spdxDocument
-	 * @param checksums
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param spdxDocument document containing the checksums
+	 * @param checksums checksums to compare
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void compareNewFileChecksums(SpdxDocument spdxDocument,
-			Collection<Checksum> checksums) throws SpdxCompareException, InvalidSPDXAnalysisException {
+			Collection<Checksum> checksums) throws InvalidSPDXAnalysisException {
 
 		Map<SpdxDocument, List<Checksum>> docUniqueChecksums = new HashMap<>();
 		this.uniqueChecksums.put(spdxDocument, docUniqueChecksums);
-		Iterator<Entry<SpdxDocument,SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument,SpdxItem> entry = iter.next();
-			if (entry.getValue() instanceof SpdxFile) {
-				Collection<Checksum> compareChecksums = ((SpdxFile)entry.getValue()).getChecksums();
-				List<Checksum> uniqueChecksums = SpdxComparer.findUniqueChecksums(checksums, compareChecksums);
-				if (uniqueChecksums.size() > 0) {
-					this.checksumsEquals = false;
-					this.differenceFound = true;
-				}
-				docUniqueChecksums.put(entry.getKey(), uniqueChecksums);
-				Map<SpdxDocument, List<Checksum>> compareUniqueChecksums = this.uniqueChecksums.get(entry.getKey());
-				if (compareUniqueChecksums == null) {
-					compareUniqueChecksums = new HashMap<>();
-					this.uniqueChecksums.put(entry.getKey(), compareUniqueChecksums);
-				}
-				uniqueChecksums = SpdxComparer.findUniqueChecksums(compareChecksums, checksums);
-				if (uniqueChecksums.size() > 0) {
-					this.checksumsEquals = false;
-					this.differenceFound = true;
-				}
-				compareUniqueChecksums.put(spdxDocument, uniqueChecksums);
-			}
-		}
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            if (entry.getValue() instanceof SpdxFile) {
+                Collection<Checksum> compareChecksums = ((SpdxFile) entry.getValue()).getChecksums();
+                List<Checksum> uniqueChecksums = SpdxComparer.findUniqueChecksums(checksums, compareChecksums);
+                if (!uniqueChecksums.isEmpty()) {
+                    this.checksumsEquals = false;
+                    this.differenceFound = true;
+                }
+                docUniqueChecksums.put(entry.getKey(), uniqueChecksums);
+                Map<SpdxDocument, List<Checksum>> compareUniqueChecksums = this.uniqueChecksums.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                uniqueChecksums = SpdxComparer.findUniqueChecksums(compareChecksums, checksums);
+                if (!uniqueChecksums.isEmpty()) {
+                    this.checksumsEquals = false;
+                    this.differenceFound = true;
+                }
+                compareUniqueChecksums.put(spdxDocument, uniqueChecksums);
+            }
+        }
 	}
 
 	
@@ -166,10 +159,10 @@ public class SpdxFileComparer extends SpdxItemComparer {
 	
 	/**
 	 * Get the checksums which are present in the file contained document A but not in document B
-	 * @param docA
-	 * @param docB
-	 * @return
-	 * @throws SpdxCompareException 
+	 * @param docA document to compare
+	 * @param docB document to compare
+	 * @return  the checksums which are present in the file contained document A but not in document B
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public List<Checksum> getUniqueChecksums(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
@@ -195,7 +188,7 @@ public class SpdxFileComparer extends SpdxItemComparer {
 
 	/**
 	 * checks to make sure there is not a compare in progress
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 * 
 	 */
 	@Override
@@ -225,8 +218,8 @@ public class SpdxFileComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @return
-	 * @throws SpdxCompareException 
+	 * @return true if any differences are found
+	 * @throws SpdxCompareException on compare errors
 	 */
 	@Override
     public boolean isDifferenceFound() throws SpdxCompareException {
@@ -238,41 +231,41 @@ public class SpdxFileComparer extends SpdxItemComparer {
 
 	/**
 	 * Return a file difference for the file contained in two different documents
-	 * @param docA
-	 * @param docB
-	 * @return
-	 * @throws SpdxCompareException
+	 * @param docA document containing files to compare
+	 * @param docB document containing files to compare
+	 * @return file differences between docA and docB
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public SpdxFileDifference getFileDifference(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
 		checkCompareMade();
 		try {
 			SpdxItem itemA = this.documentItem.get(docA);
-			if (itemA == null || !(itemA instanceof SpdxFile)) {
+			if (!(itemA instanceof SpdxFile)) {
 				throw new SpdxCompareException("No SPDX File associated with "+docA.getName());
 			}
 			SpdxFile fileA = (SpdxFile)itemA;
 			SpdxItem itemB = this.documentItem.get(docB);
-			if (itemB == null || !(itemB instanceof SpdxFile)) {
+			if (!(itemB instanceof SpdxFile)) {
 				throw new SpdxCompareException("No SPDX File associated with "+docB.getName());
 			}
 			SpdxFile fileB = (SpdxFile)itemB;
 			List<AnyLicenseInfo> uniqueLicenseInfoInFilesA = this.getUniqueSeenLicenses(docA, docB);
 			List<AnyLicenseInfo> uniqueLicenseInfoInFilesB = this.getUniqueSeenLicenses(docB, docA);
-			boolean licenseInfoInFilesEquals = uniqueLicenseInfoInFilesA.size() == 0 &&
-					uniqueLicenseInfoInFilesB.size() == 0;
+			boolean licenseInfoInFilesEquals = uniqueLicenseInfoInFilesA.isEmpty() &&
+                    uniqueLicenseInfoInFilesB.isEmpty();
 			List<Checksum> uniqueChecksumsA = this.getUniqueChecksums(docA, docB);
 			List<Checksum> uniqueChecksumsB = this.getUniqueChecksums(docB, docA);
-			boolean checksumsEquals = uniqueChecksumsA.size() == 0 && 
-					uniqueChecksumsB.size() == 0;
+			boolean checksumsEquals = uniqueChecksumsA.isEmpty() &&
+                    uniqueChecksumsB.isEmpty();
 			List<Relationship> uniqueRelationshipA = this.getUniqueRelationship(docA, docB);
 			List<Relationship> uniqueRelationshipB = this.getUniqueRelationship(docB, docA);
-			boolean relationshipsEquals = uniqueRelationshipA.size() == 0 &&
-					uniqueRelationshipB.size() == 0;
+			boolean relationshipsEquals = uniqueRelationshipA.isEmpty() &&
+                    uniqueRelationshipB.isEmpty();
 			List<Annotation> uniqueAnnotationsA = this.getUniqueAnnotations(docA, docB);
 			List<Annotation> uniqueAnnotationsB = this.getUniqueAnnotations(docB, docA);
-			boolean annotationsEquals = uniqueAnnotationsA.size() == 0 &&
-					uniqueAnnotationsB.size() == 0;
+			boolean annotationsEquals = uniqueAnnotationsA.isEmpty() &&
+                    uniqueAnnotationsB.isEmpty();
 			
 			return new SpdxFileDifference(fileA, fileB, 
 					fileA.getLicenseConcluded().equals(fileB.getLicenseConcluded()),
@@ -281,7 +274,7 @@ public class SpdxFileComparer extends SpdxItemComparer {
 					relationshipsEquals, uniqueRelationshipB, uniqueRelationshipB,
 					annotationsEquals, uniqueAnnotationsA, uniqueAnnotationsB);
 		} catch (InvalidSPDXAnalysisException e) {
-			throw (new SpdxCompareException("Error reading SPDX file propoerties: "+e.getMessage(),e));
+			throw (new SpdxCompareException("Error reading SPDX file properties: "+e.getMessage(),e));
 		}
 	}	
 }

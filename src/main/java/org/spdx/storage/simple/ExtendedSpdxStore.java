@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,16 +31,17 @@ import org.spdx.storage.PropertyDescriptor;
 /**
  * A simple abstract SPDX store that stores everything in an underlying model store which is initialized in the
  * constructor.  
- * 
+ * <p>
  * This class can be useful for subclassing and overriding specific methods and/or implementing serialization
  * with a choice of underlying message stores.
  * 
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings("unused")
 public abstract class ExtendedSpdxStore implements IModelStore {
 	
-	private IModelStore baseStore;
+	private final IModelStore baseStore;
 	
 	/**
 	 * @param baseStore store used as the base for this extended SPDX store

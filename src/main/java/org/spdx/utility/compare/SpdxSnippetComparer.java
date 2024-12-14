@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	 * Add a snippet to the comparer and performs the comparison to any existing documents
 	 * @param spdxDocument document containing the package
 	 * @param snippet snippet to be added
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public void addDocumentSnippet(SpdxDocument spdxDocument,
 			SpdxSnippet snippet) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -136,44 +136,28 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	/**
 	 * Compares the snippetFromFiles and updates the properties isSnippetFromFilesEquals,
 	 * uniqueSnippetFromFiles, and snippetFromFilesDifferences
-	 * @param fromFile
-	 * @param fromFile2
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param fromFile snippet from file to compare
+	 * @param fromFile2 second snippet from file to compare
+	 * @throws SpdxCompareException on compare errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void compareSnippetFromFiles(SpdxDocument spdxDocument, SpdxFile fromFile, 
 			SpdxDocument document2, SpdxFile fromFile2) throws SpdxCompareException, InvalidSPDXAnalysisException {
 		if (fromFile == null) {
 			if (fromFile2 != null) {
-				Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.get(document2);
-				if (unique == null) {
-					unique = new HashMap<>();
-					this.uniqueSnippetFromFile.put(document2, unique);
-				}
-				unique.put(spdxDocument, fromFile2);
+                Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.computeIfAbsent(document2, k -> new HashMap<>());
+                unique.put(spdxDocument, fromFile2);
 				this.snippetFromFilesEquals = false;
 			}
 		} else if (fromFile2 == null) {
-			Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.get(spdxDocument);
-			if (unique == null) {
-				unique = new HashMap<>();
-				this.uniqueSnippetFromFile.put(spdxDocument, unique);
-			}
-			unique.put(document2, fromFile);
+            Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+            unique.put(document2, fromFile);
 			this.snippetFromFilesEquals = false;
 		} else if (!Objects.equals(fromFile2.getName(), fromFile.getName())) {
-			Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.get(spdxDocument);
-			if (unique == null) {
-				unique = new HashMap<>();
-				this.uniqueSnippetFromFile.put(spdxDocument, unique);
-			}
-			unique.put(document2, fromFile);
-			Map<SpdxDocument, SpdxFile> unique2 = this.uniqueSnippetFromFile.get(document2);
-			if (unique2 == null) {
-				unique2 = new HashMap<>();
-				this.uniqueSnippetFromFile.put(document2, unique2);
-			}
-			unique2.put(spdxDocument, fromFile2);
+            Map<SpdxDocument, SpdxFile> unique = this.uniqueSnippetFromFile.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+            unique.put(document2, fromFile);
+            Map<SpdxDocument, SpdxFile> unique2 = this.uniqueSnippetFromFile.computeIfAbsent(document2, k -> new HashMap<>());
+            unique2.put(spdxDocument, fromFile2);
 			this.snippetFromFilesEquals = false;
 		} else {
 			SpdxFileComparer fileCompare = new SpdxFileComparer(this.extractedLicenseIdMap);
@@ -183,12 +167,8 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 				this.snippetFromFilesEquals = false;
 				Map<SpdxDocument, SpdxFileDifference> comparerMap = new HashMap<>();
 				this.snippetFromFileDifferences.put(spdxDocument, comparerMap);
-				Map<SpdxDocument, SpdxFileDifference> comparerMap2 = this.snippetFromFileDifferences.get(document2);
-				if (comparerMap2 == null) {
-					comparerMap2 = new HashMap<>();
-					this.snippetFromFileDifferences.put(document2, comparerMap2);
-				}
-				comparerMap.put(document2, fileCompare.getFileDifference(spdxDocument, document2));
+                Map<SpdxDocument, SpdxFileDifference> comparerMap2 = this.snippetFromFileDifferences.computeIfAbsent(document2, k -> new HashMap<>());
+                comparerMap.put(document2, fileCompare.getFileDifference(spdxDocument, document2));
 				comparerMap2.put(spdxDocument, fileCompare.getFileDifference(document2, spdxDocument));
 			}
 		}
@@ -199,7 +179,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 
 	/**
 	 * @return the differenceFound
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	@Override
     public boolean isDifferenceFound() throws SpdxCompareException {
@@ -209,7 +189,7 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	
 	/**
 	 * checks to make sure there is not a compare in progress
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 * 
 	 */
 	@Override
@@ -222,10 +202,10 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	
 	/**
 	 * Get any file difference for the Spdx Snippet From File between the two SPDX documents
-	 * If the fileName is different, the they are considered unique files and the getUniqueSnippetFromFile should be called
+	 * If the fileName is different, they are considered unique files and the getUniqueSnippetFromFile should be called
 	 * to obtain the unique file
-	 * @param docA
-	 * @param docB
+	 * @param docA A document to compare
+	 * @param docB B document to compare
 	 * @return the file difference or null if there is no file difference
 	 */
 	public SpdxFileDifference getSnippetFromFileDifference(SpdxDocument docA, 
@@ -273,9 +253,9 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 
 	/**
 	 * Get an SpdxFile that only exists in docA but not docB
-	 * @param docA
-	 * @param docB
-	 * @return
+	 * @param docA A document to compare
+	 * @param docB B document to compare
+	 * @return an SpdxFile that only exists in docA but not docB
 	 */
 	public SpdxFile getUniqueSnippetFromFile(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
@@ -294,12 +274,12 @@ public class SpdxSnippetComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @param spdxDocument
-	 * @return
+	 * @param spdxDocument document containing the snippet
+	 * @return snippet in the spdxDocument
 	 */
 	public SpdxSnippet getDocSnippet(SpdxDocument spdxDocument) {
 		SpdxItem retItem = this.documentItem.get(spdxDocument);
-		if (retItem != null && retItem instanceof SpdxSnippet) {
+		if (retItem instanceof SpdxSnippet) {
 			return (SpdxSnippet)retItem;
 		} else {
 			return null;

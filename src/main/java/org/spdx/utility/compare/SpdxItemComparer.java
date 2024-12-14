@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,11 +50,11 @@ public class SpdxItemComparer {
 	/**
 	 * Map of unique extractedLicenseInfos between two documents
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<AnyLicenseInfo>>> uniqueLicenseInfosInFiles = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<AnyLicenseInfo>>> uniqueLicenseInfosInFiles = new HashMap<>();
 	
 	private boolean commentsEquals = true;
 	private boolean copyrightsEquals = true;
-	private boolean licenseCommmentsEquals = true;
+	private boolean licenseCommentsEquals = true;
 	private boolean relationshipsEquals = true;
 	private boolean attributionTextEquals = true;
 	/**
@@ -66,7 +66,7 @@ public class SpdxItemComparer {
 	/**
 	 * Map of unique annotations between two documents
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<Annotation>>> uniqueAnnotations = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<Annotation>>> uniqueAnnotations = new HashMap<>();
 	
 	/**
 	 * Map of SPDX document to Items
@@ -86,10 +86,10 @@ public class SpdxItemComparer {
 	/**
 	 * Add a new item to the comparer and compare the contents of the item
 	 * to all items which have been previously added
-	 * @param spdxDocument
-	 * @param spdxItem
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param spdxDocument document containing the item
+	 * @param spdxItem item to add
+	 * @throws SpdxCompareException on compare error
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public void addDocumentItem(SpdxDocument spdxDocument,
 			SpdxItem spdxItem) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -98,9 +98,7 @@ public class SpdxItemComparer {
 		}
 		Optional<String> oName = spdxItem.getName();
 		if (this.name == null) {
-			if (oName.isPresent()) {
-				this.name = oName.get();
-			}
+            oName.ifPresent(s -> this.name = s);
 		} else if (oName.isPresent() && !this.name.equals(oName.get()) && !(this instanceof SpdxSnippetComparer)) {
 			throw new SpdxCompareException("Names do not match for item being added to comparer: "+
 					spdxItem.getName()+", expecting "+this.name);
@@ -129,7 +127,7 @@ public class SpdxItemComparer {
 			// license comments
 			if (!SpdxComparer.stringsEqual(spdxItem.getLicenseComments(),
 					itemB.getLicenseComments())) {
-				this.licenseCommmentsEquals = false;
+				this.licenseCommentsEquals = false;
 				this.itemDifferenceFound = true;
 			}
 			// attributionText
@@ -153,38 +151,28 @@ public class SpdxItemComparer {
 	 * as well as the annotationsEquals flag and sets the differenceFound to
 	 * true if a difference was found for a newly added item
 	 * @param spdxDocument document containing the item
-	 * @param annotations
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param annotations annotations to compare
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	private void compareAnnotation(SpdxDocument spdxDocument,
 			Collection<Annotation> annotations) throws InvalidSPDXAnalysisException {
-		Map<SpdxDocument, List<Annotation>> uniqueDocAnnotations = this.uniqueAnnotations.get(spdxDocument);
-		if (uniqueDocAnnotations == null) {
-			uniqueDocAnnotations = new HashMap<>();
-			this.uniqueAnnotations.put(spdxDocument, uniqueDocAnnotations);
-		}
-		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument, SpdxItem> entry = iter.next();
-			Map<SpdxDocument, List<Annotation>> compareDocAnnotations = this.uniqueAnnotations.get(entry.getKey());
-			if (compareDocAnnotations == null) {
-				compareDocAnnotations = new HashMap<>();
-				this.uniqueAnnotations.put(entry.getKey(), compareDocAnnotations);
-			}
-			Collection<Annotation> compareAnnotations = entry.getValue().getAnnotations();
-			List<Annotation> uniqueAnnotations = SpdxComparer.findUniqueAnnotations(annotations, compareAnnotations);
-			if (uniqueAnnotations.size() > 0) {
-				this.annotationsEquals = false;
-				this.itemDifferenceFound = true;
-			}
-			uniqueDocAnnotations.put(entry.getKey(), uniqueAnnotations);
-			uniqueAnnotations = SpdxComparer.findUniqueAnnotations(compareAnnotations, annotations);
-			if (uniqueAnnotations.size() > 0) {
-				this.annotationsEquals = false;
-				this.itemDifferenceFound = true;
-			}
-			compareDocAnnotations.put(spdxDocument, uniqueAnnotations);
-		}
+        Map<SpdxDocument, List<Annotation>> uniqueDocAnnotations = this.uniqueAnnotations.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            Map<SpdxDocument, List<Annotation>> compareDocAnnotations = this.uniqueAnnotations.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+            Collection<Annotation> compareAnnotations = entry.getValue().getAnnotations();
+            List<Annotation> uniqueAnnotations = SpdxComparer.findUniqueAnnotations(annotations, compareAnnotations);
+            if (!uniqueAnnotations.isEmpty()) {
+                this.annotationsEquals = false;
+                this.itemDifferenceFound = true;
+            }
+            uniqueDocAnnotations.put(entry.getKey(), uniqueAnnotations);
+            uniqueAnnotations = SpdxComparer.findUniqueAnnotations(compareAnnotations, annotations);
+            if (!uniqueAnnotations.isEmpty()) {
+                this.annotationsEquals = false;
+                this.itemDifferenceFound = true;
+            }
+            compareDocAnnotations.put(spdxDocument, uniqueAnnotations);
+        }
 	}
 
 	/**
@@ -192,38 +180,28 @@ public class SpdxItemComparer {
 	 * as well as the relationshipsEquals flag and sets the differenceFound to
 	 * true if a difference was found for a newly added item
 	 * @param spdxDocument document containing the item
-	 * @param relationships
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param relationships relationships to compare
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	private void compareRelationships(SpdxDocument spdxDocument,
 			Collection<Relationship> relationships) throws InvalidSPDXAnalysisException {
-		Map<SpdxDocument, List<Relationship>> uniqueDocRelationship = this.uniqueRelationships.get(spdxDocument);
-		if (uniqueDocRelationship == null) {
-			uniqueDocRelationship = new HashMap<>();
-			this.uniqueRelationships.put(spdxDocument, uniqueDocRelationship);
-		}
-		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument, SpdxItem> entry = iter.next();
-			Map<SpdxDocument, List<Relationship>> uniqueCompareRelationship = this.uniqueRelationships.get(entry.getKey());
-			if (uniqueCompareRelationship == null) {
-				uniqueCompareRelationship = new HashMap<>();
-				this.uniqueRelationships.put(entry.getKey(), uniqueCompareRelationship);
-			}
-			Collection<Relationship> compareRelationships = entry.getValue().getRelationships();
-			List<Relationship> uniqueRelationships = SpdxComparer.findUniqueRelationships(relationships, compareRelationships);
-			if (uniqueRelationships.size() > 0) {
-				this.relationshipsEquals = false;
-				this.itemDifferenceFound = true;
-			}
-			uniqueDocRelationship.put(entry.getKey(), uniqueRelationships);
-			uniqueRelationships = SpdxComparer.findUniqueRelationships(compareRelationships, relationships);
-			if (uniqueRelationships.size() > 0) {
-				this.relationshipsEquals = false;
-				this.itemDifferenceFound = true;
-			}
-			uniqueCompareRelationship.put(spdxDocument, uniqueRelationships);
-		}
+        Map<SpdxDocument, List<Relationship>> uniqueDocRelationship = this.uniqueRelationships.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            Map<SpdxDocument, List<Relationship>> uniqueCompareRelationship = this.uniqueRelationships.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+            Collection<Relationship> compareRelationships = entry.getValue().getRelationships();
+            List<Relationship> uniqueRelationships = SpdxComparer.findUniqueRelationships(relationships, compareRelationships);
+            if (!uniqueRelationships.isEmpty()) {
+                this.relationshipsEquals = false;
+                this.itemDifferenceFound = true;
+            }
+            uniqueDocRelationship.put(entry.getKey(), uniqueRelationships);
+            uniqueRelationships = SpdxComparer.findUniqueRelationships(compareRelationships, relationships);
+            if (!uniqueRelationships.isEmpty()) {
+                this.relationshipsEquals = false;
+                this.itemDifferenceFound = true;
+            }
+            uniqueCompareRelationship.put(spdxDocument, uniqueRelationships);
+        }
 	}
 
 	/**
@@ -231,51 +209,41 @@ public class SpdxItemComparer {
 	 * as well as the seenLicenseEquals flag and sets the differenceFound to
 	 * true if a difference was found for a newly added item
 	 * @param spdxDocument document containing the item
-	 * @param licenses
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param licenses licenses to compare
+	 * @throws SpdxCompareException on compare errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	private void compareLicenseInfosInFiles(SpdxDocument spdxDocument,
 			Collection<AnyLicenseInfo> licenses) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		Map<SpdxDocument, List<AnyLicenseInfo>> uniqueDocLicenses = 
-				this.uniqueLicenseInfosInFiles.get(spdxDocument);
-		if (uniqueDocLicenses == null) {
-			uniqueDocLicenses = new HashMap<>();
-			this.uniqueLicenseInfosInFiles.put(spdxDocument, uniqueDocLicenses);
-		}
-		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument, SpdxItem> entry = iter.next();
-			Map<SpdxDocument, List<AnyLicenseInfo>> uniqueCompareLicenses = 
-					this.uniqueLicenseInfosInFiles.get(entry.getKey());
-			if (uniqueCompareLicenses == null) {
-				uniqueCompareLicenses = new HashMap<>();
-				this.uniqueLicenseInfosInFiles.put(entry.getKey(), uniqueCompareLicenses);
-			}
-			Collection<AnyLicenseInfo> compareLicenses = entry.getValue().getLicenseInfoFromFiles();
-			List<AnyLicenseInfo> uniqueInDoc = new ArrayList<>();
-			List<AnyLicenseInfo> uniqueInCompare = new ArrayList<>();
-			Map<String, String> licenseXlationMap = this.extractedLicenseIdMap.get(spdxDocument).get(entry.getKey());
-			compareLicenseCollections(licenses, compareLicenses, uniqueInDoc, uniqueInCompare, licenseXlationMap);
-			if (uniqueInDoc.size() > 0 || uniqueInCompare.size() > 0) {
-				this.seenLicenseEquals = false;
-				this.itemDifferenceFound = true;
-			}
-			uniqueDocLicenses.put(entry.getKey(), uniqueInDoc);
-			uniqueCompareLicenses.put(spdxDocument, uniqueInCompare);
-		}
+        Map<SpdxDocument, List<AnyLicenseInfo>> uniqueDocLicenses =
+                this.uniqueLicenseInfosInFiles.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            Map<SpdxDocument, List<AnyLicenseInfo>> uniqueCompareLicenses =
+                    this.uniqueLicenseInfosInFiles.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+            Collection<AnyLicenseInfo> compareLicenses = entry.getValue().getLicenseInfoFromFiles();
+            List<AnyLicenseInfo> uniqueInDoc = new ArrayList<>();
+            List<AnyLicenseInfo> uniqueInCompare = new ArrayList<>();
+            Map<String, String> licenseXlationMap = this.extractedLicenseIdMap.get(spdxDocument).get(entry.getKey());
+            compareLicenseCollections(licenses, compareLicenses, uniqueInDoc, uniqueInCompare, licenseXlationMap);
+            if (!uniqueInDoc.isEmpty() || !uniqueInCompare.isEmpty()) {
+                this.seenLicenseEquals = false;
+                this.itemDifferenceFound = true;
+            }
+            uniqueDocLicenses.put(entry.getKey(), uniqueInDoc);
+            uniqueCompareLicenses.put(spdxDocument, uniqueInCompare);
+        }
 	}
 		
 	/**
 	 * Compares to arrays of licenses updating the alUniqueA and alUniqueB to
 	 * include any licenses found in A but not B and B but not A resp.
-	 * @param licensesA
-	 * @param licensesB
-	 * @param alUniqueA
-	 * @param alUniqueB
-	 * @param licenseXlationMap
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param licensesA A licenses to compare
+	 * @param licensesB B licenses to compare
+	 * @param alUniqueA list of licenses that are in A but not in B
+	 * @param alUniqueB list of licenses that are in B but not in A
+	 * @param licenseXlationMap map to translate non-listed license IDs
+	 * @throws SpdxCompareException on compare errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	private void compareLicenseCollections(Collection<AnyLicenseInfo> licensesA,
 			Collection<AnyLicenseInfo> licensesB,
@@ -331,10 +299,10 @@ public class SpdxItemComparer {
 
 	/**
 	 * Get any licenses found in docA but not in docB
-	 * @param docA
-	 * @param docB
-	 * @return
-	 * @throws SpdxCompareException
+	 * @param docA A document to compare
+	 * @param docB B document to compare
+	 * @return any licenses found in docA but not in docB
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public List<AnyLicenseInfo> getUniqueSeenLicenses(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
@@ -375,12 +343,12 @@ public class SpdxItemComparer {
 	public boolean isLicenseCommmentsEquals() throws SpdxCompareException {
 		checkInProgress();
 		checkCompareMade();
-		return licenseCommmentsEquals;
+		return licenseCommentsEquals;
 	}
 
 	/**
 	 * checks to make sure there is not a compare in progress
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 * 
 	 */
 	protected void checkInProgress() throws SpdxCompareException {
@@ -393,15 +361,15 @@ public class SpdxItemComparer {
 	 * @throws SpdxCompareException if no comparisons have been made
 	 */
 	protected void checkCompareMade() throws SpdxCompareException {
-		if (this.documentItem.entrySet().size() < 1) {
+		if (this.documentItem.isEmpty()) {
 			throw new SpdxCompareException("Trying to obtain results of a file compare before a file compare has been performed");
 		}	
 	}
 
 
 	/**
-	 * @return
-	 * @throws SpdxCompareException 
+	 * @return true if any difference is found in the item
+	 * @throws SpdxCompareException on compare error
 	 */
 	public boolean isDifferenceFound() throws SpdxCompareException {
 		checkInProgress();
@@ -422,9 +390,9 @@ public class SpdxItemComparer {
 
 	/**
 	 * Get the item contained by the document doc
-	 * @param doc
-	 * @return
-	 * @throws SpdxCompareException
+	 * @param doc document containing the item
+	 * @return the item contained by the document doc
+	 * @throws SpdxCompareException on compare error
 	 */
 	public SpdxItem getItem(SpdxDocument doc) throws SpdxCompareException {
 		checkInProgress();
@@ -444,10 +412,10 @@ public class SpdxItemComparer {
 
 	/**
 	 * Get relationships that are in docA but not in docB
-	 * @param docA
-	 * @param docB
-	 * @return
-	 * @throws SpdxCompareException
+	 * @param docA A document to compare
+	 * @param docB B document to compare
+	 * @return relationships that are in docA but not in docB
+	 * @throws SpdxCompareException on compare error
 	 */
 	public List<Relationship> getUniqueRelationship(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
@@ -476,7 +444,7 @@ public class SpdxItemComparer {
 
 	/**
 	 * @return the attributionTextEquals
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare error
 	 */
 	public boolean isAttributionTextEquals() throws SpdxCompareException {
 		checkInProgress();
@@ -486,10 +454,10 @@ public class SpdxItemComparer {
 
 	/**
 	 * Get annotations that are in docA but not in docB
-	 * @param docA
-	 * @param docB
-	 * @return
-	 * @throws SpdxCompareException
+	 * @param docA A document to compare
+	 * @param docB B document to compare
+	 * @return annotations that are in docA but not in docB
+	 * @throws SpdxCompareException on compare error
 	 */
 	public List<Annotation> getUniqueAnnotations(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();

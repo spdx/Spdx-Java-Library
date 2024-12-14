@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,25 +33,25 @@ import org.spdx.library.model.v2.license.AnyLicenseInfo;
  */
 public class SpdxItemDifference {
 	
-	private String name;
-	private String commentA;
-	private String commentB;
-	private String concludedLicenseA;
-	private String concludedLicenseB;
-	private boolean concludedLicenseEquals;
+	private final String name;
+	private final String commentA;
+	private final String commentB;
+	private final String concludedLicenseA;
+	private final String concludedLicenseB;
+	private final boolean concludedLicenseEquals;
 	private String copyrightA;
 	private String copyrightB;
-	private String licenseCommentsA;
-	private String licenseCommentsB;
-	private boolean seenLicensesEqual;
-	private List<AnyLicenseInfo> uniqueSeenLicensesA;
-	private List<AnyLicenseInfo> uniqueSeenLicensesB;
-	private boolean relationshipsEquals;
-	private List<Relationship> uniqueRelationshipA;
-	private List<Relationship> uniqueRelationshipB;
-	private boolean annotationsEquals;
-	private List<Annotation> uniqueAnnotationsA;
-	private List<Annotation> uniqueAnnotationsB;
+	private final String licenseCommentsA;
+	private final String licenseCommentsB;
+	private final boolean seenLicensesEqual;
+	private final List<AnyLicenseInfo> uniqueSeenLicensesA;
+	private final List<AnyLicenseInfo> uniqueSeenLicensesB;
+	private final boolean relationshipsEquals;
+	private final List<Relationship> uniqueRelationshipA;
+	private final List<Relationship> uniqueRelationshipB;
+	private final boolean annotationsEquals;
+	private final List<Annotation> uniqueAnnotationsA;
+	private final List<Annotation> uniqueAnnotationsB;
 	
 	public SpdxItemDifference(SpdxItem itemA, SpdxItem itemB, 
 			boolean concludedLicensesEqual, boolean seenLicensesEqual,
@@ -63,25 +63,13 @@ public class SpdxItemDifference {
 			boolean annotationsEquals,
 			List<Annotation> uniqueAnnotationsA,
 			List<Annotation> uniqueAnnotationsB
-			) throws SpdxCompareException, InvalidSPDXAnalysisException {
+			) throws InvalidSPDXAnalysisException {
 	    Optional<String> oNameA = itemA.getName();
-		if (oNameA.isPresent()) {
-			this.name = oNameA.get();
-		} else {
-			this.name = "";
-		}
+        this.name = oNameA.orElse("");
 		Optional<String> oCommentA = itemA.getComment();
-		if (oCommentA.isPresent()) {
-			this.commentA = oCommentA.get();
-		} else {
-			this.commentA = "";
-		}
+        this.commentA = oCommentA.orElse("");
 		Optional<String> oCommentB = itemB.getComment();
-		if (oCommentB.isPresent()) {
-			this.commentB = oCommentB.get();
-		} else {
-			this.commentB = "";
-		}
+        this.commentB = oCommentB.orElse("");
 		this.concludedLicenseA = itemA.getLicenseConcluded().toString();
 		this.concludedLicenseB = itemB.getLicenseConcluded().toString();
 		this.concludedLicenseEquals = concludedLicensesEqual;
@@ -94,17 +82,9 @@ public class SpdxItemDifference {
 			this.copyrightB = "";
 		}
 		Optional<String> oLicenseCommentsA = itemA.getLicenseComments();
-		if ( oLicenseCommentsA.isPresent()) {
-			this.licenseCommentsA = oLicenseCommentsA.get();
-		} else {
-			this.licenseCommentsA = "";
-		}
+        this.licenseCommentsA = oLicenseCommentsA.orElse("");
 		Optional<String> oLicenseCommentsB = itemB.getLicenseComments();
-		if (oLicenseCommentsB.isPresent()) {
-			this.licenseCommentsB = oLicenseCommentsB.get();
-		} else {
-			this.licenseCommentsB = "";
-		}
+        this.licenseCommentsB = oLicenseCommentsB.orElse("");
 		this.seenLicensesEqual = seenLicensesEqual;
 		this.uniqueSeenLicensesA = uniqueSeenLicensesA;
 		this.uniqueSeenLicensesB = uniqueSeenLicensesB;
