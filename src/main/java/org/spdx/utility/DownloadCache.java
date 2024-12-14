@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2023 Peter Monks
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- *
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -57,12 +55,12 @@ import org.spdx.Configuration;
 /**
  * This singleton class provides a flexible download cache for the rest of the library.  If enabled, URLs that are
  * requested using this class will have their content automatically cached locally on disk (in a directory that adheres
- * to the XDG Base Directory Specification - https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html),
+ * to the XDG Base Directory Specification - <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">...</a>),
  * and any subsequent requests will be served out of that cache.  Cache entries will also be automatically checked every
  * so often for staleness using HTTP ETag requests (which are more efficient than full HTTP requests).  The interval
  * between such checks is configurable (and can even be turned off, which makes every download request re-check the URL
  * for staleness).
- *
+ * <p>
  * The cache is configured via these Configuration options:
  * * org.spdx.storage.listedlicense.enableCache:
  *   Controls whether the cache is enabled or not. Defaults to false i.e. the cache is disabled.
@@ -89,8 +87,8 @@ public final class DownloadCache {
             System.getenv("XDG_CACHE_HOME")) +
             File.separator + "Spdx-Java-Library";
 
-    private final String CONFIG_PROPERTY_CACHE_ENABLED = "org.spdx.downloadCacheEnabled";
-    private final String CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.downloadCacheCheckIntervalSecs";
+    private static final String CONFIG_PROPERTY_CACHE_ENABLED = "org.spdx.downloadCacheEnabled";
+    private static final String CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS = "org.spdx.downloadCacheCheckIntervalSecs";
     private final boolean cacheEnabled;
     private final long cacheCheckIntervalSecs;
 
@@ -106,7 +104,7 @@ public final class DownloadCache {
                 final File cacheDirectory = new File(cacheDir);
                 Files.createDirectories(cacheDirectory.toPath());
             } catch (IOException ioe) {
-                logger.warn("Unable to create cache directory '" + cacheDir + "'; continuing with cache disabled.", ioe);
+                logger.warn("Unable to create cache directory '{}'; continuing with cache disabled.", cacheDir, ioe);
                 tmpCacheEnabled = false;
             }
         }
@@ -198,7 +196,7 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private InputStream getUrlInputStreamDirect(URL url, boolean restrictRedirects) throws IOException {
-        InputStream       result     = null;
+        InputStream       result;
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         connection.setReadTimeout(READ_TIMEOUT);
         final URL redirectUrl = processPossibleRedirect(connection, restrictRedirects);
@@ -212,7 +210,7 @@ public final class DownloadCache {
         if (status == HttpURLConnection.HTTP_OK) {
             result = connection.getInputStream();
         } else {
-            throw new IOException("Unexpected HTTP status code from " + url.toString() + ": " + status);
+            throw new IOException("Unexpected HTTP status code from " + url + ": " + status);
         }
         return result;
     }
@@ -243,7 +241,7 @@ public final class DownloadCache {
         }
 
         // At this point the cached file definitely exists
-        return new BufferedInputStream(new FileInputStream(cachedFile));
+        return new BufferedInputStream(Files.newInputStream(cachedFile.toPath()));
     }
 
     /**
@@ -264,7 +262,7 @@ public final class DownloadCache {
 
             if (difference > cacheCheckIntervalSecs) {
                 // It's been a while since we checked the cached download of this URL for staleness, so make an ETag request
-                logger.debug("Cache check interval exceeded; checking for updates to " + String.valueOf(url));
+                logger.debug("Cache check interval exceeded; checking for updates to {}", url);
                 final String eTag = cachedMetadata.get("eTag");
                 final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -276,13 +274,13 @@ public final class DownloadCache {
                     cacheMiss(url, connection, restrictRedirects);
                 } else {
                     // The content hasn't changed, so just update the lastChecked metadata but otherwise do nothing
-                    logger.debug("Cache hit for " + String.valueOf(url));
+                    logger.debug("Cache hit for {}", url);
                     cachedMetadata.put("lastChecked", iso8601.format(Instant.now()));
                     writeMetadataFile(cachedMetadataFile, cachedMetadata);
                 }
             } else {
                 // We checked recently, so don't need to do anything - the cached content will be used
-                logger.debug("Within cache check interval; skipping check of updates to " + String.valueOf(url));
+                logger.debug("Within cache check interval; skipping check of updates to {}", url);
             }
         } else {
             // Metadata doesn't exist - treat it as a cache miss
@@ -300,7 +298,7 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private void cacheMiss(URL url, HttpURLConnection connection, boolean restrictRedirects) throws IOException {
-        logger.debug("Cache miss for " + String.valueOf(url));
+        logger.debug("Cache miss for {}", url);
 
         final URL redirectUrl = processPossibleRedirect(connection, restrictRedirects);
         if (redirectUrl != null) {
@@ -313,7 +311,7 @@ public final class DownloadCache {
             final File cachedFile = new File(cacheDir, cacheKey);
             writeContentFile(connection.getInputStream(), cachedFile);
             final File cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
-            final HashMap<String, String> metadata = new HashMap<String, String>();
+            final HashMap<String, String> metadata = new HashMap<>();
             metadata.put("eTag", connection.getHeaderField("ETag"));
             metadata.put("downloadedAt", iso8601.format(Instant.now()));
             metadata.put("lastChecked", iso8601.format(Instant.now()));
@@ -380,7 +378,7 @@ public final class DownloadCache {
      *         it.
      */
     private HashMap<String,String> readMetadataFile(final File metadataFile) {
-        HashMap<String,String> result = null;
+        HashMap<String,String> result;
         try {
             final Reader r = new BufferedReader(new FileReader(metadataFile));
             result = new Gson().fromJson(r, new TypeToken<HashMap<String, String>>(){}.getType());
@@ -412,7 +410,7 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private void writeContentFile(final InputStream is, final File cachedFile) throws IOException {
-    	try (final OutputStream cacheFileOutputStream = new BufferedOutputStream(new FileOutputStream(cachedFile))) {
+    	try (final OutputStream cacheFileOutputStream = new BufferedOutputStream(Files.newOutputStream(cachedFile.toPath()))) {
     		byte[] ioBuffer = new byte[IO_BUFFER_SIZE];
             int length;
             while ((length = is.read(ioBuffer)) != -1) {
@@ -428,12 +426,13 @@ public final class DownloadCache {
      * @param s The string to attempt to parse.
      * @return The Instant for that ISO8601 value if parsing succeeded, or null if it didn't.
      */
-    private final Instant parseISO8601String(final String s) {
+    private Instant parseISO8601String(final String s) {
         Instant result = null;
         if (s != null) {
             try {
                 result = Instant.parse(s);
             } catch (final DateTimeParseException dtpe) {
+                //noinspection DataFlowIssue
                 result = null;
             }
         }

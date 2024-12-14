@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,70 +65,66 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	/**
 	 * Map of documents to a map of documents with unique checksums
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<Checksum>>> uniqueChecksums = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<Checksum>>> uniqueChecksums = new HashMap<>();
 
 	/**
 	 * Map of documents to a map of documents with unique files
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<SpdxFile>>> uniqueFiles = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<SpdxFile>>> uniqueFiles = new HashMap<>();
 	
 	/**
 	 * Map of all file differences founds between any two spdx document packages
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<SpdxFileDifference>>> fileDifferences = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<SpdxFileDifference>>> fileDifferences = new HashMap<>();
 	
 	/**
 	 * Map of documents to a map of documents with unique external refs
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<ExternalRef>>> uniqueExternalRefs = new HashMap<>();
+	private final Map<SpdxDocument, Map<SpdxDocument, List<ExternalRef>>> uniqueExternalRefs = new HashMap<>();
 	
 	/**
 	 * Map of documents to a map of documents with external refs with differences
 	 */
-	private Map<SpdxDocument, Map<SpdxDocument, List<SpdxExternalRefDifference>>> externalRefDifferences = new HashMap<>();
-	private Comparator<? super ExternalRef> externalRefTypeNameComparator = new Comparator<ExternalRef>() {
-
-		@Override
-		public int compare(ExternalRef arg0, ExternalRef arg1) {
-			if (arg0 == null) {
-				if (arg1 == null) {
-					return 0;
-				} else {
-					return -1;
-				}
-			}
-			if (arg1 == null) {
-				return 1;
-			}
-			try {
-				if (arg0.getReferenceType() == null) {
-					if (arg1.getReferenceType() != null) {
-						return -1;
-					}
-				} else {
-					int retval = arg0.getReferenceType().compareTo(arg1.getReferenceType());
-					if (retval != 0) {
-						return retval;
-					}
-				}
-			} catch (InvalidSPDXAnalysisException e) {
-				// just compare the locators
-			}
-			try {
-				if (arg0.getReferenceLocator() == null) {
-					if (arg1.getReferenceLocator() == null) {
-						return 0;
-					} else {
-						return -1;
-					}
-				} else {
-					return arg0.getReferenceLocator().compareTo(arg1.getReferenceLocator());
-				}
-			} catch (InvalidSPDXAnalysisException e) {
-				return -1;
-			}
-		}
-	};
+	private final Map<SpdxDocument, Map<SpdxDocument, List<SpdxExternalRefDifference>>> externalRefDifferences = new HashMap<>();
+	private final Comparator<? super ExternalRef> externalRefTypeNameComparator = (Comparator<ExternalRef>) (arg0, arg1) -> {
+        if (arg0 == null) {
+            if (arg1 == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+        if (arg1 == null) {
+            return 1;
+        }
+        try {
+            if (arg0.getReferenceType() == null) {
+                if (arg1.getReferenceType() != null) {
+                    return -1;
+                }
+            } else {
+                int retval = arg0.getReferenceType().compareTo(arg1.getReferenceType());
+                if (retval != 0) {
+                    return retval;
+                }
+            }
+        } catch (InvalidSPDXAnalysisException e) {
+            // just compare the locators
+        }
+        try {
+            if (arg0.getReferenceLocator() == null) {
+                if (arg1.getReferenceLocator() == null) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                return arg0.getReferenceLocator().compareTo(arg1.getReferenceLocator());
+            }
+        } catch (InvalidSPDXAnalysisException e) {
+            return -1;
+        }
+    };
 	
 	/**
 	 * @param extractedLicenseIdMap map of all extracted license IDs for any SPDX documents to be added to the comparer
@@ -141,8 +137,8 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	 * Add a package to the comparer and performs the comparison to any existing documents
 	 * @param spdxDocument document containing the package
 	 * @param spdxPackage packaged to be added
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws SpdxCompareException on compare errors
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public void addDocumentPackage(SpdxDocument spdxDocument,
 			SpdxPackage spdxPackage) throws SpdxCompareException, InvalidSPDXAnalysisException {
@@ -150,7 +146,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 		Optional<String> packageName = spdxPackage.getName();
 		if (this.name == null && packageName.isPresent()) {
 			this.name = packageName.get();
-		} else if (!Objects.equals(this.name,packageName.get())) {
+		} else if (!Objects.equals(this.name,packageName.orElse(""))) {
 			throw new SpdxCompareException("Names do not match for item being added to comparer: "+
 			        packageName+", expecting "+this.name);
 		}
@@ -250,75 +246,56 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 	
 	/**
-	 * @param spdxDocument
-	 * @param externalRefs
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param spdxDocument document containing the external refs
+	 * @param externalRefCollection collection of external refs to compare
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	private void compareNewPackageExternalRefs(SpdxDocument spdxDocument,
 			Collection<ExternalRef> externalRefCollection) throws InvalidSPDXAnalysisException {
-		ExternalRef[] externalRefs = externalRefCollection.toArray(new ExternalRef[externalRefCollection.size()]);
+		ExternalRef[] externalRefs = externalRefCollection.toArray(new ExternalRef[0]);
 		Arrays.sort(externalRefs);
-		Map<SpdxDocument, List<ExternalRef>> docUniqueExternalRefs = this.uniqueExternalRefs.get(spdxDocument);
-		if (docUniqueExternalRefs == null) {
-			docUniqueExternalRefs = new HashMap<>();
-			this.uniqueExternalRefs.put(spdxDocument, docUniqueExternalRefs);
-		}
-		Map<SpdxDocument, List<SpdxExternalRefDifference>> docExternalRefDiffs = this.externalRefDifferences.get(spdxDocument);
-		if (docExternalRefDiffs == null) {
-			docExternalRefDiffs = new HashMap<>();
-			this.externalRefDifferences.put(spdxDocument, docExternalRefDiffs);
-		}
-		
-		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument, SpdxItem> entry = iter.next();
-			if (entry.getValue() instanceof SpdxPackage) {
-				Collection<ExternalRef> compareExternalRefCollection = ((SpdxPackage)entry.getValue()).getExternalRefs();
-				ExternalRef[] compareExternalRefs = compareExternalRefCollection.toArray(new ExternalRef[compareExternalRefCollection.size()]);
-				Arrays.sort(compareExternalRefs);
-				List<SpdxExternalRefDifference> externalRefDifferences = findExternalRefDifferences(spdxDocument, entry.getKey(), 
+        Map<SpdxDocument, List<ExternalRef>> docUniqueExternalRefs = this.uniqueExternalRefs.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        Map<SpdxDocument, List<SpdxExternalRefDifference>> docExternalRefDiffs = this.externalRefDifferences.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            if (entry.getValue() instanceof SpdxPackage) {
+                Collection<ExternalRef> compareExternalRefCollection = ((SpdxPackage) entry.getValue()).getExternalRefs();
+                ExternalRef[] compareExternalRefs = compareExternalRefCollection.toArray(new ExternalRef[0]);
+                Arrays.sort(compareExternalRefs);
+                List<SpdxExternalRefDifference> externalRefDifferences = findExternalRefDifferences(
 						externalRefs, compareExternalRefs);
-				if (externalRefDifferences.size() > 0) {
-					this.externalRefsEquals = false;
-					this.differenceFound = true;
-				}
-				docExternalRefDiffs.put(entry.getKey(), externalRefDifferences);
-				Map<SpdxDocument, List<SpdxExternalRefDifference>> compareExternalRefDiffs = this.externalRefDifferences.get(entry.getKey());
-				if (compareExternalRefDiffs == null) {
-					compareExternalRefDiffs = new HashMap<>();
-					this.externalRefDifferences.put(entry.getKey(), compareExternalRefDiffs);
-				}
-				compareExternalRefDiffs.put(spdxDocument, externalRefDifferences);
-				
-				List<ExternalRef> uniqueRefs = findUniqueExternalRefs(externalRefs, compareExternalRefs);
-				if (uniqueRefs.size() > 0) {
-					this.externalRefsEquals = false;
-					this.differenceFound = true;
-				}
-				uniqueExternalRefs.put(entry.getKey(), docUniqueExternalRefs);
-				Map<SpdxDocument, List<ExternalRef>> compareUniqueRefs = this.uniqueExternalRefs.get(entry.getKey());
-				if (compareUniqueRefs == null) {
-					compareUniqueRefs = new HashMap<>();
-					this.uniqueExternalRefs.put(entry.getKey(), compareUniqueRefs);
-				}
-				uniqueRefs = findUniqueExternalRefs(compareExternalRefs, externalRefs);
-				if (uniqueRefs.size() > 0) {
-					this.externalRefsEquals = false;
-					this.differenceFound = true;
-				}
-				compareUniqueRefs.put(spdxDocument, uniqueRefs);			
-			}
-		}
+                if (!externalRefDifferences.isEmpty()) {
+                    this.externalRefsEquals = false;
+                    this.differenceFound = true;
+                }
+                docExternalRefDiffs.put(entry.getKey(), externalRefDifferences);
+                Map<SpdxDocument, List<SpdxExternalRefDifference>> compareExternalRefDiffs = this.externalRefDifferences.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                compareExternalRefDiffs.put(spdxDocument, externalRefDifferences);
+
+                List<ExternalRef> uniqueRefs = findUniqueExternalRefs(externalRefs, compareExternalRefs);
+                if (!uniqueRefs.isEmpty()) {
+                    this.externalRefsEquals = false;
+                    this.differenceFound = true;
+                }
+                uniqueExternalRefs.put(entry.getKey(), docUniqueExternalRefs);
+                Map<SpdxDocument, List<ExternalRef>> compareUniqueRefs = this.uniqueExternalRefs.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                uniqueRefs = findUniqueExternalRefs(compareExternalRefs, externalRefs);
+                if (!uniqueRefs.isEmpty()) {
+                    this.externalRefsEquals = false;
+                    this.differenceFound = true;
+                }
+                compareUniqueRefs.put(spdxDocument, uniqueRefs);
+            }
+        }
 	}
 
 	/**
-	 * @param compareExternalRefs
-	 * @param externalRefs
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
-	 */
+	 * @param externalRefsA A external refs to compare
+	 * @param externalRefsB B external refs to compare
+	 * @return list of external refs found in A but not B
+     */
 	private List<ExternalRef> findUniqueExternalRefs(
-			ExternalRef[] externalRefsA, ExternalRef[] externalRefsB) throws InvalidSPDXAnalysisException {
+			ExternalRef[] externalRefsA, ExternalRef[] externalRefsB) {
 		int bIndex = 0;
 		int aIndex = 0;
 		List<ExternalRef> alRetval = new ArrayList<>();
@@ -346,15 +323,12 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @param spdxDocument
-	 * @param key
-	 * @param externalRefs
-	 * @param compareExternalRefs
-	 * @return
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param externalRefsA A external refs to compare
+	 * @param externalRefsB B external refs to compare
+	 * @return list of differences between external refs
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private List<SpdxExternalRefDifference> findExternalRefDifferences(
-			SpdxDocument spdxDocument, SpdxDocument key,
 			ExternalRef[] externalRefsA, ExternalRef[] externalRefsB) throws InvalidSPDXAnalysisException {
 		List<SpdxExternalRefDifference> retval = new ArrayList<>();
 		int aIndex = 0;
@@ -382,102 +356,78 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @param spdxDocument
-	 * @param filesCollection
-	 * @throws SpdxCompareException 
-	 * @throws InvalidSPDXAnalysisException 
+	 * @param spdxDocument document containing the files
+	 * @param filesCollection files to compare
+	 * @throws SpdxCompareException on compare error
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void compareNewPackageFiles(SpdxDocument spdxDocument,
 			Collection<SpdxFile> filesCollection) throws SpdxCompareException, InvalidSPDXAnalysisException {
-		SpdxFile[] files = filesCollection.toArray(new SpdxFile[filesCollection.size()]);
+		SpdxFile[] files = filesCollection.toArray(new SpdxFile[0]);
 		Arrays.sort(files);
-		Map<SpdxDocument, List<SpdxFile>> docUniqueFiles = this.uniqueFiles.get(spdxDocument);
-		if (docUniqueFiles == null) {
-			docUniqueFiles = new HashMap<>();
-			this.uniqueFiles.put(spdxDocument, docUniqueFiles);
-		}
-		Map<SpdxDocument, List<SpdxFileDifference>> docDifferentFiles = this.fileDifferences.get(spdxDocument);
-		if (docDifferentFiles == null) {
-			docDifferentFiles = new HashMap<>();
-			this.fileDifferences.put(spdxDocument, docDifferentFiles);
-		}
-		Iterator<Entry<SpdxDocument, SpdxItem>> iter = this.documentItem.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<SpdxDocument, SpdxItem> entry = iter.next();
-			if (entry.getValue() instanceof SpdxPackage) {
-				Collection<SpdxFile> compareFilesCollection = ((SpdxPackage)entry.getValue()).getFiles();
-				SpdxFile[] compareFiles = compareFilesCollection.toArray(new SpdxFile[compareFilesCollection.size()]);
-				Arrays.sort(compareFiles);
-				List<SpdxFileDifference> fileDifferences = 
-						SpdxComparer.findFileDifferences(spdxDocument, entry.getKey(), files, compareFiles, this.extractedLicenseIdMap);
-				if (fileDifferences.size() > 0) {
-					this.packageFilesEquals = false;
-					this.differenceFound = true;
-				}
-				docDifferentFiles.put(entry.getKey(), fileDifferences);
-				Map<SpdxDocument, List<SpdxFileDifference>> compareDifferentFiles = this.fileDifferences.get(entry.getKey());
-				if (compareDifferentFiles == null) {
-					compareDifferentFiles = new HashMap<>();
-					this.fileDifferences.put(entry.getKey(), compareDifferentFiles);
-				}
-				compareDifferentFiles.put(spdxDocument, fileDifferences);
-				List<SpdxFile> uniqueFiles = SpdxComparer.findUniqueFiles(files, compareFiles);
-				if (uniqueFiles.size() > 0) {
-					this.packageFilesEquals = false;
-					this.differenceFound = true;
-				}
-				docUniqueFiles.put(entry.getKey(), uniqueFiles);
-				Map<SpdxDocument, List<SpdxFile>> compareUniqueFiles = this.uniqueFiles.get(entry.getKey());
-				if (compareUniqueFiles == null) {
-					compareUniqueFiles = new HashMap<>();
-					this.uniqueFiles.put(entry.getKey(), compareUniqueFiles);
-				}
-				uniqueFiles = SpdxComparer.findUniqueFiles(compareFiles, files);
-				if (uniqueFiles.size() > 0) {
-					this.packageFilesEquals = false;
-					this.differenceFound = true;
-				}
-				compareUniqueFiles.put(spdxDocument, uniqueFiles);
-			}
-		}
+        Map<SpdxDocument, List<SpdxFile>> docUniqueFiles = this.uniqueFiles.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        Map<SpdxDocument, List<SpdxFileDifference>> docDifferentFiles = this.fileDifferences.computeIfAbsent(spdxDocument, k -> new HashMap<>());
+        for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+            if (entry.getValue() instanceof SpdxPackage) {
+                Collection<SpdxFile> compareFilesCollection = ((SpdxPackage) entry.getValue()).getFiles();
+                SpdxFile[] compareFiles = compareFilesCollection.toArray(new SpdxFile[0]);
+                Arrays.sort(compareFiles);
+                List<SpdxFileDifference> fileDifferences =
+                        SpdxComparer.findFileDifferences(spdxDocument, entry.getKey(), files, compareFiles, this.extractedLicenseIdMap);
+                if (!fileDifferences.isEmpty()) {
+                    this.packageFilesEquals = false;
+                    this.differenceFound = true;
+                }
+                docDifferentFiles.put(entry.getKey(), fileDifferences);
+                Map<SpdxDocument, List<SpdxFileDifference>> compareDifferentFiles = this.fileDifferences.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                compareDifferentFiles.put(spdxDocument, fileDifferences);
+                List<SpdxFile> uniqueFiles = SpdxComparer.findUniqueFiles(files, compareFiles);
+                if (!uniqueFiles.isEmpty()) {
+                    this.packageFilesEquals = false;
+                    this.differenceFound = true;
+                }
+                docUniqueFiles.put(entry.getKey(), uniqueFiles);
+                Map<SpdxDocument, List<SpdxFile>> compareUniqueFiles = this.uniqueFiles.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                uniqueFiles = SpdxComparer.findUniqueFiles(compareFiles, files);
+                if (!uniqueFiles.isEmpty()) {
+                    this.packageFilesEquals = false;
+                    this.differenceFound = true;
+                }
+                compareUniqueFiles.put(spdxDocument, uniqueFiles);
+            }
+        }
 	}
 
 	/**
 	 * Compare the checks for a new package being added to the existing
 	 * package checksums filling in the unique checksums map
-	 * @param spdxDocument
-	 * @param checksums
-	 * @throws SpdxCompareException 
+	 * @param spdxDocument document containing the checksums
+	 * @param checksums checksums to compare
+	 * @throws SpdxCompareException on compare errors
 	 */
 	private void compareNewPackageChecksums(SpdxDocument spdxDocument,
 			Collection<Checksum> checksums) throws SpdxCompareException {
 		try {
 			Map<SpdxDocument, List<Checksum>> docUniqueChecksums = new HashMap<>();
 			this.uniqueChecksums.put(spdxDocument, docUniqueChecksums);
-			Iterator<Entry<SpdxDocument,SpdxItem>> iter = this.documentItem.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry<SpdxDocument,SpdxItem> entry = iter.next();
-				if (entry.getValue() instanceof SpdxPackage) {
-					Collection<Checksum> compareChecksums = ((SpdxPackage)entry.getValue()).getChecksums();
-					List<Checksum> uniqueChecksums = SpdxComparer.findUniqueChecksums(checksums, compareChecksums);
-					if (uniqueChecksums.size() > 0) {
-						this.packageChecksumsEquals = false;
-						this.differenceFound = true;
-					}
-					docUniqueChecksums.put(entry.getKey(), uniqueChecksums);
-					Map<SpdxDocument, List<Checksum>> compareUniqueChecksums = this.uniqueChecksums.get(entry.getKey());
-					if (compareUniqueChecksums == null) {
-						compareUniqueChecksums = new HashMap<>();
-						this.uniqueChecksums.put(entry.getKey(), compareUniqueChecksums);
-					}
-					uniqueChecksums = SpdxComparer.findUniqueChecksums(compareChecksums, checksums);
-					if (uniqueChecksums.size() > 0) {
-						this.packageChecksumsEquals = false;
-						this.differenceFound = true;
-					}
-					compareUniqueChecksums.put(spdxDocument, uniqueChecksums);
-				}
-			}
+            for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
+                if (entry.getValue() instanceof SpdxPackage) {
+                    Collection<Checksum> compareChecksums = ((SpdxPackage) entry.getValue()).getChecksums();
+                    List<Checksum> uniqueChecksums = SpdxComparer.findUniqueChecksums(checksums, compareChecksums);
+                    if (!uniqueChecksums.isEmpty()) {
+                        this.packageChecksumsEquals = false;
+                        this.differenceFound = true;
+                    }
+                    docUniqueChecksums.put(entry.getKey(), uniqueChecksums);
+                    Map<SpdxDocument, List<Checksum>> compareUniqueChecksums = this.uniqueChecksums.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                    uniqueChecksums = SpdxComparer.findUniqueChecksums(compareChecksums, checksums);
+                    if (!uniqueChecksums.isEmpty()) {
+                        this.packageChecksumsEquals = false;
+                        this.differenceFound = true;
+                    }
+                    compareUniqueChecksums.put(spdxDocument, uniqueChecksums);
+                }
+            }
 		} catch (InvalidSPDXAnalysisException e) {
 			throw new SpdxCompareException("SPDX error getting package checksums: "+e.getMessage(),e);
 		}
@@ -493,7 +443,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * @return the differenceFound
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	@Override
     public boolean isDifferenceFound() throws SpdxCompareException {
@@ -503,7 +453,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * checks to make sure there is not a compare in progress
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 * 
 	 */
 	@Override
@@ -515,7 +465,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 	/**
 	 * @return the packageVersionsEquals
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public boolean isPackageVersionsEquals() throws SpdxCompareException {
 		checkInProgress();
@@ -547,7 +497,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @return the packageVerificationCodeesEquals
+	 * @return the packageVerificationCodesEquals
 	 */
 	public boolean isPackageVerificationCodesEquals() throws SpdxCompareException {
 		checkInProgress();
@@ -558,7 +508,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * @return the filesAnalyzedEquals
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public boolean isFilesAnalyzedEquals() throws SpdxCompareException {
 		checkInProgress();
@@ -624,7 +574,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * @return the externalRefsEquals
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public boolean isExternalRefsEquals() throws SpdxCompareException {
 		checkInProgress();
@@ -633,12 +583,12 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * Return the package associated with the document
-	 * @param document 
-	 * @return The document associated with the document
+	 * @param document document
+	 * @return The package associated with the document
 	 */
-	public SpdxPackage getDocPackage(SpdxDocument document) throws SpdxCompareException {
+	public SpdxPackage getDocPackage(SpdxDocument document) {
 		SpdxItem retItem = this.documentItem.get(document);
-		if (retItem != null && retItem instanceof SpdxPackage) {
+		if (retItem instanceof SpdxPackage) {
 			return (SpdxPackage)retItem;
 		} else {
 			return null;
@@ -700,9 +650,9 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * Get any fileDifferences which are in docA but not in docB
-	 * @param docA
-	 * @param docB
-	 * @return
+	 * @param docA A document to compare
+	 * @param docB B document compare
+	 * @return any fileDifferences which are in docA but not in docB
 	 */
 	public List<SpdxFileDifference> getFileDifferences(SpdxDocument docA, 
 			SpdxDocument docB) throws SpdxCompareException {
@@ -721,9 +671,9 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 
 	/**
 	 * Return any unique files by name which are in docA but not in docB
-	 * @param docA
-	 * @param docB
-	 * @return
+	 * @param docA A document to compare
+	 * @param docB B document compare
+	 * @return any unique files by name which are in docA but not in docB
 	 */
 	public List<SpdxFile> getUniqueFiles(SpdxDocument docA, SpdxDocument docB) throws SpdxCompareException {
 		checkInProgress();
@@ -739,7 +689,7 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @return
+	 * @return package name
 	 */
 	public String getPackageName() throws SpdxCompareException {
 		checkInProgress();
@@ -747,8 +697,8 @@ public class SpdxPackageComparer extends SpdxItemComparer {
 	}
 
 	/**
-	 * @return
-	 * @throws SpdxCompareException 
+	 * @return number of package
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public int getNumPackages() throws SpdxCompareException {
 		checkInProgress();

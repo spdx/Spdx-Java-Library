@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,23 +62,23 @@ public class SpdxV3ListedLicenseModelStore implements IModelStore {
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_ADDITION_TEXT);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_STANDARD_ADDITION_TEMPLATE);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_IS_DEPRECATED_ADDITION_ID);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_DEPRECATED_VERSION);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_COMMENT);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_SEE_ALSO);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_DEPRECATED_VERSION);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_COMMENT);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_SEE_ALSO);
 		
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_LICENSE_XML);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_OBSOLETED_BY);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_LIST_VERSION_ADDED);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_LICENSE_XML);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_OBSOLETED_BY);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_LIST_VERSION_ADDED);
 		
 		// CreationInfo
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_COMMENT);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_COMMENT);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_CREATED);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_CREATED_BY);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_SPEC_VERSION);
 		
 		// Agent
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_CREATION_INFO);
-		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_NAME);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_CREATION_INFO);
+		// SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_NAME);
 		SUPPORTED_V3_DESCRIPTORS.add(SpdxConstantsV3.PROP_DESCRIPTION);
 		
 		// Collections created on initialization

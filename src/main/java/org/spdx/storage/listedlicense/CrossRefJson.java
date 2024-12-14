@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ package org.spdx.storage.listedlicense;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +36,8 @@ import org.spdx.storage.PropertyDescriptor;
  * @author Gary O'Neall
  *
  */
-class CrossRefJson {
+@SuppressWarnings("unused")
+public class CrossRefJson {
 
 	public String match;
 	public String url;
@@ -54,45 +54,24 @@ class CrossRefJson {
 	
 	/**
 	 * @param crossRef cross ref to copy values from
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public CrossRefJson(CrossRef crossRef) throws InvalidSPDXAnalysisException {
 		this.id = crossRef.getId();
-		Optional<String> fromMatch = crossRef.getMatch();
-		if (fromMatch.isPresent()) {
-			match = fromMatch.get();
-		}
-		Optional<String> fromUrl = crossRef.getUrl();
-		if (fromUrl.isPresent()) {
-			url = fromUrl.get();
-		}
-		Optional<Boolean> fromIsValid = crossRef.getValid();
-		if (fromIsValid.isPresent()) {
-			isValid = fromIsValid.get();
-		}
-		Optional<Boolean> fromIsLive = crossRef.getLive();
-		if (fromIsLive.isPresent()) {
-			isLive = fromIsLive.get();
-		}
-		Optional<Boolean> fromIsWayBackLink = crossRef.getIsWayBackLink();
-		if (fromIsWayBackLink.isPresent()) {
-			isWayBackLink = fromIsWayBackLink.get();
-		}
-		Optional<String> fromTimestamp = crossRef.getTimestamp();
-		if (fromTimestamp.isPresent()) {
-			timestamp = fromTimestamp.get();
-		}
-		Optional<Integer> fromOrder = crossRef.getOrder();
-		if (fromOrder.isPresent()) {
-			order = fromOrder.get();
-		}
+		crossRef.getMatch().ifPresent(s -> match = s);
+		crossRef.getUrl().ifPresent(s -> url = s);
+		crossRef.getValid().ifPresent(aBoolean -> isValid = aBoolean);
+		crossRef.getLive().ifPresent(aBoolean -> isLive = aBoolean);
+		crossRef.getIsWayBackLink().ifPresent(aBoolean -> isWayBackLink = aBoolean);
+		crossRef.getTimestamp().ifPresent(s -> timestamp = s);
+		crossRef.getOrder().ifPresent(integer -> order = integer);
 	}
 	
 	/**
 	 * @return all valid property descriptors
 	 */
 	public List<PropertyDescriptor> getPropertyValueDescriptors() {
-		List<PropertyDescriptor> retval = new ArrayList<PropertyDescriptor>();
+		List<PropertyDescriptor> retval = new ArrayList<>();
 		if (Objects.nonNull(match)) {
 			retval.add(new PropertyDescriptor("match", SpdxConstantsCompatV2.SPDX_NAMESPACE));
 		}
@@ -119,9 +98,9 @@ class CrossRefJson {
 
 	/**
 	 * Sets the value to the property name
-	 * @param propertyDescriptor
-	 * @param value
-	 * @throws InvalidSpdxPropertyException
+	 * @param propertyDescriptor descriptor for the property to set
+	 * @param value Value to set
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public void setPrimativeValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		switch (propertyDescriptor.getName()) {
@@ -185,18 +164,18 @@ class CrossRefJson {
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor descriptor for the property to set
 	 * @return the list associated with the property
-	 * @throws InvalidSpdxPropertyException
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public List<?> getValueList(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
 	/**
-	 * @param propertyDescriptor
+	 * @param propertyDescriptor descriptor for the property to set
 	 * @return the value associated with the property - null if not assigned or not present
-	 * @throws InvalidSpdxPropertyException
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public @Nullable Object getValue(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		switch (propertyDescriptor.getName()) {
@@ -213,8 +192,8 @@ class CrossRefJson {
 
 	/**
 	 * sets the property to null (no way to remove in this store)
-	 * @param propertyDescriptor
-	 * @throws InvalidSpdxPropertyException
+	 * @param propertyDescriptor descriptor for the property to set
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public void removeProperty(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
 		switch (propertyDescriptor.getName()) {
@@ -230,8 +209,8 @@ class CrossRefJson {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
+	 * @param propertyDescriptor descriptor for the property to set
+	 * @param clazz target class
 	 * @return true if the members can be assigned from clazz
 	 */
 	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
@@ -239,10 +218,10 @@ class CrossRefJson {
 	}
 
 	/**
-	 * @param propertyDescriptor
-	 * @param clazz
+	 * @param propertyDescriptor descriptor for the property to set
+	 * @param clazz target class
 	 * @return true if the property can be assigned from clazz
-	 * @throws InvalidSpdxPropertyException
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSpdxPropertyException {
 		switch (propertyDescriptor.getName()) {
@@ -259,8 +238,8 @@ class CrossRefJson {
 	}
 
 	/**
-	 * @param propertyName
-	 * @return if the property is a colloection
+	 * @param propertyName Name of the property
+	 * @return if the property is a collection
 	 */
 	public boolean isCollectionProperty(String propertyName) {
 		return false;

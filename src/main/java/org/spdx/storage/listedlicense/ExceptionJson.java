@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +37,13 @@ import org.spdx.storage.PropertyDescriptor;
 
 /**
  * Simple POJO to hold the license exception data loaded from a JSON file
- * 
+ * <p>
  * Licenses in the JSON format can be found at spdx.org/licenses/[exceptionid].json
  * 
  * @author Gary O'Neall 
  *
  */
+@SuppressWarnings("unused")
 public class ExceptionJson {
 
 	/**
@@ -78,7 +79,6 @@ public class ExceptionJson {
 		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LIC_DEPRECATED_VERSION, "deprecatedVersion");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_COMMENT, "comment");
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_COMMENT, "comment");
-		descriptorsToValue.put(SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID, "licenseExceptionId");
 		descriptorsToValue.put(SpdxConstantsV3.PROP_SEE_ALSO, "seeAlso");
 		collectionProperties.add(SpdxConstantsV3.PROP_SEE_ALSO);
 		descriptorsToValue.put(SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO, "seeAlso");
@@ -261,7 +261,7 @@ public class ExceptionJson {
 	 * @param propertyDescriptor descriptor for the property
 	 * @param value Value to set
 	 * @return true if the value was added
-	 * @throws InvalidSpdxPropertyException
+	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public boolean addPrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		if (!"seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
@@ -363,7 +363,7 @@ public class ExceptionJson {
 		this.licenseExceptionTemplate = fromException.getStandardAdditionTemplate().orElse(null);
 		this.licenseExceptionText = fromException.getAdditionText();
 		this.name = fromException.getName().orElse(null);
-		this.seeAlso = new ArrayList<String>(fromException.getSeeAlsos());
+		this.seeAlso = new ArrayList<>(fromException.getSeeAlsos());
 		this.obsoletedBy = fromException.getObsoletedBy().orElse(null);
 		this.listVersionAdded = fromException.getListVersionAdded().orElse(null);
 		this.licenseXml = fromException.getLicenseXml().orElse(null);
@@ -403,7 +403,7 @@ public class ExceptionJson {
 		if (Objects.nonNull(this.name) && this.name.isEmpty()) {
 			this.name = null;
 		}
-		this.seeAlso = new ArrayList<String>(fromException.getSeeAlso());
+		this.seeAlso = new ArrayList<>(fromException.getSeeAlso());
 		this.exceptionTextHtml = fromException.getExceptionTextHtml();
 		if (Objects.nonNull(this.exceptionTextHtml) && this.exceptionTextHtml.isEmpty()) {
 			this.exceptionTextHtml = null;
@@ -420,7 +420,8 @@ public class ExceptionJson {
 		if (!"seeAlso".equals(PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor))) {
 			throw new InvalidSpdxPropertyException(propertyDescriptor + "is not a list type");
 		}
-		return seeAlso.remove(value);
+        //noinspection SuspiciousMethodCalls
+        return seeAlso.remove(value);
 	}
 
 	/**

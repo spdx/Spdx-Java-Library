@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2019 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,12 +38,13 @@ import org.spdx.storage.PropertyDescriptor;
 
 /**
  * Simple POJO to hold the license data loaded from a JSON file
- * 
+ * <p>
  * Licenses in the JSON format can be found at spdx.org/licenses/[licenseid].json
  * 
  * @author Gary O'Neall 
  *
  */
+@SuppressWarnings("unused")
 public class LicenseJson {
 	
 	static final Map<PropertyDescriptor, String> PROPERTY_DESCRIPTOR_TO_VALUE_NAME;
@@ -268,11 +269,11 @@ public class LicenseJson {
 	}
 
 	/**
-	 * Add a cross reference to a value list
-	 * @param propertyDescriptor
-	 * @param value
+	 * Add a cross-reference to a value list
+	 * @param propertyDescriptor descriptor for the property
+	 * @param value cross ref value to add
 	 * @return true as specified by <code>Collections.add</code>
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public boolean addCrossRefValueToList(PropertyDescriptor propertyDescriptor, CrossRefJson value) throws InvalidSPDXAnalysisException {
 		if (SpdxConstantsCompatV2.PROP_CROSS_REF.equals(propertyDescriptor)) {
@@ -284,10 +285,10 @@ public class LicenseJson {
 	
 	/**
 	 * Add a primitive value to a value list
-	 * @param propertyDescriptor
-	 * @param value
+	 * @param propertyDescriptor descriptor for the property
+	 * @param value value to add to the list
 	 * @return true as specified by <code>Collections.add</code>
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public boolean addPrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSPDXAnalysisException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
@@ -309,7 +310,8 @@ public class LicenseJson {
 		}
 	}
 	
-	public boolean removePrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+	@SuppressWarnings("SuspiciousMethodCalls")
+    public boolean removePrimitiveValueToList(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
 			throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyDescriptor.getName());
@@ -342,7 +344,7 @@ public class LicenseJson {
 	public Object getValue(PropertyDescriptor descriptor) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(descriptor);
 		if (Objects.isNull(propertyName)) {
-			return null; // unsupport property type
+			return null; // unsupported property type
 		}
 		switch (propertyName) {
 			case "licenseText": return licenseText;
@@ -366,7 +368,7 @@ public class LicenseJson {
 			case "licenseXml": return licenseXml;
 			case "listVersionAdded": return listVersionAdded;
 			case "obsoletedBy": return obsoletedBy;
-			default: return null; // unsupportd property type
+			default: return null; // unsupported property type
 		}
 	}
 
@@ -456,7 +458,7 @@ public class LicenseJson {
 			this.name = null;
 		}
 		this.isOsiApproved = fromLicense.isOsiApproved();
-		this.seeAlso = new ArrayList<String>(fromLicense.getSeeAlso());
+		this.seeAlso = new ArrayList<>(fromLicense.getSeeAlso());
 		this.standardLicenseHeader = fromLicense.getStandardLicenseHeader();
 		if (Objects.nonNull(this.standardLicenseHeader) && this.standardLicenseHeader.isEmpty()) {
 			this.standardLicenseHeader = null;

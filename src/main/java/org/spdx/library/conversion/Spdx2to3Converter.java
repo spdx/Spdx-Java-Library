@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,16 +17,7 @@
  */
 package org.spdx.library.conversion;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -97,11 +88,12 @@ import org.spdx.storage.listedlicense.SpdxListedLicenseModelStore;
 
 /**
  * @author Gary O'Neall
- * 
+ * <p>
  * Converts SPDX spec version 2.X objects to SPDX spec version 3.X and stores the result in the
  * toModelStore
  *
  */
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "LoggingSimilarMessage"})
 public class Spdx2to3Converter implements ISpdxConverter {
 	
 	static final Logger logger = LoggerFactory.getLogger(Spdx2to3Converter.class);
@@ -300,11 +292,11 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 */
 	Map<String, Map<Collection<ExternalMap>, ExternalMapInfo>> docUriToExternalMap = Collections.synchronizedMap(new HashMap<>());
 
-	private IModelCopyManager copyManager;
+	private final IModelCopyManager copyManager;
 
 	private int documentIndex = 0;
 
-	private boolean complexLicenses = false;
+	private final boolean complexLicenses;
 
 	/**
 	 * @param creationInfoV2 SPDX Spec version 2 creation info
@@ -404,7 +396,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			}
 			return organization;
 		} else {
-			logger.warn("Incorrect person or organization format: " + spdx2personOrgString);
+            logger.warn("Incorrect person or organization format: {}", spdx2personOrgString);
 			// return a generic Agent
 			Agent agent = (Agent)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
@@ -422,8 +414,9 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param toSpecVersion specific spec version to convert to
 	 * @param defaultUriPrefix URI prefix to use when creating new elements
 	 */
-	public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
-			String toSpecVersion, String defaultUriPrefix) {
+	@SuppressWarnings("unused")
+    public Spdx2to3Converter(IModelStore toModelStore, IModelCopyManager copyManager, CreationInfo defaultCreationInfo,
+                             String toSpecVersion, String defaultUriPrefix) {
 		this(toModelStore, copyManager, defaultCreationInfo, toSpecVersion, defaultUriPrefix, true);
 	}
 	
@@ -464,8 +457,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (!Objects.equals(spdx2CreatorInfo.getCreated(), spdx3CreationInfo.getCreated())) {
 			return false;
 		}
-		List<Tool> tools = spdx3CreationInfo.getCreatedUsings().stream().collect(Collectors.toList());
-		List<Agent> agents = spdx3CreationInfo.getCreatedBys().stream().collect(Collectors.toList());
+		List<Tool> tools = new ArrayList<>(spdx3CreationInfo.getCreatedUsings());
+		List<Agent> agents = new ArrayList<>(spdx3CreationInfo.getCreatedBys());
 		for (String creator:spdx2CreatorInfo.getCreators()) {
 			if (creator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL)) {
 				String toolName = creator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL.length()).trim();
@@ -573,16 +566,17 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		org.spdx.library.model.v2.enumerations.RelationshipType fromRelationshipType = fromRelationship.getRelationshipType();
 		LifecycleScopeType scope = LIFECYCLE_SCOPE_MAP.get(fromRelationshipType);
 		String fromUri = fromRelationship.getObjectUri();
-		Optional<ModelObjectV3> existing = getExistingObject(fromUri, 
-				Objects.isNull(scope) ? SpdxConstantsV3.CORE_RELATIONSHIP : SpdxConstantsV3.CORE_LIFECYCLE_SCOPED_RELATIONSHIP);
+		String relationshipType = Objects.isNull(scope) ? SpdxConstantsV3.CORE_RELATIONSHIP : SpdxConstantsV3.CORE_LIFECYCLE_SCOPED_RELATIONSHIP;
+		Optional<ModelObjectV3> existing = getExistingObject(fromUri,
+				relationshipType);
 		if (existing.isPresent()) {
 			return (Relationship)existing.get();
 		}
 		String toObjectUri = defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId);
 		String exitingUri = alreadyConverted.putIfAbsent(fromUri, toObjectUri);
 		if (Objects.nonNull(exitingUri)) {
-			return (Relationship)getExistingObject(fromUri, 
-					Objects.isNull(scope) ? SpdxConstantsV3.CORE_RELATIONSHIP : SpdxConstantsV3.CORE_LIFECYCLE_SCOPED_RELATIONSHIP).get();
+			return (Relationship)getExistingObject(fromUri,
+					relationshipType).get();
 		}
 		Relationship toRelationship;
 		if (Objects.isNull(scope)) {
@@ -682,7 +676,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			toDoc.getNamespaceMaps().add(convertAndStore(externalDocRef, toDoc.getSpdxImports()));
 		}
 		convertElementProperties(fromDoc, toDoc);
-		if (!equivalentCreationInfo(fromDoc.getCreationInfo(), defaultCreationInfo)) {
+		if (!equivalentCreationInfo(Objects.requireNonNull(fromDoc.getCreationInfo()), defaultCreationInfo)) {
 			toDoc.setCreationInfo(convertCreationInfo(fromDoc.getCreationInfo(), this.toModelStore, this.defaultUriPrefix));
 		}
 		toDoc.setDataLicense(convertAndStore(fromDoc.getDataLicense()));
@@ -947,7 +941,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	/**
 	 * Convert and add properties from the fromException to the toAddition
 	 * @param fromException SPDX spec verion 2 LicenseException to copy properties from
-	 * @param toAddtion SPDX spec version 3 LicenseAddition to copy properties to
+	 * @param toAddition SPDX spec version 3 LicenseAddition to copy properties to
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
 	private void convertLicenseAdditionProperties(
@@ -1047,8 +1041,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return convertAndStore((org.spdx.library.model.v2.license.DisjunctiveLicenseSet)fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo) {
 			String externalUri = ((org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo)fromLicense).getIndividualURI();
-			logger.warn("Referencing an external SPDX 2 element with URI " + externalUri +
-					" while converting from SPDX 2 to 3");
+            logger.warn("Referencing an external SPDX 2 element with URI {} while converting from SPDX 2 to 3", externalUri);
 			addExternalMapInfo(externalUri);
 			return new ExternalCustomLicense(externalUri);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ExtractedLicenseInfo) {
@@ -1086,8 +1079,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return new NoneElement();
 		} else if (fromElement instanceof org.spdx.library.model.v2.ExternalSpdxElement) {
 			String externalUri = ((org.spdx.library.model.v2.ExternalSpdxElement)fromElement).getIndividualURI();
-			logger.warn("Referencing an external SPDX 2 element with URI " + externalUri +
-					" while converting from SPDX 2 to 3");
+            logger.warn("Referencing an external SPDX 2 element with URI {} while converting from SPDX 2 to 3", externalUri);
 			addExternalMapInfo(externalUri);
 			return new ExternalElement(externalUri);
 		} else if (fromElement instanceof org.spdx.library.model.v2.SpdxDocument) {
@@ -1106,12 +1098,12 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		Objects.requireNonNull(externalUri, "External URI can not be null");
 		String[] parts = externalUri.split("#");
 		if (parts.length != 2) {
-			logger.warn(externalUri + " is not a valid SPDX Spec version 2 external referenced - should have a document uri + '#' + ID");
+            logger.warn("{} is not a valid SPDX Spec version 2 external referenced - should have a document uri + '#' + ID", externalUri);
 			return;
 		}
 		Map<Collection<ExternalMap>, ExternalMapInfo> externalMapMap = docUriToExternalMap.get(parts[0]);
 		if (Objects.isNull(externalMapMap)) {
-			logger.warn("No corresponding ExternalDocumentRefs for "+externalUri);
+            logger.warn("No corresponding ExternalDocumentRefs for {}", externalUri);
 			return;
 		}
 		synchronized(externalMapMap) {
@@ -1153,10 +1145,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			convertAndAddFileType(fileType, toFile);
 		}
 		Optional<String> noticeText = spdxFile.getNoticeText();
-		
-		if (noticeText.isPresent()) {
-			toFile.getAttributionTexts().add(noticeText.get());
-		}
+
+        noticeText.ifPresent(s -> toFile.getAttributionTexts().add(s));
 		// - this is already captured in the checksums - String sha1 = spdxFile.getSha1();
 		return toFile;
 	}
@@ -1238,7 +1228,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		Optional<String> licenseComments = fromItem.getLicenseComments();
 		if (licenseComments.isPresent()) {
 			Optional<String> existingComment = toArtifact.getComment();
-			toArtifact.setComment(existingComment.isPresent() ? existingComment.get() + ";" + licenseComments.get() : licenseComments.get());
+			toArtifact.setComment(existingComment.map(s -> s + ";" + licenseComments.get()).orElseGet(licenseComments::get));
 		}
 		org.spdx.library.model.v2.license.AnyLicenseInfo concludedLicense = fromItem.getLicenseConcluded();
 		if (Objects.nonNull(concludedLicense)) {
@@ -1354,7 +1344,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	 * @param fileName Name of the File artifact
 	 * @param toPackage package to add the file to
 	 * @param fileChecksums checksums for the file
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void addPackageFileNameToPackage(String fileName,
 			SpdxPackage toPackage, Collection<org.spdx.library.model.v2.Checksum> fileChecksums) throws InvalidSPDXAnalysisException {
@@ -1474,19 +1464,21 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		convertItemProperties(fromSnippet, toSnippet);
 		org.spdx.library.model.v2.pointer.StartEndPointer fromByteRange = fromSnippet.getByteRange();
 		if (Objects.nonNull(fromByteRange)) {
-			toSnippet.setByteRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
+            //noinspection DataFlowIssue
+            toSnippet.setByteRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
 					.setBeginIntegerRange(((org.spdx.library.model.v2.pointer.ByteOffsetPointer)fromByteRange.getStartPointer()).getOffset())
 					.setEndIntegerRange(((org.spdx.library.model.v2.pointer.ByteOffsetPointer)fromByteRange.getEndPointer()).getOffset())
 					.build());
 		}
 		Optional<org.spdx.library.model.v2.pointer.StartEndPointer> fromLineRange = fromSnippet.getLineRange();
 		if (fromLineRange.isPresent()) {
-			toSnippet.setLineRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
+            //noinspection DataFlowIssue
+            toSnippet.setLineRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
 					.setBeginIntegerRange(((org.spdx.library.model.v2.pointer.LineCharPointer)fromLineRange.get().getStartPointer()).getLineNumber())
 					.setEndIntegerRange(((org.spdx.library.model.v2.pointer.LineCharPointer)fromLineRange.get().getEndPointer()).getLineNumber())
 					.build());
 		}
-		toSnippet.setSnippetFromFile(convertAndStore(fromSnippet.getSnippetFromFile()));
+		toSnippet.setSnippetFromFile(convertAndStore(Objects.requireNonNull(fromSnippet.getSnippetFromFile())));
 		return toSnippet;
 	}
 }

@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,21 +36,22 @@ import org.spdx.storage.IModelStore;
 
 /**
  * Main entrypoint for the SPDX Java Library
- * 
+ * <p>
  * This is a static class used to manage the different versions of the SPDX spec by
  * creating different model classes based on the version of the spec.
- * 
+ * <p>
  * Since the release of the SPDX spec version 3.0, the Java classes were generated.
- * 
+ * <p>
  * Each generated set of classes generated for a specific version are in a separate library / Jar file.
- * 
+ * <p>
  * These generated classes are registered in the Core model registry
- * 
+ * <p>
  * The <code>inflateModelObject</code> methods will create an initial object based on the name of the type
  * 
  * @author Gary O'Neall
  *
  */
+@SuppressWarnings("unused")
 public class SpdxModelFactory {
 	
 	static {
@@ -108,7 +109,7 @@ public class SpdxModelFactory {
 	
 	/**
 	 * This static method is a convenience to load this class and initialize the supported model versions.
-	 * 
+	 * <p>
 	 * It should be called before using any other functionality from the library
 	 */
 	public static void init() {
@@ -127,7 +128,7 @@ public class SpdxModelFactory {
 	 * @param create if true, create the model object ONLY if it does not already exist
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static CoreModelObject inflateModelObject(IModelStore modelStore, String objectUri, 
 			String type, IModelCopyManager copyManager,
@@ -148,7 +149,7 @@ public class SpdxModelFactory {
 	 * @param create if true, create the model object ONLY if it does not already exist
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return model object of type type
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static CoreModelObject inflateModelObject(IModelStore modelStore, String objectUri, 
 			String type, IModelCopyManager copyManager, boolean create, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {
@@ -162,7 +163,7 @@ public class SpdxModelFactory {
 	 * @param type type hint for creating the correct external element
 	 * @param specVersion version of the SPDX spec the object complies with
 	 * @return a java object representing an SPDX element external to model store, collection or document
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static Object getExternalElement(IModelStore store, String uri,
 			@Nullable IModelCopyManager copyManager, Class<?> type,
@@ -176,7 +177,7 @@ public class SpdxModelFactory {
 	 * @param copyManager if non-null, implicitly copy any referenced properties from other model stores
 	 * @param type type hint for creating the correct external element
 	 * @return a java object representing an SPDX element external to model store, collection or document for the most recent version of the spec supported
-	 * @throws InvalidSPDXAnalysisException 
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static Object getExternalElement(IModelStore store, String uri,
 			@Nullable IModelCopyManager copyManager, Class<?> type) throws InvalidSPDXAnalysisException {
@@ -211,7 +212,7 @@ public class SpdxModelFactory {
 	 * @param objectUriPrefixFilter only return objects with URI's starting with this string
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
 	 * @return stream of objects stored in the model store - an object being any non primitive type
-	 * @throws InvalidSPDXAnalysisException
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static Stream<?> getSpdxObjects(IModelStore store, @Nullable IModelCopyManager copyManager, 
 			@Nullable String typeFilter, @Nullable String objectUriPrefixFilter, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {

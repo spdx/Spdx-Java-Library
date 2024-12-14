@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2020 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,19 +39,19 @@ import org.spdx.library.model.v2.license.AnyLicenseInfo;
  */
 public class SpdxFileDifference extends SpdxItemDifference {
 
-	private List<FileType> fileTypeA;
-	private List<FileType> fileTypeB;
-	private List<String> contributorsA;
-	private String noticeA;
-	private List<String> contributorsB;
-	private String noticeB;
-	private List<String> dependantFileNamesA;
-	private List<String> dependantFileNamesB;
-	private boolean checksumsEquals;
-	private List<Checksum> uniqueChecksumsA;
-	private List<Checksum> uniqueChecksumsB;
-	private String spdxIdA;
-	private String spdxIdB;
+	private final List<FileType> fileTypeA;
+	private final List<FileType> fileTypeB;
+	private final List<String> contributorsA;
+	private final String noticeA;
+	private final List<String> contributorsB;
+	private final String noticeB;
+	private final List<String> dependantFileNamesA;
+	private final List<String> dependantFileNamesB;
+	private final boolean checksumsEquals;
+	private final List<Checksum> uniqueChecksumsA;
+	private final List<Checksum> uniqueChecksumsB;
+	private final String spdxIdA;
+	private final String spdxIdB;
 
 	@SuppressWarnings("deprecation")
     public SpdxFileDifference(SpdxFile fileA, SpdxFile fileB, 
@@ -72,36 +72,24 @@ public class SpdxFileDifference extends SpdxItemDifference {
 				uniqueSeenLicensesA, uniqueSeenLicensesB, 
 				relationshipsEquals, uniqueRelationshipA,  uniqueRelationshipB,
 				annotationsEquals, uniqueAnnotationsA,uniqueAnnotationsB);
-		this.fileTypeA = Arrays.asList(fileA.getFileTypes().toArray(new FileType[fileA.getFileTypes().size()]));
-		this.fileTypeB = Arrays.asList(fileB.getFileTypes().toArray(new FileType[fileB.getFileTypes().size()]));	
-		this.contributorsA = Arrays.asList(fileA.getFileContributors().toArray(new String[fileA.getFileContributors().size()]));
-		this.contributorsB = Arrays.asList(fileB.getFileContributors().toArray(new String[fileB.getFileContributors().size()]));
+		this.fileTypeA = Arrays.asList(fileA.getFileTypes().toArray(new FileType[0]));
+		this.fileTypeB = Arrays.asList(fileB.getFileTypes().toArray(new FileType[0]));
+		this.contributorsA = Arrays.asList(fileA.getFileContributors().toArray(new String[0]));
+		this.contributorsB = Arrays.asList(fileB.getFileContributors().toArray(new String[0]));
 		this.dependantFileNamesA = new ArrayList<>();
 		for (SpdxFile dependantFile:fileA.getFileDependency()) {
 		    Optional<String> dependantFileName = dependantFile.getName();
-		    if (dependantFileName.isPresent()) {
-		        dependantFileNamesA.add(dependantFileName.get());
-		    }
+            dependantFileName.ifPresent(dependantFileNamesA::add);
 		}
         this.dependantFileNamesB = new ArrayList<>();
         for (SpdxFile dependantFile:fileB.getFileDependency()) {
             Optional<String> dependantFileName = dependantFile.getName();
-            if (dependantFileName.isPresent()) {
-                dependantFileNamesB.add(dependantFileName.get());
-            }
+            dependantFileName.ifPresent(dependantFileNamesB::add);
         }
         Optional<String> noticeTextA =fileA.getNoticeText();
-		if (noticeTextA.isPresent()) {
-			this.noticeA = noticeTextA.get();
-		} else {
-			this.noticeA = "";
-		}
+        this.noticeA = noticeTextA.orElse("");
 		Optional<String> noticeTextB =fileB.getNoticeText();
-		if (noticeTextB.isPresent()) {
-			this.noticeB = noticeTextB.get();
-		} else {
-			this.noticeB = "";
-		}
+        this.noticeB = noticeTextB.orElse("");
 		this.checksumsEquals = checksumsEquals;
 		this.uniqueChecksumsA = uniqueChecksumsA;
 		this.uniqueChecksumsB = uniqueChecksumsB;
@@ -142,28 +130,28 @@ public class SpdxFileDifference extends SpdxItemDifference {
 	}
 
 	/**
-	 * @return
+	 * @return true if the types are equal
 	 */
 	public boolean isTypeEqual() {
 		return SpdxComparer.listsEquals(fileTypeA, fileTypeB);
 	}
 
 	/**
-	 * @return
+	 * @return true if the checksums are equal
 	 */
 	public boolean isChecksumsEquals() {
 		return this.checksumsEquals;
 	}
 
 	/**
-	 * @return
+	 * @return string form af all A contributors
 	 */
 	public String getContributorsAAsString() {
 		return stringListToString(this.contributorsA);
 	}
 	
 	/**
-	 * @return
+	 * @return string form of all B contributors
 	 */
 	public String getContributorsBAsString() {
 		return stringListToString(this.contributorsB);
@@ -173,7 +161,7 @@ public class SpdxFileDifference extends SpdxItemDifference {
 	
 	static String stringListToString(List<String> s) {
 		StringBuilder sb = new StringBuilder();
-		if (s != null && s.size() > 0) {
+		if ((s != null) && (!s.isEmpty())) {
 			sb.append(s.get(0));
 			for (int i = 1; i < s.size(); i++) {
 				if (Objects.nonNull(s.get(i)) && !s.get(i).isEmpty()) {
@@ -186,14 +174,14 @@ public class SpdxFileDifference extends SpdxItemDifference {
 	}
 
 	/**
-	 * @return
+	 * @return string form of all A file dependencies
 	 */
 	public String getFileDependenciesAAsString() {
 		return stringListToString(this.dependantFileNamesA);
 	}
 	
 	/**
-	 * @return
+	 * @return string form of all B file dependencies
 	 */
 	public String getFileDependenciesBAsString() {
 		return stringListToString(this.dependantFileNamesB);
@@ -270,14 +258,14 @@ public class SpdxFileDifference extends SpdxItemDifference {
 	}
 
 	/**
-	 * @return
+	 * @return SPDX ID for A
 	 */
 	public String getSpdxIdA() {
 		return this.spdxIdA;
 	}
 	
 	/**
-	 * @return
+	 * @return SPDX ID for B
 	 */
 	public String getSpdxIdB() {
 		return this.spdxIdB;

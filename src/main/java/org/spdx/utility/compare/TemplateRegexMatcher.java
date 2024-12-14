@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2023 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,11 +38,11 @@ import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 /**
  * Constructs a regular expression from a license or exception template and provide a matching method
  * to see if code matching the template exists within the text provided
- * 
+ * <p>
  * Note that the regular expression assumes a fully normalized text string to match
- * 
- * <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
- * 
+ * <p>
+ * <code>isTemplateMatchWithinText(String text)</code> will return true if the text matches the template
+ * <p>
  * <code>getQuickMatchRegex()</code> will return a regular expression with limited backtracking which can be used for a quick search
  * <code>getCompleteRegex()</code> will return a regular expression for the entire license where
  * <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
@@ -57,13 +57,13 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	
 	static final int WORD_LIMIT = 25; // number of words to search for in the quick match, beginning and end of the template
 	
-	static final String REGEX_GLOBAL_MODIFIERS = "(?im)"; // ignore case and muti-line
+	static final String REGEX_GLOBAL_MODIFIERS = "(?im)"; // ignore case and multi-line
 	
 	interface RegexElement {
 	}
 	
 	static class RegexList implements RegexElement {
-		private List<RegexElement> elements = new ArrayList<>();
+		private final List<RegexElement> elements = new ArrayList<>();
 		
 		public void addElement(RegexElement element) {
 			elements.add(element);
@@ -95,7 +95,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	}
 	
 	static class RegexToken implements RegexElement {
-		private String token;
+		private final String token;
 		
 		public RegexToken(String token) {
 			this.token = token.trim();
@@ -137,21 +137,21 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		}
 	}
 
-	private String template;
+	private final String template;
 	
 	/**
 	 * Top level regex
 	 */
-	private RegexList regexPatternList = new RegexList();
+	private final RegexList regexPatternList = new RegexList();
 	
 	
 	private int optionalNestLevel = 0;
 	
-	private List<OptionalRegexGroup> optionalGroups = new ArrayList<>();
+	private final List<OptionalRegexGroup> optionalGroups = new ArrayList<>();
 
 	/**
 	 * Generates regular expressions from a license or exception template
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	public TemplateRegexMatcher(String template) throws SpdxCompareException {
 		this.template = template;
@@ -160,7 +160,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	
 	/**
 	 * Parses the template generating the regular expression
-	 * @throws SpdxCompareException 
+	 * @throws SpdxCompareException on compare errors
 	 */
 	private void parseTemplate() throws SpdxCompareException {
 		try {
@@ -176,7 +176,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	 * @return the complete regular expression for the template
 	 */
 	public String getCompleteRegex() {
-		return REGEX_GLOBAL_MODIFIERS + regexPatternList.toString();
+		return REGEX_GLOBAL_MODIFIERS + regexPatternList;
 	}
 	
 	/**
@@ -204,7 +204,8 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		}
 		if (numWords < largestContiguousText) {
 			// Need to retry to get as much as we can
-			while (index < elementList.size() && numWords <= largestContiguousText) {
+            //noinspection ConstantValue
+            while (index < elementList.size() && numWords <= largestContiguousText) {
 				RegexElement element = elementList.get(index++);
 				result.addElement(element);
 				if (element instanceof RegexToken) {
@@ -215,11 +216,11 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 				}
 			}
 		}
-		return REGEX_GLOBAL_MODIFIERS + result.toString();
+		return REGEX_GLOBAL_MODIFIERS + result;
 	}
 	
 	/**
-	 * @param wordLimit number of non optional words to include in the pattern
+	 * @param wordLimit number of non-optional words to include in the pattern
 	 * @return a regex to match the start of the license per the template
 	 */
 	public String getStartRegex(int wordLimit) {
@@ -244,11 +245,11 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 				}
 			}
 		}
-		return REGEX_GLOBAL_MODIFIERS + result.toString();
+		return REGEX_GLOBAL_MODIFIERS + result;
 	}
 	
 	/**
-	 * @param wordLimit number of non optional words to include in the pattern
+	 * @param wordLimit number of non-optional words to include in the pattern
 	 * @return a regex to match the end of the license per the template
 	 */
 	public String getEndRegex(int wordLimit) {
@@ -265,7 +266,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		while (index < elementList.size()) {
 			result.addElement(elementList.get(index++));
 		}
-		return REGEX_GLOBAL_MODIFIERS + result.toString();
+		return REGEX_GLOBAL_MODIFIERS + result;
 	}
 	
 	/**
@@ -285,14 +286,14 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	}
 
 	/**
-	 * @param text
+	 * @param text text to search for
 	 * @return the text matching the beginning and end regular expressions for the template.  Null if there is no match.
-	 * @throws SpdxCompareException
-	 */
-	private @Nullable String findTemplateWithinText(String text) {
+     */
+	@SuppressWarnings("UnusedAssignment")
+    private @Nullable String findTemplateWithinText(String text) {
 		// Get match status
 		String result = null;
-		int startIndex = -1;
+		@SuppressWarnings("UnusedAssignment") int startIndex = -1;
 		int endIndex = -1;
 
 		if (text == null || text.isEmpty() || template == null) {
@@ -380,7 +381,7 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	 * @see org.spdx.licenseTemplate.ILicenseTemplateOutputHandler#completeParsing()
 	 */
 	@Override
-	public void completeParsing() throws LicenseParserException {
+	public void completeParsing() {
 		// Nothing to do here
 	}
 }

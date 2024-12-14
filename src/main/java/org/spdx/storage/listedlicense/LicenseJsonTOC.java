@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2018 Source Auditor Inc.
- *
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,8 @@ import org.spdx.library.model.v2.license.SpdxListedLicense;
  */
 public class LicenseJsonTOC {
 	
-	public static class LicenseJson {
+	@SuppressWarnings("unused")
+    public static class LicenseJson {
 		private String reference;
 		private boolean isDeprecatedLicenseId;
 		private String detailsUrl;
@@ -159,7 +160,7 @@ public class LicenseJsonTOC {
 	
 
 	private String licenseListVersion;
-	private List<LicenseJson> licenses;
+	private final List<LicenseJson> licenses;
 	private String releaseDate;
 
 	public LicenseJsonTOC(String version, String releaseDate) {
@@ -193,9 +194,6 @@ public class LicenseJsonTOC {
 	 */
 	public Map<String, String> getLicenseIds() {
 		Map<String, String> retval = new HashMap<>();
-		if (licenses == null) {
-			return retval;
-		}
 		for (LicenseJson license:licenses) {
 			retval.put(license.licenseId.toLowerCase(), license.licenseId);
 		}
@@ -211,11 +209,11 @@ public class LicenseJsonTOC {
 
 	/**
 	 * Add summary information about a specific license to the licenses list
-	 * @param license
-	 * @param licHTMLReference
-	 * @param licJSONReference
-	 * @param deprecated
-	 * @throws InvalidSPDXAnalysisException
+	 * @param license license to add
+	 * @param licHTMLReference HTML URL reference for the license
+	 * @param licJSONReference URL reference to the JSON file
+	 * @param deprecated if true, license ID is deprecated
+	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public void addLicense(SpdxListedLicense license, String licHTMLReference, String licJSONReference,
 			boolean deprecated) throws InvalidSPDXAnalysisException {
@@ -235,11 +233,7 @@ public class LicenseJsonTOC {
 		}
 		referenceNumber++;
 		lj.setReferenceNumber(referenceNumber);
-		List<String> seeAlso = new ArrayList<>();
-		for (String sa:license.getSeeAlso()) {
-			seeAlso.add(sa);
-		}
-		lj.setSeeAlso(seeAlso);
+		lj.setSeeAlso(new ArrayList<>(license.getSeeAlso()));
 		this.licenses.add(lj);
 	}
 

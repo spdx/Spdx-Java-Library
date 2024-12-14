@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2024 Source Auditor Inc.
- *
+ * <p>
  * SPDX-License-Identifier: Apache-2.0
- * 
+ * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,14 +38,16 @@ import org.spdx.storage.IModelStore.IdType;
  * Information about an ExternalMap captured from an ExternalDocumentRef
  *
  */
+@SuppressWarnings("unused")
 public class ExternalMapInfo {
 
-	private String docRefId;
-	private String externalDocumentUri;
-	private Optional<Hash> externalDocumentHash;
-	private Collection<ExternalMap> docImports;
+	private final String docRefId;
+	private final String externalDocumentUri;
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private final Optional<Hash> externalDocumentHash;
+	private final Collection<ExternalMap> docImports;
 	
-	private Map<String, ExternalMap> existingExternalMap = Collections.synchronizedMap(new HashMap<>());
+	private final Map<String, ExternalMap> existingExternalMap = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * @param docRefId ID of the ExternalDocRef from the SPDX Spec version 2 SPDX Document containing the reference 
@@ -53,8 +55,8 @@ public class ExternalMapInfo {
 	 * @param externalDocumentHash Optional Hash of the external SPDX document 
 	 * @param docImports SPDX Spec version 3 collection of doc imports
 	 */
-	public ExternalMapInfo(String docRefId, String externalDocumentUri, Optional<Hash> externalDocumentHash, 
-			Collection<ExternalMap> docImports) {
+	public ExternalMapInfo(String docRefId, String externalDocumentUri, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<Hash> externalDocumentHash,
+                           Collection<ExternalMap> docImports) {
 		this.docRefId = docRefId;
 		this.externalDocumentUri = externalDocumentUri;
 		this.externalDocumentHash = externalDocumentHash;
