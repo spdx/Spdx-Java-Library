@@ -421,11 +421,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  to all items which have been previously added</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>spdxDocument</code> - </dd>
-<dd><code>spdxItem</code> - </dd>
+<dd><code>spdxDocument</code> - document containing the item</dd>
+<dd><code>spdxItem</code> - item to add</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -473,11 +473,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Get any licenses found in docA but not in docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>any licenses found in docA but not in docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -540,7 +541,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">checks to make sure there is not a compare in progress</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -568,8 +569,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                           throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if any difference is found in the item</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
 </dl>
 </li>
 </ul>
@@ -600,10 +602,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Get the item contained by the document doc</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>doc</code> - </dd>
+<dd><code>doc</code> - document containing the item</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the item contained by the document doc</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
 </dl>
 </li>
 </ul>
@@ -635,11 +638,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Get relationships that are in docA but not in docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>relationships that are in docA but not in docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
 </dl>
 </li>
 </ul>
@@ -671,7 +675,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the attributionTextEquals</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
 </dl>
 </li>
 </ul>
@@ -687,11 +691,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Get annotations that are in docA but not in docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>annotations that are in docA but not in docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare error</dd>
 </dl>
 </li>
 </ul>

@@ -135,7 +135,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">VerificationCodeGenerator</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block">Generates a package verification code from a directory of source code or an array of <code>SPDXFile</code>s.
-
+ <p>
  A class implementing the IFileChecksumGenerator is supplied as a parameter to the constructor.
  The method <code>getFileChecksum</code> is called for each file in the directory.  This can
  be used as a hook to capture all files in the directory and capture the checksum values at
@@ -292,8 +292,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>VerificationCode based on all files in spdxFiles minus the skippedFilePaths</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code> - unexpected checksum calculation error</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -313,15 +313,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Generate the SPDX Package Verification Code from a directory of files included in the archive</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sourceDirectory</code> - </dd>
+<dd><code>sourceDirectory</code> - source directory for the package verification code</dd>
 <dd><code>modelStore</code> - where the resultant VerificationCode is store</dd>
 <dd><code>documentUri</code> - document URI where the VerificationCode is stored</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>PackageVerificationCode based on the files in the sourceDirectory</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code></dd>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code> - unexpected error creating checksums</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on file or directory read errors</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -346,8 +346,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a PackageVerificationCode with the value created from the fileChecksums</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code> - unexpected error creating checksums</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -361,8 +361,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Normalizes a file path per the SPDX spec</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>nonNormalizedFilePath</code> - </dd>
+<dd><code>nonNormalizedFilePath</code> - original file path - may be unix or DOS format</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>file path normalized per SPDX spec</dd>
 </dl>
 </li>
 </ul>
@@ -380,14 +381,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                              org.spdx.core.InvalidSPDXAnalysisException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sourceDirectory</code> - </dd>
+<dd><code>sourceDirectory</code> - directory to create the verification code for</dd>
 <dd><code>modelStore</code> - where the resultant VerificationCode is store</dd>
 <dd><code>documentUri</code> - document URI where the VerificationCode is stored</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>SPDX package verification code</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code></dd>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security" class="externalLink">NoSuchAlgorithmException</a></code> - unexpected error creating checksums</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on IO error reading files or directories</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>

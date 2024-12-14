@@ -135,7 +135,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">LicenseExpressionParser</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block">A parser for the SPDX License Expressions as documented in the SPDX appendix.
- 
+ <p>
  This is a static help class.  The primary method is parseLicenseExpression which 
  returns an AnyLicenseInfo.</div>
 <dl>
@@ -214,7 +214,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                       org.spdx.core.IModelCopyManager&nbsp;copyManager,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)</code></th>
 <td class="colLast">
-<div class="block">Parses a license expression into an license for use in the Model using the SPDX Version 3.X model</div>
+<div class="block">Parses a license expression into n license for use in the Model using the SPDX Version 3.X model</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -224,7 +224,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;documentUri,
                               org.spdx.core.IModelCopyManager&nbsp;copyManager)</code></th>
 <td class="colLast">
-<div class="block">Parses a license expression into an license for use in the Model using the SPDX Version 2.X model</div>
+<div class="block">Parses a license expression into n license for use in the Model using the SPDX Version 2.X model</div>
 </td>
 </tr>
 </table>
@@ -307,7 +307,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                                   <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
                                                                                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)
                                                                                            throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Parses a license expression into an license for use in the Model using the SPDX Version 3.X model</div>
+<div class="block">Parses a license expression into n license for use in the Model using the SPDX Version 3.X model</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>expression</code> - Expression to be parsed</dd>
@@ -320,7 +320,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the parsed license expression</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -335,7 +335,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;documentUri,
                                                                                               org.spdx.core.IModelCopyManager&nbsp;copyManager)
                                                                                        throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Parses a license expression into an license for use in the Model using the SPDX Version 2.X model</div>
+<div class="block">Parses a license expression into n license for use in the Model using the SPDX Version 2.X model</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>expression</code> - Expression to be parsed</dd>
@@ -347,7 +347,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the parsed license expression</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>

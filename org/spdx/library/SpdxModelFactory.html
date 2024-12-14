@@ -135,16 +135,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">SpdxModelFactory</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block">Main entrypoint for the SPDX Java Library
- 
+ <p>
  This is a static class used to manage the different versions of the SPDX spec by
  creating different model classes based on the version of the spec.
- 
+ <p>
  Since the release of the SPDX spec version 3.0, the Java classes were generated.
- 
+ <p>
  Each generated set of classes generated for a specific version are in a separate library / Jar file.
- 
+ <p>
  These generated classes are registered in the Core model registry
- 
+ <p>
  The <code>inflateModelObject</code> methods will create an initial object based on the name of the type</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
@@ -340,7 +340,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>init</h4>
 <pre class="methodSignature">public static&nbsp;void&nbsp;init()</pre>
 <div class="block">This static method is a convenience to load this class and initialize the supported model versions.
- 
+ <p>
  It should be called before using any other functionality from the library</div>
 </li>
 </ul>
@@ -374,7 +374,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>model object of type type</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -407,7 +407,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>model object of type type</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -434,7 +434,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a java object representing an SPDX element external to model store, collection or document</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -459,7 +459,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a java object representing an SPDX element external to model store, collection or document for the most recent version of the spec supported</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -531,7 +531,7 @@ public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>stream of objects stored in the model store - an object being any non primitive type</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>

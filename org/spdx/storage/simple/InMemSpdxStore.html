@@ -142,11 +142,11 @@ implements org.spdx.storage.IModelStore</pre>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>Gary O'Neall
-
+ <p>
  In memory implementation of an SPDX store.
-
+ <p>
  This implementation primarily uses <code>ConcurrentHashMaps</code>.
-
+ <p>
  It is designed to be thread-safe and low CPU utilization.  It may use significant amounts of memory
  for larger SPDX documents.</dd>
 </dl>
@@ -538,7 +538,7 @@ implements org.spdx.storage.IModelStore</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the item from the hash map</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -705,13 +705,10 @@ implements org.spdx.storage.IModelStore</pre>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html?is-external=true" title="class or interface in java.util.stream" class="externalLink">Stream</a>&lt;org.spdx.core.TypedValue&gt;&nbsp;getAllItems&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
                                                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;nameSpace,
                                                     <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
-                                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;typeFilter)
-                                             throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+                                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;typeFilter)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>getAllItems</code>&nbsp;in interface&nbsp;<code>org.spdx.storage.IModelStore</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
 </dl>
 </li>
 </ul>

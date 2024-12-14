@@ -597,8 +597,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an SPDXLicenseInfo created from the string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code></dd>
-<dd><code>org.spdx.core.DefaultStoreNotInitialized</code></dd>
+<dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code> - On invalid license expression</dd>
+<dd><code>org.spdx.core.DefaultStoreNotInitialized</code> - On the model store not being initialized - see DefaultModelStore in SPDX core package</dd>
 </dl>
 </li>
 </ul>
@@ -626,7 +626,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;getSpdxListedLicenseIds()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Array of all SPDX listed license IDs</dd>
+<dd>List of all SPDX listed license IDs</dd>
 </dl>
 </li>
 </ul>
@@ -672,7 +672,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the standard SPDX license exception or null if the ID is not in the SPDX license list</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - On SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -690,7 +690,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the standard SPDX license exception in SPDX Spec V2.X format or null if the ID is not in the SPDX license list</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - On SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>

@@ -288,6 +288,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  performance.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new instance of this class</dd>
 </dl>
 </li>
 </ul>
@@ -335,7 +336,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an SPDX spec version 2 SPDX listed license or null if the ID is not in the SPDX license list</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -353,7 +354,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an SPDX spec version 2 SPDX listed license exception or null if the ID is not in the SPDX license list</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -371,7 +372,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>SPDX listed license or null if the ID is not in the SPDX license list</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing error</dd>
 </dl>
 </li>
 </ul>
@@ -412,7 +413,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The version of the loaded license list in the form M.N, where M is the major release and N is the minor release.
- If no license list is loaded, returns <code>SpdxListedLicenseModelStore.DEFAULT_LICENSE_LIST_VERSION</code>.</dd>
+ If no license list is loaded, returns the default license list version.</dd>
 </dl>
 </li>
 </ul>

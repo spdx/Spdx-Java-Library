@@ -144,9 +144,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>
 implements <a href="IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></pre>
 <div class="block">Read-only model store for the SPDX listed licenses
- 
- License and exception ID's can be case insensitive
- 
+ <p>
+ License and exception ID's can be case-insensitive
+ <p>
  License information is stored in a LicenseJson file with the ID being Listed License ID
  License Exception information is stored in an ExceptionJson file with the ID being the Listed Exception ID
  CrossRef information is stored within the LicenseJson file.  Id's are anonymous and generated.</div>
@@ -559,7 +559,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>InputStream for the Table of Contents of the licenses formated in JSON SPDX</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on IO errors</dd>
 </dl>
 </li>
 </ul>
@@ -575,7 +575,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>InputStream for the Table of Contents of the exceptions formated in JSON SPDX</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on IO errors</dd>
 </dl>
 </li>
 </ul>
@@ -591,7 +591,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>InputStream for a license formated in SPDX JSON</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on IO errors</dd>
 </dl>
 </li>
 </ul>
@@ -607,7 +607,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>InputStream for an exception formated in SPDX JSON</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - on IO errors</dd>
 </dl>
 </li>
 </ul>
@@ -847,8 +847,8 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="IListedLicenseStore.html#isSpdxListedLicenseId(java.lang.String,java.lang.String)">isSpdxListedLicenseId</a></code>&nbsp;in interface&nbsp;<code><a href="IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listedLicenseDocumentUri</code> - </dd>
-<dd><code>licenseId</code> - </dd>
+<dd><code>listedLicenseDocumentUri</code> - Prefix URL for the listed license</dd>
+<dd><code>licenseId</code> - license ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the licenseId belongs to an SPDX listed license</dd>
 </dl>
@@ -866,8 +866,8 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="IListedLicenseStore.html#isSpdxListedExceptionId(java.lang.String,java.lang.String)">isSpdxListedExceptionId</a></code>&nbsp;in interface&nbsp;<code><a href="IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listedLicenseDocumentUri</code> - </dd>
-<dd><code>exceptionId</code> - </dd>
+<dd><code>listedLicenseDocumentUri</code> - prefix URL for the listed license</dd>
+<dd><code>exceptionId</code> - exception ID maintained by the SPDX legal team</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the exceptionId belongs to an SPDX listed exception</dd>
 </dl>
@@ -1078,7 +1078,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>licenseId</code> - case insensitive license ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the case sensitive license ID</dd>
+<dd>the case-sensitive license ID</dd>
 </dl>
 </li>
 </ul>
@@ -1093,7 +1093,7 @@ implements <a href="IListedLicenseStore.html" title="interface in org.spdx.stora
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="IListedLicenseStore.html#listedExceptionIdCaseSensitive(java.lang.String)">listedExceptionIdCaseSensitive</a></code>&nbsp;in interface&nbsp;<code><a href="IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>exceptionId</code> - case insensitive exception ID</dd>
+<dd><code>exceptionId</code> - case-insensitive exception ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>case sensitive ID</dd>
 </dl>

@@ -101,9 +101,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>Gary O'Neall
- 
+ <p>
  Storage for SPDX listed licenses.
- 
+ <p>
  The <code>SpdxListedLicenseModelStore</code> is the default storage which pull the data from JSON files at spdx.org/licenses
  
  The <code>SpdxListedLicenseLocalModelStore</code> uses a local copy of the licenses stored in the resources/licenses directory</dd>
@@ -134,19 +134,27 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tbody>
 <tr class="altColor">
-<th class="colFirst" scope="row"><a href="ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJson</a></th>
+<th class="colFirst" scope="row"><a href="CrossRefJson.html" title="class in org.spdx.storage.listedlicense">CrossRefJson</a></th>
 <td class="colLast">
-<div class="block">Simple POJO to hold the license exception data loaded from a JSON file
- 
- Licenses in the JSON format can be found at spdx.org/licenses/[exceptionid].json</div>
+<div class="block">JSON Representation of a CrossRef</div>
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJson</a></th>
+<td class="colLast">
+<div class="block">Simple POJO to hold the license exception data loaded from a JSON file</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="ExceptionJsonTOC.html" title="class in org.spdx.storage.listedlicense">ExceptionJsonTOC</a></th>
 <td class="colLast">
 <div class="block">Table of Contents for the listed license list as represented as a JSON index file
  at spdx.org/licenses/licenses.json</div>
 </td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="ExceptionJsonTOC.ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJsonTOC.ExceptionJson</a></th>
+<td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="LicenseCreationInfo.html" title="class in org.spdx.storage.listedlicense">LicenseCreationInfo</a></th>
@@ -159,9 +167,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="LicenseJson.html" title="class in org.spdx.storage.listedlicense">LicenseJson</a></th>
 <td class="colLast">
-<div class="block">Simple POJO to hold the license data loaded from a JSON file
- 
- Licenses in the JSON format can be found at spdx.org/licenses/[licenseid].json</div>
+<div class="block">Simple POJO to hold the license data loaded from a JSON file</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -182,13 +188,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></th>
 <td class="colLast">
-<div class="block">Read-only model store for the SPDX listed licenses
- 
- License and exception ID's can be case insensitive
- 
- License information is stored in a LicenseJson file with the ID being Listed License ID
- License Exception information is stored in an ExceptionJson file with the ID being the Listed Exception ID
- CrossRef information is stored within the LicenseJson file.</div>
+<div class="block">Read-only model store for the SPDX listed licenses</div>
 </td>
 </tr>
 <tr class="rowColor">

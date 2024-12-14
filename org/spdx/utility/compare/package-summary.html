@@ -122,58 +122,61 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></th>
+<td class="colLast">
+<div class="block">Information obout any difference found</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="FilterTemplateOutputHandler.html" title="class in org.spdx.utility.compare">FilterTemplateOutputHandler</a></th>
 <td class="colLast">Deprecated.
 <div class="deprecationComment">The <code>TemplateRegexMatcher</code> class should be used in place of this class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="LicenseCompareHelper.html" title="class in org.spdx.utility.compare">LicenseCompareHelper</a></th>
 <td class="colLast">
 <div class="block">Primarily a static class of helper functions for comparing two SPDX licenses</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></th>
 <td class="colLast">
 <div class="block">Performs a comparison between two or more SPDX documents and holds the results of the comparison
- The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code>
- 
- For files, the comparison results are separated into unique files based on the file names
- which can be obtained by the method <code>getUniqueFiles(index1, index2)</code>.</div>
+ The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxExternalRefDifference.html" title="class in org.spdx.utility.compare">SpdxExternalRefDifference</a></th>
 <td class="colLast">
 <div class="block">Contains information on differences between two different External Refs.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxFileComparer.html" title="class in org.spdx.utility.compare">SpdxFileComparer</a></th>
 <td class="colLast">
 <div class="block">Compares two SPDX files.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxFileDifference.html" title="class in org.spdx.utility.compare">SpdxFileDifference</a></th>
 <td class="colLast">
 <div class="block">Contains the results of a comparison between two SPDX files with the same name</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></th>
 <td class="colLast">
 <div class="block">Compares two SPDX items.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxItemDifference.html" title="class in org.spdx.utility.compare">SpdxItemDifference</a></th>
 <td class="colLast">
 <div class="block">Contains the results of a comparison between two SPDX items with the same name</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxLicenseDifference.html" title="class in org.spdx.utility.compare">SpdxLicenseDifference</a></th>
 <td class="colLast">
 <div class="block">Contains the results of a comparison between two SPDX non-standard licenses
@@ -181,32 +184,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  other fields are different</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxPackageComparer.html" title="class in org.spdx.utility.compare">SpdxPackageComparer</a></th>
 <td class="colLast">
 <div class="block">Compares two SPDX package.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxSnippetComparer.html" title="class in org.spdx.utility.compare">SpdxSnippetComparer</a></th>
 <td class="colLast">
 <div class="block">Compares two SPDX snippets.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="TemplateRegexMatcher.html" title="class in org.spdx.utility.compare">TemplateRegexMatcher</a></th>
 <td class="colLast">
 <div class="block">Constructs a regular expression from a license or exception template and provide a matching method
- to see if code matching the template exists within the text provided
- 
- Note that the regular expression assumes a fully normalized text string to match
- 
- <code>isTemplateMatchWithinText(String text)</code> will return true if the text text matches the template
- 
- <code>getQuickMatchRegex()</code> will return a regular expression with limited backtracking which can be used for a quick search
- <code>getCompleteRegex()</code> will return a regular expression for the entire license where
- <code>getStartRegex(int wordLimit)</code> will return a regular expression to match the beginning of a license
- and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license</div>
+ to see if code matching the template exists within the text provided</div>
 </td>
 </tr>
 </tbody>

@@ -330,6 +330,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public&nbsp;org.spdx.core.TypedValue&nbsp;getTypedValue()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the TypedValue</dd>
 </dl>
 </li>
 </ul>
@@ -342,8 +343,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;?&gt;&nbsp;getValueList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>all values for the property</dd>
 </dl>
 </li>
 </ul>
@@ -357,11 +359,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                 throws org.spdx.core.InvalidSPDXAnalysisException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>value if present, otherwise null</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -375,9 +377,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
-<dd><code>clazz</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>clazz</code> - target class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the collection members can be assigned to the class</dd>
 </dl>
 </li>
 </ul>
@@ -391,9 +394,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
-<dd><code>clazz</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>clazz</code> - target class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the property can be assigned to the class</dd>
 </dl>
 </li>
 </ul>
@@ -406,8 +410,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isCollectionProperty&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the property is a collection</dd>
 </dl>
 </li>
 </ul>

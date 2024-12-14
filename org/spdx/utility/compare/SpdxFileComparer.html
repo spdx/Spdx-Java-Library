@@ -329,10 +329,10 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>spdxDocument</code> - document containing the file</dd>
-<dd><code>spdxFile</code> - </dd>
+<dd><code>spdxFile</code> - file to add</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -378,11 +378,12 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <div class="block">Get the checksums which are present in the file contained document A but not in document B</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - document to compare</dd>
+<dd><code>docB</code> - document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the checksums which are present in the file contained document A but not in document B</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -415,7 +416,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="SpdxItemComparer.html#checkInProgress()">checkInProgress</a></code>&nbsp;in class&nbsp;<code><a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -463,8 +464,9 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="SpdxItemComparer.html#isDifferenceFound()">isDifferenceFound</a></code>&nbsp;in class&nbsp;<code><a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if any differences are found</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -480,11 +482,12 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <div class="block">Return a file difference for the file contained in two different documents</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - document containing files to compare</dd>
+<dd><code>docB</code> - document containing files to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>file differences between docA and docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>

@@ -218,7 +218,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNonOptionalLicenseText(java.lang.String,org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling)">getNonOptionalLicenseText</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseTemplate,
                          <a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling)</code></th>
 <td class="colLast">
-<div class="block">Get the text of a license minus any optional text - note: this include the default variable text</div>
+<div class="block">Get the text of a license minus any optional text - note: this includes the default variable text</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -518,7 +518,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Remove common comment characters from either a template or license text strings</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - </dd>
+<dd><code>s</code> - string source</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>string without comment characters</dd>
 </dl>
@@ -606,7 +606,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;getNonOptionalLicenseText&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseTemplate,
                                                      <a href="FilterTemplateOutputHandler.VarTextHandling.html" title="enum in org.spdx.utility.compare">FilterTemplateOutputHandler.VarTextHandling</a>&nbsp;varTextHandling)
                                               throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
-<div class="block">Get the text of a license minus any optional text - note: this include the default variable text</div>
+<div class="block">Get the text of a license minus any optional text - note: this includes the default variable text</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>licenseTemplate</code> - license template containing optional and var tags</dd>
@@ -649,8 +649,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>isTextMatchingTemplate</h4>
 <pre class="methodSignature">public static&nbsp;<a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a>&nbsp;isTextMatchingTemplate&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;template,
                                                                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)
-                                                                                 throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a>,
-                                                                                        org.spdx.core.InvalidSPDXAnalysisException</pre>
+                                                                                 throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>template</code> - Template in the standard template format used for comparison</dd>
@@ -659,7 +658,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>any differences found</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on comparison errors</dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on errors reading reading properties from the SPDX model</dd>
 </dl>
 </li>
 </ul>
@@ -775,8 +773,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>matchingStandardLicenseIdsWithinText</h4>
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;matchingStandardLicenseIdsWithinText&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text,
                                                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;licenseIds)
-                                                         throws org.spdx.core.InvalidSPDXAnalysisException,
-                                                                <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+                                                         throws org.spdx.core.InvalidSPDXAnalysisException</pre>
 <div class="block">Returns a list of SPDX Standard License ID's from the provided list that were found within the text, using
  the SPDX matching guidelines.</div>
 <dl>
@@ -787,7 +784,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>List of SPDX standard license IDs from licenseIds that match</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard licenses</dd>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - If an error occurs in the comparison</dd>
 </dl>
 </li>
 </ul>
@@ -798,18 +794,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>matchingStandardLicenseIdsWithinText</h4>
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;matchingStandardLicenseIdsWithinText&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)
-                                                         throws org.spdx.core.InvalidSPDXAnalysisException,
-                                                                <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+                                                         throws org.spdx.core.InvalidSPDXAnalysisException</pre>
 <div class="block">Returns a list of SPDX Standard License ID's that were found within the text, using
  the SPDX matching guidelines.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>text</code> - Text to compare to all of the standard licenses</dd>
+<dd><code>text</code> - Text to compare to all the standard licenses</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>List of SPDX standard license IDs that match</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard licenses</dd>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - If an error occurs in the comparison</dd>
 </dl>
 </li>
 </ul>
@@ -821,8 +815,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>matchingStandardLicenseExceptionIdsWithinText</h4>
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;matchingStandardLicenseExceptionIdsWithinText&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text,
                                                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;licenseExceptionIds)
-                                                                  throws org.spdx.core.InvalidSPDXAnalysisException,
-                                                                         <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+                                                                  throws org.spdx.core.InvalidSPDXAnalysisException</pre>
 <div class="block">Returns a list of SPDX Standard License Exception ID's from the provided list that were found within the text, using
  the SPDX matching guidelines.</div>
 <dl>
@@ -830,10 +823,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>text</code> - Text to compare to</dd>
 <dd><code>licenseExceptionIds</code> - License Exceptions Ids to compare against</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Array of SPDX standard license exception IDs from licenseExceptionIds that match</dd>
+<dd>List of SPDX standard license exception IDs from licenseExceptionIds that match</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard license exceptions</dd>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - If an error occurs in the comparison</dd>
 </dl>
 </li>
 </ul>
@@ -844,18 +836,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>matchingStandardLicenseExceptionIdsWithinText</h4>
 <pre class="methodSignature">public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;matchingStandardLicenseExceptionIdsWithinText&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)
-                                                                  throws org.spdx.core.InvalidSPDXAnalysisException,
-                                                                         <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+                                                                  throws org.spdx.core.InvalidSPDXAnalysisException</pre>
 <div class="block">Returns a list of SPDX Standard License Exception ID's that were found within the text, using
  the SPDX matching guidelines.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>text</code> - Text to compare to all of the standard license exceptions</dd>
+<dd><code>text</code> - Text to compare to all the standard license exceptions</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Array of SPDX standard license exception IDs that match</dd>
+<dd>List of SPDX standard license exception IDs that match</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard license exceptions</dd>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - If an error occurs in the comparison</dd>
 </dl>
 </li>
 </ul>
@@ -866,8 +856,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>isLicensePassBlackList</h4>
 <pre class="methodSignature">public static&nbsp;boolean&nbsp;isLicensePassBlackList&#8203;(org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;license,
-                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>...&nbsp;blackList)
-                                      throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>...&nbsp;blackList)</pre>
 <div class="block">Detect if a license pass black lists</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -875,8 +864,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>blackList</code> - license black list</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>if the license pass black lists</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard license exceptions</dd>
 </dl>
 </li>
 </ul>
@@ -887,8 +874,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>isLicensePassWhiteList</h4>
 <pre class="methodSignature">public static&nbsp;boolean&nbsp;isLicensePassWhiteList&#8203;(org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;license,
-                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>...&nbsp;whiteList)
-                                      throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>...&nbsp;whiteList)</pre>
 <div class="block">Detect if a license pass white lists</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -896,8 +882,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>whiteList</code> - license white list</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>if the license pass white lists</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an error occurs accessing the standard license exceptions</dd>
 </dl>
 </li>
 </ul>

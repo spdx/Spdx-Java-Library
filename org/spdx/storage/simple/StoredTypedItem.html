@@ -401,7 +401,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>new number of times this item is referenced</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -411,13 +411,10 @@ extends org.spdx.core.TypedValue</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getReferenceCount</h4>
-<pre class="methodSignature">public&nbsp;int&nbsp;getReferenceCount()
-                      throws org.spdx.core.SpdxInvalidTypeException</pre>
+<pre class="methodSignature">public&nbsp;int&nbsp;getReferenceCount()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>new number of times this item is referenced</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
 </dl>
 </li>
 </ul>
@@ -435,7 +432,7 @@ extends org.spdx.core.TypedValue</pre>
 <dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
 <dd><code>value</code> - Value to be set</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -452,7 +449,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -471,7 +468,7 @@ extends org.spdx.core.TypedValue</pre>
 <dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
 <dd><code>value</code> - Value to be set</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -508,9 +505,9 @@ extends org.spdx.core.TypedValue</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>value</code> - </dd>
+<dd><code>value</code> - value to remove</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -528,7 +525,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>List of values associated with the objectUri, propertyDescriptor and document</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -574,7 +571,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>store</code> - model store to copy from</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -592,7 +589,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Size of the collection</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -612,7 +609,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if value is in the list associated with the property descriptor</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code></dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
 </li>
 </ul>
@@ -632,7 +629,7 @@ extends org.spdx.core.TypedValue</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the property with the propertyDescriptor can be assigned to clazz</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.ModelRegistryException</code></dd>
+<dd><code>org.spdx.core.ModelRegistryException</code> - On registry exception - check that it is initialized</dd>
 </dl>
 </li>
 </ul>

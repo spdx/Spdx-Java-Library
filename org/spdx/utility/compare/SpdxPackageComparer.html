@@ -427,8 +427,8 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dd><code>spdxDocument</code> - document containing the package</dd>
 <dd><code>spdxPackage</code> - packaged to be added</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -461,7 +461,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the differenceFound</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -478,7 +478,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="SpdxItemComparer.html#checkInProgress()">checkInProgress</a></code>&nbsp;in class&nbsp;<code><a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -494,7 +494,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the packageVersionsEquals</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -556,7 +556,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
                                          throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the packageVerificationCodeesEquals</dd>
+<dd>the packageVerificationCodesEquals</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
@@ -574,7 +574,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the filesAnalyzedEquals</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -702,7 +702,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the externalRefsEquals</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -712,16 +712,13 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <ul class="blockList">
 <li class="blockList">
 <h4>getDocPackage</h4>
-<pre class="methodSignature">public&nbsp;org.spdx.library.model.v2.SpdxPackage&nbsp;getDocPackage&#8203;(org.spdx.library.model.v2.SpdxDocument&nbsp;document)
-                                                    throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+<pre class="methodSignature">public&nbsp;org.spdx.library.model.v2.SpdxPackage&nbsp;getDocPackage&#8203;(org.spdx.library.model.v2.SpdxDocument&nbsp;document)</pre>
 <div class="block">Return the package associated with the document</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>document</code> - </dd>
+<dd><code>document</code> - document</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>The document associated with the document</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd>The package associated with the document</dd>
 </dl>
 </li>
 </ul>
@@ -801,9 +798,10 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <div class="block">Get any fileDifferences which are in docA but not in docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>any fileDifferences which are in docA but not in docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
@@ -821,9 +819,10 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <div class="block">Return any unique files by name which are in docA but not in docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>any unique files by name which are in docA but not in docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
@@ -839,6 +838,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
                       throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>package name</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
@@ -854,8 +854,9 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
                    throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>number of package</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>

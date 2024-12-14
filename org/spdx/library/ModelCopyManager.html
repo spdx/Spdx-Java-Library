@@ -140,10 +140,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>
 implements org.spdx.core.IModelCopyManager</pre>
 <div class="block">This class helps facilitate copying objects from one model to another.
- 
+ <p>
  In addition to the copy functions (methods), this object keeps track of 
  what was copied where so that the same object is not copied twice.
- 
+ <p>
  This object can be passed into the constructor for ModelObjects to allow the objects to be copied.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
@@ -374,7 +374,7 @@ public&nbsp;<a href="conversion/ISpdxConverter.html" title="interface in org.spd
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a converter for the fromStore fromSpecVersion to the toStore toSpecVersion</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - On SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -449,7 +449,7 @@ public&nbsp;<a href="conversion/ISpdxConverter.html" title="interface in org.spd
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Object URI for the copied object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>

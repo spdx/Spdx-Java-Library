@@ -235,7 +235,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
                             org.spdx.library.model.v2.SpdxDocument&nbsp;docB)</code></th>
 <td class="colLast">
 <div class="block">Get any file difference for the Spdx Snippet From File between the two SPDX documents
- If the fileName is different, the they are considered unique files and the getUniqueSnippetFromFile should be called
+ If the fileName is different, they are considered unique files and the getUniqueSnippetFromFile should be called
  to obtain the unique file</div>
 </td>
 </tr>
@@ -344,7 +344,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dd><code>spdxDocument</code> - document containing the package</dd>
 <dd><code>snippet</code> - snippet to be added</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
 </li>
@@ -363,7 +363,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the differenceFound</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -380,7 +380,7 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="SpdxItemComparer.html#checkInProgress()">checkInProgress</a></code>&nbsp;in class&nbsp;<code><a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
 </dl>
 </li>
 </ul>
@@ -394,12 +394,12 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
                                                        org.spdx.library.model.v2.SpdxDocument&nbsp;docB)
                                                 throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <div class="block">Get any file difference for the Spdx Snippet From File between the two SPDX documents
- If the fileName is different, the they are considered unique files and the getUniqueSnippetFromFile should be called
+ If the fileName is different, they are considered unique files and the getUniqueSnippetFromFile should be called
  to obtain the unique file</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the file difference or null if there is no file difference</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -484,9 +484,10 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <div class="block">Get an SpdxFile that only exists in docA but not docB</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>docA</code> - </dd>
-<dd><code>docB</code> - </dd>
+<dd><code>docA</code> - A document to compare</dd>
+<dd><code>docB</code> - B document to compare</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>an SpdxFile that only exists in docA but not docB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code></dd>
 </dl>
@@ -514,8 +515,9 @@ extends <a href="SpdxItemComparer.html" title="class in org.spdx.utility.compare
 <pre class="methodSignature">public&nbsp;org.spdx.library.model.v2.SpdxSnippet&nbsp;getDocSnippet&#8203;(org.spdx.library.model.v2.SpdxDocument&nbsp;spdxDocument)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>spdxDocument</code> - </dd>
+<dd><code>spdxDocument</code> - document containing the snippet</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>snippet in the spdxDocument</dd>
 </dl>
 </li>
 </ul>

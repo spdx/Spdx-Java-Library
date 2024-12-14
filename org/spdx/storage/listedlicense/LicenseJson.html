@@ -135,7 +135,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">LicenseJson</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block">Simple POJO to hold the license data loaded from a JSON file
- 
+ <p>
  Licenses in the JSON format can be found at spdx.org/licenses/[licenseid].json</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
@@ -189,9 +189,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addCrossRefValueToList(org.spdx.storage.PropertyDescriptor,org.spdx.storage.listedlicense.CrossRefJson)">addCrossRefValueToList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
-                      org.spdx.storage.listedlicense.CrossRefJson&nbsp;value)</code></th>
+                      <a href="CrossRefJson.html" title="class in org.spdx.storage.listedlicense">CrossRefJson</a>&nbsp;value)</code></th>
 <td class="colLast">
-<div class="block">Add a cross reference to a value list</div>
+<div class="block">Add a cross-reference to a value list</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -377,17 +377,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>addCrossRefValueToList</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;addCrossRefValueToList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
-                                      org.spdx.storage.listedlicense.CrossRefJson&nbsp;value)
+                                      <a href="CrossRefJson.html" title="class in org.spdx.storage.listedlicense">CrossRefJson</a>&nbsp;value)
                                throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Add a cross reference to a value list</div>
+<div class="block">Add a cross-reference to a value list</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
-<dd><code>value</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>value</code> - cross ref value to add</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true as specified by <code>Collections.add</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
@@ -403,12 +403,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Add a primitive value to a value list</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - </dd>
-<dd><code>value</code> - </dd>
+<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>value</code> - value to add to the list</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true as specified by <code>Collections.add</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
 </li>
 </ul>
