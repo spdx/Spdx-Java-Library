@@ -105,7 +105,7 @@ public class ModelCopyManager implements IModelCopyManager {
 	
 	/**
 	 * @param fromStore Store copied from
-	 * @param fromObjectUri Object URI in the from tsotre
+	 * @param fromObjectUri Object URI in the fromStore
 	 * @param toStore store copied to
 	 * @return the objectId which has already been copied, or null if it has not been copied
 	 */

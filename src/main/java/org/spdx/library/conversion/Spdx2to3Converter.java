@@ -379,8 +379,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 					SpdxConstantsV3.CORE_ORGANIZATION, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
 			organization.setCreationInfo(creationInfo);
 			if (matcher.groupCount() > 1) {
-				String origanizationName = matcher.group(2).trim();
-				organization.setName(origanizationName);
+				String organizationName = matcher.group(2).trim();
+				organization.setName(organizationName);
 			} else {
 				logger.warn("Missing organization name");
 				organization.setName("[MISSING]");
@@ -940,7 +940,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	
 	/**
 	 * Convert and add properties from the fromException to the toAddition
-	 * @param fromException SPDX spec verion 2 LicenseException to copy properties from
+	 * @param fromException SPDX spec version 2 LicenseException to copy properties from
 	 * @param toAddition SPDX spec version 3 LicenseAddition to copy properties to
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
@@ -992,7 +992,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	}
 
 	/**
-	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression
+	 * Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 LicenseExpression
 	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
 	 * @return an SPDX spec version 3 LicenseExpression
 	 * @throws InvalidSPDXAnalysisException on any errors converting
@@ -1027,9 +1027,9 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	}
 
 	/**
-	 * Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result
+	 * Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 SPDX AnyLicenseInfo and store the result
 	 * @param fromLicense an SPDX spec version 2 AnyLicenseInfo
-	 * @return an SPDX spec version 3 AnyLicenseIfno
+	 * @return an SPDX spec version 3 AnyLicenseInfo
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
 	public AnyLicenseInfo convertAndStore(org.spdx.library.model.v2.license.AnyLicenseInfo fromLicense) throws InvalidSPDXAnalysisException {
@@ -1201,7 +1201,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 	}
 
 	/**
-	 * Adds a Sotfware Purpose to a SoftwareArtifact.  If the primaryPurpose is already used, add as an additionalPurpose
+	 * Adds a Software Purpose to a SoftwareArtifact.  If the primaryPurpose is already used, add as an additionalPurpose
 	 * @param purpose purpose to add
 	 * @param artifact artifact to add the purpose to
 	 * @throws InvalidSPDXAnalysisException on any error in conversion
