@@ -312,7 +312,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertAndStore(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertAndStore</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)</code></th>
 <td class="colLast">
-<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result</div>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 SPDX AnyLicenseInfo and store the result</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -441,7 +441,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <td class="colFirst"><code>org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convertToLicenseExpression(org.spdx.library.model.v2.license.AnyLicenseInfo)">convertToLicenseExpression</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)</code></th>
 <td class="colLast">
-<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 LicenseExpression</div>
 </td>
 </tr>
 <tr id="i24" class="altColor">
@@ -951,7 +951,7 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <h4>convertToLicenseExpression</h4>
 <pre class="methodSignature">public&nbsp;org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression&nbsp;convertToLicenseExpression&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)
                                                                                            throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 LicenseExpression</div>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 LicenseExpression</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fromLicense</code> - an SPDX spec version 2 AnyLicenseInfo</dd>
@@ -970,12 +970,12 @@ implements <a href="ISpdxConverter.html" title="interface in org.spdx.library.co
 <h4>convertAndStore</h4>
 <pre class="methodSignature">public&nbsp;org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;convertAndStore&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;fromLicense)
                                                                              throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseIfno to an SPDX spec version 3 SPDX AnyLicenseIfno and store the result</div>
+<div class="block">Converts an SPDX spec version 2 SPDX AnyLicenseInfo to an SPDX spec version 3 SPDX AnyLicenseInfo and store the result</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fromLicense</code> - an SPDX spec version 2 AnyLicenseInfo</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>an SPDX spec version 3 AnyLicenseIfno</dd>
+<dd>an SPDX spec version 3 AnyLicenseInfo</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on any errors converting</dd>
 </dl>
