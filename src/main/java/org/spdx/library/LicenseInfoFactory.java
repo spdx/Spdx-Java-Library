@@ -42,6 +42,7 @@ import org.spdx.utility.license.LicenseExpressionParser;
 
 /**
  * Factory for creating SPDXLicenseInfo objects from a Jena model
+ * 
  * @author Gary O'Neall
  */
 @SuppressWarnings("unused")

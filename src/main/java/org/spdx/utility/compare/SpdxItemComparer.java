@@ -35,11 +35,13 @@ import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 
 /**
- * Compares two SPDX items.  The <code>compare(itemA, itemB)</code> method will perform the comparison and
+ * Compares two SPDX items
+ * <p>
+ * The <code>compare(itemA, itemB)</code> method will perform the comparison and
  * store the results.  <code>isDifferenceFound()</code> will return true of any 
  * differences were found.
- * @author Gary
  *
+ * @author Gary O'Neall
  */
 public class SpdxItemComparer {
 	private boolean itemInProgress = false;

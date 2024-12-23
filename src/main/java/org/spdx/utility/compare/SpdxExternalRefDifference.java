@@ -30,7 +30,6 @@ import org.spdx.library.model.v2.enumerations.ReferenceCategory;
  * Contains information on differences between two different External Refs.
  * 
  * @author Gary O'Neall
- *
  */
 public class SpdxExternalRefDifference {
 	

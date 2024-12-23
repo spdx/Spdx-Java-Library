@@ -37,8 +37,8 @@ import org.spdx.licenseTemplate.LineColumn;
 /**
  * Compares the output of a parsed license template to text.  The method matches is called after
  * the document is parsed to determine if the text matches.
+ * 
  * @author Gary O'Neall
- *
  */
 public class CompareTemplateOutputHandler implements
 		ILicenseTemplateOutputHandler {

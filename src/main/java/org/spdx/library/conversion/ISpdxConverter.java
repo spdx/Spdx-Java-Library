@@ -18,10 +18,9 @@
 package org.spdx.library.conversion;
 
 /**
- * @author Gary O'Neall
- * 
  * Interface for classes that can convert from one SPDX spec version to another
  *
+ * @author Gary O'Neall
  */
 public interface ISpdxConverter {
 

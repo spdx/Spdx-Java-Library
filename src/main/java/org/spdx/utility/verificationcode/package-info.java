@@ -16,9 +16,8 @@
  *   limitations under the License.
  */
 /**
- * @author Gary O'Neall
- * 
  * Classes used to generate PackageVerificationCodes
  *
+ * @author Gary O'Neall
  */
 package org.spdx.utility.verificationcode;

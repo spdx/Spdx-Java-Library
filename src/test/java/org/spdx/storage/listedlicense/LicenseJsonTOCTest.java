@@ -32,7 +32,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class LicenseJsonTOCTest extends TestCase {
 

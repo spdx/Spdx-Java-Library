@@ -33,7 +33,6 @@ import org.spdx.library.model.v2.license.SpdxListedLicense;
  * at spdx.org/licenses/licenses.json
  * 
  * @author Gary O'Neall
- *
  */
 public class LicenseJsonTOC {
 	

@@ -33,10 +33,9 @@ import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
- * @author Gary O'Neall
- * 
  * Storage for the creator agent of the license list
  *
+ * @author Gary O'Neall
  */
 @SuppressWarnings("unused")
 public class LicenseCreatorAgent {

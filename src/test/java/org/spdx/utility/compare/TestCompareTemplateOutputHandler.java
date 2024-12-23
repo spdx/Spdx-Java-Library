@@ -34,7 +34,6 @@ import org.spdx.licenseTemplate.LicenseTemplateRule.RuleType;
 
 /**
  * @author Source Auditor
- *
  */
 public class TestCompareTemplateOutputHandler {
 

@@ -44,8 +44,7 @@ import org.spdx.utility.compare.UnitTestHelper;
 import junit.framework.TestCase;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class SpdxListedLicenseWebStoreTest extends TestCase {
 

@@ -26,9 +26,8 @@ import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.utility.DownloadCache;
 
 /**
- * @author gary   Original code
- * @author pmonks Optional caching of downloaded files
- *
+ * @author Gary O'Neall   Original code
+ * @author Peter Monks    Optional caching of downloaded files
  */
 public class SpdxListedLicenseWebStore extends SpdxListedLicenseModelStore {
 

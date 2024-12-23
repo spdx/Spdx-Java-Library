@@ -16,9 +16,8 @@
  *   limitations under the License.
  */
 /**
- * @author Gary O'Neall
- * 
  * Simple SPDX storage using in memory basic functions
  *
+ * @author Gary O'Neall
  */
 package org.spdx.storage.simple;

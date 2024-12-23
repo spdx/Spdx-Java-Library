@@ -65,12 +65,12 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
 /**
- * A parser for the SPDX License Expressions as documented in the SPDX appendix.
+ * A parser for the SPDX License Expressions as documented in the SPDX appendix
  * <p>
  * This is a static help class.  The primary method is parseLicenseExpression which 
  * returns an AnyLicenseInfo.
+ * 
  * @author Gary O'Neall
- *
  */
 public class LicenseExpressionParser {
 

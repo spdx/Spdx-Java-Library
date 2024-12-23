@@ -39,8 +39,7 @@ import org.spdx.storage.simple.InMemSpdxStore;
 import junit.framework.TestCase;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class LicenseInfoFactoryTest extends TestCase {
 	

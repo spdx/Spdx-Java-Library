@@ -47,15 +47,14 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
- * @author Gary O'Neall
- * <p>
- * In memory implementation of an SPDX store.
+ * In memory implementation of an SPDX store
  * <p>
  * This implementation primarily uses <code>ConcurrentHashMaps</code>.
  * <p>
  * It is designed to be thread-safe and low CPU utilization.  It may use significant amounts of memory
  * for larger SPDX documents.
  *
+ * @author Gary O'Neall
  */
 public class InMemSpdxStore implements IModelStore {
 

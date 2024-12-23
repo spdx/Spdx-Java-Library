@@ -34,8 +34,7 @@ import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class LicenseCreatorAgentTest {
 	

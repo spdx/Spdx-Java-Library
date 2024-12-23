@@ -33,7 +33,6 @@ import org.spdx.library.model.v2.license.ListedLicenseException;
  * at spdx.org/licenses/licenses.json
  * 
  * @author Gary O'Neall
- *
  */
 public class ExceptionJsonTOC {
 	public static class ExceptionJson {

@@ -49,7 +49,6 @@ import org.spdx.storage.IModelStore;
  * The <code>inflateModelObject</code> methods will create an initial object based on the name of the type
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("unused")
 public class SpdxModelFactory {

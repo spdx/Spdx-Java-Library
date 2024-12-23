@@ -32,11 +32,13 @@ import org.spdx.library.model.v2.SpdxSnippet;
 import org.spdx.library.model.v2.pointer.StartEndPointer;
 
 /**
- * Compares two SPDX snippets.  The <code>compare(snippetA, snippetB)</code> method will perform the comparison and
+ * Compares two SPDX snippets
+ * <p>
+ * The <code>compare(snippetA, snippetB)</code> method will perform the comparison and
  * store the results.  <code>isDifferenceFound()</code> will return true of any 
  * differences were found.
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxSnippetComparer extends SpdxItemComparer {
 

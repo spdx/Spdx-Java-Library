@@ -16,9 +16,8 @@
  *   limitations under the License.
  */
 /**
- * @author Gary O'Neall
- * 
  * Utilities to help with license expression parsing and creation
  *
+ * @author Gary O'Neall
  */
 package org.spdx.utility.license;

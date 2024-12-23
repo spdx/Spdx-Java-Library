@@ -45,7 +45,6 @@ import org.spdx.storage.IModelStore.IdType;
  * a file level.
  *
  * @author Gary O'Neall
- *
  */
 public class VerificationCodeGenerator {
 

@@ -53,7 +53,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("deprecation")
 public class LicenseCompareHelperTestV2 extends TestCase {

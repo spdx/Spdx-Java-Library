@@ -54,7 +54,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class SpdxPackageComparerTest extends TestCase {
 	

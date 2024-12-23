@@ -35,11 +35,13 @@ import org.spdx.library.model.v2.SpdxItem;
 import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 /**
- * Compares two SPDX files.  The <code>compare(fileA, fileB)</code> method will perform the comparison and
+ * Compares two SPDX files
+ * <p>
+ * The <code>compare(fileA, fileB)</code> method will perform the comparison and
  * store the results.  <code>isDifferenceFound()</code> will return true of any 
  * differences were found.
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxFileComparer extends SpdxItemComparer {
 	private boolean inProgress = false;

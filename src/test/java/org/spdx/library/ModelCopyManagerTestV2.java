@@ -46,7 +46,6 @@ import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class ModelCopyManagerTestV2 {
 	private static final String ORIGINAL_NAMESPACE = "http://something#";

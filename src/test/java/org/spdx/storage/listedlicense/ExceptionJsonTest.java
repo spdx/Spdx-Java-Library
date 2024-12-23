@@ -40,8 +40,7 @@ import com.google.gson.Gson;
 import junit.framework.TestCase;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class ExceptionJsonTest extends TestCase {
 

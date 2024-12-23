@@ -36,7 +36,6 @@ import org.spdx.storage.PropertyDescriptor;
  * with a choice of underlying message stores.
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("unused")
 public abstract class ExtendedSpdxStore implements IModelStore {

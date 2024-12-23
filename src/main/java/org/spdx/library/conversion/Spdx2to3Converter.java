@@ -87,11 +87,10 @@ import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.listedlicense.SpdxListedLicenseModelStore;
 
 /**
- * @author Gary O'Neall
- * <p>
  * Converts SPDX spec version 2.X objects to SPDX spec version 3.X and stores the result in the
  * toModelStore
  *
+ * @author Gary O'Neall
  */
 @SuppressWarnings({"OptionalGetWithoutIsPresent", "LoggingSimilarMessage"})
 public class Spdx2to3Converter implements ISpdxConverter {

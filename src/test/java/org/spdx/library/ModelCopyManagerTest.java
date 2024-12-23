@@ -44,7 +44,6 @@ import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class ModelCopyManagerTest {
 	

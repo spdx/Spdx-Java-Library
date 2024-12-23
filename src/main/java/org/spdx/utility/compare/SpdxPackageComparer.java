@@ -38,11 +38,13 @@ import org.spdx.library.model.v2.SpdxItem;
 import org.spdx.library.model.v2.SpdxPackage;
 
 /**
- * Compares two SPDX package.  The <code>compare(pkgA, pkgB)</code> method will perform the comparison and
+ * Compares two SPDX package.
+ * <p>
+ * The <code>compare(pkgA, pkgB)</code> method will perform the comparison and
  * store the results.  <code>isDifferenceFound()</code> will return true of any 
  * differences were found.
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxPackageComparer extends SpdxItemComparer {
 	private boolean inProgress = false;
