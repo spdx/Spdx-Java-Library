@@ -17,7 +17,7 @@
  */
 /**
  * Functions for reading, writing, and manipulating SPDX documents
- * 
+ * <p>
  * The <code>org.spdx.library.model.compat.v2.compat.v2</code> package represents the SPDX model as Java objects
  * with getters and setters to support manipulating the SPDX documents.
  * 

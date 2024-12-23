@@ -17,7 +17,7 @@
  */
 /**
  * Classes that convert between major versions of SPDX
- * 
+ * <p>
  * These classes can be used directly (e.g. from a web application or CLI) or 
  * from the <code>CopyManager</code>.
  *
