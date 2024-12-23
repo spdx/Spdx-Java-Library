@@ -134,7 +134,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <hr>
 <pre>public final class <span class="typeNameLabel">DownloadCache</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
-<div class="block">This singleton class provides a flexible download cache for the rest of the library.  If enabled, URLs that are
+<div class="block">Flexible download cache for the rest of the library
+ <p>
+ This singleton class provides a flexible download cache for the rest of the library.  If enabled, URLs that are
  requested using this class will have their content automatically cached locally on disk (in a directory that adheres
  to the XDG Base Directory Specification - <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">...</a>),
  and any subsequent requests will be served out of that cache.  Cache entries will also be automatically checked every
@@ -148,6 +150,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  * org.spdx.storage.listedlicense.cacheCheckIntervalSecs:
    How many seconds should the cache wait between issuing ETag requests to determine whether cached content is
    stale? Defaults to 86,400 seconds (24 hours).</div>
+<dl>
+<dt><span class="simpleTagLabel">Author:</span></dt>
+<dd>Gary O'Neall</dd>
+</dl>
 </li>
 </ul>
 </div>

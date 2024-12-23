@@ -97,16 +97,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h1 title="Package" class="title">Package&nbsp;org.spdx.storage.listedlicense</h1>
 </div>
 <div class="contentContainer">
-<section>
-<dl>
-<dt><span class="simpleTagLabel">Author:</span></dt>
-<dd>Gary O'Neall
- <p>
- Storage for SPDX listed licenses.
+<section><a id="package.description">
+<!--   -->
+</a>
+<div class="block">Storage for SPDX listed licenses
  <p>
  The <code>SpdxListedLicenseModelStore</code> is the default storage which pull the data from JSON files at spdx.org/licenses
  
- The <code>SpdxListedLicenseLocalModelStore</code> uses a local copy of the licenses stored in the resources/licenses directory</dd>
+ The <code>SpdxListedLicenseLocalModelStore</code> uses a local copy of the licenses stored in the resources/licenses directory</div>
+<dl>
+<dt><span class="simpleTagLabel">Author:</span></dt>
+<dd>Gary O'Neall</dd>
 </dl>
 </section>
 <ul class="blockList">
@@ -120,7 +121,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tbody>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="IListedLicenseStore.html" title="interface in org.spdx.storage.listedlicense">IListedLicenseStore</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Extends the model store to include interfaces specific to listed licenses</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -158,11 +161,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="LicenseCreationInfo.html" title="class in org.spdx.storage.listedlicense">LicenseCreationInfo</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Creation information for the listed license store</div>
+</td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="LicenseCreatorAgent.html" title="class in org.spdx.storage.listedlicense">LicenseCreatorAgent</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Storage for the creator agent of the license list</div>
+</td>
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="LicenseJson.html" title="class in org.spdx.storage.listedlicense">LicenseJson</a></th>
@@ -183,7 +190,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxListedLicenseLocalStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseLocalStore</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Model store for listed licenses using the JSON files in the resources/stdlicenses directory.</div>
+</td>
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxListedLicenseModelStore</a></th>
@@ -197,11 +206,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="SpdxV2ListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxV2ListedLicenseModelStore</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Model store for generating SPDX version 2.X listed license and listed exceptions</div>
+</td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="SpdxV3ListedLicenseModelStore.html" title="class in org.spdx.storage.listedlicense">SpdxV3ListedLicenseModelStore</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Model store for generating SPDX version 3.X listed license and listed exceptions</div>
+</td>
 </tr>
 </tbody>
 </table>

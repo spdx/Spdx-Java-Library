@@ -97,15 +97,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h1 title="Package" class="title">Package&nbsp;org.spdx.library.conversion</h1>
 </div>
 <div class="contentContainer">
-<section>
+<section><a id="package.description">
+<!--   -->
+</a>
+<div class="block">Classes that convert between major versions of SPDX
+ <p>
+ These classes can be used directly (e.g. from a web application or CLI) or 
+ from the <code>CopyManager</code>.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
-<dd>Gary O'Neall
- 
- This package contains classes that convert between major versions of SPDX
- 
- These classes can be used directly (e.g. from a web application or CLI) or 
- from the <code>CopyManager</code>.</dd>
+<dd>Gary O'Neall</dd>
 </dl>
 </section>
 <ul class="blockList">
@@ -119,7 +120,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tbody>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="ISpdxConverter.html" title="interface in org.spdx.library.conversion">ISpdxConverter</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Interface for classes that can convert from one SPDX spec version to another</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -134,11 +137,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tbody>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="ExternalMapInfo.html" title="class in org.spdx.library.conversion">ExternalMapInfo</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Information about an ExternalMap captured from an ExternalDocumentRef</div>
+</td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="Spdx2to3Converter.html" title="class in org.spdx.library.conversion">Spdx2to3Converter</a></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Converts SPDX spec version 2.X objects to SPDX spec version 3.X and stores the result in the
+ toModelStore</div>
+</td>
 </tr>
 </tbody>
 </table>
