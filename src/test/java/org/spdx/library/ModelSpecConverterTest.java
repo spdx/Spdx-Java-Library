@@ -28,8 +28,7 @@ import org.junit.Test;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class ModelSpecConverterTest {
 

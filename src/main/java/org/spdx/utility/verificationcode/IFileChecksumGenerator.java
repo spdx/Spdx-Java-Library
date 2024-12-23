@@ -21,8 +21,8 @@ import java.io.IOException;
 
 /**
  * Interface for implementations of generators of file checksums
- * @author Gary O'Neall
  *
+ * @author Gary O'Neall
  */
 public interface IFileChecksumGenerator {
 	/**

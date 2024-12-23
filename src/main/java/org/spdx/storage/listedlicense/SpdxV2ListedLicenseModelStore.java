@@ -35,10 +35,9 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
- * @author Gary O'Neall
- * 
  * Model store for generating SPDX version 2.X listed license and listed exceptions
  *
+ * @author Gary O'Neall
  */
 public class SpdxV2ListedLicenseModelStore implements IModelStore {
 	

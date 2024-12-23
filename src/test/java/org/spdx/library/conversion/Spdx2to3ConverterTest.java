@@ -91,7 +91,6 @@ import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class Spdx2to3ConverterTest {
 	

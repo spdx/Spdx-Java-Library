@@ -16,8 +16,7 @@
  *   limitations under the License.
  */
 /**
- * Package containing useful library functions for reading, writing, and manipulating 
- * SPDX documents.
+ * Functions for reading, writing, and manipulating SPDX documents
  * 
  * The <code>org.spdx.library.model.compat.v2.compat.v2</code> package represents the SPDX model as Java objects
  * with getters and setters to support manipulating the SPDX documents.
@@ -30,6 +29,5 @@
  * for creating SPDX documents and license information resp.
  * 
  * @author Gary O'Neall
- *
  */
 package org.spdx.library;

@@ -34,7 +34,6 @@ import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class FilterTemplateOutputHandlerTest {
 	

@@ -30,8 +30,7 @@ import org.spdx.storage.PropertyDescriptor;
 import junit.framework.TestCase;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class StoredTypedItemTest extends TestCase {
 

@@ -41,8 +41,7 @@ import org.spdx.storage.PropertyDescriptor;
  * <p>
  * Licenses in the JSON format can be found at spdx.org/licenses/[licenseid].json
  * 
- * @author Gary O'Neall 
- *
+ * @author Gary O'Neall
  */
 @SuppressWarnings("unused")
 public class LicenseJson {

@@ -27,9 +27,9 @@ import org.spdx.library.model.v2.SpdxItem;
 import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 /**
- *  Contains the results of a comparison between two SPDX items with the same name
+ * Contains the results of a comparison between two SPDX items with the same name
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxItemDifference {
 	

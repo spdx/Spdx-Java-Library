@@ -51,8 +51,8 @@ import org.spdx.utility.compare.FilterTemplateOutputHandler.VarTextHandling;
 
 /**
  * Primarily a static class of helper functions for comparing two SPDX licenses
+ * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("deprecation")
 public class LicenseCompareHelper {

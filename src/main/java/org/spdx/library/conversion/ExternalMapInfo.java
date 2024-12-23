@@ -33,10 +33,9 @@ import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IdType;
 
 /**
- * @author Gary O'Neall
- * 
  * Information about an ExternalMap captured from an ExternalDocumentRef
  *
+ * @author Gary O'Neall
  */
 @SuppressWarnings("unused")
 public class ExternalMapInfo {

@@ -24,11 +24,10 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 
 
 /**
- * @author Gary O'Neall
- * 
  * Model store for listed licenses using the JSON files in the resources/stdlicenses directory.
  * Note the resources/stdlicenses must be on the build path.
  *
+ * @author Gary O'Neall
  */
 public class SpdxListedLicenseLocalStore extends SpdxListedLicenseModelStore {
 	

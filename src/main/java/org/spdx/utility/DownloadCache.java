@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
 import org.spdx.Configuration;
 
 /**
+ * Flexible download cache for the rest of the library
+ * <p>
  * This singleton class provides a flexible download cache for the rest of the library.  If enabled, URLs that are
  * requested using this class will have their content automatically cached locally on disk (in a directory that adheres
  * to the XDG Base Directory Specification - <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">...</a>),
@@ -67,6 +69,8 @@ import org.spdx.Configuration;
  * * org.spdx.storage.listedlicense.cacheCheckIntervalSecs:
  *   How many seconds should the cache wait between issuing ETag requests to determine whether cached content is
  *   stale? Defaults to 86,400 seconds (24 hours).
+ * 
+ * @author Gary O'Neall
  */
 public final class DownloadCache {
     private static final Logger logger = LoggerFactory.getLogger(DownloadCache.class);

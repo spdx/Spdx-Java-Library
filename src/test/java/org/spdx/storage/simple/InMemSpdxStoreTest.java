@@ -45,7 +45,6 @@ import net.jodah.concurrentunit.Waiter;
 
 /**
  * @author Gary O'Neall
- *
  */
 public class InMemSpdxStoreTest extends TestCase {
 	

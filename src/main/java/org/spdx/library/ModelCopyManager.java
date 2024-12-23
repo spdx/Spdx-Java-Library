@@ -50,7 +50,6 @@ import org.spdx.storage.PropertyDescriptor;
  * This object can be passed into the constructor for ModelObjects to allow the objects to be copied.
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("unused")
 public class ModelCopyManager implements IModelCopyManager {

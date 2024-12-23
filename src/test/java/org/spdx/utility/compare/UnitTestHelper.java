@@ -37,8 +37,8 @@ import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 /**
  * Helper class for unit tests
- * @author Gary
  *
+ * @author Gary O'Neall
  */
 public class UnitTestHelper {
 	

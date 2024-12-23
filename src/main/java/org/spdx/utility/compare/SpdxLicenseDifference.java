@@ -24,10 +24,12 @@ import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
 
 /**
  * Contains the results of a comparison between two SPDX non-standard licenses
+ * <p>
+ * Contains the results of a comparison between two SPDX non-standard licenses,
  * where the license text is equivalent and the license comment, license ID, or
- * other fields are different
+ * other fields are different.
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxLicenseDifference {
 

@@ -16,12 +16,11 @@
  *   limitations under the License.
  */
 /**
- * @author Gary O'Neall
- * 
- * This package contains classes that convert between major versions of SPDX
+ * Classes that convert between major versions of SPDX
  * 
  * These classes can be used directly (e.g. from a web application or CLI) or 
  * from the <code>CopyManager</code>.
  *
+ * @author Gary O'Neall
  */
 package org.spdx.library.conversion;

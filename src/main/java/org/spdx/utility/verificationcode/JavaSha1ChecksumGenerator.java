@@ -24,8 +24,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Java sha1 checksum generator using MessageDigest
- * @author Gary O'Neall
  *
+ * @author Gary O'Neall
  */
 public class JavaSha1ChecksumGenerator implements IFileChecksumGenerator {
 	static final String SHA1_ALGORITHM = "SHA-1";

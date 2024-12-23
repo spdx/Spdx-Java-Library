@@ -34,8 +34,8 @@ import org.spdx.library.model.v2.license.AnyLicenseInfo;
 
 /**
  * Contains the results of a comparison between two SPDX files with the same name
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxFileDifference extends SpdxItemDifference {
 

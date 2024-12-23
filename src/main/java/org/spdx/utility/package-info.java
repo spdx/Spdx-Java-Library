@@ -19,6 +19,5 @@
  * Utility classes that may be of use for libraries or programs that use the SPDX library
  * 
  * @author Gary O'Neall
- *
  */
 package org.spdx.utility;

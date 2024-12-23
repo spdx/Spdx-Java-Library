@@ -1,8 +1,10 @@
 package org.spdx.utility.compare;
 
 /**
+ * Exception thrown when there is an error during the comparison of SPDX
+ * documents
+ * 
  * @author Gary O'Neall
- *
  */
 public class SpdxCompareException extends Exception {
 

@@ -34,7 +34,6 @@ import org.spdx.storage.PropertyDescriptor;
  * JSON Representation of a CrossRef
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("unused")
 public class CrossRefJson {

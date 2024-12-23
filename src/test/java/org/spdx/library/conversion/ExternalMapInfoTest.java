@@ -37,8 +37,7 @@ import org.spdx.storage.IModelStore.IdType;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
- * @author gary
- *
+ * @author Gary O'Neall
  */
 public class ExternalMapInfoTest {
 	

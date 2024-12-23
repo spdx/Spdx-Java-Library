@@ -48,7 +48,6 @@ import org.spdx.storage.listedlicense.SpdxV3ListedLicenseModelStore;
  * Singleton class which holds the listed licenses
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class ListedLicenses {

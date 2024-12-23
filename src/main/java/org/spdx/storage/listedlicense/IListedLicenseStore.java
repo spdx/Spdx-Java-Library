@@ -25,10 +25,9 @@ import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.IModelStore;
 
 /**
- * @author Gary O'Neall
- * 
  * Extends the model store to include interfaces specific to listed licenses
  *
+ * @author Gary O'Neall
  */
 public interface IListedLicenseStore extends IModelStore {
 

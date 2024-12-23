@@ -65,7 +65,6 @@ import com.google.gson.Gson;
  * CrossRef information is stored within the LicenseJson file.  Id's are anonymous and generated. 
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("LoggingSimilarMessage")
 public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore {

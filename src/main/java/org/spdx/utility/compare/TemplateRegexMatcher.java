@@ -49,7 +49,6 @@ import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
  * and <code>getEndRegex(int wordLimit)</code> will return a regular expression to match the end of a license
  * 
  * @author Gary O'Neall
- *
  */
 public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	

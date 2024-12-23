@@ -20,8 +20,10 @@ package org.spdx.library;
 import org.spdx.core.InvalidSPDXAnalysisException;
 
 /**
- * @author gary
- *
+ * Exception thrown when there is an error during the conversion of SPDX
+ * documents
+ * 
+ * @author Gary O'Neall
  */
 @SuppressWarnings("unused")
 public class SpdxConversionException extends InvalidSPDXAnalysisException {

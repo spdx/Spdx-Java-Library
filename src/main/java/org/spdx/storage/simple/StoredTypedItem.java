@@ -28,7 +28,6 @@ import org.spdx.storage.PropertyDescriptor;
  * Individual item to be stored in memory
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class StoredTypedItem extends TypedValue {

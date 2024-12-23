@@ -53,6 +53,7 @@ import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
 import org.spdx.licenseTemplate.LicenseTextHelper;
 /**
  * Performs a comparison between two or more SPDX documents and holds the results of the comparison
+ * <p>
  * The main function to perform the comparison is <code>compare(spdxdoc1, spdxdoc2)</code>
  * <p>
  * For files, the comparison results are separated into unique files based on the file names
@@ -66,7 +67,6 @@ import org.spdx.licenseTemplate.LicenseTextHelper;
  * getters where the compare operation is started in the middle of a get operation.
  * 
  * @author Gary O'Neall
- *
  */
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class SpdxComparer {

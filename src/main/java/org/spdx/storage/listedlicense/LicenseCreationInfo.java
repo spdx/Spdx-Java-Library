@@ -36,10 +36,9 @@ import org.spdx.library.model.v3_0_1.core.Agent;
 import org.spdx.storage.PropertyDescriptor;
 
 /**
- * @author Gary O'Neall
- * 
  * Creation information for the listed license store
  *
+ * @author Gary O'Neall
  */
 public class LicenseCreationInfo {
 

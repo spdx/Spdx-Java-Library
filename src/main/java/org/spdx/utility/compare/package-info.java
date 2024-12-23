@@ -19,6 +19,5 @@
  * Utility classes for comparing SPDX model objects
  * 
  * @author Gary O'Neall
- *
  */
 package org.spdx.utility.compare;
