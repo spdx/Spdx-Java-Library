@@ -16,7 +16,7 @@
  *   limitations under the License.
  */
 /**
- * Storage for SPDX listed licenses.
+ * Storage for SPDX listed licenses
  * <p>
  * The <code>SpdxListedLicenseModelStore</code> is the default storage which pull the data from JSON files at spdx.org/licenses
  * 
