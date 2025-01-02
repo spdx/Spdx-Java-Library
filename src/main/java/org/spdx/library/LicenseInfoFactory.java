@@ -111,7 +111,7 @@ public class LicenseInfoFactory {
 		} catch (LicenseParserException e) {
 			throw new InvalidLicenseStringException(e.getMessage(),e);
 		} catch (InvalidSPDXAnalysisException e) {
-			throw new InvalidLicenseStringException("Unexpected SPDX error parsing license string");
+			throw new InvalidLicenseStringException("Unexpected SPDX error parsing license string", e);
 		}
 	}
 	
