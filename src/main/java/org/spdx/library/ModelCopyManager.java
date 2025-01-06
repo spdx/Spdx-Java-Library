@@ -448,7 +448,10 @@ public class ModelCopyManager implements IModelCopyManager {
 		}
 		if (Objects.isNull(toNamespace) || toNamespace.isEmpty() || 
 				sourceUri.startsWith(toNamespace)) {
-            logger.warn("{} already exists - possibly overwriting properties due to a copy from a different model store.", sourceUri);
+			if (!sourceUri.startsWith("https://spdx.org")) {
+				// It is not a pre-defined SPDX URI
+				logger.warn("{} already exists - possibly overwriting properties due to a copy from a different model store.", sourceUri);
+			}
 			return sourceUri;
 		}
 		switch (idType) {
