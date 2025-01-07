@@ -414,7 +414,7 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Optional<String> getCaseSensisitiveId(String nameSpace, String caseInsensisitiveId) {
+	public Optional<String> getCaseSensitiveId(String nameSpace, String caseInsensisitiveId) {
 		Objects.requireNonNull(nameSpace, "Namespace can not be null");
 		Objects.requireNonNull(caseInsensisitiveId, "CaseInsensisitiveId can not be null");
 		String objectUri = nameSpace + "#" + caseInsensisitiveId;
