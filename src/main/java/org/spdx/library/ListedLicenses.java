@@ -126,7 +126,7 @@ public class ListedLicenses {
         		try {
         			baseModelStore = new SpdxListedLicenseLocalStore();
         		} catch(InvalidSPDXAnalysisException ex) {
-        			logger.error("Error loading cached SPDX licenses");
+        			logger.error("Error loading cached SPDX licenses", ex);
         			throw new RuntimeException("Unexpected error loading SPDX Listed Licenses");
         		}
         	}
