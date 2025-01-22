@@ -1463,6 +1463,15 @@ public class SpdxComparer {
 	}
 
 	/**
+	 * @return true if the external document refs are equal
+	 * @throws SpdxCompareException on compare errors
+	 */
+	@Deprecated
+	public boolean isExternalDcoumentRefsEquals() throws SpdxCompareException {
+		return isExternalDocumentRefsEquals();
+	}
+
+	/**
 	 * @return true if the extracted licensing infos are equal
 	 * @throws SpdxCompareException on compare errors
 	 */
@@ -1609,6 +1618,15 @@ public class SpdxComparer {
 		this.checkDocsField();
 		this.checkInProgress();
 		return this._isFilesEqualsNoCheck();
+	}
+	
+	/**
+	 * @return true if the files are equal
+	 * @throws SpdxCompareException on compare errors
+	 */
+	@Deprecated
+	public boolean isfilesEquals() throws SpdxCompareException {
+		return isFilesEquals();
 	}
 	
 	/**
