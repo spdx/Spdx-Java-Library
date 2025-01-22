@@ -95,7 +95,7 @@ public class SpdxComparer {
 	 */
 	private final Map<SpdxDocument, Map<SpdxDocument, List<ExtractedLicenseInfo>>> uniqueExtractedLicenses = new HashMap<>();
 	/**
-	 * Map of any SPDX documents that have extraced license infos with equivalent text but different comments, objectUri's or other fields
+	 * Map of any SPDX documents that have extracted license infos with equivalent text but different comments, objectUri's or other fields
 	 */
 	private final Map<SpdxDocument, Map<SpdxDocument, List<SpdxLicenseDifference>>> licenseDifferences = new HashMap<>();
 	/**
@@ -359,7 +359,7 @@ public class SpdxComparer {
 				this.uniqueExternalDocumentRefs.put(spdxDocs.get(i), uniqueAMap);
 			}
 		}
-		if (!this._isExternalDcoumentRefsEqualsNoCheck()) {
+		if (!this._isExternalDocumentRefsEqualsNoCheck()) {
 			this.differenceFound = true;
 		}	
 	}
@@ -579,7 +579,7 @@ public class SpdxComparer {
 	 * same if they have the same package name and the same package version.
 	 * NOTE: The arrays must be sorted by file name
 	 * @param pkgsA source packages
-	 * @param pkgsB packages to compaer
+	 * @param pkgsB packages to compare
 	 * @return any packages in A that are not in B
 	 */
 	static List<SpdxPackage> findUniquePackages(List<SpdxPackage> pkgsA, List<SpdxPackage> pkgsB) {
@@ -786,7 +786,7 @@ public class SpdxComparer {
 
 	/**
 	 * add all the document packages to the multi-comparer
-	 * @param spdxDocument document containing the packges
+	 * @param spdxDocument document containing the packages
 	 * @param pkgs package to add
 	 * @param extractedLicenseIdMap map of documents to extracted licenses and ids
 	 * @throws SpdxCompareException on compare errors
@@ -823,8 +823,8 @@ public class SpdxComparer {
 
 	/**
 	 * Compares two licenses from two different SPDX documents taking into account
-	 * the extracted license infos who's ID's may be different between the two documents
-	 * Note: The ExtracedLicenseIDMap must be initialized before this method is invoked
+	 * the extracted license infos whose ID's may be different between the two documents
+	 * Note: The ExtractedLicenseIDMap must be initialized before this method is invoked
 	 * @param doc1 Index of the SPDX document for license1
 	 * @param license1 license to compare
 	 * @param doc2 Index of the SPDX document for license2
@@ -882,7 +882,7 @@ public class SpdxComparer {
 	private void compareDocumentFields() throws SpdxCompareException {
 		compareDataLicense();
 		compareDocumentComments();
-		compareSpdxVerions();
+		compareSpdxVersions();
 		compareDocumentContents();
 		if (!this.dataLicenseEqual || !this.spdxVersionsEqual || !this.documentCommentsEqual) {
 			this.differenceFound = true;
@@ -912,7 +912,7 @@ public class SpdxComparer {
 	 * @throws SpdxCompareException on compare errors
 	 * 
 	 */
-	private void compareSpdxVerions() throws SpdxCompareException {
+	private void compareSpdxVersions() throws SpdxCompareException {
 		try {
 			String docVer1;
 			docVer1 = spdxDocs.get(0).getSpecVersion();
@@ -1377,7 +1377,7 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * Validates that the spdx dcouments field has been initialized
+	 * Validates that the spdx documents field has been initialized
 	 * @throws SpdxCompareException on compare errors
 	 */
 	private void checkDocsField() throws SpdxCompareException {
@@ -1440,7 +1440,7 @@ public class SpdxComparer {
 		return this.documentCommentsEqual;
 	}
 	
-	private boolean _isExternalDcoumentRefsEqualsNoCheck() {
+	private boolean _isExternalDocumentRefsEqualsNoCheck() {
         for (Entry<SpdxDocument, Map<SpdxDocument, List<ExternalDocumentRef>>> spdxDocumentMapEntry : this.uniqueExternalDocumentRefs.entrySet()) {
             for (List<ExternalDocumentRef> externalDocumentRefs : spdxDocumentMapEntry.getValue().values()) {
                 if (!externalDocumentRefs.isEmpty()) {
@@ -1456,10 +1456,10 @@ public class SpdxComparer {
 	 * @return true if the external document refs are equal
 	 * @throws SpdxCompareException on compare errors
 	 */
-	public boolean isExternalDcoumentRefsEquals() throws SpdxCompareException {
+	public boolean isExternalDocumentRefsEquals() throws SpdxCompareException {
 		checkInProgress();
 		checkDocsField();
-		return _isExternalDcoumentRefsEqualsNoCheck();
+		return _isExternalDocumentRefsEqualsNoCheck();
 	}
 
 	/**
@@ -1476,7 +1476,7 @@ public class SpdxComparer {
 	 * @return true if the extracted licensing infos are equal
 	 */
 	private boolean _isExtractedLicensingInfoEqualsNoCheck() {
-		// check for unique extraced license infos
+		// check for unique extracted license infos
         for (Entry<SpdxDocument, Map<SpdxDocument, List<ExtractedLicenseInfo>>> entry : this.uniqueExtractedLicenses.entrySet()) {
             for (Entry<SpdxDocument, List<ExtractedLicenseInfo>> spdxDocumentListEntry : entry.getValue().entrySet()) {
                 List<ExtractedLicenseInfo> licenses = spdxDocumentListEntry.getValue();
@@ -1498,7 +1498,7 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * Retrieves any unique extracted licenses fromt the first SPDX document index
+	 * Retrieves any unique extracted licenses from the first SPDX document index
 	 * relative to the second - unique is determined by the license text matching
 	 * @param docIndexA source document index
 	 * @param docIndexB index of the compare document
@@ -1605,7 +1605,7 @@ public class SpdxComparer {
 	 * @return true if the files are equal
 	 * @throws SpdxCompareException on compare errors
 	 */
-	public boolean isfilesEquals() throws SpdxCompareException {
+	public boolean isFilesEquals() throws SpdxCompareException {
 		this.checkDocsField();
 		this.checkInProgress();
 		return this._isFilesEqualsNoCheck();
@@ -1870,7 +1870,7 @@ public class SpdxComparer {
 	}
 
 	/**
-	 * @return true if the licens list version is equal
+	 * @return true if the license list version is equal
 	 * @throws SpdxCompareException On error in comparison
 	 */
 	public boolean isLicenseListVersionEqual() throws SpdxCompareException {
@@ -1914,7 +1914,7 @@ public class SpdxComparer {
 	/**
 	 * Find any SPDX annotations which are in annotationsA but not in annotationsB
 	 * @param annotationsA source annotations
-	 * @param annotationsB annotations to be compared agains
+	 * @param annotationsB annotations to be compared against
 	 * @return list of unique annotations in annotationsB
 	 * @throws InvalidSPDXAnalysisException On SPDX parsing errors
 	 */

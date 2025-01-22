@@ -438,7 +438,7 @@ public class SpdxFileComparerTest extends TestCase {
 		fc.addDocumentFile(DOCA, fileA);
 		fc.addDocumentFile(DOCB, fileB);
 		assertTrue(fc.isDifferenceFound());
-		assertFalse(fc.isLicenseCommmentsEquals());
+		assertFalse(fc.isLicenseCommentsEquals());
 		SpdxFileDifference diff = fc.getFileDifference(DOCA, DOCB);
 		assertFalse(diff.isLicenseCommentsEqual());
 		
@@ -447,7 +447,7 @@ public class SpdxFileComparerTest extends TestCase {
 		fc.addDocumentFile(DOCA, fileA);
 		fc.addDocumentFile(DOCB, fileB);
 		assertFalse(fc.isDifferenceFound());
-		assertTrue(fc.isLicenseCommmentsEquals());		
+		assertTrue(fc.isLicenseCommentsEquals());
 	}
 
 	/**
@@ -510,7 +510,7 @@ public class SpdxFileComparerTest extends TestCase {
 	 * Test method for {@link org.spdx.compare.SpdxFileComparer#isLicenseCommmentsEquals()}.
 	 * @throws InvalidSPDXAnalysisException 
 	 */
-	public void testIsCommmentsEquals() throws SpdxCompareException, InvalidLicenseStringException, InvalidSPDXAnalysisException {
+	public void testIsCommentsEquals() throws SpdxCompareException, InvalidLicenseStringException, InvalidSPDXAnalysisException {
 		String fileNameA = "a/b/c/name.txt";
 		String fileNameB = fileNameA;
 		Collection<FileType> fileTypeA = new HashSet<>(Arrays.asList(new FileType[] {FileType.SOURCE}));
@@ -911,7 +911,7 @@ public class SpdxFileComparerTest extends TestCase {
 		assertTrue(fc.isDifferenceFound());
 		SpdxFileDifference diff = fc.getFileDifference(DOCA, DOCB);
 		assertFalse(diff.isTypeEqual());
-		//Note - each of the individual fields is tested in their respecive unit tests
+		//Note - each of the individual fields is tested in their respective unit tests
 	}
 
 }

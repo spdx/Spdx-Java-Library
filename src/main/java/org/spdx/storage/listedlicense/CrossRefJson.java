@@ -101,7 +101,7 @@ public class CrossRefJson {
 	 * @param value Value to set
 	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
-	public void setPrimativeValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+	public void setPrimitiveValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		switch (propertyDescriptor.getName()) {
 			case "match": if (!(value instanceof String)) {
 					throw new InvalidSpdxPropertyException("Expected string type for "+propertyDescriptor);

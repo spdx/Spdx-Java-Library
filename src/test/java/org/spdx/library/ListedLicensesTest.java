@@ -12,7 +12,7 @@ import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;
 
-/**
+/*
  * Copyright (c) 2019 Source Auditor Inc.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -116,7 +116,7 @@ public class ListedLicensesTest extends TestCase {
 		assertNull(result);
 	}
 
-	public void testGetExceptionbyIdLocal() throws InvalidSPDXAnalysisException {
+	public void testGetExceptionByIdLocal() throws InvalidSPDXAnalysisException {
 		System.setProperty("SPDXParser.OnlyUseLocalLicenses", "true");
 		ListedLicenses.resetListedLicenses();
 		try {

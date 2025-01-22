@@ -425,7 +425,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -522,7 +522,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -570,7 +570,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -617,7 +617,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertFalse(pc.isPackageDownloadLocationsEquals());
@@ -664,7 +664,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -711,7 +711,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertFalse(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -759,7 +759,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -806,7 +806,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertFalse(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -854,7 +854,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -901,7 +901,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertFalse(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -948,7 +948,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -995,7 +995,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());
@@ -1127,7 +1127,7 @@ public class SpdxPackageComparerTest extends TestCase {
 		assertTrue(pc.isConcludedLicenseEquals());
 		assertTrue(pc.isCopyrightsEquals());
 		assertTrue(pc.isDeclaredLicensesEquals());
-		assertTrue(pc.isLicenseCommmentsEquals());
+		assertTrue(pc.isLicenseCommentsEquals());
 		assertTrue(pc.isPackageChecksumsEquals());
 		assertTrue(pc.isPackageDescriptionsEquals());
 		assertTrue(pc.isPackageDownloadLocationsEquals());

@@ -207,7 +207,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		assertTrue(comparer.isAttributionTextEquals());
@@ -255,7 +255,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertFalse(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -275,7 +275,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertFalse(comparer.isSeenLicenseEquals());
 	}
@@ -297,7 +297,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertFalse(comparer.isSeenLicenseEquals());
 		List<AnyLicenseInfo> result = comparer.getUniqueSeenLicenses(DOCB, DOCA);
@@ -334,7 +334,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertFalse(comparer.isSeenLicenseEquals());
 		List<AnyLicenseInfo> result = comparer.getUniqueSeenLicenses(DOCA, DOCB);
@@ -368,7 +368,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertFalse(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -388,7 +388,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertFalse(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -408,13 +408,13 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		assertFalse(comparer.isAttributionTextEquals());
 	}
 
-	public void testIsLicenseCommmentsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
+	public void testIsLicenseCommentsEquals() throws SpdxCompareException, InvalidSPDXAnalysisException {
 		SpdxItem itemA = createGenericItem(DOCA, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDA, LICENSE_INFO_FROM_FILESA, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
@@ -429,7 +429,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertFalse(comparer.isLicenseCommmentsEquals());
+		assertFalse(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -465,7 +465,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertFalse(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -487,7 +487,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertFalse(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		List<Relationship> result = comparer.getUniqueRelationship(DOCA, DOCB);
@@ -523,7 +523,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertFalse(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		List<Relationship> result = comparer.getUniqueRelationship(DOCB, DOCA);
@@ -559,7 +559,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 	}
@@ -581,7 +581,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		List<Annotation> result = comparer.getUniqueAnnotations(DOCA, DOCB);
@@ -617,7 +617,7 @@ public class SpdxItemComparerTest extends TestCase {
 		assertTrue(comparer.isCommentsEquals());
 		assertTrue(comparer.isConcludedLicenseEquals());
 		assertTrue(comparer.isCopyrightsEquals());
-		assertTrue(comparer.isLicenseCommmentsEquals());
+		assertTrue(comparer.isLicenseCommentsEquals());
 		assertTrue(comparer.isRelationshipsEquals());
 		assertTrue(comparer.isSeenLicenseEquals());
 		List<Annotation> result = comparer.getUniqueAnnotations(DOCB, DOCA);

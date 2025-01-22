@@ -109,7 +109,7 @@ public class ExceptionJsonTest extends TestCase {
 		ej.example = "example";
 		ej.exceptionTextHtml = "exceptionTextHtml";
 		ej.isDeprecatedLicenseId = true;
-		ej.licenseComments = "licenseComents";
+		ej.licenseComments = "licenseComments";
 		ej.licenseExceptionId = exceptionId;
 		ej.licenseExceptionTemplate = "template";
 		ej.licenseExceptionText = "text";
@@ -140,18 +140,18 @@ public class ExceptionJsonTest extends TestCase {
 		}
 	}
 
-	public void testGetSetPrimativeValue() throws InvalidSpdxPropertyException {
+	public void testGetSetPrimitiveValue() throws InvalidSpdxPropertyException {
 		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		String exceptionId = "SpdxexceptionId1";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
 		for (PropertyDescriptor property:STRING_PROPERTIES) {
 			stringValues.put(property, "ValueFor"+ExceptionJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(property));
-			ej.setPrimativeValue(property, stringValues.get(property));
+			ej.setPrimitiveValue(property, stringValues.get(property));
 		}
 		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
 		for (PropertyDescriptor property:BOOLEAN_PROPERTIES) {
 			booleanValues.put(property, false);
-			ej.setPrimativeValue(property, booleanValues.get(property));
+			ej.setPrimitiveValue(property, booleanValues.get(property));
 		}
 		for (PropertyDescriptor property:STRING_PROPERTIES) {
 			assertEquals(stringValues.get(property), ej.getValue(property));
@@ -165,7 +165,7 @@ public class ExceptionJsonTest extends TestCase {
 		String exceptionId = "SpdxexceptionId1";
 		ExceptionJson ej = new ExceptionJson(exceptionId);
 		String value = "value";
-		ej.setPrimativeValue(STRING_PROPERTIES.get(0), value);
+		ej.setPrimitiveValue(STRING_PROPERTIES.get(0), value);
 		assertEquals("value", ej.getValue(STRING_PROPERTIES.get(0)));
 		ej.removeProperty(STRING_PROPERTIES.get(0));
 		assertTrue(ej.getValue(STRING_PROPERTIES.get(0)) == null);

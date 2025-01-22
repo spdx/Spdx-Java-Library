@@ -489,12 +489,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		}
 		if (isLicenseId) {
 			LicenseJson license = fetchLicenseJson(id);
-			license.setPrimativeValue(propertyDescriptor, value);
+			license.setPrimitiveValue(propertyDescriptor, value);
 		} else if (isExceptionId) {
 			ExceptionJson exc = fetchExceptionJson(id);
-			exc.setPrimativeValue(propertyDescriptor, value);
+			exc.setPrimitiveValue(propertyDescriptor, value);
 		} else if (Objects.nonNull(crossRef)) {
-			crossRef.setPrimativeValue(propertyDescriptor, value);
+			crossRef.setPrimitiveValue(propertyDescriptor, value);
 		} else {
             logger.error("ID {} is not a listed license ID, crossRef ID nor a listed exception ID", id);
 			throw new SpdxIdNotFoundException("ID "+id+" is not a listed license ID, crossRef ID nor a listed exception ID");

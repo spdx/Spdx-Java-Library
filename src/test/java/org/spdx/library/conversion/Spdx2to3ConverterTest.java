@@ -226,7 +226,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
 		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {personCreator}), created));
@@ -242,7 +242,7 @@ public class Spdx2to3ConverterTest {
 				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();
 		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
@@ -309,7 +309,7 @@ public class Spdx2to3ConverterTest {
 		String pkgName = "my package";
 		String pkgCopyright = "Package copyright";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
 		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {personCreator}), created));
@@ -329,7 +329,7 @@ public class Spdx2to3ConverterTest {
 				new org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo(fromModelStore, externalDocumentUri, externalLicenseId, copyManager, true);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, externalLic, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();
 		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
@@ -380,7 +380,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
 		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {personCreator}), created));
@@ -396,7 +396,7 @@ public class Spdx2to3ConverterTest {
 				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();
 		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
@@ -519,7 +519,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		String externalDocumentId = SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM + "external";
 		String externalDocumentUri = "https://external/document";
@@ -560,7 +560,7 @@ public class Spdx2to3ConverterTest {
 				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
 		org.spdx.library.model.v2.Checksum externalDocChecksum = doc.createChecksum(sha1Algorithm, externalDocChecksumValue);
@@ -610,7 +610,7 @@ public class Spdx2to3ConverterTest {
 		assertTrue(rootElements[0] instanceof SpdxPackage);
 		SpdxPackage resultPkg = (SpdxPackage)rootElements[0];
 		assertEquals(pkgName, resultPkg.getName().get());
-		assertEquals(pkgDownloadLoctation, resultPkg.getDownloadLocation().get());
+		assertEquals(pkgDownloadLocation, resultPkg.getDownloadLocation().get());
 		assertEquals(pkgCopyright, resultPkg.getCopyrightText().get());
 		List<Relationship> pkgConcludedLicRelationships = findRelationship(resultRelationships, RelationshipType.HAS_CONCLUDED_LICENSE, resultPkg.getObjectUri(), null);
 		assertEquals(1, pkgConcludedLicRelationships.size());
@@ -714,7 +714,7 @@ public class Spdx2to3ConverterTest {
 	public void testConvertAndStoreRelationship() throws InvalidSPDXAnalysisException {
 		String pkgName = "my package";
 		String pkgCopyright = "Package copyright";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		String fileName = "File name";
 		String fileCopyright = "Copyright my file";
@@ -733,7 +733,7 @@ public class Spdx2to3ConverterTest {
 		pkg.setCopyrightText(pkgCopyright);
 		pkg.setLicenseConcluded(noAssertionLicense);
 		pkg.setLicenseDeclared(noAssertionLicense);
-		pkg.setDownloadLocation(pkgDownloadLoctation);
+		pkg.setDownloadLocation(pkgDownloadLocation);
 		pkg.setFilesAnalyzed(false);
 		
 		org.spdx.library.model.v2.Checksum fileSha1 = pkg.createChecksum(sha1Algorithm, fileChecksumValue);
@@ -995,7 +995,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		org.spdx.library.model.v2.enumerations.ChecksumAlgorithm sha1Algorithm = 
 				org.spdx.library.model.v2.enumerations.ChecksumAlgorithm.SHA1;
@@ -1020,7 +1020,7 @@ public class Spdx2to3ConverterTest {
 				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();		
 		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
 		doc.setName(docName);
@@ -1471,7 +1471,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		
 		org.spdx.library.model.v2.enumerations.ChecksumAlgorithm sha1Algorithm = 
 				org.spdx.library.model.v2.enumerations.ChecksumAlgorithm.SHA1;
@@ -1517,7 +1517,7 @@ public class Spdx2to3ConverterTest {
 				LicenseInfoFactory.parseSPDXLicenseStringCompatV2(pkgLicenseDeclaredStr, fromModelStore, DOCUMENT_URI, copyManager);
 		org.spdx.library.model.v2.SpdxPackage pkg = spdxFile.createPackage(pkgId, pkgName, pkgConcludedLicense, pkgCopyright, pkgLicenseDeclared)
 				.setFilesAnalyzed(false)
-				.setDownloadLocation(pkgDownloadLoctation)
+				.setDownloadLocation(pkgDownloadLocation)
 				.build();
 		
 		
@@ -1589,7 +1589,7 @@ public class Spdx2to3ConverterTest {
 		String pkgCopyright = "Package copyright";
 		String pkgConcludedLicenseStr = "Apache-2.0";
 		String pkgLicenseDeclaredStr = "NOASSERTION";
-		String pkgDownloadLoctation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
+		String pkgDownloadLocation = "https://github.com/spdx/tools-java/releases/tag/v1.1.8";
 		String builtDate = "2023-01-29T18:30:22Z";
 		String releaseDate = "2022-01-29T18:30:22Z";
 		String validUntil = "2025-01-29T18:30:22Z";
@@ -1638,7 +1638,7 @@ public class Spdx2to3ConverterTest {
 		pkg.setBuiltDate(builtDate);
 		pkg.setComment(pkgComment);
 		pkg.setDescription(pkgDescription);
-		pkg.setDownloadLocation(pkgDownloadLoctation);
+		pkg.setDownloadLocation(pkgDownloadLocation);
 		pkg.setFilesAnalyzed(true);
 		pkg.setHomepage(pkgHomePage);
 		pkg.setLicenseComments(pkgLicenseComments);
@@ -1701,7 +1701,7 @@ public class Spdx2to3ConverterTest {
 		assertEquals(pkgCopyright, result.getCopyrightText().get());
 		assertEquals(builtDate, result.getBuiltTime().get());
 		assertEquals(pkgDescription, result.getDescription().get());
-		assertEquals(pkgDownloadLoctation, result.getDownloadLocation().get());
+		assertEquals(pkgDownloadLocation, result.getDownloadLocation().get());
 		assertEquals(pkgHomePage, result.getHomePage().get());
 		Agent[] originators = result.getOriginatedBys().toArray(new Agent[result.getOriginatedBys().size()]);
 		assertEquals(1, originators.length);
@@ -1837,9 +1837,9 @@ public class Spdx2to3ConverterTest {
 		AnyLicenseInfo[] snippetConcludedLicResults = snippetConcludedRel.get(0).getTos().toArray(new AnyLicenseInfo[snippetConcludedRel.get(0).getTos().size()]);
 		assertEquals(1, snippetConcludedLicResults.length);
 		assertEquals(snippetConcludedStr, snippetConcludedLicResults[0].toString());
-		List<Relationship> snippetDeclareddRel = findRelationship(resultRelationships, RelationshipType.HAS_DECLARED_LICENSE, result.getObjectUri(), null);
-		assertEquals(1, snippetDeclareddRel.size());
-		AnyLicenseInfo[] snippetDeclaredLicResults = snippetDeclareddRel.get(0).getTos().toArray(new AnyLicenseInfo[snippetDeclareddRel.get(0).getTos().size()]);
+		List<Relationship> snippetDeclaredRel = findRelationship(resultRelationships, RelationshipType.HAS_DECLARED_LICENSE, result.getObjectUri(), null);
+		assertEquals(1, snippetDeclaredRel.size());
+		AnyLicenseInfo[] snippetDeclaredLicResults = snippetDeclaredRel.get(0).getTos().toArray(new AnyLicenseInfo[snippetDeclaredRel.get(0).getTos().size()]);
 		assertEquals(1, snippetDeclaredLicResults.length);
 		assertEquals(snippetDeclaredStr, snippetDeclaredLicResults[0].toString());
 		assertEquals(startLine, result.getLineRange().get().getBeginIntegerRange());
