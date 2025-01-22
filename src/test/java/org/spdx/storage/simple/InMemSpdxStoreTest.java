@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.SpdxIdInUseException;
 import org.spdx.core.TypedValue;
-import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.storage.PropertyDescriptor;
@@ -81,7 +80,7 @@ public class InMemSpdxStoreTest extends TestCase {
 	String state;	// used to track state in the asynch tests (e.g. testTransaction)
 	
 	private synchronized String setTestState(String newState) {
-		logger.info("Setting state to "+state);
+		logger.info("Setting state to {}", state);
 		String retval = state;
 		state = newState;
 		return retval;
