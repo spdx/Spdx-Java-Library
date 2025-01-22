@@ -218,7 +218,6 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
-					<optimize>true</optimize>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -233,9 +232,6 @@
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
-						<configuration>
-							<additionalparam>${javadoc.opts}</additionalparam>
-						</configuration>
 						<goals>
 							<goal>jar</goal>
 						</goals>
