@@ -349,6 +349,14 @@ public class SpdxItemComparer {
 	}
 
 	/**
+	 * @return the licenseCommentsEquals
+	 */
+	@Deprecated
+	public boolean isLicenseCommmentsEquals() throws SpdxCompareException {
+		return isLicenseCommentsEquals();
+	}
+
+	/**
 	 * checks to make sure there is not a compare in progress
 	 * @throws SpdxCompareException on compare errors
 	 * 
