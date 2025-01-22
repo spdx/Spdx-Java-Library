@@ -217,7 +217,7 @@ public class SpdxModelFactory {
 			@Nullable String typeFilter, @Nullable String objectUriPrefixFilter, @Nullable String idPrefix) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store, "Store must not be null");
 		return store.getAllItems(objectUriPrefixFilter, typeFilter).map(tv -> {
-			//TODO: Change this a null namespace and filtering on anonomous or startswith document URI - this will catch the anon. types
+			//TODO: Change this a null namespace and filtering on anonymous or startswith document URI - this will catch the anon. types
 			try {
 				return inflateModelObject(store, tv.getObjectUri(), tv.getType(), copyManager, tv.getSpecVersion(), false, idPrefix);
 			} catch (InvalidSPDXAnalysisException e) {

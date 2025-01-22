@@ -85,14 +85,14 @@ public class CrossRefJsonV2Test extends TestCase {
 		List<PropertyDescriptor> result = crj.getPropertyValueDescriptors();
 		assertEquals(0, result.size());
 		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
-			crj.setPrimativeValue(valueName, "ValueFor"+valueName);
+			crj.setPrimitiveValue(valueName, "ValueFor"+valueName);
 		}
 		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
-			crj.setPrimativeValue(valueName, false);
+			crj.setPrimitiveValue(valueName, false);
 		}
 		int i = 1;
 		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
-			crj.setPrimativeValue(valueName, i++);
+			crj.setPrimitiveValue(valueName, i++);
 		}
 		result = crj.getPropertyValueDescriptors();
 		assertEquals(PROPERTY_VALUE_NAMES.size(), result.size());
@@ -103,23 +103,23 @@ public class CrossRefJsonV2Test extends TestCase {
 		}
 	}
 
-	public void testSetPrimativeValue() throws InvalidSpdxPropertyException {
+	public void testSetPrimitiveValue() throws InvalidSpdxPropertyException {
 		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		CrossRefJson crj = new CrossRefJson();
 		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
-			crj.setPrimativeValue(valueName, stringValues.get(valueName));
+			crj.setPrimitiveValue(valueName, stringValues.get(valueName));
 		}
 		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
 		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			booleanValues.put(valueName, false);
-			crj.setPrimativeValue(valueName, booleanValues.get(valueName));
+			crj.setPrimitiveValue(valueName, booleanValues.get(valueName));
 		}
 		Map<PropertyDescriptor, Integer> integerValues = new HashMap<>();
 		int i = 1;
 		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			integerValues.put(valueName, i++);
-			crj.setPrimativeValue(valueName, integerValues.get(valueName));
+			crj.setPrimitiveValue(valueName, integerValues.get(valueName));
 		}
 		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			assertEquals(stringValues.get(valueName), crj.getValue(valueName));
@@ -145,18 +145,18 @@ public class CrossRefJsonV2Test extends TestCase {
 		CrossRefJson crj = new CrossRefJson();
 		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			stringValues.put(valueName, "ValueFor"+valueName);
-			crj.setPrimativeValue(valueName, stringValues.get(valueName));
+			crj.setPrimitiveValue(valueName, stringValues.get(valueName));
 		}
 		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
 		for (PropertyDescriptor valueName:BOOLEAN_PROPERTY_VALUE_NAMES) {
 			booleanValues.put(valueName, false);
-			crj.setPrimativeValue(valueName, booleanValues.get(valueName));
+			crj.setPrimitiveValue(valueName, booleanValues.get(valueName));
 		}
 		Map<PropertyDescriptor, Integer> integerValues = new HashMap<>();
 		int i = 1;
 		for (PropertyDescriptor valueName:INTEGER_PROPERTY_VALUE_NAMES) {
 			integerValues.put(valueName, i++);
-			crj.setPrimativeValue(valueName, integerValues.get(valueName));
+			crj.setPrimitiveValue(valueName, integerValues.get(valueName));
 		}
 		for (PropertyDescriptor valueName:STRING_PROPERTY_VALUE_NAMES) {
 			assertEquals(stringValues.get(valueName), crj.getValue(valueName));

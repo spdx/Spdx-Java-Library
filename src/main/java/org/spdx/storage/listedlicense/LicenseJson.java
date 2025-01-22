@@ -140,7 +140,7 @@ public class LicenseJson {
 		throw new InvalidSpdxPropertyException("Invalid type for Listed License SPDX Property: "+type);
 	}
 
-	public void setPrimativeValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
+	public void setPrimitiveValue(PropertyDescriptor propertyDescriptor, Object value) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
 			throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyDescriptor.getName());

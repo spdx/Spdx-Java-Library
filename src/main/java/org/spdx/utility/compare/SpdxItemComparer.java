@@ -340,9 +340,9 @@ public class SpdxItemComparer {
 	}
 
 	/**
-	 * @return the licenseCommmentsEquals
+	 * @return the licenseCommentsEquals
 	 */
-	public boolean isLicenseCommmentsEquals() throws SpdxCompareException {
+	public boolean isLicenseCommentsEquals() throws SpdxCompareException {
 		checkInProgress();
 		checkCompareMade();
 		return licenseCommentsEquals;

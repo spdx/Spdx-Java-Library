@@ -2128,7 +2128,7 @@ public class SpdxComparerTest extends TestCase {
 		SpdxComparer comparer = new SpdxComparer();
 		comparer.compare(docA, docB);
 		assertTrue(comparer.isDifferenceFound());
-		assertFalse(comparer.isExternalDcoumentRefsEquals());
+		assertFalse(comparer.isExternalDocumentRefsEquals());
 		List<ExternalDocumentRef> result = comparer.getUniqueExternalDocumentRefs(0, 1);
 		assertEquals(1, result.size());
 		assertTrue(ref1.equivalent(result.get(0)));

@@ -114,10 +114,10 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		for (PropertyDescriptor desc:STRING_PROPERTIES) {
-			lj.setPrimativeValue(desc, "s");
+			lj.setPrimitiveValue(desc, "s");
 		}
 		for (PropertyDescriptor desc:BOOLEAN_PROPERTIES) {
-			lj.setPrimativeValue(desc, true);
+			lj.setPrimitiveValue(desc, true);
 		}
 		CrossRefJson firstItem = new CrossRefJson();
 		firstItem.url = "http://first";
@@ -151,18 +151,18 @@ public class LicenseJsonTest extends TestCase {
 	 * Test method for {@link org.spdx.storage.listedlicense.LicenseJson#setPrimativeValue(java.lang.String, java.lang.Object)}.
 	 * @throws InvalidSpdxPropertyException 
 	 */
-	public void testGetSetPrimativeValue() throws InvalidSpdxPropertyException {
+	public void testGetSetPrimitiveValue() throws InvalidSpdxPropertyException {
 		Map<PropertyDescriptor, String> stringValues = new HashMap<>();
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		for (PropertyDescriptor valueName:STRING_PROPERTIES) {
 			stringValues.put(valueName, "ValueFor"+LicenseJson.PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(valueName));
-			lj.setPrimativeValue(valueName, stringValues.get(valueName));
+			lj.setPrimitiveValue(valueName, stringValues.get(valueName));
 		}
 		Map<PropertyDescriptor, Boolean> booleanValues = new HashMap<>();
 		for (PropertyDescriptor valueName:BOOLEAN_PROPERTIES) {
 			booleanValues.put(valueName, false);
-			lj.setPrimativeValue(valueName, booleanValues.get(valueName));
+			lj.setPrimitiveValue(valueName, booleanValues.get(valueName));
 		}
 		for (PropertyDescriptor valueName:STRING_PROPERTIES) {
 			assertEquals(stringValues.get(valueName), lj.getValue(valueName));
@@ -440,7 +440,7 @@ public class LicenseJsonTest extends TestCase {
 		String licenseId = "SpdxLicenseId1";
 		LicenseJson lj = new LicenseJson(licenseId);
 		String value = "value";
-		lj.setPrimativeValue(STRING_PROPERTIES.get(0), value);
+		lj.setPrimitiveValue(STRING_PROPERTIES.get(0), value);
 		assertEquals("value", lj.getValue(STRING_PROPERTIES.get(0)));
 		lj.removeProperty(STRING_PROPERTIES.get(0));
 		assertTrue(lj.getValue(STRING_PROPERTIES.get(0)) == null);
