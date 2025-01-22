@@ -79,7 +79,7 @@ public class StoredTypedItemTest extends TestCase {
 		StoredTypedItem sti = new StoredTypedItem(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3");
 		StoredTypedItem sti2 = new StoredTypedItem(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3");
 		assertTrue(sti.equals(sti2));
-		assertTrue(sti2.equals(sti2));
+		assertTrue(sti2.equals(sti));
 		StoredTypedItem sti3 = new StoredTypedItem(TEST_OBJECT_URI2, TEST_TYPE1, "SPDX-2.3");
 		assertFalse(sti.equals(sti3));
 		assertFalse(sti3.equals(sti));
