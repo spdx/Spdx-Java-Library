@@ -219,8 +219,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
               org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;license2)</code></th>
 <td class="colLast">
 <div class="block">Compares two licenses from two different SPDX documents taking into account
- the extracted license infos who's ID's may be different between the two documents
- Note: The ExtracedLicenseIDMap must be initialized before this method is invoked</div>
+ the extracted license infos whose ID's may be different between the two documents
+ Note: The ExtractedLicenseIDMap must be initialized before this method is invoked</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -389,7 +389,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#getUniqueExtractedLicenses(int,int)">getUniqueExtractedLicenses</a></span>&#8203;(int&nbsp;docIndexA,
                           int&nbsp;docIndexB)</code></th>
 <td class="colLast">
-<div class="block">Retrieves any unique extracted licenses fromt the first SPDX document index
+<div class="block">Retrieves any unique extracted licenses from the first SPDX document index
  relative to the second - unique is determined by the license text matching</div>
 </td>
 </tr>
@@ -549,26 +549,40 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isExternalDcoumentRefsEquals()">isExternalDcoumentRefsEquals</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isExternalDocumentRefsEquals()">isExternalDocumentRefsEquals</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isExternalRefsEquals()">isExternalRefsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isExtractedLicensingInfosEqual()">isExtractedLicensingInfosEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isFilesAnalyzedEquals()">isFilesAnalyzedEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isfilesEquals()">isfilesEquals</a></span>()</code></th>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isFilesEquals()">isFilesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -578,10 +592,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><span class="typeNameLabel">SpdxItemComparer.</span><code><span class="memberNameLink"><a href="../SpdxItemComparer.html#isLicenseCommmentsEquals()">isLicenseCommmentsEquals</a></span>()</code></th>
+<th class="colSecond" scope="row"><span class="typeNameLabel">SpdxItemComparer.</span><code><span class="memberNameLink"><a href="../SpdxItemComparer.html#isLicenseCommentsEquals()">isLicenseCommentsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">SpdxItemComparer.</span><code><span class="memberNameLink"><a href="../SpdxItemComparer.html#isLicenseCommmentsEquals()">isLicenseCommmentsEquals</a></span>()</code></th>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isLicenseEqual(org.spdx.library.model.v2.license.AnyLicenseInfo,org.spdx.library.model.v2.license.AnyLicenseInfo,java.util.Map)">isLicenseEqual</a></span>&#8203;(org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;license1,
               org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;license2,
@@ -591,7 +612,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  different license ID's for the same license</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isLicenseEqual(org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo,org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo,java.util.Map)">isLicenseEqual</a></span>&#8203;(org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;license1,
               org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;license2,
@@ -601,130 +622,130 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  different license ID's for the same license</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isLicenseListVersionEqual()">isLicenseListVersionEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxSnippetComparer.</span><code><span class="memberNameLink"><a href="../SpdxSnippetComparer.html#isLineRangeEquals()">isLineRangeEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxSnippetComparer.</span><code><span class="memberNameLink"><a href="../SpdxSnippetComparer.html#isNameEquals()">isNameEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxFileComparer.</span><code><span class="memberNameLink"><a href="../SpdxFileComparer.html#isNoticeTextEquals()">isNoticeTextEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageChecksumsEquals()">isPackageChecksumsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageDescriptionsEquals()">isPackageDescriptionsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageDownloadLocationsEquals()">isPackageDownloadLocationsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageFilenamesEquals()">isPackageFilenamesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageFilesEquals()">isPackageFilesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageHomePagesEquals()">isPackageHomePagesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageOriginatorsEqual()">isPackageOriginatorsEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isPackagesEquals()">isPackagesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageSourceInfosEquals()">isPackageSourceInfosEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageSummaryEquals()">isPackageSummaryEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageSuppliersEquals()">isPackageSuppliersEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageVerificationCodesEquals()">isPackageVerificationCodesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxPackageComparer.</span><code><span class="memberNameLink"><a href="../SpdxPackageComparer.html#isPackageVersionsEquals()">isPackageVersionsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxItemComparer.</span><code><span class="memberNameLink"><a href="../SpdxItemComparer.html#isRelationshipsEquals()">isRelationshipsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxItemComparer.</span><code><span class="memberNameLink"><a href="../SpdxItemComparer.html#isSeenLicenseEquals()">isSeenLicenseEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxSnippetComparer.</span><code><span class="memberNameLink"><a href="../SpdxSnippetComparer.html#isSnippetFromFilesEquals()">isSnippetFromFilesEquals</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The snippetFromFiles can be true if there are some unique snippetFromFiles or differences between the snippetFromFiles (or both)</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isSnippetsEqual()">isSnippetsEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxComparer.</span><code><span class="memberNameLink"><a href="../SpdxComparer.html#isSpdxVersionEqual()">isSpdxVersionEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">TemplateRegexMatcher.</span><code><span class="memberNameLink"><a href="../TemplateRegexMatcher.html#isTemplateMatchWithinText(java.lang.String)">isTemplateMatchWithinText</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextMatchingTemplate(java.lang.String,java.lang.String)">isTextMatchingTemplate</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;template,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextStandardException(org.spdx.library.model.v2.license.LicenseException,java.lang.String)">isTextStandardException</a></span>&#8203;(org.spdx.library.model.v2.license.LicenseException&nbsp;exception,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
@@ -732,7 +753,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Compares exception text to the exception text of an SPDX Standard exception</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextStandardException(org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException,java.lang.String)">isTextStandardException</a></span>&#8203;(org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException&nbsp;exception,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
@@ -740,7 +761,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Compares exception text to the exception text of an SPDX Standard exception</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextStandardLicense(org.spdx.library.model.v2.license.License,java.lang.String)">isTextStandardLicense</a></span>&#8203;(org.spdx.library.model.v2.license.License&nbsp;license,
                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
@@ -748,7 +769,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Compares license text to the license text of an SPDX Standard License</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#isTextStandardLicense(org.spdx.library.model.v3_0_1.expandedlicensing.License,java.lang.String)">isTextStandardLicense</a></span>&#8203;(org.spdx.library.model.v3_0_1.expandedlicensing.License&nbsp;license,
                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
@@ -756,12 +777,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Compares license text to the license text of an SPDX Standard License</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">SpdxFileComparer.</span><code><span class="memberNameLink"><a href="../SpdxFileComparer.html#isTypesEquals()">isTypesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>[]</code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">LicenseCompareHelper.</span><code><span class="memberNameLink"><a href="../LicenseCompareHelper.html#matchingStandardLicenseIds(java.lang.String)">matchingStandardLicenseIds</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseText)</code></th>
 <td class="colLast">

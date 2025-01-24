@@ -27,8 +27,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":10,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":9,"i46":9,"i47":9,"i48":9,"i49":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":10,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":42,"i39":10,"i40":10,"i41":42,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":9,"i48":9,"i49":9,"i50":9,"i51":9};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -186,7 +186,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
@@ -245,8 +245,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
               org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;license2)</code></th>
 <td class="colLast">
 <div class="block">Compares two licenses from two different SPDX documents taking into account
- the extracted license infos who's ID's may be different between the two documents
- Note: The ExtracedLicenseIDMap must be initialized before this method is invoked</div>
+ the extracted license infos whose ID's may be different between the two documents
+ Note: The ExtractedLicenseIDMap must be initialized before this method is invoked</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -390,7 +390,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUniqueExtractedLicenses(int,int)">getUniqueExtractedLicenses</a></span>&#8203;(int&nbsp;docIndexA,
                           int&nbsp;docIndexB)</code></th>
 <td class="colLast">
-<div class="block">Retrieves any unique extracted licenses fromt the first SPDX document index
+<div class="block">Retrieves any unique extracted licenses from the first SPDX document index
  relative to the second - unique is determined by the license text matching</div>
 </td>
 </tr>
@@ -458,39 +458,53 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isExternalDcoumentRefsEquals()">isExternalDcoumentRefsEquals</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+</td>
 </tr>
 <tr id="i39" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isExtractedLicensingInfosEqual()">isExtractedLicensingInfosEqual</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isExternalDocumentRefsEquals()">isExternalDocumentRefsEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i40" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isfilesEquals()">isfilesEquals</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isExtractedLicensingInfosEqual()">isExtractedLicensingInfosEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i41" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isLicenseListVersionEqual()">isLicenseListVersionEqual</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isfilesEquals()">isfilesEquals</a></span>()</code></th>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+</td>
 </tr>
 <tr id="i42" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isPackagesEquals()">isPackagesEquals</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isFilesEquals()">isFilesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i43" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSnippetsEqual()">isSnippetsEqual</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isLicenseListVersionEqual()">isLicenseListVersionEqual</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i44" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSpdxVersionEqual()">isSpdxVersionEqual</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isPackagesEquals()">isPackagesEquals</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i45" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSnippetsEqual()">isSnippetsEqual</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i46" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSpdxVersionEqual()">isSpdxVersionEqual</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#listsEquals(java.util.List,java.util.List)">listsEquals</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;?&gt;&nbsp;a1,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;?&gt;&nbsp;a2)</code></th>
@@ -498,7 +512,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Compare two object lists</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#objectsEqual(java.lang.Object,java.lang.Object)">objectsEqual</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;o1,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;o2)</code></th>
@@ -506,7 +520,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">returns true if the two objects are equal considering nulls</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stringCollectionsEqual(java.util.Collection,java.util.Collection)">stringCollectionsEqual</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util" class="externalLink">Collection</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;stringsA,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util" class="externalLink">Collection</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;stringsB)</code></th>
@@ -515,7 +529,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  ignoring order and trimming strings.</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stringsEqual(java.lang.String,java.lang.String)">stringsEqual</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringA,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringB)</code></th>
@@ -524,7 +538,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  considering null values and trimming the strings.</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stringsEqual(java.util.Optional,java.util.Optional)">stringsEqual</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;stringA,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html?is-external=true" title="class or interface in java.util" class="externalLink">Optional</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&gt;&nbsp;stringB)</code></th>
@@ -668,8 +682,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                               org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;license2)
                        throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <div class="block">Compares two licenses from two different SPDX documents taking into account
- the extracted license infos who's ID's may be different between the two documents
- Note: The ExtracedLicenseIDMap must be initialized before this method is invoked</div>
+ the extracted license infos whose ID's may be different between the two documents
+ Note: The ExtractedLicenseIDMap must be initialized before this method is invoked</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>doc1</code> - Index of the SPDX document for license1</dd>
@@ -953,14 +967,32 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a id="isExternalDocumentRefsEquals()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isExternalDocumentRefsEquals</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;isExternalDocumentRefsEquals()
+                                     throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the external document refs are equal</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
+</dl>
+</li>
+</ul>
 <a id="isExternalDcoumentRefsEquals()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isExternalDcoumentRefsEquals</h4>
-<pre class="methodSignature">public&nbsp;boolean&nbsp;isExternalDcoumentRefsEquals()
+<pre class="methodSignature"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang" class="externalLink">@Deprecated</a>
+public&nbsp;boolean&nbsp;isExternalDcoumentRefsEquals()
                                      throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the external document refs are equal</dd>
@@ -994,7 +1026,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v2.license.ExtractedLicenseInfo&gt;&nbsp;getUniqueExtractedLicenses&#8203;(int&nbsp;docIndexA,
                                                                                                int&nbsp;docIndexB)
                                                                                         throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
-<div class="block">Retrieves any unique extracted licenses fromt the first SPDX document index
+<div class="block">Retrieves any unique extracted licenses from the first SPDX document index
  relative to the second - unique is determined by the license text matching</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -1098,14 +1130,32 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a id="isFilesEquals()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isFilesEquals</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;isFilesEquals()
+                      throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the files are equal</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - on compare errors</dd>
+</dl>
+</li>
+</ul>
 <a id="isfilesEquals()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isfilesEquals</h4>
-<pre class="methodSignature">public&nbsp;boolean&nbsp;isfilesEquals()
+<pre class="methodSignature"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang" class="externalLink">@Deprecated</a>
+public&nbsp;boolean&nbsp;isfilesEquals()
                       throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the files are equal</dd>
@@ -1342,7 +1392,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                   throws <a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the licens list version is equal</dd>
+<dd>true if the license list version is equal</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="SpdxCompareException.html" title="class in org.spdx.utility.compare">SpdxCompareException</a></code> - On error in comparison</dd>
 </dl>
@@ -1382,7 +1432,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>annotationsA</code> - source annotations</dd>
-<dd><code>annotationsB</code> - annotations to be compared agains</dd>
+<dd><code>annotationsB</code> - annotations to be compared against</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>list of unique annotations in annotationsB</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>

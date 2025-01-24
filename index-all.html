@@ -308,8 +308,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#compareLicense(int,org.spdx.library.model.v2.license.AnyLicenseInfo,int,org.spdx.library.model.v2.license.AnyLicenseInfo)">compareLicense(int, AnyLicenseInfo, int, AnyLicenseInfo)</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>
 <div class="block">Compares two licenses from two different SPDX documents taking into account
- the extracted license infos who's ID's may be different between the two documents
- Note: The ExtracedLicenseIDMap must be initialized before this method is invoked</div>
+ the extracted license infos whose ID's may be different between the two documents
+ Note: The ExtractedLicenseIDMap must be initialized before this method is invoked</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#compareStrings(java.lang.String,java.lang.String)">compareStrings(String, String)</a></span> - Static method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>
@@ -1106,7 +1106,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#getUniqueExtractedLicenses(int,int)">getUniqueExtractedLicenses(int, int)</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>
-<div class="block">Retrieves any unique extracted licenses fromt the first SPDX document index
+<div class="block">Retrieves any unique extracted licenses from the first SPDX document index
  relative to the second - unique is determined by the license text matching</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#getUniqueFiles(int,int)">getUniqueFiles(int, int)</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
@@ -1351,6 +1351,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#isDocumentRelationshipsEquals()">isDocumentRelationshipsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#isExternalDcoumentRefsEquals()">isExternalDcoumentRefsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#isExternalDocumentRefsEquals()">isExternalDocumentRefsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxPackageComparer.html#isExternalRefsEquals()">isExternalRefsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxPackageComparer.html" title="class in org.spdx.utility.compare">SpdxPackageComparer</a></dt>
 <dd>&nbsp;</dd>
@@ -1361,6 +1365,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxPackageComparer.html#isFilesAnalyzedEquals()">isFilesAnalyzedEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxPackageComparer.html" title="class in org.spdx.utility.compare">SpdxPackageComparer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#isfilesEquals()">isfilesEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxComparer.html#isFilesEquals()">isFilesEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxComparer.html" title="class in org.spdx.utility.compare">SpdxComparer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/FilterTemplateOutputHandler.html#isIncludeVarText()">isIncludeVarText()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/FilterTemplateOutputHandler.html" title="class in org.spdx.utility.compare">FilterTemplateOutputHandler</a></dt>
 <dd>
@@ -1372,8 +1380,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxItemDifference.html#isLicenseCommentsEqual()">isLicenseCommentsEqual()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxItemDifference.html" title="class in org.spdx.utility.compare">SpdxItemDifference</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxItemComparer.html#isLicenseCommmentsEquals()">isLicenseCommmentsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></dt>
+<dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxItemComparer.html#isLicenseCommentsEquals()">isLicenseCommentsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/utility/compare/SpdxItemComparer.html#isLicenseCommmentsEquals()">isLicenseCommmentsEquals()</a></span> - Method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/SpdxItemComparer.html" title="class in org.spdx.utility.compare">SpdxItemComparer</a></dt>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/utility/compare/LicenseCompareHelper.html#isLicenseEqual(org.spdx.library.model.v2.license.AnyLicenseInfo,org.spdx.library.model.v2.license.AnyLicenseInfo,java.util.Map)">isLicenseEqual(AnyLicenseInfo, AnyLicenseInfo, Map&lt;String, String&gt;)</a></span> - Static method in class org.spdx.utility.compare.<a href="org/spdx/utility/compare/LicenseCompareHelper.html" title="class in org.spdx.utility.compare">LicenseCompareHelper</a></dt>
 <dd>
 <div class="block">Compares two licenses from potentially two different documents which may have
@@ -2024,13 +2036,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/LicenseJsonTOC.LicenseJson.html#setOsiApproved(boolean)">setOsiApproved(boolean)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/LicenseJsonTOC.LicenseJson.html" title="class in org.spdx.storage.listedlicense">LicenseJsonTOC.LicenseJson</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/CrossRefJson.html#setPrimativeValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimativeValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/CrossRefJson.html" title="class in org.spdx.storage.listedlicense">CrossRefJson</a></dt>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/CrossRefJson.html#setPrimitiveValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimitiveValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/CrossRefJson.html" title="class in org.spdx.storage.listedlicense">CrossRefJson</a></dt>
 <dd>
 <div class="block">Sets the value to the property name</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/ExceptionJson.html#setPrimativeValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimativeValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJson</a></dt>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/ExceptionJson.html#setPrimitiveValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimitiveValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJson</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/LicenseJson.html#setPrimativeValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimativeValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/LicenseJson.html" title="class in org.spdx.storage.listedlicense">LicenseJson</a></dt>
+<dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/LicenseJson.html#setPrimitiveValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimitiveValue(PropertyDescriptor, Object)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/LicenseJson.html" title="class in org.spdx.storage.listedlicense">LicenseJson</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/spdx/storage/listedlicense/ExceptionJsonTOC.ExceptionJson.html#setReference(java.lang.String)">setReference(String)</a></span> - Method in class org.spdx.storage.listedlicense.<a href="org/spdx/storage/listedlicense/ExceptionJsonTOC.ExceptionJson.html" title="class in org.spdx.storage.listedlicense">ExceptionJsonTOC.ExceptionJson</a></dt>
 <dd>&nbsp;</dd>
