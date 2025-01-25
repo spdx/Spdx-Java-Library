@@ -25,14 +25,14 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import org.spdx.core.CoreModelObject;
-import org.spdx.core.IModelCopyManager;
-import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.core.ModelRegistry;
-import org.spdx.core.ModelRegistryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spdx.core.*;
 import org.spdx.library.model.v2.SpdxModelInfoV2_X;
 import org.spdx.library.model.v3_0_1.SpdxModelInfoV3_0;
 import org.spdx.storage.IModelStore;
+import org.spdx.storage.listedlicense.SpdxListedLicenseModelStore;
+import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
  * Main entrypoint for the SPDX Java Library
@@ -52,7 +52,9 @@ import org.spdx.storage.IModelStore;
  */
 @SuppressWarnings("unused")
 public class SpdxModelFactory {
-	
+
+	static final Logger logger = LoggerFactory.getLogger(SpdxModelFactory.class.getName());
+
 	static {
 		// register the supported spec version models
 		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV2_X());
@@ -60,6 +62,10 @@ public class SpdxModelFactory {
 	}
 	
 	public static final String IMPLEMENTATION_VERSION = "2.0.0";
+
+	static final String DEFAULT_DOCUMENT_URI = "https://default/spdx/document";
+
+	private static final Object INIT_LOCK = new Object();
 
 	/**
 	 * Static class private constructor
@@ -107,12 +113,48 @@ public class SpdxModelFactory {
 	}
 	
 	/**
-	 * This static method is a convenience to load this class and initialize the supported model versions.
+	 * This static method is a convenience to load this class and initialize the supported model versions and
+	 * initialize the DefaultModelStore with default values
 	 * <p>
 	 * It should be called before using any other functionality from the library
 	 */
 	public static void init() {
-		// doesn't do anything
+		synchronized (INIT_LOCK) {
+			if (!DefaultModelStore.isInitialized()) {
+				DefaultModelStore.initialize(new InMemSpdxStore(), DEFAULT_DOCUMENT_URI, new ModelCopyManager());
+			}
+		}
+	}
+
+	/**
+	 * This static method is a convenience to load this class and initialize the supported model versions and
+	 * initialize the DefaultModelStore with the parameter values
+	 * <p>
+	 * It should be called before using any other functionality from the library
+	 * @param modelStore Model store to use as a default
+	 * @param defaultDocumentUri Document URI to use as a default
+	 * @param defaultCopyManager Copy manager to use as a default
+	 */
+	public static void init(IModelStore modelStore, String defaultDocumentUri,
+							IModelCopyManager defaultCopyManager) {
+		Objects.requireNonNull(modelStore, "Model store can not be null");
+		Objects.requireNonNull(defaultDocumentUri, "Document URI can not be null");
+		Objects.requireNonNull(defaultCopyManager, "Copy manager can not be null");
+		synchronized (INIT_LOCK) {
+			if (!DefaultModelStore.isInitialized()) {
+				DefaultModelStore.initialize(modelStore, defaultDocumentUri, defaultCopyManager);
+			} else {
+                try {
+                    if (!(Objects.equals(modelStore, DefaultModelStore.getDefaultModelStore()) &&
+                            Objects.equals(defaultDocumentUri, DefaultModelStore.getDefaultDocumentUri()) &&
+                            Objects.equals(defaultCopyManager, DefaultModelStore.getDefaultCopyManager()))) {
+                        logger.warn("Ignoring second call to initialize the model store");
+                    }
+                } catch (DefaultStoreNotInitialized e) {
+					logger.error("Unexpected store not initialized during init", e);
+                }
+            }
+		}
 	}
 	
 	/**
