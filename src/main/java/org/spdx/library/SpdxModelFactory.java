@@ -126,38 +126,6 @@ public class SpdxModelFactory {
 	}
 
 	/**
-	 * This static method is a convenience to load this class and initialize the supported model versions and
-	 * initialize the DefaultModelStore with the parameter values
-	 * <p>
-	 * It should be called before using any other functionality from the library
-	 * @param modelStore Model store to use as a default
-	 * @param defaultDocumentUri Document URI to use as a default
-	 * @param defaultCopyManager Copy manager to use as a default
-	 */
-	public static void init(IModelStore modelStore, String defaultDocumentUri,
-							IModelCopyManager defaultCopyManager) {
-		Objects.requireNonNull(modelStore, "Model store can not be null");
-		Objects.requireNonNull(defaultDocumentUri, "Document URI can not be null");
-		Objects.requireNonNull(defaultCopyManager, "Copy manager can not be null");
-		synchronized (INIT_LOCK) {
-			if (!DefaultModelStore.isInitialized()) {
-				DefaultModelStore.initialize(modelStore, defaultDocumentUri, defaultCopyManager);
-			} else {
-				try {
-					if (!(Objects.equals(modelStore, DefaultModelStore.getDefaultModelStore()) &&
-							Objects.equals(defaultDocumentUri, DefaultModelStore.getDefaultDocumentUri()) &&
-							Objects.equals(defaultCopyManager, DefaultModelStore.getDefaultCopyManager()))) {
-						logger.warn("Ignoring second call to initialize the model store");
-					}
-				} catch (DefaultStoreNotInitialized e) {
-					logger.error("Unexpected store not initialized during init", e);
-				}
-			}
-		}
-	}
-
-	
-	/**
 	 * If the object exists in the model store, it will be "inflated" back to the Java object.
 	 * If the object does not exist AND the create parameter is true, a new object will be created and
 	 * its inflated form will be returned
@@ -252,7 +220,7 @@ public class SpdxModelFactory {
 	 * @param typeFilter type to filter on
 	 * @param objectUriPrefixFilter only return objects with URI's starting with this string
 	 * @param idPrefix optional prefix used for any new object URI's created in support of this model object
-	 * @return stream of objects stored in the model store - an object being any non primitive type
+	 * @return stream of objects stored in the model store - an object being any non-primitive type
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static Stream<?> getSpdxObjects(IModelStore store, @Nullable IModelCopyManager copyManager, 
