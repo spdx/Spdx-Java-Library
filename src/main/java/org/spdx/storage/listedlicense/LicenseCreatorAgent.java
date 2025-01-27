@@ -27,6 +27,7 @@ import org.spdx.core.ModelRegistryException;
 import org.spdx.core.SpdxInvalidIdException;
 import org.spdx.core.SpdxInvalidTypeException;
 import org.spdx.core.TypedValue;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
 import org.spdx.library.model.v3_0_1.core.Agent;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
@@ -51,6 +52,7 @@ public class LicenseCreatorAgent {
 	private final TypedValue creationInfoTV;
 	
 	public LicenseCreatorAgent(String licenseListVersion) throws SpdxInvalidIdException, SpdxInvalidTypeException, ModelRegistryException {
+		SpdxModelFactory.init();
 		this.objectUri = OBJECT_URI_PREFIX + licenseListVersion.replace('.','_');
 		this.typedValue = new TypedValue(objectUri, SpdxConstantsV3.CORE_AGENT, SpdxConstantsV3.MODEL_SPEC_VERSION);
 		this.creationInfoTV = new TypedValue(LicenseCreationInfo.CREATION_INFO_URI, SpdxConstantsV3.CORE_CREATION_INFO, SpdxConstantsV3.MODEL_SPEC_VERSION);
