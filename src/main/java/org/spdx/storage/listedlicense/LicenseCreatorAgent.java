@@ -52,6 +52,8 @@ public class LicenseCreatorAgent {
 	private final TypedValue creationInfoTV;
 	
 	public LicenseCreatorAgent(String licenseListVersion) throws SpdxInvalidIdException, SpdxInvalidTypeException, ModelRegistryException {
+               // Call init to make sure the model is initialized before it is used by the license factory methods
+               // Note that multiple calls to init does not cause any harm
 		SpdxModelFactory.init();
 		this.objectUri = OBJECT_URI_PREFIX + licenseListVersion.replace('.','_');
 		this.typedValue = new TypedValue(objectUri, SpdxConstantsV3.CORE_AGENT, SpdxConstantsV3.MODEL_SPEC_VERSION);
