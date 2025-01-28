@@ -1,5 +1,29 @@
 # Getting Started
 
+## Installation
+
+The library is available in Maven Central as
+[`org.spdx:java-spdx-library`](https://search.maven.org/artifact/org.spdx/java-spdx-library)
+(note the order of the word "java-spdx").
+
+If you are using Maven, you can add the following dependency in your POM file:
+
+```xml
+<dependency>
+  <groupId>org.spdx</groupId>
+  <artifactId>java-spdx-library</artifactId>
+  <version>(,2.0]</version>
+</dependency>
+```
+
+## Using the library for license analysis
+
+The static class `org.spdx.library.model.license.LicenseInfoFactory` supports the parsing of
+  SPDX license expressions, creation, and comparison of SPDX licenses.
+
+The `LicenseInfoFactory` will initialize the library and work with both the SPDX spe version 3
+and the SPDX spec version 2 license models.  SPDX spec version to methods end in `CompatV2`.
+
 ## Initialization
 
 Before executing any of the model class methods, the model versions need to be initialized.  This is done by calling:
@@ -141,3 +165,6 @@ We now need to add the required fields to make this a valid SPDX document:
 					.build();  // The more complex model objects follows a builder pattern
 			myDoc.getDocumentDescribes().add(file);
 ```
+
+Similar to SPDX spec version 3, the create methods in the SPDX spec version 2 objects will copy the
+model store, copy manager, and document uri to the newly created objects.
