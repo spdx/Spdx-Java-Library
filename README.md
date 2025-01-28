@@ -60,29 +60,12 @@ document used for the SPDX model object.
 
 ## Getting Started
 
-The library is available in Maven Central as
-[`org.spdx:java-spdx-library`](https://search.maven.org/artifact/org.spdx/java-spdx-library)
-(note the order of the word "java-spdx").
+See the [GETTING-STARTED.md](GETTING-STARTED.md) file for how to get started in different scenarios.
 
-If you are using Maven, you can add the following dependency in your POM file:
-
-```xml
-<dependency>
-  <groupId>org.spdx</groupId>
-  <artifactId>java-spdx-library</artifactId>
-  <version>(,2.0]</version>
-</dependency>
-```
+## API Documentation
 
 The API documentation is available at:
 <https://spdx.github.io/Spdx-Java-Library/>
-
-There are a couple of static classes that help common usage scenarios:
-
-- `org.spdx.library.SpdxModelFactory` supports the creation of specific
-  model objects
-- `org.spdx.library.model.license.LicenseInfoFactory` supports the parsing of
-  SPDX license expressions, creation, and comparison of SPDX licenses
 
 ## Configuration options
 
@@ -100,23 +83,38 @@ of Spdx-Java-Library.
 
 ## Initialization
 
-The first thing that needs to be done in your implementation is call `SpdxModelFactory.init()` - this will load all the supported versions.
+Before executing any of the model class methods, the model versions need to be initialized.  This is done by calling:
 
-If you are programmatically creating SPDX data, you will start by creating a model store.
-The simplest model store is an in-memory model store which can be created with `store = new InMemSpdxStore()`.
+```java
+SpdxModelFactory.init();
+```
 
-A copy manager will be needed if you are working with more than one store (e.g. a serialized format of SPDX data and in memory).  If you're not sure, you should just create one.  This can be done with `copyManager = new ModelCopyManager()`.
+SPDX data is stored in a "model store" and copying between model stores requires a copy manager.
 
-The first object you create will depend on the major version:
+A simple store is provided in the java library.  To create the simple in-memory model store and a copy manager, execute the following:
 
-- For SPDX 2.X, you would start by creating an `SpdxDocument`.
-  - The factory method `SpdxDocument document = SpdxModelFactory.createSpdxDocumentV2(IModelStore modelStore, String documentUri, IModelCopyManager copyManager)` will create a new SPDX document.
-  - Once created, you can use the setters to set the specific fields.
-  - You can then use the convenience create methods on the document to create additional SPDX objects (e.g. `document.createSpdxFile(...)`);
-- For SPDX 3.X, you will start with a `CreationInfo` class.
-  - The factory method `CreationInfo creationInfo = SpdxModelClassFactory.createCreationInfo(IModelStore modelStore, String createdByUri,String createdByName, @Nullable IModelCopyManager copyManager)` will create and initialize a CreationInfo with today's date and the Agent information.
-  - To create any additional objects, you can use the builder convenience methods from the creationInfo (or any Elements created by the creationInfo) e.g. `creationInfo.createSoftwareSpdxFile(String spdxFileObjectUri)`. 
-  - The created objects will copy the creationInfo.
+```java
+InMemSpdxStore modelStore = new InMemSpdxStore();
+IModelCopyManager copyManager = new ModelCopyManager();
+```
+
+Many factory and helper methods in the library make use of a DefaultModelStore
+if no model store or copy manager is specified.
+
+The `SpdxModelFactory.init()` will create defaults for this purpose.
+
+If you would like to use a different default model store and/or copy manager, you can call:
+
+```java
+DefaultModelStore.initialize(IModelStore newModelStore, String newDefaultDocumentUri,
+                            IModelCopyManager newDefaultCopyManager);
+```
+
+The `newDefaultDocumentUri` is a default document URI used for SPDX Spec version 2 model objects.
+
+IMPORTANT NOTE: The call to `DefaultModelStore.initialize` must be made prior to or immediately after the call
+to `SpdxModelFactory.init()`.  Otherwise, any data stored in the previous default model object will be lost.
+The `SpdxModelFactory.init()` will not overwrite an already initialized default model store.
 
 ## Update for new versions of the spec
 
