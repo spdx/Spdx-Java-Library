@@ -31,7 +31,6 @@ import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;
-import org.spdx.utility.compare.UnitTestHelper;
 
 
 /**
@@ -162,7 +161,18 @@ public class ListedLicensesTest extends TestCase {
 	    assertTrue(idProp.get() instanceof String);
 	    assertEquals(id, idProp.get());
 	}
-	
+
+	public void testGetIdV2() throws InvalidSPDXAnalysisException {
+		String id = "Apache-2.0";
+		SpdxListedLicense lic = ListedLicenses.getListedLicenses().getListedLicenseByIdCompatV2(id);
+		assertEquals(id, lic.getId());
+	}
+
+	public void testGetIdV3() throws InvalidSPDXAnalysisException {
+		String id = "Apache-2.0";
+		ListedLicense lic = ListedLicenses.getListedLicenses().getListedLicenseById(id);
+		assertEquals(id, lic.getId());
+	}
    public void testGetExceptionIdProperty() throws InvalidSPDXAnalysisException {
 		String id = "Classpath-exception-2.0";
 		org.spdx.library.model.v2.license.ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
