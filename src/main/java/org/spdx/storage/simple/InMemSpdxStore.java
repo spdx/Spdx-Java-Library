@@ -393,7 +393,7 @@ public class InMemSpdxStore implements IModelStore {
 		if (objectUri.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(objectUri) || LicenseInfoFactory.isSpdxListedExceptionId(objectUri)) {
 			return IdType.ListedLicense;
 		} else {
-			return IdType.Unkown;
+			return IdType.Unknown;
 		}
 	}
 
@@ -414,10 +414,10 @@ public class InMemSpdxStore implements IModelStore {
 	}
 
 	@Override
-	public Optional<String> getCaseSensisitiveId(String nameSpace, String caseInsensisitiveId) {
+	public Optional<String> getCaseSensitiveId(String nameSpace, String caseInsensitiveId) {
 		Objects.requireNonNull(nameSpace, "Namespace can not be null");
-		Objects.requireNonNull(caseInsensisitiveId, "CaseInsensisitiveId can not be null");
-		String objectUri = nameSpace + "#" + caseInsensisitiveId;
+		Objects.requireNonNull(caseInsensitiveId, "CaseInsensitiveId can not be null");
+		String objectUri = nameSpace + "#" + caseInsensitiveId;
 		StoredTypedItem item = typedValueMap.get(objectUri.toLowerCase());
 		if (Objects.isNull(item)) {
 			return Optional.empty();

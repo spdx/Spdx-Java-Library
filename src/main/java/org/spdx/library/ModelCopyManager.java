@@ -351,7 +351,7 @@ public class ModelCopyManager implements IModelCopyManager {
     }
 
     /**
-	 * Copies a property which is is a collection
+	 * Copies a property which is a collection
      * @param toStore Model Store to copy to
      * @param toObjectUri URI to copy to
      * @param fromStore Model Store containing the source item
@@ -460,7 +460,7 @@ public class ModelCopyManager implements IModelCopyManager {
 			case SpdxId: return toNamespace + toStore.getNextId(IdType.SpdxId);
 			case ListedLicense: return sourceUri;
 			case Anonymous:
-			case Unkown:
+			case Unknown:
 			default: return toStore.getNextId(IdType.Anonymous);
 		}
 	}
@@ -477,7 +477,7 @@ public class ModelCopyManager implements IModelCopyManager {
 	private String sourceUriToObjectUriV2Compat(String sourceUri, IdType idType, 
 			IModelStore toStore, String toNamespace, boolean isExternalDocRef) throws InvalidSPDXAnalysisException {
 		if ((isExternalDocRef || !(IdType.Anonymous.equals(idType) ||
-				IdType.ListedLicense.equals(idType) || IdType.Unkown.equals(idType)))
+				IdType.ListedLicense.equals(idType) || IdType.Unknown.equals(idType)))
 				&& (Objects.isNull(toNamespace) || toNamespace.isEmpty())) {
 			throw new InvalidSPDXAnalysisException("A to namespace or document URI must be provided to copy SPDX element for SPDX spec version 2");
 		}
@@ -510,7 +510,7 @@ public class ModelCopyManager implements IModelCopyManager {
 				toNamespace + toStore.getNextId(IdType.SpdxId);
 			case ListedLicense: return sourceUri;
 			case Anonymous:
-			case Unkown:
+			case Unknown:
 			default: return toStore.getNextId(IdType.Anonymous);
 		}
 	}
