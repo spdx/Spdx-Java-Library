@@ -1,5 +1,6 @@
 package org.spdx.library;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
@@ -11,6 +12,7 @@ import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;
+import org.spdx.utility.compare.UnitTestHelper;
 
 /*
  * Copyright (c) 2019 Source Auditor Inc.
@@ -57,15 +59,15 @@ public class ListedLicensesTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.license.ListedLicenses#isSpdxListedLicenseId(java.lang.String)}.
+	 * Test method for {@link org.spdx.library.ListedLicenses#isSpdxListedLicenseId(java.lang.String)}.
 	 */
 	public void testIsSpdxListedLicenseID() {
 		assertTrue(ListedLicenses.getListedLicenses().isSpdxListedLicenseId("Apache-2.0"));
 	}
 
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.license.ListedLicenses#getListedLicenseById(java.lang.String)}.
-	 * @throws InvalidSPDXAnalysisException 
+	 * Test method for {@link org.spdx.library.ListedLicenses#getListedLicenseById(java.lang.String)}.
+	 * @throws InvalidSPDXAnalysisException on error getting license IDs
 	 */
 	public void testGetListedLicenseById() throws InvalidSPDXAnalysisException {
 		String id = "Apache-2.0";
@@ -92,7 +94,7 @@ public class ListedLicensesTest extends TestCase {
 		}
 	}
 	/**
-	 * Test method for {@link org.spdx.library.model.compat.v2.compat.v2.license.ListedLicenses#getSpdxListedLicenseIds()}.
+	 * Test method for {@link org.spdx.library.ListedLicenses#getSpdxListedLicenseIds()}.
 	 */
 	public void testGetSpdxListedLicenseIds() {
 		List<String> result = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
@@ -130,21 +132,21 @@ public class ListedLicensesTest extends TestCase {
 		}
 	}
 	
-	public void testGetExceptionIds() throws InvalidSPDXAnalysisException {
+	public void testGetExceptionIds() {
 		assertTrue(ListedLicenses.getListedLicenses().getSpdxListedExceptionIds().size() >= NUM_3_7_EXCEPTION);
 	}
 	
 	public void testListedLicenseIdCaseSensitive() {
 		String expected = "Apache-2.0";
 		String lower = expected.toLowerCase();
-		assertEquals(expected, ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive(lower).get());
+		assertEquals(expected, ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive(lower).orElse(null));
 		assertFalse(ListedLicenses.getListedLicenses().listedLicenseIdCaseSensitive("NotaLicenseId").isPresent());
 	}
 	
 	public void testListedExceptionIdCaseSensitive() {
 		String expected = "Classpath-exception-2.0";
 		String lower = expected.toLowerCase();
-		assertEquals(expected, ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive(lower).get());
+		assertEquals(expected, ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive(lower).orElse(null));
 		assertFalse(ListedLicenses.getListedLicenses().listedExceptionIdCaseSensitive("NotAnExceptionId").isPresent());
 	}
 	
@@ -158,13 +160,55 @@ public class ListedLicensesTest extends TestCase {
 	    assertEquals(id, idProp.get());
 	}
 	
-	   public void testGetExceptionIdProperty() throws InvalidSPDXAnalysisException {
-	        String id = "Classpath-exception-2.0";
-	        org.spdx.library.model.v2.license.ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
-	        Optional<Object> idProp = ex.getModelStore().getValue(
-	        		CompatibleModelStoreWrapper.documentUriIdToUri(ex.getDocumentUri(), id, false), SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
-	        assertTrue(idProp.isPresent());
-	        assertTrue(idProp.get() instanceof String);
-	        assertEquals(id, idProp.get());
-	    }
+   public void testGetExceptionIdProperty() throws InvalidSPDXAnalysisException {
+		String id = "Classpath-exception-2.0";
+		org.spdx.library.model.v2.license.ListedLicenseException ex = ListedLicenses.getListedLicenses().getListedExceptionByIdCompatV2(id);
+		Optional<Object> idProp = ex.getModelStore().getValue(
+				CompatibleModelStoreWrapper.documentUriIdToUri(ex.getDocumentUri(), id, false), SpdxConstantsCompatV2.PROP_LICENSE_EXCEPTION_ID);
+		assertTrue(idProp.isPresent());
+		assertTrue(idProp.get() instanceof String);
+		assertEquals(id, idProp.get());
+	}
+
+	public void testGetListedLicenses() throws InvalidSPDXAnalysisException {
+		Map<String, ListedLicense> retval =ListedLicenses.getListedLicenses().getSpdxListedLicenses();
+		List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+		assertEquals(ids.size(), retval.size());
+		for (String id:ids) {
+			assertTrue(retval.get(id).getObjectUri().endsWith(id));
+		}
+	}
+
+	public void testGetListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
+		if (UnitTestHelper.runSlowTests()) {
+			//TODO: Once https://github.com/spdx/spdx-java-model-2_X/issues/13 is fixed, this conditional can be removed
+			Map<String, SpdxListedLicense> retval =ListedLicenses.getListedLicenses().getSpdxListedLicensesCompatV2();
+			List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+			assertEquals(ids.size(), retval.size());
+			for (String id:ids) {
+				assertEquals(id, retval.get(id).getId());
+			}
+		}
+	}
+
+	public void testGetListedLicenseExceptions() throws InvalidSPDXAnalysisException {
+		Map<String, ListedLicenseException> retval =ListedLicenses.getListedLicenses().getSpdxListedLicenseExceptions();
+		List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
+		assertEquals(ids.size(), retval.size());
+		for (String id:ids) {
+			assertTrue(retval.get(id).getObjectUri().endsWith(id));
+		}
+	}
+
+	public void testGetListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
+		if (UnitTestHelper.runSlowTests()) {
+			Map<String, org.spdx.library.model.v2.license.ListedLicenseException> retval =
+					ListedLicenses.getListedLicenses().getSpdxListedLicenseExceptionsCompatV2();
+			List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
+			assertEquals(ids.size(), retval.size());
+			for (String id:ids) {
+				assertEquals(id, retval.get(id).getId());
+			}
+		}
+	}
 }

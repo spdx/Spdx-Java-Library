@@ -19,10 +19,7 @@ package org.spdx.library;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -33,6 +30,7 @@ import org.spdx.core.SpdxIdNotFoundException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxModelFactoryCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v2.license.SpdxListedLicenseException;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
@@ -62,6 +60,11 @@ public class ListedLicenses {
 	private SpdxV2ListedLicenseModelStore licenseStoreV2;
 	private SpdxV3ListedLicenseModelStore licenseStoreV3;
 	private static ListedLicenses listedLicenses = null;
+	private Map<String, SpdxListedLicense> spdxListedLicenseMapCompatV2;
+	private Map<String, ListedLicense> spdxListedLicenseMap;
+	private Map<String, org.spdx.library.model.v2.license.ListedLicenseException> spdxListedExceptionMapCompatV2;
+	private Map<String, ListedLicenseException> spdxListedExceptionMap;
+
 	/**
 	 * Lock for any modifications to the underlying licenseModelStore
 	 */
@@ -202,8 +205,8 @@ public class ListedLicenses {
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
 		try {
-			return (SpdxListedLicense)SpdxModelFactoryCompatV2.getModelObjectV2(this.licenseStoreV2, 
-					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId, 
+			return (SpdxListedLicense)SpdxModelFactoryCompatV2.getModelObjectV2(this.licenseStoreV2,
+					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId,
 					SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null, false);
 		} catch (SpdxIdNotFoundException ex) {
 			return null;
@@ -261,6 +264,128 @@ public class ListedLicenses {
 			listedLicenseModificationLock.readLock().unlock();
         }
     }
+
+	/**
+	 * @return a map of SPDX listed license IDs to the SPDX listed license
+	 * @throws InvalidSPDXAnalysisException on errors fetching the licenses
+	 */
+	public Map<String, ListedLicense> getSpdxListedLicenses() throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedLicenseMap)) {
+				return this.spdxListedLicenseMap;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedLicenseMap)) {
+				return this.spdxListedLicenseMap;
+			}
+			Map<String, ListedLicense> allListedLicenses = new HashMap<>();
+			for (String licenseId : this.baseModelStore.getSpdxListedLicenseIds()) {
+				allListedLicenses.put(licenseId, new ListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null,
+						false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX));
+			}
+			this.spdxListedLicenseMap = Collections.unmodifiableMap(allListedLicenses);
+			return this.spdxListedLicenseMap;
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * @return a map of SPDX listed license exception IDs to the SPDX listed license exception
+	 * @throws InvalidSPDXAnalysisException on errors fetching the license exceptions
+	 */
+	public Map<String, ListedLicenseException> getSpdxListedLicenseExceptions() throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedExceptionMap)) {
+				return this.spdxListedExceptionMap;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedExceptionMap)) {
+				return this.spdxListedExceptionMap;
+			}
+			Map<String, ListedLicenseException> allListedExceptions = new HashMap<>();
+			for (String exceptionId : this.baseModelStore.getSpdxListedExceptionIds()) {
+				allListedExceptions.put(exceptionId, new ListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null,
+						false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX));
+			}
+			this.spdxListedExceptionMap = Collections.unmodifiableMap(allListedExceptions);
+			return this.spdxListedExceptionMap;
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * @return a map of SPDX listed license IDs to the SPDX Spec version 2 listed license
+	 * @throws InvalidSPDXAnalysisException on errors fetching the licenses
+	 */
+	public Map<String, SpdxListedLicense> getSpdxListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedLicenseMapCompatV2)) {
+				return this.spdxListedLicenseMapCompatV2;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedLicenseMapCompatV2)) {
+				return this.spdxListedLicenseMapCompatV2;
+			}
+			Map<String, SpdxListedLicense> allListedLicenses = new HashMap<>();
+			for (String licenseId : this.baseModelStore.getSpdxListedLicenseIds()) {
+				allListedLicenses.put(licenseId, (SpdxListedLicense)SpdxModelFactoryCompatV2.getModelObjectV2(this.licenseStoreV2,
+						SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId,
+						SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null, false));
+			}
+			this.spdxListedLicenseMapCompatV2 = Collections.unmodifiableMap(allListedLicenses);
+			return this.spdxListedLicenseMapCompatV2;
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * @return a map of SPDX listed license exception IDs to the SPDX listed license exception
+	 * @throws InvalidSPDXAnalysisException on errors fetching the license exceptions
+	 */
+	public Map<String, org.spdx.library.model.v2.license.ListedLicenseException> getSpdxListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
+		listedLicenseModificationLock.readLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedExceptionMapCompatV2)) {
+				return this.spdxListedExceptionMapCompatV2;
+			}
+		} finally {
+			listedLicenseModificationLock.readLock().unlock();
+		}
+		listedLicenseModificationLock.writeLock().lock();
+		try {
+			if (Objects.nonNull(this.spdxListedExceptionMapCompatV2)) {
+				return this.spdxListedExceptionMapCompatV2;
+			}
+			Map<String, org.spdx.library.model.v2.license.ListedLicenseException> allListedExceptions = new HashMap<>();
+			for (String exceptionId : this.baseModelStore.getSpdxListedExceptionIds()) {
+				allListedExceptions.put(exceptionId, (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactoryCompatV2.getModelObjectV2(
+						this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX,
+						exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null, false));
+			}
+			this.spdxListedExceptionMapCompatV2 = Collections.unmodifiableMap(allListedExceptions);
+			return this.spdxListedExceptionMapCompatV2;
+		} finally {
+			listedLicenseModificationLock.writeLock().unlock();
+		}
+	}
     
 	/**
 	 * @return The version of the loaded license list in the form M.N, where M is the major release and N is the minor release.
