@@ -476,8 +476,9 @@ public class ModelCopyManager implements IModelCopyManager {
 	 */
 	private String sourceUriToObjectUriV2Compat(String sourceUri, IdType idType, 
 			IModelStore toStore, String toNamespace, boolean isExternalDocRef) throws InvalidSPDXAnalysisException {
-		if ((isExternalDocRef || !(IdType.Anonymous.equals(idType) ||
-				IdType.ListedLicense.equals(idType) || IdType.Unknown.equals(idType)))
+        //noinspection deprecation
+        if ((isExternalDocRef || !(IdType.Anonymous.equals(idType) || IdType.ListedLicense.equals(idType) ||
+				IdType.Unknown.equals(idType)  || IdType.Unkown.equals(idType)))
 				&& (Objects.isNull(toNamespace) || toNamespace.isEmpty())) {
 			throw new InvalidSPDXAnalysisException("A to namespace or document URI must be provided to copy SPDX element for SPDX spec version 2");
 		}
