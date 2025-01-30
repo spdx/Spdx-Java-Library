@@ -204,13 +204,7 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
-		try {
-			return (SpdxListedLicense)SpdxModelFactoryCompatV2.getModelObjectV2(this.licenseStoreV2,
-					SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId,
-					SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null, false);
-		} catch (SpdxIdNotFoundException ex) {
-			return null;
-		}
+		return getSpdxListedLicensesCompatV2().get(licenseId);
 	}
 	
 	/**
@@ -219,13 +213,7 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
 	 */
 	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
-		try {
-			return (org.spdx.library.model.v2.license.ListedLicenseException)SpdxModelFactoryCompatV2.getModelObjectV2(
-					this.licenseStoreV2, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
-					exceptionId, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null, false);
-		} catch (SpdxIdNotFoundException ex) {
-			return null;
-		}
+		return getSpdxListedLicenseExceptionsCompatV2().get(exceptionId);
 	}
 	
 	/**
@@ -234,22 +222,11 @@ public class ListedLicenses {
 	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
 	 */
 	public ListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
-		try {
-			return new ListedLicense(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(licenseId), null, 
-					false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
-		} catch (SpdxIdNotFoundException ex) {
-			return null;
-		}
-		
+		return getSpdxListedLicenses().get(licenseId);
 	}
 	
 	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
-		try {
-			return new ListedLicenseException(this.licenseStoreV3, SpdxListedLicenseModelStore.licenseOrExceptionIdToObjectUri(exceptionId), null, 
-					false, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX);
-		} catch (SpdxIdNotFoundException ex) {
-			return null;
-		}
+		return getSpdxListedLicenseExceptions().get(exceptionId);
 		
 	}
 	

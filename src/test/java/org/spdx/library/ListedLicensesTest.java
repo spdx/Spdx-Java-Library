@@ -180,14 +180,11 @@ public class ListedLicensesTest extends TestCase {
 	}
 
 	public void testGetListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
-		if (UnitTestHelper.runSlowTests()) {
-			//TODO: Once https://github.com/spdx/spdx-java-model-2_X/issues/13 is fixed, this conditional can be removed
-			Map<String, SpdxListedLicense> retval =ListedLicenses.getListedLicenses().getSpdxListedLicensesCompatV2();
-			List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
-			assertEquals(ids.size(), retval.size());
-			for (String id:ids) {
-				assertEquals(id, retval.get(id).getId());
-			}
+		Map<String, SpdxListedLicense> retval =ListedLicenses.getListedLicenses().getSpdxListedLicensesCompatV2();
+		List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+		assertEquals(ids.size(), retval.size());
+		for (String id:ids) {
+			assertEquals(id, retval.get(id).getId());
 		}
 	}
 
@@ -201,14 +198,12 @@ public class ListedLicensesTest extends TestCase {
 	}
 
 	public void testGetListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
-		if (UnitTestHelper.runSlowTests()) {
-			Map<String, org.spdx.library.model.v2.license.ListedLicenseException> retval =
-					ListedLicenses.getListedLicenses().getSpdxListedLicenseExceptionsCompatV2();
-			List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
-			assertEquals(ids.size(), retval.size());
-			for (String id:ids) {
-				assertEquals(id, retval.get(id).getId());
-			}
+		Map<String, org.spdx.library.model.v2.license.ListedLicenseException> retval =
+				ListedLicenses.getListedLicenses().getSpdxListedLicenseExceptionsCompatV2();
+		List<String> ids = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
+		assertEquals(ids.size(), retval.size());
+		for (String id:ids) {
+			assertEquals(id, retval.get(id).getId());
 		}
 	}
 }
