@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.spdx.core.DefaultModelStore;
-import org.spdx.core.DefaultStoreNotInitialized;
+import org.spdx.core.DefaultStoreNotInitializedException;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.GenericModelObject;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
@@ -117,7 +117,7 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 		DefaultModelStore.initialize(new InMemSpdxStore(), "https://default/prefix", new ModelCopyManager());
 	}
 	
-	public void testParseSPDXLicenseString() throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public void testParseSPDXLicenseString() throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		String parseString = COMPLEX_LICENSE.toString();
 		AnyLicenseInfo li = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(parseString);
 		if (!li.equals(COMPLEX_LICENSE)) {

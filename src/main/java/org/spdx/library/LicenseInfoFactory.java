@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.DefaultModelStore;
-import org.spdx.core.DefaultStoreNotInitialized;
+import org.spdx.core.DefaultStoreNotInitializedException;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
@@ -92,10 +92,10 @@ public class LicenseInfoFactory {
 	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException if the license string is not valid
-	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
+	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
-			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -136,11 +136,11 @@ public class LicenseInfoFactory {
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException if the license string is not valid
-	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
+	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
 			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
-			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -175,9 +175,9 @@ public class LicenseInfoFactory {
 	 * @param licenseString String conforming to the syntax
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException if the license string is not valid
-	 * @throws DefaultStoreNotInitialized if the default model store is not initialized
+	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		return parseSPDXLicenseString(licenseString, null, null, null, null);
 	}
 	
@@ -196,9 +196,9 @@ public class LicenseInfoFactory {
 	 * @param licenseString String conforming to the syntax
 	 * @return an SPDXLicenseInfo created from the string
 	 * @throws InvalidLicenseStringException On invalid license expression
-	 * @throws DefaultStoreNotInitialized On the model store not being initialized - see DefaultModelStore in SPDX core package
+	 * @throws DefaultStoreNotInitializedException On the model store not being initialized - see DefaultModelStore in SPDX core package
 	 */
-	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitialized {
+	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		return parseSPDXLicenseStringCompatV2(licenseString, null, null, null);
 	}
 
