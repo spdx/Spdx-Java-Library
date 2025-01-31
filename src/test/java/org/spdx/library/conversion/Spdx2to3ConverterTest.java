@@ -178,9 +178,6 @@ public class Spdx2to3ConverterTest {
 		assertTrue(verify.isEmpty());
 	}
 
-	/**
-	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#Spdx2to3Converter(org.spdx.storage.IModelStore, org.spdx.library.ModelCopyManager, org.spdx.library.model.v3_0_1.core.CreationInfo, java.lang.String, java.lang.String)}.
-	 */
 	@Test
 	public void testSpdx2to3Converter() {
 		Spdx2to3Converter result = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
@@ -625,7 +622,7 @@ public class Spdx2to3ConverterTest {
 		
 		NamespaceMap[] namespaceMaps = result.getNamespaceMaps().toArray(new NamespaceMap[result.getNamespaceMaps().size()]);
 		assertEquals(1, namespaceMaps.length);
-		assertEquals(externalDocumentUri, namespaceMaps[0].getNamespace());
+		assertEquals(externalDocumentUri + "#", namespaceMaps[0].getNamespace());
 		assertEquals(externalDocumentId, namespaceMaps[0].getPrefix());
 		
 		List<CustomLicense> customLicenses = new ArrayList<>();
@@ -684,7 +681,7 @@ public class Spdx2to3ConverterTest {
 		Collection<ExternalMap> docImports = new ArrayList<>();
 		NamespaceMap result = converter.convertAndStore(externalDocRef, docImports);
 		assertEquals(externalDocumentId, result.getPrefix());
-		assertEquals(externalDocumentUri, result.getNamespace());
+		assertEquals(externalDocumentUri + "#", result.getNamespace());
 	}
 	
 	List<Relationship> findRelationship(List<Relationship> relationships, @Nullable RelationshipType relationshipType,
