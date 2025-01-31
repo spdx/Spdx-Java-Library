@@ -726,7 +726,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		NamespaceMap toNamespaceMap = (NamespaceMap)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
 				toObjectUri, SpdxConstantsV3.CORE_NAMESPACE_MAP, copyManager, true, defaultUriPrefix);
 		toNamespaceMap.setPrefix(externalDocRef.getId());
-		toNamespaceMap.setNamespace(externalDocRef.getSpdxDocumentNamespace());
+		toNamespaceMap.setNamespace(externalDocRef.getSpdxDocumentNamespace() + "#");
 		return toNamespaceMap;
 	}
 
