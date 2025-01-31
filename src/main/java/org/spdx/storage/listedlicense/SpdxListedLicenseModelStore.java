@@ -1098,11 +1098,9 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 			listedLicenseModificationLock.writeLock().unlock();
 		}
 		if (isLicenseId) {
-			LicenseJson license = fetchLicenseJson(id);
-			return license.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
+			return LicenseJson.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 		} else if (isExceptionId) {
-			ExceptionJson exc = fetchExceptionJson(id);
-			return exc.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
+			return ExceptionJson.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 		} else if (Objects.nonNull(crossRef)) {
 			return crossRef.isCollectionMembersAssignableTo(propertyDescriptor, clazz);
 		} else {

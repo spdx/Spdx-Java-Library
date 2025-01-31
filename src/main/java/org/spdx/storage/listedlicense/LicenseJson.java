@@ -510,7 +510,7 @@ public class LicenseJson {
 
 	}
 
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSpdxPropertyException {
+	public static boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws InvalidSpdxPropertyException {
 		String propertyName = PROPERTY_DESCRIPTOR_TO_VALUE_NAME.get(propertyDescriptor);
 		if (Objects.isNull(propertyName)) {
 			throw new InvalidSpdxPropertyException("Invalid property for SPDX listed license:"+propertyDescriptor.getName());

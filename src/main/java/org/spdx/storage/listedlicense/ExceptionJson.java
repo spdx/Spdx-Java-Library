@@ -457,7 +457,7 @@ public class ExceptionJson {
 	 * @param clazz class to test assignability
 	 * @return true if the list associated with the propertyDescriptor have a value added of type clazz
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
+	public static boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) {
 		if (SpdxConstantsCompatV2.RDFS_PROP_SEE_ALSO.equals(propertyDescriptor) ||
 				SpdxConstantsV3.PROP_SEE_ALSO.equals(propertyDescriptor)) {
 			return String.class.isAssignableFrom(clazz);
