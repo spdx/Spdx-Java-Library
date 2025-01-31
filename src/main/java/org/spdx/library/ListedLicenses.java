@@ -306,7 +306,7 @@ public class ListedLicenses {
 	 * @return a map of SPDX listed license IDs to the SPDX Spec version 2 listed license
 	 * @throws InvalidSPDXAnalysisException on errors fetching the licenses
 	 */
-	public Map<String, SpdxListedLicense> getSpdxListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
+	protected Map<String, SpdxListedLicense> getSpdxListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (Objects.nonNull(this.spdxListedLicenseMapCompatV2)) {
@@ -337,7 +337,7 @@ public class ListedLicenses {
 	 * @return a map of SPDX listed license exception IDs to the SPDX listed license exception
 	 * @throws InvalidSPDXAnalysisException on errors fetching the license exceptions
 	 */
-	public Map<String, org.spdx.library.model.v2.license.ListedLicenseException> getSpdxListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
+	protected Map<String, org.spdx.library.model.v2.license.ListedLicenseException> getSpdxListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
 		try {
 			if (Objects.nonNull(this.spdxListedExceptionMapCompatV2)) {
