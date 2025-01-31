@@ -43,6 +43,8 @@ import org.spdx.storage.simple.InMemSpdxStore;
 import junit.framework.TestCase;
 
 /**
+ * Test SPDX item comparer
+ *
  * @author Gary O'Neall
  */
 public class SpdxItemComparerTest extends TestCase {
