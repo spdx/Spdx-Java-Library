@@ -467,7 +467,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                               <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
                                                                                               org.spdx.core.IModelCopyManager&nbsp;copyManager)
                                                                                        throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
-                                                                                              org.spdx.core.DefaultStoreNotInitialized</pre>
+                                                                                              org.spdx.core.DefaultStoreNotInitializedException</pre>
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
@@ -491,7 +491,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>an SPDXLicenseInfo created from the string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code> - if the license string is not valid</dd>
-<dd><code>org.spdx.core.DefaultStoreNotInitialized</code> - if the default model store is not initialized</dd>
+<dd><code>org.spdx.core.DefaultStoreNotInitializedException</code> - if the default model store is not initialized</dd>
 </dl>
 </li>
 </ul>
@@ -511,7 +511,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                                   <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
                                                                                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)
                                                                                            throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
-                                                                                                  org.spdx.core.DefaultStoreNotInitialized</pre>
+                                                                                                  org.spdx.core.DefaultStoreNotInitializedException</pre>
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
@@ -536,7 +536,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>an SPDXLicenseInfo created from the string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code> - if the license string is not valid</dd>
-<dd><code>org.spdx.core.DefaultStoreNotInitialized</code> - if the default model store is not initialized</dd>
+<dd><code>org.spdx.core.DefaultStoreNotInitializedException</code> - if the default model store is not initialized</dd>
 </dl>
 </li>
 </ul>
@@ -548,7 +548,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>parseSPDXLicenseString</h4>
 <pre class="methodSignature">public static&nbsp;org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;parseSPDXLicenseString&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString)
                                                                                            throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
-                                                                                                  org.spdx.core.DefaultStoreNotInitialized</pre>
+                                                                                                  org.spdx.core.DefaultStoreNotInitializedException</pre>
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
@@ -567,7 +567,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>an SPDXLicenseInfo created from the string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code> - if the license string is not valid</dd>
-<dd><code>org.spdx.core.DefaultStoreNotInitialized</code> - if the default model store is not initialized</dd>
+<dd><code>org.spdx.core.DefaultStoreNotInitializedException</code> - if the default model store is not initialized</dd>
 </dl>
 </li>
 </ul>
@@ -579,7 +579,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>parseSPDXLicenseStringCompatV2</h4>
 <pre class="methodSignature">public static&nbsp;org.spdx.library.model.v2.license.AnyLicenseInfo&nbsp;parseSPDXLicenseStringCompatV2&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString)
                                                                                        throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
-                                                                                              org.spdx.core.DefaultStoreNotInitialized</pre>
+                                                                                              org.spdx.core.DefaultStoreNotInitializedException</pre>
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
@@ -598,7 +598,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd>an SPDXLicenseInfo created from the string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code> - On invalid license expression</dd>
-<dd><code>org.spdx.core.DefaultStoreNotInitialized</code> - On the model store not being initialized - see DefaultModelStore in SPDX core package</dd>
+<dd><code>org.spdx.core.DefaultStoreNotInitializedException</code> - On the model store not being initialized - see DefaultModelStore in SPDX core package</dd>
 </dl>
 </li>
 </ul>
