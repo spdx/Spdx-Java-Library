@@ -33,6 +33,8 @@ import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.licenseTemplate.LicenseTemplateRule.RuleType;
 
 /**
+ * Test compare template output handler
+ *
  * @author Source Auditor
  */
 public class TestCompareTemplateOutputHandler {

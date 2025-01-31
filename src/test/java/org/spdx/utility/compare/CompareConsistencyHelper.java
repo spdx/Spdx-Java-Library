@@ -10,6 +10,9 @@ import org.spdx.library.LicenseInfoFactory;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 
 
+/**
+ * Compare consistency helper
+ */
 public class CompareConsistencyHelper {
 
     /**

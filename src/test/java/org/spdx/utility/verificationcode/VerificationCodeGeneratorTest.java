@@ -19,6 +19,9 @@ import org.spdx.storage.simple.InMemSpdxStore;
 
 import junit.framework.TestCase;
 
+/**
+ * Test verification code generator
+ */
 public class VerificationCodeGeneratorTest extends TestCase {
 	
     static final String SOURCE_PATH = "TestFiles" + File.separator + "spdx-parser-source";
