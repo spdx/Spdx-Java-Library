@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 Source Auditor Inc.
- * <p>
+ * SPDX-FileCopyrightText: Copyright (c) 2020 Source Auditor Inc.
+ * SPDX-FileType: SOURCE
  * SPDX-License-Identifier: Apache-2.0
  * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
+
 /**
  * Classes used to generate PackageVerificationCodes
  *
