@@ -1198,7 +1198,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 		} else if (objectUri.startsWith(LicenseCreatorAgent.OBJECT_URI_PREFIX)) {
 			return IdType.SpdxId;
 		} else {
-			return IdType.Unkown;
+			return IdType.Unknown;
 		}
 	}
 	

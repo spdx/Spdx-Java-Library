@@ -393,7 +393,7 @@ public class InMemSpdxStore implements IModelStore {
 		if (objectUri.contains("://spdx.org/licenses/") || LicenseInfoFactory.isSpdxListedLicenseId(objectUri) || LicenseInfoFactory.isSpdxListedExceptionId(objectUri)) {
 			return IdType.ListedLicense;
 		} else {
-			return IdType.Unkown;
+			return IdType.Unknown;
 		}
 	}
 
