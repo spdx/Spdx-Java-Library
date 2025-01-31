@@ -1,5 +1,7 @@
 /**
- * Copyright (c) 2011 Source Auditor Inc.
+ * SPDX-FileCopyrightText: Copyright (c) 2011 Source Auditor Inc.
+ * SPDX-FileType: SOURCE
+ * SPDX-License-Identifier: Apache-2.0
  * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -12,8 +14,7 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- *
-*/
+ */
 package org.spdx.utility.verificationcode;
 
 import java.io.File;

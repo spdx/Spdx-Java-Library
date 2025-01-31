@@ -45,6 +45,8 @@ import junit.framework.TestCase;
 
 
 /**
+ * Test SPDX snippet comparer
+ *
  * @author Gary O'Neall
  */
 public class SpdxSnippetComparerTest extends TestCase {

@@ -1,5 +1,7 @@
 /**
- * Copyright (c) 2018 Source Auditor Inc.
+ * SPDX-FileCopyrightText: Copyright (c) 2018 Source Auditor Inc.
+ * SPDX-FileType: SOURCE
+ * SPDX-License-Identifier: Apache-2.0
  * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -25,7 +27,6 @@ import javax.annotation.Nullable;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-
 
 
 /**

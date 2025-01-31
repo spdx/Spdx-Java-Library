@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2023 Peter Monks
- * <p>
+ * SPDX-FileCopyrightText: Copyright (c) 2023 Peter Monks
+ * SPDX-FileType: SOURCE
  * SPDX-License-Identifier: Apache-2.0
  * <p>
  *   Licensed under the Apache License, Version 2.0 (the "License");
