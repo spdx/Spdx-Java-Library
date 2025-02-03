@@ -63,6 +63,8 @@ The `SpdxModelFactory.init()` will not overwrite an already initialized default 
 
 ### Programmatically Creating SPDX Data
 
+See the [Spdx3Example.java](src/examples/java/org/spdx/example/Spdx3Example.java) file for the complete code example.
+
 All SPDX elements are required to have a unique SPDX ID which is an Object URI.  In the SPDX Java libraries, this is commonly referred to as the `objectUri` to avoid confusion with the SPDX 2.X version short SPDX IDs.
 
 A good practice is to create a common prefix to use for your programmatic session.  The prefix should be unique to the session.  There are convenience methods in the library to append identifiers unique to the model store.
@@ -73,42 +75,44 @@ In these examples, we'll use:
 String prefix = "https://org.spdx.spdxdata/899b1918-f72a-4755-9215-6262b3c346df/";
 ```
 
-Since SPDX 3.0 requires creation info on every element, the easiest way to start is to use the SPDX 3 model convenience method `SpdxModelClassFactory.createCreationInfo(...)` which will create the `Agent` and `CreationInfo` classes which can be added to all the subsequent elements.
+Since SPDX 3.0 requires creation info on every element, the easiest way to start is to use the SPDX 3 model convenience method `SpdxModelFactory.createCreationInfoV3(...)` which will create the `Agent` and `CreationInfo` classes which can be added to all the subsequent elements.
 
 For example:
 
 ```java
-CreationInfo creationInfo = SpdxModelClassFactory.createCreationInfo(
+CreationInfo creationInfo = SpdxModelFactoryV3.createCreationInfo(
 			modelStore, prefix + "Agent/Gary01123", "Gary O'Neall",
 			copyManager);
 ```
 
 We're now ready to create our first SPDX element.  You can start anywhere, but let's start with an SBOM element.
 
-There is a factory method you can use to get started:
+Every SPDX object has builder methods for all the SPDX objects.
+
+To build the initial SBOM, we can call the builder method for Sbom.
+The only parameter is the Object URI for the element - we'll use the same prefix for consistency.
+We might as well add a name while we're at it.
 
 ```java
-Sbom sbom = SpdxModelClassFactory.getModelObject(modelStore, 
-			prefix + "sbom/mysbom", SpdxConstantsV3.SOFTWARE_SBOM, 
-			copyManager, true, prefix);
+Sbom sbom = creationInfo.createSbom(prefix + "sbom/mysbom")
+        .setName("My SBOM")
+        .build();
 ```
 
-Let's not forget to add the creation info:
+Note that the builder add all the creation information from the 
+object calling the builder method, so no need to add the creationInfo,
+modelStore or copyManager.
+
+From here on out, we can just use the builder methods to create objects and the getter / setter methods.
+
+For example, if we want to create a package to add to the SBOM as a root we can call:
 
 ```java
-sbom.setCreationInfo(creationInfo);
-```
-
-From here on, things get easier.  We can get and set properties to the sbom we just created.
-
-If we want to create another SPDX object or element, we can use the builder convenience methods available to all SPDX objects.  For example, if we want to create a package to add to the SBOM we can call:
-
-```java
-sbom.getElements().add(
-			sbom.createSpdxPackage(prefix + "package/mypackage")
-			.setName("Package Name")
-			.build()
-			);
+SpdxPackage pkg = sbom.createSpdxPackage(prefix + "package/mypackage")
+        .setName("Package Name")
+        .build();
+        sbom.getElements().add(pkg);
+        sbom.getRootElements().add(pkg);
 ```
 
 The model store, creation info, copy manager, and prefix information will all be copied from the sbom allowing you to focus just on the properties you need to add.
