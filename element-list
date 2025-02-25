@@ -1,4 +1,5 @@
 org.spdx
+org.spdx.example
 org.spdx.library
 org.spdx.library.conversion
 org.spdx.storage.listedlicense
