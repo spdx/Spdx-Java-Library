@@ -573,7 +573,7 @@ public class LicenseExpressionParser {
 					licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager, true);
 		} else {
 			// LicenseRef
-			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(documentUri, token);
+			Optional<String> caseSensitiveId = store.getCaseSensitiveId(documentUri, token);
 			ExtractedLicenseInfo localLicense;
 			if (caseSensitiveId.isPresent()) {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
