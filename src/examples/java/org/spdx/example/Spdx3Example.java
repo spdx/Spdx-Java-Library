@@ -30,6 +30,7 @@ import org.spdx.storage.simple.InMemSpdxStore;
 
 /**
  * Example which creates an SBOM from scratch
+ *
  * NOTE: Snippets from this file are used in the GETTING_STARTED.md file - any changes to this file
  * should update the GETTING_STARTED.md file
  */
