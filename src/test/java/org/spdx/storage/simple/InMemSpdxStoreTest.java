@@ -581,13 +581,30 @@ public class InMemSpdxStoreTest extends TestCase {
 		}
 	}
 	
-	public void testGetCaseSensisitiveId() throws Exception {
+	@SuppressWarnings("deprecation")
+    public void testGetCaseSensisitiveId() throws Exception {
 		try (InMemSpdxStore store = new InMemSpdxStore()) {
 			String expected = "TestIdOne";
 			String lower = expected.toLowerCase();
 			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + expected, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 			assertEquals(expected, store.getCaseSensisitiveId(TEST_NAMESPACE1, lower).get());
 			assertFalse(store.getCaseSensisitiveId(TEST_NAMESPACE1, "somethingNotThere").isPresent());
+			try {
+				store.create(new TypedValue(TEST_NAMESPACE1 + "#" + lower, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+				fail("This should be a duplicate ID failure");
+			} catch (InvalidSPDXAnalysisException e) {
+				// expected
+			}
+		}
+	}
+
+	public void testGetCaseSensitiveId() throws Exception {
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			String expected = "TestIdOne";
+			String lower = expected.toLowerCase();
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + expected, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
+			assertEquals(expected, store.getCaseSensitiveId(TEST_NAMESPACE1, lower).get());
+			assertFalse(store.getCaseSensitiveId(TEST_NAMESPACE1, "somethingNotThere").isPresent());
 			try {
 				store.create(new TypedValue(TEST_NAMESPACE1 + "#" + lower, SpdxConstantsCompatV2.CLASS_ANNOTATION, "SPDX-2.3"));
 				fail("This should be a duplicate ID failure");

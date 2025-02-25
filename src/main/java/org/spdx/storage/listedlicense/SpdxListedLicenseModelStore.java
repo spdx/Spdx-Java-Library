@@ -1246,12 +1246,12 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
-		Optional<String> retval = listedLicenseIdCaseSensitive(caseInsensisitiveId);
+	public Optional<String> getCaseSensitiveId(String documentUri, String caseInsensitiveId) {
+		Optional<String> retval = listedLicenseIdCaseSensitive(caseInsensitiveId);
 		if (retval.isPresent()) {
 			return retval;
 		}
-		return listedExceptionIdCaseSensitive(caseInsensisitiveId);
+		return listedExceptionIdCaseSensitive(caseInsensitiveId);
 	}
 	
 	@Override

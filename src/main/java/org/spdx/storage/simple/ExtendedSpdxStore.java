@@ -229,11 +229,11 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getCaseSensisitiveId(java.lang.String, java.lang.String)
+	 * @see org.spdx.storage.IModelStore#getCaseSensitiveId(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
-		return baseStore.getCaseSensisitiveId(documentUri, caseInsensisitiveId);
+	public Optional<String> getCaseSensitiveId(String documentUri, String caseInsensitiveId) {
+		return baseStore.getCaseSensitiveId(documentUri, caseInsensitiveId);
 	}
 
 	/* (non-Javadoc)

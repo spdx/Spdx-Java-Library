@@ -332,12 +332,12 @@ public class SpdxV2ListedLicenseModelStore implements IModelStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getCaseSensisitiveId(java.lang.String, java.lang.String)
+	 * @see org.spdx.storage.IModelStore#getCaseSensitiveId(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Optional<String> getCaseSensisitiveId(String nameSpace,
-			String caseInsensisitiveId) {
-		return baseStore.getCaseSensisitiveId(nameSpace, caseInsensisitiveId);
+	public Optional<String> getCaseSensitiveId(String nameSpace,
+			String caseInsensitiveId) {
+		return baseStore.getCaseSensitiveId(nameSpace, caseInsensitiveId);
 	}
 
 	/* (non-Javadoc)
