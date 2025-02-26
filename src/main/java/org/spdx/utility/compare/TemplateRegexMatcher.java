@@ -326,8 +326,10 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 				startIndex = startMatcher.start();
 				Pattern endPattern = Pattern.compile(getEndRegex(WORD_LIMIT));
 				Matcher endMatcher = endPattern.matcher(compareText);
-				if (endMatcher.find()) {
+				while (endMatcher.find() && endMatcher.start() >= startIndex) {
 					endIndex = endMatcher.end();
+				}
+				if (endIndex > 0) {
 					result = compareText.substring(startIndex, endIndex);
 				}
 			}
