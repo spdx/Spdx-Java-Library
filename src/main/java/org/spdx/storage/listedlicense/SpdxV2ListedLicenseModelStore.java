@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
@@ -184,7 +185,7 @@ public class SpdxV2ListedLicenseModelStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#getAllItems(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Stream<TypedValue> getAllItems(String nameSpace, String typeFilter)
+	public Stream<TypedValue> getAllItems(@Nullable String nameSpace, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		return baseStore.getAllItems(nameSpace, typeFilter).filter(tv -> !tv.getSpecVersion().startsWith("3."));
 	}
