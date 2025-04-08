@@ -947,7 +947,7 @@ public abstract class SpdxListedLicenseModelStore implements IListedLicenseStore
 	}
 	
 	@Override
-	public Stream<TypedValue> getAllItems(String documentUri, @Nullable String typeFilter)
+	public Stream<TypedValue> getAllItems(@Nullable String documentUri, @Nullable String typeFilter)
 			throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.writeLock().lock();
 		try {

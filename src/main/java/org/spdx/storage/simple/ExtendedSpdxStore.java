@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
@@ -111,7 +112,7 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#getAllItems(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Stream<TypedValue> getAllItems(String documentUri, String typeFilter) throws InvalidSPDXAnalysisException {
+	public Stream<TypedValue> getAllItems(@Nullable String documentUri, @Nullable String typeFilter) throws InvalidSPDXAnalysisException {
 		return baseStore.getAllItems(documentUri, typeFilter);
 	}
 

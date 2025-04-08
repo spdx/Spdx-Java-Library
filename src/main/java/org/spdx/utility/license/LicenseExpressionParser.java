@@ -505,6 +505,7 @@ public class LicenseExpressionParser {
 	}
 	
 	/**
+	 * Converts an external reference to a full object URI
 	 * @param externalReference String of the form [prefix]:[id] where [prefix] is a prefix in the customIdToUri and ID is the suffix of the object URI
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the full object URI with the [prefix] replaced by the associated namespace
@@ -519,13 +520,15 @@ public class LicenseExpressionParser {
 			throw new LicenseParserException("Invalid external ID: "+externalReference);
 		}
 		String namespace = null;
-		for (DictionaryEntry entry:customIdToUri) {
-			if (refParts[0].equals(entry.getIdPrefix())) {
-				Optional<String> entryValue = entry.getValue();
-				if (!entryValue.isPresent()) {
-					throw new LicenseParserException("No associated namespace for license ID prefix "+entry.getIdPrefix());
+		if (Objects.nonNull(customIdToUri)) {
+			for (DictionaryEntry entry : customIdToUri) {
+				if (refParts[0].equals(entry.getIdPrefix())) {
+					Optional<String> entryValue = entry.getValue();
+					if (!entryValue.isPresent()) {
+						throw new LicenseParserException("No associated namespace for license ID prefix "+entry.getIdPrefix());
+					}
+					namespace = entryValue.get();
 				}
-				namespace = entryValue.get();
 			}
 		}
 		if (Objects.isNull(namespace)) {

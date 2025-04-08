@@ -31,6 +31,9 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ListedLicenses;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxCreatorInformation;
+import org.spdx.library.model.v2.pointer.ByteOffsetPointer;
+import org.spdx.library.model.v2.pointer.LineCharPointer;
+import org.spdx.library.model.v2.pointer.StartEndPointer;
 import org.spdx.library.model.v3_0_1.ModelObjectV3;
 import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
 import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
@@ -1461,21 +1464,29 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		Snippet toSnippet = (Snippet)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
 				toObjectUri, SpdxConstantsV3.SOFTWARE_SNIPPET, copyManager, true, defaultUriPrefix);
 		convertItemProperties(fromSnippet, toSnippet);
-		org.spdx.library.model.v2.pointer.StartEndPointer fromByteRange = fromSnippet.getByteRange();
+		StartEndPointer fromByteRange = fromSnippet.getByteRange();
 		if (Objects.nonNull(fromByteRange)) {
-            //noinspection DataFlowIssue
-            toSnippet.setByteRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
-					.setBeginIntegerRange(((org.spdx.library.model.v2.pointer.ByteOffsetPointer)fromByteRange.getStartPointer()).getOffset())
-					.setEndIntegerRange(((org.spdx.library.model.v2.pointer.ByteOffsetPointer)fromByteRange.getEndPointer()).getOffset())
-					.build());
+			// noinspection DataFlowIssue
+			ByteOffsetPointer startPointer = (ByteOffsetPointer) fromByteRange.getStartPointer();
+			ByteOffsetPointer endPointer = (ByteOffsetPointer) fromByteRange.getEndPointer();
+			if (Objects.nonNull(startPointer) && Objects.nonNull(endPointer)) {
+				toSnippet.setByteRange(toSnippet
+						.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
+						.setBeginIntegerRange(startPointer.getOffset())
+						.setEndIntegerRange(endPointer.getOffset()).build());
+			}
 		}
-		Optional<org.spdx.library.model.v2.pointer.StartEndPointer> fromLineRange = fromSnippet.getLineRange();
+		Optional<StartEndPointer> fromLineRange = fromSnippet.getLineRange();
 		if (fromLineRange.isPresent()) {
-            //noinspection DataFlowIssue
-            toSnippet.setLineRange(toSnippet.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
-					.setBeginIntegerRange(((org.spdx.library.model.v2.pointer.LineCharPointer)fromLineRange.get().getStartPointer()).getLineNumber())
-					.setEndIntegerRange(((org.spdx.library.model.v2.pointer.LineCharPointer)fromLineRange.get().getEndPointer()).getLineNumber())
-					.build());
+			// noinspection DataFlowIssue
+			LineCharPointer startPointer = (LineCharPointer) fromLineRange.get().getStartPointer();
+			LineCharPointer endPointer = (LineCharPointer) fromLineRange.get().getEndPointer();
+			if (Objects.nonNull(startPointer) && Objects.nonNull(endPointer)) {
+				toSnippet.setLineRange(toSnippet
+						.createPositiveIntegerRange(toModelStore.getNextId(IdType.Anonymous))
+						.setBeginIntegerRange(startPointer.getLineNumber())
+						.setEndIntegerRange(endPointer.getLineNumber()).build());
+			}
 		}
 		toSnippet.setSnippetFromFile(convertAndStore(Objects.requireNonNull(fromSnippet.getSnippetFromFile())));
 		return toSnippet;
