@@ -490,7 +490,11 @@ public class LicenseExpressionParser {
 				}
 			}
 			return new ListedLicense(store, listedLicense.getObjectUri(), copyManager, true, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE);
-		} else {
+		} else if (SpdxConstantsCompatV2.NOASSERTION_VALUE.equals(token)) {
+			return new NoAssertionLicense();
+		} else if (SpdxConstantsCompatV2.NONE_VALUE.equals(token)) {
+			return new NoneLicense();
+		}else {
 			// LicenseRef
 			String objectUri = customLicenseUriPrefix + token;
 			CustomLicense localLicense;
@@ -571,6 +575,10 @@ public class LicenseExpressionParser {
 			}
 			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
 					licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager, true);
+		} else if (SpdxConstantsCompatV2.NOASSERTION_VALUE.equals(token)) {
+			return new SpdxNoAssertionLicense();
+		} else if (SpdxConstantsCompatV2.NONE_VALUE.equals(token)) {
+			return new SpdxNoneLicense();
 		} else {
 			// LicenseRef
 			Optional<String> caseSensitiveId = store.getCaseSensitiveId(documentUri, token);
