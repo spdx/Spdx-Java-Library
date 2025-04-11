@@ -226,8 +226,13 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 		assertEquals(externalExtractedId, ((ExternalExtractedLicenseInfo)result).toString());
 	}
 
-    public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
+    public void regressionMitWith() throws InvalidSPDXAnalysisException {
         AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("MIT WITH Autoconf-exception-2.0");
         assertEquals("MIT WITH Autoconf-exception-2.0",result.toString());
     }
+
+	public void testParseNoAssertionAnds() throws InvalidSPDXAnalysisException {
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("MIT AND NOASSERTION AND NONE");
+		assertEquals("(MIT AND NOASSERTION AND NONE)",result.toString());
+	}
 }

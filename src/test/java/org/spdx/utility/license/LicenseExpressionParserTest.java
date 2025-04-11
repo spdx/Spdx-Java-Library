@@ -378,8 +378,13 @@ public class LicenseExpressionParserTest extends TestCase {
 		}
 	}
 
-    public void regressionMitWith() throws InvalidSPDXAnalysisException, InvalidLicenseStringException {
+    public void regressionMitWith() throws InvalidSPDXAnalysisException {
     	AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString("MIT WITH Autoconf-exception-2.0");
         assertEquals("MIT WITH Autoconf-exception-2.0",result.toString());
     }
+
+	public void testParseNoAssertionAnds() throws InvalidSPDXAnalysisException {
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString("MIT AND NOASSERTION AND NONE");
+		assertEquals("(MIT AND NOASSERTION AND NONE)",result.toString());
+	}
 }
