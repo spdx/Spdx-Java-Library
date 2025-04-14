@@ -455,7 +455,7 @@ public class LicenseExpressionParser {
 	}
 
 	/**
-	 * Converts a string token into its equivalent license either a listed license or a LicenseRef-
+	 * Converts a string token into its equivalent license - either a listed license or a LicenseRef
 	 * @param token Token to translate to the equivalent license
 	 * @param store Store for the licenses
 	 * @param customLicenseUriPrefix Prefix to use for any created local licenses or additions
