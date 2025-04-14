@@ -440,7 +440,7 @@ public class LicenseExpressionParser {
 			}
 			return new ListedLicenseException(store, listedException.getObjectUri(), copyManager,
 					true, customLicenseUriPrefix);
-		} else {
+		} else if (token.toLowerCase().startsWith("additionref-")) {
 			// custom addition
 			String objectUri = customLicenseUriPrefix + token;
 			CustomLicenseAddition localAddition;
@@ -451,6 +451,8 @@ public class LicenseExpressionParser {
 				localAddition.setAdditionText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localAddition;
+		} else {
+			throw new LicenseParserException(String.format("Invalid license addition %s.  Must be either a listed license exception or be prefixed with 'AdditionRef-'", token));
 		}
 	}
 
@@ -523,18 +525,16 @@ public class LicenseExpressionParser {
 			throw new LicenseParserException("Invalid external ID: "+externalReference);
 		}
 		String namespace = null;
-		if (Objects.nonNull(customIdToUri)) {
-			for (DictionaryEntry entry : customIdToUri) {
-				if (refParts[0].equals(entry.getIdPrefix())) {
-					Optional<String> entryValue = entry.getValue();
-					if (!entryValue.isPresent()) {
-						throw new LicenseParserException("No associated namespace for license ID prefix "+entry.getIdPrefix());
-					}
-					namespace = entryValue.get();
-				}
-			}
-		}
-		if (Objects.isNull(namespace)) {
+        for (DictionaryEntry entry : customIdToUri) {
+            if (refParts[0].equals(entry.getIdPrefix())) {
+                Optional<String> entryValue = entry.getValue();
+                if (!entryValue.isPresent()) {
+                    throw new LicenseParserException("No associated namespace for license ID prefix " + entry.getIdPrefix());
+                }
+                namespace = entryValue.get();
+            }
+        }
+        if (Objects.isNull(namespace)) {
 			throw new LicenseParserException("No ID Prefix "+refParts[0]+" found in the customIdToUri map");
 		}
 		return namespace + refParts[1];
