@@ -27,8 +27,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.spdx.licenseTemplate.*;
+import org.spdx.licenseTemplate.LicenseParserException;
+import org.spdx.licenseTemplate.LicenseTemplateRule;
+import org.spdx.licenseTemplate.LicenseTemplateRuleException;
+import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.licenseTemplate.LicenseTemplateRule.RuleType;
+import org.spdx.licenseTemplate.LineColumn;
 
 /**
  * Test compare template output handler
@@ -49,12 +53,12 @@ public class TestCompareTemplateOutputHandler {
     static final String APACHE_1_0_TEMPLATE = "TestFiles" + File.separator + "Apache-1.0.template.txt";
     static final String BSD_2_CLAUSE_TEXT = "TestFiles" + File.separator + "BSD-2-Clause.txt";
     static final String BSD_2_CLAUSE_TEMPLATE = "TestFiles" + File.separator + "BSD-2-Clause.template.txt";
-    static final String BSD_4_CLAUSE_UC_TEXT = "TestFiles" + File.separator + "BSD-4-Clause-UC.txt";
-    static final String BSD_4_CLAUSE_UC_TEMPLATE = "TestFiles" + File.separator + "BSD-4-Clause-UC.template.txt";
-    static final String BSD_4_CLAUSE_TEXT = "TestFiles" + File.separator + "BSD-4-Clause.txt";
-    static final String BSD_4_CLAUSE_TEMPLATE = "TestFiles" + File.separator + "BSD-4-Clause.template.txt";
-    static final String CROSSWORD_TEXT = "TestFiles" + File.separator + "Crossword.txt";
-    static final String CROSSWORD_TEMPLATE = "TestFiles" + File.separator + "Crossword.template.txt";
+    static final String BSD_4_CLAUSE_UC_TEXT  = "TestFiles" + File.separator + "BSD-4-Clause-UC.txt";
+    static final String BSD_4_CLAUSE_UC_TEMPLATE  = "TestFiles" + File.separator + "BSD-4-Clause-UC.template.txt";
+    static final String BSD_4_CLAUSE_TEXT  = "TestFiles" + File.separator + "BSD-4-Clause.txt";
+    static final String BSD_4_CLAUSE_TEMPLATE  = "TestFiles" + File.separator + "BSD-4-Clause.template.txt";
+    static final String CROSSWORD_TEXT  = "TestFiles" + File.separator + "Crossword.txt";
+    static final String CROSSWORD_TEMPLATE  = "TestFiles" + File.separator + "Crossword.template.txt";
     static final String DFSL_TEXT = "TestFiles" + File.separator + "D-FSL-1.0.txt";
     static final String DFSL_TEMPLATE = "TestFiles" + File.separator + "D-FSL-1.0.template.txt";
     static final String CONDOR_1_1_TEXT = "TestFiles" + File.separator + "Condor-1.1.txt";
@@ -124,7 +128,6 @@ public class TestCompareTemplateOutputHandler {
 
     /**
      * Test method for {@link org.spdx.compare.CompareTemplateOutputHandler#CompareTemplateOutputHandler(java.lang.String)}.
-     *
      * @throws Exception
      */
     @Test
@@ -136,57 +139,56 @@ public class TestCompareTemplateOutputHandler {
 
     /**
      * Test method for {@link org.spdx.compare.CompareTemplateOutputHandler#text(java.lang.String)}.
-     *
      * @throws LicenseTemplateRuleException
      */
     @Test
-    public void testOptionalText() throws Exception {
+    public void testOptionalText()  throws Exception {
         String l1 = "Line 1\n";
         String l2 = "Line 2\n";
         String l3 = "Line 3\n";
         String l4 = "Line 4";
         // optional in middle
-        String compareText = l1 + l4;
+        String compareText = l1+l4;
         CompareTemplateOutputHandler ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.text(l1);
         ctoh.beginOptional(new LicenseTemplateRule("OptionalRule", RuleType.BEGIN_OPTIONAL));
         ctoh.text(l2);
         ctoh.text(l3);
-        ctoh.endOptional(new LicenseTemplateRule("EndOptional", RuleType.END_OPTIONAL));
+        ctoh.endOptional(new LicenseTemplateRule("EndOptional",RuleType.END_OPTIONAL));
         ctoh.text(l4);
         ctoh.completeParsing();
         assertTrue(ctoh.matches());
 
         // optional at beginning
-        compareText = l3 + l4;
+        compareText = l3+l4;
         ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.beginOptional(new LicenseTemplateRule("OptionalRule", RuleType.BEGIN_OPTIONAL));
         ctoh.text(l1);
         ctoh.text(l2);
-        ctoh.endOptional(new LicenseTemplateRule("EndOptional", RuleType.END_OPTIONAL));
+        ctoh.endOptional(new LicenseTemplateRule("EndOptional",RuleType.END_OPTIONAL));
         ctoh.text(l3);
         ctoh.text(l4);
         ctoh.completeParsing();
         assertTrue(ctoh.matches());
         // optional at end
-        compareText = l1 + l2 + l3;
+        compareText = l1+l2+l3;
         ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.text(l1);
         ctoh.text(l2);
         ctoh.text(l3);
         ctoh.beginOptional(new LicenseTemplateRule("OptionalRule", RuleType.BEGIN_OPTIONAL));
         ctoh.text(l4);
-        ctoh.endOptional(new LicenseTemplateRule("EndOptional", RuleType.END_OPTIONAL));
+        ctoh.endOptional(new LicenseTemplateRule("EndOptional",RuleType.END_OPTIONAL));
         ctoh.completeParsing();
         assertTrue(ctoh.matches());
         // optional code present
-        compareText = l1 + l2 + l3 + l4;
+        compareText = l1+l2+l3+l4;
         ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.text(l1);
         ctoh.beginOptional(new LicenseTemplateRule("OptionalRule", RuleType.BEGIN_OPTIONAL));
         ctoh.text(l2);
         ctoh.text(l3);
-        ctoh.endOptional(new LicenseTemplateRule("EndOptional", RuleType.END_OPTIONAL));
+        ctoh.endOptional(new LicenseTemplateRule("EndOptional",RuleType.END_OPTIONAL));
         ctoh.text(l4);
         ctoh.completeParsing();
         assertTrue(ctoh.matches());
@@ -204,33 +206,33 @@ public class TestCompareTemplateOutputHandler {
         String l2R = "## Line 2 with replaceable analog canceled stuff\n";
         String l3 = "Line\n";
         String l4 = "Line 4";
-        String compareText = l1 + l2 + l3 + l4;
+        String compareText = l1+l2+l3+l4;
         CompareTemplateOutputHandler ctoh = new CompareTemplateOutputHandler(compareText);
-        int nextToken = ctoh.textEquivalent(l1, 0);
+        int nextToken = ctoh.textEquivalent(l1,0);
         assertTrue(nextToken > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l2, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l3, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l4, nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l2,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l3,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l4,nextToken)) > 0);
         // after end of compare string
-        assertTrue((nextToken = ctoh.textEquivalent(l4, nextToken)) < 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l4,nextToken)) < 0);
 
         // difference in string
         ctoh = new CompareTemplateOutputHandler(compareText);
-        assertTrue((nextToken = ctoh.textEquivalent(l4, 0)) < 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l4,0)) < 0);
 
         // skippable tokens
         ctoh = new CompareTemplateOutputHandler(compareText);
-        assertTrue((nextToken = ctoh.textEquivalent(l1S, 0)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l2S, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l3, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l4, nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l1S,0)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l2S,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l3,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l4,nextToken)) > 0);
 
         // equivalent tokens
         ctoh = new CompareTemplateOutputHandler(compareText);
-        assertTrue((nextToken = ctoh.textEquivalent(l1, 0)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l2R, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l3, nextToken)) > 0);
-        assertTrue((nextToken = ctoh.textEquivalent(l4, nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l1,0)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l2R,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l3,nextToken)) > 0);
+        assertTrue((nextToken = ctoh.textEquivalent(l4,nextToken)) > 0);
     }
 
     /**
@@ -270,11 +272,10 @@ public class TestCompareTemplateOutputHandler {
 
     /**
      * Test method for {@link org.spdx.compare.CompareTemplateOutputHandler#variableRule(org.spdx.licenseTemplate.LicenseTemplateRule)}.
-     *
      * @throws LicenseTemplateRuleException
      */
     @Test
-    public void testVariableRule() throws Exception {
+    public void testVariableRule()  throws Exception {
         String line1 = "this is line one\n";
         String line2 = "this line 2 is another line\n";
         String line2Match = "this\\sline\\s.+another\\sline";
@@ -286,7 +287,7 @@ public class TestCompareTemplateOutputHandler {
         CompareTemplateOutputHandler ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.text(line1);
         LicenseTemplateRule variableRule = new LicenseTemplateRule("Variable Rule",
-                RuleType.VARIABLE, line2, line2Match, "Example: " + line2);
+                RuleType.VARIABLE, line2, line2Match, "Example: "+line2);
         ctoh.variableRule(variableRule);
         ctoh.text(line3);
         ctoh.completeParsing();
@@ -297,7 +298,7 @@ public class TestCompareTemplateOutputHandler {
         ctoh = new CompareTemplateOutputHandler(partialCompareText);
         ctoh.text(line1);
         variableRule = new LicenseTemplateRule("Variable Rule",
-                RuleType.VARIABLE, line2, line2Match, "Example: " + line2);
+                RuleType.VARIABLE, line2, line2Match, "Example: "+line2);
         ctoh.variableRule(variableRule);
         ctoh.completeParsing();
         assertTrue(ctoh.matches());
@@ -306,7 +307,7 @@ public class TestCompareTemplateOutputHandler {
         ctoh = new CompareTemplateOutputHandler(compareText);
         ctoh.text(line1);
         variableRule = new LicenseTemplateRule("Variable Rule",
-                RuleType.VARIABLE, line2, line2MissMatch, "Example: " + line2);
+                RuleType.VARIABLE, line2, line2MissMatch, "Example: "+line2);
         ctoh.variableRule(variableRule);
         ctoh.text(line3);
         ctoh.completeParsing();
@@ -315,7 +316,7 @@ public class TestCompareTemplateOutputHandler {
         // Extra word
         ctoh = new CompareTemplateOutputHandler(compareText);
         variableRule = new LicenseTemplateRule("Variable Rule",
-                RuleType.VARIABLE, line2, line2PartialMatch, "Example: " + line2);
+                RuleType.VARIABLE, line2, line2PartialMatch, "Example: "+line2);
         ctoh.variableRule(variableRule);
         ctoh.text(line3);
         ctoh.completeParsing();
@@ -657,7 +658,9 @@ public class TestCompareTemplateOutputHandler {
         String compareText = "a b\tc d e f g h i j k l m n o p\nq r s t u v w x y z end";
         CompareTemplateOutputHandler templateOutputHandler = new CompareTemplateOutputHandler(compareText);
         SpdxLicenseTemplateHelper.parseTemplate(templateText, templateOutputHandler);
+
         System.out.println(templateOutputHandler.getDifferences().getDifferenceMessage());
+
         if (templateOutputHandler.matches()) {
             fail(templateOutputHandler.getDifferences().getDifferenceMessage());
         }
