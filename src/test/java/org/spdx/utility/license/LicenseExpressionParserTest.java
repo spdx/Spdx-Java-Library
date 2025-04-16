@@ -61,7 +61,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	static final String[] STD_TEXTS = new String[] {"Academic Free License (", "CONTRAT DE LICENCE DE LOGICIEL LIBRE CeCILL-B",
 	"European Union Public Licence", "Afmparse License"};
 	static final String[] NONSTD_TEXTS = new String[] {"text1", "text2", "text3", "text4"};
-	static final String[] NONSTD_ADDITION_IDS = new String[] {"AdditionRef-exception-1","AdditionRef-exception-2",
+	static final String[] NONSTD_ADDITION_IDS = new String[] {"AdditionRef-exception-1", "AdditionRef-exception-2",
 			"AdditionRef-exception-3", "AdditionRef-exception-4"};
 	static final String[] STD_EXCEPTION_IDS = new String[] {"389-exception", "Autoconf-exception-2.0"};
 	static final String[] NON_STD_ADDITION_NAMES = new String[] {"exName-1", "exName-2", "exName-3", "exName-4"};
