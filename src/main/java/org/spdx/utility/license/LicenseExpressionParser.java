@@ -589,7 +589,7 @@ public class LicenseExpressionParser {
 			}
 			return localLicense;
 		} else if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
-			throw new LicenseParserException(String.format("Unexpected listed license exception %s.  Must be a listed license or LicenseRef", token));
+			throw new LicenseParserException(String.format("Unexpected listed license exception %s.  Must be a listed license or a LicenseRef", token));
 		} else {
 			throw new LicenseParserException(String.format("Unknown license %s.  Must be a listed license or have the syntax %s", token, SpdxConstantsCompatV2.LICENSE_ID_PATTERN));
 		}
