@@ -440,7 +440,7 @@ public class LicenseExpressionParser {
 			}
 			return new ListedLicenseException(store, listedException.getObjectUri(), copyManager,
 					true, customLicenseUriPrefix);
-		} else {
+		} else if (token.toLowerCase().startsWith("additionref-")) {
 			// custom addition
 			String objectUri = customLicenseUriPrefix + token;
 			CustomLicenseAddition localAddition;
@@ -451,12 +451,13 @@ public class LicenseExpressionParser {
 				localAddition.setAdditionText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localAddition;
+		} else {
+			throw new LicenseParserException(String.format("Invalid license addition %s.  Must be either a listed license exception or be prefixed with 'AdditionRef-'", token));
 		}
 	}
 
 	/**
-	 * Converts a string token into its equivalent license
-	 * checking for a listed license
+	 * Converts a string token into its equivalent license - either a listed license or a LicenseRef
 	 * @param token Token to translate to the equivalent license
 	 * @param store Store for the licenses
 	 * @param customLicenseUriPrefix Prefix to use for any created local licenses or additions
@@ -490,7 +491,7 @@ public class LicenseExpressionParser {
 				}
 			}
 			return new ListedLicense(store, listedLicense.getObjectUri(), copyManager, true, SpdxConstantsV3.SPDX_LISTED_LICENSE_NAMESPACE);
-		} else {
+		} else if (token.toLowerCase().startsWith("licenseref-")) {
 			// LicenseRef
 			String objectUri = customLicenseUriPrefix + token;
 			CustomLicense localLicense;
@@ -501,10 +502,15 @@ public class LicenseExpressionParser {
 				localLicense.setLicenseText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localLicense;
+		} else if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
+			throw new LicenseParserException(String.format("Unexpected listed license exception %s.  Must be a listed license or a LicenseRef", token));
+		} else {
+			throw new LicenseParserException(String.format("Unknown license %s.  Must be a listed license or have the syntax %s", token, SpdxConstantsCompatV2.LICENSE_ID_PATTERN));
 		}
 	}
 	
 	/**
+	 * Converts an external reference to a full object URI
 	 * @param externalReference String of the form [prefix]:[id] where [prefix] is a prefix in the customIdToUri and ID is the suffix of the object URI
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return the full object URI with the [prefix] replaced by the associated namespace
@@ -519,24 +525,23 @@ public class LicenseExpressionParser {
 			throw new LicenseParserException("Invalid external ID: "+externalReference);
 		}
 		String namespace = null;
-		for (DictionaryEntry entry:customIdToUri) {
-			if (refParts[0].equals(entry.getIdPrefix())) {
-				Optional<String> entryValue = entry.getValue();
-				if (!entryValue.isPresent()) {
-					throw new LicenseParserException("No associated namespace for license ID prefix "+entry.getIdPrefix());
-				}
-				namespace = entryValue.get();
-			}
-		}
-		if (Objects.isNull(namespace)) {
+        for (DictionaryEntry entry : customIdToUri) {
+            if (refParts[0].equals(entry.getIdPrefix())) {
+                Optional<String> entryValue = entry.getValue();
+                if (!entryValue.isPresent()) {
+                    throw new LicenseParserException("No associated namespace for license ID prefix " + entry.getIdPrefix());
+                }
+                namespace = entryValue.get();
+            }
+        }
+        if (Objects.isNull(namespace)) {
 			throw new LicenseParserException("No ID Prefix "+refParts[0]+" found in the customIdToUri map");
 		}
 		return namespace + refParts[1];
 	}
 
 	/**
-	 * Converts a string token into its equivalent license
-	 * checking for a listed license
+	 * Converts a string token into its equivalent license - either a listed license or a LicenseRef
 	 * @param token license ID token
 	 * @param store model store for non-listed licenses
 	 * @param documentUri document URI for non-listed licenses
@@ -565,15 +570,14 @@ public class LicenseExpressionParser {
 				SpdxListedLicense listedLicense = LicenseInfoFactory.getListedLicenseByIdCompatV2(licenseId.get());
 				if (Objects.nonNull(copyManager)) {
 					// copy to the local store
-					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(), 
+					copyManager.copy(store, listedLicense.getObjectUri(), listedLicense.getModelStore(),
 							listedLicense.getObjectUri(), ModelObjectV2.LATEST_SPDX_2_VERSION, listedLicense.getDocumentUri());
 				}
 			}
-			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, 
+			return (org.spdx.library.model.v2.license.AnyLicenseInfo) org.spdx.library.model.v2.SpdxModelFactoryCompatV2.getModelObjectV2(store, SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX,
 					licenseId.get(), SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, copyManager, true);
-		} else {
-			// LicenseRef
-			Optional<String> caseSensitiveId = store.getCaseSensisitiveId(documentUri, token);
+		} else if (token.toLowerCase().startsWith("licenseref-")) {
+			Optional<String> caseSensitiveId = store.getCaseSensitiveId(documentUri, token);
 			ExtractedLicenseInfo localLicense;
 			if (caseSensitiveId.isPresent()) {
 				localLicense = new ExtractedLicenseInfo(store, documentUri, caseSensitiveId.get(), copyManager, false);
@@ -584,6 +588,10 @@ public class LicenseExpressionParser {
 				localLicense.setExtractedText(UNINITIALIZED_LICENSE_TEXT);
 			}
 			return localLicense;
+		} else if (LicenseInfoFactory.isSpdxListedExceptionId(token)) {
+			throw new LicenseParserException(String.format("Unexpected listed license exception %s.  Must be a listed license or a LicenseRef", token));
+		} else {
+			throw new LicenseParserException(String.format("Unknown license %s.  Must be a listed license or have the syntax %s", token, SpdxConstantsCompatV2.LICENSE_ID_PATTERN));
 		}
 	}
 	

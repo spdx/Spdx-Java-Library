@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.TypedValue;
 import org.spdx.storage.IModelStore;
@@ -111,7 +113,8 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	 * @see org.spdx.storage.IModelStore#getAllItems(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Stream<TypedValue> getAllItems(String documentUri, String typeFilter) throws InvalidSPDXAnalysisException {
+	public Stream<TypedValue> getAllItems(@Nullable String documentUri, @Nullable String typeFilter)
+			throws InvalidSPDXAnalysisException {
 		return baseStore.getAllItems(documentUri, typeFilter);
 	}
 
@@ -229,11 +232,11 @@ public abstract class ExtendedSpdxStore implements IModelStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.spdx.storage.IModelStore#getCaseSensisitiveId(java.lang.String, java.lang.String)
+	 * @see org.spdx.storage.IModelStore#getCaseSensitiveId(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Optional<String> getCaseSensisitiveId(String documentUri, String caseInsensisitiveId) {
-		return baseStore.getCaseSensisitiveId(documentUri, caseInsensisitiveId);
+	public Optional<String> getCaseSensitiveId(String documentUri, String caseInsensitiveId) {
+		return baseStore.getCaseSensitiveId(documentUri, caseInsensitiveId);
 	}
 
 	/* (non-Javadoc)

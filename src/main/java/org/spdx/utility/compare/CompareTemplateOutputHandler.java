@@ -217,7 +217,7 @@ public class CompareTemplateOutputHandler implements
 					}
 					nextToken = compareText(textTokens, matchTokens, nextToken, this);
 					if (nextToken < 0) {
-						int errorLocation = -nextToken;
+						int errorLocation = -nextToken - 1;
 						differences.addDifference(tokenToLocation.get(errorLocation), LicenseTextHelper.getTokenAt(matchTokens, errorLocation), 
 										"Normal text of license does not match", text, null, getLastOptionalDifference());
 					}

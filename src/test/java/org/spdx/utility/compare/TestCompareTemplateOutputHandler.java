@@ -32,6 +32,7 @@ import org.spdx.licenseTemplate.LicenseTemplateRule;
 import org.spdx.licenseTemplate.LicenseTemplateRuleException;
 import org.spdx.licenseTemplate.SpdxLicenseTemplateHelper;
 import org.spdx.licenseTemplate.LicenseTemplateRule.RuleType;
+import org.spdx.licenseTemplate.LineColumn;
 
 /**
  * Test compare template output handler
@@ -628,6 +629,8 @@ public class TestCompareTemplateOutputHandler {
 		}
 	}
 
+  // Issue 269
+  // https://github.com/spdx/Spdx-Java-Library/issues/269
 	@Test
 	public void testRegressionGPL10() throws IOException, LicenseTemplateRuleException, LicenseParserException {
 		String compareText = UnitTestHelper.fileToText(GPL_1_ONLY_TEXT);
@@ -638,4 +641,54 @@ public class TestCompareTemplateOutputHandler {
 			fail(templateOutputHandler.getDifferences().getDifferenceMessage());
 		}
 	}
+
+    // Test for literal string matching without any var's
+    @Test
+    public void testCompareAlphabetDiffMessage() throws IOException, LicenseTemplateRuleException, LicenseParserException {
+        String templateText = "a b c d e f g h i j k l m n o p q r s t u v w x y z";
+        String compareText = "a b\tc d e f g h i j k l m n o p\nq r s t u v w x y zebra";
+        CompareTemplateOutputHandler templateOutputHandler = new CompareTemplateOutputHandler(compareText);
+        SpdxLicenseTemplateHelper.parseTemplate(templateText, templateOutputHandler);
+
+        System.out.println(templateOutputHandler.getDifferences().getDifferenceMessage());
+
+        if (templateOutputHandler.matches()) {
+            fail(templateOutputHandler.getDifferences().getDifferenceMessage());
+        }
+        assertEquals(String.format("Normal text of license does not match starting at line #2 column #18 \"zebra\" when comparing to template text \"%s\"", templateText), templateOutputHandler.getDifferences().getDifferenceMessage());
+        assertEquals(1, templateOutputHandler.getDifferences().getDifferences().size());
+        LineColumn lineColumn = templateOutputHandler.getDifferences().getDifferences().get(0);
+        assertEquals(2, lineColumn.getLine());
+        assertEquals(18, lineColumn.getColumn());
+        assertEquals(5, lineColumn.getLen());
+
+        String line = compareText.split("\n")[lineColumn.getLine() - 1];
+        String failedToken = line.substring(lineColumn.getColumn(), lineColumn.getColumn() + lineColumn.getLen());
+        assertEquals("zebra", failedToken);
+    }
+
+    @Test
+    public void testCompareAlphabetVarDiffMessage() throws IOException, LicenseTemplateRuleException, LicenseParserException {
+        String templateText = "a<<var;name=\"more\";original=\"\";match=\"[b-y\\s]*\">><<beginOptional>>z<<endOptional>>";
+        String compareText = "a b\tc d e f g h i j k l m n o p\nq r s t u v w x y z end";
+        CompareTemplateOutputHandler templateOutputHandler = new CompareTemplateOutputHandler(compareText);
+        SpdxLicenseTemplateHelper.parseTemplate(templateText, templateOutputHandler);
+
+        System.out.println(templateOutputHandler.getDifferences().getDifferenceMessage());
+
+        if (templateOutputHandler.matches()) {
+            fail(templateOutputHandler.getDifferences().getDifferenceMessage());
+        }
+        assertEquals("Additional text found after the end of the expected license text starting at line #2 column #20 \"end\"", templateOutputHandler.getDifferences().getDifferenceMessage());
+        assertEquals(1, templateOutputHandler.getDifferences().getDifferences().size());
+        LineColumn lineColumn = templateOutputHandler.getDifferences().getDifferences().get(0);
+        assertEquals(2, lineColumn.getLine());
+        assertEquals(20, lineColumn.getColumn());
+        assertEquals(3, lineColumn.getLen());
+
+        String line = compareText.split("\n")[lineColumn.getLine() - 1];
+        String failedToken = line.substring(lineColumn.getColumn(), lineColumn.getColumn() + lineColumn.getLen());
+        assertEquals("end", failedToken);
+    }
+
 }

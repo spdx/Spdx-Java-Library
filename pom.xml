@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
     <groupId>org.spdx</groupId>
     <artifactId>java-spdx-library</artifactId>
-    <version>2.0.0-RC3-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 	<name>java-spdx-library</name>
 	<url>https://github.com/spdx/Spdx-Java-Library</url>
@@ -41,7 +41,7 @@
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.outputTimestamp>1738392153</project.build.outputTimestamp>
+		<project.build.outputTimestamp>1745001494</project.build.outputTimestamp>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -148,20 +148,19 @@
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-model-2_X</artifactId>
-    	<version>1.0.0-RC2</version>
+    	<version>1.0.0</version>
     </dependency>
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-core</artifactId>
-    	<version>1.0.0-RC2</version>
+    	<version>1.0.0</version>
     </dependency>
     <dependency>
     	<groupId>org.spdx</groupId>
     	<artifactId>spdx-java-model-3_0</artifactId>
-    	<version>1.0.0-RC2</version>
+    	<version>1.0.0</version>
     </dependency>
   </dependencies>
-  
   <build>
   		<resources>
 			<resource>

@@ -285,6 +285,23 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 	}
 
 	/**
+	 * Normalizes text for use in the template matcher
+	 * @param text text to normalize
+	 * @return text that is normalized for license comparison
+	 */
+	public String normalizeText(String text) {
+		StringBuilder normalizedText = new StringBuilder();
+
+		for (String token:LicenseTextHelper.tokenizeLicenseText(LicenseTextHelper.removeLineSeparators(
+				LicenseCompareHelper.removeCommentChars(text)), new HashMap<>())) {
+			normalizedText.append(
+					LicenseTextHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase()));
+			normalizedText.append(' ');
+		}
+		return normalizedText.toString();
+	}
+
+	/**
 	 * @param text text to search for
 	 * @return the text matching the beginning and end regular expressions for the template.  Null if there is no match.
      */
@@ -298,17 +315,8 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 		if (text == null || text.isEmpty() || template == null) {
 			return null;
 		}
-		
-		StringBuilder normalizedText = new StringBuilder();
-		
-		for (String token:LicenseTextHelper.tokenizeLicenseText(LicenseTextHelper.removeLineSeparators(
-				LicenseCompareHelper.removeCommentChars(text)), new HashMap<>())) {
-			normalizedText.append(
-					LicenseTextHelper.NORMALIZE_TOKENS.getOrDefault(token.toLowerCase(), token.toLowerCase()));
-			normalizedText.append(' ');
-		}
-		
-		String compareText = normalizedText.toString();
+
+		String compareText = normalizeText(text);
 
 		Pattern quickPattern = Pattern.compile(getQuickMatchRegex(WORD_LIMIT));
 		if (quickPattern.matcher(compareText).find()) {
@@ -318,8 +326,10 @@ public class TemplateRegexMatcher implements ILicenseTemplateOutputHandler {
 				startIndex = startMatcher.start();
 				Pattern endPattern = Pattern.compile(getEndRegex(WORD_LIMIT));
 				Matcher endMatcher = endPattern.matcher(compareText);
-				if (endMatcher.find()) {
+				while (endMatcher.find() && endMatcher.start() >= startIndex) {
 					endIndex = endMatcher.end();
+				}
+				if (endIndex > 0) {
 					result = compareText.substring(startIndex, endIndex);
 				}
 			}
