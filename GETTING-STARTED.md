@@ -21,7 +21,7 @@ If you are using Maven, you can add the following dependency in your POM file:
 The static class `org.spdx.library.model.license.LicenseInfoFactory` supports the parsing of
   SPDX license expressions, creation, and comparison of SPDX licenses.
 
-The `LicenseInfoFactory` will initialize the library and work with both the SPDX spe version 3
+The `LicenseInfoFactory` will initialize the library and work with both the SPDX spec version 3
 and the SPDX spec version 2 license models.  SPDX spec version to methods end in `CompatV2`.
 
 ## Initialization
