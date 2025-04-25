@@ -1,25 +1,49 @@
 # Spdx-Java-Library
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.spdx/java-spdx-library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.spdx/java-spdx-library)
+[![javadoc](https://javadoc.io/badge2/org.spdx/java-spdx-library/javadoc.svg)](https://javadoc.io/doc/org.spdx/java-spdx-library)
 ![Java CI with Maven](https://github.com/spdx/Spdx-Java-Library/workflows/Java%20CI%20with%20Maven/badge.svg)
-
-Java library which implements the Java object model for SPDX and provides useful helper functions.
-
-The API documentation is available at:
-<https://spdx.github.io/Spdx-Java-Library/>
-
-## Code quality badges
 
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=bugs)](https://sonarcloud.io/dashboard?id=java-spdx-library)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=security_rating)](https://sonarcloud.io/dashboard?id=java-spdx-library)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=java-spdx-library)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=java-spdx-library&metric=sqale_index)](https://sonarcloud.io/dashboard?id=java-spdx-library)
 
+Spdx-Java-Library is a Java library which implements the Java object model for SPDX and provides useful helper functions.
+
+The library is available in Maven Central as
+[`org.spdx:java-spdx-library`](https://search.maven.org/artifact/org.spdx/java-spdx-library)
+(note the order of the word "java-spdx").
+
+If you are using Maven, you can add the following dependency in your POM file:
+
+```xml
+<dependency>
+  <groupId>org.spdx</groupId>
+  <artifactId>java-spdx-library</artifactId>
+  <version>(,2.0]</version>
+</dependency>
+```
+
+See the [GETTING-STARTED.md](GETTING-STARTED.md) file for how to get started in different scenarios.
+
+## Table of Contents
+
+- [Library Version Compatibility](#library-version-compatibility)
+- [Storage Interface](#storage-interface)
+  - [Storage Interface Usage](#storage-interface-usage)
+- [Multi-Threaded Considerations](#multi-threaded-considerations)
+- [Configuration Options](#configuration-options)
+- [Initialization](#initialization)
+- [Update for New Versions of the Spec](#update-for-new-versions-of-the-spec)
+- [API Documentation](#api-documentation)
+- [Contributing](#contributing)
+
 ## Library Version Compatibility
 
 Library version 2.0.0 and higher is not compatible with previous versions of the library due to breaking changes introduced in SPDX 3.0.
 
-The library does support the spec versions 2.X and 3.X.
+The library does support the specification versions 2.X and 3.X.
 
 See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how to upgrade from earlier versions of the library.
 
@@ -34,7 +58,7 @@ See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how
   This interface is currently used to implement JSON, XML, YAML, and RDF/XML
   formats.
 - The default storage interface is an in-memory Map which should be sufficient
-  for light weight usage of the library.
+  for lightweight usage of the library.
 
 ### Storage Interface Usage
 
@@ -57,15 +81,6 @@ support multi-threaded applications.
 
 These methods serialize access to the model store for the specific SPDX
 document used for the SPDX model object.
-
-## Getting Started
-
-See the [GETTING-STARTED.md](GETTING-STARTED.md) file for how to get started in different scenarios.
-
-## API Documentation
-
-The API documentation is available at:
-<https://spdx.github.io/Spdx-Java-Library/>
 
 ## Configuration options
 
@@ -98,7 +113,7 @@ InMemSpdxStore modelStore = new InMemSpdxStore();
 IModelCopyManager copyManager = new ModelCopyManager();
 ```
 
-Many factory and helper methods in the library make use of a DefaultModelStore
+Many factory and helper methods in the library make use of a `DefaultModelStore`
 if no model store or copy manager is specified.
 
 The `SpdxModelFactory.init()` will create defaults for this purpose.
@@ -125,8 +140,66 @@ To update Spdx-Java-Library, the following is a very brief checklist:
 3. If there are any conversions that are needed when copying to or from the new model version, add conversion code to the `ModelCopyConverter` class.
 4. Update SpdxModelFactory unit test for the highest version check
 
-## Development Status
+## API Documentation
 
-Note: This library is currently unstable, and under development.
-Reviews, suggestions are welcome.
-Please enter an issue with any suggestions.
+Here are links to the API documentation for the family of SPDX Java libraries.
+
+"latest" points to the API documentation of the latest stable version of the library, while "dev" points to the API documentation generated every time there is an update in the library's GitHub repository.
+
+| Library | | |
+|-|-|-|
+| [java-spdx-library][lib-gh] | [latest][lib-docl] | [dev][lib-docd] |
+| [spdx-java-core][core-gh] | [latest][core-docl] | [dev][core-docd] |
+| Model | | |
+| [spdx-java-model-2_X][model2-gh] | [latest][model2-docl] | [dev][model2-docd] |
+| [spdx-java-model-3_0][model3-gh] | [latest][model3-docl] | |
+| Model store | | |
+| [spdx-jackson-store][jackson-gh] | [latest][jackson-docl] | |
+| [spdx-rdf-store][rdf-gh] | [latest][rdf-docl] | [dev][rdf-docd] |
+| [spdx-spreadsheet-store][spreadsheet-gh] | [latest][spreadsheet-docl] | |
+| [spdx-tagvalue-store][tagvalue-gh] | [latest][tagvalue-docl] | [dev][tagvalue-docd] |
+| [spdx-v3jsonld-store][v3jsonld-gh] | [latest][v3jsonld-docl] | [dev][v3jsonld-docd] |
+| Tools | | |
+| [spdx-model-to-java][genjava-gh] | | |
+| [spdx-maven-plugin][maven-gh] | [latest][maven-docl] | |
+| [tools-java][tools-gh] | [latest][tools-docl] | |
+
+[lib-gh]: https://github.com/spdx/Spdx-Java-Library
+[lib-docl]: https://javadoc.io/doc/org.spdx/java-spdx-library
+[lib-docd]: https://spdx.github.io/Spdx-Java-Library/
+[core-gh]: https://github.com/spdx/spdx-java-core
+[core-docl]: https://javadoc.io/doc/org.spdx/spdx-java-core
+[core-docd]: https://spdx.github.io/spdx-java-core/
+[model2-gh]: https://github.com/spdx/spdx-java-model-2_X
+[model2-docl]: https://javadoc.io/doc/org.spdx/spdx-java-model-2_X
+[model2-docd]: https://spdx.github.io/spdx-java-model-2_X/
+[model3-gh]: https://github.com/spdx/spdx-java-model-3_0
+[model3-docl]: https://javadoc.io/doc/org.spdx/spdx-java-model-3_0
+[jackson-gh]: https://github.com/spdx/spdx-java-jackson-store
+[jackson-docl]: https://javadoc.io/doc/org.spdx/spdx-jackson-store
+[rdf-gh]: https://github.com/spdx/spdx-java-rdf-store
+[rdf-docl]: https://javadoc.io/doc/org.spdx/spdx-rdf-store
+[rdf-docd]: https://spdx.github.io/spdx-java-rdf-store/
+[spreadsheet-gh]: https://github.com/spdx/spdx-java-spreadsheet-store
+[spreadsheet-docl]: https://javadoc.io/doc/org.spdx/spdx-spreadsheet-store
+[tagvalue-gh]: https://github.com/spdx/spdx-java-tagvalue-store
+[tagvalue-docl]: https://javadoc.io/doc/org.spdx/spdx-tagvalue-store
+[tagvalue-docd]: https://spdx.github.io/spdx-java-tagvalue-store/
+[v3jsonld-gh]: https://github.com/spdx/spdx-java-v3jsonld-store
+[v3jsonld-docl]: https://javadoc.io/doc/org.spdx/spdx-v3jsonld-store
+[v3jsonld-docd]: https://spdx.github.io/spdx-java-v3jsonld-store/
+[genjava-gh]: https://github.com/spdx/spdx-model-to-java
+[maven-gh]: https://github.com/spdx/spdx-maven-plugin
+[maven-docl]: https://javadoc.io/doc/org.spdx/spdx-maven-plugin/latest/index.html
+[tools-gh]: https://github.com/spdx/tools-java
+[tools-docl]: https://javadoc.io/doc/org.spdx/tools-java
+
+## Contributing
+
+Reviews and suggestions are welcome.
+Please [submit an issue][issues] with any suggestions.
+
+See [CONTRIBUTING.md][contributing] for contribution guidelines.
+
+[issues]: https://github.com/spdx/Spdx-Java-Library/issues
+[contributing]: https://github.com/spdx/Spdx-Java-Library/blob/master/CONTRIBUTING.md
