@@ -4,6 +4,18 @@ With the support of SPDX 3.0, several changes have been made to the library code
 Although we tried to keep breaking changes to a minimum, some of the changes were necessary due to breaking changes in the spec. itself.
 We also took advantage of the changes to fix some annoying design flaws in the previous implementation of the library.
 
+## New initialisation methods
+
+v2 of the library introduces an explicit initialisation process.  This involves:
+
+1. (optional) Calling `org.spdx.core.DefaultModelStore.initialize(...)` with your own choice of ModelStore and CopyManager.
+2. (required) Calling `org.spdx.library.SpdxModelFactory.init()` (this must happen _soon after_ the call to `DefaultModelStore.initialize()` - ideally before any other SPDX classes or methods are used).
+
+Notes:
+
+- Step #1 is optional; if not provided, a default ModelStore and CopyManager will be automatically created and configured by `SpdxModelFactory.init()`.
+- Once initialized (via Step #2), further calls to `DefaultModelStore.initialize(...)` will be ignored.
+
 ## Classes and Methods moved to SPDX Java Core library
 
 The SPDX Java Core Library is in a separate repository and jar file.
@@ -21,6 +33,14 @@ The packages in `org.spdx.licenseTemplates` are now in the `java-spdx-core` repo
 
 A new class `LicenseTextHelper` was added and the method `isLicenseTextEquivalent(String, String)` along with many supporting methods were moved to `LicenseTextHelper` from `org.spdx.utility.compare.LicenseCompareHelper`.
 
+## Other moved classes
+
+- `org.spdx.library.model.license.ListedLicenses` moved to `org.spdx.library.ListedLicenses`
+
+## Removed methods
+
+Some methods that previously existed in the model classes (e.g. `ListedLicense.getLicenseTextHtml()`) have been removed and do not have an equivalent in v2 of the library.
+
 ## Changes to SPDX version 2 package, class, and method names
 
 To support accessing SPDX 2.X model object while updating the library for SPDX 3.0 support, the package names for the SPDX 2.X model objects are now named `org.spdx.library.model.v2.[package]`.
@@ -28,6 +48,10 @@ To support accessing SPDX 2.X model object while updating the library for SPDX 3
 Many of the class and property names have been changed to append `CompatV2` to clearly designate a compatible object is being referenced.
 
 Also note that the model classes are now stored in a separate repository `spdx-java-model-2_X`.
+
+## SPDX version 3.x package
+
+SPDX 3.0.1 model objects can be found in packages underneath `org.spdx.library.model.v3_0_1`.  Note that Spdx-Java-Library will only track the latest minor+patch version for the last 2 major SPDX specification versions (i.e. v2.3.0 and v3.0.1), because minor+patch versions of the SPDX specification are backwards compatible _within_ a major version.
 
 ## Changes to ExternalElement and ExternalExtractedLicenseInfo (SPDX Version 2.X classes)
 
