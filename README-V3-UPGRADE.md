@@ -39,7 +39,7 @@ A new class `LicenseTextHelper` was added and the method `isLicenseTextEquivalen
 
 ## Removed methods
 
-Some methods that previously existed in the model classes (e.g. `org.spdx.library.model.license.SpdxListedLicense.getLicenseTextHtml()`, `org.spdx.library.model.license.SpdxListedLicense.getCrossRef()`) have been removed and do not have an equivalent in v2 of the library.
+Some methods that exist in the v2.3 model classes (e.g. `org.spdx.library.model.license.SpdxListedLicense.getLicenseTextHtml()`, `org.spdx.library.model.license.SpdxListedLicense.getCrossRef()`, `org.spdx.library.model.license.ListedLicenseException.getExceptionTextHtml()`) have been removed and do not have an equivalent in the v3.0 model classes.
 
 ## Changes to SPDX version 2 package, class, and method names
 
