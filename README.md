@@ -64,14 +64,12 @@ Here are links to the API documentation for the family of SPDX Java libraries.
 | [spdx-jackson-store][jackson-gh] | Jackson Databind-based storage implementation for SPDX objects. Supports JSON, YAML and XML formats. | [release][jackson-docr] | |
 | [spdx-rdf-store][rdf-gh] | RDF-based storage implementation for SPDX objects. | [release][rdf-docr] | [dev][rdf-docd] |
 | [spdx-spreadsheet-store][spreadsheet-gh] | Spreadsheet-based storage implementation for SPDX objects. Supports XLS and XLSX formats. | [release][spreadsheet-docr] | |
-| [spdx-tagvalue-store][tagvalue-gh] | Tag-value-based storage implementation for SPDX objects. | [release][tagvalue-docr] | [dev][tagvalue-docd] |
+| [spdx-tagvalue-store][tagvalue-gh] | Tag-value-file-based storage implementation for SPDX objects. | [release][tagvalue-docr] | [dev][tagvalue-docd] |
 | [spdx-v3jsonld-store][v3jsonld-gh] | JSON-LD-based storage implementation for SPDX 3 objects. | [release][v3jsonld-docr] | [dev][v3jsonld-docd] |
 | Tools | | | |
 | [spdx-model-to-java][genjava-gh] | Generates Java source files from SPDX 3 model files. Used for spdx-java-model-3_0. | | |
 | [spdx-maven-plugin][maven-gh] | Maven plugin producing SPDX documents for artifacts described in the Maven POM file. | [release][maven-docr] | |
 | [tools-java][tools-gh] | Command-line tools for working with SPDX documents. | [release][tools-docr] | |
-
-Generates Java source files from the SPDX spec version 3+ suitable for inclusion in the SPDX Java Library
 
 [lib-gh]: https://github.com/spdx/Spdx-Java-Library
 [lib-docr]: https://javadoc.io/doc/org.spdx/java-spdx-library
@@ -195,6 +193,10 @@ To update Spdx-Java-Library, the following is a very brief checklist:
 2. Update the SpdxModelFactory source file to load the model info by adding the line `ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoVXXX());` in the static block at the very beginning of the class.
 3. If there are any conversions that are needed when copying to or from the new model version, add conversion code to the `ModelCopyConverter` class.
 4. Update SpdxModelFactory unit test for the highest version check
+
+## Development Status
+
+Stable.
 
 ## Contributing
 
