@@ -25,7 +25,8 @@ If you are using Maven, you can add the following dependency in your POM file:
 </dependency>
 ```
 
-See the [GETTING-STARTED.md](GETTING-STARTED.md) file for how to get started in different scenarios.
+See the [GETTING-STARTED.md](GETTING-STARTED.md) file for installation
+instructions and how to get started in different scenarios.
 
 ## Table of Contents
 
