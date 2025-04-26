@@ -21,7 +21,7 @@ If you are using Maven, you can add the following dependency in your POM file:
 <dependency>
   <groupId>org.spdx</groupId>
   <artifactId>java-spdx-library</artifactId>
-  <version>(,2.0]</version>
+  <version>[2.0,3.0)</version>
 </dependency>
 ```
 
@@ -30,22 +30,78 @@ See the [GETTING-STARTED.md](GETTING-STARTED.md) file for how to get started in 
 ## Table of Contents
 
 - [Library Version Compatibility](#library-version-compatibility)
+- [API Documentation](#api-documentation)
 - [Storage Interface](#storage-interface)
   - [Storage Interface Usage](#storage-interface-usage)
 - [Multi-Threaded Considerations](#multi-threaded-considerations)
 - [Configuration Options](#configuration-options)
 - [Initialization](#initialization)
 - [Update for New Versions of the Spec](#update-for-new-versions-of-the-spec)
-- [API Documentation](#api-documentation)
 - [Contributing](#contributing)
 
 ## Library Version Compatibility
 
 Library version 2.0.0 and higher is not compatible with previous versions of the library due to breaking changes introduced in SPDX 3.0.
 
-The library does support the specification versions 2.X and 3.X.
+However, the library supports both SPDX specification versions 2.X and 3.X.
 
-See the [README-V3-UPGRADE.md](README-V3-UPGRADE.md) file for information on how to upgrade from earlier versions of the library.
+See [README-V3-UPGRADE.md](README-V3-UPGRADE.md) for library upgrade instructions.
+
+## API Documentation
+
+Here are links to the API documentation for the family of SPDX Java libraries.
+
+"release" points to the API documentation of the latest stable version of the library, while "dev" points to the API documentation generated every time there is an update in the library's GitHub repository.
+
+| Library | Description | Doc (release) | Doc (dev) |
+|-|-|-|-|
+| [java-spdx-library][lib-gh] | Core library implementing the SPDX Java object model and helper functions. | [release][lib-docr] | [dev][lib-docd] |
+| [spdx-java-core][core-gh] | Core utilities and shared functionality for SPDX Java libraries. | [release][core-docr] | [dev][core-docd] |
+| Model | | | |
+| [spdx-java-model-2_X][model2-gh] | Model implementation for SPDX 2.X specification. | [release][model2-docr] | [dev][model2-docd] |
+| [spdx-java-model-3_0][model3-gh] | Model implementation for SPDX 3.0 specification. | [release][model3-docr] | |
+| Model store | | | |
+| [spdx-jackson-store][jackson-gh] | Jackson Databind-based storage implementation for SPDX objects. Supports JSON, YAML and XML formats. | [release][jackson-docr] | |
+| [spdx-rdf-store][rdf-gh] | RDF-based storage implementation for SPDX objects. | [release][rdf-docr] | [dev][rdf-docd] |
+| [spdx-spreadsheet-store][spreadsheet-gh] | Spreadsheet-based storage implementation for SPDX objects. Supports XLS and XLSX formats. | [release][spreadsheet-docr] | |
+| [spdx-tagvalue-store][tagvalue-gh] | Tag-value-based storage implementation for SPDX objects. | [release][tagvalue-docr] | [dev][tagvalue-docd] |
+| [spdx-v3jsonld-store][v3jsonld-gh] | JSON-LD-based storage implementation for SPDX 3 objects. | [release][v3jsonld-docr] | [dev][v3jsonld-docd] |
+| Tools | | | |
+| [spdx-model-to-java][genjava-gh] | Generates Java source files from SPDX 3 model files. Used for spdx-java-model-3_0. | | |
+| [spdx-maven-plugin][maven-gh] | Maven plugin producing SPDX documents for artifacts described in the Maven POM file. | [release][maven-docr] | |
+| [tools-java][tools-gh] | Command-line tools for working with SPDX documents. | [release][tools-docr] | |
+
+Generates Java source files from the SPDX spec version 3+ suitable for inclusion in the SPDX Java Library
+
+[lib-gh]: https://github.com/spdx/Spdx-Java-Library
+[lib-docr]: https://javadoc.io/doc/org.spdx/java-spdx-library
+[lib-docd]: https://spdx.github.io/Spdx-Java-Library/
+[core-gh]: https://github.com/spdx/spdx-java-core
+[core-docr]: https://javadoc.io/doc/org.spdx/spdx-java-core
+[core-docd]: https://spdx.github.io/spdx-java-core/
+[model2-gh]: https://github.com/spdx/spdx-java-model-2_X
+[model2-docr]: https://javadoc.io/doc/org.spdx/spdx-java-model-2_X
+[model2-docd]: https://spdx.github.io/spdx-java-model-2_X/
+[model3-gh]: https://github.com/spdx/spdx-java-model-3_0
+[model3-docr]: https://javadoc.io/doc/org.spdx/spdx-java-model-3_0
+[jackson-gh]: https://github.com/spdx/spdx-java-jackson-store
+[jackson-docr]: https://javadoc.io/doc/org.spdx/spdx-jackson-store
+[rdf-gh]: https://github.com/spdx/spdx-java-rdf-store
+[rdf-docr]: https://javadoc.io/doc/org.spdx/spdx-rdf-store
+[rdf-docd]: https://spdx.github.io/spdx-java-rdf-store/
+[spreadsheet-gh]: https://github.com/spdx/spdx-java-spreadsheet-store
+[spreadsheet-docr]: https://javadoc.io/doc/org.spdx/spdx-spreadsheet-store
+[tagvalue-gh]: https://github.com/spdx/spdx-java-tagvalue-store
+[tagvalue-docr]: https://javadoc.io/doc/org.spdx/spdx-tagvalue-store
+[tagvalue-docd]: https://spdx.github.io/spdx-java-tagvalue-store/
+[v3jsonld-gh]: https://github.com/spdx/spdx-java-v3jsonld-store
+[v3jsonld-docr]: https://javadoc.io/doc/org.spdx/spdx-v3jsonld-store
+[v3jsonld-docd]: https://spdx.github.io/spdx-java-v3jsonld-store/
+[genjava-gh]: https://github.com/spdx/spdx-model-to-java
+[maven-gh]: https://github.com/spdx/spdx-maven-plugin
+[maven-docr]: https://javadoc.io/doc/org.spdx/spdx-maven-plugin/latest/index.html
+[tools-gh]: https://github.com/spdx/tools-java
+[tools-docr]: https://javadoc.io/doc/org.spdx/tools-java
 
 ## Storage Interface
 
@@ -139,60 +195,6 @@ To update Spdx-Java-Library, the following is a very brief checklist:
 2. Update the SpdxModelFactory source file to load the model info by adding the line `ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoVXXX());` in the static block at the very beginning of the class.
 3. If there are any conversions that are needed when copying to or from the new model version, add conversion code to the `ModelCopyConverter` class.
 4. Update SpdxModelFactory unit test for the highest version check
-
-## API Documentation
-
-Here are links to the API documentation for the family of SPDX Java libraries.
-
-"latest" points to the API documentation of the latest stable version of the library, while "dev" points to the API documentation generated every time there is an update in the library's GitHub repository.
-
-| Library | | |
-|-|-|-|
-| [java-spdx-library][lib-gh] | [latest][lib-docl] | [dev][lib-docd] |
-| [spdx-java-core][core-gh] | [latest][core-docl] | [dev][core-docd] |
-| Model | | |
-| [spdx-java-model-2_X][model2-gh] | [latest][model2-docl] | [dev][model2-docd] |
-| [spdx-java-model-3_0][model3-gh] | [latest][model3-docl] | |
-| Model store | | |
-| [spdx-jackson-store][jackson-gh] | [latest][jackson-docl] | |
-| [spdx-rdf-store][rdf-gh] | [latest][rdf-docl] | [dev][rdf-docd] |
-| [spdx-spreadsheet-store][spreadsheet-gh] | [latest][spreadsheet-docl] | |
-| [spdx-tagvalue-store][tagvalue-gh] | [latest][tagvalue-docl] | [dev][tagvalue-docd] |
-| [spdx-v3jsonld-store][v3jsonld-gh] | [latest][v3jsonld-docl] | [dev][v3jsonld-docd] |
-| Tools | | |
-| [spdx-model-to-java][genjava-gh] | | |
-| [spdx-maven-plugin][maven-gh] | [latest][maven-docl] | |
-| [tools-java][tools-gh] | [latest][tools-docl] | |
-
-[lib-gh]: https://github.com/spdx/Spdx-Java-Library
-[lib-docl]: https://javadoc.io/doc/org.spdx/java-spdx-library
-[lib-docd]: https://spdx.github.io/Spdx-Java-Library/
-[core-gh]: https://github.com/spdx/spdx-java-core
-[core-docl]: https://javadoc.io/doc/org.spdx/spdx-java-core
-[core-docd]: https://spdx.github.io/spdx-java-core/
-[model2-gh]: https://github.com/spdx/spdx-java-model-2_X
-[model2-docl]: https://javadoc.io/doc/org.spdx/spdx-java-model-2_X
-[model2-docd]: https://spdx.github.io/spdx-java-model-2_X/
-[model3-gh]: https://github.com/spdx/spdx-java-model-3_0
-[model3-docl]: https://javadoc.io/doc/org.spdx/spdx-java-model-3_0
-[jackson-gh]: https://github.com/spdx/spdx-java-jackson-store
-[jackson-docl]: https://javadoc.io/doc/org.spdx/spdx-jackson-store
-[rdf-gh]: https://github.com/spdx/spdx-java-rdf-store
-[rdf-docl]: https://javadoc.io/doc/org.spdx/spdx-rdf-store
-[rdf-docd]: https://spdx.github.io/spdx-java-rdf-store/
-[spreadsheet-gh]: https://github.com/spdx/spdx-java-spreadsheet-store
-[spreadsheet-docl]: https://javadoc.io/doc/org.spdx/spdx-spreadsheet-store
-[tagvalue-gh]: https://github.com/spdx/spdx-java-tagvalue-store
-[tagvalue-docl]: https://javadoc.io/doc/org.spdx/spdx-tagvalue-store
-[tagvalue-docd]: https://spdx.github.io/spdx-java-tagvalue-store/
-[v3jsonld-gh]: https://github.com/spdx/spdx-java-v3jsonld-store
-[v3jsonld-docl]: https://javadoc.io/doc/org.spdx/spdx-v3jsonld-store
-[v3jsonld-docd]: https://spdx.github.io/spdx-java-v3jsonld-store/
-[genjava-gh]: https://github.com/spdx/spdx-model-to-java
-[maven-gh]: https://github.com/spdx/spdx-maven-plugin
-[maven-docl]: https://javadoc.io/doc/org.spdx/spdx-maven-plugin/latest/index.html
-[tools-gh]: https://github.com/spdx/tools-java
-[tools-docl]: https://javadoc.io/doc/org.spdx/tools-java
 
 ## Contributing
 
