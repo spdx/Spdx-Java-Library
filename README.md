@@ -62,14 +62,14 @@ Here are links to the API documentation for the family of SPDX Java libraries.
 | [spdx-java-model-2_X][model2-gh] | Model implementation for SPDX 2.X specification. | [release][model2-docr] | [dev][model2-docd] |
 | [spdx-java-model-3_0][model3-gh] | Model implementation for SPDX 3.0 specification. | [release][model3-docr] | |
 | Model store | | | |
-| [spdx-jackson-store][jackson-gh] | Jackson Databind-based storage implementation for SPDX objects. Supports JSON, YAML and XML formats. | [release][jackson-docr] | |
+| [spdx-jackson-store][jackson-gh] | Jackson Databind-based storage implementation for SPDX objects. Supports JSON, YAML and XML formats. | [release][jackson-docr] | [dev][jackson-docd] |
 | [spdx-rdf-store][rdf-gh] | RDF-based storage implementation for SPDX objects. | [release][rdf-docr] | [dev][rdf-docd] |
-| [spdx-spreadsheet-store][spreadsheet-gh] | Spreadsheet-based storage implementation for SPDX objects. Supports XLS and XLSX formats. | [release][spreadsheet-docr] | |
+| [spdx-spreadsheet-store][spreadsheet-gh] | Spreadsheet-based storage implementation for SPDX objects. Supports XLS and XLSX formats. | [release][spreadsheet-docr] | [dev][spreadsheet-docd] |
 | [spdx-tagvalue-store][tagvalue-gh] | Tag-value-file-based storage implementation for SPDX objects. | [release][tagvalue-docr] | [dev][tagvalue-docd] |
 | [spdx-v3jsonld-store][v3jsonld-gh] | JSON-LD-based storage implementation for SPDX 3 objects. | [release][v3jsonld-docr] | [dev][v3jsonld-docd] |
 | Tools | | | |
-| [spdx-model-to-java][genjava-gh] | Generates Java source files from SPDX 3 model files. Used for spdx-java-model-3_0. | | |
-| [spdx-maven-plugin][maven-gh] | Maven plugin producing SPDX documents for artifacts described in the Maven POM file. | [release][maven-docr] | |
+| [spdx-model-to-java][genjava-gh] | Generates Java source files from SPDX 3 model files. Used for spdx-java-model-3_0. | | [dev][genjava-docd] |
+| [spdx-maven-plugin][maven-gh] | Maven plugin producing SPDX documents for artifacts described in the Maven POM file. | [release][maven-docr] | [dev][maven-docd] |
 | [tools-java][tools-gh] | Command-line tools for working with SPDX documents. | [release][tools-docr] | |
 
 [lib-gh]: https://github.com/spdx/Spdx-Java-Library
@@ -85,11 +85,13 @@ Here are links to the API documentation for the family of SPDX Java libraries.
 [model3-docr]: https://javadoc.io/doc/org.spdx/spdx-java-model-3_0
 [jackson-gh]: https://github.com/spdx/spdx-java-jackson-store
 [jackson-docr]: https://javadoc.io/doc/org.spdx/spdx-jackson-store
+[jackson-docd]: https://spdx.github.io/spdx-java-jackson-store/
 [rdf-gh]: https://github.com/spdx/spdx-java-rdf-store
 [rdf-docr]: https://javadoc.io/doc/org.spdx/spdx-rdf-store
 [rdf-docd]: https://spdx.github.io/spdx-java-rdf-store/
 [spreadsheet-gh]: https://github.com/spdx/spdx-java-spreadsheet-store
 [spreadsheet-docr]: https://javadoc.io/doc/org.spdx/spdx-spreadsheet-store
+[spreadsheet-docd]: https://spdx.github.io/spdx-java-spreadsheet-store/
 [tagvalue-gh]: https://github.com/spdx/spdx-java-tagvalue-store
 [tagvalue-docr]: https://javadoc.io/doc/org.spdx/spdx-tagvalue-store
 [tagvalue-docd]: https://spdx.github.io/spdx-java-tagvalue-store/
@@ -97,8 +99,10 @@ Here are links to the API documentation for the family of SPDX Java libraries.
 [v3jsonld-docr]: https://javadoc.io/doc/org.spdx/spdx-v3jsonld-store
 [v3jsonld-docd]: https://spdx.github.io/spdx-java-v3jsonld-store/
 [genjava-gh]: https://github.com/spdx/spdx-model-to-java
+[genjava-docd]: https://spdx.github.io/spdx-model-to-java/
 [maven-gh]: https://github.com/spdx/spdx-maven-plugin
-[maven-docr]: https://javadoc.io/doc/org.spdx/spdx-maven-plugin/latest/index.html
+[maven-docr]: https://javadoc.io/doc/org.spdx/spdx-maven-plugin
+[maven-docd]: https://spdx.github.io/spdx-maven-plugin/
 [tools-gh]: https://github.com/spdx/tools-java
 [tools-docr]: https://javadoc.io/doc/org.spdx/tools-java
 
