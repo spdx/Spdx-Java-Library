@@ -6,6 +6,7 @@
     <packaging>jar</packaging>
 	<name>java-spdx-library</name>
 	<url>https://github.com/spdx/Spdx-Java-Library</url>
+	<description>Java library which implements the Java object model for SPDX and provides useful helper functions.</description>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -47,7 +48,7 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>spdx</sonar.organization>
 		<sonar.projectKey>java-spdx-library</sonar.projectKey>
-		<dependency-check-maven.version>8.0.1</dependency-check-maven.version>
+		<dependency-check-maven.version>8.0.2</dependency-check-maven.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -252,7 +253,7 @@
 			<plugin>
 				<groupId>org.spdx</groupId>
 				<artifactId>spdx-maven-plugin</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.1</version>
 				<executions>
 					<execution>
 						<id>build-spdx</id>
@@ -341,7 +342,6 @@
 		<system>Github</system>
 		<url>https://github.com/spdx/Spdx-Java-Library/issues</url>
 	</issueManagement>
-	<description>Java library which implements the Java object model for SPDX and provides useful helper functions.</description>
 	<ciManagement>
 		<system>Github Actions</system>
 		<url>https://github.com/spdx/Spdx-Java-Library/actions</url>
