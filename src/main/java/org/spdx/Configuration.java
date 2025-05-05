@@ -19,6 +19,7 @@ package org.spdx;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public final class Configuration {
     }
 
     /**
+     * Retrieve the singleton instance of the Configuration class
+     *
      * @return The singleton instance of the Configuration class.
      */
     public static Configuration getInstance() {
@@ -69,6 +72,8 @@ public final class Configuration {
     }
 
     /**
+     * Retrieve the value of a configuration property by its name
+     *
      * @param propertyName The name of the configuration property to retrieve.
      * @return The value of the given property name, or null if it wasn't found.
      */
@@ -77,6 +82,9 @@ public final class Configuration {
     }
 
     /**
+     * Retrieve the value of a configuration property by its name;
+     * return a default value if was not found
+     *
      * @param propertyName The name of the configuration property to retrieve.
      * @param defaultValue The default value to return, if the property isn't found.
      * @return The value of the given property name, or defaultValue if it wasn't found.
@@ -85,6 +93,31 @@ public final class Configuration {
         return System.getProperty(propertyName, properties == null ? defaultValue : properties.getProperty(propertyName, defaultValue));
     }
 
+    /**
+     * Retrieve the value of the first found configuration property from a list
+     * of names; return a default value if none are found.
+     * <p>
+     * This method checks each property name in the provided list in order.
+     * If a property name is not found, it moves on to the next one.
+     * If a property name is found, its value is returned.
+     * If none of the property names are found, the provided default value is returned.
+     *
+     * @param propertyNames An ordered list of property names to check.
+     * @param defaultValue  The default value to return if none of the property names are found.
+     * @return The value of the first found property name, or {@code defaultValue} if none are found.
+     */
+    public String getProperty(final List<String> propertyNames, final String defaultValue) {
+        if (propertyNames != null) {
+            for (String propertyName : propertyNames) {
+                String value = getProperty(propertyName);
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return defaultValue;
+    }
+    
     /**
      * Tries to load properties from the CLASSPATH, using the provided filename, ignoring errors
      * encountered during the process (e.g., the properties file doesn't exist, etc.).
