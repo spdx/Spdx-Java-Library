@@ -17,14 +17,13 @@
  */
 package org.spdx.library;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.Configuration;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxModelFactoryCompatV2;
@@ -49,8 +48,6 @@ import org.spdx.storage.listedlicense.SpdxV3ListedLicenseModelStore;
 public class ListedLicenses {
 	
 	static final Logger logger = LoggerFactory.getLogger(ListedLicenses.class.getName());
-	private static final String PROPERTIES_DIR = "resources";
-	private static final String LISTED_LICENSE_PROPERTIES_FILENAME = PROPERTIES_DIR + "/" + "licenses.properties";
 
 	Properties licenseProperties;
     boolean onlyUseLocalLicenses;
@@ -72,45 +69,13 @@ public class ListedLicenses {
 	 * This constructor should only be called by the getListedLicenses method
 	 */
 	private ListedLicenses() {
-		licenseProperties = loadLicenseProperties();
-		onlyUseLocalLicenses = Boolean.parseBoolean(
-	            System.getProperty("SPDXParser.OnlyUseLocalLicenses", licenseProperties.getProperty("OnlyUseLocalLicenses", "false")));
+		// Note: this code is confusing as this property changed names several times over time, and we want to preserve
+		// backwards compatibility for those downstream library users who are using the old/deprecated names
+		onlyUseLocalLicenses = Boolean.parseBoolean(Configuration.getInstance().getProperty("org.spdx.useJARLicenseInfoOnly",
+				Configuration.getInstance().getProperty("SPDXParser.OnlyUseLocalLicenses",
+						Configuration.getInstance().getProperty("OnlyUseLocalLicenses", "false"))));
 		initializeLicenseModelStore();
 	}
-	
-	/**
-	 * Tries to load properties from LISTED_LICENSE_PROPERTIES_FILENAME, ignoring errors
-	 * encountered during the process (e.g., the properties file doesn't exist, etc.).
-	 * 
-	 * @return a (possibly empty) set of properties
-	 */
-    private static Properties loadLicenseProperties() {
-        listedLicenseModificationLock.writeLock().lock();
-        try {
-            Properties licenseProperties = new Properties();
-            InputStream in = null;
-            try {
-                in = ListedLicenses.class.getResourceAsStream("/" + LISTED_LICENSE_PROPERTIES_FILENAME);
-                if (in != null) {
-                    licenseProperties.load(in);
-                }
-            } catch (IOException e) {
-                // Ignore it and fall through
-                logger.warn("IO Exception reading listed license properties file: {}", e.getMessage());
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        logger.warn("Unable to close listed license properties file: {}", e.getMessage());
-                    }
-                }
-            }
-            return licenseProperties;
-        } finally {
-            listedLicenseModificationLock.writeLock().unlock();
-        }
-    }
 	
     private void initializeLicenseModelStore() {
         listedLicenseModificationLock.writeLock().lock();
