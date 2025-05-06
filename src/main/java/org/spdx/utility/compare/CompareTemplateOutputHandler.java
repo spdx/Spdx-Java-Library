@@ -640,7 +640,7 @@ public class CompareTemplateOutputHandler implements
 	}
 	
 	/**
-	 * Information obout any difference found
+	 * Information about any difference found
 	 */
 	public static class DifferenceDescription {
 		private static final int MAX_DIFF_TEXT_LENGTH = 100;

@@ -47,12 +47,18 @@ public class CrossRefJson {
 	public Integer order;
 	private transient String id;	// The ID is always transient and of anonymous type
 	
+	/**
+	 * Default constructor for GSON compatibility
+	 */
 	public CrossRefJson() {
 		// empty constructor so GSON will work
 	}
 	
 	/**
-	 * @param crossRef cross ref to copy values from
+	 * Construct a {@code CrossRefJson} object by copying values
+	 * from a {@link CrossRef} object
+	 *
+	 * @param crossRef The {@link CrossRef} object to copy values from.
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public CrossRefJson(CrossRef crossRef) throws InvalidSPDXAnalysisException {
@@ -65,8 +71,10 @@ public class CrossRefJson {
 		crossRef.getTimestamp().ifPresent(s -> timestamp = s);
 		crossRef.getOrder().ifPresent(integer -> order = integer);
 	}
-	
+
 	/**
+	 * Retrieve all valid property descriptors for this object
+	 *
 	 * @return all valid property descriptors
 	 */
 	public List<PropertyDescriptor> getPropertyValueDescriptors() {
@@ -96,7 +104,8 @@ public class CrossRefJson {
 	}
 
 	/**
-	 * Sets the value to the property name
+	 * Set the value to the property name
+	 *
 	 * @param propertyDescriptor descriptor for the property to set
 	 * @param value Value to set
 	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
@@ -154,10 +163,20 @@ public class CrossRefJson {
 		throw new InvalidSpdxPropertyException(propertyDescriptor + " is not a list type.");
 	}
 
+	/**
+	 * Get the crossRefId
+	 *
+	 * @return The crossRefId
+	 */
 	public @Nullable String getId() {
 		return this.id;
 	}
 
+	/**
+	 * Set the crossRefId
+	 *
+	 * @param crossRefId
+	 */
 	public void setId(String crossRefId) {
 		this.id = crossRefId;
 	}
@@ -172,6 +191,8 @@ public class CrossRefJson {
 	}
 
 	/**
+	 * Retrieve the value associated with the given property descriptor
+	 *
 	 * @param propertyDescriptor descriptor for the property to set
 	 * @return the value associated with the property - null if not assigned or not present
 	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
@@ -190,8 +211,9 @@ public class CrossRefJson {
 	}
 
 	/**
-	 * sets the property to null (no way to remove in this store)
-	 * @param propertyDescriptor descriptor for the property to set
+	 * Set the property to null (no way to remove in this store)
+	 *
+	 * @param propertyDescriptor Descriptor for the property to set
 	 * @throws InvalidSpdxPropertyException on SPDX parsing errors
 	 */
 	public void removeProperty(PropertyDescriptor propertyDescriptor) throws InvalidSpdxPropertyException {
@@ -203,11 +225,16 @@ public class CrossRefJson {
 			case "timestamp": this.timestamp = null; break;
 			case "isWayBackLink": this.isWayBackLink = null; break;
 			case "order": this.order = null; break;
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
+			default:
+				throw new InvalidSpdxPropertyException("Invalid property for CrossRef:" + propertyDescriptor);
 		}
 	}
 
 	/**
+	 * Check whether the members of the collection can be assigned to the given class
+	 * <p>
+	 * Note: This is not implemented for this class and always returns false.
+	 *
 	 * @param propertyDescriptor descriptor for the property to set
 	 * @param clazz target class
 	 * @return true if the members can be assigned from clazz
@@ -217,6 +244,8 @@ public class CrossRefJson {
 	}
 
 	/**
+	 * Check whether the property value can be assigned to the given class
+	 *
 	 * @param propertyDescriptor descriptor for the property to set
 	 * @param clazz target class
 	 * @return true if the property can be assigned from clazz
@@ -226,17 +255,24 @@ public class CrossRefJson {
 		switch (propertyDescriptor.getName()) {
 			case "match":
 			case "url":
-			case "timestamp": return String.class.isAssignableFrom(clazz);
+			case "timestamp":
+				return String.class.isAssignableFrom(clazz);
 			case "isValid":
 			case "isLive":
-			case "isWayBackLink": return Boolean.class.isAssignableFrom(clazz);
-			case "order": return Integer.class.isAssignableFrom(clazz);
-			default: throw new InvalidSpdxPropertyException("Invalid property for CrossRef:"+propertyDescriptor);
-	}
-
+			case "isWayBackLink":
+				return Boolean.class.isAssignableFrom(clazz);
+			case "order":
+				return Integer.class.isAssignableFrom(clazz);
+			default:
+				throw new InvalidSpdxPropertyException("Invalid property for CrossRef:" + propertyDescriptor);
+		}
 	}
 
 	/**
+	 * Check whether the property is a collection
+	 * <p>
+	 * Note: This is not implemented for this class and always returns false.
+	 *
 	 * @param propertyName Name of the property
 	 * @return if the property is a collection
 	 */
