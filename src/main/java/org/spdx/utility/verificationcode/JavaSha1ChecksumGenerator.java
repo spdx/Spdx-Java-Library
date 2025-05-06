@@ -24,7 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Java sha1 checksum generator using MessageDigest
+ * Java SHA1 checksum generator using MessageDigest
  *
  * @author Gary O'Neall
  */
@@ -35,6 +35,7 @@ public class JavaSha1ChecksumGenerator implements IFileChecksumGenerator {
 
 	/**
 	 * Create a SHA1 based checksum generator
+	 *
 	 * @throws NoSuchAlgorithmException if the SHA1 algorithm does not exist
 	 */
 	public JavaSha1ChecksumGenerator() throws NoSuchAlgorithmException {
@@ -42,6 +43,7 @@ public class JavaSha1ChecksumGenerator implements IFileChecksumGenerator {
 	}
 
 	/**
+	 * Generate a checksum for the file using SHA1
 	 *
 	 * @param file File to generate the checksum for
 	 * @return file checksum

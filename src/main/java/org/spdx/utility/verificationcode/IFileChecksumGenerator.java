@@ -27,6 +27,8 @@ import java.io.IOException;
  */
 public interface IFileChecksumGenerator {
 	/**
+	 * Generate a checksum for the file
+	 *
 	 * @param file File to generate the checksum for
 	 * @return the checksum for the file
 	 * @throws IOException on errors reading the file

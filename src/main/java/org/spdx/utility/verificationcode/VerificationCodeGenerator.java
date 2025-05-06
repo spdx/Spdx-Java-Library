@@ -123,6 +123,8 @@ public class VerificationCodeGenerator {
 	}
 
 	/**
+	 * Generate the SPDX Package Verification Code from a list of file checksums
+	 *
 	 * @param fileChecksums used to create the verification code value
 	 * @param skippedFilePaths list of files skipped when calculating the verification code
 	 * @param modelStore where the resultant VerificationCode is store
@@ -150,8 +152,9 @@ public class VerificationCodeGenerator {
 
 	/**
 	 * Collect the file level checksums and filenames
+	 *
 	 * @param prefixForRelative The portion of the filepath which precedes the relative file path for the archive
-	 * @param sourceDirectory directory to collectd the file data from
+	 * @param sourceDirectory directory to collect the file data from
 	 * @param fileNameAndChecksums resultant list of file names and checksums - added to in this method
 	 * @param skippedFiles files to be ignored in the package verification result
 	 * @throws IOException on IO error reading the directory of file
@@ -229,7 +232,10 @@ public class VerificationCodeGenerator {
         }
 		return sb.toString();
 	}
+
 	/**
+	 * Generate the SPDX Package Verification Code from a directory of files included in the archive
+	 *
 	 * @param sourceDirectory directory to create the verification code for
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
