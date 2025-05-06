@@ -43,92 +43,133 @@ public class ExceptionJsonTOC {
 		private String name;
 		private String licenseExceptionId;
 		private List<String> seeAlso;
+
 		/**
+		 * Retrieve the license exception ID
+		 *
 		 * @return the licenseExceptionId
 		 */
 		public String getLicenseExceptionId() {
 			return licenseExceptionId;
 		}
+
 		/**
+		 * Retrieve the reference
+		 *
 		 * @return the reference
 		 */
 		public String getReference() {
 			return reference;
 		}
+
 		/**
+		 * Check whether this is a deprecated license ID
+		 *
 		 * @return the isDeprecatedLicenseId
 		 */
 		public boolean isDeprecatedLicenseId() {
 			return isDeprecatedLicenseId;
 		}
+
 		/**
+		 * Retrieve the details URL
+		 *
 		 * @return the detailsUrl
 		 */
 		public String getDetailsUrl() {
 			return detailsUrl;
 		}
+
 		/**
+		 * Retrieve the reference number
+		 *
 		 * @return the referenceNumber
 		 */
 		public int getReferenceNumber() {
 			return referenceNumber;
 		}
+
 		/**
+		 * Retrieve the name
+		 *
 		 * @return the name
 		 */
 		public String getName() {
 			return name;
 		}
+
 		/**
+		 * Retrieve the see-also list
+		 *
 		 * @return the seeAlso
 		 */
 		public List<String> getSeeAlso() {
 			return seeAlso;
 		}
+
 		/**
+		 * Set the reference
+		 *
 		 * @param reference the reference to set
 		 */
 		public void setReference(String reference) {
 			this.reference = reference;
 		}
+
 		/**
+		 * Set whether this is a deprecated license ID
+		 *
 		 * @param isDeprecatedLicenseId the isDeprecatedLicenseId to set
 		 */
 		public void setDeprecatedLicenseId(boolean isDeprecatedLicenseId) {
 			this.isDeprecatedLicenseId = isDeprecatedLicenseId;
 		}
+
 		/**
+		 * Set the details URL
+		 *
 		 * @param detailsUrl the detailsUrl to set
 		 */
 		public void setDetailsUrl(String detailsUrl) {
 			this.detailsUrl = detailsUrl;
 		}
+
 		/**
+		 * Set the reference number
+		 *
 		 * @param referenceNumber the referenceNumber to set
 		 */
 		public void setReferenceNumber(int referenceNumber) {
 			this.referenceNumber = referenceNumber;
 		}
+
 		/**
+		 * Set the name
+		 *
 		 * @param name the name to set
 		 */
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		/**
+		 * Set the license exception ID
+		 *
 		 * @param licenseExceptionId the licenseExceptionId to set
 		 */
 		public void setLicenseExceptionId(String licenseExceptionId) {
 			this.licenseExceptionId = licenseExceptionId;
 		}
+
 		/**
+		 * Set the see-also list
+		 *
 		 * @param seeAlso the seeAlso to set
 		 */
 		public void setSeeAlso(List<String> seeAlso) {
 			this.seeAlso = seeAlso;
 		}
 	}
-	
 
 	private String licenseListVersion;
 	private final List<ExceptionJson> exceptions;
@@ -136,6 +177,7 @@ public class ExceptionJsonTOC {
 
 	/**
 	 * Create an ExceptionJsonTOC
+	 *
 	 * @param version license list version
 	 * @param releaseDate release date of the license list
 	 */
@@ -155,6 +197,8 @@ public class ExceptionJsonTOC {
 	}
 
 	/**
+	 * Retrieve the license list version
+	 *
 	 * @return the licenseListVersion
 	 */
 	public @Nullable String getLicenseListVersion() {
@@ -162,6 +206,8 @@ public class ExceptionJsonTOC {
 	}
 
 	/**
+	 * Retrieve the list of exceptions
+	 *
 	 * @return the exceptions
 	 */
 	public List<ExceptionJson> getExceptions() {
@@ -169,7 +215,9 @@ public class ExceptionJsonTOC {
 	}
 	
 	/**
-	 * @return map of lower case to correct case exception IDs
+	 * Retrieve a map of lower case to correct case exception IDs
+	 *
+	 * @return A map of lower case to correct case exception IDs
 	 */
 	public Map<String, String> getExceptionIds() {
 		Map<String, String> retval = new HashMap<>();
@@ -180,6 +228,8 @@ public class ExceptionJsonTOC {
 	}
 
 	/**
+	 * Retrieve the release date
+	 *
 	 * @return the releaseDate
 	 */
 	public @Nullable String getReleaseDate() {
@@ -188,6 +238,7 @@ public class ExceptionJsonTOC {
 
 	/**
 	 * Add a new exception to the list of exceptions
+	 *
 	 * @param exception exception to be added
 	 * @param exceptionHTMLReference URL of the exception HTML
 	 * @param exceptionJSONReference URL of the JSON
@@ -215,6 +266,8 @@ public class ExceptionJsonTOC {
 	}
 
 	/**
+	 * Set the license list version
+	 *
 	 * @param licenseListVersion the licenseListVersion to set
 	 */
 	public void setLicenseListVersion(String licenseListVersion) {
@@ -222,11 +275,12 @@ public class ExceptionJsonTOC {
 	}
 
 	/**
+	 * Set the release date
+	 *
 	 * @param releaseDate the releaseDate to set
 	 */
 	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
 	}
-	
-	
+
 }
