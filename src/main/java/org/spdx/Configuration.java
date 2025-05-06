@@ -95,15 +95,15 @@ public final class Configuration {
 
     /**
      * Retrieve the value of the first found configuration property from a list
-     * of names; return a default value if none are found.
+     * of names; return a default value if none are found
      * <p>
      * This method checks each property name in the provided list in order.
      * If a property name is not found, it moves on to the next one.
      * If a property name is found, its value is returned.
      * If none of the property names are found, the provided default value is returned.
      *
-     * @param propertyNames An ordered list of property names to check.
-     * @param defaultValue  The default value to return if none of the property names are found.
+     * @param propertyNames An ordered list of configuration property names to retrieve.
+     * @param defaultValue  The default value to return if none of the properties are found.
      * @return The value of the first found property name, or {@code defaultValue} if none are found.
      */
     public String getProperty(final List<String> propertyNames, final String defaultValue) {
