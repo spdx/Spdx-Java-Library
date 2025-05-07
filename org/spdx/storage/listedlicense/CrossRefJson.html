@@ -213,11 +213,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">CrossRefJson</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Default constructor for GSON compatibility</div>
+</td>
 </tr>
 <tr class="rowColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(org.spdx.library.model.v2.license.CrossRef)">CrossRefJson</a></span>&#8203;(org.spdx.library.model.v2.license.CrossRef&nbsp;crossRef)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Construct a <code>CrossRefJson</code> object by copying values
+ from a <code>CrossRef</code> object</div>
+</td>
 </tr>
 </table>
 </li>
@@ -251,17 +256,23 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Get the crossRefId</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.storage.PropertyDescriptor&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPropertyValueDescriptors()">getPropertyValueDescriptors</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve all valid property descriptors for this object</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValue(org.spdx.storage.PropertyDescriptor)">getValue</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the value associated with the given property descriptor</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;?&gt;</code></td>
@@ -272,18 +283,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isCollectionMembersAssignableTo(org.spdx.storage.PropertyDescriptor,java.lang.Class)">isCollectionMembersAssignableTo</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the members of the collection can be assigned to the given class</div>
+</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isCollectionProperty(java.lang.String)">isCollectionProperty</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;propertyName)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the property is a collection</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isPropertyValueAssignableTo(org.spdx.storage.PropertyDescriptor,java.lang.Class)">isPropertyValueAssignableTo</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the property value can be assigned to the given class</div>
+</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -295,20 +312,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeProperty(org.spdx.storage.PropertyDescriptor)">removeProperty</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
 <td class="colLast">
-<div class="block">sets the property to null (no way to remove in this store)</div>
+<div class="block">Set the property to null (no way to remove in this store)</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setId(java.lang.String)">setId</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;crossRefId)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Set the crossRefId</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPrimitiveValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setPrimitiveValue</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
 <td class="colLast">
-<div class="block">Sets the value to the property name</div>
+<div class="block">Set the value to the property name</div>
 </td>
 </tr>
 </table>
@@ -415,6 +434,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>CrossRefJson</h4>
 <pre>public&nbsp;CrossRefJson()</pre>
+<div class="block">Default constructor for GSON compatibility</div>
 </li>
 </ul>
 <a id="&lt;init&gt;(org.spdx.library.model.v2.license.CrossRef)">
@@ -425,9 +445,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>CrossRefJson</h4>
 <pre>public&nbsp;CrossRefJson&#8203;(org.spdx.library.model.v2.license.CrossRef&nbsp;crossRef)
              throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+<div class="block">Construct a <code>CrossRefJson</code> object by copying values
+ from a <code>CrossRef</code> object</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>crossRef</code> - cross ref to copy values from</dd>
+<dd><code>crossRef</code> - The <code>CrossRef</code> object to copy values from.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on SPDX parsing errors</dd>
 </dl>
@@ -450,6 +472,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getPropertyValueDescriptors</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.storage.PropertyDescriptor&gt;&nbsp;getPropertyValueDescriptors()</pre>
+<div class="block">Retrieve all valid property descriptors for this object</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>all valid property descriptors</dd>
@@ -465,7 +488,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre class="methodSignature">public&nbsp;void&nbsp;setPrimitiveValue&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)
                        throws org.spdx.core.InvalidSpdxPropertyException</pre>
-<div class="block">Sets the value to the property name</div>
+<div class="block">Set the value to the property name</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property to set</dd>
@@ -527,6 +550,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>getId</h4>
 <pre class="methodSignature"><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
 public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;getId()</pre>
+<div class="block">Get the crossRefId</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>The crossRefId</dd>
+</dl>
 </li>
 </ul>
 <a id="setId(java.lang.String)">
@@ -536,6 +564,11 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.
 <li class="blockList">
 <h4>setId</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;setId&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;crossRefId)</pre>
+<div class="block">Set the crossRefId</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>crossRefId</code> - </dd>
+</dl>
 </li>
 </ul>
 <a id="getValueList(org.spdx.storage.PropertyDescriptor)">
@@ -565,6 +598,7 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.
 <pre class="methodSignature"><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
 public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;getValue&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)
                 throws org.spdx.core.InvalidSpdxPropertyException</pre>
+<div class="block">Retrieve the value associated with the given property descriptor</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property to set</dd>
@@ -583,10 +617,10 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.
 <h4>removeProperty</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;removeProperty&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)
                     throws org.spdx.core.InvalidSpdxPropertyException</pre>
-<div class="block">sets the property to null (no way to remove in this store)</div>
+<div class="block">Set the property to null (no way to remove in this store)</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property to set</dd>
+<dd><code>propertyDescriptor</code> - Descriptor for the property to set</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.InvalidSpdxPropertyException</code> - on SPDX parsing errors</dd>
 </dl>
@@ -600,6 +634,9 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.
 <h4>isCollectionMembersAssignableTo</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isCollectionMembersAssignableTo&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</pre>
+<div class="block">Check whether the members of the collection can be assigned to the given class
+ <p>
+ Note: This is not implemented for this class and always returns false.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property to set</dd>
@@ -618,6 +655,7 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isPropertyValueAssignableTo&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)
                                     throws org.spdx.core.InvalidSpdxPropertyException</pre>
+<div class="block">Check whether the property value can be assigned to the given class</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyDescriptor</code> - descriptor for the property to set</dd>
@@ -636,6 +674,9 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.
 <li class="blockList">
 <h4>isCollectionProperty</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isCollectionProperty&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;propertyName)</pre>
+<div class="block">Check whether the property is a collection
+ <p>
+ Note: This is not implemented for this class and always returns false.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>propertyName</code> - Name of the property</dd>
