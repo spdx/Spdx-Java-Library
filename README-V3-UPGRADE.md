@@ -16,6 +16,11 @@ Notes:
 - Step #1 is optional; if not provided, a default ModelStore and CopyManager will be automatically created and configured by `SpdxModelFactory.init()`.
 - Once initialized (via Step #2), further calls to `DefaultModelStore.initialize(...)` will be ignored.
 
+## Deprecated configuration for using online licenses from Jar file removed
+
+The configuration properties `OnlyUseLocalLicenses`  and `SPDXParser.OnlyUseLocalLicenses` will no longer force the 
+library to use the licenses distributed with the Jar file.  The supported property `org.spdx.useJARLicenseInfoOnly` should be used.
+
 ## Classes and Methods moved to SPDX Java Core library
 
 The SPDX Java Core Library is in a separate repository and jar file.
