@@ -54,14 +54,36 @@ public class CompareTemplateOutputHandler implements
 		private boolean skip = false;	// skip this instruction in matching
 		private boolean skipFirstTextToken = false;	// skip the first text token
 		private DifferenceDescription lastOptionalDifference = null;
-		
+
+		/**
+		 * Construct a new {@link ParseInstruction} with the specified rule, text, and parent
+		 *
+		 * A parse instruction represents a single unit of parsing logic, which may include a rule,
+		 * associated text, and a hierarchical relationship to a parent instruction.
+		 *
+		 * @param rule The {@link LicenseTemplateRule} associated with this parse instruction. Can
+		 *        be {@code null} if no rule is associated.
+		 * @param text The text content of this parse instruction. Can be {@code null} if no text is
+		 *        associated.
+		 * @param parent The parent {@link ParseInstruction} of this parse instruction. Can be
+		 *        {@code null} if this parse instruction has no parent.
+		 */
 		ParseInstruction(LicenseTemplateRule rule, String text, ParseInstruction parent) {
 			this.rule = rule;
 			this.text = text;
 			this.subInstructions = new ArrayList<>();
 			this.parent = parent;
 		}
-		
+
+		/**
+		 * Return a string representation of this parse instruction
+		 *
+		 * If the parse instruction has an associated rule, the rule's string representation is returned.
+		 * If the parse instruction has associated text, the first 10 characters of the text are returned.
+		 * If neither a rule nor text is associated, "NONE" is returned.
+		 *
+		 * @return A string representation of this parse instruction.
+		 */
 		@Override 
 		public String toString() {
 			if (this.rule != null) {
@@ -80,28 +102,52 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return the rule
+		 * Retrieve the license template rule associated with this parse instruction
+		 *
+		 * The rule defines the type of instruction (e.g., variable, optional, etc.) and provides
+		 * details about how the instruction should be processed during the comparison.
+		 *
+		 * @return The {@link LicenseTemplateRule} associated with this parse instruction, or {@code null}
+		 *         if no rule is associated.
 		 */
 		public LicenseTemplateRule getRule() {
 			return rule;
 		}
 
 		/**
-		 * @param rule the rule to set
+		 * Set the license template rule associated with this parse instruction
+		 *
+		 * The rule defines the type of instruction (e.g., variable, optional, etc.) and provides
+		 * details about how the instruction should be processed during the comparison.
+		 *
+		 * @param rule The {@link LicenseTemplateRule} to associate with this parse instruction. Can
+		 *        be {@code null} if no rule is associated.
 		 */
 		public void setRule(LicenseTemplateRule rule) {
 			this.rule = rule;
 		}
 
 		/**
-		 * @return the text
+		 * Retrieve the text associated with this parse instruction
+		 *
+		 * The text represents the content of this parse instruction, which may be compared against
+		 * other text during the license template matching process.
+		 *
+		 * @return The text associated with this parse instruction, or {@code null} if no text is
+		 *         set.
 		 */
 		public String getText() {
 			return text;
 		}
 
 		/**
-		 * @param text the text to set
+		 * Set the text content for this parse instruction
+		 *
+		 * The text represents the content of this parse instruction, which may be compared against
+		 * other text during the license template matching process.
+		 *
+		 * @param text The text to associate with this parse instruction. Can be {@code null} if no
+		 *        text is to be associated.
 		 */
 		public void setText(String text) {
 			this.text = text;
@@ -109,6 +155,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Add the instruction to the list of sub-instructions
+		 *
 		 * @param instruction instruction to add
 		 */
 		public void addSubInstruction(ParseInstruction instruction) {
@@ -130,34 +177,50 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return the parent
+		 * Retrieve the parent parse instruction of this parse instruction
+		 *
+		 * @return The parent {@link ParseInstruction}, or {@code null} if this parse instruction
+		 *         has no parent.
 		 */
 		public ParseInstruction getParent() {
 			return parent;
 		}
 
 		/**
-		 * @param parent the parent to set
+		 * Set the parent parse instruction for this parse instruction
+		 *
+		 * @param parent The {@link ParseInstruction} to set as the parent of this parse
+		 *        instruction. Can be {@code null} if this parse instruction has no parent.
 		 */
 		public void setParent(ParseInstruction parent) {
 			this.parent = parent;
 		}
 
 		/**
-		 * @return the subInstructions
+		 * Retrieve the list of sub-instructions for this parse instruction.
+		 *
+		 * Sub-instructions represent the child instructions that are part of this parse
+		 * instruction. These can include text, rules, or other nested instructions.
+		 *
+		 * @return A {@link List} of {@link ParseInstruction} objects representing the
+		 *         sub-instructions of this parse instruction. If there are no sub-instructions, an
+		 *         empty list is returned.
 		 */
 		public List<ParseInstruction> getSubInstructions() {
 			return subInstructions;
 		}
 
 		/**
-		 * @return true iff there are only text instructions as sub instructions
+		 * Check whether all sub-instructions of this parse instruction contain only text
+		 *
+		 * @return {@code true} if all sub-instructions contain only text, {@code false} otherwise.
+		 *         Also returns {@code false} if there are no sub-instructions.
 		 */
 		public boolean onlyText() {
 			if (this.subInstructions.isEmpty()) {
 				return false;
 			}
-			for (ParseInstruction subInstr:this.subInstructions) {
+			for (ParseInstruction subInstr : this.subInstructions) {
 				if (subInstr.getText() == null) {
 					return false;
 				}
@@ -165,9 +228,16 @@ public class CompareTemplateOutputHandler implements
 			return true;
 		}
 
+		/**
+		 * Convert all sub-instructions of this parse instruction into a single concatenated text
+		 * string
+		 *
+		 * @return A concatenated string containing the text of all sub-instructions, or an empty
+		 *         string if no sub-instructions contain text.
+		 */
 		public String toText() {
 			StringBuilder sb = new StringBuilder();
-			for (ParseInstruction subInstr:this.subInstructions) {
+			for (ParseInstruction subInstr : this.subInstructions) {
 				if (subInstr.getText() != null) {
 					sb.append(subInstr.getText());
 				}
@@ -177,6 +247,7 @@ public class CompareTemplateOutputHandler implements
 		
 		/**
 		 * Attempt to match this instruction against a tokenized array
+		 *
 		 * @param matchTokens Tokens to match the instruction against
 		 * @param startToken Index of the tokens to start the match
 		 * @param endToken Last index of the tokens to use in the match
@@ -193,12 +264,14 @@ public class CompareTemplateOutputHandler implements
 		
 		/**
 		 * Attempt to match this instruction against a tokenized array
+		 *
 		 * @param matchTokens Tokens to match the instruction against
 		 * @param startToken Index of the tokens to start the match
 		 * @param endToken Last index of the tokens to use in the match
 		 * @param originalText Original text used go generate the matchTokens
 		 * @param differences Description of differences found
-		 * @param tokenToLocation Map of the location of tokens	 * @param ignoreOptionalDifferences if true, don't record any optional differences
+		 * @param tokenToLocation Map of the location of tokens
+		 * @param ignoreOptionalDifferences if true, don't record any optional differences
 		 * @return Next token index after the match or -1 if no match was found
 		 * @throws LicenseParserException On license parsing errors
 		 */
@@ -271,12 +344,13 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Match to an optional rule
+		 *
 		 * @param matchingStartTokens List of indexes for the start tokens for the next normal text
 		 * @param matchTokens Tokens to match against
 		 * @param startToken Index of the first token to search for the match
 		 * @param originalText Original text used go generate the matchTokens
 		 * @param tokenToLocation Map of token index to line/column where the token was found in the original text
-		 *  @param ignoreOptionalDifferences if true, don't record any optional differences
+		 * @param ignoreOptionalDifferences if true, don't record any optional differences
 		 * @return the index of the token after the find or -1 if the text did not match
 		 * @throws LicenseParserException On license parsing errors
 		 */
@@ -305,6 +379,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Find the indexes that match the matching optional or first normal text within the sub-instructions
+		 *
 		 * @param afterChild the child after which to start searching for the first normal text
 		 * @param matchTokens Tokens used to match the text against
 		 * @param startToken Start of the match tokens to begin the search
@@ -427,6 +502,7 @@ public class CompareTemplateOutputHandler implements
 		
 		/**
 		 * Determine the number of tokens matched from the compare text
+		 *
 		 * @param text text to search
 		 * @param end End of matching text
 		 * @return number of tokens in the text
@@ -446,6 +522,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Match to a variable rule
+		 *
 		 * @param matchingStartTokens List of indexes for the start tokens for the next normal text
 		 * @param matchTokens Tokens to match against
 		 * @param startToken Index of the first token to search for the match
@@ -476,7 +553,10 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return The difference description for the last optional rule which did not match
+		 * Retrieve the difference description for the last optional rule that did not match
+		 *
+		 * @return A {@link DifferenceDescription} object representing the last optional difference,
+		 *         or {@code null} if no optional difference was found.
 		 */
 		public DifferenceDescription getLastOptionalDifference() {
 			if (this.lastOptionalDifference != null) {
@@ -487,9 +567,17 @@ public class CompareTemplateOutputHandler implements
 				return null;
 			}
 		}
-		
+
+		/**
+		 * Set the last optional difference that did not match.
+		 *
+		 * @param optionalDifference A {@link DifferenceDescription} object representing the last
+		 *        optional difference. This must not be {@code null}, and it must have a non-empty
+		 *        difference message.
+		 */
 		public void setLastOptionalDifference(DifferenceDescription optionalDifference) {
-			if (optionalDifference != null && optionalDifference.getDifferenceMessage() != null && !optionalDifference.getDifferenceMessage().isEmpty()) {
+			if (optionalDifference != null && optionalDifference.getDifferenceMessage() != null
+					&& !optionalDifference.getDifferenceMessage().isEmpty()) {
 				this.lastOptionalDifference = optionalDifference;
 				if (this.parent != null) {
 					this.parent.setLastOptionalDifference(optionalDifference);
@@ -498,7 +586,12 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return true if the instruction following this instruction is a beginOptional rule containing text with a single token
+		 * Determine if the instruction following this one is an optional rule containing text with
+		 * a single token
+		 *
+		 * @return {@code true} if the instruction following this instruction is a
+		 *         {@code BEGIN_OPTIONAL} rule containing text with a single token, {@code false}
+		 *         otherwise.
 		 */
 		public boolean isFollowingInstructionOptionalSingleToken() {
 			if (parent == null) {
@@ -520,8 +613,12 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @param parseInstruction subInstruction to find the next parse instruction after
-		 * @return the next instruction after parseInstruction in the subInstructions
+		 * Find the next parse instruction that follows the given parse instruction in the list of
+		 * sub-instructions
+		 *
+		 * @param parseInstruction subInstruction to find the next parse instruction after.
+		 * @return The next instruction after parseInstruction in the subInstructions, or
+		 *         {@code null} if no such instruction exists.
 		 */
 		private ParseInstruction findFollowingInstruction(ParseInstruction parseInstruction) {
 			if (parseInstruction == null) {
@@ -542,7 +639,9 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return the tokens from the next group of optional
+		 * Retrieve the tokens from the next group of optional text
+		 *
+		 * @return The tokens from the next group of optional.
 		 */
 		public String[] getNextOptionalTextTokens() {
 			if (parent == null) {
@@ -588,7 +687,9 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return the next sibling parse instruction which is just text (no rules)
+		 * Retrieve the next sibling parse instruction that contains only text (no rules)
+		 *
+		 * @return The next sibling parse instruction which is just text (no rules).
 		 */
 		public ParseInstruction getNextNormalTextInstruction() {
 			if (this.parent == null) {
@@ -625,14 +726,28 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @param skipFirstTextToken if true, the first text token will be skipped
+		 * Set whether the first text token of this parse instruction should be skipped during
+		 * matching
+		 *
+		 * This is useful in cases where the first token of the text is optional or should not be
+		 * considered for comparison purposes.
+		 *
+		 * @param skipFirstTextToken If {@code true}, the first text token will be skipped during
+		 *        matching; otherwise, it will be included.
 		 */
 		public void setSkipFirstToken(boolean skipFirstTextToken) {
 			this.skipFirstTextToken = skipFirstTextToken;
 		}
-		
+
 		/**
-		 * @return true if the first text token should be skipped
+		 * Check whether the first text token of this parse instruction should be skipped during
+		 * matching
+		 *
+		 * This is useful in cases where the first token of the text is optional or should not be
+		 * considered for comparison purposes.
+		 *
+		 * @return {@code true} if the first text token should be skipped during matching;
+		 *         {@code false} otherwise.
 		 */
 		public boolean isSkipFirstTextToken() {
 			return this.skipFirstTextToken;
