@@ -79,13 +79,6 @@ public class ListedLicenses {
 	 * exceptions
 	 * <p>
 	 * This method sets up the appropriate model store based on the configuration.
-	 * If the property
-	 * {@code org.spdx.useJARLicenseInfoOnly} is set to {@code true}, it uses the
-	 * locally cached licenses.
-	 * Otherwise, it attempts to fetch the most current listed licenses from the
-	 * SPDX website.
-	 * If the web store is unavailable, it falls back to the locally cached
-	 * licenses.
 	 * </p>
 	 * <p>
 	 * This method also initializes the SPDX version 2 and version 3 model stores
