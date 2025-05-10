@@ -96,9 +96,10 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * Increment the reference count for this stored type item - the number of times this item is referenced
+	 * Increment the reference count for this stored type item - the number of times this item is
+	 * referenced
 	 *
-	 * @return new number of times this item is referenced
+	 * @return The new number of times this item is referenced.
 	 */
 	@SuppressWarnings("UnusedReturnValue")
     public int incReferenceCount() {
@@ -114,7 +115,7 @@ public class StoredTypedItem extends TypedValue {
 	/**
 	 * Decrement the reference count for this stored type item
 	 *
-	 * @return new number of times this item is referenced
+	 * @return The new number of times this item is referenced.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
 	public int decReferenceCount() throws SpdxInvalidTypeException {
@@ -147,8 +148,8 @@ public class StoredTypedItem extends TypedValue {
 	/**
 	 * Set the value for the specified property descriptor
 	 *
-	 * @param propertyDescriptor Descriptor for the property
-	 * @param value Value to be set
+	 * @param propertyDescriptor  The descriptor for the property. Must not be {@code null}.
+	 * @param value The value to be set. Must not be {@code null}.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
 	public void setValue(PropertyDescriptor propertyDescriptor, Object value)
@@ -176,7 +177,7 @@ public class StoredTypedItem extends TypedValue {
 	 * Set the value list for the property to an empty list creating the propertyDescriptor if it
 	 * does not exist
 	 *
-	 * @param propertyDescriptor descriptor for the property
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
 	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor)
@@ -198,8 +199,8 @@ public class StoredTypedItem extends TypedValue {
 	 * Add a value to a property list for a String or Boolean type of value creating the
 	 * propertyDescriptor if it does not exist
 	 *
-	 * @param propertyDescriptor Descriptor for the property
-	 * @param value Value to be set
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @param value Th value to be set. Must not be {@code null}.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
 	public boolean addValueToList(PropertyDescriptor propertyDescriptor, Object value)
@@ -253,8 +254,8 @@ public class StoredTypedItem extends TypedValue {
 	/**
 	 * Remove a property from a property list if it exists
 	 *
-	 * @param propertyDescriptor descriptor for the property
-	 * @param value to be removed
+	 * @param propertyDescriptor The descriptor for the property.
+	 * @param value The value to be removed.
 	 * @return {@code true} if the value was removed, {@code false} if the value did not exist.
 	 * @throws SpdxInvalidTypeException for an invalid type
 	 */
@@ -283,8 +284,8 @@ public class StoredTypedItem extends TypedValue {
 	/**
 	 * Remove a property from a property list if it exists
 	 *
-	 * @param propertyDescriptor descriptor for the property
-	 * @param value value to remove
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @param value The value to be removed. Must not be {@code null}.
 	 * @return {@code true} if the value was removed, {@code false} if the value did not exist.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
@@ -322,7 +323,7 @@ public class StoredTypedItem extends TypedValue {
 	 * Retrieve an iterator over the list of values associated with the specified property
 	 * descriptor
 	 *
-	 * @param propertyDescriptor Descriptor for the property
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
 	 * @return An {@link Iterator} over the list of values associated with the property descriptor.
 	 *         If no values exist, an empty iterator is returned.
 	 * @throws SpdxInvalidTypeException If the property is not associated with a list or if the type
@@ -363,9 +364,9 @@ public class StoredTypedItem extends TypedValue {
 	}
 	
 	/**
-	 * Remove a property from the document for the given ID if the property exists.
+	 * Remove a property from the document for the given ID if the property exists
 	 * <p>
-	 * Does not raise any exception if the propertyDescriptor does not exist
+	 * Does not raise any exception if the propertyDescriptor does not exist.
 	 *
 	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
 	 */
@@ -394,9 +395,15 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @return Size of the collection
-	 * @throws SpdxInvalidTypeException on invalid type
+	 * Retrieve the size of the collection associated with the specified property descriptor
+	 * <p>
+	 * This method calculates the total number of elements in the collection associated with the
+	 * given property descriptor.
+	 *
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @return The size of the collection.
+	 * @throws SpdxInvalidTypeException If the type is invalid or if the property is not associated
+	 *         with a collection.
 	 */
 	@SuppressWarnings("rawtypes")
 	public int collectionSize(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
@@ -412,7 +419,7 @@ public class StoredTypedItem extends TypedValue {
 		}
 		if (map instanceof ConcurrentHashMap<?, ?>) {
 			int count = 0;
-			for (Object value:((ConcurrentHashMap<?, ?>)map).values()) {
+			for (Object value : ((ConcurrentHashMap<?, ?>) map).values()) {
 				if (value instanceof Collection) {
 					count = count + ((Collection)value).size();
 				} else {
@@ -426,16 +433,17 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * Check whether the specified value exists in the list associated with the given property descriptor.
-	 * 
+	 * Check whether the specified value exists in the collection associated with the given property
+	 * descriptor
+	 * <p>
 	 * This method verifies if the provided value is present in the collection of values associated
-	 * with the specified property descriptor. If the property descriptor is not associated with a list,
-	 * an exception is thrown.
-	 * 
+	 * with the specified property descriptor.
+	 *
 	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
-	 * @param value The value to be checked.
-	 * @return {@code true} if the value exists in the list associated with the property descriptor; {@code false} otherwise.
-	 * @throws SpdxInvalidTypeException If the property is not associated with a list or if the type is invalid.
+	 * @param value The value to be checked. Must not be {@code null}.
+	 * @return {@code true} if the value exists in the collection; {@code false} otherwise.
+	 * @throws SpdxInvalidTypeException If the type is invalid or if the property is not associated
+	 *         with a collection.
 	 */
 	public boolean collectionContains(PropertyDescriptor propertyDescriptor, Object value)
 			throws SpdxInvalidTypeException {
@@ -470,12 +478,17 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param clazz class to test against
-	 * @return true if the property with the propertyDescriptor can be assigned to clazz
-	 * @throws ModelRegistryException On registry exception - check that it is initialized
+	 * Check whether all members of the collection associated with the specified property descriptor
+	 * can be assigned to the specified class
+	 *
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @param clazz The class to test against. Must not be {@code null}.
+	 * @return {@code true} if the property with the {@code propertyDescriptor} can be assigned to
+	 *         {@code clazz}; {@code false} otherwise.
+	 * @throws ModelRegistryException If the model registry is not properly initialized.
 	 */
-	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz) throws ModelRegistryException {
+	public boolean isCollectionMembersAssignableTo(PropertyDescriptor propertyDescriptor,
+			Class<?> clazz) throws ModelRegistryException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object map = properties.get(propertyDescriptor);
@@ -488,8 +501,8 @@ public class StoredTypedItem extends TypedValue {
 		}
 		@SuppressWarnings("unchecked")
 		ConcurrentHashMap<String, List<Object>> idValueMap = (ConcurrentHashMap<String, List<Object>>)map;
-		for (List<Object> valueList:idValueMap.values()) {
-			for (Object value:valueList) {
+		for (List<Object> valueList : idValueMap.values()) {
+			for (Object value : valueList) {
 				if (!isAssignableTo(value, clazz, getSpecVersion())) {
 					return false;
 				}
@@ -497,15 +510,18 @@ public class StoredTypedItem extends TypedValue {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * @param value value to test
-	 * @param clazz class to see if the value can be assigned to
-	 * @param specVersion version of the spec
-	 * @return true if value can be assigned to clazz
-	 * @throws ModelRegistryException if the model registry is not property initialized
+	 * Check whether the given value can be assigned to the specified class
+	 *
+	 * @param value The value to test.
+	 * @param clazz The class to check if the value can be assigned to.
+	 * @param specVersion The SPDX specification version to use for type resolution.
+	 * @return {@code true} if the value can be assigned to {@code clazz}; {@code false} otherwise.
+	 * @throws ModelRegistryException If the model registry is not properly initialized.
 	 */
-	private boolean isAssignableTo(Object value, Class<?> clazz, String specVersion) throws ModelRegistryException {
+	private boolean isAssignableTo(Object value, Class<?> clazz, String specVersion)
+			throws ModelRegistryException {
 		if (clazz.isAssignableFrom(value.getClass())) {
 			return true;
 		}
@@ -538,15 +554,20 @@ public class StoredTypedItem extends TypedValue {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param clazz class to test against
-	 * @param specVersion Version of the spec to test for
-	 * @return true if the property can be assigned to type clazz for the latest SPDX spec version
-	 * @throws ModelRegistryException if the registry is not property initialized
+	 * Check whether the value associated with the specified property descriptor can be assigned to
+	 * the specified class
+	 *
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @param clazz The class to test against. Must not be {@code null}.
+	 * @param specVersion The SPDX specification version to use for type resolution.
+	 * @return {@code true} if the property value can be assigned to type {@code clazz} for the
+	 *         latest SPDX spec version; {@code false} otherwise.
+	 * @throws ModelRegistryException If the model registry is not properly initialized.
 	 */
-	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor, Class<?> clazz, String specVersion) throws ModelRegistryException {
+	public boolean isPropertyValueAssignableTo(PropertyDescriptor propertyDescriptor,
+			Class<?> clazz, String specVersion) throws ModelRegistryException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(clazz, "Class can not be null");
 		Object value = properties.get(propertyDescriptor);
@@ -557,8 +578,11 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param propertyDescriptor property descriptor
-	 * @return true if there is a list associated with the property descriptor
+	 * Check whether the specified property descriptor is associated with a collection
+	 *
+	 * @param propertyDescriptor The property descriptor to check. Must not be {@code null}.
+	 * @return {@code true} if the property descriptor is associated with a collection;
+	 *         {@code false} otherwise.
 	 */
 	public boolean isCollectionProperty(PropertyDescriptor propertyDescriptor) {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
@@ -567,8 +591,11 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param elementId objectUri for the element to check
-	 * @return true if an element using the objectUri is used as a value in a collection
+	 * Check whether the specified element ID is used as a value in any collection or property
+	 *
+	 * @param elementId The object URI of the element to check.
+	 * @return {@code true} if the element using the object URI is used as a value in a collection;
+	 *         {@code false} otherwise.
 	 */
 	public boolean usesId(String elementId) {
 		if (Objects.isNull(elementId)) {
