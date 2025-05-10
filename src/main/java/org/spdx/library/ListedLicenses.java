@@ -73,7 +73,25 @@ public class ListedLicenses {
 				 "false"));
 		initializeLicenseModelStore();
 	}
-	
+
+	/**
+	 * Initializes the license model store for managing SPDX listed licenses and
+	 * exceptions
+	 * <p>
+	 * This method sets up the appropriate model store based on the configuration.
+	 * If the property
+	 * {@code org.spdx.useJARLicenseInfoOnly} is set to {@code true}, it uses the
+	 * locally cached licenses.
+	 * Otherwise, it attempts to fetch the most current listed licenses from the
+	 * SPDX website.
+	 * If the web store is unavailable, it falls back to the locally cached
+	 * licenses.
+	 * </p>
+	 * <p>
+	 * This method also initializes the SPDX version 2 and version 3 model stores
+	 * for compatibility.
+	 * </p>
+	 */
     private void initializeLicenseModelStore() {
         listedLicenseModificationLock.writeLock().lock();
         try {
@@ -100,10 +118,18 @@ public class ListedLicenses {
         }
 	}
 
-
-
+	/**
+	 * Retrieve the singleton instance of the {@code ListedLicenses} class
+	 * <p>
+	 * This method ensures that only one instance of the {@code ListedLicenses}
+	 * class is created and shared
+	 * throughout the application. If the instance does not already exist, it
+	 * initializes it.
+	 * </p>
+	 *
+	 * @return The singleton instance of the {@code ListedLicenses} class.
+	 */
 	public static ListedLicenses getListedLicenses() {
-	    
 	    ListedLicenses retval;
 	    listedLicenseModificationLock.readLock().lock();
 	    try {
@@ -124,12 +150,15 @@ public class ListedLicenses {
 	    }
         return retval;
     }
-	
+
 	/**
-	 * Resets all of the cached license information and reloads the license IDs
-	 * NOTE: This method should be used with caution, it will negatively impact
-	 * performance.
-	 * @return a new instance of this class
+	 * Reset all cached license information and reload the license IDs
+	 * <p>
+	 * NOTE: This method should be used with caution as it can negatively
+	 * impact performance due to the reloading process.
+	 * </p>
+	 *
+	 * @return A new instance of the {@code ListedLicenses} class.
 	 */
     public static ListedLicenses resetListedLicenses() {
         listedLicenseModificationLock.writeLock().lock();
@@ -140,58 +169,86 @@ public class ListedLicenses {
             listedLicenseModificationLock.writeLock().unlock();
         }
     }
-	
 
 	/**
-	 * @param licenseId case insensitive
-	 * @return true if the licenseId belongs to an SPDX listed license
+	 * Check whether the given license ID belongs to an SPDX listed license
+	 *
+	 * @param licenseId The case-insensitive SPDX license ID.
+	 * @return {@code true} if the license ID belongs to an SPDX listed license,
+	 *         {@code false} otherwise.
 	 */
     public boolean isSpdxListedLicenseId(String licenseId) {
 		return baseModelStore.isSpdxListedLicenseId(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, licenseId);
 	}
-    
-    /**
-     * @param exceptionId case insensitive
-     * @return true if the exceptionId belongs to an SPDX listed exception
-     */
+
+	/**
+	 * Check whether the given exception ID belongs to an SPDX listed exception
+	 *
+	 * @param exceptionId The case-insensitive SPDX exception ID to check.
+	 * @return {@code true} if the exception ID belongs to an SPDX listed exception,
+	 *         {@code false} otherwise.
+	 */
     public boolean isSpdxListedExceptionId(String exceptionId) {
     	return this.baseModelStore.isSpdxListedExceptionId(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, exceptionId);
     }
-	
+
 	/**
-	 * @param licenseId SPDX Listed License ID
-	 * @return an SPDX spec version 2 SPDX listed license or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException on SPDX parsing error
+	 * Retrieve an SPDX listed license by its ID
+	 * for SPDX specification version 2 compatibility
+	 *
+	 * @param licenseId The SPDX Listed License ID.
+	 * @return The SPDX specification version 2 listed license, or {@code null} if
+	 *         the ID is not in the SPDX License List.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while retrieving the
+	 *                                      license.
 	 */
 	public SpdxListedLicense getListedLicenseByIdCompatV2(String licenseId) throws InvalidSPDXAnalysisException {
 		return getSpdxListedLicensesCompatV2().get(licenseId);
 	}
-	
+
 	/**
-	 * @param exceptionId SPDX Listed License Exception ID
-	 * @return an SPDX spec version 2 SPDX listed license exception or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
+	 * Retrieve an SPDX listed license exception by its ID
+	 * for SPDX specification version 2 compatibility
+	 *
+	 * @param exceptionId The SPDX Listed License Exception ID.
+	 * @return The SPDX specification version 2 listed license exception, or
+	 *         {@code null} if the ID is not in the SPDX License List.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while retrieving the
+	 *                                      exception.
 	 */
-	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId) throws InvalidSPDXAnalysisException {
+	public org.spdx.library.model.v2.license.ListedLicenseException getListedExceptionByIdCompatV2(String exceptionId)
+			throws InvalidSPDXAnalysisException {
 		return getSpdxListedLicenseExceptionsCompatV2().get(exceptionId);
 	}
-	
+
 	/**
-	 * @param licenseId SPDX Listed License ID
-	 * @return SPDX listed license or null if the ID is not in the SPDX license list
-	 * @throws InvalidSPDXAnalysisException  on SPDX parsing error
+	 * Retrieve an SPDX listed license by its ID
+	 *
+	 * @param licenseId The SPDX Listed License ID.
+	 * @return The SPDX listed license, or {@code null} if not in the SPDX License List.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while retrieving the license.
 	 */
 	public ListedLicense getListedLicenseById(String licenseId) throws InvalidSPDXAnalysisException {
 		return getSpdxListedLicenses().get(licenseId);
 	}
-	
+
+	/**
+	 * Retrieve an SPDX listed license exception by its ID
+	 *
+	 * @param exceptionId The SPDX Listed License Exception ID.
+	 * @return The SPDX listed license exception, or {@code null} if not in the SPDX
+	 *         License List.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while retrieving the
+	 *                                      exception.
+	 */
 	public ListedLicenseException getListedExceptionById(String exceptionId) throws InvalidSPDXAnalysisException {
 		return getSpdxListedLicenseExceptions().get(exceptionId);
-		
 	}
-	
+
 	/**
-	 * @return List of all SPDX listed license IDs
+	 * Retrieve a list of all SPDX listed license IDs
+	 *
+	 * @return A list of all SPDX Listed License IDs.
 	 */
     public List<String> getSpdxListedLicenseIds() {
         listedLicenseModificationLock.readLock().lock();
@@ -203,8 +260,12 @@ public class ListedLicenses {
     }
 
 	/**
-	 * @return a map of SPDX listed license IDs to the SPDX listed license
-	 * @throws InvalidSPDXAnalysisException on errors fetching the licenses
+	 * Retrieve a map of SPDX Listed License IDs to their SPDX listed licenses
+	 *
+	 * @return A map where the keys are SPDX Listed License IDs and the values are
+	 *         {@link ListedLicense} objects.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while fetching the
+	 *                                      licenses.
 	 */
 	public Map<String, ListedLicense> getSpdxListedLicenses() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
@@ -233,8 +294,13 @@ public class ListedLicenses {
 	}
 
 	/**
-	 * @return a map of SPDX listed license exception IDs to the SPDX listed license exception
-	 * @throws InvalidSPDXAnalysisException on errors fetching the license exceptions
+	 * Retrieve a map of SPDX Listed License Exception IDs to their SPDX listed
+	 * license exceptions
+	 *
+	 * @return A map where the keys are SPDX Listed License Exception IDs
+	 *         and the values are {@link ListedLicenseException} objects.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while fetching the
+	 *                                      license exceptions.
 	 */
 	public Map<String, ListedLicenseException> getSpdxListedLicenseExceptions() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
@@ -263,8 +329,13 @@ public class ListedLicenses {
 	}
 
 	/**
-	 * @return a map of SPDX listed license IDs to the SPDX Spec version 2 listed license
-	 * @throws InvalidSPDXAnalysisException on errors fetching the licenses
+	 * Retrieve a map of SPDX Listed License IDs to their SPDX listed licenses
+	 * for SPDX specification version 2 compatibility
+	 *
+	 * @return A map where the keys are SPDX Listed License IDs and the values are
+	 *         {@link SpdxListedLicense} (SPDX spec version 2) objects.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while fetching the
+	 *                                      licenses.
 	 */
 	protected Map<String, SpdxListedLicense> getSpdxListedLicensesCompatV2() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
@@ -294,8 +365,16 @@ public class ListedLicenses {
 	}
 
 	/**
-	 * @return a map of SPDX listed license exception IDs to the SPDX listed license exception
-	 * @throws InvalidSPDXAnalysisException on errors fetching the license exceptions
+	 * Retrieve a map of SPDX Listed License Exception IDs to their SPDX listed
+	 * license exceptions
+	 * for SPDX specification version 2 compatibility
+	 *
+	 * @return A map where the keys are SPDX Listed License Exception IDs
+	 *         and the values are
+	 *         {@link org.spdx.library.model.v2.license.ListedLicenseException}
+	 *         (SPDX spec version 2) objects.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while fetching the
+	 *                                      license exceptions.
 	 */
 	protected Map<String, org.spdx.library.model.v2.license.ListedLicenseException> getSpdxListedLicenseExceptionsCompatV2() throws InvalidSPDXAnalysisException {
 		listedLicenseModificationLock.readLock().lock();
@@ -323,52 +402,80 @@ public class ListedLicenses {
 			listedLicenseModificationLock.writeLock().unlock();
 		}
 	}
-    
+
 	/**
-	 * @return The version of the loaded license list in the form M.N, where M is the major release and N is the minor release.
-	 * If no license list is loaded, returns the default license list version.
+	 * Retrieve the version of the loaded SPDX license list
+	 * <p>
+	 * The version is returned in the format "M.N", where M is the major release and N is the minor release.
+	 * If no license list is loaded, this method returns the default license list version.
+	 * </p>
+	 *
+	 * @return The version of the loaded SPDX license list, or the default version if no license list is loaded.
 	 */
 	public String getLicenseListVersion() {
 		return this.baseModelStore.getLicenseListVersion();
 	}
 
 	/**
-	 * @return list of SPDX exception IDs
+	 * Retrieve a list of all SPDX listed exception IDs
+	 *
+	 * @return A list of SPDX listed exception IDs.
 	 */
 	public List<String> getSpdxListedExceptionIds() {
 		return this.baseModelStore.getSpdxListedExceptionIds();
 	}
 
 	/**
-	 * @param licenseId case insensitive license ID
-	 * @return the case sensitive license ID
+	 * Retrieve the case-sensitive SPDX license ID for a given case-insensitive
+	 * license ID
+	 *
+	 * @param licenseId The case-insensitive SPDX license ID to look up.
+	 * @return An {@link Optional} containing the case-sensitive license ID if
+	 *         found, or an empty {@link Optional} if not found.
 	 */
 	public Optional<String> listedLicenseIdCaseSensitive(String licenseId) {
 		return this.baseModelStore.listedLicenseIdCaseSensitive(licenseId);
 	}
 
 	/**
-	 * @param exceptionId case insensitive exception ID
-	 * @return case sensitive ID
+	 * Retrieve the case-sensitive SPDX exception ID for a given case-insensitive
+	 * exception ID
+	 *
+	 * @param exceptionId The case-insensitive SPDX exception ID to look up.
+	 * @return An {@link Optional} containing the case-sensitive exception ID if
+	 *         found, or an empty {@link Optional} if not found.
 	 */
 	public Optional<String> listedExceptionIdCaseSensitive(String exceptionId) {
 		return this.baseModelStore.listedExceptionIdCaseSensitive(exceptionId);
 	}
-	
+
 	/**
-	 * @return model store for listed licenses using the version 3 SPDX model
+	 * Retrieve the model store for listed licenses using the SPDX version 3 model
+	 *
+	 * @return The {@link IModelStore} for SPDX version 3 listed licenses and
+	 *         exceptions.
 	 */
 	public IModelStore getLicenseModelStore() {
 		return this.licenseStoreV3;
 	}
-	
+
+	/**
+	 * Retrieve the model store for listed licenses using the SPDX version 2 model
+	 *
+	 * @return The {@link IModelStore} for SPDX version 2 listed licenses and
+	 *         exceptions.
+	 */
 	public IModelStore getLicenseModelStoreCompatV2() {
 		return this.licenseStoreV2;
 	}
 
 	/**
-	 * @return the CreationInfo used for all SPDX listed licenses and listed exceptions
-	 * @throws InvalidSPDXAnalysisException on error inflating the creation info
+	 * Retrieve the creation information for all SPDX listed licenses and exceptions
+	 *
+	 * @return The {@link CreationInfo} used for all SPDX listed licenses and
+	 *         exceptions.
+	 * @throws InvalidSPDXAnalysisException If an error occurs while inflating the
+	 *                                      creation information.
 	 */
 	public CreationInfo getListedLicenseCreationInfo() throws InvalidSPDXAnalysisException {
 		return licenseStoreV3.getListedLicenseCreationInfo();
