@@ -57,7 +57,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Construct a new {@link ParseInstruction} with the specified rule, text, and parent
-		 *
+		 * <p>
 		 * A parse instruction represents a single unit of parsing logic, which may include a rule,
 		 * associated text, and a hierarchical relationship to a parent instruction.
 		 *
@@ -77,7 +77,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Return a string representation of this parse instruction
-		 *
+		 * <p>
 		 * If the parse instruction has an associated rule, the rule's string representation is returned.
 		 * If the parse instruction has associated text, the first 10 characters of the text are returned.
 		 * If neither a rule nor text is associated, "NONE" is returned.
@@ -103,7 +103,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Retrieve the license template rule associated with this parse instruction
-		 *
+		 * <p>
 		 * The rule defines the type of instruction (e.g., variable, optional, etc.) and provides
 		 * details about how the instruction should be processed during the comparison.
 		 *
@@ -116,7 +116,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Set the license template rule associated with this parse instruction
-		 *
+		 * <p>
 		 * The rule defines the type of instruction (e.g., variable, optional, etc.) and provides
 		 * details about how the instruction should be processed during the comparison.
 		 *
@@ -129,7 +129,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Retrieve the text associated with this parse instruction
-		 *
+		 * <p>
 		 * The text represents the content of this parse instruction, which may be compared against
 		 * other text during the license template matching process.
 		 *
@@ -142,7 +142,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Set the text content for this parse instruction
-		 *
+		 * <p>
 		 * The text represents the content of this parse instruction, which may be compared against
 		 * other text during the license template matching process.
 		 *
@@ -198,7 +198,7 @@ public class CompareTemplateOutputHandler implements
 
 		/**
 		 * Retrieve the list of sub-instructions for this parse instruction.
-		 *
+		 * <p>
 		 * Sub-instructions represent the child instructions that are part of this parse
 		 * instruction. These can include text, rules, or other nested instructions.
 		 *
@@ -590,7 +590,7 @@ public class CompareTemplateOutputHandler implements
 		 * a single token
 		 *
 		 * @return {@code true} if the instruction following this instruction is a
-		 *         {@code BEGIN_OPTIONAL} rule containing text with a single token, {@code false}
+		 *         {@code beginOptional} rule containing text with a single token, {@code false}
 		 *         otherwise.
 		 */
 		public boolean isFollowingInstructionOptionalSingleToken() {
@@ -677,11 +677,23 @@ public class CompareTemplateOutputHandler implements
 			    nextInst.setSkip(true);
 			}
 		}
-		
+
+		/**
+		 * Check whether this parse instruction should be skipped during matching
+		 *
+		 * @return {@code true} if this parse instruction should be skipped; {@code false}
+		 *         otherwise.
+		 */
 		public boolean getSkip() {
-			return this.skip ;
+			return this.skip;
 		}
-		
+
+		/**
+		 * Set whether this parse instruction should be skipped during matching
+		 *
+		 * @param skip {@code true} if this parse instruction should be skipped; {@code false}
+		 *        otherwise.
+		 */
 		public void setSkip(boolean skip) {
 			this.skip = skip;
 		}
@@ -728,7 +740,7 @@ public class CompareTemplateOutputHandler implements
 		/**
 		 * Set whether the first text token of this parse instruction should be skipped during
 		 * matching
-		 *
+		 * <p>
 		 * This is useful in cases where the first token of the text is optional or should not be
 		 * considered for comparison purposes.
 		 *
@@ -742,7 +754,7 @@ public class CompareTemplateOutputHandler implements
 		/**
 		 * Check whether the first text token of this parse instruction should be skipped during
 		 * matching
-		 *
+		 * <p>
 		 * This is useful in cases where the first token of the text is optional or should not be
 		 * considered for comparison purposes.
 		 *
@@ -765,6 +777,7 @@ public class CompareTemplateOutputHandler implements
 		
 		/**
 		 * Creates a difference description
+		 *
 		 * @param differenceFound if true, a difference was found
 		 * @param differenceMessage Message describing the differences
 		 * @param differences list of lines where the difference was found
@@ -785,28 +798,39 @@ public class CompareTemplateOutputHandler implements
 		}
 
 		/**
-		 * @return true if a difference is found
+		 * Check whether a difference was found during the comparison process
+		 *
+		 * @return {@code true} if a difference was found; {@code false} otherwise.
 		 */
 		public boolean isDifferenceFound() {
 			return differenceFound;
 		}
 
 		/**
-		 * @param differenceFound if true, a difference was found
+		 * Set whether a difference was found during the comparison process
+		 *
+		 * @param differenceFound {@code true} if a difference was found; {@code false} otherwise.
 		 */
 		public void setDifferenceFound(boolean differenceFound) {
 			this.differenceFound = differenceFound;
 		}
 
 		/**
-		 * @return Message describing the differences
+		 * Retrieve the message describing the differences found during the comparison process
+		 * <p>
+		 * The difference message provides details about the nature of the differences, including
+		 * the location, token, and context of the mismatch.
+		 *
+		 * @return A message describing the differences.
 		 */
 		public String getDifferenceMessage() {
 			return differenceMessage;
 		}
 
 		/**
-		 * @param differenceMessage Message describing the differences
+		 * Set the message describing the differences found during the comparison process.
+		 *
+		 * @param differenceMessage A message describing the differences.
 		 */
 		public void setDifferenceMessage(String differenceMessage) {
 			this.differenceMessage = differenceMessage;
@@ -827,6 +851,8 @@ public class CompareTemplateOutputHandler implements
 		}
 		
 		/**
+		 * Adds a new difference to the list of differences found during the comparison process
+		 *
 		 * @param location Location in the text of the difference
 		 * @param token Token causing the difference
 		 * @param msg Message for the difference
@@ -880,9 +906,15 @@ public class CompareTemplateOutputHandler implements
 	DifferenceDescription differences = new DifferenceDescription();
 	ParseInstruction currentOptionalInstruction = null;
 	boolean parsingComplete = false;
-	
+
 	/**
-	 * @param compareText Text to compare the parsed SPDX license template to
+	 * Construct a new {@link CompareTemplateOutputHandler} with the specified text to compare
+	 * <p>
+	 * This handler is used to compare the output of a parsed SPDX license template to the provided
+	 * text. It tokenizes the input text and prepares it for comparison against the parsed license
+	 * template.
+	 *
+	 * @param compareText The text to compare the parsed SPDX license template to.
 	 * @throws IOException This is not to be expected since we are using StringReaders
 	 */
 	public CompareTemplateOutputHandler(String compareText) throws IOException {
@@ -892,11 +924,14 @@ public class CompareTemplateOutputHandler implements
 	}
 	
 	/**
+	 * Compares the given text tokens against the match tokens starting from a specific token index
+	 *
 	 * @param textTokens source for compare
 	 * @param matchTokens tokens to match against
 	 * @param startToken index for the start token
 	 * @param instruction parse instruction
-	 * @return positive index of the next match token after the match or negative index of the token which first failed the match
+	 * @return positive index of the next match token after the match or negative index of the token
+	 *         which first failed the match
 	 */
 	private int compareText(String[] textTokens, String[] matchTokens, int startToken,
 							ParseInstruction instruction) {
@@ -1023,7 +1058,10 @@ public class CompareTemplateOutputHandler implements
 	}
 
 	/**
-	 * Performs the actual parsing if it has not been completed.  NOTE: This should only be called after all text has been added.
+	 * Performs the actual parsing if it has not been completed
+	 * <p>
+	 * NOTE: This should only be called after all text has been added.
+	 *
 	 * @return true if no differences were found
 	 * @throws LicenseParserException on license parsing error
 	 */
@@ -1035,6 +1073,8 @@ public class CompareTemplateOutputHandler implements
 	}
 	
 	/**
+	 * Retrieve the details of the differences found during the comparison process
+	 *
 	 * @return details on the differences found
 	 */
 	public DifferenceDescription getDifferences() {
@@ -1057,6 +1097,7 @@ public class CompareTemplateOutputHandler implements
 
 	/**
 	 * Compares the text against the compareText
+	 *
 	 * @param text text to compare
 	 * @param startToken token of the compareText to being the comparison
 	 * @return next token index (positive) if there is a match, negative first token where this is a miss-match if no match

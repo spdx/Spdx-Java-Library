@@ -51,12 +51,22 @@ public class VerificationCodeGenerator {
 
 	private final IFileChecksumGenerator fileChecksumGenerator;
 
+	/**
+	 * Construct a new {@link VerificationCodeGenerator} with the specified file checksum generator
+	 * <p>
+	 * The file checksum generator is used to calculate checksums for files during the generation of
+	 * the SPDX Package Verification Code.
+	 *
+	 * @param fileChecksumGenerator An implementation of {@link IFileChecksumGenerator} used to
+	 *        calculate file checksums. Must not be {@code null}.
+	 */
 	public VerificationCodeGenerator(IFileChecksumGenerator fileChecksumGenerator) {
 		this.fileChecksumGenerator = fileChecksumGenerator;
 	}
 
 	/**
 	 * Generate the SPDX Package Verification Code from an array of SPDXFiles
+	 *
 	 * @param spdxFiles Files to generate the VerificationCode from
 	 * @param skippedFilePaths File path names to not include in the VerificationCode
 	 * @param modelStore where the resultant VerificationCode is store
@@ -93,6 +103,7 @@ public class VerificationCodeGenerator {
 
 	/**
 	 * Generate the SPDX Package Verification Code from a directory of files included in the archive
+	 *
 	 * @param sourceDirectory source directory for the package verification code
 	 * @param modelStore where the resultant VerificationCode is store
 	 * @param documentUri document URI where the VerificationCode is stored
@@ -184,6 +195,7 @@ public class VerificationCodeGenerator {
 
 	/**
 	 * Normalizes a file path per the SPDX spec
+	 *
 	 * @param nonNormalizedFilePath original file path - may be unix or DOS format
 	 * @return file path normalized per SPDX spec
 	 */
@@ -218,6 +230,7 @@ public class VerificationCodeGenerator {
 	}
 	/**
 	 * Convert a byte array SHA-1 digest into a 40 character hex string
+	 *
 	 * @param digest message digest from checksum calculation
 	 * @return string representation of the checksum
 	 */
