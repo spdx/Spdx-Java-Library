@@ -58,13 +58,32 @@ public class StoredTypedItem extends TypedValue {
 	private int referenceCount = 0;
 	
 	private final ReadWriteLock countLock = new ReentrantReadWriteLock();
-	
+
+	/**
+	 * Construct a new {@link StoredTypedItem} with the specified object URI, type, and
+	 * specification version
+	 * <p>
+	 * This constructor initializes a stored typed item, which represents an individual item to be
+	 * stored in memory with its associated properties and metadata.
+	 *
+	 * @param objectUri The unique URI identifying this stored item.
+	 * @param type The type of the stored item.
+	 * @param specVersion The version of the SPDX specification associated with this item.
+	 * @throws InvalidSPDXAnalysisException If the provided parameters are invalid or violate SPDX
+	 *         constraints.
+	 */
 	public StoredTypedItem(String objectUri, String type, String specVersion) throws InvalidSPDXAnalysisException {
 		super(objectUri, type, specVersion);
 	}
-	
+
 	/**
-	 * @return property descriptors for all properties having a value
+	 * Retrieve the property descriptors for all properties that have a value
+	 * <p>
+	 * This method iterates through the stored properties and collects the descriptors
+	 * for all properties that currently have an associated value.
+	 * 
+	 * @return An unmodifiable {@link List} of {@link PropertyDescriptor} objects representing
+	 *         the properties that have values.
 	 */
 	public List<PropertyDescriptor> getPropertyValueDescriptors() {
 		Iterator<Entry<PropertyDescriptor, Object>> iter = this.properties.entrySet().iterator();
@@ -75,9 +94,10 @@ public class StoredTypedItem extends TypedValue {
 		}
 		return Collections.unmodifiableList(retval);
 	}
-	
+
 	/**
 	 * Increment the reference count for this stored type item - the number of times this item is referenced
+	 *
 	 * @return new number of times this item is referenced
 	 */
 	@SuppressWarnings("UnusedReturnValue")
@@ -93,6 +113,7 @@ public class StoredTypedItem extends TypedValue {
 	
 	/**
 	 * Decrement the reference count for this stored type item
+	 *
 	 * @return new number of times this item is referenced
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
@@ -108,9 +129,11 @@ public class StoredTypedItem extends TypedValue {
                countLock.writeLock().unlock();
            }
 	}
-	
-	 /**
-     * @return new number of times this item is referenced
+
+	/**
+	 * Retrieve the current reference count for this stored item
+	 *
+     * @return The current number of times this item is referenced.
      */
     public int getReferenceCount() {
            countLock.readLock().lock();
@@ -120,13 +143,16 @@ public class StoredTypedItem extends TypedValue {
                countLock.readLock().unlock();
            }
     }
-	
+
 	/**
+	 * Set the value for the specified property descriptor
+	 *
 	 * @param propertyDescriptor Descriptor for the property
 	 * @param value Value to be set
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
-	public void setValue(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+	public void setValue(PropertyDescriptor propertyDescriptor, Object value)
+			throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof CoreModelObject) {
@@ -145,14 +171,17 @@ public class StoredTypedItem extends TypedValue {
 		}
 		properties.put(propertyDescriptor, value);
 	}
-	
+
 	/**
-	 * Sets the value list for the property to an empty list creating the propertyDescriptor if it does not exist
+	 * Set the value list for the property to an empty list creating the propertyDescriptor if it
+	 * does not exist
+	 *
 	 * @param propertyDescriptor descriptor for the property
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
-	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+	public void clearPropertyValueList(PropertyDescriptor propertyDescriptor)
+			throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Object value = properties.get(propertyDescriptor);
 		if (value == null) {
 			return;
@@ -166,12 +195,15 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * Adds a value to a property list for a String or Boolean type of value creating the propertyDescriptor if it does not exist
+	 * Add a value to a property list for a String or Boolean type of value creating the
+	 * propertyDescriptor if it does not exist
+	 *
 	 * @param propertyDescriptor Descriptor for the property
 	 * @param value Value to be set
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
-	public boolean addValueToList(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
+	public boolean addValueToList(PropertyDescriptor propertyDescriptor, Object value)
+			throws SpdxInvalidTypeException {
 		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		if (value instanceof CoreModelObject) {
@@ -217,15 +249,17 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Invalid list type for "+propertyDescriptor);
 		}
 	}
-	
 
 	/**
+	 * Remove a property from a property list if it exists
+	 *
 	 * @param propertyDescriptor descriptor for the property
 	 * @param value to be removed
-	 * @return true if the value was removed, false if the value did not exist
+	 * @return {@code true} if the value was removed, {@code false} if the value did not exist.
 	 * @throws SpdxInvalidTypeException for an invalid type
 	 */
-	public boolean removeTypedValueFromList(PropertyDescriptor propertyDescriptor, TypedValue value) throws SpdxInvalidTypeException {
+	public boolean removeTypedValueFromList(PropertyDescriptor propertyDescriptor, TypedValue value)
+			throws SpdxInvalidTypeException {
 		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
 			return false;
@@ -247,13 +281,16 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * Removes a property from a list if it exists
+	 * Remove a property from a property list if it exists
+	 *
 	 * @param propertyDescriptor descriptor for the property
 	 * @param value value to remove
+	 * @return {@code true} if the value was removed, {@code false} if the value did not exist.
 	 * @throws SpdxInvalidTypeException on invalid type
 	 */
-	public boolean removeValueFromList(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+	public boolean removeValueFromList(PropertyDescriptor propertyDescriptor, Object value)
+			throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
@@ -280,14 +317,20 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Invalid list type for "+propertyDescriptor);
 		}
 	}
-	
+
 	/**
+	 * Retrieve an iterator over the list of values associated with the specified property
+	 * descriptor
+	 *
 	 * @param propertyDescriptor Descriptor for the property
-	 * @return List of values associated with the objectUri, propertyDescriptor and document
-	 * @throws SpdxInvalidTypeException on invalid type
+	 * @return An {@link Iterator} over the list of values associated with the property descriptor.
+	 *         If no values exist, an empty iterator is returned.
+	 * @throws SpdxInvalidTypeException If the property is not associated with a list or if the type
+	 *         is invalid.
 	 */
-	public Iterator<Object> getValueList(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+	public Iterator<Object> getValueList(PropertyDescriptor propertyDescriptor)
+			throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Object list = properties.get(propertyDescriptor);
 		if (list == null) {
 			return Collections.emptyIterator();
@@ -306,29 +349,38 @@ public class StoredTypedItem extends TypedValue {
 			throw new SpdxInvalidTypeException("Trying to get a list for non list type for property "+propertyDescriptor);
 		}
 	}
-	
+
 	/**
-	 * @param propertyDescriptor Descriptor for the property
-	 * @return the single value associated with the objectUri, propertyDescriptor and document
+	 * Retrieve the value associated with the specified property descriptor
+	 *
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @return The single value associated with the specified property descriptor, or {@code null}
+	 *         if no value exists.
 	 */
 	public Object getValue(PropertyDescriptor propertyDescriptor) {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		return properties.get(propertyDescriptor);
 	}
 	
 	/**
-	 * Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyDescriptor does not exist
-	 * @param propertyDescriptor Descriptor for the property
+	 * Remove a property from the document for the given ID if the property exists.
+	 * <p>
+	 * Does not raise any exception if the propertyDescriptor does not exist
+	 *
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
 	 */
 	public void removeProperty(PropertyDescriptor propertyDescriptor) {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		properties.remove(propertyDescriptor);
 	}
 
 	/**
-	 * Copy all values for this item from another store
-	 * @param store model store to copy from
-	 * @throws InvalidSPDXAnalysisException on invalid type
+	 * Copy all values for this item from another model store
+	 *
+	 * @param store The {@link IModelStore} from which to copy values. Must not be {@code null}.
+	 * @throws InvalidSPDXAnalysisException If an invalid type is encountered during the copy
+	 *         process. This can occur if the values in the source store are not compatible with
+	 *         this item's properties.
 	 */
 	public void copyValuesFrom(IModelStore store) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(store, "Store can not be null");
@@ -348,7 +400,7 @@ public class StoredTypedItem extends TypedValue {
 	 */
 	@SuppressWarnings("rawtypes")
 	public int collectionSize(PropertyDescriptor propertyDescriptor) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
 			properties.putIfAbsent(propertyDescriptor,  new ConcurrentHashMap<String, List<Object>>());
@@ -374,13 +426,20 @@ public class StoredTypedItem extends TypedValue {
 	}
 
 	/**
-	 * @param propertyDescriptor descriptor for the property
-	 * @param value value to be checked
-	 * @return true if value is in the list associated with the property descriptor
-	 * @throws SpdxInvalidTypeException on invalid type
+	 * Check whether the specified value exists in the list associated with the given property descriptor.
+	 * 
+	 * This method verifies if the provided value is present in the collection of values associated
+	 * with the specified property descriptor. If the property descriptor is not associated with a list,
+	 * an exception is thrown.
+	 * 
+	 * @param propertyDescriptor The descriptor for the property. Must not be {@code null}.
+	 * @param value The value to be checked.
+	 * @return {@code true} if the value exists in the list associated with the property descriptor; {@code false} otherwise.
+	 * @throws SpdxInvalidTypeException If the property is not associated with a list or if the type is invalid.
 	 */
-	public boolean collectionContains(PropertyDescriptor propertyDescriptor, Object value) throws SpdxInvalidTypeException {
-		Objects.requireNonNull(propertyDescriptor, "property descriptor can not be null");
+	public boolean collectionContains(PropertyDescriptor propertyDescriptor, Object value)
+			throws SpdxInvalidTypeException {
+		Objects.requireNonNull(propertyDescriptor, "Property descriptor can not be null");
 		Objects.requireNonNull(value, "Value can not be null");
 		Object map = properties.get(propertyDescriptor);
 		if (map == null) {
