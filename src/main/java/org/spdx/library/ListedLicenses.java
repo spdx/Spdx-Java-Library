@@ -117,7 +117,7 @@ public class ListedLicenses {
 	 * This method ensures that only one instance of the {@code ListedLicenses}
 	 * class is created and shared
 	 * throughout the application. If the instance does not already exist, it
-	 * initializes it.
+	 * is initialized.
 	 * </p>
 	 *
 	 * @return The singleton instance of the {@code ListedLicenses} class.
