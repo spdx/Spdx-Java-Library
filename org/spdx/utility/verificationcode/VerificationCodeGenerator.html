@@ -165,7 +165,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(org.spdx.utility.verificationcode.IFileChecksumGenerator)">VerificationCodeGenerator</a></span>&#8203;(<a href="IFileChecksumGenerator.html" title="interface in org.spdx.utility.verificationcode">IFileChecksumGenerator</a>&nbsp;fileChecksumGenerator)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Construct a new <a href="VerificationCodeGenerator.html" title="class in org.spdx.utility.verificationcode"><code>VerificationCodeGenerator</code></a> with the specified file checksum generator</div>
+</td>
 </tr>
 </table>
 </li>
@@ -262,6 +264,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>VerificationCodeGenerator</h4>
 <pre>public&nbsp;VerificationCodeGenerator&#8203;(<a href="IFileChecksumGenerator.html" title="interface in org.spdx.utility.verificationcode">IFileChecksumGenerator</a>&nbsp;fileChecksumGenerator)</pre>
+<div class="block">Construct a new <a href="VerificationCodeGenerator.html" title="class in org.spdx.utility.verificationcode"><code>VerificationCodeGenerator</code></a> with the specified file checksum generator
+ <p>
+ The file checksum generator is used to calculate checksums for files during the generation of
+ the SPDX Package Verification Code.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>fileChecksumGenerator</code> - An implementation of <a href="IFileChecksumGenerator.html" title="interface in org.spdx.utility.verificationcode"><code>IFileChecksumGenerator</code></a> used to
+        calculate file checksums. Must not be <code>null</code>.</dd>
+</dl>
 </li>
 </ul>
 </li>

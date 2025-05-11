@@ -191,7 +191,9 @@ implements org.spdx.licenseTemplate.ILicenseTemplateOutputHandler</pre>
 </tr>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String)">CompareTemplateOutputHandler</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Construct a new <a href="CompareTemplateOutputHandler.html" title="class in org.spdx.utility.compare"><code>CompareTemplateOutputHandler</code></a> with the specified text to compare</div>
+</td>
 </tr>
 </table>
 </li>
@@ -229,13 +231,15 @@ implements org.spdx.licenseTemplate.ILicenseTemplateOutputHandler</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getDifferences()">getDifferences</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the details of the differences found during the comparison process</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#matches()">matches</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Performs the actual parsing if it has not been completed.</div>
+<div class="block">Performs the actual parsing if it has not been completed</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -288,9 +292,14 @@ implements org.spdx.licenseTemplate.ILicenseTemplateOutputHandler</pre>
 <h4>CompareTemplateOutputHandler</h4>
 <pre>public&nbsp;CompareTemplateOutputHandler&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;compareText)
                              throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
+<div class="block">Construct a new <a href="CompareTemplateOutputHandler.html" title="class in org.spdx.utility.compare"><code>CompareTemplateOutputHandler</code></a> with the specified text to compare
+ <p>
+ This handler is used to compare the output of a parsed SPDX license template to the provided
+ text. It tokenizes the input text and prepares it for comparison against the parsed license
+ template.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>compareText</code> - Text to compare the parsed SPDX license template to</dd>
+<dd><code>compareText</code> - The text to compare the parsed SPDX license template to.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - This is not to be expected since we are using StringReaders</dd>
 </dl>
@@ -366,7 +375,9 @@ implements org.spdx.licenseTemplate.ILicenseTemplateOutputHandler</pre>
 <h4>matches</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;matches()
                 throws org.spdx.licenseTemplate.LicenseParserException</pre>
-<div class="block">Performs the actual parsing if it has not been completed.  NOTE: This should only be called after all text has been added.</div>
+<div class="block">Performs the actual parsing if it has not been completed
+ <p>
+ NOTE: This should only be called after all text has been added.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if no differences were found</dd>
@@ -382,6 +393,7 @@ implements org.spdx.licenseTemplate.ILicenseTemplateOutputHandler</pre>
 <li class="blockList">
 <h4>getDifferences</h4>
 <pre class="methodSignature">public&nbsp;<a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a>&nbsp;getDifferences()</pre>
+<div class="block">Retrieve the details of the differences found during the comparison process</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>details on the differences found</dd>

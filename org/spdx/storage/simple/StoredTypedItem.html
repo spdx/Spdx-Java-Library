@@ -167,7 +167,10 @@ extends org.spdx.core.TypedValue</pre>
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String)">StoredTypedItem</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;objectUri,
                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;type,
                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;specVersion)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Construct a new <a href="StoredTypedItem.html" title="class in org.spdx.storage.simple"><code>StoredTypedItem</code></a> with the specified object URI, type, and
+ specification version</div>
+</td>
 </tr>
 </table>
 </li>
@@ -192,32 +195,39 @@ extends org.spdx.core.TypedValue</pre>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addValueToList(org.spdx.storage.PropertyDescriptor,java.lang.Object)">addValueToList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
 <td class="colLast">
-<div class="block">Adds a value to a property list for a String or Boolean type of value creating the propertyDescriptor if it does not exist</div>
+<div class="block">Add a value to a property list for a String or Boolean type of value creating the
+ propertyDescriptor if it does not exist</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#clearPropertyValueList(org.spdx.storage.PropertyDescriptor)">clearPropertyValueList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
 <td class="colLast">
-<div class="block">Sets the value list for the property to an empty list creating the propertyDescriptor if it does not exist</div>
+<div class="block">Set the value list for the property to an empty list creating the propertyDescriptor if it
+ does not exist</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#collectionContains(org.spdx.storage.PropertyDescriptor,java.lang.Object)">collectionContains</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the specified value exists in the collection associated with the given property
+ descriptor</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#collectionSize(org.spdx.storage.PropertyDescriptor)">collectionSize</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the size of the collection associated with the specified property descriptor</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#copyValuesFrom(org.spdx.storage.IModelStore)">copyValuesFrom</a></span>&#8203;(org.spdx.storage.IModelStore&nbsp;store)</code></th>
 <td class="colLast">
-<div class="block">Copy all values for this item from another store</div>
+<div class="block">Copy all values for this item from another model store</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -230,79 +240,103 @@ extends org.spdx.core.TypedValue</pre>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.storage.PropertyDescriptor&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPropertyValueDescriptors()">getPropertyValueDescriptors</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the property descriptors for all properties that have a value</div>
+</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getReferenceCount()">getReferenceCount</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the current reference count for this stored item</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValue(org.spdx.storage.PropertyDescriptor)">getValue</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the value associated with the specified property descriptor</div>
+</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util" class="externalLink">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueList(org.spdx.storage.PropertyDescriptor)">getValueList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve an iterator over the list of values associated with the specified property
+ descriptor</div>
+</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#incReferenceCount()">incReferenceCount</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Increment the reference count for this stored type item - the number of times this item is referenced</div>
+<div class="block">Increment the reference count for this stored type item - the number of times this item is
+ referenced</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isCollectionMembersAssignableTo(org.spdx.storage.PropertyDescriptor,java.lang.Class)">isCollectionMembersAssignableTo</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether all members of the collection associated with the specified property descriptor
+ can be assigned to the specified class</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isCollectionProperty(org.spdx.storage.PropertyDescriptor)">isCollectionProperty</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the specified property descriptor is associated with a collection</div>
+</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isPropertyValueAssignableTo(org.spdx.storage.PropertyDescriptor,java.lang.Class,java.lang.String)">isPropertyValueAssignableTo</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz,
                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;specVersion)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the value associated with the specified property descriptor can be assigned to
+ the specified class</div>
+</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeProperty(org.spdx.storage.PropertyDescriptor)">removeProperty</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</code></th>
 <td class="colLast">
-<div class="block">Removes a property from the document for the given ID if the property exists.</div>
+<div class="block">Remove a property from the document for the given ID if the property exists</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeTypedValueFromList(org.spdx.storage.PropertyDescriptor,org.spdx.core.TypedValue)">removeTypedValueFromList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                         org.spdx.core.TypedValue&nbsp;value)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Remove a property from a property list if it exists</div>
+</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeValueFromList(org.spdx.storage.PropertyDescriptor,java.lang.Object)">removeValueFromList</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
 <td class="colLast">
-<div class="block">Removes a property from a list if it exists</div>
+<div class="block">Remove a property from a property list if it exists</div>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setValue(org.spdx.storage.PropertyDescriptor,java.lang.Object)">setValue</a></span>&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Set the value for the specified property descriptor</div>
+</td>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#usesId(java.lang.String)">usesId</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;elementId)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether the specified element ID is used as a value in any collection or property</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -345,9 +379,19 @@ extends org.spdx.core.TypedValue</pre>
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;type,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;specVersion)
                 throws org.spdx.core.InvalidSPDXAnalysisException</pre>
+<div class="block">Construct a new <a href="StoredTypedItem.html" title="class in org.spdx.storage.simple"><code>StoredTypedItem</code></a> with the specified object URI, type, and
+ specification version
+ <p>
+ This constructor initializes a stored typed item, which represents an individual item to be
+ stored in memory with its associated properties and metadata.</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>objectUri</code> - The unique URI identifying this stored item.</dd>
+<dd><code>type</code> - The type of the stored item.</dd>
+<dd><code>specVersion</code> - The version of the SPDX specification associated with this item.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code></dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If the provided parameters are invalid or violate SPDX
+         constraints.</dd>
 </dl>
 </li>
 </ul>
@@ -368,9 +412,14 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>getPropertyValueDescriptors</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.storage.PropertyDescriptor&gt;&nbsp;getPropertyValueDescriptors()</pre>
+<div class="block">Retrieve the property descriptors for all properties that have a value
+ <p>
+ This method iterates through the stored properties and collects the descriptors
+ for all properties that currently have an associated value.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>property descriptors for all properties having a value</dd>
+<dd>An unmodifiable <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink"><code>List</code></a> of <code>PropertyDescriptor</code> objects representing
+         the properties that have values.</dd>
 </dl>
 </li>
 </ul>
@@ -381,10 +430,11 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>incReferenceCount</h4>
 <pre class="methodSignature">public&nbsp;int&nbsp;incReferenceCount()</pre>
-<div class="block">Increment the reference count for this stored type item - the number of times this item is referenced</div>
+<div class="block">Increment the reference count for this stored type item - the number of times this item is
+ referenced</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>new number of times this item is referenced</dd>
+<dd>The new number of times this item is referenced.</dd>
 </dl>
 </li>
 </ul>
@@ -399,7 +449,7 @@ extends org.spdx.core.TypedValue</pre>
 <div class="block">Decrement the reference count for this stored type item</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>new number of times this item is referenced</dd>
+<dd>The new number of times this item is referenced.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
@@ -412,9 +462,10 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>getReferenceCount</h4>
 <pre class="methodSignature">public&nbsp;int&nbsp;getReferenceCount()</pre>
+<div class="block">Retrieve the current reference count for this stored item</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>new number of times this item is referenced</dd>
+<dd>The current number of times this item is referenced.</dd>
 </dl>
 </li>
 </ul>
@@ -427,10 +478,11 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;void&nbsp;setValue&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)
               throws org.spdx.core.SpdxInvalidTypeException</pre>
+<div class="block">Set the value for the specified property descriptor</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
-<dd><code>value</code> - Value to be set</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>value</code> - The value to be set. Must not be <code>null</code>.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
@@ -444,10 +496,11 @@ extends org.spdx.core.TypedValue</pre>
 <h4>clearPropertyValueList</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;clearPropertyValueList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)
                             throws org.spdx.core.SpdxInvalidTypeException</pre>
-<div class="block">Sets the value list for the property to an empty list creating the propertyDescriptor if it does not exist</div>
+<div class="block">Set the value list for the property to an empty list creating the propertyDescriptor if it
+ does not exist</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
@@ -462,11 +515,12 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;addValueToList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)
                        throws org.spdx.core.SpdxInvalidTypeException</pre>
-<div class="block">Adds a value to a property list for a String or Boolean type of value creating the propertyDescriptor if it does not exist</div>
+<div class="block">Add a value to a property list for a String or Boolean type of value creating the
+ propertyDescriptor if it does not exist</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
-<dd><code>value</code> - Value to be set</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>value</code> - Th value to be set. Must not be <code>null</code>.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
@@ -481,12 +535,13 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;removeTypedValueFromList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                         org.spdx.core.TypedValue&nbsp;value)
                                  throws org.spdx.core.SpdxInvalidTypeException</pre>
+<div class="block">Remove a property from a property list if it exists</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>value</code> - to be removed</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property.</dd>
+<dd><code>value</code> - The value to be removed.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the value was removed, false if the value did not exist</dd>
+<dd><code>true</code> if the value was removed, <code>false</code> if the value did not exist.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - for an invalid type</dd>
 </dl>
@@ -501,11 +556,13 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;removeValueFromList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)
                             throws org.spdx.core.SpdxInvalidTypeException</pre>
-<div class="block">Removes a property from a list if it exists</div>
+<div class="block">Remove a property from a property list if it exists</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>value</code> - value to remove</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>value</code> - The value to be removed. Must not be <code>null</code>.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>true</code> if the value was removed, <code>false</code> if the value did not exist.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
 </dl>
@@ -519,13 +576,17 @@ extends org.spdx.core.TypedValue</pre>
 <h4>getValueList</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util" class="externalLink">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;getValueList&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)
                               throws org.spdx.core.SpdxInvalidTypeException</pre>
+<div class="block">Retrieve an iterator over the list of values associated with the specified property
+ descriptor</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>List of values associated with the objectUri, propertyDescriptor and document</dd>
+<dd>An <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util" class="externalLink"><code>Iterator</code></a> over the list of values associated with the property descriptor.
+         If no values exist, an empty iterator is returned.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - If the property is not associated with a list or if the type
+         is invalid.</dd>
 </dl>
 </li>
 </ul>
@@ -536,11 +597,13 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>getValue</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;getValue&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</pre>
+<div class="block">Retrieve the value associated with the specified property descriptor</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the single value associated with the objectUri, propertyDescriptor and document</dd>
+<dd>The single value associated with the specified property descriptor, or <code>null</code>
+         if no value exists.</dd>
 </dl>
 </li>
 </ul>
@@ -551,10 +614,12 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>removeProperty</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;removeProperty&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</pre>
-<div class="block">Removes a property from the document for the given ID if the property exists.  Does not raise any exception if the propertyDescriptor does not exist</div>
+<div class="block">Remove a property from the document for the given ID if the property exists
+ <p>
+ Does not raise any exception if the propertyDescriptor does not exist.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - Descriptor for the property</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
 </dl>
 </li>
 </ul>
@@ -566,12 +631,14 @@ extends org.spdx.core.TypedValue</pre>
 <h4>copyValuesFrom</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;copyValuesFrom&#8203;(org.spdx.storage.IModelStore&nbsp;store)
                     throws org.spdx.core.InvalidSPDXAnalysisException</pre>
-<div class="block">Copy all values for this item from another store</div>
+<div class="block">Copy all values for this item from another model store</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>store</code> - model store to copy from</dd>
+<dd><code>store</code> - The <code>IModelStore</code> from which to copy values. Must not be <code>null</code>.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - on invalid type</dd>
+<dd><code>org.spdx.core.InvalidSPDXAnalysisException</code> - If an invalid type is encountered during the copy
+         process. This can occur if the values in the source store are not compatible with
+         this item's properties.</dd>
 </dl>
 </li>
 </ul>
@@ -583,13 +650,18 @@ extends org.spdx.core.TypedValue</pre>
 <h4>collectionSize</h4>
 <pre class="methodSignature">public&nbsp;int&nbsp;collectionSize&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)
                    throws org.spdx.core.SpdxInvalidTypeException</pre>
+<div class="block">Retrieve the size of the collection associated with the specified property descriptor
+ <p>
+ This method calculates the total number of elements in the collection associated with the
+ given property descriptor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Size of the collection</dd>
+<dd>The size of the collection.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - If the type is invalid or if the property is not associated
+         with a collection.</dd>
 </dl>
 </li>
 </ul>
@@ -602,14 +674,20 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;collectionContains&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)
                            throws org.spdx.core.SpdxInvalidTypeException</pre>
+<div class="block">Check whether the specified value exists in the collection associated with the given property
+ descriptor
+ <p>
+ This method verifies if the provided value is present in the collection of values associated
+ with the specified property descriptor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>value</code> - value to be checked</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>value</code> - The value to be checked. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if value is in the list associated with the property descriptor</dd>
+<dd><code>true</code> if the value exists in the collection; <code>false</code> otherwise.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - on invalid type</dd>
+<dd><code>org.spdx.core.SpdxInvalidTypeException</code> - If the type is invalid or if the property is not associated
+         with a collection.</dd>
 </dl>
 </li>
 </ul>
@@ -622,14 +700,17 @@ extends org.spdx.core.TypedValue</pre>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isCollectionMembersAssignableTo&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz)
                                         throws org.spdx.core.ModelRegistryException</pre>
+<div class="block">Check whether all members of the collection associated with the specified property descriptor
+ can be assigned to the specified class</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>clazz</code> - class to test against</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>clazz</code> - The class to test against. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the property with the propertyDescriptor can be assigned to clazz</dd>
+<dd><code>true</code> if the property with the <code>propertyDescriptor</code> can be assigned to
+         <code>clazz</code>; <code>false</code> otherwise.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.ModelRegistryException</code> - On registry exception - check that it is initialized</dd>
+<dd><code>org.spdx.core.ModelRegistryException</code> - If the model registry is not properly initialized.</dd>
 </dl>
 </li>
 </ul>
@@ -643,15 +724,18 @@ extends org.spdx.core.TypedValue</pre>
                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;?&gt;&nbsp;clazz,
                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;specVersion)
                                     throws org.spdx.core.ModelRegistryException</pre>
+<div class="block">Check whether the value associated with the specified property descriptor can be assigned to
+ the specified class</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - descriptor for the property</dd>
-<dd><code>clazz</code> - class to test against</dd>
-<dd><code>specVersion</code> - Version of the spec to test for</dd>
+<dd><code>propertyDescriptor</code> - The descriptor for the property. Must not be <code>null</code>.</dd>
+<dd><code>clazz</code> - The class to test against. Must not be <code>null</code>.</dd>
+<dd><code>specVersion</code> - The SPDX specification version to use for type resolution.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the property can be assigned to type clazz for the latest SPDX spec version</dd>
+<dd><code>true</code> if the property value can be assigned to type <code>clazz</code> for the
+         latest SPDX spec version; <code>false</code> otherwise.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.spdx.core.ModelRegistryException</code> - if the registry is not property initialized</dd>
+<dd><code>org.spdx.core.ModelRegistryException</code> - If the model registry is not properly initialized.</dd>
 </dl>
 </li>
 </ul>
@@ -662,11 +746,13 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>isCollectionProperty</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isCollectionProperty&#8203;(org.spdx.storage.PropertyDescriptor&nbsp;propertyDescriptor)</pre>
+<div class="block">Check whether the specified property descriptor is associated with a collection</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>propertyDescriptor</code> - property descriptor</dd>
+<dd><code>propertyDescriptor</code> - The property descriptor to check. Must not be <code>null</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if there is a list associated with the property descriptor</dd>
+<dd><code>true</code> if the property descriptor is associated with a collection;
+         <code>false</code> otherwise.</dd>
 </dl>
 </li>
 </ul>
@@ -677,11 +763,13 @@ extends org.spdx.core.TypedValue</pre>
 <li class="blockList">
 <h4>usesId</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;usesId&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;elementId)</pre>
+<div class="block">Check whether the specified element ID is used as a value in any collection or property</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>elementId</code> - objectUri for the element to check</dd>
+<dd><code>elementId</code> - The object URI of the element to check.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if an element using the objectUri is used as a value in a collection</dd>
+<dd><code>true</code> if the element using the object URI is used as a value in a collection;
+         <code>false</code> otherwise.</dd>
 </dl>
 </li>
 </ul>

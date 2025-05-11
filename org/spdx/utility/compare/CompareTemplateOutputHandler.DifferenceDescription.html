@@ -198,12 +198,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text,
              org.spdx.licenseTemplate.LicenseTemplateRule&nbsp;rule,
              <a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a>&nbsp;lastOptionalDifference)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Adds a new difference to the list of differences found during the comparison process</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getDifferenceMessage()">getDifferenceMessage</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Retrieve the message describing the differences found during the comparison process</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.licenseTemplate.LineColumn&gt;</code></td>
@@ -213,17 +217,23 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isDifferenceFound()">isDifferenceFound</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Check whether a difference was found during the comparison process</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDifferenceFound(boolean)">setDifferenceFound</a></span>&#8203;(boolean&nbsp;differenceFound)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Set whether a difference was found during the comparison process</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDifferenceMessage(java.lang.String)">setDifferenceMessage</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;differenceMessage)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Set the message describing the differences found during the comparison process.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -299,9 +309,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>isDifferenceFound</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;isDifferenceFound()</pre>
+<div class="block">Check whether a difference was found during the comparison process</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if a difference is found</dd>
+<dd><code>true</code> if a difference was found; <code>false</code> otherwise.</dd>
 </dl>
 </li>
 </ul>
@@ -312,9 +323,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>setDifferenceFound</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;setDifferenceFound&#8203;(boolean&nbsp;differenceFound)</pre>
+<div class="block">Set whether a difference was found during the comparison process</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>differenceFound</code> - if true, a difference was found</dd>
+<dd><code>differenceFound</code> - <code>true</code> if a difference was found; <code>false</code> otherwise.</dd>
 </dl>
 </li>
 </ul>
@@ -325,9 +337,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getDifferenceMessage</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;getDifferenceMessage()</pre>
+<div class="block">Retrieve the message describing the differences found during the comparison process
+ <p>
+ The difference message provides details about the nature of the differences, including
+ the location, token, and context of the mismatch.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Message describing the differences</dd>
+<dd>A message describing the differences.</dd>
 </dl>
 </li>
 </ul>
@@ -338,9 +354,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>setDifferenceMessage</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;setDifferenceMessage&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;differenceMessage)</pre>
+<div class="block">Set the message describing the differences found during the comparison process.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>differenceMessage</code> - Message describing the differences</dd>
+<dd><code>differenceMessage</code> - A message describing the differences.</dd>
 </dl>
 </li>
 </ul>
@@ -382,6 +399,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                           <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;text,
                           org.spdx.licenseTemplate.LicenseTemplateRule&nbsp;rule,
                           <a href="CompareTemplateOutputHandler.DifferenceDescription.html" title="class in org.spdx.utility.compare">CompareTemplateOutputHandler.DifferenceDescription</a>&nbsp;lastOptionalDifference)</pre>
+<div class="block">Adds a new difference to the list of differences found during the comparison process</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>location</code> - Location in the text of the difference</dd>
