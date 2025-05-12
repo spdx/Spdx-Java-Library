@@ -201,7 +201,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertFalse(comparer.isDifferenceFound());
@@ -249,7 +249,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSEB2, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -269,7 +269,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, new AnyLicenseInfo[] {LICENSEB1}, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -291,7 +291,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, s2, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -312,7 +312,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueSeenLicenses(DOCB, DOCA).size());
@@ -328,7 +328,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB =createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, s2, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -349,7 +349,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueSeenLicenses(DOCA, DOCB).size());
@@ -362,7 +362,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTB, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -382,7 +382,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTB, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -402,7 +402,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTB);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -423,7 +423,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTB,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -443,7 +443,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTB, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(itemA, comparer.getItem(DOCA));
@@ -459,7 +459,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, r2,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -481,7 +481,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, r2,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -501,7 +501,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueRelationship(DOCA, DOCB).size());
@@ -517,7 +517,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, r2,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);;
 		assertTrue(comparer.isDifferenceFound());
@@ -537,7 +537,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueRelationship(DOCB, DOCA).size());
@@ -553,7 +553,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, a2, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -575,7 +575,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, a2, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -595,7 +595,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueAnnotations(DOCA, DOCB).size());
@@ -611,7 +611,7 @@ public class SpdxItemComparerTest extends TestCase {
 		SpdxItem itemB = createGenericItem(DOCB, NAMEA, COMMENTA, a2, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		SpdxItemComparer comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertTrue(comparer.isDifferenceFound());
@@ -631,7 +631,7 @@ public class SpdxItemComparerTest extends TestCase {
 		itemB = createGenericItem(DOCB, NAMEA, COMMENTA, ANNOTATIONSA, RELATIONSHIPSA,
 				LICENSE_CONCLUDEDB, LICENSE_INFO_FROM_FILESB, COPYRIGHTA, LICENSE_COMMENTA,
 				ATTRIBUTION_TEXTA);
-		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP);
+		comparer = new SpdxItemComparer(LICENSE_XLATION_MAP, new HashMap<>());
 		comparer.addDocumentItem(DOCA, itemA);
 		comparer.addDocumentItem(DOCB, itemB);
 		assertEquals(0, comparer.getUniqueAnnotations(DOCB, DOCA).size());
