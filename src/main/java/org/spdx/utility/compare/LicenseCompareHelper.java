@@ -181,12 +181,25 @@ public class LicenseCompareHelper {
         }
         // ignore
     }
-	
-	/*
-	 * @param text text to test
-	 * @return the first token in the license text
+
+	/**
+	 * Return the first license token found in the given text
+	 * <p>
+	 * The method normalizes the input text, removes comment characters,
+	 * and splits it into tokens
+	 * using {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * It returns the first non-empty token found,
+	 * or {@code null} if no such token exists.
+	 * </p>
+	 *
+	 * @param text The license text to extract the first token from.
+	 * @return The first non-empty token as a {@link String},
+	 *         or {@code null} if none is found.
 	 */
 	public static String getFirstLicenseToken(String text) {
+		if (text == null) {
+			return null;
+		}
 		String textToTokenize = LicenseTextHelper.normalizeText(LicenseTextHelper.replaceMultWord(LicenseTextHelper.replaceSpaceComma(
 				LicenseTextHelper.removeLineSeparators(removeCommentChars(text))))).toLowerCase();
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
@@ -197,12 +210,23 @@ public class LicenseCompareHelper {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @param text text to test
-	 * @return true if the text contains a single token
+	 * Check whether the given text contains only a single token
+	 * <p>
+	 * A single token string is defined as a non-null string that does not
+	 * contain any newline characters and contains exactly one non-empty token
+	 * as identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * </p>
+	 *
+	 * @param text The text to test.
+	 * @return {@code true} if the text contains a single token,
+	 *         {@code false} otherwise.
 	 */
 	public static boolean isSingleTokenString(String text) {
+		if (text == null) {
+			return false;
+		}
 		if (text.contains("\n")) {
 			return false;
 		}
