@@ -94,7 +94,7 @@ public class LicenseCompareHelper {
 	 * @return string without comment characters
 	 */
 	public static String removeCommentChars(String s) {
-		if (s == null) {
+		if (s == null || s.isEmpty()) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
