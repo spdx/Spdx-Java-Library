@@ -98,31 +98,27 @@ public class LicenseCompareHelper {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new StringReader(s));
+		try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
 			String line = reader.readLine();
+			boolean firstLine = true;
 			while (line != null) {
 				line = END_COMMENT_PATTERN.matcher(line).replaceAll("");
 				line = START_COMMENT_PATTERN.matcher(line).replaceAll("");
 				line = BEGIN_OPTIONAL_COMMENT_PATTERN.matcher(line).replaceAll("<<beginOptional>>");
+
+				if (!firstLine) {
+					sb.append("\n");
+				} else {
+					firstLine = false;
+				}
 				sb.append(line);
-				sb.append("\n");
 				line = reader.readLine();
 			}
-			return sb.toString();
 		} catch (IOException e) {
 			logger.warn("IO error reading strings?!?", e);
 			return s;
-		} finally {
-			if (Objects.nonNull(reader)) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					logger.warn("IO error closing a string reader?!?", e);
-				}
-			}
 		}
+		return sb.toString();
 	}
 
 	/**
