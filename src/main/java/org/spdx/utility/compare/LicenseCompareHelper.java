@@ -414,10 +414,10 @@ public class LicenseCompareHelper {
 	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseExceptionWithinText(String text, ListedLicenseException exception) {
-		boolean result = false;
 		if (text == null || text.isEmpty() || exception == null) {
 			return false;
 		}
+		boolean result = false;
 		try {
 			return new TemplateRegexMatcher(exception.getStandardAdditionTemplate().orElse(exception.getAdditionText())).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
@@ -756,7 +756,6 @@ public class LicenseCompareHelper {
 	 * @return True if the license is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseWithinText(String text, org.spdx.library.model.v2.license.SpdxListedLicense license) {
-		
 		try {
 			return new TemplateRegexMatcher(license.getStandardLicenseTemplate()).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
@@ -776,10 +775,10 @@ public class LicenseCompareHelper {
 	 * @return True if the license exception is found within the text, false otherwise (or if either argument is null)
 	 */
 	public static boolean isStandardLicenseExceptionWithinText(String text, org.spdx.library.model.v2.license.ListedLicenseException exception) {
-		boolean result = false;
 		if (text == null || text.isEmpty() || exception == null) {
 			return false;
 		}
+		boolean result = false;
 		try {
 			return new TemplateRegexMatcher(exception.getLicenseExceptionTemplate()).isTemplateMatchWithinText(text);
 		} catch (SpdxCompareException e) {
