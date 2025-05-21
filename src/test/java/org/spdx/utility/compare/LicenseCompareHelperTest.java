@@ -539,18 +539,19 @@ public class LicenseCompareHelperTest extends TestCase {
 		Map<String, String> xlationMap = new HashMap<>();;
 		assertTrue(LicenseCompareHelper.isLicenseEqual(lic3, lic4, xlationMap));
 		assertFalse(LicenseCompareHelper.isLicenseEqual(lic4, lic2, xlationMap));
-	}	
-	
-	
+	}
+
 	public void testisSingleTokenString() {
+		assertTrue(LicenseCompareHelper.isSingleTokenString(""));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" token "));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("'"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" '"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("' "));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a and"));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a\nand"));
+		assertFalse(LicenseCompareHelper.isSingleTokenString(null));
 	}
-	
+
 	public void regressionTestMatchingGpl20Only() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
 		DifferenceDescription result = LicenseCompareHelper.isTextStandardLicense(LicenseInfoFactory.getListedLicenseById("GPL-2.0-only"), compareText);
@@ -568,11 +569,16 @@ public class LicenseCompareHelperTest extends TestCase {
 			assertTrue(result[3].startsWith("GPL-2"));
 		}
 	}
-	
+
 	public void testFirstLicenseToken() {
 		assertEquals("first", LicenseCompareHelper.getFirstLicenseToken("   first,token that is needed\nnext"));
+		assertEquals("first", LicenseCompareHelper.getFirstLicenseToken("// first,second"));
+		assertNull(LicenseCompareHelper.getFirstLicenseToken(null));
+		assertNull(LicenseCompareHelper.getFirstLicenseToken(""));
+		assertNull(LicenseCompareHelper.getFirstLicenseToken("  <!-- -->"));
+		assertNull(LicenseCompareHelper.getFirstLicenseToken("# "));
 	}
-	
+
 	@SuppressWarnings("unused")
 	private String stringCharToUnicode(String s, int location) {
 		return "\\u" + Integer.toHexString(s.charAt(location) | 0x10000).substring(1);
