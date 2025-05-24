@@ -205,7 +205,7 @@ public class LicenseCompareHelper {
 	 * @return The first non-empty token as a {@link String},
 	 *         or {@code null} if none is found.
 	 */
-	public static String getFirstLicenseToken(String text) {
+	public static @Nullable String getFirstLicenseToken(@Nullable String text) {
 		if (text == null) {
 			return null;
 		}
