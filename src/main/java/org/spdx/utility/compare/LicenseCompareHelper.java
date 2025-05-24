@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Collection;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,7 +207,7 @@ public class LicenseCompareHelper {
 	 *         or {@code null} if none is found.
 	 */
 	public static @Nullable String getFirstLicenseToken(@Nullable String text) {
-		if (text == null) {
+		if (text == null || text.isEmpty()) {
 			return null;
 		}
 		String textToTokenize = LicenseTextHelper.normalizeText(LicenseTextHelper.replaceMultWord(LicenseTextHelper.replaceSpaceComma(
@@ -233,7 +234,7 @@ public class LicenseCompareHelper {
 	 *         {@code false} otherwise.
 	 */
 	public static boolean isSingleTokenString(@Nullable String text) {
-		if (text == null) {
+		if (text == null || text.isEmpty()) {
 			return false;
 		}
 		if (text.contains("\n")) {
@@ -250,7 +251,7 @@ public class LicenseCompareHelper {
 				}
 			}
 		}
-		return true;
+		return found;
 	}
 
 	/**
