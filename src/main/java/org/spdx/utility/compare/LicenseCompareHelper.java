@@ -63,10 +63,18 @@ public class LicenseCompareHelper {
 	
 	protected static final Pattern REGEX_QUANTIFIER_PATTERN = Pattern.compile(".*\\.\\{(\\d+),(\\d+)}$");
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
-	
+
+	static final Pattern END_COMMENT_PATTERN = Pattern.compile("(\\*/|-->|-}|\\*\\)|\\s\\*)\\s*$");
+	static final Pattern START_COMMENT_PATTERN = Pattern.compile("^\\s*" + START_COMMENT_CHAR_PATTERN);
+	static final Pattern BEGIN_OPTIONAL_COMMENT_PATTERN = Pattern
+			.compile("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN);
+
 	/**
-	 * @param objectUri URI of the license
-	 * @return license ID
+	 * Convert a license object URI to its corresponding License ID
+	 *
+	 * @param objectUri The URI of the license.
+	 * @return The SPDX License ID extracted from the URI, or the original
+	 *         {@code objectUri} if no known prefix is found.
 	 */
 	public static String licenseUriToLicenseId(String objectUri) {
 		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX)) {
@@ -77,41 +85,42 @@ public class LicenseCompareHelper {
 			return objectUri; // no match - should we throw an exception?
 		}
 	}
-	
+
 	/**
-	 * Remove common comment characters from either a template or license text strings
+	 * Remove common comment characters from either a template or license text
+	 * strings
+	 *
 	 * @param s string source
 	 * @return string without comment characters
 	 */
 	public static String removeCommentChars(String s) {
-	       StringBuilder sb = new StringBuilder();
-	        BufferedReader reader = null;
-	        try {
-	            reader = new BufferedReader(new StringReader(s));
-	            String line = reader.readLine();
-	            while (line != null) {
-	            	line = line.replaceAll("(\\*/|-->|-}|\\*\\)|\\s\\*)\\s*$", "");  // remove end of line comments
-	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
-                    line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
-                    sb.append(line);
-	                sb.append("\n");
-	                line = reader.readLine();
-	            }
-	            return sb.toString();
-	        } catch (IOException e) {
-	            logger.warn("IO error reading strings?!?", e);
-	            return s;
-	        } finally {
-                if (Objects.nonNull(reader)) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        logger.warn("IO error closing a string reader?!?", e);
-                    }
-                }
-	        }
+		if (s == null || s.isEmpty()) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
+			String line = reader.readLine();
+			boolean firstLine = true;
+			while (line != null) {
+				line = END_COMMENT_PATTERN.matcher(line).replaceAll("");
+				line = START_COMMENT_PATTERN.matcher(line).replaceAll("");
+				line = BEGIN_OPTIONAL_COMMENT_PATTERN.matcher(line).replaceAll("<<beginOptional>>");
+
+				if (!firstLine) {
+					sb.append("\n");
+				} else {
+					firstLine = false;
+				}
+				sb.append(line);
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			logger.warn("IO error reading strings?!?", e);
+			return s;
+		}
+		return sb.toString();
 	}
-	
+
 	/**
 	 * Locate the original text starting with the start token and ending with the end token
 	 * @param fullLicenseText entire license text
