@@ -223,7 +223,7 @@ public class LicenseCompareHelper {
 	 * @return {@code true} if the text contains a single token,
 	 *         {@code false} otherwise.
 	 */
-	public static boolean isSingleTokenString(String text) {
+	public static boolean isSingleTokenString(@Nullable String text) {
 		if (text == null) {
 			return false;
 		}
