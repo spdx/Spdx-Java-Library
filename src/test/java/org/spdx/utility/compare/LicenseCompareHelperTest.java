@@ -552,9 +552,11 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertTrue(LicenseCompareHelper.isSingleTokenString("''"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("token"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" token"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(" token "));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("token\n"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("\ntoken"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" \n token "));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(":;token?"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("'''token"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("token'''"));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a and"));
