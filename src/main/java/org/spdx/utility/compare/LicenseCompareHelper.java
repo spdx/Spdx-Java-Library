@@ -123,12 +123,15 @@ public class LicenseCompareHelper {
 	}
 
 	/**
-	 * Locate the original text starting with the start token and ending with the end token
+	 * Locate the original text starting with the start token and ending with the
+	 * end token
+	 *
 	 * @param fullLicenseText entire license text
-	 * @param startToken starting token
-	 * @param endToken ending token
+	 * @param startToken      starting token
+	 * @param endToken        ending token
 	 * @param tokenToLocation token location
-	 * @return original text starting with the start token and ending with the end token
+	 * @return original text starting with the start token and ending with the end
+	 *         token
 	 */
 	public static String locateOriginalText(String fullLicenseText, int startToken, int endToken,  
 			Map<Integer, LineColumn> tokenToLocation, String[] tokens) {
@@ -224,39 +227,35 @@ public class LicenseCompareHelper {
 	/**
 	 * Check whether the given text contains only a single token
 	 * <p>
-	 * A single token string is defined as a non-null string that does not
-	 * contain any newline characters and contains exactly one non-empty token
-	 * as identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * A single token string is a string that contains zero or one token as
+	 * identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
 	 * </p>
 	 *
 	 * @param text The text to test.
-	 * @return {@code true} if the text contains a single token,
+	 * @return {@code true} if the text contains zero one token,
 	 *         {@code false} otherwise.
 	 */
 	public static boolean isSingleTokenString(@Nullable String text) {
 		if (text == null || text.isEmpty()) {
-			return false;
-		}
-		if (text.contains("\n")) {
-			return false;
+			return true; // zero tokens is considered a single token string
 		}
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(text);
-		boolean found = false;
+		int nonWhitespaceTokenCount = 0;
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
-				if (found) {
-					return false;
-				} else {
-					found = true;
+				nonWhitespaceTokenCount++;
+				if (nonWhitespaceTokenCount > 1) {
+					return false; // more than one token
 				}
 			}
 		}
-		return found;
+		return true; // either no tokens or one token
 	}
 
 	/**
 	 * Compares two licenses from potentially two different documents which may have
 	 * different license ID's for the same license
+	 *
 	 * @param license1 first license to compare
 	 * @param license2 second license to compare
 	 * @param xlationMap Mapping the license ID's from license 1 to license 2
@@ -367,11 +366,15 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @param template Template in the standard template format used for comparison
+	 * Compare the provided text against a license template using SPDX matching
+	 * guidelines
+	 *
+	 * @param template    Template in the standard template format used for
+	 *                    comparison
 	 * @param compareText Text to compare using the template
-	 * @return any differences found
+	 * @return Any differences found
 	 * @throws SpdxCompareException on comparison errors
-     */
+	 */
 	public static DifferenceDescription isTextMatchingTemplate(String template, String compareText) throws SpdxCompareException {
 		CompareTemplateOutputHandler compareTemplateOutputHandler;
 		try {
