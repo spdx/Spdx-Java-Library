@@ -227,8 +227,9 @@ public class LicenseCompareHelper {
 	/**
 	 * Check whether the given text contains only a single token
 	 * <p>
-	 * A single token string is a string that contains zero or one token as
-	 * identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * A single token string is a string that contains zero or one
+	 * non-whitspace token as identified by the
+	 * {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
 	 * </p>
 	 *
 	 * @param text The text to test.
@@ -240,16 +241,17 @@ public class LicenseCompareHelper {
 			return true; // zero tokens is considered a single token string
 		}
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(text);
-		int nonWhitespaceTokenCount = 0;
+		boolean found = false;
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
-				nonWhitespaceTokenCount++;
-				if (nonWhitespaceTokenCount > 1) {
-					return false; // more than one token
+				if (found) {
+					return false; // more than one token found
+				} else {
+					found = true; // first token found
 				}
 			}
 		}
-		return true; // either no tokens or one token
+		return true; // either no tokens or only one token found
 	}
 
 	/**
