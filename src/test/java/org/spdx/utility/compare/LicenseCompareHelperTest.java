@@ -542,19 +542,26 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	public void testisSingleTokenString() {
-		assertTrue(LicenseCompareHelper.isSingleTokenString("token"));
-		assertTrue(LicenseCompareHelper.isSingleTokenString(" token "));
-		assertTrue(LicenseCompareHelper.isSingleTokenString(" \n token "));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(null));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(""));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(" "));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("\n"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("'"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" '"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("' "));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("''"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("token"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(" token"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("token\n"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("\ntoken"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString(" \n token "));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("'''token"));
+		assertTrue(LicenseCompareHelper.isSingleTokenString("token'''"));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a and"));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a\nand"));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("a and  "));
 		assertFalse(LicenseCompareHelper.isSingleTokenString("  a and"));
-		assertFalse(LicenseCompareHelper.isSingleTokenString("\n"));
-		assertFalse(LicenseCompareHelper.isSingleTokenString(""));
-		assertFalse(LicenseCompareHelper.isSingleTokenString(null));
+		assertFalse(LicenseCompareHelper.isSingleTokenString("  a.and"));
 	}
 
 	public void regressionTestMatchingGpl20Only() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
