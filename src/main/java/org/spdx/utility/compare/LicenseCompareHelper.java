@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Collection;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +64,18 @@ public class LicenseCompareHelper {
 	
 	protected static final Pattern REGEX_QUANTIFIER_PATTERN = Pattern.compile(".*\\.\\{(\\d+),(\\d+)}$");
 	static final String START_COMMENT_CHAR_PATTERN = "(//|/\\*|\\*|#|' |REM |<!--|--|;|\\(\\*|\\{-)|\\.\\\\\"";
-	
+
+	static final Pattern END_COMMENT_PATTERN = Pattern.compile("(\\*/|-->|-}|\\*\\)|\\s\\*)\\s*$");
+	static final Pattern START_COMMENT_PATTERN = Pattern.compile("^\\s*" + START_COMMENT_CHAR_PATTERN);
+	static final Pattern BEGIN_OPTIONAL_COMMENT_PATTERN = Pattern
+			.compile("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN);
+
 	/**
-	 * @param objectUri URI of the license
-	 * @return license ID
+	 * Convert a license object URI to its corresponding License ID
+	 *
+	 * @param objectUri The URI of the license.
+	 * @return The SPDX License ID extracted from the URI, or the original
+	 *         {@code objectUri} if no known prefix is found.
 	 */
 	public static String licenseUriToLicenseId(String objectUri) {
 		if (objectUri.startsWith(SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX)) {
@@ -77,48 +86,52 @@ public class LicenseCompareHelper {
 			return objectUri; // no match - should we throw an exception?
 		}
 	}
-	
+
 	/**
-	 * Remove common comment characters from either a template or license text strings
+	 * Remove common comment characters from either a template or license text
+	 * strings
+	 *
 	 * @param s string source
 	 * @return string without comment characters
 	 */
 	public static String removeCommentChars(String s) {
-	       StringBuilder sb = new StringBuilder();
-	        BufferedReader reader = null;
-	        try {
-	            reader = new BufferedReader(new StringReader(s));
-	            String line = reader.readLine();
-	            while (line != null) {
-	            	line = line.replaceAll("(\\*/|-->|-}|\\*\\)|\\s\\*)\\s*$", "");  // remove end of line comments
-	                line = line.replaceAll("^\\s*" + START_COMMENT_CHAR_PATTERN, "");  // remove start of line comments
-                    line = line.replaceAll("^\\s*<<beginOptional>>\\s*" + START_COMMENT_CHAR_PATTERN, "<<beginOptional>>");
-                    sb.append(line);
-	                sb.append("\n");
-	                line = reader.readLine();
-	            }
-	            return sb.toString();
-	        } catch (IOException e) {
-	            logger.warn("IO error reading strings?!?", e);
-	            return s;
-	        } finally {
-                if (Objects.nonNull(reader)) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        logger.warn("IO error closing a string reader?!?", e);
-                    }
-                }
-	        }
+		if (s == null || s.isEmpty()) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
+			String line = reader.readLine();
+			boolean firstLine = true;
+			while (line != null) {
+				line = END_COMMENT_PATTERN.matcher(line).replaceAll("");
+				line = START_COMMENT_PATTERN.matcher(line).replaceAll("");
+				line = BEGIN_OPTIONAL_COMMENT_PATTERN.matcher(line).replaceAll("<<beginOptional>>");
+
+				if (!firstLine) {
+					sb.append("\n");
+				} else {
+					firstLine = false;
+				}
+				sb.append(line);
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			logger.warn("IO error reading strings?!?", e);
+			return s;
+		}
+		return sb.toString();
 	}
-	
+
 	/**
-	 * Locate the original text starting with the start token and ending with the end token
+	 * Locate the original text starting with the start token and ending with the
+	 * end token
+	 *
 	 * @param fullLicenseText entire license text
-	 * @param startToken starting token
-	 * @param endToken ending token
+	 * @param startToken      starting token
+	 * @param endToken        ending token
 	 * @param tokenToLocation token location
-	 * @return original text starting with the start token and ending with the end token
+	 * @return original text starting with the start token and ending with the end
+	 *         token
 	 */
 	public static String locateOriginalText(String fullLicenseText, int startToken, int endToken,  
 			Map<Integer, LineColumn> tokenToLocation, String[] tokens) {
@@ -181,12 +194,25 @@ public class LicenseCompareHelper {
         }
         // ignore
     }
-	
-	/*
-	 * @param text text to test
-	 * @return the first token in the license text
+
+	/**
+	 * Return the first license token found in the given text
+	 * <p>
+	 * The method normalizes the input text, removes comment characters,
+	 * and splits it into tokens
+	 * using {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * It returns the first non-empty token found,
+	 * or {@code null} if no such token exists.
+	 * </p>
+	 *
+	 * @param text The license text to extract the first token from.
+	 * @return The first non-empty token as a {@link String},
+	 *         or {@code null} if none is found.
 	 */
-	public static String getFirstLicenseToken(String text) {
+	public static @Nullable String getFirstLicenseToken(@Nullable String text) {
+		if (text == null || text.isEmpty()) {
+			return null;
+		}
 		String textToTokenize = LicenseTextHelper.normalizeText(LicenseTextHelper.replaceMultWord(LicenseTextHelper.replaceSpaceComma(
 				LicenseTextHelper.removeLineSeparators(removeCommentChars(text))))).toLowerCase();
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(textToTokenize);
@@ -197,32 +223,42 @@ public class LicenseCompareHelper {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @param text text to test
-	 * @return true if the text contains a single token
+	 * Check whether the given text contains only a single token
+	 * <p>
+	 * A single token string is a string that contains zero or one token,
+	 * as identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
+	 * Whitespace and punctuation such as dots, commas, question marks,
+	 * and quotation marks are ignored.
+	 * </p>
+	 *
+	 * @param text The text to test.
+	 * @return {@code true} if the text contains zero or one token,
+	 *         {@code false} otherwise.
 	 */
-	public static boolean isSingleTokenString(String text) {
-		if (text.contains("\n")) {
-			return false;
+	public static boolean isSingleTokenString(@Nullable String text) {
+		if (text == null || text.isEmpty()) {
+			return true; // Zero tokens is considered a single token string
 		}
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(text);
 		boolean found = false;
 		while (m.find()) {
 			if (!m.group(1).trim().isEmpty()) {
 				if (found) {
-					return false;
+					return false; // More than one eligible token found
 				} else {
-					found = true;
+					found = true; // First eligible token found
 				}
 			}
 		}
-		return true;
+		return true; // Zero or one eligible token found
 	}
 
 	/**
 	 * Compares two licenses from potentially two different documents which may have
 	 * different license ID's for the same license
+	 *
 	 * @param license1 first license to compare
 	 * @param license2 second license to compare
 	 * @param xlationMap Mapping the license ID's from license 1 to license 2
@@ -333,11 +369,15 @@ public class LicenseCompareHelper {
 	}
 	
 	/**
-	 * @param template Template in the standard template format used for comparison
+	 * Compare the provided text against a license template using SPDX matching
+	 * guidelines
+	 *
+	 * @param template    Template in the standard template format used for
+	 *                    comparison
 	 * @param compareText Text to compare using the template
-	 * @return any differences found
+	 * @return Any differences found
 	 * @throws SpdxCompareException on comparison errors
-     */
+	 */
 	public static DifferenceDescription isTextMatchingTemplate(String template, String compareText) throws SpdxCompareException {
 		CompareTemplateOutputHandler compareTemplateOutputHandler;
 		try {
