@@ -227,14 +227,14 @@ public class LicenseCompareHelper {
 	/**
 	 * Check whether the given text contains only a single token
 	 * <p>
-	 * A single token string is a string that contains zero or one token,
+	 * A single token string is a string that contains exactly one token,
 	 * as identified by the {@link LicenseTextHelper#TOKEN_SPLIT_PATTERN}.
 	 * Whitespace and punctuation such as dots, commas, question marks,
 	 * and quotation marks are ignored.
 	 * </p>
 	 *
 	 * @param text The text to test.
-	 * @return {@code true} if the text contains zero or one token,
+	 * @return {@code true} if the text contains exactly one token,
 	 *         {@code false} otherwise.
 	 */
 	public static boolean isSingleTokenString(@Nullable String text) {
