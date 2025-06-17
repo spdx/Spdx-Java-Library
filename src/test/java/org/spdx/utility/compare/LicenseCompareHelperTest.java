@@ -542,10 +542,10 @@ public class LicenseCompareHelperTest extends TestCase {
 	}
 
 	public void testisSingleTokenString() {
-		assertTrue(LicenseCompareHelper.isSingleTokenString(null));
-		assertTrue(LicenseCompareHelper.isSingleTokenString(""));
-		assertTrue(LicenseCompareHelper.isSingleTokenString(" "));
-		assertTrue(LicenseCompareHelper.isSingleTokenString("\n"));
+		assertFalse(LicenseCompareHelper.isSingleTokenString(null));
+		assertFalse(LicenseCompareHelper.isSingleTokenString(""));
+		assertFalse(LicenseCompareHelper.isSingleTokenString(" "));
+		assertFalse(LicenseCompareHelper.isSingleTokenString("\n"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("'"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString(" '"));
 		assertTrue(LicenseCompareHelper.isSingleTokenString("' "));

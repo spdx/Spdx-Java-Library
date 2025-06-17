@@ -238,8 +238,8 @@ public class LicenseCompareHelper {
 	 *         {@code false} otherwise.
 	 */
 	public static boolean isSingleTokenString(@Nullable String text) {
-		if (text == null || text.isEmpty()) {
-			return true; // Zero tokens is considered a single token string
+		if (text == null || text.trim().isEmpty()) {
+			return false;
 		}
 		Matcher m = LicenseTextHelper.TOKEN_SPLIT_PATTERN.matcher(text);
 		boolean found = false;
