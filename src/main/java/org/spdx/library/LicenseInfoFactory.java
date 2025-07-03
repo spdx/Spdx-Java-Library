@@ -30,15 +30,16 @@ import org.spdx.core.DefaultStoreNotInitializedException;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
-import org.spdx.library.model.v2.license.LicenseParserException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_1.simplelicensing.InvalidLicenseExpression;
 import org.spdx.storage.IModelStore;
 import org.spdx.utility.license.LicenseExpressionParser;
+import org.spdx.utility.license.LicenseParserException;
 
 /**
  * Factory for creating SPDXLicenseInfo objects from a Jena model
@@ -90,8 +91,7 @@ public class LicenseInfoFactory {
 	 * @param documentUri Document URI for the document containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
 	 * none exist for an ID, they will be added.  If null, the default model document URI will be used.
 	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
-	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException if the license string is not valid
+	 * @return an SPDXLicenseInfo created from the string.  If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
@@ -109,9 +109,20 @@ public class LicenseInfoFactory {
 			return LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri, 
 					copyManager);
 		} catch (LicenseParserException e) {
-			throw new InvalidLicenseStringException(e.getMessage(),e);
-		} catch (InvalidSPDXAnalysisException e) {
-			throw new InvalidLicenseStringException("Unexpected SPDX error parsing license string", e);
+            try {
+                return new org.spdx.library.model.v2.license.InvalidLicenseExpression(store, documentUri,
+                        store.getNextId(IModelStore.IdType.Anonymous), copyManager, e.getMessage(), licenseString);
+            } catch (InvalidSPDXAnalysisException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (InvalidSPDXAnalysisException e) {
+			try {
+				return new org.spdx.library.model.v2.license.InvalidLicenseExpression(store, documentUri,
+						store.getNextId(IModelStore.IdType.Anonymous), copyManager,
+						String.format("Unexpected SPDX error parsing license string: %s", e.getMessage()), licenseString);
+			} catch (InvalidSPDXAnalysisException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 	
@@ -134,8 +145,7 @@ public class LicenseInfoFactory {
 	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
 	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
-	 * @return an SPDXLicenseInfo created from the string
-	 * @throws InvalidLicenseStringException if the license string is not valid
+	 * @return an SPDXLicenseInfo created from the string.   If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
@@ -151,13 +161,28 @@ public class LicenseInfoFactory {
 			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
 		try {
-			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix, 
+			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix,
 					copyManager, customIdToUri);
 		} catch (LicenseParserException e) {
-			throw new InvalidLicenseStringException(e.getMessage(),e);
+			try {
+				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
+						copyManager, true, customLicensePrefix);
+				retval.setMessage(e.getMessage());
+				return retval;
+			} catch (InvalidSPDXAnalysisException e1) {
+				throw new RuntimeException(e1);
+			}
 		} catch (InvalidSPDXAnalysisException e) {
-			throw new InvalidLicenseStringException("Unexpected SPDX error parsing license string", e);
+			try {
+				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
+						copyManager, true, customLicensePrefix);
+				retval.setMessage(String.format("Unexpected SPDX error parsing license string: %s", e.getMessage()));
+				return retval;
+			} catch (InvalidSPDXAnalysisException e1) {
+				throw new RuntimeException(e1);
+			}
 		}
+
 	}
 
 	/**
