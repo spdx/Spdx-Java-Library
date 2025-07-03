@@ -159,4 +159,13 @@ public class LicenseInfoFactoryTestV2 extends TestCase {
 		result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(lowerCaseCecil);
 		assertEquals(COMPLEX_LICENSE, result);
 	}
+
+	public void testInvalidV2() throws InvalidSPDXAnalysisException {
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("MIT AND NOT Apache-2.0");
+		assertTrue(result instanceof org.spdx.library.model.v2.license.InvalidLicenseExpression);
+		List<String> verify = result.verify();
+		assertEquals(1, verify.size());
+		assertTrue(verify.get(0).contains("NOT"));
+		assertTrue(verify.get(0).contains("Unknown license"));
+	}
 }
