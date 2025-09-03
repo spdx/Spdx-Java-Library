@@ -80,9 +80,16 @@ public class SpdxItemComparer {
 	 */
 	protected Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> extractedLicenseIdMap;
 
-	
+	protected Map<Integer, Boolean> equivalentElements;
+
 	public SpdxItemComparer(Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> extractedLicenseIdMap) {
+		this(extractedLicenseIdMap, new HashMap<>());
+	}
+	
+	public SpdxItemComparer(Map<SpdxDocument, Map<SpdxDocument, Map<String, String>>> extractedLicenseIdMap,
+							Map<Integer, Boolean> equivalentElements) {
 		this.extractedLicenseIdMap = extractedLicenseIdMap;
+		this.equivalentElements = equivalentElements;
 	}
 	
 	/**
@@ -191,13 +198,14 @@ public class SpdxItemComparer {
         for (Entry<SpdxDocument, SpdxItem> entry : this.documentItem.entrySet()) {
             Map<SpdxDocument, List<Relationship>> uniqueCompareRelationship = this.uniqueRelationships.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
             Collection<Relationship> compareRelationships = entry.getValue().getRelationships();
-            List<Relationship> uniqueRelationships = SpdxComparer.findUniqueRelationships(relationships, compareRelationships);
+            List<Relationship> uniqueRelationships = SpdxComparer.findUniqueRelationships(relationships,
+					compareRelationships, equivalentElements);
             if (!uniqueRelationships.isEmpty()) {
                 this.relationshipsEquals = false;
                 this.itemDifferenceFound = true;
             }
             uniqueDocRelationship.put(entry.getKey(), uniqueRelationships);
-            uniqueRelationships = SpdxComparer.findUniqueRelationships(compareRelationships, relationships);
+            uniqueRelationships = SpdxComparer.findUniqueRelationships(compareRelationships, relationships, equivalentElements);
             if (!uniqueRelationships.isEmpty()) {
                 this.relationshipsEquals = false;
                 this.itemDifferenceFound = true;
