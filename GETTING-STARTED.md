@@ -19,7 +19,7 @@ If you are using Maven, you can add the following dependency in your POM file:
 ## Using the library for license analysis
 
 The static class `org.spdx.library.model.license.LicenseInfoFactory` supports the parsing of
-  SPDX license expressions, creation, and comparison of SPDX licenses.
+SPDX license expressions, creation, and comparison of SPDX licenses.
 
 The `LicenseInfoFactory` will initialize the library and work with both the SPDX spec version 3
 and the SPDX spec version 2 license models.  SPDX spec version to methods end in `CompatV2`.
@@ -41,7 +41,7 @@ InMemSpdxStore modelStore = new InMemSpdxStore();
 IModelCopyManager copyManager = new ModelCopyManager();
 ```
 
-Many factory and helper methods in the library make use of a DefaultModelStore 
+Many factory and helper methods in the library make use of a DefaultModelStore
 if no model store or copy manager is specified.
 
 The `SpdxModelFactory.init()` will create defaults for this purpose.
@@ -55,7 +55,7 @@ DefaultModelStore.initialize(IModelStore newModelStore, String newDefaultDocumen
 
 The `newDefaultDocumentUri` is a default document URI used for SPDX Spec version 2 model objects.
 
-IMPORTANT NOTE: The call to `DefaultModelStore.initialize` must be made prior to or immediately after the call 
+IMPORTANT NOTE: The call to `DefaultModelStore.initialize` must be made prior to or immediately after the call
 to `SpdxModelFactory.init()`.  Otherwise, any data stored in the previous default model object will be lost.
 The `SpdxModelFactory.init()` will not overwrite an already initialized default model store.
 
@@ -121,10 +121,10 @@ The model store, creation info, copy manager, and prefix information will all be
 
 ### Programmatically Creating SPDX Data
 
-SPDX Spec version 2 stores all date within an SPDX document.  SPDX documents have a single document URI which is a 
-prefix for all IDs within the document.
+SPDX Spec version 2 stores all data within an SPDX document.
+SPDX documents have a single document URI which is a prefix for all IDs within the document.
 
-The SPDX document MUST be unique.
+The SPDX document URI MUST be unique.
 
 Below is an example:
 

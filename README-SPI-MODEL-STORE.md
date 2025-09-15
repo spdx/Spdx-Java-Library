@@ -20,7 +20,7 @@ These methods should be used to avoid common errors when converting between supp
 
 ## Using the Serialization interfaces
 
-Note: You can extend the default org.spdx.storage.simple.InMemSpdxStore with a couple of serialization / de-serialization methods to implement a storage interface to a serializeable format (such as a JSON or YAML file).
+Note: You can extend the default org.spdx.storage.simple.InMemSpdxStore with a couple of serialization / de-serialization methods to implement a storage interface to a serializable format (such as a JSON or YAML file).
 
 ## Handling Collections of Values
 
