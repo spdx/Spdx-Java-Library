@@ -60,7 +60,7 @@ SPDX 3.0.1 model objects can be found in packages underneath `org.spdx.library.m
 
 ## Changes to ExternalElement and ExternalExtractedLicenseInfo (SPDX Version 2.X classes)
 
-- Constructors changed to take the document URI for the document containing the external element or license.  This is different from the previous constructor which took the document URI of the document containing the reference and an ID of the form `DocumentRef-XX:[ID]`  To accomodate compatibility, the constructors
+- Constructors changed to take the document URI for the document containing the external element or license.  This is different from the previous constructor which took the document URI of the document containing the reference and an ID of the form `DocumentRef-XX:[ID]`  To accommodate compatibility, the constructors
 will check for the old DocumentRef format and attempt a conversion.
 - Added a method `referenceElementId(SpdxDocument documentReferencingExternal)` which will convert return the `DocumentRef-XX:[ID]`.  This should be used in place of the getId which previously returned this format.
 
