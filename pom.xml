@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-    <groupId>org.spdx</groupId>
-    <artifactId>java-spdx-library</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+	<groupId>org.spdx</groupId>
+	<artifactId>java-spdx-library</artifactId>
+	<version>2.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>java-spdx-library</name>
 	<url>https://github.com/spdx/Spdx-Java-Library</url>
 	<description>Java library which implements the Java object model for SPDX and provides useful helper functions.</description>
@@ -33,13 +33,6 @@
 		<developerConnection>scm:git:git@github.com:spdx/Spdx-Java-Library.git</developerConnection>
 		<tag>master</tag>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<id>ossrh</id>
-			<name>spdx-spdx-tools</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.outputTimestamp>1745001494</project.build.outputTimestamp>
@@ -72,20 +65,20 @@
 			<id>release</id>
 			<build>
 				<plugins>
-		          <plugin>
-		              <groupId>org.apache.maven.plugins</groupId>
-		              <artifactId>maven-source-plugin</artifactId>
-		              <version>3.3.1</version>
-		              <executions>
-		                <execution>
-		                  <id>attach-sources</id>
-		                  <phase>verify</phase>
-		                  <goals>
-		                    <goal>jar-no-fork</goal>
-		                  </goals>
-		                </execution>
-		              </executions>
-		            </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.3.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
@@ -163,7 +156,7 @@
     </dependency>
   </dependencies>
   <build>
-  		<resources>
+		<resources>
 			<resource>
 				<targetPath>resources</targetPath>
 				<filtering>false</filtering>
@@ -210,6 +203,15 @@
 			</testResource>
 		</testResources>
 		<plugins>
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.7.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -293,21 +295,21 @@
 					<originator>Organization: Linux Foundation</originator>
 				</configuration>
 			</plugin>
-	        <plugin>
-	          <groupId>org.apache.maven.plugins</groupId>
-	          <artifactId>maven-release-plugin</artifactId>
-	          <version>3.1.1</version>
-	          <configuration>
-	            <tagNameFormat>v@{project.version}</tagNameFormat>
-	            <releaseProfiles>release</releaseProfiles>
-	            <goals>deploy</goals>
-	          </configuration>
-	        </plugin>
-	        <plugin>
-	          <groupId>org.owasp</groupId>
-	          <artifactId>dependency-check-maven</artifactId>
-	          <version>${dependency-check-maven.version}</version>
-	        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<releaseProfiles>release</releaseProfiles>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${dependency-check-maven.version}</version>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
