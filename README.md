@@ -1,6 +1,6 @@
 # Spdx-Java-Library
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.spdx/java-spdx-library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.spdx/java-spdx-library)
+[![Maven Central Version](https://img.shields.io/maven-central/v/org.spdx/java-spdx-library)](https://central.sonatype.com/artifact/org.spdx/java-spdx-library)
 [![javadoc](https://javadoc.io/badge2/org.spdx/java-spdx-library/javadoc.svg)](https://javadoc.io/doc/org.spdx/java-spdx-library)
 ![Java CI with Maven](https://github.com/spdx/Spdx-Java-Library/workflows/Java%20CI%20with%20Maven/badge.svg)
 
@@ -197,7 +197,7 @@ To update Spdx-Java-Library, the following is a very brief checklist:
 1. Create a Java .jar file for the new version which contains an implementation of `ISpdxModelInfo` - typically named `SpdxModelInfoVXXX` - where "XXX" is the version of the spec.
 2. Update the SpdxModelFactory source file to load the model info by adding the line `ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoVXXX());` in the static block at the very beginning of the class.
 3. If there are any conversions that are needed when copying to or from the new model version, add conversion code to the `ModelCopyConverter` class.
-4. Update SpdxModelFactory unit test for the highest version check
+4. Update SpdxModelFactory unit test for the highest version check.
 
 ## Development Status
 
