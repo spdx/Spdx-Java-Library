@@ -1,0 +1,10 @@
+org.spdx
+org.spdx.example
+org.spdx.library
+org.spdx.library.conversion
+org.spdx.storage.listedlicense
+org.spdx.storage.simple
+org.spdx.utility
+org.spdx.utility.compare
+org.spdx.utility.license
+org.spdx.utility.verificationcode
