@@ -1,0 +1,65 @@
+' SPDX-FileCopyrightText: 2025 SPDX contributors
+' SPDX-FileType: DOCUMENTATION
+' SPDX-License-Identifier: Apache-2.0
+
+@startuml spdx_java_lib_family
+scale 1.5
+
+title Family of SPDX Java libraries
+
+' Left-to-right layout is more familiar for readers of left-to-right languages.
+left to right direction
+
+' Use "package" to group related components and improve readability.
+' This does not imply actual Java package structure.
+package "SPDX Java libraries" {
+    package "Core libraries" {
+        component "<b>java-spdx-library</b>\n(core library & helpers)" as lib #LightGreen
+        component "spdx-java-core\n(core utilities)" as core #LightYellow
+        interface "IModelStore\n(storage service provider interface)" as storeSPI #LightYellow
+    }
+
+    package "Models" {
+        component "spdx-java-model-2_X\n(SPDX 2 model)" as model2
+        component "spdx-java-model-3_0\n(SPDX 3 model)" as model3
+    }
+
+    package "Storage implementations" {
+        component "spdx-java-tagvalue-store\n(Tag-Value store)" as tagvalue
+        component "spdx-java-rdf-store\n(RDF store)" as rdf
+        component "spdx-java-spreadsheet-store\n(XLS spreadsheet store)" as sheet
+        component "spdx-java-jackson-store\n(JSON / YAML / XML store)" as jackson
+        component "spdx-java-v3jsonld-store\n(v3 JSON-LD store)" as v3jsonld
+    }
+
+    package "Tooling" {
+        component "spdx-model-to-java\n(code generator for SPDX 3 model)" as genmodel3
+        component "tools-java\n(command-line tools)" as tools
+        component "spdx-maven-plugin\n(Maven integration)" as maven
+    }
+
+    package "Specifications" {
+        component "SPDX 3 specification Turtle file" as spdx3turtle
+    }
+}
+
+' Core relationships
+lib --> core : depends on
+lib --> model2 : depends on
+lib --> model3 : depends on
+
+' Storage SPI and implementations
+core --> storeSPI : contains
+jackson ..|> storeSPI : implements
+rdf ..|> storeSPI : implements
+sheet ..|> storeSPI : implements
+tagvalue ..|> storeSPI : implements
+v3jsonld ..|> storeSPI : implements
+
+' Tooling
+maven --> lib : depends on
+tools --> lib : depends on
+genmodel3 --> model3 : generates
+genmodel3 --> spdx3turtle : depends on
+
+@enduml
