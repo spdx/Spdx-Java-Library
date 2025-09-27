@@ -12,7 +12,7 @@
 Spdx-Java-Library is a Java library which implements the Java object model for SPDX and provides useful helper functions.
 
 The library is available in Maven Central as
-[`org.spdx:java-spdx-library`](https://search.maven.org/artifact/org.spdx/java-spdx-library)
+[`org.spdx:java-spdx-library`](https://central.sonatype.com/artifact/org.spdx/java-spdx-library)
 (note the order of the word "java-spdx").
 
 If you are using Maven, you can add the following dependency in your POM file:
