@@ -50,6 +50,8 @@ See [README-V3-UPGRADE.md](README-V3-UPGRADE.md) for library upgrade instruction
 
 ## API Documentation
 
+[![SPDX Java library family diagram](spdx_java_lib_family.png)](./spdx_java_lib_family.png)
+
 Here are links to the API documentation for the family of SPDX Java libraries.
 
 "release" points to the API documentation of the latest stable version of the library, while "dev" points to the API documentation generated every time there is an update in the library's GitHub repository.
