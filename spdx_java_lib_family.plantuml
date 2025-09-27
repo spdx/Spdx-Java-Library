@@ -1,0 +1,81 @@
+' SPDX-FileCopyrightText: 2025 SPDX contributors
+' SPDX-FileType: DOCUMENTATION
+' SPDX-License-Identifier: Apache-2.0
+
+@startuml spdx_java_lib_family
+scale 1.5
+
+title Family of SPDX Java libraries
+
+' Left-to-right layout is more familiar for readers of left-to-right languages.
+left to right direction
+
+' Use "package" to group related components and improve readability.
+' This does not imply actual Java package structure.
+package "SPDX Java libraries" {
+    package "Core libraries" as core_pkg {
+        component "<b><size:20>java-spdx-library</size></b>\nCore library & helpers" as lib #LightSalmon
+        component "<b><size:20>spdx-java-core</size></b>\nCore utilities" as core #LightYellow
+        component "<b><size:20>org.spdx.storage.IModelStore</size></b>\nStorage service provider interface" as storeSPI #LightBlue
+        component "<b><size:20>org.spdx.storage.simple.InMemSpdxStore</size></b>\nSimple in-memory store" as inmem #LightBlue
+    }
+
+    package "Models" as model_pkg {
+        component "<b><size:20>spdx-java-model-2_X</size></b>\nSPDX 2 model" as model2 #LightGreen
+        component "<b><size:20>spdx-java-model-3_0</size></b>\nSPDX 3 model" as model3 #LightGreen
+    }
+
+    package "Storage implementations" as store_pkg {
+        component "<b><size:20>spdx-java-tagvalue-store</size></b>\nTag-Value store" as tagvalue #LightBlue
+        component "<b><size:20>spdx-java-rdf-store</size></b>\nRDF store" as rdf #LightBlue
+        component "<b><size:20>spdx-java-spreadsheet-store</size></b>\nXLS spreadsheet store" as sheet #LightBlue
+        component "<b><size:20>spdx-java-jackson-store</size></b>\nJSON / XML / YAML store" as jackson #LightBlue
+        component "<b><size:20>spdx-java-v3jsonld-store</size></b>\nSPDX 3 JSON-LD store" as v3jsonld #LightBlue
+    }
+
+    package "Tooling" as tooling_pkg {
+        component "<b><size:20>spdx-maven-plugin</size></b>\nMaven integration" as maven
+        component "<b><size:20>spdx-model-to-java</size></b>\nJava code generator for SPDX 3 model" as genmodel3
+    }
+
+    package "Specifications" as spec_pkg {
+        component "<i><size:20>spdx-model.ttl</size></i>\nSPDX 3 specification RDF 1.1 Turtle file" as spdx3turtle
+    }
+
+    package "User-facing applications" as app_pkg {
+        component "<b><size:20>tools-java</size></b>\nCommand-line tools" as tools
+        component "<i><size:20>spdx-online-tools</size></i>\nWeb-based tools" as online
+    }
+}
+
+' Core libraries and models
+lib --> core : depends on
+lib --> model2 : depends on
+lib --> model3 : depends on
+
+' Storage SPI and implementations
+core --> storeSPI : contains
+lib --> inmem : contains
+inmem ..|> storeSPI : implements
+jackson ..|> storeSPI : implements
+rdf ..|> storeSPI : implements
+sheet ..|> storeSPI : implements
+tagvalue ..|> storeSPI : implements
+v3jsonld ..|> storeSPI : implements
+
+' Tooling
+maven --> lib : depends on
+genmodel3 --> model3 : generates
+genmodel3 -left-> spdx3turtle : has data file
+
+' User-facing applications
+tools --> lib : depends on
+online --> tools : depends on
+
+' Layout hints
+spec_pkg -[hidden]-> tooling_pkg
+store_pkg -[hidden]-> core_pkg
+inmem -[hidden]-> store_pkg
+model_pkg -[hidden]-> core_pkg
+
+@enduml
