@@ -2,7 +2,10 @@
 ' SPDX-FileType: DOCUMENTATION
 ' SPDX-License-Identifier: Apache-2.0
 
-@startuml spdx_java_lib_family
+' Use PlantUML to generate PNG or SVG diagrams from this file.
+' See https://plantuml.com/ for installation and usage instructions.
+
+@startuml spdx-java-lib-family
 scale 1.5
 
 title Family of SPDX Java libraries

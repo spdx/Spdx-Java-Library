@@ -50,7 +50,7 @@ See [README-V3-UPGRADE.md](README-V3-UPGRADE.md) for library upgrade instruction
 
 ## API Documentation
 
-[![SPDX Java library family diagram](spdx_java_lib_family.png)](./spdx_java_lib_family.png)
+[![SPDX Java library family diagram](./spdx-java-lib-family.png)](./spdx-java-lib-family.png)
 
 Here are links to the API documentation for the family of SPDX Java libraries.
 
