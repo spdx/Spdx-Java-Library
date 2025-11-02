@@ -31,6 +31,7 @@ import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
+import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
@@ -143,14 +144,17 @@ public class LicenseInfoFactory {
 	 * none exist for an ID, they will be added.  If null, the default model store will be used.
 	 * @param customLicensePrefix Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
 	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
+	 * @param creationInfo Creation information to use for newly created elements.  If null, the default
 	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string.   If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
-	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store, 
-			@Nullable String customLicensePrefix, @Nullable IModelCopyManager copyManager, 
-			@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store,
+														@Nullable String customLicensePrefix,
+														@Nullable CreationInfo creationInfo,
+														@Nullable IModelCopyManager copyManager,
+														@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -160,9 +164,18 @@ public class LicenseInfoFactory {
 		if (Objects.isNull(copyManager)) {
 			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
+		if (Objects.isNull(creationInfo)) {
+            try {
+                creationInfo = SpdxModelClassFactoryV3.createCreationInfo(
+                        store, customLicensePrefix + "licenseinfo-creator", "LicenseInfoFactory",
+                        copyManager);
+            } catch (InvalidSPDXAnalysisException e) {
+                throw new RuntimeException(e);
+            }
+        }
 		try {
 			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix,
-					copyManager, customIdToUri);
+					creationInfo, copyManager, customIdToUri);
 		} catch (LicenseParserException e) {
 			try {
 				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
@@ -186,6 +199,34 @@ public class LicenseInfoFactory {
 	}
 
 	/**
+	 * Parses a license string and converts it into a SPDXLicenseInfo object using the default creation information
+	 * Syntax - A license set must start and end with a parenthesis "("
+	 * 			A conjunctive license set will have and AND after the first
+	 *				licenseInfo term
+	 * 			A disjunctive license set will have an OR after the first
+	 *				licenseInfo term
+	 *			If there is no And or Or, then it is converted to a simple
+	 *				license type
+	 *			A space or tab must be used between license ID's and the
+	 *				keywords AND and OR
+	 *			A licenseID must NOT be "AND" or "OR"
+	 * @param licenseString String conforming to the syntax
+	 * @param store Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+	 * none exist for an ID, they will be added.  If null, the default model store will be used.
+	 * @param customLicensePrefix Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
+	 * for an ID, they will be added.  If null, the default model document URI + "#" will be used.
+	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
+	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
+	 * @return an SPDXLicenseInfo created from the string.   If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
+	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
+	 */
+	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store,
+														@Nullable String customLicensePrefix,
+														@Nullable IModelCopyManager copyManager,
+														@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
+		return parseSPDXLicenseString(licenseString, store, customLicensePrefix, null, copyManager, customIdToUri);
+	}
+	/**
 	 * Parses a license string and converts it into a SPDXLicenseInfo object
 	 * Syntax - A license set must start and end with a parenthesis "("
 	 * 			A conjunctive license set will have and AND after the first
@@ -203,7 +244,7 @@ public class LicenseInfoFactory {
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
-		return parseSPDXLicenseString(licenseString, null, null, null, null);
+		return parseSPDXLicenseString(licenseString, null, null, null, null, null);
 	}
 	
 	/**
