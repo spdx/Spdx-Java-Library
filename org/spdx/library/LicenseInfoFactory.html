@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9};
+var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -288,6 +288,28 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                       org.spdx.core.IModelCopyManager&nbsp;copyManager,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)</code></th>
 <td class="colLast">
+<div class="block">Parses a license string and converts it into a SPDXLicenseInfo object using the default creation information
+ Syntax - A license set must start and end with a parenthesis "("
+                        A conjunctive license set will have and AND after the first
+                                licenseInfo term
+                        A disjunctive license set will have an OR after the first
+                                licenseInfo term
+                        If there is no And or Or, then it is converted to a simple
+                                license type
+                        A space or tab must be used between license ID's and the
+                                keywords AND and OR
+                        A licenseID must NOT be "AND" or "OR"</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>static org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#parseSPDXLicenseString(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo,org.spdx.core.IModelCopyManager,java.util.List)">parseSPDXLicenseString</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString,
+                      org.spdx.storage.IModelStore&nbsp;store,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;customLicensePrefix,
+                      org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;creationInfo,
+                      org.spdx.core.IModelCopyManager&nbsp;copyManager,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)</code></th>
+<td class="colLast">
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
@@ -301,7 +323,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                         A licenseID must NOT be "AND" or "OR"</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>static org.spdx.library.model.v2.license.AnyLicenseInfo</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#parseSPDXLicenseStringCompatV2(java.lang.String)">parseSPDXLicenseStringCompatV2</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString)</code></th>
 <td class="colLast">
@@ -318,7 +340,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                         A licenseID must NOT be "AND" or "OR"</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>static org.spdx.library.model.v2.license.AnyLicenseInfo</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#parseSPDXLicenseStringCompatV2(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.core.IModelCopyManager)">parseSPDXLicenseStringCompatV2</a></span>&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString,
                               org.spdx.storage.IModelStore&nbsp;store,
@@ -495,6 +517,54 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a id="parseSPDXLicenseString(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo,org.spdx.core.IModelCopyManager,java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseSPDXLicenseString</h4>
+<pre class="methodSignature">public static&nbsp;org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo&nbsp;parseSPDXLicenseString&#8203;(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;licenseString,
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                                                                                  org.spdx.storage.IModelStore&nbsp;store,
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;customLicensePrefix,
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                                                                                  org.spdx.library.model.v3_0_1.core.CreationInfo&nbsp;creationInfo,
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                                                                                  org.spdx.core.IModelCopyManager&nbsp;copyManager,
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation" class="externalLink">@Nullable</a>
+                                                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)
+                                                                                           throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
+                                                                                                  org.spdx.core.DefaultStoreNotInitializedException</pre>
+<div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
+ Syntax - A license set must start and end with a parenthesis "("
+                        A conjunctive license set will have and AND after the first
+                                licenseInfo term
+                        A disjunctive license set will have an OR after the first 
+                                licenseInfo term
+                        If there is no And or Or, then it is converted to a simple
+                                license type
+                        A space or tab must be used between license ID's and the 
+                                keywords AND and OR
+                        A licenseID must NOT be "AND" or "OR"</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>licenseString</code> - String conforming to the syntax</dd>
+<dd><code>store</code> - Store containing any extractedLicenseInfos - if any extractedLicenseInfos by ID already exist, they will be used.  If
+ none exist for an ID, they will be added.  If null, the default model store will be used.</dd>
+<dd><code>customLicensePrefix</code> - Prefix to use for any custom licenses or addition IDs found in the string.  If the resultant object URI does not exist
+ for an ID, they will be added.  If null, the default model document URI + "#" will be used.</dd>
+<dd><code>creationInfo</code> - Creation information to use for newly created elements.  If null, the default</dd>
+<dd><code>copyManager</code> - allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.</dd>
+<dd><code>customIdToUri</code> - Mapping of the id prefixes used in the license expression to the namespace preceding the external ID</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an SPDXLicenseInfo created from the string.   If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.spdx.core.DefaultStoreNotInitializedException</code> - if the default model store is not initialized</dd>
+<dd><code>org.spdx.library.model.v2.license.InvalidLicenseStringException</code></dd>
+</dl>
+</li>
+</ul>
 <a id="parseSPDXLicenseString(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.core.IModelCopyManager,java.util.List)">
 <!--   -->
 </a>
@@ -512,15 +582,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                                                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.library.model.v3_0_1.core.DictionaryEntry&gt;&nbsp;customIdToUri)
                                                                                            throws org.spdx.library.model.v2.license.InvalidLicenseStringException,
                                                                                                   org.spdx.core.DefaultStoreNotInitializedException</pre>
-<div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
+<div class="block">Parses a license string and converts it into a SPDXLicenseInfo object using the default creation information
  Syntax - A license set must start and end with a parenthesis "("
                         A conjunctive license set will have and AND after the first
                                 licenseInfo term
-                        A disjunctive license set will have an OR after the first 
+                        A disjunctive license set will have an OR after the first
                                 licenseInfo term
                         If there is no And or Or, then it is converted to a simple
                                 license type
-                        A space or tab must be used between license ID's and the 
+                        A space or tab must be used between license ID's and the
                                 keywords AND and OR
                         A licenseID must NOT be "AND" or "OR"</div>
 <dl>

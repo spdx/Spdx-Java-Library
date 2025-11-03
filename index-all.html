@@ -1992,7 +1992,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">P</h2>
 <dl>
-<dt><span class="memberNameLink"><a href="org/spdx/utility/license/LicenseExpressionParser.html#parseLicenseExpression(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.core.IModelCopyManager,java.util.List)">parseLicenseExpression(String, IModelStore, String, IModelCopyManager, List&lt;DictionaryEntry&gt;)</a></span> - Static method in class org.spdx.utility.license.<a href="org/spdx/utility/license/LicenseExpressionParser.html" title="class in org.spdx.utility.license">LicenseExpressionParser</a></dt>
+<dt><span class="memberNameLink"><a href="org/spdx/utility/license/LicenseExpressionParser.html#parseLicenseExpression(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo,org.spdx.core.IModelCopyManager,java.util.List)">parseLicenseExpression(String, IModelStore, String, CreationInfo, IModelCopyManager, List&lt;DictionaryEntry&gt;)</a></span> - Static method in class org.spdx.utility.license.<a href="org/spdx/utility/license/LicenseExpressionParser.html" title="class in org.spdx.utility.license">LicenseExpressionParser</a></dt>
 <dd>
 <div class="block">Parses a license expression into n license for use in the Model using the SPDX Version 3.X model</div>
 </dd>
@@ -2015,6 +2015,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
                         A licenseID must NOT be "AND" or "OR"</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/spdx/library/LicenseInfoFactory.html#parseSPDXLicenseString(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.core.IModelCopyManager,java.util.List)">parseSPDXLicenseString(String, IModelStore, String, IModelCopyManager, List&lt;DictionaryEntry&gt;)</a></span> - Static method in class org.spdx.library.<a href="org/spdx/library/LicenseInfoFactory.html" title="class in org.spdx.library">LicenseInfoFactory</a></dt>
+<dd>
+<div class="block">Parses a license string and converts it into a SPDXLicenseInfo object using the default creation information
+ Syntax - A license set must start and end with a parenthesis "("
+                        A conjunctive license set will have and AND after the first
+                                licenseInfo term
+                        A disjunctive license set will have an OR after the first
+                                licenseInfo term
+                        If there is no And or Or, then it is converted to a simple
+                                license type
+                        A space or tab must be used between license ID's and the
+                                keywords AND and OR
+                        A licenseID must NOT be "AND" or "OR"</div>
+</dd>
+<dt><span class="memberNameLink"><a href="org/spdx/library/LicenseInfoFactory.html#parseSPDXLicenseString(java.lang.String,org.spdx.storage.IModelStore,java.lang.String,org.spdx.library.model.v3_0_1.core.CreationInfo,org.spdx.core.IModelCopyManager,java.util.List)">parseSPDXLicenseString(String, IModelStore, String, CreationInfo, IModelCopyManager, List&lt;DictionaryEntry&gt;)</a></span> - Static method in class org.spdx.library.<a href="org/spdx/library/LicenseInfoFactory.html" title="class in org.spdx.library">LicenseInfoFactory</a></dt>
 <dd>
 <div class="block">Parses a license string and converts it into a SPDXLicenseInfo object
  Syntax - A license set must start and end with a parenthesis "("
