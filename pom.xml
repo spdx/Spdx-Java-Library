@@ -41,7 +41,7 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>spdx</sonar.organization>
 		<sonar.projectKey>java-spdx-library</sonar.projectKey>
-		<dependency-check-maven.version>12.1.5</dependency-check-maven.version>
+		<dependency-check-maven.version>12.1.9</dependency-check-maven.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -116,7 +116,7 @@
     <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-lang3</artifactId>
-    	<version>3.18.0</version>
+    	<version>3.20.0</version>
     </dependency>
     <dependency>
     	<groupId>org.jsoup</groupId>
@@ -206,7 +206,7 @@
 			<plugin>
 				<groupId>org.sonatype.central</groupId>
 				<artifactId>central-publishing-maven-plugin</artifactId>
-				<version>0.7.0</version>
+				<version>0.9.0</version>
 				<extensions>true</extensions>
 				<configuration>
 					<publishingServerId>central</publishingServerId>
@@ -225,7 +225,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.3</version>
+				<version>3.12.0</version>
 				<configuration>
 					<quiet>true</quiet>
 					<notimestamp>true</notimestamp>
@@ -243,7 +243,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
+				<version>3.5.0</version>
 				<configuration>
 					<archive>
 						<manifestEntries>
@@ -298,7 +298,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.2.0</version>
 				<configuration>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<releaseProfiles>release</releaseProfiles>

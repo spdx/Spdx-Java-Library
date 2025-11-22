@@ -33,6 +33,8 @@ import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ConjunctiveLicenseSet;
 import org.spdx.library.model.v3_0_1.expandedlicensing.CustomLicense;
@@ -117,6 +119,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	static final String DEFAULT_PREFIX = TEST_DOCUMENT_URI + "#";
 	ModelCopyManager copyManager;
 	List<DictionaryEntry> idMap;
+	CreationInfo creationInfo;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -124,6 +127,8 @@ public class LicenseExpressionParserTest extends TestCase {
 		modelStore = new InMemSpdxStore();
 		copyManager = new ModelCopyManager();
 		DefaultModelStore.initialize(new InMemSpdxStore(), TEST_DOCUMENT_URI, copyManager);
+		creationInfo = SpdxModelClassFactoryV3.createCreationInfo(modelStore, TEST_DOCUMENT_URI + "createdby",
+				"Test Creation Info", copyManager);
 		NON_STD_LICENSES = new CustomLicense[NONSTD_IDS.length];
 		for (int i = 0; i < NONSTD_IDS.length; i++) {
 			NON_STD_LICENSES[i] = new CustomLicense(modelStore, TEST_DOCUMENT_URI + "#" + 
@@ -176,7 +181,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		String parseString = STD_IDS[0];
 		AnyLicenseInfo expected = STANDARD_LICENSES[0];
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX,
+				modelStore, DEFAULT_PREFIX, creationInfo,
 				copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
@@ -186,14 +191,14 @@ public class LicenseExpressionParserTest extends TestCase {
 		String parseString = NONSTD_IDS[0];
 		AnyLicenseInfo expected = NON_STD_LICENSES[0];
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 	
 	public void testUninitializedExtractedLicense() throws InvalidSPDXAnalysisException {
 		String parseString = "LicenseRef-3242";
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertEquals(DEFAULT_PREFIX + parseString, result.getObjectUri());
 	}
 
@@ -203,7 +208,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		OrLaterOperator expected = new OrLaterOperator(DefaultModelStore.getDefaultDocumentUri());
 		expected.setSubjectLicense(STANDARD_LICENSES[0]);
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -214,14 +219,14 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.setSubjectAddition(NON_STD_LICENSE_ADDITIONS[0]);
 		expected.setSubjectExtendableLicense(STANDARD_LICENSES[0]);
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 		parseString = STD_IDS[0]+" WITH " + STD_EXCEPTION_IDS[0];
 		expected = new WithAdditionOperator();
 		expected.setSubjectAddition(STD_LICENSE_EXCEPTIONS[0]);
 		expected.setSubjectExtendableLicense(STANDARD_LICENSES[0]);
 		result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -232,7 +237,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().add(STANDARD_LICENSES[0]);
 		expected.getMembers().add(NON_STD_LICENSES[0]);
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -243,7 +248,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().add(STANDARD_LICENSES[0]);
 		expected.getMembers().add(NON_STD_LICENSES[0]);
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -255,7 +260,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -267,7 +272,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -279,7 +284,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1],
 				NON_STD_LICENSES[1], STANDARD_LICENSES[2], STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -293,7 +298,7 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				NON_STD_LICENSES[1], dls})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, modelStore, 
-				DEFAULT_PREFIX, copyManager, idMap);
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 
@@ -308,19 +313,19 @@ public class LicenseExpressionParserTest extends TestCase {
 		expected.getMembers().addAll(new ArrayList<AnyLicenseInfo>(Arrays.asList(new AnyLicenseInfo[] {STANDARD_LICENSES[1] ,
 				cls, STANDARD_LICENSES[3]})));
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(parseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(expected.equals(result));
 	}
 	
 	public void testExternalCustomLicense() throws InvalidSPDXAnalysisException {
 		String simpleParseString = EXTERNAL_CUSTOM_LICENSE_TOKENS[0];
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(simpleParseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(result instanceof ExternalCustomLicense);
 		assertEquals(EXTERNAL_CUSTOM_LICENSE_URIS[0], ((ExternalCustomLicense)result).getObjectUri());
 		String licenseWithAddition = EXTERNAL_CUSTOM_LICENSE_TOKENS[0] + " WITH 	389-exception";
 		result = LicenseExpressionParser.parseLicenseExpression(licenseWithAddition, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(result instanceof WithAdditionOperator);
 		ExtendableLicense subject = ((WithAdditionOperator)result).getSubjectExtendableLicense();
 		assertTrue(subject instanceof ExternalExtendableLicense);
@@ -330,7 +335,7 @@ public class LicenseExpressionParserTest extends TestCase {
 				EXTERNAL_CUSTOM_LICENSE_TOKENS[2] + " AND " +
 				EXTERNAL_CUSTOM_LICENSE_TOKENS[3];
 		result = LicenseExpressionParser.parseLicenseExpression(complexParseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(result instanceof ConjunctiveLicenseSet);
 		Boolean[] found = new Boolean[] {false, false, false, false};
 		Collection<AnyLicenseInfo> members = ((ConjunctiveLicenseSet)result).getMembers();
@@ -351,7 +356,7 @@ public class LicenseExpressionParserTest extends TestCase {
 	public void testExternalLicenseAddition() throws InvalidSPDXAnalysisException {
 		String simpleParseString = NONSTD_IDS[0] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[0];
 		AnyLicenseInfo result = LicenseExpressionParser.parseLicenseExpression(simpleParseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(result instanceof WithAdditionOperator);
 		
 		assertEquals(EXTERNAL_CUSTOM_ADDITION_URIS[0], ((WithAdditionOperator)result)
@@ -361,7 +366,7 @@ public class LicenseExpressionParserTest extends TestCase {
 				STD_IDS[1] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[2] + " AND " +
 				STD_IDS[2] + " WITH " + EXTERNAL_CUSTOM_ADDITION_TOKENS[3];
 		result = LicenseExpressionParser.parseLicenseExpression(complexParseString, 
-				modelStore, DEFAULT_PREFIX, copyManager, idMap);
+				modelStore, DEFAULT_PREFIX, creationInfo, copyManager, idMap);
 		assertTrue(result instanceof ConjunctiveLicenseSet);
 		Boolean[] found = new Boolean[] {false, false, false, false};
 		Collection<AnyLicenseInfo> members = ((ConjunctiveLicenseSet)result).getMembers();
