@@ -346,6 +346,10 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		Objects.requireNonNull(idPrefix, "Creation info must have an idPrefix to accurately generate SPDX IDs");
 		Matcher matcher = SPDX_2_CREATOR_PATTERN.matcher(spdx2personOrgString);
 		if (!matcher.matches()) {
+			// return null for NOASSERTION and NONE
+			if ("NOASSERTION".equals(spdx2personOrgString) || "NONE".equals(spdx2personOrgString)) {
+				return null;
+			}
 			// return a generic Agent
 			Agent agent = (Agent)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),

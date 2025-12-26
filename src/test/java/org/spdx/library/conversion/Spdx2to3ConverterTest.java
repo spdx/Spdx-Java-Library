@@ -1951,5 +1951,29 @@ public class Spdx2to3ConverterTest {
 		assertTrue(expected.isEmpty());
 		assertEquals(ands.toString(), result.getLicenseExpression());
 	}
+	
+	@Test
+	public void testPackageSupplierNoAssertionAndNone() throws InvalidSPDXAnalysisException {
+		CreationInfo testCreationInfo = Spdx2to3Converter.convertCreationInfo(
+				new SpdxCreatorInformation(fromModelStore, DOCUMENT_URI, 
+						fromModelStore.getNextId(IdType.Anonymous), copyManager, true)
+					.setCreated("2010-01-29T18:30:22Z"),
+				toModelStore, DEFAULT_PREFIX);
+		
+		// "NOASSERTION" agent string
+		Agent resultNoAssertion = Spdx2to3Converter.stringToAgent("NOASSERTION", testCreationInfo);
+		assertNull("stringToAgent should return null for NOASSERTION value", resultNoAssertion);
+		
+		// "NONE" agent string
+		Agent resultNone = Spdx2to3Converter.stringToAgent("NONE", testCreationInfo);
+		assertNull("stringToAgent should return null for NONE value", resultNone);
+		
+		// Valid Person agent string
+		String personCreator = SpdxConstantsCompatV2.CREATOR_PREFIX_PERSON + "John Doe (john@example.com)";
+		Agent resultPerson = Spdx2to3Converter.stringToAgent(personCreator, testCreationInfo);
+		assertNotNull("stringToAgent should return an Agent for valid Person format", resultPerson);
+		assertTrue("Result should be a Person", resultPerson instanceof Person);
+		assertEquals("John Doe", resultPerson.getName().get());
+	}
 
 }
