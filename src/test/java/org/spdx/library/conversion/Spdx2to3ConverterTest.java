@@ -137,12 +137,14 @@ public class Spdx2to3ConverterTest {
 		String organizationCreatorName = "Source Auditor Inc.";
 		String organizationCreator = SpdxConstantsCompatV2.CREATOR_PREFIX_ORGANIZATION + organizationCreatorName;
 		String created = "2010-01-29T18:30:22Z";
+		String comment = "Test creation info comment";
 		String licenseListVersion = "3.21";
 		SpdxCreatorInformation creatorInfo = new SpdxCreatorInformation(fromModelStore, DOCUMENT_URI, creatorId, copyManager, true);
 		creatorInfo.getCreators().add(personCreator);
 		creatorInfo.getCreators().add(toolCreator);
 		creatorInfo.getCreators().add(organizationCreator);
 		creatorInfo.setCreated(created);
+		creatorInfo.setComment(comment);
 		creatorInfo.setLicenseListVersion(licenseListVersion);
 		List<String> verify = creatorInfo.verify();
 		assertTrue(verify.isEmpty());
@@ -173,6 +175,7 @@ public class Spdx2to3ConverterTest {
 		assertEquals(1, tools.length);
 		assertEquals(toolCreatorName, tools[0].getName().get());
 		assertEquals(created, result.getCreated());
+		assertEquals(comment, result.getComment().orElse(null));
 		assertEquals(IdType.Anonymous, toModelStore.getIdType(result.getObjectUri()));
 		verify = result.verify();
 		assertTrue(verify.isEmpty());

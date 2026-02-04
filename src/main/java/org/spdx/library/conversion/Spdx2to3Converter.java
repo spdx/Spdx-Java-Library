@@ -315,6 +315,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		CreationInfo retval = new CreationInfo.CreationInfoBuilder(modelStore, modelStore.getNextId(IdType.Anonymous), null)
 				.setCreated(creationInfoV2.getCreated())
 				.setSpecVersion(SpdxConstantsV3.MODEL_SPEC_VERSION)
+			    .setComment(creationInfoV2.getComment().orElse(null))
 				.build();
 		retval.setIdPrefix(uriPrefix);
 		for (String docCreator:creationInfoV2.getCreators()) {
