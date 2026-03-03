@@ -30,6 +30,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -44,6 +46,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -107,7 +112,7 @@ public final class DownloadCache {
             try {
                 final File cacheDirectory = new File(cacheDir);
                 Files.createDirectories(cacheDirectory.toPath());
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 logger.warn("Unable to create cache directory '{}'; continuing with cache disabled.", cacheDir, ioe);
                 tmpCacheEnabled = false;
             }
@@ -116,7 +121,7 @@ public final class DownloadCache {
         long tmpCacheCheckIntervalSecs = DEFAULT_CACHE_CHECK_INTERVAL_SECS;
         try {
             tmpCacheCheckIntervalSecs = Long.parseLong(Configuration.getInstance().getProperty(CONFIG_PROPERTY_CACHE_CHECK_INTERVAL_SECS));
-        } catch(NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             // Ignore parse failures - in this case we use the default value of 24 hours
         }
         cacheCheckIntervalSecs = tmpCacheCheckIntervalSecs;
@@ -163,10 +168,10 @@ public final class DownloadCache {
 
     /**
      * @param url The URL to get an input stream for.  Notes: redirects issued by this url are restricted to known
-     *            SPDX hosts; redirects to other hosts will cause an IOException to be thrown. This method may
-     *            synchronize on this argument, so callers should avoid using it for synchronization.
-     * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
-     *        types, depending on whether the content is being served out of cache or not.
+     *            SPDX hosts; redirects to other hosts will cause an IOException to be thrown.
+     * @return An InputStream for url, or null if url is null or the method is interrupted during execution.  Note that
+     *        this InputStream may be of different concrete types, depending on whether the content is being served out
+     *        of cache or not.
      * @throws IOException When an IO error of some kind occurs.
      */
     public InputStream getUrlInputStream(final URL url) throws IOException {
@@ -174,22 +179,56 @@ public final class DownloadCache {
     }
 
     /**
-     * @param url The URL to get an input stream for.  Note: this method may synchronize on this argument, so callers
-     *            should avoid using it for synchronization.
+     * @param url The URL to normalize.
+     * @return A normalized rendition of the url, as a String.
+     */
+    private static String normalizeURL(final URL url) {
+        String result = null;
+
+        if (url != null) {
+            try {
+                URI uri = new URI(url.toString()).normalize();  // JDK normalization
+
+                // Then manually strip fragment as well
+                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), null);
+                result = uri.toString();
+            } catch (final URISyntaxException e) {
+                result = url.toString();  // Fallback on naive stringification if normalization fails
+            }
+        }
+
+        return result;
+    }
+
+    // A collection of per-URL locks - note that this will grow without bound as the number of URLs requested through the cache grows
+    private final ConcurrentHashMap<String, ReentrantLock> perUrlLocks = new ConcurrentHashMap<>();
+
+    /**
+     * @param url The URL to get an input stream for.
      * @param restrictRedirects A flag that controls whether redirects returned by url are restricted to known SPDX
      *                          hosts or not. Defaults to true. USE EXTREME CAUTION WHEN TURNING THIS OFF!
-     * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
-     *        types, depending on whether the content is being served out of cache or not.
+     * @return An InputStream for url, or null if url is null or the method is interrupted during execution.  Note that
+     *        this InputStream may be of different concrete types, depending on whether the content is being served out
+     *        of cache or not.
      * @throws IOException When an IO error of some kind occurs.
      */
     public InputStream getUrlInputStream(final URL url, final boolean restrictRedirects) throws IOException {
         InputStream result = null;
+
         if (url != null) {
             if (cacheEnabled) {
-                // Per-URL critical section to prevent cache stampede
-                synchronized (url) {
+                // Per-URL critical section (to prevent cache stampede)
+                final String normalizedUrl = normalizeURL(url);
+                perUrlLocks.putIfAbsent(normalizedUrl, new ReentrantLock());
+                final Lock lock = perUrlLocks.get(normalizedUrl);
+                lock.lock();
+
+                try {
                     result = getUrlInputStreamThroughCache(url, restrictRedirects);
+                } finally {
+                    lock.unlock();
                 }
+                // End of per-URL critical section
             } else {
                 result = getUrlInputStreamDirect(url, restrictRedirects);
             }
@@ -233,26 +272,24 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private InputStream getUrlInputStreamThroughCache(final URL url, boolean restrictRedirects) throws IOException {
-        synchronized (url) {
-            final String cacheKey           = base64Encode(url);
-            final File   cachedFile         = new File(cacheDir, cacheKey);
-            final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
+        final String cacheKey           = base64Encode(url);
+        final File   cachedFile         = new File(cacheDir, cacheKey);
+        final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
 
-            if (cachedFile.exists() && cachedMetadataFile.exists()) {
-                try {
-                    checkCache(url, restrictRedirects);
-                } catch (IOException ioe) {
-                    // We know we have a locally cached file here, so if we happen to get an exception we can safely ignore
-                    // it and fall back on the (possibly stale) cached content file.  This makes the code more robust in the
-                    // presence of network errors when the cache has previously been populated.
-                }
-            } else {
-                cacheMiss(url, restrictRedirects);
+        if (cachedFile.exists() && cachedMetadataFile.exists()) {
+            try {
+                checkCache(url, restrictRedirects);
+            } catch (IOException ioe) {
+                // We know we have a locally cached file here, so if we happen to get an exception we can safely ignore
+                // it and fall back on the (possibly stale) cached content file.  This makes the code more robust in the
+                // presence of network errors when the cache has previously been populated.
             }
+        } else {
+            cacheMiss(url, restrictRedirects);
+        }
 
-            // At this point the cached file definitely exists
-            return new BufferedInputStream(Files.newInputStream(cachedFile.toPath()));
-            }
+        // At this point the cached file definitely exists
+        return new BufferedInputStream(Files.newInputStream(cachedFile.toPath()));
     }
 
     /**
