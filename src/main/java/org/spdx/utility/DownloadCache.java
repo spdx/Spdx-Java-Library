@@ -162,8 +162,9 @@ public final class DownloadCache {
     }
 
     /**
-     * @param url The URL to get an input stream for.  Note that redirects issued by this url are restricted to known
-     *            SPDX hosts. Redirects to other hosts will cause an IOException to be thrown.
+     * @param url The URL to get an input stream for.  Notes: redirects issued by this url are restricted to known
+     *            SPDX hosts; redirects to other hosts will cause an IOException to be thrown. This method may
+     *            synchronize on this argument, so callers should avoid using it for synchronization.
      * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
      *        types, depending on whether the content is being served out of cache or not.
      * @throws IOException When an IO error of some kind occurs.
@@ -173,7 +174,8 @@ public final class DownloadCache {
     }
 
     /**
-     * @param url The URL to get an input stream for.
+     * @param url The URL to get an input stream for.  Note: this method may synchronize on this argument, so callers
+     *            should avoid using it for synchronization.
      * @param restrictRedirects A flag that controls whether redirects returned by url are restricted to known SPDX
      *                          hosts or not. Defaults to true. USE EXTREME CAUTION WHEN TURNING THIS OFF!
      * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
@@ -184,7 +186,10 @@ public final class DownloadCache {
         InputStream result = null;
         if (url != null) {
             if (cacheEnabled) {
-                result = getUrlInputStreamThroughCache(url, restrictRedirects);
+                // Per-URL critical section to prevent cache stampede
+                synchronized (url) {
+                    result = getUrlInputStreamThroughCache(url, restrictRedirects);
+                }
             } else {
                 result = getUrlInputStreamDirect(url, restrictRedirects);
             }
@@ -228,24 +233,26 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private InputStream getUrlInputStreamThroughCache(final URL url, boolean restrictRedirects) throws IOException {
-        final String cacheKey           = base64Encode(url);
-        final File   cachedFile         = new File(cacheDir, cacheKey);
-        final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
+        synchronized (url) {
+            final String cacheKey           = base64Encode(url);
+            final File   cachedFile         = new File(cacheDir, cacheKey);
+            final File   cachedMetadataFile = new File(cacheDir, cacheKey + ".metadata.json");
 
-        if (cachedFile.exists() && cachedMetadataFile.exists()) {
-            try {
-                checkCache(url, restrictRedirects);
-            } catch (IOException ioe) {
-                // We know we have a locally cached file here, so if we happen to get an exception we can safely ignore
-                // it and fall back on the (possibly stale) cached content file.  This makes the code more robust in the
-                // presence of network errors when the cache has previously been populated.
+            if (cachedFile.exists() && cachedMetadataFile.exists()) {
+                try {
+                    checkCache(url, restrictRedirects);
+                } catch (IOException ioe) {
+                    // We know we have a locally cached file here, so if we happen to get an exception we can safely ignore
+                    // it and fall back on the (possibly stale) cached content file.  This makes the code more robust in the
+                    // presence of network errors when the cache has previously been populated.
+                }
+            } else {
+                cacheMiss(url, restrictRedirects);
             }
-        } else {
-            cacheMiss(url, restrictRedirects);
-        }
 
-        // At this point the cached file definitely exists
-        return new BufferedInputStream(Files.newInputStream(cachedFile.toPath()));
+            // At this point the cached file definitely exists
+            return new BufferedInputStream(Files.newInputStream(cachedFile.toPath()));
+            }
     }
 
     /**
