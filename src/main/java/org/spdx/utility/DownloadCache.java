@@ -219,7 +219,7 @@ public final class DownloadCache {
             if (cacheEnabled) {
                 // Per-URL critical section (to prevent cache stampede)
                 final String normalizedUrl = normalizeURL(url);
-                perUrlLocks.putIfAbsent(normalizedUrl, new ReentrantLock());
+                perUrlLocks.computeIfAbsent(normalizedUrl, k -> new ReentrantLock());
                 final Lock lock = perUrlLocks.get(normalizedUrl);
                 lock.lock();
 
