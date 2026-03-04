@@ -169,9 +169,8 @@ public final class DownloadCache {
     /**
      * @param url The URL to get an input stream for.  Notes: redirects issued by this url are restricted to known
      *            SPDX hosts; redirects to other hosts will cause an IOException to be thrown.
-     * @return An InputStream for url, or null if url is null or the method is interrupted during execution.  Note that
-     *        this InputStream may be of different concrete types, depending on whether the content is being served out
-     *        of cache or not.
+     * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
+     *         types, depending on whether the content is being served out of cache or not.
      * @throws IOException When an IO error of some kind occurs.
      */
     public InputStream getUrlInputStream(final URL url) throws IOException {
@@ -207,9 +206,8 @@ public final class DownloadCache {
      * @param url The URL to get an input stream for.
      * @param restrictRedirects A flag that controls whether redirects returned by url are restricted to known SPDX
      *                          hosts or not. Defaults to true. USE EXTREME CAUTION WHEN TURNING THIS OFF!
-     * @return An InputStream for url, or null if url is null or the method is interrupted during execution.  Note that
-     *        this InputStream may be of different concrete types, depending on whether the content is being served out
-     *        of cache or not.
+     * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
+     *        types, depending on whether the content is being served out of cache or not.
      * @throws IOException When an IO error of some kind occurs.
      */
     public InputStream getUrlInputStream(final URL url, final boolean restrictRedirects) throws IOException {
@@ -268,7 +266,7 @@ public final class DownloadCache {
      * @param restrictRedirects A flag that controls whether redirects returned by url are restricted to known SPDX
      *                          hosts or not. Defaults to true. USE EXTREME CAUTION WHEN TURNING THIS OFF!
      * @return An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
-     *        types, depending on whether the content is being served out of cache or not.
+     *         types, depending on whether the content is being served out of cache or not.
      * @throws IOException When an IO error of some kind occurs.
      */
     private InputStream getUrlInputStreamThroughCache(final URL url, boolean restrictRedirects) throws IOException {
