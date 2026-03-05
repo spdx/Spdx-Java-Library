@@ -259,11 +259,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>url</code> - The URL to get an input stream for.  Note that redirects issued by this url are restricted to known
-            SPDX hosts. Redirects to other hosts will cause an IOException to be thrown.</dd>
+<dd><code>url</code> - The URL to get an input stream for.  Notes: redirects issued by this url are restricted to known
+            SPDX hosts; redirects to other hosts will cause an IOException to be thrown.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>An InputStream for url, or null if url is null.  Note that this InputStream may be of different concrete
-        types, depending on whether the content is being served out of cache or not.</dd>
+         types, depending on whether the content is being served out of cache or not.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io" class="externalLink">IOException</a></code> - When an IO error of some kind occurs.</dd>
 </dl>
