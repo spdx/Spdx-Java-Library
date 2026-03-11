@@ -7,11 +7,11 @@
   "licenseId": "Vim",
   "crossRef": [
     {
-      "match": "true",
+      "match": "false",
       "url": "http://vimdoc.sourceforge.net/htmldoc/uganda.html",
       "isValid": true,
       "isLive": true,
-      "timestamp": "2024-12-30T17:54:54Z",
+      "timestamp": "2026-03-05T18:01:55Z",
       "isWayBackLink": false,
       "order": 0
     }

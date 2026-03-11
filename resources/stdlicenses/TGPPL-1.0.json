@@ -12,16 +12,16 @@
       "url": "https://fedoraproject.org/wiki/Licensing/TGPPL",
       "isValid": true,
       "isLive": true,
-      "timestamp": "2024-12-30T17:57:52Z",
+      "timestamp": "2026-03-05T18:00:41Z",
       "isWayBackLink": false,
       "order": 0
     },
     {
-      "match": "false",
+      "match": "N/A",
       "url": "https://tahoe-lafs.org/trac/tahoe-lafs/browser/trunk/COPYING.TGPPL.rst",
       "isValid": true,
-      "isLive": true,
-      "timestamp": "2024-12-30T17:57:58Z",
+      "isLive": false,
+      "timestamp": "2026-03-05T18:00:41Z",
       "isWayBackLink": false,
       "order": 1
     }

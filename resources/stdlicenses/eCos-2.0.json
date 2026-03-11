@@ -9,11 +9,11 @@
   "licenseId": "eCos-2.0",
   "crossRef": [
     {
-      "match": "true",
+      "match": "N/A",
       "url": "https://www.gnu.org/licenses/ecos-license.html",
       "isValid": true,
-      "isLive": true,
-      "timestamp": "2024-12-30T17:54:49Z",
+      "isLive": false,
+      "timestamp": "2026-03-05T17:57:23Z",
       "isWayBackLink": false,
       "order": 0
     }
