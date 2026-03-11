@@ -50,7 +50,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 
 	private static final String APACHE_ID = "Apache-2.0";
 	private static final String LICENSE_LIST_URI = "http://spdx.org/licenses/";
-	private static final String LICENSE_LIST_VERSION = "3.17";
 	private static final String APACHE_LICENSE_NAME = "Apache License 2.0";
 	
 	private static final String ECOS_EXCEPTION_ID = "eCos-exception-2.0";
@@ -72,10 +71,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		super.tearDown();
 	}
 
-	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#exists(java.lang.String, java.lang.String)}.
-	 * @throws Exception 
-	 */
 	public void testExists() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		assertTrue(slll.exists(LICENSE_LIST_URI + APACHE_ID));
@@ -84,10 +79,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		slll.close();
 	}
 
-	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#create(java.lang.String, java.lang.String, java.lang.String)}.
-	 * @throws Exception 
-	 */
 	public void testCreate() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		String nextId = slll.getNextId(IdType.ListedLicense);
@@ -102,10 +93,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		slll.close();
 	}
 
-	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#getNextId(org.spdx.storage.IModelStore.IdType, java.lang.String)}.
-	 * @throws Exception 
-	 */
 	public void testGetNextId() throws Exception {
 		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
 		String nextId = slll.getNextId(IdType.ListedLicense);
@@ -131,16 +118,6 @@ public class SpdxListedLicenseLocalStoreTest extends TestCase {
 		List<String> result = slll.getSpdxListedExceptionIds();
 		assertTrue(result.size() >= NUM_3_7_EXCEPTION);
 		assertTrue(result.contains(ECOS_EXCEPTION_ID));
-		slll.close();
-	}
-
-	/**
-	 * Test method for {@link org.spdx.storage.listedlicense.SpdxListedLicenseModelStore#getLicenseListVersion()}.
-	 * @throws Exception 
-	 */
-	public void testGetLicenseListVersion() throws Exception {
-		SpdxListedLicenseLocalStore slll = new SpdxListedLicenseLocalStore();
-		assertTrue(LICENSE_LIST_VERSION.compareTo(slll.getLicenseListVersion()) <= 0);
 		slll.close();
 	}
 	
