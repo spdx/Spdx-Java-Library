@@ -6,11 +6,11 @@
   "licenseId": "CMU-Mach",
   "crossRef": [
     {
-      "match": "N/A",
+      "match": "false",
       "url": "https://www.cs.cmu.edu/~410/licenses.html",
       "isValid": true,
-      "isLive": false,
-      "timestamp": "2024-12-30T17:54:53Z",
+      "isLive": true,
+      "timestamp": "2026-03-05T18:01:53Z",
       "isWayBackLink": false,
       "order": 0
     }
