@@ -1,5 +1,6 @@
 # Release Checklist for the SPDX Java Tools
 
+- [ ] Check for a new release of the license list (stored in resources/stdlicenses)
 - [ ] Check for any warnings from the compiler and findbugs
 - [ ] Run unit tests for all packages that depend on the library
 - [ ] Run unit tests with `export SPDX_JAVA_LIB_RUN_SLOW_TESTS=true` to ensure the extended (slow) test suite passes
