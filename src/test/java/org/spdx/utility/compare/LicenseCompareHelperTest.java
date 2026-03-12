@@ -22,13 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.spdx.core.DefaultModelStore;
 import org.spdx.core.IModelCopyManager;
@@ -777,8 +771,9 @@ public class LicenseCompareHelperTest extends TestCase {
 		String gpl20WithClasspathException20 = gpl20 + "\n\n" + classpathException20;
 		String textWithRandomPrefixAndSuffix = "Some random preamble text.\n\n" + classpathException20 + "\n\nSome random epilogue text.";
 
-		List<String> expectedResultEmpty = Arrays.asList();
-		List<String> expectedResultClasspathException20 = Arrays.asList("Classpath-exception-2.0");
+		List<String> expectedResultEmpty = Collections.emptyList();
+		List<String> classPathException20Only = Collections.singletonList("Classpath-exception-2.0");
+		List<String> expectedResultClasspathException20 = Arrays.asList("Classpath-exception-2.0", "Classpath-exception-2.0-short");
 
 		// Note: be cautious about adding too many assertions to this test, as LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText can have lengthy runtimes
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(null));
@@ -786,7 +781,7 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertListsEqual(expectedResultEmpty, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText("Some random text that isn't a standard license exception"));
 
 		// Tests for the 2-arg version of matchingStandardLicenseExceptionIdsWithinText (which is faster than the 1-arg version)
-		assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20, Arrays.asList("Classpath-exception-2.0")));
+		assertListsEqual(classPathException20Only, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(gpl20WithClasspathException20, classPathException20Only));
 
 		if (UnitTestHelper.runSlowTests()) {
 			assertListsEqual(expectedResultClasspathException20, LicenseCompareHelper.matchingStandardLicenseExceptionIdsWithinText(classpathException20));
