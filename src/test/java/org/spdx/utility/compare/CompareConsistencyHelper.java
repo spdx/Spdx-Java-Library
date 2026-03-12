@@ -62,7 +62,7 @@ public class CompareConsistencyHelper {
 
         final boolean      isDifferenceFound                    = LicenseCompareHelper.isTextStandardLicense(listedLicense, text).isDifferenceFound();
         final boolean      isStandardLicenseWithinText          = LicenseCompareHelper.isStandardLicenseWithinText(text, listedLicense);
-        final List<String> matchingStandardLicenseIds           = Arrays.asList(LicenseCompareHelper.matchingStandardLicenseIds(text));
+        final List<String> matchingStandardLicenseIds           = LicenseCompareHelper.listAllListedLicenseIdsMatched(text);
         final List<String> matchingStandardLicenseIdsWithinText = LicenseCompareHelper.matchingStandardLicenseIdsWithinText(text);
 
         // Note: we sort these lists because we don't care about different orderings within them - just that they contain the same elements (in any order)
