@@ -104,6 +104,7 @@ public class LicenseCompareHelperTest extends TestCase {
     static final String GPL_2_TEMPLATE = "TestFiles" + File.separator + "GPL-2.0-only.template.txt";
     static final String IMAGE_MAGIK_TEMPLATE = "TestFiles" + File.separator + "ImageMagick.template.txt";
     static final String X_11_PTHREADS = "TestFiles" + File.separator + "x-11-pthreads.txt";
+	static final String ECOS_EXCEPTION =  "TestFiles" + File.separator + "eCos-exception-2.0.txt";
 
 	IModelStore modelStore;
 	IModelCopyManager copyManager;
@@ -572,6 +573,27 @@ public class LicenseCompareHelperTest extends TestCase {
 		assertFalse(result.isDifferenceFound());
 	}
 	
+	public void testListAllListedLicenseIdsMatched() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
+		if (UnitTestHelper.runSlowTests()) {
+			String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
+			List<String> result = LicenseCompareHelper.listAllListedLicenseIdsMatched(compareText);
+			assertEquals(4,result.size());
+			assertTrue(result.get(0).startsWith("GPL-2"));
+			assertTrue(result.get(1).startsWith("GPL-2"));
+			assertTrue(result.get(2).startsWith("GPL-2"));
+			assertTrue(result.get(3).startsWith("GPL-2"));
+		}
+	}
+
+	public void testListAllListedExceptionIdsMatched() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
+		if (UnitTestHelper.runSlowTests()) {
+			String compareText = UnitTestHelper.fileToText(ECOS_EXCEPTION);
+			List<String> result = LicenseCompareHelper.listAllListedExceptionIdsMatched(compareText);
+			assertEquals(1,result.size());
+			assertEquals("eCos-exception-2.0", result.get(0));
+		}
+	}
+
 	public void testMatchingStandardLicenseIds() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		if (UnitTestHelper.runSlowTests()) {
 			String compareText = UnitTestHelper.fileToText(GPL_2_TEXT);
@@ -1015,8 +1037,8 @@ public class LicenseCompareHelperTest extends TestCase {
 	
 	public void testX11Pthreads() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		String licText = UnitTestHelper.fileToText(X_11_PTHREADS);
-		String[] result = LicenseCompareHelper.matchingStandardLicenseIds(licText);
-		assertEquals(0, result.length);
+		List<String> result = LicenseCompareHelper.listAllListedLicenseIdsMatched(licText);
+		assertEquals(0, result.size());
 		ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById("X11-distribute-modifications-variant");
 		assertTrue(LicenseCompareHelper.isTextStandardLicense(license, licText).isDifferenceFound());
 	}

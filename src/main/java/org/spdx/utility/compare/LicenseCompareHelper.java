@@ -468,27 +468,59 @@ public class LicenseCompareHelper {
 		return result;
 	}
 
-
 	/**
-	 * Returns a list of SPDX Standard License ID's that match the text provided using
+	 * Returns a list of SPDX Listed Exception ID's that match the text provided using
 	 * the SPDX matching guidelines.
-	 * @param licenseText Text to compare to the standard license texts
-	 * @return Array of SPDX standard license IDs that match
-	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
+	 * @param exceptionText Text to compare to the listed exception texts
+	 * @return List of SPDX listed exception IDs that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the listed exceptions
 	 * @throws SpdxCompareException If an error occurs in the comparison
 	 */
-	public static String[] matchingStandardLicenseIds(String licenseText) throws InvalidSPDXAnalysisException, SpdxCompareException {
-		List<String> stdLicenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+	public static List<String> listAllListedExceptionIdsMatched(String exceptionText) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> listedExceptionIds = ListedLicenses.getListedLicenses().getSpdxListedExceptionIds();
 		List<String> matchingIds  = new ArrayList<>();
-		for (String stdLicId : stdLicenseIds) {
-			ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(stdLicId);
+		for (String exceptionId : listedExceptionIds) {
+			ListedLicenseException exception = ListedLicenses.getListedLicenses().getListedExceptionById(exceptionId);
+			if (!isTextStandardException(exception, exceptionText).isDifferenceFound()) {
+				matchingIds.add(licenseUriToLicenseId(exception.getObjectUri()));
+			}
+		}
+		return matchingIds;
+	}
+
+	/**
+	 * Returns a list of SPDX Listed License ID's that match the text provided using
+	 * the SPDX matching guidelines.
+	 * @param licenseText Text to compare to the listed license texts
+	 * @return List of SPDX listed license IDs that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the listed licenses
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	public static List<String> listAllListedLicenseIdsMatched(String licenseText) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		List<String> listedLicenseIds = ListedLicenses.getListedLicenses().getSpdxListedLicenseIds();
+		List<String> matchingIds  = new ArrayList<>();
+		for (String listedLicId : listedLicenseIds) {
+			ListedLicense license = ListedLicenses.getListedLicenses().getListedLicenseById(listedLicId);
 			if (!isTextStandardLicense(license, licenseText).isDifferenceFound()) {
 				matchingIds.add(licenseUriToLicenseId(license.getObjectUri()));
 			}
 		}
-		return matchingIds.toArray(new String[0]);
+		return matchingIds;
 	}
 
+	/**
+	 * Returns an array of SPDX Listed License ID's that match the text provided using
+	 * the SPDX matching guidelines.  Deprecated in favor of <code>listAllListedLicenseIdsMatched(String licenseText)</code>
+	 * @param licenseText Text to compare to the listed license texts
+	 * @return Array of SPDX listed license IDs that match
+	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the listed licenses
+	 * @throws SpdxCompareException If an error occurs in the comparison
+	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
+	public static String[] matchingStandardLicenseIds(String licenseText) throws InvalidSPDXAnalysisException, SpdxCompareException {
+		return listAllListedLicenseIdsMatched(licenseText).toArray(new String[0]);
+	}
 
 	/**
 	 * Returns a list of SPDX Standard License ID's from the provided list that were found within the text, using
@@ -497,7 +529,7 @@ public class LicenseCompareHelper {
 	 * @param licenseIds License ids to compare against
 	 * @return List of SPDX standard license IDs from licenseIds that match
 	 * @throws InvalidSPDXAnalysisException If an error occurs accessing the standard licenses
-     */
+	 */
 	public static List<String> matchingStandardLicenseIdsWithinText(String text, List<String> licenseIds) throws InvalidSPDXAnalysisException {
 		List<String> result = new ArrayList<>();
 
