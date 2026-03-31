@@ -78,6 +78,7 @@ import org.spdx.library.model.v3_0_1.expandedlicensing.NoneLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.OrLaterOperator;
 import org.spdx.library.model.v3_0_1.expandedlicensing.WithAdditionOperator;
 import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
+import org.spdx.library.model.v3_0_1.simplelicensing.InvalidLicenseExpression;
 import org.spdx.library.model.v3_0_1.simplelicensing.LicenseExpression;
 import org.spdx.library.model.v3_0_1.software.ContentIdentifierType;
 import org.spdx.library.model.v3_0_1.software.Snippet;
@@ -844,6 +845,33 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		toOrLaterOperator.setSubjectLicense((License)convertAndStore(fromOrLaterOperator.getLicense()));
 		return toOrLaterOperator;
 	}
+
+	/**
+	 * Converts an SPDX spec version 2 SPDX InvalidLicenseExpression to an SPDX spec version 3 SPDX InvalidLicenseExpression and store the result
+	 * @param fromInvalidExpression an SPDX spec version 2 InvalidLicenseExpression
+	 * @return an SPDX spec version 3 InvalidLicenseExpression
+	 * @throws InvalidSPDXAnalysisException on any errors converting
+	 */
+	public InvalidLicenseExpression convertAndStore(org.spdx.library.model.v2.license.InvalidLicenseExpression fromInvalidExpression) throws InvalidSPDXAnalysisException {
+		Optional<ModelObjectV3> existing = getExistingObject(fromInvalidExpression.getObjectUri(),
+				"SimpleLicensing.InvalidLicenseExpression"); //TODO: This should be included in the SPDXV3 Constants file
+		if (existing.isPresent()) {
+			return (InvalidLicenseExpression)existing.get();
+		}
+		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
+		String existingUri = this.alreadyConverted.putIfAbsent(fromInvalidExpression.getObjectUri(), toObjectUri);
+		if (Objects.nonNull(existingUri)) {
+			// small window if conversion occurred since the last check already converted
+			return (InvalidLicenseExpression)getExistingObject(fromInvalidExpression.getObjectUri(),
+					"SimpleLicensing.InvalidLicenseExpression").get();
+		}
+		InvalidLicenseExpression toInvalidLicExpression = (InvalidLicenseExpression)SpdxModelClassFactoryV3.getModelObject(toModelStore,
+				toObjectUri, "SimpleLicensing.InvalidLicenseExpression", copyManager, true, defaultUriPrefix);
+		toInvalidLicExpression.setCreationInfo(defaultCreationInfo);
+		toInvalidLicExpression.setMessage(fromInvalidExpression.getMessage());
+		toInvalidLicExpression.setLicenseExpression(fromInvalidExpression.getMessage());
+		return toInvalidLicExpression;
+	}
 	
 	/**
 	 * Converts an SPDX spec version 2 SPDX SpdxListedLicense to an SPDX spec version 3 SPDX ListedLicense and store the result
@@ -1043,26 +1071,28 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		if (!complexLicenses) {
 			return convertToLicenseExpression(fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ConjunctiveLicenseSet) {
-			return convertAndStore((org.spdx.library.model.v2.license.ConjunctiveLicenseSet)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.ConjunctiveLicenseSet) fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.DisjunctiveLicenseSet) {
-			return convertAndStore((org.spdx.library.model.v2.license.DisjunctiveLicenseSet)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.DisjunctiveLicenseSet) fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo) {
-			String externalUri = ((org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo)fromLicense).getIndividualURI();
-            logger.warn("Referencing an external SPDX 2 element with URI {} while converting from SPDX 2 to 3", externalUri);
+			String externalUri = ((org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo) fromLicense).getIndividualURI();
+			logger.warn("Referencing an external SPDX 2 element with URI {} while converting from SPDX 2 to 3", externalUri);
 			addExternalMapInfo(externalUri);
 			return new ExternalCustomLicense(externalUri);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.ExtractedLicenseInfo) {
-			return convertAndStore((org.spdx.library.model.v2.license.ExtractedLicenseInfo)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.ExtractedLicenseInfo) fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.OrLaterOperator) {
-			return convertAndStore((org.spdx.library.model.v2.license.OrLaterOperator)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.OrLaterOperator) fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.SpdxListedLicense) {
-			return convertAndStore((org.spdx.library.model.v2.license.SpdxListedLicense)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.SpdxListedLicense) fromLicense);
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.SpdxNoneLicense) {
 			return new NoneLicense();
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.SpdxNoAssertionLicense) {
 			return new NoAssertionLicense();
 		} else if (fromLicense instanceof org.spdx.library.model.v2.license.WithExceptionOperator) {
-			return convertAndStore((org.spdx.library.model.v2.license.WithExceptionOperator)fromLicense);
+			return convertAndStore((org.spdx.library.model.v2.license.WithExceptionOperator) fromLicense);
+		} else if (fromLicense instanceof org.spdx.library.model.v2.license.InvalidLicenseExpression) {
+			return convertAndStore((org.spdx.library.model.v2.license.InvalidLicenseExpression) fromLicense);
 		} else {
 			throw new InvalidSPDXAnalysisException("Can not convert the from AnyLicenseInfo type "+fromLicense.getType());
 		}
