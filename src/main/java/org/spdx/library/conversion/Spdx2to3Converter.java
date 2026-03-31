@@ -848,28 +848,29 @@ public class Spdx2to3Converter implements ISpdxConverter {
 
 	/**
 	 * Converts an SPDX spec version 2 SPDX InvalidLicenseExpression to an SPDX spec version 3 SPDX InvalidLicenseExpression and store the result
-	 * @param fromInvalidExpression an SPDX spec version 2 InvalidLicenseExpression
+	 * @param fromInvalidLicenseExpression an SPDX spec version 2 InvalidLicenseExpression
 	 * @return an SPDX spec version 3 InvalidLicenseExpression
 	 * @throws InvalidSPDXAnalysisException on any errors converting
 	 */
-	public InvalidLicenseExpression convertAndStore(org.spdx.library.model.v2.license.InvalidLicenseExpression fromInvalidExpression) throws InvalidSPDXAnalysisException {
-		Optional<ModelObjectV3> existing = getExistingObject(fromInvalidExpression.getObjectUri(),
+	public InvalidLicenseExpression convertAndStore(org.spdx.library.model.v2.license.InvalidLicenseExpression fromInvalidLicenseExpression)
+			throws InvalidSPDXAnalysisException {
+		Optional<ModelObjectV3> existing = getExistingObject(fromInvalidLicenseExpression.getObjectUri(),
 				"SimpleLicensing.InvalidLicenseExpression"); //TODO: This should be included in the SPDXV3 Constants file
 		if (existing.isPresent()) {
 			return (InvalidLicenseExpression)existing.get();
 		}
 		String toObjectUri = toModelStore.getNextId(IdType.Anonymous);
-		String existingUri = this.alreadyConverted.putIfAbsent(fromInvalidExpression.getObjectUri(), toObjectUri);
+		String existingUri = this.alreadyConverted.putIfAbsent(fromInvalidLicenseExpression.getObjectUri(), toObjectUri);
 		if (Objects.nonNull(existingUri)) {
 			// small window if conversion occurred since the last check already converted
-			return (InvalidLicenseExpression)getExistingObject(fromInvalidExpression.getObjectUri(),
+			return (InvalidLicenseExpression)getExistingObject(fromInvalidLicenseExpression.getObjectUri(),
 					"SimpleLicensing.InvalidLicenseExpression").get();
 		}
 		InvalidLicenseExpression toInvalidLicExpression = (InvalidLicenseExpression)SpdxModelClassFactoryV3.getModelObject(toModelStore,
 				toObjectUri, "SimpleLicensing.InvalidLicenseExpression", copyManager, true, defaultUriPrefix);
 		toInvalidLicExpression.setCreationInfo(defaultCreationInfo);
-		toInvalidLicExpression.setMessage(fromInvalidExpression.getMessage());
-		toInvalidLicExpression.setLicenseExpression(fromInvalidExpression.getMessage());
+		toInvalidLicExpression.setMessage(fromInvalidLicenseExpression.getMessage());
+		toInvalidLicExpression.setLicenseExpression(fromInvalidLicenseExpression.getMessage());
 		return toInvalidLicExpression;
 	}
 	
