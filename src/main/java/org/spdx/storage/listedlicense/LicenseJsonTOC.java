@@ -160,7 +160,7 @@ public class LicenseJsonTOC {
 	
 
 	private String licenseListVersion;
-	private final List<LicenseJson> licenses;
+	private List<LicenseJson> licenses;
 	private String releaseDate;
 
 	public LicenseJsonTOC(String version, String releaseDate) {
