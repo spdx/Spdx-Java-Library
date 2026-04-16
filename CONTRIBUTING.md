@@ -21,3 +21,21 @@ Once implemented, submit a pull request with `spec/X.X` branch as the parent bra
 Licensing
 ---------
 However you choose to contribute, please sign-off in each of your commits that you license your contributions under the terms of [the Developer Certificate of Origin](https://developercertificate.org/). Git has utilities for signing off on commits: `git commit -s` signs a current commit, and `git rebase --signoff <revision-range>` retroactively signs a range of past commits.
+
+AI usage policy
+---------------
+
+AI tools (e.g., LLMs, code assistants, and proofreaders) are permitted as
+assistive supplements, not replacements for human judgment.
+
+- **Code review:**
+  AI tools may act as a preliminary "peer reviewer" to catch syntax or style
+  issues, similar to a non-AI code analysis tool.
+  However, a human must perform the final review, validate logic,
+  and take full responsibility for all decisions.
+- **Automation:**
+  AI is acceptable for offloading repetitive, well-understood, and
+  time-consuming boilerplate tasks.
+- **Verification:**
+  All AI-generated suggestions must be manually verified for security,
+  performance, and project alignment.
