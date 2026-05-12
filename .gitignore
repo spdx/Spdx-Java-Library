@@ -15,3 +15,6 @@ buildNumber.properties
 .classpath
 .project
 .settings/
+
+# IDEA files
+.idea/
