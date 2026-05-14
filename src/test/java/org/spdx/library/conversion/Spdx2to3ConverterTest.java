@@ -1978,5 +1978,4 @@ public class Spdx2to3ConverterTest {
 		assertTrue("Result should be a Person", resultPerson instanceof Person);
 		assertEquals("John Doe", resultPerson.getName().get());
 	}
-
 }
