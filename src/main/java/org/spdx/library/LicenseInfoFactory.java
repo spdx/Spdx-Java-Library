@@ -17,9 +17,7 @@
  */
 package org.spdx.library;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.Nullable;
 
@@ -30,10 +28,13 @@ import org.spdx.core.DefaultStoreNotInitializedException;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.license.InvalidLicenseStringException;
+import org.spdx.library.model.v2.license.LicenseSet;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
 import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
 import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.library.model.v3_0_1.core.DictionaryEntry;
+import org.spdx.library.model.v3_0_1.expandedlicensing.ConjunctiveLicenseSet;
+import org.spdx.library.model.v3_0_1.expandedlicensing.DisjunctiveLicenseSet;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
 import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
 import org.spdx.library.model.v3_0_1.simplelicensing.AnyLicenseInfo;
@@ -96,7 +97,7 @@ public class LicenseInfoFactory {
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
-			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
+			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws DefaultStoreNotInitializedException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -107,8 +108,8 @@ public class LicenseInfoFactory {
 			copyManager = DefaultModelStore.getDefaultCopyManager();
 		}
 		try {
-			return LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri, 
-					copyManager);
+			return fixSingleMemberSetsCompatV2(LicenseExpressionParser.parseLicenseExpressionCompatV2(licenseString, store, documentUri,
+					copyManager));
 		} catch (LicenseParserException e) {
             try {
                 return new org.spdx.library.model.v2.license.InvalidLicenseExpression(store, documentUri,
@@ -126,7 +127,74 @@ public class LicenseInfoFactory {
 			}
 		}
 	}
-	
+
+	/**
+	 * Fixes any single member license sets found within an AnyLicenseInfo
+	 * @param license any type of license
+	 * @return license with any single member license sets replaced by the single member value
+	 */
+	private static AnyLicenseInfo fixSingleMemberSets(AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
+		Set<AnyLicenseInfo> members = null;
+		if (license instanceof ConjunctiveLicenseSet) {
+			members = ((ConjunctiveLicenseSet) license).getMembers();
+		} else if (license instanceof DisjunctiveLicenseSet) {
+			members = ((DisjunctiveLicenseSet) license).getMembers();
+		}
+		if (Objects.isNull(members)) {
+			return license;
+		}
+		if (members.size() == 1) {
+			return members.stream().findFirst().get();
+		}
+		Map<AnyLicenseInfo, AnyLicenseInfo> changedMembers = new HashMap<>();
+		for (AnyLicenseInfo member : members) {
+			AnyLicenseInfo optimizedMember = fixSingleMemberSets(member);
+			if (!Objects.equals(optimizedMember, member)) {
+				changedMembers.put(member, optimizedMember);
+			}
+		}
+		if (!changedMembers.isEmpty()) {
+			Set<AnyLicenseInfo> newMembers = new HashSet<>();
+			for (AnyLicenseInfo member : members) {
+				newMembers.add(changedMembers.getOrDefault(member, member));
+			}
+			members.clear();
+			members.addAll(newMembers);
+		}
+		return license;
+	}
+
+	/**
+	 * Fixes any single member license sets found within an AnyLicenseInfo
+	 * @param license any type of license
+	 * @return license with any single member license sets replaced by the single member value
+	 */
+	private static org.spdx.library.model.v2.license.AnyLicenseInfo fixSingleMemberSetsCompatV2(org.spdx.library.model.v2.license.AnyLicenseInfo license) throws InvalidSPDXAnalysisException {
+		if (license instanceof LicenseSet) {
+			Collection<org.spdx.library.model.v2.license.AnyLicenseInfo> members = ((LicenseSet)license).getMembers();
+			if (members.size() == 1) {
+				return members.stream().findFirst().get();
+			} else {
+				Map<org.spdx.library.model.v2.license.AnyLicenseInfo,
+						org.spdx.library.model.v2.license.AnyLicenseInfo> changedMembers = new HashMap<>();
+				for (org.spdx.library.model.v2.license.AnyLicenseInfo member : members) {
+					org.spdx.library.model.v2.license.AnyLicenseInfo optimizedMember = fixSingleMemberSetsCompatV2(member);
+					if (!Objects.equals(optimizedMember, member)) {
+						changedMembers.put(member, optimizedMember);
+					}
+				}
+				if (!changedMembers.isEmpty()) {
+					Set<org.spdx.library.model.v2.license.AnyLicenseInfo> newMembers = new HashSet<>();
+					for (org.spdx.library.model.v2.license.AnyLicenseInfo member : members) {
+						newMembers.add(changedMembers.getOrDefault(member, member));
+					}
+					((LicenseSet)license).setMembers(newMembers);
+				}
+			}
+		}
+		return license;
+	}
+
 	/**
 	 * Parses a license string and converts it into a SPDXLicenseInfo object
 	 * Syntax - A license set must start and end with a parenthesis "("
@@ -174,8 +242,8 @@ public class LicenseInfoFactory {
             }
         }
 		try {
-			return LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix,
-					creationInfo, copyManager, customIdToUri);
+			return fixSingleMemberSets(LicenseExpressionParser.parseLicenseExpression(licenseString, store, customLicensePrefix,
+					creationInfo, copyManager, customIdToUri));
 		} catch (LicenseParserException e) {
 			try {
 				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
