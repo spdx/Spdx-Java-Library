@@ -249,6 +249,7 @@ public class LicenseInfoFactory {
 				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
 						copyManager, true, customLicensePrefix);
 				retval.setMessage(e.getMessage());
+				retval.setLicenseExpression(licenseString);
 				return retval;
 			} catch (InvalidSPDXAnalysisException e1) {
 				throw new RuntimeException(e1);
@@ -258,6 +259,7 @@ public class LicenseInfoFactory {
 				InvalidLicenseExpression retval = new InvalidLicenseExpression(store, store.getNextId(IModelStore.IdType.Anonymous),
 						copyManager, true, customLicensePrefix);
 				retval.setMessage(String.format("Unexpected SPDX error parsing license string: %s", e.getMessage()));
+				retval.setLicenseExpression(licenseString);
 				return retval;
 			} catch (InvalidSPDXAnalysisException e1) {
 				throw new RuntimeException(e1);
