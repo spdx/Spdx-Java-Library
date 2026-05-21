@@ -870,7 +870,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 				toObjectUri, "SimpleLicensing.InvalidLicenseExpression", copyManager, true, defaultUriPrefix);
 		toInvalidLicExpression.setCreationInfo(defaultCreationInfo);
 		toInvalidLicExpression.setMessage(fromInvalidLicenseExpression.getMessage());
-		toInvalidLicExpression.setLicenseExpression(fromInvalidLicenseExpression.getMessage());
+		toInvalidLicExpression.setLicenseExpression(fromInvalidLicenseExpression.getLicenseExpression());
 		return toInvalidLicExpression;
 	}
 	
