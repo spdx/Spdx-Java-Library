@@ -31,16 +31,7 @@ import org.spdx.library.model.v2.GenericModelObject;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxDocument;
 import org.spdx.library.model.v2.enumerations.ChecksumAlgorithm;
-import org.spdx.library.model.v2.license.AnyLicenseInfo;
-import org.spdx.library.model.v2.license.ConjunctiveLicenseSet;
-import org.spdx.library.model.v2.license.DisjunctiveLicenseSet;
-import org.spdx.library.model.v2.license.ExternalExtractedLicenseInfo;
-import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
-import org.spdx.library.model.v2.license.LicenseException;
-import org.spdx.library.model.v2.license.ListedLicenseException;
-import org.spdx.library.model.v2.license.OrLaterOperator;
-import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v2.license.WithExceptionOperator;
+import org.spdx.library.model.v2.license.*;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -250,5 +241,11 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 		}
 		assertTrue(foundLicenseRef);
 		assertTrue(foundMit);
+	}
+
+	public void testInvalidExceptionOnly() throws InvalidSPDXAnalysisException {
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("389-exception");
+		assertTrue(result instanceof InvalidLicenseExpression);
+		assertEquals("389-exception", ((InvalidLicenseExpression)result).getLicenseExpression());
 	}
 }
