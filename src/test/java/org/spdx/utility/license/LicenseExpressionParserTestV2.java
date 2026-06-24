@@ -244,6 +244,9 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 	}
 
 	public void testInvalidExceptionOnly() throws InvalidSPDXAnalysisException {
+        # "389-exception" is a valid license exception,
+        # but a license expression has to be presented with a license,
+        # to form a valid license expression.
 		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2("389-exception");
 		assertTrue(result instanceof InvalidLicenseExpression);
 		assertEquals("389-exception", ((InvalidLicenseExpression)result).getLicenseExpression());
