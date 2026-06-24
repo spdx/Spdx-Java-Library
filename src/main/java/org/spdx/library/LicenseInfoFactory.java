@@ -95,9 +95,10 @@ public class LicenseInfoFactory {
 	 * @param copyManager allows for copying of any properties set which use other model stores or document URI's.  If null, the default will be used.
 	 * @return an SPDXLicenseInfo created from the string.  If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
+	 * @throws InvalidLicenseStringException no longer used, a <code>InvalidLicenseExpression</code> is returned on parsing errors - retained for compatibility in the method signature
 	 */
 	public static org.spdx.library.model.v2.license.AnyLicenseInfo parseSPDXLicenseStringCompatV2(String licenseString, @Nullable IModelStore store, 
-			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws DefaultStoreNotInitializedException {
+			@Nullable String documentUri, @Nullable IModelCopyManager copyManager) throws DefaultStoreNotInitializedException, InvalidLicenseStringException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
@@ -217,12 +218,13 @@ public class LicenseInfoFactory {
 	 * @param customIdToUri Mapping of the id prefixes used in the license expression to the namespace preceding the external ID
 	 * @return an SPDXLicenseInfo created from the string.   If the license expression is not parseable, a <code>InvalidLicenseExpression</code> is returned.
 	 * @throws DefaultStoreNotInitializedException if the default model store is not initialized
+	 * @throws InvalidLicenseStringException no longer used, a <code>InvalidLicenseExpression</code> is returned on parsing errors - retained for compatibility in the method signature
 	 */
 	public static AnyLicenseInfo parseSPDXLicenseString(String licenseString, @Nullable IModelStore store,
 														@Nullable String customLicensePrefix,
 														@Nullable CreationInfo creationInfo,
 														@Nullable IModelCopyManager copyManager,
-														@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException {
+														@Nullable List<DictionaryEntry> customIdToUri) throws InvalidLicenseStringException, DefaultStoreNotInitializedException, InvalidLicenseStringException {
 		if (Objects.isNull(store)) {
 			store = DefaultModelStore.getDefaultModelStore();
 		}
