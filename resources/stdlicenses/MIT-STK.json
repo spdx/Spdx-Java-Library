@@ -8,11 +8,11 @@
   "licenseId": "MIT-STK",
   "crossRef": [
     {
-      "match": "true",
+      "match": "false",
       "url": "https://github.com/thestk/stk/blob/6aacd357d76250bb7da2b1ddf675651828784bbc/LICENSE",
       "isValid": true,
       "isLive": true,
-      "timestamp": "2026-03-05T17:58:56Z",
+      "timestamp": "2026-02-20T20:56:44Z",
       "isWayBackLink": false,
       "order": 0
     }
