@@ -19,6 +19,7 @@ package org.spdx.storage.listedlicense;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -556,5 +557,15 @@ public class LicenseJson {
 			}
 		});
 		return retval;
+	}
+
+	/**
+	 * Sort the crossRef list by order, with URL as a secondary sort key for
+	 * entries with no order set.
+	 */
+	public void sortCrossRef() {
+		crossRef.sort(Comparator
+				.comparingInt((CrossRefJson c) -> c.order != null ? c.order : Integer.MAX_VALUE)
+				.thenComparing(c -> c.url != null ? c.url : ""));
 	}
 }
