@@ -251,6 +251,13 @@ public class LicenseJsonTOC {
 		this.releaseDate = releaseDate;
 	}
 
+	/**
+	 * Sort the licenses list by licenseId.
+	 */
+	public void sort() {
+		licenses.sort((l1, l2) -> l1.getLicenseId().compareToIgnoreCase(l2.getLicenseId()));
+	}
+
 	protected static String toAbsoluteURL(String relURL) {
 		String retval = relURL.startsWith("./") ? relURL.substring(2) : relURL;
 		return SpdxConstantsCompatV2.LISTED_LICENSE_URL + retval;

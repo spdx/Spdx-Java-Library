@@ -283,4 +283,11 @@ public class ExceptionJsonTOC {
 		this.releaseDate = releaseDate;
 	}
 
+	/**
+	 * Sort the exceptions list by licenseExceptionId.
+	 */
+	public void sort() {
+		exceptions.sort((e1, e2) -> e1.getLicenseExceptionId().compareToIgnoreCase(e2.getLicenseExceptionId()));
+	}
+
 }
