@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -272,6 +272,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;valueId,
                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;type)</code></th>
 <td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sortCrossRef()">sortCrossRef</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Sort the crossRef list by order, with URL as a secondary sort key for
+ entries with no order set.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -548,7 +556,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a id="getPropertyValueDescriptors()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getPropertyValueDescriptors</h4>
 <pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;org.spdx.storage.PropertyDescriptor&gt;&nbsp;getPropertyValueDescriptors()</pre>
@@ -556,6 +564,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>all present property descriptors</dd>
 </dl>
+</li>
+</ul>
+<a id="sortCrossRef()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>sortCrossRef</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;sortCrossRef()</pre>
+<div class="block">Sort the crossRef list by order, with URL as a secondary sort key for
+ entries with no order set.</div>
 </li>
 </ul>
 </li>
