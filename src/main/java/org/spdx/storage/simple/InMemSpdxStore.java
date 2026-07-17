@@ -64,7 +64,7 @@ public class InMemSpdxStore implements IModelStore {
 	/**
 	 * Pattern for the generated license ID
 	 */
-	public static Pattern LICENSE_ID_PATTERN_GENERATED =
+	public static final Pattern LICENSE_ID_PATTERN_GENERATED =
 			Pattern.compile(".*"+SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM+GENERATED+"(\\d+)$");	// Pattern for generated license IDs
 
 	static Pattern DOCUMENT_ID_PATTERN_GENERATED = Pattern.compile(".*"+SpdxConstantsCompatV2.EXTERNAL_DOC_REF_PRENUM+GENERATED+"(\\d+)$");
