@@ -19,11 +19,7 @@ package org.spdx.utility;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -425,8 +421,7 @@ public final class DownloadCache {
      */
     private HashMap<String,String> readMetadataFile(final File metadataFile) {
         HashMap<String,String> result;
-        try {
-            final Reader r = new BufferedReader(new FileReader(metadataFile));
+        try (final Reader r = Files.newBufferedReader(metadataFile.toPath(), StandardCharsets.UTF_8)) {
             result = new Gson().fromJson(r, new TypeToken<HashMap<String, String>>(){}.getType());
         }
         catch (IOException ioe) {
@@ -442,7 +437,7 @@ public final class DownloadCache {
      * @throws IOException When an IO error of some kind occurs.
      */
     private void writeMetadataFile(final File metadataFile, HashMap<String,String> metadata) throws IOException {
-        try (final Writer w = new BufferedWriter(new FileWriter(metadataFile))) {
+        try (final Writer w = Files.newBufferedWriter(metadataFile.toPath(), StandardCharsets.UTF_8)) {
             new Gson().toJson(metadata, new TypeToken<HashMap<String, String>>(){}.getType(), w);
             w.flush();
         }
