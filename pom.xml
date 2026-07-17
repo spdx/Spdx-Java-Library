@@ -311,6 +311,18 @@
 				<version>${dependency-check-maven.version}</version>
 			</plugin>
 			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.10.3.0</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>High</threshold>
+					<xmlOutput>true</xmlOutput>
+					<sarifOutput>true</sarifOutput>
+					<failOnError>true</failOnError>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>3.6.1</version>
@@ -339,9 +351,13 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.5</version>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.10.3.0</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>High</threshold>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
