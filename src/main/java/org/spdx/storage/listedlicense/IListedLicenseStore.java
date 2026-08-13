@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.library.model.v3_0_1.core.CreationInfo;
+import org.spdx.library.model.v3.core.CreationInfo;
 import org.spdx.storage.IModelStore;
 
 /**

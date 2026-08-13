@@ -22,10 +22,10 @@ import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ModelCopyManager;
 import org.spdx.library.SpdxModelFactory;
-import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
-import org.spdx.library.model.v3_0_1.core.CreationInfo;
-import org.spdx.library.model.v3_0_1.software.Sbom;
-import org.spdx.library.model.v3_0_1.software.SpdxPackage;
+import org.spdx.library.model.v3.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3.core.CreationInfo;
+import org.spdx.library.model.v3.software.Sbom;
+import org.spdx.library.model.v3.software.SpdxPackage;
 import org.spdx.storage.simple.InMemSpdxStore;
 
 /**

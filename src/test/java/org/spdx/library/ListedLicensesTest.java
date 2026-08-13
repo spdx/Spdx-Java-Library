@@ -26,8 +26,8 @@ import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.license.LicenseException;
 import org.spdx.library.model.v2.license.SpdxListedLicense;
-import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
-import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicenseException;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicenseException;
 import org.spdx.storage.compatv2.CompatibleModelStoreWrapper;
 
 import junit.framework.TestCase;

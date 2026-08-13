@@ -24,7 +24,7 @@ import java.util.Objects;
 
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.LicenseInfoFactory;
-import org.spdx.library.model.v3_0_1.expandedlicensing.ListedLicense;
+import org.spdx.library.model.v3.expandedlicensing.ListedLicense;
 
 
 /**

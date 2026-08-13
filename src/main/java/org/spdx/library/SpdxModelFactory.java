@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spdx.core.*;
 import org.spdx.library.model.v2.SpdxModelInfoV2_X;
-import org.spdx.library.model.v3_0_1.SpdxModelInfoV3_0;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.simple.InMemSpdxStore;
 
@@ -57,7 +56,7 @@ public class SpdxModelFactory {
 	static {
 		// register the supported spec version models
 		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV2_X());
-		ModelRegistry.getModelRegistry().registerModel(new SpdxModelInfoV3_0());
+		ModelRegistry.getModelRegistry().registerModel(new org.spdx.library.model.v3.SpdxModelInfoV3());
 	}
 	
 	public static final String IMPLEMENTATION_VERSION = "2.0.0";

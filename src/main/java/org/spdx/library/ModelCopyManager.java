@@ -17,10 +17,7 @@
  */
 package org.spdx.library;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
@@ -35,7 +32,7 @@ import org.spdx.core.TypedValue;
 import org.spdx.library.conversion.ISpdxConverter;
 import org.spdx.library.conversion.Spdx2to3Converter;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
-import org.spdx.library.model.v3_0_1.SpdxConstantsV3;
+import org.spdx.library.model.v3.SpdxConstantsV3;
 import org.spdx.storage.IModelStore;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -53,6 +50,18 @@ import org.spdx.storage.PropertyDescriptor;
  */
 @SuppressWarnings("unused")
 public class ModelCopyManager implements IModelCopyManager {
+
+	static final Map<String, String> NAMESPACE_VERSION_PATTERN;
+	static {
+		Map<String, String> namespaceVersionPattternMap = new HashMap<>();
+		namespaceVersionPattternMap.put("3.0.1", "/3.0.1/");
+		namespaceVersionPattternMap.put("3.0", "/3.0.1/");
+		//TODO: After spec version 3.1 RC1, the namespace pattern will change to "/3/"
+		namespaceVersionPattternMap.put("3.1", "/3.1.0/");
+		namespaceVersionPattternMap.put("3.1.0", "/3.1.0/");
+		namespaceVersionPattternMap.put("3", "/3.1.0/");
+		NAMESPACE_VERSION_PATTERN = Collections.unmodifiableMap(namespaceVersionPattternMap);
+	}
 	
 	static final Logger logger = LoggerFactory.getLogger(ModelCopyManager.class);
 	
@@ -87,7 +96,8 @@ public class ModelCopyManager implements IModelCopyManager {
 		Objects.requireNonNull(fromSpecVersion);
 		Objects.requireNonNull(toSpecVersion);
 		return fromSpecVersion.startsWith("SPDX-2") && toSpecVersion.startsWith("SPDX-2") ||
-				fromSpecVersion.startsWith("3.0.") && toSpecVersion.startsWith("3.0.");
+				fromSpecVersion.startsWith("3.0.1") && toSpecVersion.startsWith("3.0.1") ||
+				fromSpecVersion.startsWith("3.1") && toSpecVersion.startsWith("3.1");
 	}
 	
 	/**
@@ -99,7 +109,10 @@ public class ModelCopyManager implements IModelCopyManager {
 			String toSpecVersion) {
 		Objects.requireNonNull(fromSpecVersion);
 		Objects.requireNonNull(toSpecVersion);
-		return fromSpecVersion.startsWith("SPDX-2") && toSpecVersion.startsWith("3.0.");
+		if (fromSpecVersion.startsWith("SPDX-2") && toSpecVersion.startsWith("3")) {
+			return false; //TODO: I think this can be implemented using the Spdx2to3Converter
+		}
+		return fromSpecVersion.startsWith("3") && toSpecVersion.startsWith("3");
 	}
 	
 	/**
@@ -278,7 +291,54 @@ public class ModelCopyManager implements IModelCopyManager {
 	private void copyConverted(IModelStore toStore, String toObjectUri, 
 			IModelStore fromStore, TypedValue fromTv, String toSpecVersion,
 			@Nullable String toNamespace) throws InvalidSPDXAnalysisException {
-		throw new InvalidSPDXAnalysisException("Unimplemented");
+		// TODO: Add in the Spdx2to3Converter
+		if (!canConvert(fromTv.getSpecVersion(), toSpecVersion)) {
+			throw new InvalidSPDXAnalysisException(String.format("Can not convert from spec version %s to spec version %s",
+					fromTv.getSpecVersion(), toSpecVersion));
+		}
+		if (fromTv.getSpecVersion().equals(toSpecVersion)) {
+			copyCompatible(toStore, toObjectUri, fromStore, fromTv, toSpecVersion, toNamespace);
+		}
+		else if (fromTv.getSpecVersion().startsWith("3.") && toSpecVersion.startsWith("3.")) {
+			if (!toStore.exists(toObjectUri)) {
+				toStore.create(new TypedValue(toObjectUri, fromTv.getType(), toSpecVersion));
+			}
+			putCopiedId(fromStore, fromTv.getObjectUri(), toStore, toObjectUri);
+			List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromTv.getObjectUri());
+			for (PropertyDescriptor propDesc:propertyDescriptors) {
+				PropertyDescriptor convertedProDesc = convertPropertyDescriptor(propDesc, fromTv.getSpecVersion(), toSpecVersion);
+				if (fromStore.isCollectionProperty(fromTv.getObjectUri(), propDesc)) {
+					copyCollectionProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, convertedProDesc, toSpecVersion, toNamespace);
+				} else {
+					copyIndividualProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, convertedProDesc, toSpecVersion, toNamespace);
+				}
+			}
+		} else {
+			throw new InvalidSPDXAnalysisException("Unimplemented");
+		}
+	}
+
+	/**
+	 * Converts a property descriptor between minor spec version for SPDX 3
+	 * @param fromPropertyDescriptor Descriptor to convert from
+	 * @param fromSpecVersion spec version for the original property descriptor
+	 * @param toSpecVersion spec version for the resulting spec version
+	 * @return a property descriptor compatible to the to spec version
+	 * @throws InvalidSPDXAnalysisException if either version is not supported
+	 */
+	PropertyDescriptor convertPropertyDescriptor(PropertyDescriptor fromPropertyDescriptor,
+												 String fromSpecVersion,
+												 String toSpecVersion) throws InvalidSPDXAnalysisException {
+		String fromSpecVersionPattern = NAMESPACE_VERSION_PATTERN.get(fromSpecVersion);
+		if (Objects.isNull(fromSpecVersionPattern)) {
+			throw new InvalidSPDXAnalysisException(String.format("Unrecognized from spec version for conversion %s", fromSpecVersion));
+		}
+		String toSpecVersionPattern = NAMESPACE_VERSION_PATTERN.get(toSpecVersion);
+		if (Objects.isNull(toSpecVersionPattern)) {
+			throw new InvalidSPDXAnalysisException(String.format("Unrecognized from spec version for conversion %s", toSpecVersion));
+		}
+		return new PropertyDescriptor(fromPropertyDescriptor.getName(),
+				fromPropertyDescriptor.getNameSpace().replace(fromSpecVersionPattern, toSpecVersionPattern));
 	}
 	
 	/**
@@ -301,9 +361,9 @@ public class ModelCopyManager implements IModelCopyManager {
 		List<PropertyDescriptor> propertyDescriptors = fromStore.getPropertyValueDescriptors(fromTv.getObjectUri());
 		for (PropertyDescriptor propDesc:propertyDescriptors) {
 			if (fromStore.isCollectionProperty(fromTv.getObjectUri(), propDesc)) {
-			    copyCollectionProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, toSpecVersion, toNamespace);
+			    copyCollectionProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, propDesc, toSpecVersion, toNamespace);
 			} else {
-			    copyIndividualProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, toSpecVersion, toNamespace);
+			    copyIndividualProperty(toStore, toObjectUri, fromStore, fromTv.getObjectUri(), propDesc, propDesc, toSpecVersion, toNamespace);
 			}
 		}
 	}
@@ -314,38 +374,39 @@ public class ModelCopyManager implements IModelCopyManager {
      * @param toObjectUri to object URI to copy to
      * @param fromStore Model Store containing the source item
      * @param fromObjectUri object to copy from
-     * @param propDescriptor Descriptor for the property
+	 * @param fromPropDescriptor Descriptor for the property to copy from
+	 * @param toPropDescriptor Descriptor for the property to copy to
      * @param toSpecVersion Version of the SPDX spec the to value complies with
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void copyIndividualProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
-            String fromObjectUri, PropertyDescriptor propDescriptor,
+            String fromObjectUri, PropertyDescriptor fromPropDescriptor, PropertyDescriptor toPropDescriptor,
 			String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Optional<Object> result;
 		try {
-			if (fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
-	            throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is a collection type");
+			if (fromStore.isCollectionProperty(fromObjectUri, fromPropDescriptor)) {
+	            throw new InvalidSPDXAnalysisException("Property "+fromPropDescriptor+" is a collection type");
 	        }
-			result =  fromStore.getValue(fromObjectUri, propDescriptor);
+			result =  fromStore.getValue(fromObjectUri, fromPropDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
         if (result.isPresent()) {
             if (result.get() instanceof IndividualUriValue) {
-                toStore.setValue(toObjectUri, propDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
+                toStore.setValue(toObjectUri, fromPropDescriptor, new SimpleUriValue((IndividualUriValue)result.get()));
             } else if (result.get() instanceof TypedValue) {
                 TypedValue tv = (TypedValue)result.get();
                 if (fromStore.equals(toStore)) {
-                    toStore.setValue(toObjectUri, propDescriptor, tv);
+                    toStore.setValue(toObjectUri, fromPropDescriptor, tv);
                 } else {
-                    toStore.setValue(toObjectUri, propDescriptor, 
+                    toStore.setValue(toObjectUri, fromPropDescriptor,
                             copy(toStore, fromStore, tv.getObjectUri(), toSpecVersion, toNamespace));
                 }
             } else {
-                toStore.setValue(toObjectUri, propDescriptor, result.get());
+                toStore.setValue(toObjectUri, toPropDescriptor, result.get());
             }
         }
     }
@@ -356,22 +417,23 @@ public class ModelCopyManager implements IModelCopyManager {
      * @param toObjectUri URI to copy to
      * @param fromStore Model Store containing the source item
      * @param fromObjectUri Object URI to copy from
-	 * @param propDescriptor Descriptor for the property
+	 * @param fromPropDescriptor Descriptor for the property to copy from
+	 * @param toPropDescriptor Descriptor for the property to copy to
 	 * @param toSpecVersion Version of the SPDX spec the to value complies with
 	 * @param toNamespace Namespace to use if an ID needs to be generated for the to object
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	private void copyCollectionProperty(IModelStore toStore, String toObjectUri, IModelStore fromStore,
-            String fromObjectUri, PropertyDescriptor propDescriptor, 
-			String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
+            String fromObjectUri, PropertyDescriptor fromPropDescriptor, PropertyDescriptor toPropDescriptor,
+										String toSpecVersion, @Nullable String toNamespace) throws InvalidSPDXAnalysisException {
 		IModelStoreLock fromStoreLock = fromStore.enterCriticalSection(false);
 		//Note: we use a write lock since the RDF store may end up creating a property to check if it is a collection
 		Iterator<Object> fromListIter;
 		try {
-			if (!fromStore.isCollectionProperty(fromObjectUri, propDescriptor)) {
-		        throw new InvalidSPDXAnalysisException("Property "+propDescriptor+" is not a collection type");
+			if (!fromStore.isCollectionProperty(fromObjectUri, fromPropDescriptor)) {
+		        throw new InvalidSPDXAnalysisException("Property "+fromPropDescriptor+" is not a collection type");
 		    }
-		    fromListIter = fromStore.listValues(fromObjectUri, propDescriptor);
+		    fromListIter = fromStore.listValues(fromObjectUri, fromPropDescriptor);
 		} finally {
 			fromStoreLock.unlock();
 		}
@@ -391,7 +453,7 @@ public class ModelCopyManager implements IModelCopyManager {
             } else {
                 toStoreItem = listItem;
             }
-            toStore.addValueToCollection(toObjectUri, propDescriptor, toStoreItem);
+            toStore.addValueToCollection(toObjectUri, toPropDescriptor, toStoreItem);
         }
     }
 

@@ -20,7 +20,7 @@ package org.spdx.example;
 
 import junit.framework.TestCase;
 import org.spdx.core.InvalidSPDXAnalysisException;
-import org.spdx.library.model.v3_0_1.software.Sbom;
+import org.spdx.library.model.v3.software.Sbom;
 
 import java.util.List;
 
