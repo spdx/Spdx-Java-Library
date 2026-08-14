@@ -74,7 +74,7 @@ public class ExternalMapInfo {
 			ExternalMap retval = existingExternalMap.get(externalUri);
 			if (Objects.isNull(retval)) {
 				retval = (ExternalMap)SpdxModelClassFactoryV3.getModelObject(modelStore, 
-						modelStore.getNextId(IdType.Anonymous), SpdxConstantsV3.CORE_EXTERNAL_MAP, null, true, null);
+						modelStore.getNextId(IdType.Anonymous), SpdxConstantsV3.CORE_EXTERNAL_MAP, null, SpdxConstantsV3.MODEL_SPEC_VERSION, true, null);
 				retval.setExternalSpdxId(externalUri);
 				retval.setLocationHint(this.externalDocumentUri);
 				if (externalDocumentHash.isPresent()) {

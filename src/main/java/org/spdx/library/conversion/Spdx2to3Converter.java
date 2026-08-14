@@ -323,7 +323,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			if (docCreator.startsWith(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL)) {
 				Tool tool = (Tool)SpdxModelClassFactoryV3.getModelObject(modelStore, 
 						uriPrefix + "additionalTool" + modelStore.getNextId(IdType.SpdxId),
-						SpdxConstantsV3.CORE_TOOL, null, true, uriPrefix);
+						SpdxConstantsV3.CORE_TOOL, null, SpdxConstantsV3.MODEL_SPEC_VERSION, true, uriPrefix);
 				tool.setCreationInfo(retval)
 					.setName(docCreator.substring(SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL.length()).trim())
 					.setIdPrefix(uriPrefix);
@@ -355,14 +355,14 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			// return a generic Agent
 			Agent agent = (Agent)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), SpdxConstantsV3.MODEL_SPEC_VERSION, true, creationInfo.getIdPrefix());
 			agent.setCreationInfo(creationInfo);
 			agent.setName(spdx2personOrgString);
 			return agent;
 		} else if (matcher.group(1).trim().equals("Person")) {
 			Person person = (Person)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					idPrefix + creationInfo.getModelStore().getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_PERSON, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+					SpdxConstantsV3.CORE_PERSON, creationInfo.getCopyManager(), SpdxConstantsV3.MODEL_SPEC_VERSION, true, creationInfo.getIdPrefix());
 			person.setCreationInfo(creationInfo);
 			if (matcher.groupCount() > 1) {
 				String personName = matcher.group(2).trim();
@@ -384,7 +384,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		} else if (matcher.group(1).trim().equals("Organization"))  {
 			Organization organization = (Organization)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_ORGANIZATION, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+					SpdxConstantsV3.CORE_ORGANIZATION, creationInfo.getCopyManager(), SpdxConstantsV3.MODEL_SPEC_VERSION, true, creationInfo.getIdPrefix());
 			organization.setCreationInfo(creationInfo);
 			if (matcher.groupCount() > 1) {
 				String organizationName = matcher.group(2).trim();
@@ -408,7 +408,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			// return a generic Agent
 			Agent agent = (Agent)SpdxModelClassFactoryV3.getModelObject(creationInfo.getModelStore(), 
 					creationInfo.getIdPrefix() + creationInfo.getModelStore().getNextId(IdType.SpdxId),
-					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), true, creationInfo.getIdPrefix());
+					SpdxConstantsV3.CORE_AGENT, creationInfo.getCopyManager(), SpdxConstantsV3.MODEL_SPEC_VERSION, true, creationInfo.getIdPrefix());
 			agent.setCreationInfo(creationInfo);
 			agent.setName(spdx2personOrgString);
 			return agent;
@@ -559,7 +559,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return Optional.empty();
 		} else {
 			return Optional.of(SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-					toObjectUri, toType, copyManager, false, defaultUriPrefix));
+					toObjectUri, toType, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, false, defaultUriPrefix));
 		}
 	}
 	
@@ -589,10 +589,10 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		Relationship toRelationship;
 		if (Objects.isNull(scope)) {
 			toRelationship = (Relationship)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-					toObjectUri, SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, true, defaultUriPrefix);
+					toObjectUri, SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		} else {
 			toRelationship = (LifecycleScopedRelationship)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-					toObjectUri, SpdxConstantsV3.CORE_LIFECYCLE_SCOPED_RELATIONSHIP, copyManager, true, defaultUriPrefix);
+					toObjectUri, SpdxConstantsV3.CORE_LIFECYCLE_SCOPED_RELATIONSHIP, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		}
 		toRelationship.setCreationInfo(defaultCreationInfo);
 		toRelationship.setRelationshipType(RELATIONSHIP_TYPE_MAP.get(fromRelationshipType));
@@ -643,7 +643,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (Annotation)getExistingObject(fromUri, SpdxConstantsV3.CORE_ANNOTATION).get();
 		}
 		Annotation toAnnotation = (Annotation)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.CORE_ANNOTATION, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.CORE_ANNOTATION, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		
 		toAnnotation.setAnnotationType(ANNOTATION_TYPE_MAP.get(fromAnnotation.getAnnotationType()));
 		toAnnotation.setStatement(fromAnnotation.getComment());
@@ -678,7 +678,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (SpdxDocument)getExistingObject(fromDoc.getObjectUri(), SpdxConstantsV3.CORE_SPDX_DOCUMENT).get();
 		} 
 		SpdxDocument toDoc = (SpdxDocument)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.CORE_SPDX_DOCUMENT, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.CORE_SPDX_DOCUMENT, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		// NOTE: We have to add the external doc refs first so that the ExternalMap will be properly populated
 		for (org.spdx.library.model.v2.ExternalDocumentRef externalDocRef:fromDoc.getExternalDocumentRefs()) {
 			toDoc.getNamespaceMaps().add(convertAndStore(externalDocRef, toDoc.getSpdxImports()));
@@ -733,7 +733,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (NamespaceMap)getExistingObject(externalDocRef.getObjectUri(), SpdxConstantsV3.CORE_NAMESPACE_MAP).get();
 		} 
 		NamespaceMap toNamespaceMap = (NamespaceMap)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.CORE_NAMESPACE_MAP, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.CORE_NAMESPACE_MAP, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toNamespaceMap.setPrefix(externalDocRef.getId());
 		toNamespaceMap.setNamespace(externalDocRef.getSpdxDocumentNamespace() + "#");
 		return toNamespaceMap;
@@ -758,7 +758,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (ConjunctiveLicenseSet)getExistingObject(fromConjunctiveLicenseSet.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_CONJUNCTIVE_LICENSE_SET).get();
 		} 
 		ConjunctiveLicenseSet toConjunctiveLicenseSet = (ConjunctiveLicenseSet)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CONJUNCTIVE_LICENSE_SET, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CONJUNCTIVE_LICENSE_SET, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		for (org.spdx.library.model.v2.license.AnyLicenseInfo fromMember:fromConjunctiveLicenseSet.getMembers()) {
 			toConjunctiveLicenseSet.getMembers().add(convertAndStore(fromMember));
 		}
@@ -785,7 +785,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (DisjunctiveLicenseSet)getExistingObject(fromDisjunctiveLicenseSet.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_DISJUNCTIVE_LICENSE_SET).get();
 		} 
 		DisjunctiveLicenseSet toDisjunctiveLicenseSet = (DisjunctiveLicenseSet)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_DISJUNCTIVE_LICENSE_SET, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_DISJUNCTIVE_LICENSE_SET, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		for (org.spdx.library.model.v2.license.AnyLicenseInfo fromMember:fromDisjunctiveLicenseSet.getMembers()) {
 			toDisjunctiveLicenseSet.getMembers().add(convertAndStore(fromMember));
 		}
@@ -812,7 +812,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (CustomLicense)getExistingObject(fromExtractedLicenseInfo.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE).get();
 		} 
 		CustomLicense toCustomLicense = (CustomLicense)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toCustomLicense.setCreationInfo(defaultCreationInfo);
 		toCustomLicense.setLicenseText(fromExtractedLicenseInfo.getExtractedText());
 		toCustomLicense.setName(fromExtractedLicenseInfo.getName());
@@ -840,7 +840,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (OrLaterOperator)getExistingObject(fromOrLaterOperator.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_OR_LATER_OPERATOR).get();
 		} 
 		OrLaterOperator toOrLaterOperator = (OrLaterOperator)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_OR_LATER_OPERATOR, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_OR_LATER_OPERATOR, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toOrLaterOperator.setCreationInfo(defaultCreationInfo);
 		toOrLaterOperator.setSubjectLicense((License)convertAndStore(fromOrLaterOperator.getLicense()));
 		return toOrLaterOperator;
@@ -867,7 +867,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 					"SimpleLicensing.InvalidLicenseExpression").get();
 		}
 		InvalidLicenseExpression toInvalidLicExpression = (InvalidLicenseExpression)SpdxModelClassFactoryV3.getModelObject(toModelStore,
-				toObjectUri, "SimpleLicensing.InvalidLicenseExpression", copyManager, true, defaultUriPrefix);
+				toObjectUri, "SimpleLicensing.InvalidLicenseExpression", copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toInvalidLicExpression.setCreationInfo(defaultCreationInfo);
 		toInvalidLicExpression.setMessage(fromInvalidLicenseExpression.getMessage());
 		toInvalidLicExpression.setLicenseExpression(fromInvalidLicenseExpression.getLicenseExpression());
@@ -901,7 +901,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return retval;
 		}
 		ListedLicense toListedLicense = (ListedLicense)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				fromSpdxListedLicense.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, copyManager, true, defaultUriPrefix);
+				fromSpdxListedLicense.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toListedLicense.setCreationInfo(defaultCreationInfo);
 		toListedLicense.setComment(fromSpdxListedLicense.getComment());
 		// fromSpdxListedLicense.getCrossRef()) - no equivalent in SPDX version 3.X
@@ -939,7 +939,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (WithAdditionOperator)getExistingObject(fromWithExceptionOperator.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_WITH_ADDITION_OPERATOR).get();
 		} 
 		WithAdditionOperator toWithAdditionOperator = (WithAdditionOperator)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_WITH_ADDITION_OPERATOR, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_WITH_ADDITION_OPERATOR, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toWithAdditionOperator.setCreationInfo(defaultCreationInfo);
 		toWithAdditionOperator.setSubjectAddition(convertAndStore(fromWithExceptionOperator.getException()));
 		toWithAdditionOperator.setSubjectExtendableLicense((ExtendableLicense)convertAndStore(fromWithExceptionOperator.getLicense()));
@@ -969,7 +969,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (CustomLicenseAddition)getExistingObject(fromException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE_ADDITION).get();
 		} 
 		CustomLicenseAddition toCustomAddition = (CustomLicenseAddition)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE_ADDITION, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.EXPANDED_LICENSING_CUSTOM_LICENSE_ADDITION, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		convertLicenseAdditionProperties(fromException, toCustomAddition);
 		return toCustomAddition;
 	}
@@ -1018,7 +1018,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return retval;
 		}
 		ListedLicenseException toListedException = (ListedLicenseException)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				fromException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, copyManager, true, defaultUriPrefix);
+				fromException.getObjectUri(), SpdxConstantsV3.EXPANDED_LICENSING_LISTED_LICENSE_EXCEPTION, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		convertLicenseAdditionProperties(fromException, toListedException);
 		toListedException.setDeprecatedVersion(fromException.getDeprecatedVersion());
 		toListedException.setIsDeprecatedAdditionId(fromException.isDeprecated());
@@ -1045,7 +1045,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (LicenseExpression)getExistingObject(fromLicense.getObjectUri(), SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION).get();
 		}
 		LicenseExpression licenseExpression = (LicenseExpression)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.SIMPLE_LICENSING_LICENSE_EXPRESSION, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		licenseExpression.setCreationInfo(defaultCreationInfo);
 		String expression = fromLicense.toString();
 		licenseExpression.setLicenseExpression(expression);
@@ -1170,7 +1170,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (SpdxFile)getExistingObject(spdxFile.getObjectUri(), SpdxConstantsV3.SOFTWARE_SPDX_FILE).get();
 		} 
 		SpdxFile toFile = (SpdxFile)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.SOFTWARE_SPDX_FILE, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.SOFTWARE_SPDX_FILE, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		convertItemProperties(spdxFile, toFile);
 		
 		for (org.spdx.library.model.v2.Checksum checksum:spdxFile.getChecksums()) {
@@ -1207,7 +1207,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (Hash)getExistingObject(checksum.getObjectUri(), SpdxConstantsV3.CORE_HASH).get();
 		} 
 		Hash toHash = (Hash)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.CORE_HASH, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.CORE_HASH, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		toHash.setAlgorithm(HASH_ALGORITH_MAP.get(checksum.getAlgorithm()));
 		toHash.setHashValue(checksum.getValue());
 		return toHash;
@@ -1271,7 +1271,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		org.spdx.library.model.v2.license.AnyLicenseInfo concludedLicense = fromItem.getLicenseConcluded();
 		if (Objects.nonNull(concludedLicense)) {
 			Relationship concludedRelationship = (Relationship)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, true, defaultUriPrefix);
+					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 			concludedRelationship.setCreationInfo(defaultCreationInfo);
 			concludedRelationship.setFrom(toArtifact);
 			concludedRelationship.getTos().add(convertAndStore(concludedLicense));
@@ -1281,7 +1281,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			// we use the license concluded for the SPDX package
 			for (org.spdx.library.model.v2.license.AnyLicenseInfo declaredLicense:fromItem.getLicenseInfoFromFiles()) {
 				Relationship declaredRelationship = (Relationship)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-						defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, true, defaultUriPrefix);
+						defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 				declaredRelationship.setCreationInfo(defaultCreationInfo);
 				declaredRelationship.setFrom(toArtifact);
 				declaredRelationship.getTos().add(convertAndStore(declaredLicense));
@@ -1308,7 +1308,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (SpdxPackage)getExistingObject(spdxPackage.getObjectUri(), SpdxConstantsV3.SOFTWARE_SPDX_PACKAGE).get();
 		} 
 		SpdxPackage toPackage = (SpdxPackage)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.SOFTWARE_SPDX_PACKAGE, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.SOFTWARE_SPDX_PACKAGE, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		convertItemProperties(spdxPackage, toPackage);
 		toPackage.setBuiltTime(spdxPackage.getBuiltDate().orElse(null));
 		toPackage.setDescription(spdxPackage.getDescription().orElse(null));
@@ -1350,7 +1350,8 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		org.spdx.library.model.v2.license.AnyLicenseInfo declaredLicense = spdxPackage.getLicenseDeclared();
 		if (Objects.nonNull(declaredLicense)) {
 			Relationship declaredRelationship = (Relationship)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager, true, defaultUriPrefix);
+					defaultUriPrefix + toModelStore.getNextId(IdType.SpdxId), SpdxConstantsV3.CORE_RELATIONSHIP, copyManager,
+					SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 			declaredRelationship.setCreationInfo(defaultCreationInfo);
 			declaredRelationship.setFrom(toPackage);
 			declaredRelationship.getTos().add(convertAndStore(declaredLicense));
@@ -1369,7 +1370,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			org.spdx.library.model.v2.SpdxPackageVerificationCode spdxPackageVerificationCode) throws InvalidSPDXAnalysisException {
 		PackageVerificationCode pkgVerificationCode = (PackageVerificationCode)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
 				toModelStore.getNextId(IdType.Anonymous), SpdxConstantsV3.CORE_PACKAGE_VERIFICATION_CODE,
-				copyManager, true, defaultUriPrefix);
+				copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		
 		pkgVerificationCode.setAlgorithm(HashAlgorithm.SHA1);
 		pkgVerificationCode.setHashValue(spdxPackageVerificationCode.getValue());
@@ -1498,7 +1499,7 @@ public class Spdx2to3Converter implements ISpdxConverter {
 			return (Snippet)getExistingObject(fromSnippet.getObjectUri(), SpdxConstantsV3.SOFTWARE_SNIPPET).get();
 		} 
 		Snippet toSnippet = (Snippet)SpdxModelClassFactoryV3.getModelObject(toModelStore, 
-				toObjectUri, SpdxConstantsV3.SOFTWARE_SNIPPET, copyManager, true, defaultUriPrefix);
+				toObjectUri, SpdxConstantsV3.SOFTWARE_SNIPPET, copyManager, SpdxConstantsV3.MODEL_SPEC_VERSION, true, defaultUriPrefix);
 		convertItemProperties(fromSnippet, toSnippet);
 		StartEndPointer fromByteRange = fromSnippet.getByteRange();
 		if (Objects.nonNull(fromByteRange)) {
