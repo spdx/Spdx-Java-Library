@@ -649,12 +649,6 @@ public class SpdxComparerTest extends TestCase {
 		return retval;
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#compare(org.spdx.rdfparser.SpdxDocument, org.spdx.rdfparser.SpdxDocument)}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws IOException 
-	 * @throws SpdxCompareException 
-	 */
 	public void testCompare() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -671,13 +665,6 @@ public class SpdxComparerTest extends TestCase {
 		assertEquals(doc2.hashCode(), comparer.getSpdxDoc(1).hashCode());
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#compareLicense(int, org.spdx.rdfparser.license.AnyLicenseInfo, int, org.spdx.rdfparser.license.AnyLicenseInfo)}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws IOException 
-	 * @throws SpdxCompareException 
-	 * @throws InvalidLicenseStringException 
-	 */
 	public void testCompareLicense() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException, InvalidLicenseStringException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -949,12 +936,6 @@ public class SpdxComparerTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isDifferenceFound()}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws IOException 
-	 * @throws SpdxCompareException 
-	 */
 	public void testIsDifferenceFound() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -970,12 +951,6 @@ public class SpdxComparerTest extends TestCase {
 
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isSpdxVersionEqual()}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws SpdxCompareException 
-	 * @throws IOException 
-	 */
 	public void testIsSpdxVersionEqual() throws InvalidSPDXAnalysisException, SpdxCompareException, IOException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -993,12 +968,6 @@ public class SpdxComparerTest extends TestCase {
 		assertFalse(comparer.isDifferenceFound());
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#getSpdxDoc(int)}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws IOException 
-	 * @throws SpdxCompareException 
-	 */
 	public void testGetSpdxDoc() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1013,12 +982,6 @@ public class SpdxComparerTest extends TestCase {
 
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isDataLicenseEqual()}.
-	 * @throws InvalidSPDXAnalysisException 
-	 * @throws IOException 
-	 * @throws SpdxCompareException 
-	 */
 	public void testIsDataLicenseEqual() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxComparer comparer = new SpdxComparer();		
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1035,9 +998,6 @@ public class SpdxComparerTest extends TestCase {
 		assertFalse(comparer.isDataLicenseEqual());
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isDocumentCommentsEqual()}.
-	 */
 	public void testIsDocumentCommentsEqual()throws IOException, InvalidSPDXAnalysisException, SpdxCompareException {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1055,10 +1015,6 @@ public class SpdxComparerTest extends TestCase {
 		assertFalse(comparer.isDifferenceFound());
 		assertTrue(comparer.isDocumentCommentsEqual());
 	}
-
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isExtractedLicensingInfosEqual()}.
-	 */
 	public void testIsExtractedLicensingInfosEqual() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1275,9 +1231,6 @@ public class SpdxComparerTest extends TestCase {
 		assertTrue(comparer.isDifferenceFound());		
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#getUniqueExtractedLicenses(int, int)}.
-	 */
 	public void testGetUniqueExtractedLicenses() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1423,9 +1376,6 @@ public class SpdxComparerTest extends TestCase {
 		assertTrue(uniqueLicIds.contains(result.get(3).getLicenseId()));
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#getExtractedLicenseDifferences(int, int)}.
-	 */
 	public void testGetExtractedLicenseDifferences() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1667,9 +1617,6 @@ public class SpdxComparerTest extends TestCase {
 		return crossReff1.containsAll(collection);
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isPackageEqual()}.
-	 */
 	public void testIsPackageEqual() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1685,9 +1632,6 @@ public class SpdxComparerTest extends TestCase {
 		// note - other test cases will test to make sure isPackageEquals is set for all changes where it should be false
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#isCreatorInformationEqual()}.
-	 */
 	public void testIsCreatorInformationEqual() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -1745,9 +1689,6 @@ public class SpdxComparerTest extends TestCase {
 		assertTrue(comparer.isDifferenceFound());
 	}
 
-	/**
-	 * Test method for {@link org.spdx.compare.SpdxComparer#getUniqueCreators(int, int)}.
-	 */
 	public void testGetUniqueCreators() throws IOException, InvalidSPDXAnalysisException, SpdxCompareException  {
 		SpdxComparer comparer = new SpdxComparer();
 		SpdxDocument doc1 = createTestSpdxDoc(DOC_URIA);
@@ -2056,10 +1997,10 @@ public class SpdxComparerTest extends TestCase {
 		Optional<SpdxElement> element1B = Optional.of(e1b);
 		Optional<SpdxElement> none1 = Optional.empty();
 		Optional<SpdxElement> none2 = Optional.empty();
-		assertTrue(SpdxComparer.elementsEquivalent(element1A, element2A));
-		assertFalse(SpdxComparer.elementsEquivalent(element1A, element1B));
-		assertFalse(SpdxComparer.elementsEquivalent(element1A, none1));
-		assertTrue(SpdxComparer.elementsEquivalent(none1, none2));
+		assertTrue(SpdxComparer.elementsEquivalent(element1A, element2A, new HashMap<>()));
+		assertFalse(SpdxComparer.elementsEquivalent(element1A, element1B, new HashMap<>()));
+		assertFalse(SpdxComparer.elementsEquivalent(element1A, none1, new HashMap<>()));
+		assertTrue(SpdxComparer.elementsEquivalent(none1, none2, new HashMap<>()));
 	}
 
 	public void testFindUniqueChecksums() throws InvalidSPDXAnalysisException {
