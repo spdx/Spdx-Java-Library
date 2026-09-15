@@ -30,11 +30,16 @@ import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spdx.core.DefaultModelStore;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.core.SpdxIdInUseException;
 import org.spdx.core.TypedValue;
 import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
+import org.spdx.library.model.v3_0_1.SpdxModelClassFactoryV3;
+import org.spdx.library.model.v3_0_1.core.Annotation;
+import org.spdx.library.model.v3_0_1.core.AnnotationType;
+import org.spdx.library.model.v3_0_1.core.CreationInfo;
 import org.spdx.storage.PropertyDescriptor;
 import org.spdx.storage.IModelStore.IModelStoreLock;
 import org.spdx.storage.IModelStore.IdType;
@@ -725,25 +730,40 @@ public class InMemSpdxStoreTest extends TestCase {
 	    }
 	}
 	
-	   public void testReferenceCountsDelete() throws Exception {
-	        try (InMemSpdxStore store = new InMemSpdxStore()) {
-	        	store.create(new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3"));
-		        store.create(new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2, "SPDX-2.3"));
-		        StoredTypedItem item = store.getItem(TEST_OBJECT_URI1);
-		        assertEquals(0, item.getReferenceCount());
-		        TypedValue tv = new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID1, TEST_TYPE1, "SPDX-2.3");
-		        store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2, 
-		        		new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
-		        assertEquals(1, item.getReferenceCount());
-		        store.setValue(TEST_NAMESPACE1 + "#" + TEST_ID2, 
-		        		new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
-		        assertEquals(2, item.getReferenceCount());
-		        store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2, 
-		        		new PropertyDescriptor("prop3", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
-		        assertEquals(3, item.getReferenceCount());
-		        store.delete(TEST_NAMESPACE1 + "#" + TEST_ID2);
-		        assertEquals(0, item.getReferenceCount());
-		        store.delete(TEST_OBJECT_URI1);
-	        }
-	    }
+   public void testReferenceCountsDelete() throws Exception {
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			store.create(new TypedValue(TEST_OBJECT_URI1, TEST_TYPE1, "SPDX-2.3"));
+			store.create(new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID2, TEST_TYPE2, "SPDX-2.3"));
+			StoredTypedItem item = store.getItem(TEST_OBJECT_URI1);
+			assertEquals(0, item.getReferenceCount());
+			TypedValue tv = new TypedValue(TEST_NAMESPACE1 + "#" + TEST_ID1, TEST_TYPE1, "SPDX-2.3");
+			store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2,
+					new PropertyDescriptor("prop1", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
+			assertEquals(1, item.getReferenceCount());
+			store.setValue(TEST_NAMESPACE1 + "#" + TEST_ID2,
+					new PropertyDescriptor("prop2", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
+			assertEquals(2, item.getReferenceCount());
+			store.addValueToCollection(TEST_NAMESPACE1 + "#" + TEST_ID2,
+					new PropertyDescriptor("prop3", SpdxConstantsCompatV2.SPDX_NAMESPACE), tv);
+			assertEquals(3, item.getReferenceCount());
+			store.delete(TEST_NAMESPACE1 + "#" + TEST_ID2);
+			assertEquals(0, item.getReferenceCount());
+			store.delete(TEST_OBJECT_URI1);
+		}
+	}
+
+	public void testCaseSensitiveURIs() throws Exception {
+		String prefix = "https://this/uri";
+		CreationInfo creationInfo = SpdxModelClassFactoryV3.createCreationInfo(DefaultModelStore.getDefaultModelStore(),
+				prefix + "Agent/Test","Test", DefaultModelStore.getDefaultCopyManager());
+		Annotation ann1 = creationInfo.createAnnotation(prefix + "/this")
+				.setAnnotationType(AnnotationType.OTHER)
+				.setComment("Annotation 1")
+				.build();
+		Annotation ann2 = creationInfo.createAnnotation(prefix + "/THIS")
+				.setAnnotationType(AnnotationType.OTHER)
+				.setComment("Annotation 2")
+				.build();
+		assertNotSame(ann1, ann2);
+	}
 }
