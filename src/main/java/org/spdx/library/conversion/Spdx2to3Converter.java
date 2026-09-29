@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.spdx.core.IModelCopyManager;
 import org.spdx.core.InvalidSPDXAnalysisException;
 import org.spdx.library.ListedLicenses;
+import org.spdx.library.SpdxModelFactory;
 import org.spdx.library.model.v2.SpdxConstantsCompatV2;
 import org.spdx.library.model.v2.SpdxCreatorInformation;
 import org.spdx.library.model.v2.pointer.ByteOffsetPointer;
@@ -700,7 +702,35 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		for (org.spdx.library.model.v2.license.ExtractedLicenseInfo extractedLicense:fromDoc.getExtractedLicenseInfos()) {
 			convertAndStore(extractedLicense);
 		}
+		convertOrphanElements(fromDoc, toDoc);
 		return toDoc;
+	}
+
+	/**
+	 * Converts any SPDX spec version 2 packages, files, and snippets belonging to fromDoc which are not
+	 * reachable through documentDescribes or a relationship (i.e. have no edges connecting them to anything
+	 * else in the document). Without this, such elements would be silently dropped from the conversion since
+	 * they would never be visited by the relationship graph traversal performed elsewhere in this class.
+	 * Any such elements found are converted, stored, and added to the toDoc's root elements.
+	 * @param fromDoc SPDX spec version 2 document being converted from
+	 * @param toDoc SPDX spec version 3 document being converted to
+	 * @throws InvalidSPDXAnalysisException on any errors converting the orphan elements
+	 */
+	@SuppressWarnings("unchecked")
+	private void convertOrphanElements(org.spdx.library.model.v2.SpdxDocument fromDoc, SpdxDocument toDoc) throws InvalidSPDXAnalysisException {
+		String documentUri = fromDoc.getDocumentUri();
+		IModelStore fromModelStore = fromDoc.getModelStore();
+		for (String typeFilter : new String[] {SpdxConstantsCompatV2.CLASS_SPDX_PACKAGE,
+				SpdxConstantsCompatV2.CLASS_SPDX_FILE, SpdxConstantsCompatV2.CLASS_SPDX_SNIPPET}) {
+			List<org.spdx.library.model.v2.SpdxElement> fromElements = ((Stream<org.spdx.library.model.v2.SpdxElement>)
+					SpdxModelFactory.getSpdxObjects(fromModelStore, copyManager, typeFilter, documentUri, null))
+					.collect(Collectors.toList());
+			for (org.spdx.library.model.v2.SpdxElement fromElement : fromElements) {
+				if (!alreadyCopied(fromElement.getObjectUri())) {
+					toDoc.getRootElements().add(convertAndStore(fromElement));
+				}
+			}
+		}
 	}
 
 	/**

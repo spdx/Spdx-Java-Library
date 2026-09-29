@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -669,6 +671,56 @@ public class Spdx2to3ConverterTest {
 		assertEquals(fileChecksumValue, containedFileHash.getHashValue());
 		verify = result.verify();
 		assertTrue(verify.isEmpty());
+	}
+	
+	/**
+	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#convertAndStore(org.spdx.library.model.v2.SpdxDocument)}.
+	 * Verifies that a package with no relationships and not included in documentDescribes (i.e. no edges
+	 * connecting it to anything else in the document) is still converted rather than silently dropped.
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	@Test
+	public void testConvertAndStoreSpdxDocumentOrphanPackage() throws InvalidSPDXAnalysisException {
+		String describedPkgName = "described package";
+		String orphanPkgName = "orphan package";
+
+		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
+		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL + "test"}), 
+				"2010-01-29T18:30:22Z"));
+		org.spdx.library.model.v2.license.AnyLicenseInfo dataLicense = 
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2("CC0-1.0", fromModelStore, DOCUMENT_URI, copyManager);
+		doc.setDataLicense(dataLicense);
+
+		org.spdx.library.model.v2.license.AnyLicenseInfo noAssertion = 
+				new org.spdx.library.model.v2.license.SpdxNoAssertionLicense();
+		org.spdx.library.model.v2.SpdxPackage describedPkg = doc.createPackage(fromModelStore.getNextId(IdType.SpdxId), 
+				describedPkgName, noAssertion, "copyright", noAssertion)
+				.setFilesAnalyzed(false)
+				.setDownloadLocation("NOASSERTION")
+				.build();
+		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {describedPkg}));
+
+		// orphan package - no relationships, not part of documentDescribes
+		org.spdx.library.model.v2.SpdxPackage orphanPkg = doc.createPackage(fromModelStore.getNextId(IdType.SpdxId), 
+				orphanPkgName, noAssertion, "copyright", noAssertion)
+				.setFilesAnalyzed(false)
+				.setDownloadLocation("NOASSERTION")
+				.build();
+
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
+				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX, true);
+		converter.convertAndStore(doc);
+
+		List<SpdxPackage> resultPackages = new ArrayList<>();
+		SpdxModelFactory.getSpdxObjects(toModelStore, copyManager, SpdxConstantsV3.SOFTWARE_SPDX_PACKAGE, DEFAULT_PREFIX, DEFAULT_PREFIX)
+				.forEach(pkg -> resultPackages.add((SpdxPackage)pkg));
+		assertEquals(2, resultPackages.size());
+		Set<String> resultPackageNames = new HashSet<>();
+		for (SpdxPackage pkg:resultPackages) {
+			resultPackageNames.add(pkg.getName().get());
+		}
+		assertTrue(resultPackageNames.contains(describedPkgName));
+		assertTrue(resultPackageNames.contains(orphanPkgName));
 	}
 	
 	@Test
