@@ -608,9 +608,21 @@ public class Spdx2to3ConverterTest {
 		assertEquals(annotationComment, resultAnnotation.getStatement().get());
 		
 		Element[] rootElements = result.getRootElements().toArray(new Element[result.getRootElements().size()]);
-		assertEquals(1, rootElements.length);
-		assertTrue(rootElements[0] instanceof SpdxPackage);
-		SpdxPackage resultPkg = (SpdxPackage)rootElements[0];
+		assertEquals(2, rootElements.length);
+		SpdxPackage resultPkg = null;
+		CustomLicense rootCustomLicense = null;
+		for (Element rootElement:rootElements) {
+			if (rootElement instanceof SpdxPackage) {
+				resultPkg = (SpdxPackage)rootElement;
+			} else if (rootElement instanceof CustomLicense) {
+				rootCustomLicense = (CustomLicense)rootElement;
+			} else {
+				fail("Unexpected root element type "+rootElement.getClass().getName());
+			}
+		}
+		assertTrue(Objects.nonNull(resultPkg));
+		assertTrue(Objects.nonNull(rootCustomLicense));
+		assertEquals(extractedLicName, rootCustomLicense.getName().get());
 		assertEquals(pkgName, resultPkg.getName().get());
 		assertEquals(pkgDownloadLocation, resultPkg.getDownloadLocation().get());
 		assertEquals(pkgCopyright, resultPkg.getCopyrightText().get());
@@ -721,6 +733,85 @@ public class Spdx2to3ConverterTest {
 		}
 		assertTrue(resultPackageNames.contains(describedPkgName));
 		assertTrue(resultPackageNames.contains(orphanPkgName));
+	}
+
+	/**
+	 * Test method for {@link org.spdx.library.conversion.Spdx2to3Converter#convertAndStore(org.spdx.library.model.v2.SpdxDocument)}.
+	 * Verifies that extracted licensing info, listed licenses, and listed license exceptions stored in the
+	 * document's model store but not referenced by any package, file, or snippet are still converted and
+	 * added as root elements rather than silently dropped.
+	 * @throws InvalidSPDXAnalysisException 
+	 */
+	@Test
+	public void testConvertAndStoreSpdxDocumentOrphanLicenses() throws InvalidSPDXAnalysisException {
+		String pkgName = "package";
+		String extractedLicName = "Extracted License Name";
+		String extractedLicText = "Extracted license text";
+		String orphanLicenseId = "Apache-2.0";
+		String orphanExceptionId = "Classpath-exception-2.0";
+
+		org.spdx.library.model.v2.SpdxDocument doc = new org.spdx.library.model.v2.SpdxDocument(fromModelStore, DOCUMENT_URI, copyManager, true);
+		doc.setCreationInfo(doc.createCreationInfo(Arrays.asList(new String[] {SpdxConstantsCompatV2.CREATOR_PREFIX_TOOL + "test"}), 
+				"2010-01-29T18:30:22Z"));
+		org.spdx.library.model.v2.license.AnyLicenseInfo dataLicense = 
+				LicenseInfoFactory.parseSPDXLicenseStringCompatV2("CC0-1.0", fromModelStore, DOCUMENT_URI, copyManager);
+		doc.setDataLicense(dataLicense);
+
+		org.spdx.library.model.v2.license.AnyLicenseInfo noAssertion = 
+				new org.spdx.library.model.v2.license.SpdxNoAssertionLicense();
+		org.spdx.library.model.v2.SpdxPackage pkg = doc.createPackage(fromModelStore.getNextId(IdType.SpdxId), 
+				pkgName, noAssertion, "copyright", noAssertion)
+				.setFilesAnalyzed(false)
+				.setDownloadLocation("NOASSERTION")
+				.build();
+		doc.setDocumentDescribes(Arrays.asList(new org.spdx.library.model.v2.SpdxItem[] {pkg}));
+
+		// extracted license info stored at the document level but not referenced by the package
+		org.spdx.library.model.v2.license.ExtractedLicenseInfo extractedLicense = 
+				new org.spdx.library.model.v2.license.ExtractedLicenseInfo(fromModelStore, DOCUMENT_URI, 
+						fromModelStore.getNextId(IdType.LicenseRef), copyManager, true);
+		extractedLicense.setExtractedText(extractedLicText);
+		extractedLicense.setName(extractedLicName);
+		doc.setExtractedLicenseInfos(Arrays.asList(new org.spdx.library.model.v2.license.ExtractedLicenseInfo[] {extractedLicense}));
+
+		// listed license and listed license exception stored in the document's model store but not
+		// referenced by the package, a relationship, or documentDescribes
+		org.spdx.library.model.v2.license.SpdxListedLicense orphanLicense = 
+				new org.spdx.library.model.v2.license.SpdxListedLicense(fromModelStore, 
+						SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, orphanLicenseId, copyManager, true);
+		org.spdx.library.model.v2.license.ListedLicenseException orphanException = 
+				new org.spdx.library.model.v2.license.ListedLicenseException(fromModelStore, 
+						SpdxConstantsCompatV2.LISTED_LICENSE_NAMESPACE_PREFIX, orphanExceptionId, copyManager, true);
+
+		Spdx2to3Converter converter = new Spdx2to3Converter(toModelStore, copyManager, defaultCreationInfo, 
+				SpdxModelFactory.getLatestSpecVersion(), DEFAULT_PREFIX, true);
+		SpdxDocument result = converter.convertAndStore(doc);
+
+		Element[] rootElements = result.getRootElements().toArray(new Element[result.getRootElements().size()]);
+		assertEquals(4, rootElements.length);
+		boolean foundPkg = false;
+		boolean foundCustomLicense = false;
+		boolean foundListedLicense = false;
+		boolean foundListedException = false;
+		for (Element rootElement:rootElements) {
+			if (rootElement instanceof SpdxPackage) {
+				foundPkg = true;
+				assertEquals(pkgName, ((SpdxPackage)rootElement).getName().get());
+			} else if (rootElement instanceof CustomLicense) {
+				foundCustomLicense = true;
+				assertEquals(extractedLicName, ((CustomLicense)rootElement).getName().get());
+			} else if (rootElement instanceof ListedLicense) {
+				foundListedLicense = true;
+			} else if (rootElement instanceof ListedLicenseException) {
+				foundListedException = true;
+			} else {
+				fail("Unexpected root element type "+rootElement.getClass().getName());
+			}
+		}
+		assertTrue(foundPkg);
+		assertTrue(foundCustomLicense);
+		assertTrue(foundListedLicense);
+		assertTrue(foundListedException);
 	}
 	
 	@Test

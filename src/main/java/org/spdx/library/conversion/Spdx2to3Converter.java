@@ -700,17 +700,18 @@ public class Spdx2to3Converter implements ISpdxConverter {
 		}
 						).collect(Collectors.toList()));
 		for (org.spdx.library.model.v2.license.ExtractedLicenseInfo extractedLicense:fromDoc.getExtractedLicenseInfos()) {
-			convertAndStore(extractedLicense);
+			toDoc.getRootElements().add(convertAndStore(extractedLicense));
 		}
 		convertOrphanElements(fromDoc, toDoc);
 		return toDoc;
 	}
 
 	/**
-	 * Converts any SPDX spec version 2 packages, files, and snippets belonging to fromDoc which are not
-	 * reachable through documentDescribes or a relationship (i.e. have no edges connecting them to anything
-	 * else in the document). Without this, such elements would be silently dropped from the conversion since
-	 * they would never be visited by the relationship graph traversal performed elsewhere in this class.
+	 * Converts any SPDX spec version 2 packages, files, snippets, listed licenses, and listed license
+	 * exceptions belonging to fromDoc which are not reachable through documentDescribes, a relationship,
+	 * or a license expression (i.e. have no edges connecting them to anything else in the document).
+	 * Without this, such elements would be silently dropped from the conversion since they would never
+	 * be visited by the relationship graph traversal performed elsewhere in this class.
 	 * Any such elements found are converted, stored, and added to the toDoc's root elements.
 	 * @param fromDoc SPDX spec version 2 document being converted from
 	 * @param toDoc SPDX spec version 3 document being converted to
@@ -729,6 +730,24 @@ public class Spdx2to3Converter implements ISpdxConverter {
 				if (!alreadyCopied(fromElement.getObjectUri())) {
 					toDoc.getRootElements().add(convertAndStore(fromElement));
 				}
+			}
+		}
+		// Listed licenses and listed license exceptions are stored under the SPDX License List namespace
+		// rather than the document's namespace, so no object URI prefix filter is used to find them.
+		List<org.spdx.library.model.v2.license.SpdxListedLicense> fromListedLicenses = ((Stream<org.spdx.library.model.v2.license.SpdxListedLicense>)
+				SpdxModelFactory.getSpdxObjects(fromModelStore, copyManager, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE, null, null))
+				.collect(Collectors.toList());
+		for (org.spdx.library.model.v2.license.SpdxListedLicense fromListedLicense : fromListedLicenses) {
+			if (!alreadyCopied(fromListedLicense.getObjectUri())) {
+				toDoc.getRootElements().add(convertAndStore(fromListedLicense));
+			}
+		}
+		List<org.spdx.library.model.v2.license.ListedLicenseException> fromListedExceptions = ((Stream<org.spdx.library.model.v2.license.ListedLicenseException>)
+				SpdxModelFactory.getSpdxObjects(fromModelStore, copyManager, SpdxConstantsCompatV2.CLASS_SPDX_LISTED_LICENSE_EXCEPTION, null, null))
+				.collect(Collectors.toList());
+		for (org.spdx.library.model.v2.license.ListedLicenseException fromListedException : fromListedExceptions) {
+			if (!alreadyCopied(fromListedException.getObjectUri())) {
+				toDoc.getRootElements().add(convertAndStore(fromListedException));
 			}
 		}
 	}
