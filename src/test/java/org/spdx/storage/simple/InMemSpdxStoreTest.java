@@ -764,6 +764,7 @@ public class InMemSpdxStoreTest extends TestCase {
 				.setAnnotationType(AnnotationType.OTHER)
 				.setComment("Annotation 2")
 				.build();
-		assertNotSame(ann1, ann2);
+		assertNotSame("Annotations with differenc ease URIs are showing equal", ann1, ann2);
+		assertFalse("Annotations with differenc ease URIs are showing equivalent", ann1.equivalent(ann2));
 	}
 }
