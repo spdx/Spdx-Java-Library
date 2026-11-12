@@ -51,6 +51,9 @@ import org.spdx.library.model.v2.SpdxSnippet;
 import org.spdx.library.model.v2.license.AnyLicenseInfo;
 import org.spdx.library.model.v2.license.ExtractedLicenseInfo;
 import org.spdx.licenseTemplate.LicenseTextHelper;
+
+import javax.annotation.Nullable;
+
 /**
  * Performs a comparison between two or more SPDX documents and holds the results of the comparison
  * <p>
@@ -149,6 +152,8 @@ public class SpdxComparer {
 	// Snippet references comparison results
 	private final Map<SpdxDocument, Map<SpdxDocument, List<SpdxSnippet>>> uniqueSnippets = new HashMap<>();
 	private final Map<String, SpdxSnippetComparer>  snippetComparers = new HashMap<>();
+
+	private final Map<Integer, Boolean> equivalentElements = new HashMap<>(); // Key is the hash of the hashes of the 2 element
 	
 	public SpdxComparer() {
 		// Default empty constructor
@@ -350,7 +355,7 @@ public class SpdxComparer {
 				Collection<ExternalDocumentRef> externalDocRefsB = spdxDocs.get(j).getExternalDocumentRefs();
 
 				// find any external refs in A that are not in B
-				List<ExternalDocumentRef> uniqueA = findUniqueExternalDocumentRefs(externalDocRefsA, externalDocRefsB);
+				List<ExternalDocumentRef> uniqueA = findUniqueExternalDocumentRefs(externalDocRefsA, externalDocRefsB, equivalentElements);
 				if (!uniqueA.isEmpty()) {
 					uniqueAMap.put(spdxDocs.get(j), uniqueA);					
 				}
@@ -385,7 +390,7 @@ public class SpdxComparer {
 				Collection<Relationship> relationshipsB = spdxDocs.get(j).getRelationships();
 
 				// find any creators in A that are not in B
-				List<Relationship> uniqueA = findUniqueRelationships(relationshipsA, relationshipsB);
+				List<Relationship> uniqueA = findUniqueRelationships(relationshipsA, relationshipsB, equivalentElements);
 				if (!uniqueA.isEmpty()) {
 					uniqueAMap.put(spdxDocs.get(j), uniqueA);					
 				}
@@ -896,7 +901,7 @@ public class SpdxComparer {
 				Collection<SpdxElement> itemsA = spdxDocs.get(i).getDocumentDescribes();
 				for (int j = i+1; j < spdxDocs.size(); j++) {
 					Collection<SpdxElement> itemsB = spdxDocs.get(j).getDocumentDescribes();
-					if (!collectionsEquivalent(itemsA, itemsB)) {
+					if (!collectionsEquivalent(itemsA, itemsB, equivalentElements)) {
 						this.documentContentsEquals = false;
 						this.differenceFound = true;
 						return;
@@ -1156,15 +1161,30 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static boolean elementsEquivalent(Optional<? extends ModelObjectV2> elementA, Optional<? extends ModelObjectV2> elementB) throws InvalidSPDXAnalysisException {
-		if (elementA.isPresent()) {
-			if (elementB.isPresent()) {
-				return elementA.get().equivalent(elementB.get());
+    public static boolean elementsEquivalent(Optional<? extends ModelObjectV2> elementA,
+											 Optional<? extends ModelObjectV2> elementB,
+											 Map<Integer, Boolean> equivalentElements) throws InvalidSPDXAnalysisException {
+		return elementsEquivalent(elementA.orElse(null), elementB.orElse(null), equivalentElements);
+	}
+
+	public static boolean elementsEquivalent(@Nullable ModelObjectV2 elementA,
+											@Nullable ModelObjectV2 elementB,
+											 Map<Integer, Boolean> equivalentElements) throws InvalidSPDXAnalysisException {
+		if (Objects.nonNull(elementA)) {
+			if (Objects.nonNull(elementB)) {
+				int key = Objects.hash(elementA, elementB);
+				int key2 = Objects.hash(elementA, elementB);
+				Boolean equiv = equivalentElements.get(key);
+				if (Objects.isNull(equiv)) {
+					equiv = elementA.equivalent(elementB);
+					equivalentElements.put(key, equiv);
+				}
+				return equiv;
 			} else {
 				return false;
 			}
 		} else {
-			return !elementB.isPresent();
+			return Objects.isNull(elementB);
 		}
 	}
 	
@@ -1174,7 +1194,9 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 * @return true if the collections all contain equivalent items
 	 */
-	public static boolean collectionsEquivalent(Collection<? extends ModelObjectV2> collectionA, Collection<? extends ModelObjectV2> collectionB) throws InvalidSPDXAnalysisException {
+	public static boolean collectionsEquivalent(Collection<? extends ModelObjectV2> collectionA,
+												Collection<? extends ModelObjectV2> collectionB,
+												Map<Integer, Boolean> equivalentElements) throws InvalidSPDXAnalysisException {
 		if (Objects.isNull(collectionA)) {
 			return Objects.isNull(collectionB);
 		}
@@ -1184,16 +1206,18 @@ public class SpdxComparer {
 		if (collectionA.size() != collectionB.size()) {
 			return false;
 		}
+		//DEBUG:
+		int size = collectionA.size();
+		int count = 0;
+		//ENDDEBUG:
 		for (ModelObjectV2 elementA:collectionA) {
+
 			if (Objects.isNull(elementA)) {
 				continue;
 			}
 			boolean found = false;
 			for (ModelObjectV2 elementB:collectionB) {
-				if (Objects.isNull(elementB)) {
-					continue;
-				}
-				if (elementA.equivalent(elementB)) {
+				if (elementsEquivalent(elementA, elementB, equivalentElements)) {
 					found = true;
 					break;
 				}
@@ -1201,6 +1225,11 @@ public class SpdxComparer {
 			if (!found) {
 				return false;
 			}
+			//DEBUG:
+			if (size > 10000) {
+				System.out.println("Compared item "+count++ + "out of "+size);
+			}
+			//ENDDEBUG:
 		}
 		return true;
 	}
@@ -1966,7 +1995,9 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	public static List<Relationship> findUniqueRelationships(
-			Collection<Relationship> relationshipsA, Collection<Relationship> relationshipsB) throws InvalidSPDXAnalysisException {
+			Collection<Relationship> relationshipsA,
+			Collection<Relationship> relationshipsB,
+			Map<Integer, Boolean> equivalentElements) throws InvalidSPDXAnalysisException {
 		List<Relationship> retval = new ArrayList<>();
 		if (relationshipsA == null) {
 			return retval;
@@ -1978,7 +2009,7 @@ public class SpdxComparer {
 			boolean found = false;
 			if (relationshipsB != null) {
 				for (Relationship relB:relationshipsB) {
-					if (relA.equivalent(relB)) {
+					if (elementsEquivalent(relA, relB, equivalentElements)) {
 						found = true;
 						break;
 					}
@@ -1999,7 +2030,8 @@ public class SpdxComparer {
 	 * @throws InvalidSPDXAnalysisException On error in comparison
 	 */
 	public static List<ExternalDocumentRef> findUniqueExternalDocumentRefs(
-			Collection<ExternalDocumentRef> externalDocRefsA, Collection<ExternalDocumentRef> externalDocRefsB) throws InvalidSPDXAnalysisException {
+			Collection<ExternalDocumentRef> externalDocRefsA, Collection<ExternalDocumentRef> externalDocRefsB,
+			Map<Integer, Boolean> equivalentElements) throws InvalidSPDXAnalysisException {
 		List<ExternalDocumentRef> retval = new ArrayList<>();
 		if (externalDocRefsA == null) {
 			return new ArrayList<>();
@@ -2013,7 +2045,7 @@ public class SpdxComparer {
 				for (ExternalDocumentRef docRefB:externalDocRefsB) {
 					if (compareStrings(docRefA.getSpdxDocumentNamespace(),
 							docRefB.getSpdxDocumentNamespace()) == 0 &&
-							elementsEquivalent(docRefA.getChecksum(), docRefB.getChecksum())) {
+							elementsEquivalent(docRefA.getChecksum(), docRefB.getChecksum(), equivalentElements)) {
 						found = true;
 						break;
 					}
