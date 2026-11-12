@@ -93,7 +93,7 @@ public class VerificationCodeGenerator {
             if (spdxFile != null) {
                 Optional<String> name = spdxFile.getName();
                 if (name.isPresent() && !skippedFilePathSet.contains(name.get())) {
-                    fileChecksums.add(spdxFile.getSha1());
+                    fileChecksums.add(spdxFile.getSha1().toLowerCase());
                 }
             }
         }

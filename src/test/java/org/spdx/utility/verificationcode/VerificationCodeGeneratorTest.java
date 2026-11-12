@@ -98,6 +98,23 @@ public class VerificationCodeGeneratorTest extends TestCase {
         compareFileNameArrays(SKIPPED_FILE_NAMES, vc.getExcludedFileNames());
     }
     
+    public void testGeneratePackageVerificationCodeUppercaseSha1() throws NoSuchAlgorithmException, InvalidSPDXAnalysisException {
+        SpdxFile[] uppercaseFiles = new SpdxFile[SPDX_FILE_NAMES.length];
+        for (int i = 0; i < uppercaseFiles.length; i++) {
+            uppercaseFiles[i] = new SpdxFile(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.Anonymous), null, true);
+            uppercaseFiles[i].setName(SPDX_FILE_NAMES[i]);
+            uppercaseFiles[i].getFileTypes().add(FileType.SOURCE);
+            uppercaseFiles[i].getChecksums().add(uppercaseFiles[i].createChecksum(ChecksumAlgorithm.SHA1,
+                    SPDX_FILE_SHA1S[i].toUpperCase()));
+            uppercaseFiles[i].setLicenseConcluded(new SpdxNoAssertionLicense());
+            uppercaseFiles[i].getLicenseInfoFromFiles().add(new SpdxNoAssertionLicense());
+        }
+        VerificationCodeGenerator vg = new VerificationCodeGenerator(new JavaSha1ChecksumGenerator());
+        String lowercase = vg.generatePackageVerificationCode(SPDX_FILES, new String[0], modelStore, DOCUMENT_URI).getValue();
+        String uppercase = vg.generatePackageVerificationCode(uppercaseFiles, new String[0], modelStore, DOCUMENT_URI).getValue();
+        assertEquals(lowercase, uppercase);
+    }
+
     /**
      * @param skippedFileNames
      * @param excludedFileNames
