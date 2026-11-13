@@ -92,7 +92,9 @@ public class VerificationCodeGenerator {
         for (SpdxFile spdxFile : spdxFiles) {
             if (spdxFile != null) {
                 Optional<String> name = spdxFile.getName();
-                if (name.isPresent() && !skippedFilePathSet.contains(name.get())) {
+                // a file with no name can not match any of the skipped file paths,
+                // so it still contributes its checksum to the verification code
+                if (!name.isPresent() || !skippedFilePathSet.contains(name.get())) {
                     fileChecksums.add(spdxFile.getSha1());
                 }
             }

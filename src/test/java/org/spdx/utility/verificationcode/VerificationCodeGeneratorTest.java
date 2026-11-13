@@ -62,6 +62,14 @@ public class VerificationCodeGeneratorTest extends TestCase {
             "cccc9215216045864ca5785d1892a00106cf0f6a"
     };
 
+    private static final String UNNAMED_FILE_SHA1 = "eeee9215216045864ca5785d1892a00106cf0f6a";
+
+    /** SHA-1 over the sorted SHA1s of SPDX_FILES[0] and the unnamed file */
+    private static final String NAMED_AND_UNNAMED_RESULT = "8c1104b80174143709b50afec3c3f3b3ff74b9cc";
+
+    /** SHA-1 over the unnamed file's SHA1 alone, with SPDX_FILES[0] excluded by path */
+    private static final String UNNAMED_ONLY_RESULT = "2e751eadfa9dd28547a3861d6a791d7abe61afea";
+
     private SpdxFile[] SPDX_FILES;
     
     private IModelStore modelStore;
@@ -120,6 +128,25 @@ public class VerificationCodeGeneratorTest extends TestCase {
         }
     }
     
+    public void testGeneratePackageVerificationCodeFileWithoutName() throws NoSuchAlgorithmException, InvalidSPDXAnalysisException {
+        VerificationCodeGenerator vg = new VerificationCodeGenerator(new JavaSha1ChecksumGenerator());
+        SpdxFile unnamed = new SpdxFile(modelStore, DOCUMENT_URI, modelStore.getNextId(IdType.Anonymous), null, true);
+        unnamed.getFileTypes().add(FileType.SOURCE);
+        unnamed.getChecksums().add(unnamed.createChecksum(ChecksumAlgorithm.SHA1, UNNAMED_FILE_SHA1));
+        unnamed.setLicenseConcluded(new SpdxNoAssertionLicense());
+        unnamed.getLicenseInfoFromFiles().add(new SpdxNoAssertionLicense());
+        assertFalse(unnamed.getName().isPresent());
+
+        SpdxFile[] files = new SpdxFile[] { SPDX_FILES[0], unnamed };
+        SpdxPackageVerificationCode vc = vg.generatePackageVerificationCode(files, new String[0], modelStore, DOCUMENT_URI);
+        assertEquals(NAMED_AND_UNNAMED_RESULT, vc.getValue());
+
+        String[] skipped = new String[] { SPDX_FILE_NAMES[0] };
+        SpdxPackageVerificationCode skippedVc = vg.generatePackageVerificationCode(files, skipped, modelStore, DOCUMENT_URI);
+        assertEquals(UNNAMED_ONLY_RESULT, skippedVc.getValue());
+        assertEquals(1, skippedVc.getExcludedFileNames().size());
+    }
+
     public void testNormalizeFilePath() {
         String s1 = "simple/test.c";
         String ns1 = "./simple/test.c";
