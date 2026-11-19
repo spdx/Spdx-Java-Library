@@ -746,4 +746,49 @@ public class InMemSpdxStoreTest extends TestCase {
 		        store.delete(TEST_OBJECT_URI1);
 	        }
 	    }
+
+	public void testSpdxElementIdsAreCaseSensitive() throws Exception {
+		String namespace = "https://example.com/spdxdocs/android";
+		String upperId = SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM + "Arcturus.ogg";
+		String lowerId = SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM + "arcturus.ogg";
+		String upperUri = namespace + "#" + upperId;
+		String lowerUri = namespace + "#" + lowerId;
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			store.create(new TypedValue(upperUri, TEST_TYPE1, "SPDX-2.3"));
+			assertTrue(store.exists(upperUri));
+			assertTrue(store.exists(namespace.toUpperCase() + "#" + upperId));
+			assertFalse(store.exists(lowerUri));
+			assertFalse(store.getCaseSensitiveId(namespace, lowerId).isPresent());
+			assertEquals(upperId, store.getCaseSensitiveId(namespace, upperId).get());
+			store.create(new TypedValue(lowerUri, TEST_TYPE1, "SPDX-2.3"));
+			assertTrue(store.exists(lowerUri));
+			assertEquals(lowerId, store.getCaseSensitiveId(namespace, lowerId).get());
+			store.delete(lowerUri);
+			assertFalse(store.exists(lowerUri));
+			assertTrue(store.exists(upperUri));
+			try {
+				store.create(new TypedValue(upperUri, TEST_TYPE1, "SPDX-2.3"));
+				fail("The same SPDX element id is a duplicate");
+			} catch (InvalidSPDXAnalysisException e) {
+				// expected
+			}
+		}
+	}
+
+	public void testLicenseRefIdsRemainCaseInsensitive() throws Exception {
+		String namespace = "https://example.com/spdxdocs/android";
+		String canonicalId = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + "Name";
+		String otherCaseId = SpdxConstantsCompatV2.NON_STD_LICENSE_ID_PRENUM + "name";
+		try (InMemSpdxStore store = new InMemSpdxStore()) {
+			store.create(new TypedValue(namespace + "#" + canonicalId, TEST_TYPE1, "SPDX-2.3"));
+			try {
+				store.create(new TypedValue(namespace + "#" + otherCaseId, TEST_TYPE1, "SPDX-2.3"));
+				fail("LicenseRef identifiers that differ only by case are the same identifier");
+			} catch (InvalidSPDXAnalysisException e) {
+				// expected
+			}
+			assertTrue(store.exists(namespace + "#" + otherCaseId));
+			assertEquals(canonicalId, store.getCaseSensitiveId(namespace, otherCaseId.toLowerCase()).get());
+		}
+	}
 }

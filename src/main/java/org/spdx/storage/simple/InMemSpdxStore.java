@@ -96,17 +96,39 @@ public class InMemSpdxStore implements IModelStore {
 	public InMemSpdxStore() {
 
 	}
+
+	/**
+	 * Key used to store an object URI.
+	 * <p>
+	 * An SPDX element id, the URI fragment that starts with {@code SPDXRef-}, is case-sensitive.
+	 * {@code SPDXRef-Arcturus.ogg} and {@code SPDXRef-arcturus.ogg} are different elements.
+	 * License identifiers and every other id stay case-insensitive.
+	 * @param objectUri object URI
+	 * @return map key
+	 */
+	static String storageKey(String objectUri) {
+		int fragmentStart = objectUri.lastIndexOf('#');
+		if (fragmentStart >= 0 && fragmentStart < objectUri.length() - 1) {
+			String fragment = objectUri.substring(fragmentStart + 1);
+			if (fragment.startsWith(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
+				return objectUri.substring(0, fragmentStart + 1).toLowerCase() + fragment;
+			}
+		} else if (objectUri.startsWith(SpdxConstantsCompatV2.SPDX_ELEMENT_REF_PRENUM)) {
+			return objectUri;
+		}
+		return objectUri.toLowerCase();
+	}
 	
 	@Override
 	public boolean exists(String objectUri) {
-		return typedValueMap.containsKey(objectUri.toLowerCase());
+		return typedValueMap.containsKey(storageKey(objectUri));
 	}
 
 	@Override
 	public void create(TypedValue typedValue) throws InvalidSPDXAnalysisException {
 		StoredTypedItem value = new StoredTypedItem(typedValue.getObjectUri(), typedValue.getType(), typedValue.getSpecVersion());
 		updateNextIds(typedValue.getObjectUri());
-		if (Objects.nonNull(this.typedValueMap.putIfAbsent(typedValue.getObjectUri().toLowerCase(), value))) {
+		if (Objects.nonNull(this.typedValueMap.putIfAbsent(storageKey(typedValue.getObjectUri()), value))) {
 			throw new DuplicateSpdxIdException("Object URI "+typedValue.getObjectUri()+" already exists.");
 		}
 	}
@@ -197,7 +219,7 @@ public class InMemSpdxStore implements IModelStore {
 	 * @throws InvalidSPDXAnalysisException on SPDX parsing errors
 	 */
 	protected StoredTypedItem getItem(String objectUri) throws InvalidSPDXAnalysisException {
-		StoredTypedItem item = this.typedValueMap.get(objectUri.toLowerCase());
+		StoredTypedItem item = this.typedValueMap.get(storageKey(objectUri));
 		if (item == null) {
 			throw new SpdxIdNotFoundException("Object URI "+objectUri+" was not found in the memory store.  The ID must first be created before getting or setting property values.");
 		}
@@ -418,7 +440,7 @@ public class InMemSpdxStore implements IModelStore {
 		Objects.requireNonNull(nameSpace, "Namespace can not be null");
 		Objects.requireNonNull(caseInsensitiveId, "CaseInsensitiveId can not be null");
 		String objectUri = nameSpace + "#" + caseInsensitiveId;
-		StoredTypedItem item = typedValueMap.get(objectUri.toLowerCase());
+		StoredTypedItem item = typedValueMap.get(storageKey(objectUri));
 		if (Objects.isNull(item)) {
 			return Optional.empty();
 		}
@@ -444,7 +466,7 @@ public class InMemSpdxStore implements IModelStore {
 	@Override
 	public void delete(String objectUri) throws InvalidSPDXAnalysisException {
 		Objects.requireNonNull(objectUri, "Missing object URI");
-		if (!this.typedValueMap.containsKey(objectUri.toLowerCase())) {
+		if (!this.typedValueMap.containsKey(storageKey(objectUri))) {
 			return;
 		}
 		referenceCountLock.writeLock().lock();
@@ -473,7 +495,7 @@ public class InMemSpdxStore implements IModelStore {
                     }
                 }
             }
-            if (Objects.isNull(typedValueMap.remove(objectUri.toLowerCase()))) {
+            if (Objects.isNull(typedValueMap.remove(storageKey(objectUri)))) {
                 logger.error("Error deleting - object URI {} does not exist.", objectUri);
                 throw new SpdxIdNotFoundException("Error deleting - object URI "+objectUri+" does not exist.");
             }
