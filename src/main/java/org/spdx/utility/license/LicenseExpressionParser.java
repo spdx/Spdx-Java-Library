@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -79,11 +80,13 @@ public class LicenseExpressionParser {
 		OR_LATER, WITH, AND, OR	//NOTE: These must be in precedence order 
 	}
 
+	static final int MAX_TOKENS = 1000; // Maximum number of tokens the parser will handle - limit prevents a large number of recursive calls
     static final String LEFT_PAREN = "(";
 	static final String RIGHT_PAREN = ")";
 	static final Map<String, Operator> OPERATOR_MAP = new HashMap<>();
 	public static final String UNINITIALIZED_LICENSE_TEXT = "[Initialized with license Parser.  The actual license text is not available]";
-	
+	static final Pattern TOKEN_SPLIT_PATTERN = Pattern.compile("[\\s()+]+");
+
 	static {
 		OPERATOR_MAP.put("+", Operator.OR_LATER);
 		OPERATOR_MAP.put("AND", Operator.AND);
@@ -123,6 +126,10 @@ public class LicenseExpressionParser {
 			return new NoAssertionLicense();
 		} else if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NONE_VALUE)) {
 			return new NoneLicense();
+		} else if (tokens.length > MAX_TOKENS) {
+			throw new LicenseParserException(String.format(
+					"License expression includes %s tokens which exceeds the maximum %s tokens.",
+					tokens.length, MAX_TOKENS));
 		} else {
 			try {
 				return parseLicenseExpression(tokens, store, customLicenseUriPrefix, creationInfo,
@@ -159,6 +166,10 @@ public class LicenseExpressionParser {
 			return new SpdxNoAssertionLicense(store, documentUri);
 		} else if (tokens.length == 1 && tokens[0].equals(SpdxConstantsCompatV2.NONE_VALUE)) {
 			return new SpdxNoneLicense(store, documentUri);
+		} else if (tokens.length > MAX_TOKENS) {
+			throw new LicenseParserException(String.format(
+					"License expression includes %s tokens which exceeds the maximum %s tokens.",
+					tokens.length, MAX_TOKENS));
 		} else {
 			try {
 				return parseLicenseExpressionCompatV2(tokens, store, documentUri, copyManager);
@@ -177,35 +188,9 @@ public class LicenseExpressionParser {
 	 * @return array of string tokens
 	 */
 	private static String[] tokenizeExpression(String expression) {
-		String[] startTokens = expression.split("\\s");
-		List<String> endTokens = new ArrayList<>();
-		for (String token : startTokens) {
-			processPreToken(token, endTokens);
-		}
-		return endTokens.toArray(new String[0]);
-	}
-
-	/**
-	 * @param preToken previous token
-	 * @param tokenList resultant list of tokens - modified by this methods
-	 */
-	private static void processPreToken(String preToken,
-			List<String> tokenList) {
-		if (preToken.isEmpty()) {
-            //noinspection UnnecessaryReturnStatement
-            return;
-		} else if (preToken.startsWith("(")) {
-			tokenList.add("(");
-			processPreToken(preToken.substring(1), tokenList);
-		} else if (preToken.endsWith(")")) {
-			processPreToken(preToken.substring(0, preToken.length()-1), tokenList);
-			tokenList.add(")");
-		} else if (preToken.endsWith("+")) {
-			processPreToken(preToken.substring(0, preToken.length()-1), tokenList);
-			tokenList.add("+");
-		} else {
-			tokenList.add(preToken);
-		}
+		return Arrays.stream(expression.split("\\s+|(?=[()+])|(?<=[()+])"))
+				.filter(s -> !s.isEmpty())
+				.toArray(String[]::new);
 	}
 
 	/**
