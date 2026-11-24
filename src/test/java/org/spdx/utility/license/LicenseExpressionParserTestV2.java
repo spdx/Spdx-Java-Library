@@ -251,4 +251,26 @@ public class LicenseExpressionParserTestV2 extends TestCase {
 		assertTrue(result instanceof InvalidLicenseExpression);
 		assertEquals("389-exception", ((InvalidLicenseExpression)result).getLicenseExpression());
 	}
+
+	public void testLargeExpression() throws InvalidSPDXAnalysisException {
+		StringBuilder sb = new StringBuilder("GPL-2.0-only");
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append(" OR Apache-2.0");
+		}
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString());
+		assertTrue(result instanceof InvalidLicenseExpression);
+	}
+
+	public void testLargeNesting() throws InvalidSPDXAnalysisException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append("(");
+		}
+		sb.append("GPL-2.0-only AND Apache-2.0");
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append(")");
+		}
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseStringCompatV2(sb.toString());
+		assertTrue(result instanceof InvalidLicenseExpression);
+	}
 }

@@ -413,4 +413,28 @@ public class LicenseExpressionParserTest extends TestCase {
 		assertTrue(result instanceof InvalidLicenseExpression);
 		assertEquals(STD_EXCEPTION_IDS[0], ((InvalidLicenseExpression)result).getLicenseExpression());
 	}
+
+	public void testLargeExpression() throws InvalidSPDXAnalysisException {
+		StringBuilder sb = new StringBuilder("GPL-2.0-only");
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append(" OR Apache-2.0");
+		}
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), modelStore,
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
+		assertTrue(result instanceof InvalidLicenseExpression);
+	}
+
+	public void testLargeNesting() throws InvalidSPDXAnalysisException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append("(");
+		}
+		sb.append("GPL-2.0-only AND Apache-2.0");
+		for (int i = 0; i < LicenseExpressionParser.MAX_TOKENS + 100; i++) {
+			sb.append(")");
+		}
+		AnyLicenseInfo result = LicenseInfoFactory.parseSPDXLicenseString(sb.toString(), modelStore,
+				DEFAULT_PREFIX, creationInfo, copyManager, idMap);
+		assertTrue(result instanceof InvalidLicenseExpression);
+	}
 }
